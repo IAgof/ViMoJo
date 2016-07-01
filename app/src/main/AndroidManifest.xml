@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.videonasocialmedia.videona"
+<manifest package="com.videonasocialmedia.vimojo"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-feature
@@ -13,7 +13,7 @@
         android:xlargeScreens="false"/>
 
     <permission
-        android:name="com.videonasocialmedia.videona.permission.C2D_MESSAGE"
+        android:name="com.videonasocialmedia.vimojo.permission.C2D_MESSAGE"
         android:protectionLevel="signature"/>
 
     <uses-permission android:name="com.videonasocialmedia.videona.permission.C2D_MESSAGE"/>
@@ -28,7 +28,7 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
 
     <application
-        android:name=".VideonaApplication"
+        android:name="com.videonasocialmedia.vimojo.VideonaApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/VideonaTheme">
@@ -70,7 +70,7 @@
         <!-- Used for Google Play Store Campaign Measurement-->
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService"/>
         <receiver
-            android:name=".presentation.views.broadcastreceiver.InstallReceiver"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.broadcastreceiver.InstallReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -89,7 +89,7 @@
         </receiver>
 
         <activity
-            android:name=".presentation.views.activity.InitAppActivity"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="sensorLandscape"
@@ -102,7 +102,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.views.activity.IntroAppActivity"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.IntroAppActivity"
             android:label="@string/app_name"
             android:theme="@style/VideonaIntroTutorial">
         </activity>
@@ -125,7 +125,7 @@
             android:parentActivityName=".presentation.views.activity.RecordActivity"/>
 
         <activity
-            android:name=".presentation.views.activity.NamePreferenceActivity"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.NamePreferenceActivity"
             android:label="@string/app_name"
             android:parentActivityName=".presentation.views.activity.SettingsActivity"
             android:windowSoftInputMode="adjustResize">
@@ -136,7 +136,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.views.activity.UsernamePreferenceActivity"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.UsernamePreferenceActivity"
             android:label="@string/app_name"
             android:parentActivityName=".presentation.views.activity.SettingsActivity"
             android:windowSoftInputMode="adjustResize">
@@ -147,7 +147,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.views.activity.EmailPreferenceActivity"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.EmailPreferenceActivity"
             android:label="@string/app_name"
             android:parentActivityName=".presentation.views.activity.SettingsActivity"
             android:windowSoftInputMode="adjustResize">
@@ -158,7 +158,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.views.activity.AboutActivity"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.AboutActivity"
             android:label="@string/app_name"
             android:parentActivityName=".presentation.views.activity.SettingsActivity">
             <intent-filter>
@@ -168,7 +168,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.views.activity.PrivacyPolicyActivity"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity"
             android:label="@string/app_name"
             android:parentActivityName=".presentation.views.activity.SettingsActivity">
             <intent-filter>
@@ -178,7 +178,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.views.activity.TermsOfServiceActivity"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity"
             android:label="@string/app_name"
             android:parentActivityName=".presentation.views.activity.SettingsActivity">
             <intent-filter>
@@ -188,7 +188,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.views.activity.LicensesActivity"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.LicensesActivity"
             android:label="@string/app_name"
             android:parentActivityName=".presentation.views.activity.SettingsActivity">
             <intent-filter>
@@ -198,7 +198,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.views.activity.LegalNoticeActivity"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.LegalNoticeActivity"
             android:label="@string/app_name"
             android:parentActivityName=".presentation.views.activity.SettingsActivity">
             <intent-filter>
@@ -207,13 +207,62 @@
             </intent-filter>
         </activity>
 
+
         <activity
-            android:name=".presentation.views.activity.ShareVideoActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.RecordActivity"/>
+        android:name=".presentation.views.activity.ShareActivity"
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:parentActivityName=".presentation.views.activity.EditActivity"
+        />
+
+        <activity
+        android:name=".presentation.views.activity.GalleryActivity"
+        android:label="@string/app_name"
+        android:screenOrientation="sensorLandscape"/>
+
+        <activity
+        android:name=".presentation.views.activity.EditActivity"
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:parentActivityName=".presentation.views.activity.RecordActivity"/>
+
+        <activity
+        android:name=".presentation.views.activity.VideoTrimActivity"
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:parentActivityName=".presentation.views.activity.EditActivity"/>
+
+        <activity
+        android:name=".presentation.views.activity.VideoSplitActivity"
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:parentActivityName=".presentation.views.activity.EditActivity"/>
+
+        <activity
+        android:name=".presentation.views.activity.VideoDuplicateActivity"
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:parentActivityName=".presentation.views.activity.EditActivity"/>
+
+        <activity
+        android:name=".presentation.views.activity.MusicListActivity"
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:parentActivityName=".presentation.views.activity.EditActivity"/>
+
+        <activity
+        android:name=".presentation.views.activity.MusicDetailActivity"
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:parentActivityName=".presentation.views.activity.MusicListActivity"/>
 
         <service
             android:name=".presentation.views.services.ExportProjectService"
+            android:exported="false"
+            />
+
+        <service
+            android:name=".ftp.presentation.services.FtpUploaderService"
             android:exported="false"
             />
 

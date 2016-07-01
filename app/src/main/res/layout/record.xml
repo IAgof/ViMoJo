@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/coordinatorLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false">
+
+    <com.videonasocialmedia.avrecorder.view.GLCameraView
+        android:id="@+id/cameraPreview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_alignParentBottom="true"
+            android:id="@+id/settings_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorGreyTransparent"
+            android:layout_toStartOf="@+id/controls"
+            android:layout_marginRight="36dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="#00ffffff"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_color_lens_white_48px"
+                />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:src="@drawable/ic_brightness_5_white_48px"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:src="@drawable/ic_brightness_5_white_48px"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:src="@drawable/ic_brightness_5_white_48px"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:src="@drawable/ic_brightness_5_white_48px"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:src="@drawable/ic_brightness_5_white_48px"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:src="@drawable/ic_brightness_5_white_48px"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/hud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="16dp"
+            android:background="@color/colorGreyTransparent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:src="@android:drawable/ic_dialog_map"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:src="@android:drawable/ic_lock_idle_low_battery"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:src="@android:drawable/ic_lock_power_off"/>
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:src="@android:drawable/stat_notify_missed_call"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_mic_none_white_24dp"/>
+
+            <ImageView
+                android:id="@+id/imageRecPoint"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_vertical"
+                android:alpha="0.5"
+                android:background="@color/colorGreyTransparent"
+                android:paddingLeft="4dp"
+                android:src="@anim/activity_record_drawable_rec_progress"
+                android:visibility="invisible"/>
+
+            <Chronometer
+                android:id="@+id/chronometer_record"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_vertical"
+                android:alpha="0.5"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dp"
+                android:paddingRight="16dp"
+                android:text="00:00"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:visibility="visible"/>
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/controls"
+            android:layout_width="160dp"
+            android:layout_height="210dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:background="@drawable/activity_record_icon_rec_circle">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="8"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"/>
+
+                    <ImageButton
+                        android:id="@+id/button_toggle_flash"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="8"
+                        android:background="@null"
+                        android:paddingBottom="4dp"
+                        android:paddingLeft="28dp"
+                        android:paddingRight="4dp"
+                        android:paddingTop="28dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/record_activity_icon_flash_camera_selector"/>
+
+                    <ImageButton
+                        android:id="@+id/button_change_camera"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="8"
+                        android:background="@null"
+                        android:paddingBottom="12dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="24dp"
+                        android:paddingTop="20dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/activity_record_change_camera_selector"
+                        android:visibility="visible"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="8"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
+
+
+                    <ImageButton
+                        android:id="@+id/button_share"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="8"
+                        android:alpha="0.25"
+                        android:background="@null"
+                        android:clickable="false"
+                        android:padding="16dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/activity_record_button_share_selector"
+                        android:visibility="invisible"/>
+
+                    <ImageButton
+                        android:id="@+id/button_record"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="8"
+                        android:background="@null"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/activity_record_icon_rec_normal"
+                        android:visibility="visible"/>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="8"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"/>
+
+                    <ImageButton
+                        android:id="@+id/settings_button"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="8"
+                        android:background="@null"
+                        android:paddingBottom="28dp"
+                        android:paddingLeft="28dp"
+                        android:paddingRight="4dp"
+                        android:paddingTop="4dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_tune_white_36px"/>
+
+                    <ImageButton
+                        android:id="@+id/edit_button"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="8"
+                        android:background="@null"
+                        android:paddingBottom="20dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="24dp"
+                        android:paddingTop="12dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_camera_roll_white_36px"
+                        android:visibility="visible"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/rotateDeviceHint"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/common_icon_rotate_device"
+            android:visibility="gone"/>
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

@@ -55,13 +55,6 @@
         <item name="colorControlNormal">@color/colorControlNormal</item>
     </style>
 
-    <style name="VideonaDialog" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:colorPrimary">@color/colorPrimary</item>
-        <item name="android:textColorAlertDialogListItem">@color/textColorPrimary</item>
-        <item name="android:colorAccent">@color/colorPrimary</item>
-        <item name="textAllCaps">false</item>
-    </style>
-
     <style name="VideonaAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:colorPrimary">@color/colorPrimary</item>
         <item name="android:textColorAlertDialogListItem">@color/textColorPrimary</item>
@@ -95,6 +88,10 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
 
+    </style>
+
+    <style name="VideonaDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
 </resources>

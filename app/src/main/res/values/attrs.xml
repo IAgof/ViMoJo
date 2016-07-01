@@ -8,13 +8,36 @@
 
 <resources>
 
+    <attr name="ic_settings_videona" format="reference"/>
+    
     <declare-styleable name="CircleImageView">
         <attr name="border_width" format="dimension"/>
         <attr name="border_color" format="color"/>
         <attr name="border_overlay" format="boolean"/>
     </declare-styleable>
 
-    <attr name="ic_settings_videona" format="reference"/>
+    <declare-styleable name="AspectRatioVideoView">
+        <attr name="aspect" format="enum">
+            <enum name="four_three" value="1"/>
+            <enum name="sixteen_nine" value="2"/>
+        </attr>
+    </declare-styleable>
 
+    <declare-styleable name="RangeSeekbar">
+        <attr name="background_color" format="reference|color"/>
+        <attr name="bar_color" format="reference|color"/>
+        <attr name="bar_height" format="dimension"/>
+        <attr name="selected_bar_color" format="reference|color"/>
+        <attr name="thumb_image" format="reference"/>
+        <attr name="thumb_image_max" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="ToolbarNavigator">
+        <attr name="tint_color" format="reference|color"/>
+        <attr name="edit_selected" default="false" format="boolean"/>
+        <attr name="music_selected" default="false" format="boolean"/>
+        <attr name="share_selected" default="false" format="boolean"/>
+    </declare-styleable>
+    
 </resources>
 

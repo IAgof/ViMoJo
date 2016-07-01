@@ -6,28 +6,28 @@
     <bool name="ga_autoActivityTracking">true</bool>
 
     <!-- The screen names that will appear in reports -->
-    <screenName name="com.videonasocialmedia.videona.presentation.views.login.LoginActivity">
+    <screenName name="com.videonasocialmedia.vimojo.presentation.views.login.LoginActivity">
         VideonaApplication-Android LoginActivity
     </screenName>
-    <screenName name="com.videonasocialmedia.videona.presentation.views.login.UserSignUpActivity">
+    <screenName name="com.videonasocialmedia.vimojo.presentation.views.login.UserSignUpActivity">
         VideonaApplication-Android UserSignUpActivity
     </screenName>
-    <screenName name="com.videonasocialmedia.videona.presentation.views.activity.RecordActivity">
+    <screenName name="com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity">
         VideonaApplication-Android RecordActivity
     </screenName>
-    <screenName name="com.videonasocialmedia.videona.presentation.views.activity.EditActivity">
+    <screenName name="com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity">
         VideonaApplication-Android EditActivity
     </screenName>
-    <screenName name="com.videonasocialmedia.videona.presentation.views.activity.ShareActivity">
+    <screenName name="com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity">
         VideonaApplication-Android ShareActivity
     </screenName>
-    <screenName name="com.videonasocialmedia.videona.presentation.views.activity.MusicListActivity">
+    <screenName name="com.videonasocialmedia.vimojo.presentation.views.activity.MusicListActivity">
         VideonaApplication-Android MusicActivity
     </screenName>
-    <screenName name="com.videonasocialmedia.videona.presentation.views.activity.AboutActivity">
+    <screenName name="com.videonasocialmedia.vimojo.presentation.views.activity.AboutActivity">
         VideonaApplication-Android AboutActivity
     </screenName>
-    <screenName name="com.videonasocialmedia.videona.presentation.views.activity.GalleryActivity">
+    <screenName name="com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity">
         VideonaApplication-Android GalleryActivity
     </screenName>
     <!--  The following value should be replaced with correct property id. -->

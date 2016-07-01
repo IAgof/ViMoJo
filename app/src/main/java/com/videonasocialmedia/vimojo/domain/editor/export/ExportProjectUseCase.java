@@ -1,0 +1,41 @@
+/*
+ * Copyright (c) 2015. Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+
+package com.videonasocialmedia.vimojo.domain.editor.export;
+
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
+
+
+public class ExportProjectUseCase implements OnExportEndedListener {
+
+    private OnExportFinishedListener onExportFinishedListener;
+    private Exporter exporter;
+    private Project project;
+
+    public ExportProjectUseCase(OnExportFinishedListener onExportFinishedListener) {
+        this.onExportFinishedListener = onExportFinishedListener;
+        project = Project.getInstance(null, null, null);
+        exporter = new ExporterImpl(project, this);
+    }
+
+    public void export() {
+        exporter.export();
+    }
+
+    @Override
+    public void onExportError(String error) {
+        onExportFinishedListener.onExportError(error);
+    }
+
+    @Override
+    public void onExportSuccess(Video video) {
+        onExportFinishedListener.onExportSuccess(video);
+
+    }
+}

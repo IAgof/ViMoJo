@@ -47,7 +47,7 @@
     <PreferenceCategory
         android:title="@string/title_camera_section">
 
-        <com.videonasocialmedia.videona.presentation.views.customviews.ChooseCameraResolutionListPreferences
+        <com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseCameraResolutionListPreferences
             android:dialogTitle="@string/resolution"
             android:entries="@array/camera_resolution_names"
             android:entryValues="@array/camera_resolution_values"
@@ -55,7 +55,7 @@
             android:summary="@string/low_value"
             android:title="@string/resolution"/>
 
-        <com.videonasocialmedia.videona.presentation.views.customviews.ChooseCameraQualityListPreferences
+        <com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseCameraQualityListPreferences
             android:dialogTitle="@string/quality"
             android:entries="@array/camera_quality_names"
             android:entryValues="@array/camera_quality_values"

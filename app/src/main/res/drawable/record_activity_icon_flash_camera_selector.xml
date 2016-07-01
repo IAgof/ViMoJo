@@ -8,14 +8,11 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- pressed state -->
-    <item android:drawable="@drawable/activity_record_icon_flash_camera_pressed" android:state_pressed="true"/>
-    <item android:drawable="@drawable/activity_record_icon_flash_camera_pressed" android:state_activated="true"/>
+    <item android:drawable="@drawable/ic_flash_on_white_36px" android:state_activated="true"/>
 
     <!-- default state -->
-    <item android:drawable="@drawable/activity_record_icon_flash_camera_normal"/>
+    <item android:drawable="@drawable/ic_flash_off_white_36px"/>
 
-    <!-- not support state -->
-    <item android:drawable="@drawable/gatito_rules_pressed" android:state_focused="true"/>
 
 
 </selector>
