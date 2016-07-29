@@ -41,7 +41,8 @@ public class FtpController implements CopyStreamListener {
                 String title = getVideoTitle(srcPath);
                 File videoFile = new File(srcPath);
                 videoLength = videoFile.length();
-                String dst = /*"/user/" +*/ title;
+//                String dst = /*"/user/" +*/ title;
+                String dst = "/assets/" + title;
                 final FtpClient uploader = new FtpClient();
 
                 try {
