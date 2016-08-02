@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 
 /**
- *
+ *FTP Use case
  */
 public class FtpController implements CopyStreamListener {
 
