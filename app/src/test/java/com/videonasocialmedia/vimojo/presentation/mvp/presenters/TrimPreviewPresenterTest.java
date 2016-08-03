@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.videonasocialmedia.vimojo.domain.editor.ModifyVideoDurationUseCase;
+import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 

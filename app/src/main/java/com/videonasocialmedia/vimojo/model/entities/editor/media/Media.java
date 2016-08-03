@@ -54,14 +54,6 @@ public abstract class Media extends EditorElement {
      */
     protected int fileStopTime;
 
-    /**
-     * @deprecated
-     * It's not necessary to set this param. In getter calculates the difference between stop time
-     * and start time
-     *
-     * The long of the media resource to be added to the project
-     */
-    protected int duration;
 
     /**
      * Transition before the media item.
@@ -105,12 +97,11 @@ public abstract class Media extends EditorElement {
      * @param authors       - List of authors of the media item.
      */
     protected Media(String identifier, String iconPath, String mediaPath, int fileStartTime,
-                    int duration, ArrayList<User> authors, License license) {
+                   int duration , ArrayList<User> authors, License license) {
         super(identifier, iconPath);
         this.mediaPath = mediaPath;
 //        this.source = new File(this.mediaPath);
         this.fileStartTime = fileStartTime;
-        this.duration = duration;
         this.fileStopTime = duration;
         this.authors = authors;
         this.license = license;
@@ -143,7 +134,6 @@ public abstract class Media extends EditorElement {
 //        this.source = new File(this.mediaPath);
         this.fileStartTime = fileStartTime;
         this.fileStopTime = duration;
-        this.duration = duration;
         this.opening = opening;
         this.ending = ending;
         this.metadata = metadata;
@@ -190,13 +180,6 @@ public abstract class Media extends EditorElement {
         return fileStopTime - fileStartTime;
     }
 
-    /**
-     * @deprecated
-     * @param duration
-     */
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
 
     public int getFileStopTime() {
         return fileStopTime;

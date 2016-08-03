@@ -82,6 +82,8 @@ dependencies {
     compile 'com.karumi:dexter:2.2.2'
     compile 'com.jcraft:jsch:0.1.53'
 
+    compile(name:'videona-sdk',ext:'aar')
+
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'

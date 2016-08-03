@@ -261,6 +261,9 @@
             android:exported="false"
             />
 
+        <service android:name=".trim.domain.TrimBackgroundService"
+                 android:exported="false"/>
+
         <service
             android:name=".ftp.presentation.services.FtpUploaderService"
             android:exported="false"
