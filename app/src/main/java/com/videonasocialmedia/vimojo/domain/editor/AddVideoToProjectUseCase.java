@@ -107,6 +107,4 @@ public class AddVideoToProjectUseCase {
             listener.onAddMediaItemToTrackError();
         }
     }
-
-
 }
