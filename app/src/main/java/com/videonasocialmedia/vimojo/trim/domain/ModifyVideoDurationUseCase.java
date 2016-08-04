@@ -19,7 +19,7 @@ public class ModifyVideoDurationUseCase {
         final String exportPath;
 
         try {
-            Future<Void> mFuture = MediaTranscoder.getInstance().transcodeVideo(videoToEdit.getMediaPath(), exportPath,
+            Future<Void> mFuture = MediaTranscoder.getInstance().transcodeVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
                     new VideonaFormat(), listener, null, null, startTimeMs, finishTimeMs);
         } catch (IOException e) {
             // TODO(javi.cabanas): 2/8/16 mangage io expception on external library and send onTranscodeFailed if neccessary

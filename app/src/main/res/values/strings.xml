@@ -1632,5 +1632,6 @@ and Conditions.\n\n
     <string name="app_name">Vimojo</string>
     <string name="uploadComplete">Upload complete</string>
     <string name="uploading">Uploading</string>
+    <string name="trimError">The video couldn\'t be trimmed</string>
 
 </resources>

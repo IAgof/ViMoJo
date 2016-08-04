@@ -17,7 +17,9 @@ import android.media.MediaMetadataRetriever;
 import com.videonasocialmedia.vimojo.model.entities.editor.transitions.Transition;
 import com.videonasocialmedia.vimojo.model.entities.licensing.License;
 import com.videonasocialmedia.vimojo.model.entities.social.User;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -28,7 +30,7 @@ import java.util.ArrayList;
  */
 public class Video extends Media {
 
-    public static String VIDEO_PATH;
+    public static String VIDEO_FOLDER_PATH;
 
     /**
      * The total duration of the file media resource
@@ -38,6 +40,8 @@ public class Video extends Media {
      * Define if a video has been splitted before
      */
     private boolean isSplit;
+
+    private String tempPath;
 
     // TODO(jliarte): 14/06/16 this entity should not depend on MediaMetadataRetriever as it is part of android
     /* Needed to allow mockito inject it */
@@ -84,17 +88,15 @@ public class Video extends Media {
     public Video(String mediaPath) {
         super(null, null, mediaPath, 0, 0, null, null);
         try {
-//            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             retriever.setDataSource(mediaPath);
-            duration = Integer.parseInt(retriever.extractMetadata(
+
+            fileDuration = Integer.parseInt(retriever.extractMetadata(
                     MediaMetadataRetriever.METADATA_KEY_DURATION));
-            fileDuration = duration;
             fileStartTime = 0;
-            fileStopTime = duration;
+            fileStopTime = fileDuration;
             isSplit = false;
         } catch (Exception e) {
             fileDuration = 0;
-            duration = 0;
             fileStopTime = 0;
             isSplit = false;
         }
@@ -124,11 +126,28 @@ public class Video extends Media {
         this.isSplit = isSplit;
     }
 
-    private int getFileDuration(String path){
+    private int getFileDuration(String path) {
 //        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(path);
         return Integer.parseInt(retriever.extractMetadata(
                 MediaMetadataRetriever.METADATA_KEY_DURATION));
     }
 
+    public String getTempPath() {
+        return tempPath;
+    }
+
+    public void setTempPath() {
+        if (tempPath == null) {
+            tempPath = Constants.PATH_APP_TEMP + "Temp_" + System.currentTimeMillis() + ".mp4";
+        }
+    }
+
+    public void deleteTempVideo() {
+        if (tempPath != null) {
+            File f = new File(tempPath);
+            f.delete()
+            tempPath = null;
+        }
+    }
 }

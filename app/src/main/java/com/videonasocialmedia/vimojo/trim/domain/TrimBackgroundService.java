@@ -12,6 +12,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 public class TrimBackgroundService extends IntentService implements MediaTranscoderListener {
 
     public static final String ACTION = "com.videonasocialmedia.android.service.receiver";
+    Video video;
 
     public TrimBackgroundService() {
         super("TrimService");
@@ -19,15 +20,15 @@ public class TrimBackgroundService extends IntentService implements MediaTransco
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        // TODO(javi.cabanas): 2/8/16 the video is not parcelable so it is not possible to pass through extras
-        Video video;
+// TODO(javi.cabanas): 4/8/16 we need to map someway the video on one side of the intent to catch it on the other side i.e. we need an unique id to make sure the video is the one in the project
+       //video= getExtras(video)
         int startTimeMs, finishTimeMs;
 
         startTimeMs = intent.getIntExtra("startTimeMs", 0);
         finishTimeMs = intent.getIntExtra("finishTimeMs", 0);
 
         ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
-        modifyVideoDurationUseCase.trimVideo(video, startTimeMs, finishTimeMs);
+        modifyVideoDurationUseCase.trimVideo(video, startTimeMs, finishTimeMs, this);
     }
 
 
@@ -38,7 +39,6 @@ public class TrimBackgroundService extends IntentService implements MediaTransco
 
     @Override
     public void onTranscodeCompleted() {
-// TODO(javi.cabanas): 2/8/16 make video model aware of temporal video availability
         Intent intent = new Intent(ACTION);
         intent.putExtra("videoTrimmed", true);
         sendBroadcast(intent);
@@ -46,7 +46,7 @@ public class TrimBackgroundService extends IntentService implements MediaTransco
 
     @Override
     public void onTranscodeCanceled() {
-// TODO(javi.cabanas): 2/8/16 make video model aware of temporal video is not available
+        video.deleteTempVideo();
         Intent intent = new Intent(ACTION);
         intent.putExtra("videoTrimmed", false);
         sendBroadcast(intent);
@@ -54,7 +54,7 @@ public class TrimBackgroundService extends IntentService implements MediaTransco
 
     @Override
     public void onTranscodeFailed(Exception e) {
-// TODO(javi.cabanas): 2/8/16 make video model aware of temporal video is not available
+        video.deleteTempVideo();
         Intent intent = new Intent(ACTION);
         intent.putExtra("videoTrimmed", false);
         sendBroadcast(intent);

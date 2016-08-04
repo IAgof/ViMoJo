@@ -101,8 +101,8 @@ public class Project {
         File imagePath = new File(Image.IMAGE_PATH + "thumbs");
         imagePath.mkdirs();
 
-        Video.VIDEO_PATH = rootPath + "/videos";
-        File videoPath = new File(Audio.AUDIO_PATH + "/thumbs");
+        Video.VIDEO_FOLDER_PATH = rootPath + "/videos";
+        File videoPath = new File(Video.VIDEO_FOLDER_PATH + "/thumbs");
         videoPath.mkdirs();
 
     }
