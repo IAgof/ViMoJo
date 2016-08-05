@@ -81,14 +81,6 @@ public class SplitPreviewPresenter implements OnVideosRetrieved {
 
 
     public void splitVideo(Video video, int positionInAdapter, int timeMs) {
-        Video copyVideo = new Video(video);
-
-       /* video.setFileStopTime(timeMs);
-        video.setIsSplit(true);
-        copyVideo.setFileStartTime(timeMs);
-        copyVideo.setFileStopTime(video.getFileStopTime());
-        copyVideo.setIsSplit(true);*/
-
         splitVideoUseCase.separateVideo(video, positionInAdapter, timeMs);
         userEventTracker.trackClipSplitted(currentProject);
     }
