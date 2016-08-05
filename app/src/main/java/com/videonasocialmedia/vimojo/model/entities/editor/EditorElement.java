@@ -90,4 +90,7 @@ public abstract class EditorElement {
 
     public abstract void setIdentifier();
 
+    public int getIdentifier() {
+        return identifier;
+    }
 }

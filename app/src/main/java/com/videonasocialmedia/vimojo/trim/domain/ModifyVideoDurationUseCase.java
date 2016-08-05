@@ -16,8 +16,6 @@ public class ModifyVideoDurationUseCase {
 
     public void trimVideo(final Video videoToEdit, final int startTimeMs, final int finishTimeMs, MediaTranscoderListener listener) {
 
-        final String exportPath;
-
         try {
             Future<Void> mFuture = MediaTranscoder.getInstance().transcodeVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
                     new VideonaFormat(), listener, null, null, startTimeMs, finishTimeMs);

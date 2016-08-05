@@ -35,6 +35,7 @@ public class SplitVideoUseCase {
 
         Context appContext = VideonaApplication.getAppContext();
         Intent trimServiceIntent = new Intent(appContext, TrimBackgroundService.class);
+        trimServiceIntent.putExtra("videoId", videoToEdit.getIdentifier());
         trimServiceIntent.putExtra("startTimeMs",startTimeMs);
         trimServiceIntent.putExtra("finishTimeMs", finishTimeMs);
         appContext.startService(trimServiceIntent);

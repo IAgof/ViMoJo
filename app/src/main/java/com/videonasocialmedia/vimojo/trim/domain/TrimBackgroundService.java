@@ -4,7 +4,11 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
+import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+
+import java.util.List;
 
 /**
  *
@@ -20,15 +24,33 @@ public class TrimBackgroundService extends IntentService implements MediaTransco
 
     @Override
     protected void onHandleIntent(Intent intent) {
-// TODO(javi.cabanas): 4/8/16 we need to map someway the video on one side of the intent to catch it on the other side i.e. we need an unique id to make sure the video is the one in the project
-       //video= getExtras(video)
+        //video= getExtras(video)
         int startTimeMs, finishTimeMs;
+        int videoId;
 
+        videoId = intent.getIntExtra("videoId", -51456);
         startTimeMs = intent.getIntExtra("startTimeMs", 0);
         finishTimeMs = intent.getIntExtra("finishTimeMs", 0);
 
-        ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
-        modifyVideoDurationUseCase.trimVideo(video, startTimeMs, finishTimeMs, this);
+        getVideo(videoId);
+        if (video != null) {
+            ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
+            modifyVideoDurationUseCase.trimVideo(video, startTimeMs, finishTimeMs, this);
+        } else {
+            onTranscodeFailed(null);
+        }
+    }
+
+    private void getVideo(int videoId) {
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
+        if (videoList != null) {
+            for (Media media : videoList) {
+                if (media.getIdentifier() == videoId) {
+                    video = (Video) media;
+                }
+            }
+        }
     }
 
 
