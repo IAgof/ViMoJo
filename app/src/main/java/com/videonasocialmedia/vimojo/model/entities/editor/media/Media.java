@@ -96,7 +96,7 @@ public abstract class Media extends EditorElement {
      * @param license       - Legal stuff.
      * @param authors       - List of authors of the media item.
      */
-    protected Media(String identifier, String iconPath, String mediaPath, int fileStartTime,
+    protected Media(int identifier, String iconPath, String mediaPath, int fileStartTime,
                    int duration , ArrayList<User> authors, License license) {
         super(identifier, iconPath);
         this.mediaPath = mediaPath;
@@ -124,7 +124,7 @@ public abstract class Media extends EditorElement {
      * @param license          - Legal stuff.
      * @param authors          - List of authors of the media item.
      */
-    protected Media(String identifier, String iconPath, String selectedIconPath, String title,
+    protected Media(int identifier, String iconPath, String selectedIconPath, String title,
                     String mediaPath, int fileStartTime, int duration, Transition opening,
                     Transition ending, MediaMetadata metadata, ArrayList<User> authors,
                     License license) {
