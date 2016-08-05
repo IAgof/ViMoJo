@@ -49,6 +49,7 @@ public class Video extends Media {
     // TODO(jliarte): 14/06/16 this entity should not depend on MediaMetadataRetriever as it is part of android
     /* Needed to allow mockito inject it */
     private MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+    private int duration;
 
 
     /**
@@ -132,5 +133,13 @@ public class Video extends Media {
     public void setIdentifier() {
         if (identifier < 1)
             this.identifier = count.addAndGet(1);
+    }
+
+    public boolean isTrimmed() {
+        return tempPath!=null;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

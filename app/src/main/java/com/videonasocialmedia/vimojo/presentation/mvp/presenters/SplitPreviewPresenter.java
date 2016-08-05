@@ -37,9 +37,6 @@ public class SplitPreviewPresenter implements OnVideosRetrieved {
      */
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
 
-    private AddVideoToProjectUseCase addVideoToProjectUseCase;
-    private SplitVideoUseCase splitVideoUseCase;
-
     private SplitView splitView;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
@@ -47,7 +44,6 @@ public class SplitPreviewPresenter implements OnVideosRetrieved {
     public SplitPreviewPresenter(SplitView splitView, UserEventTracker userEventTracker) {
         this.splitView = splitView;
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        addVideoToProjectUseCase = new AddVideoToProjectUseCase();
         this.currentProject = loadCurrentProject();
         this.userEventTracker = userEventTracker;
     }
@@ -81,6 +77,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved {
 
 
     public void splitVideo(Video video, int positionInAdapter, int timeMs) {
+        SplitVideoUseCase splitVideoUseCase= new SplitVideoUseCase();
         splitVideoUseCase.separateVideo(video, positionInAdapter, timeMs);
         userEventTracker.trackClipSplitted(currentProject);
     }

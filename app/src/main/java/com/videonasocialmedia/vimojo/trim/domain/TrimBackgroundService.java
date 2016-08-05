@@ -35,6 +35,7 @@ public class TrimBackgroundService extends IntentService implements MediaTransco
         getVideo(videoId);
         if (video != null) {
             ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
+            video.setTempPath();
             modifyVideoDurationUseCase.trimVideo(video, startTimeMs, finishTimeMs, this);
         } else {
             onTranscodeFailed(null);
@@ -52,7 +53,6 @@ public class TrimBackgroundService extends IntentService implements MediaTransco
             }
         }
     }
-
 
     @Override
     public void onTranscodeProgress(double v) {

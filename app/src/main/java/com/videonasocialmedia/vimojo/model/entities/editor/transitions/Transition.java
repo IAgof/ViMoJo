@@ -83,7 +83,7 @@ public abstract class Transition extends EditorElement {
      * @param author          - Transition owner's user reference.
      * @param license         - Owner's choice licensing for the transition.
      */
-    public Transition(String identifier, String iconPath, String type, Media afterMediaItem,
+    public Transition(int identifier, String iconPath, String type, Media afterMediaItem,
                       Media beforeMediaItem, long duration, User author, License license) {
         super(identifier, iconPath);
         this.type = type;
@@ -111,7 +111,7 @@ public abstract class Transition extends EditorElement {
      * @param author           - Transition owner's user reference.
      * @param license          - Owner's choice licensing for the transition.
      */
-    public Transition(String identifier, String iconPath, String selectedIconPath, String type,
+    public Transition(int identifier, String iconPath, String selectedIconPath, String type,
                       Media afterMediaItem, Media beforeMediaItem, long duration, User author,
                       License license) {
         super(identifier, iconPath, selectedIconPath);

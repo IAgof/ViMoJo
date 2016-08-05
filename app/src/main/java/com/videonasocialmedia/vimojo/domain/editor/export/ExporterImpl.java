@@ -56,15 +56,28 @@ public class ExporterImpl implements Exporter {
     public void export() {
         pathVideoEdited = Constants.PATH_APP_EDITED + File.separator + "V_EDIT_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".mp4";
         LinkedList<Media> medias = getMediasFromProject();
-        ArrayList<String> videoTrimmedPaths = trimVideos(medias);
-        if(trimCorrect) {
-            //transcode(videoTrimmedPaths);
-            Movie result = appendFiles(videoTrimmedPaths);
-            if(result != null) {
-                saveFinalVideo(result);
-                Utils.cleanDirectory(new File(trimTempPath));
+        ArrayList<String> videoTrimmedPaths = createVideoPathList(medias);
+
+        // TODO(javi.cabanas): 5/8/16 check if all trim services have been finished
+        Movie result = appendFiles(videoTrimmedPaths);
+        if (result != null) {
+            saveFinalVideo(result);
+            Utils.cleanDirectory(new File(trimTempPath));
+        }
+
+    }
+
+    private ArrayList<String> createVideoPathList(LinkedList<Media> medias) {
+        ArrayList <String> result= new ArrayList<>();
+        for (Media media:medias) {
+            Video video= (Video) media;
+            if (video.isTrimmed()){
+                result.add(video.getTempPath());
+            }else{
+                result.add(video.getMediaPath());
             }
         }
+        return result;
     }
 
     private LinkedList<Media> getMediasFromProject() {
@@ -73,7 +86,7 @@ public class ExporterImpl implements Exporter {
     }
 
     private ArrayList<String> trimVideos(LinkedList<Media> medias) {
-        final File tempDir = new File (trimTempPath);
+        final File tempDir = new File(trimTempPath);
         if (!tempDir.exists())
             tempDir.mkdirs();
         ArrayList<String> videoTrimmedPaths = new ArrayList<>();
@@ -82,13 +95,13 @@ public class ExporterImpl implements Exporter {
         int index = 0;
         do {
             try {
-                String videoTrimmedTempPath =  trimTempPath + File.separator + "video_trimmed_" +
+                String videoTrimmedTempPath = trimTempPath + File.separator + "video_trimmed_" +
                         index + ".mp4";
                 int startTime = medias.get(index).getFileStartTime();
                 int endTime = medias.get(index).getFileStopTime();
                 int editedFileDuration = medias.get(index).getFileStopTime() - medias.get(index).getFileStartTime();
-                int originalFileDuration = ((Video)medias.get(index)).getFileDuration();
-                if(editedFileDuration < originalFileDuration) {
+                int originalFileDuration = ( (Video) medias.get(index) ).getFileDuration();
+                if (editedFileDuration < originalFileDuration) {
                     trimmer = new VideoTrimmer();
                     movie = trimmer.trim(medias.get(index).getMediaPath(), startTime, endTime);
                     com.videonasocialmedia.muxer.utils.Utils.createFile(movie, videoTrimmedTempPath);
@@ -102,7 +115,7 @@ public class ExporterImpl implements Exporter {
                 onExportEndedListener.onExportError(String.valueOf(e));
             }
             index++;
-        } while(trimCorrect && medias.size() > index);
+        } while (trimCorrect && medias.size() > index);
 
         return videoTrimmedPaths;
     }
@@ -115,7 +128,7 @@ public class ExporterImpl implements Exporter {
             Music music = (Music) project.getAudioTracks().get(0).getItems().getFirst();
             // TODO(alvaro) 060616 check if music is downloaded in a repository, not here.
             File musicFile = Utils.getMusicFileByName(music.getMusicTitle(), music.getMusicResourceId());
-            if(musicFile == null){
+            if (musicFile == null) {
                 onExportEndedListener.onExportError("Music not found");
             }
             ArrayList<String> audio = new ArrayList<>();
