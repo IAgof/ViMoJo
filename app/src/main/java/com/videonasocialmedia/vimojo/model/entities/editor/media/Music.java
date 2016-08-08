@@ -21,7 +21,7 @@ public class Music extends Audio {
     private int iconResourceId;
 
     public Music(int iconResourceId, String musicTitle, int musicResourceId, int colorResourceId, String author) {
-        super("", "", "", musicTitle, "", 0, 0, null, null, null, null, null);
+        super(musicResourceId, "", "", musicTitle, "", 0, 0, null, null, null, null, null);
         this.musicResourceId = musicResourceId;
         this.colorResourceId = colorResourceId;
         this.musicTitle = musicTitle;
@@ -63,5 +63,10 @@ public class Music extends Audio {
 
     public String getAuthor() {
         return author;
+    }
+
+    @Override
+    public void setIdentifier() {
+        identifier=musicResourceId;
     }
 }

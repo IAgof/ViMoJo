@@ -4,7 +4,11 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
+import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+
+import java.util.List;
 
 /**
  *
@@ -12,6 +16,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 public class TrimBackgroundService extends IntentService implements MediaTranscoderListener {
 
     public static final String ACTION = "com.videonasocialmedia.android.service.receiver";
+    Video video;
 
     public TrimBackgroundService() {
         super("TrimService");
@@ -19,17 +24,35 @@ public class TrimBackgroundService extends IntentService implements MediaTransco
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        // TODO(javi.cabanas): 2/8/16 the video is not parcelable so it is not possible to pass through extras
-        Video video;
+        //video= getExtras(video)
         int startTimeMs, finishTimeMs;
+        int videoId;
 
+        videoId = intent.getIntExtra("videoId", -51456);
         startTimeMs = intent.getIntExtra("startTimeMs", 0);
         finishTimeMs = intent.getIntExtra("finishTimeMs", 0);
 
-        ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
-        modifyVideoDurationUseCase.trimVideo(video, startTimeMs, finishTimeMs);
+        getVideo(videoId);
+        if (video != null) {
+            ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
+            video.setTempPath();
+            modifyVideoDurationUseCase.trimVideo(video, startTimeMs, finishTimeMs, this);
+        } else {
+            onTranscodeFailed(null);
+        }
     }
 
+    private void getVideo(int videoId) {
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
+        if (videoList != null) {
+            for (Media media : videoList) {
+                if (media.getIdentifier() == videoId) {
+                    video = (Video) media;
+                }
+            }
+        }
+    }
 
     @Override
     public void onTranscodeProgress(double v) {
@@ -38,7 +61,6 @@ public class TrimBackgroundService extends IntentService implements MediaTransco
 
     @Override
     public void onTranscodeCompleted() {
-// TODO(javi.cabanas): 2/8/16 make video model aware of temporal video availability
         Intent intent = new Intent(ACTION);
         intent.putExtra("videoTrimmed", true);
         sendBroadcast(intent);
@@ -46,7 +68,7 @@ public class TrimBackgroundService extends IntentService implements MediaTransco
 
     @Override
     public void onTranscodeCanceled() {
-// TODO(javi.cabanas): 2/8/16 make video model aware of temporal video is not available
+        video.deleteTempVideo();
         Intent intent = new Intent(ACTION);
         intent.putExtra("videoTrimmed", false);
         sendBroadcast(intent);
@@ -54,7 +76,7 @@ public class TrimBackgroundService extends IntentService implements MediaTransco
 
     @Override
     public void onTranscodeFailed(Exception e) {
-// TODO(javi.cabanas): 2/8/16 make video model aware of temporal video is not available
+        video.deleteTempVideo();
         Intent intent = new Intent(ACTION);
         intent.putExtra("videoTrimmed", false);
         sendBroadcast(intent);

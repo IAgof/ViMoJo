@@ -79,6 +79,7 @@ public class MediaTrack extends Track {
         if (itemToAdd instanceof Audio) {
             throw new IllegalItemOnTrack("Cannot add an Audio media item to a MediaTrack.");
         }
+        itemToAdd.setIdentifier();
         return super.insertItemAt(position, itemToAdd);
     }
 
@@ -88,6 +89,7 @@ public class MediaTrack extends Track {
             throw new IllegalItemOnTrack("Cannot add an Audio media item to a MediaTrack.");
         }
         // With super works, waiting merge model branch to dev return this.insertItem(itemToAdd);
+        itemToAdd.setIdentifier();
         return super.insertItem(itemToAdd);
     }
 

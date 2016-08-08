@@ -381,7 +381,7 @@ public class ShareActivity extends VideonaActivity implements ShareVideoView, Vi
     @OnClick({R.id.ftp_container, R.id.ftp_icon})
     public void requestFtpUpload() {
         Intent intent = new Intent(this, FtpUploaderService.class);
-        intent.putExtra("VIDEO_PATH", videoPath);
+        intent.putExtra("VIDEO_FOLDER_PATH", videoPath);
         startService(intent);
 
     }

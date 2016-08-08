@@ -14,6 +14,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.SplitView;
+import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -36,8 +37,6 @@ public class SplitPreviewPresenter implements OnVideosRetrieved {
      */
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
 
-    private AddVideoToProjectUseCase addVideoToProjectUseCase;
-
     private SplitView splitView;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
@@ -45,7 +44,6 @@ public class SplitPreviewPresenter implements OnVideosRetrieved {
     public SplitPreviewPresenter(SplitView splitView, UserEventTracker userEventTracker) {
         this.splitView = splitView;
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        addVideoToProjectUseCase = new AddVideoToProjectUseCase();
         this.currentProject = loadCurrentProject();
         this.userEventTracker = userEventTracker;
     }
@@ -79,13 +77,8 @@ public class SplitPreviewPresenter implements OnVideosRetrieved {
 
 
     public void splitVideo(Video video, int positionInAdapter, int timeMs) {
-        Video copyVideo = new Video(video);
-        copyVideo.setFileStartTime(timeMs);
-        copyVideo.setFileStopTime(video.getFileStopTime());
-        video.setFileStopTime(timeMs);
-        video.setIsSplit(true);
-        copyVideo.setIsSplit(true);
-        addVideoToProjectUseCase.addVideoToProjectAtPosition(copyVideo, positionInAdapter + 1);
+        SplitVideoUseCase splitVideoUseCase= new SplitVideoUseCase();
+        splitVideoUseCase.separateVideo(video, positionInAdapter, timeMs);
         userEventTracker.trackClipSplitted(currentProject);
     }
 
