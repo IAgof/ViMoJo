@@ -32,7 +32,7 @@ public class SplitVideoUseCase {
         trimVideoSplit(endVideo, endVideo.getFileStartTime(), endVideo.getFileStopTime());
     }
 
-    public void trimVideoSplit(final Video videoToEdit, final int startTimeMs, final int finishTimeMs) {
+    public void trimVideoSplit(Video videoToEdit, final int startTimeMs, final int finishTimeMs) {
 
         Context appContext = VideonaApplication.getAppContext();
         Intent trimServiceIntent = new Intent(appContext, TrimBackgroundService.class);
