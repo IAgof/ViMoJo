@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
-            android:layout_weight="4" />
+            android:layout_weight="4"/>
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -64,19 +64,24 @@
                 tools:text="00:00"
                 />
 
-            <com.videonasocialmedia.vimojo.presentation.views.customviews.TrimRangeSeekBarView
-                android:id="@+id/trim_rangeSeekBar"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_below="@id/text_time_trim"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                app:background_color="@null"
-                app:bar_color="@color/colorPrimaryLight"
-                app:bar_height="48dp"
-                app:selected_bar_color="@color/colorDivider"
-                app:thumb_image="@drawable/activity_edit_clip_trim_thumb_seekbar"
-                app:thumb_image_max="@drawable/activity_edit_clip_trim_thumb_seekbar"/>
+            <!--<com.videonasocialmedia.vimojo.presentation.views.customviews.TrimRangeSeekBarView-->
+            <!--android:id="@+id/trim_rangeSeekBar"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:layout_below="@id/text_time_trim"-->
+            <!--android:layout_marginLeft="12dp"-->
+            <!--android:layout_marginRight="12dp"-->
+            <!--app:background_color="@null"-->
+            <!--app:bar_color="@color/colorPrimaryLight"-->
+            <!--app:bar_height="48dp"-->
+            <!--app:selected_bar_color="@color/colorDivider"-->
+            <!--app:thumb_image="@drawable/activity_edit_clip_trim_thumb_seekbar"-->
+            <!--app:thumb_image_max="@drawable/activity_edit_clip_trim_thumb_seekbar"/>-->
+
+            <com.crystal.crystalrangeseekbar.widgets.BubbleThumbRangeSeekbar
+                android:id="@id/trim_rangeSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/text_start_trim"
@@ -111,10 +116,10 @@
         android:id="@+id/button_trim_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
         android:layout_gravity="bottom|left"
         android:layout_margin="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="12dp"
         android:src="@drawable/activity_edit_common_icon_cancel"
         />
 
@@ -122,11 +127,11 @@
         android:id="@+id/button_trim_accept"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
         android:layout_gravity="bottom|right"
         android:layout_marginBottom="8dp"
         android:layout_marginRight="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="12dp"
         android:src="@drawable/activity_edit_common_icon_accept"
 
         />

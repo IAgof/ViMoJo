@@ -14,9 +14,11 @@ import java.util.concurrent.Future;
  */
 public class ModifyVideoDurationUseCase {
 
-    public void trimVideo(final Video videoToEdit, final int startTimeMs, final int finishTimeMs, MediaTranscoderListener listener) {
+    public void trimVideo(Video videoToEdit, final int startTimeMs, final int finishTimeMs, MediaTranscoderListener listener) {
 
         try {
+            videoToEdit.setFileStartTime(startTimeMs);
+            videoToEdit.setFileStopTime(finishTimeMs);
             Future<Void> mFuture = MediaTranscoder.getInstance().transcodeVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
                     new VideonaFormat(), listener, null, null, startTimeMs, finishTimeMs);
         } catch (IOException e) {

@@ -87,6 +87,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
 
 
     public void setTrim(int startTimeMs, int finishTimeMs) {
+
         Context appContext = VideonaApplication.getAppContext();
         Intent trimServiceIntent = new Intent(appContext, TrimBackgroundService.class);
         trimServiceIntent.putExtra("videoId", videoToEdit.getIdentifier());

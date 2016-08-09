@@ -32,20 +32,23 @@
         android:orientation="vertical">
 
 
-        <com.videonasocialmedia.vimojo.presentation.views.customviews.TrimRangeSeekBarView
+        <!--<com.videonasocialmedia.vimojo.presentation.views.customviews.TrimRangeSeekBarView-->
+        <!--android:id="@+id/trim_rangeSeekBar"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_marginLeft="12dp"-->
+        <!--android:layout_marginRight="12dp"-->
+        <!--app:background_color="@null"-->
+        <!--app:bar_color="@color/colorPrimaryLight"-->
+        <!--app:bar_height="48dp"-->
+        <!--app:selected_bar_color="@color/colorDivider"-->
+        <!--app:thumb_image="@drawable/activity_edit_clip_trim_thumb_seekbar"-->
+        <!--app:thumb_image_max="@drawable/activity_edit_clip_trim_thumb_seekbar"/>-->
+        <com.crystal.crystalrangeseekbar.widgets.BubbleThumbRangeSeekbar
             android:id="@+id/trim_rangeSeekBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
-            app:background_color="@null"
-            app:bar_color="@color/colorPrimaryLight"
-            app:bar_height="48dp"
-            app:selected_bar_color="@color/colorDivider"
-            app:thumb_image="@drawable/activity_edit_clip_trim_thumb_seekbar"
-            app:thumb_image_max="@drawable/activity_edit_clip_trim_thumb_seekbar"/>
-
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/text_start_trim"
@@ -108,24 +111,24 @@
             android:id="@+id/button_trim_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="12dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="12dp"
             android:src="@drawable/activity_edit_common_icon_cancel"/>
 
         <ImageButton
             android:id="@+id/button_trim_accept"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="12dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="4dp"
             android:layout_marginRight="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="12dp"
             android:src="@drawable/activity_edit_common_icon_accept"/>
 
     </RelativeLayout>

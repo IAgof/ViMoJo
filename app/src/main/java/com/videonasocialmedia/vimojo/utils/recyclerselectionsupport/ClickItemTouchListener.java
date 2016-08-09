@@ -16,7 +16,7 @@ abstract class ClickItemTouchListener implements OnItemTouchListener {
     private final GestureDetectorCompat mGestureDetector;
 
     ClickItemTouchListener(RecyclerView hostView) {
-        mGestureDetector = new ItemClickGestureDetector(hostView.getContext(),
+        mGestureDetector = new GestureDetectorCompat(hostView.getContext(),
                 new ItemClickGestureListener(hostView));
     }
 
@@ -24,12 +24,12 @@ abstract class ClickItemTouchListener implements OnItemTouchListener {
         if (Build.VERSION.SDK_INT >= 19) {
             return hostView.isAttachedToWindow();
         } else {
-            return (hostView.getHandler() != null);
+            return ( hostView.getHandler() != null );
         }
     }
 
     private boolean hasAdapter(RecyclerView hostView) {
-        return (hostView.getAdapter() != null);
+        return ( hostView.getAdapter() != null );
     }
 
     @Override
@@ -49,28 +49,9 @@ abstract class ClickItemTouchListener implements OnItemTouchListener {
     }
 
     abstract boolean performItemClick(RecyclerView parent, View view, int position, long id);
+
     abstract boolean performItemLongClick(RecyclerView parent, View view, int position, long id);
 
-    private class ItemClickGestureDetector extends GestureDetectorCompat {
-        private final ItemClickGestureListener mGestureListener;
-
-        public ItemClickGestureDetector(Context context, ItemClickGestureListener listener) {
-            super(context, listener);
-            mGestureListener = listener;
-        }
-
-        @Override
-        public boolean onTouchEvent(MotionEvent event) {
-            final boolean handled = super.onTouchEvent(event);
-
-            final int action = event.getAction() & MotionEventCompat.ACTION_MASK;
-            if (action == MotionEvent.ACTION_UP) {
-                mGestureListener.dispatchSingleTapUpIfNeeded(event);
-            }
-
-            return handled;
-        }
-    }
 
     private class ItemClickGestureListener extends SimpleOnGestureListener {
         private final RecyclerView mHostView;
@@ -96,7 +77,7 @@ abstract class ClickItemTouchListener implements OnItemTouchListener {
             final int y = (int) event.getY();
 
             mTargetChild = mHostView.findChildViewUnder(x, y);
-            return (mTargetChild != null);
+            return ( mTargetChild != null );
         }
 
         @Override

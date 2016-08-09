@@ -36,7 +36,7 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.VideonaApplication;
 import com.videonasocialmedia.vimojo.trim.domain.TrimBackgroundService;
-import com.videonasocialmedia.vimojo.trim.views.TrimBroadCastReceveiver;
+import com.videonasocialmedia.vimojo.trim.domain.TrimBroadCastReceveiver;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 
 import org.json.JSONException;
