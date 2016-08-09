@@ -29,7 +29,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:clipChildren="false">
 
 
         <!--<com.videonasocialmedia.vimojo.presentation.views.customviews.TrimRangeSeekBarView-->
@@ -48,7 +49,19 @@
         <com.crystal.crystalrangeseekbar.widgets.BubbleThumbRangeSeekbar
             android:id="@+id/trim_rangeSeekBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="60dp"
+            app:corner_radius="10"
+            android:paddingLeft="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            app:bar_color="@color/colorDivider"
+            app:bar_highlight_color="@color/colorAccent"
+            app:left_thumb_color="@color/colorSecondary"
+            app:left_thumb_color_pressed="@color/colorAccent"
+            app:right_thumb_color="@color/colorSecondary"
+            app:right_thumb_color_pressed="@color/colorAccent"
+            />
 
         <TextView
             android:id="@+id/text_start_trim"

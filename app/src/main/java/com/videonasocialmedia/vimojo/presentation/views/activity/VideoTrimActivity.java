@@ -180,7 +180,6 @@ public class VideoTrimActivity extends VideonaActivity implements TrimView,
     @OnClick(R.id.button_trim_accept)
     public void onClickTrimAccept() {
         presenter.setTrim(startTimeMs, finishTimeMs);
-        presenter.setTrim(startTimeMs, finishTimeMs);
         navigateTo(EditActivity.class, videoIndexOnTrack);
         finish();
     }
@@ -200,12 +199,13 @@ public class VideoTrimActivity extends VideonaActivity implements TrimView,
     }
 
     private void initTrimmingBars() {
-        updateTrimingTextTags();
         trimmingRangeSeekBar.setMinValue(0f);
         trimmingRangeSeekBar.setMaxValue(videoDuration);
-        trimmingRangeSeekBar.setOnRangeSeekbarChangeListener(this);
         trimmingRangeSeekBar.setMinStartValue(startTimeMs);
-        trimmingRangeSeekBar.setMaxValue(finishTimeMs);
+        trimmingRangeSeekBar.setMaxStartValue(finishTimeMs);
+        trimmingRangeSeekBar.apply();
+        trimmingRangeSeekBar.setOnRangeSeekbarChangeListener(this);
+        updateTrimingTextTags();
     }
 
     @Override
@@ -271,17 +271,19 @@ public class VideoTrimActivity extends VideonaActivity implements TrimView,
     @Override
     public void valueChanged(Number minValue, Number maxValue) {
         videonaPlayer.pausePreview();
+        if (!shouldRestoreRangeSeekBar) {
+            int min = minValue.intValue();
+            int max = maxValue.intValue();
+            if (min == startTimeMs)
+                videonaPlayer.seekTo(max);
+            else if (max == finishTimeMs)
+                videonaPlayer.seekTo(min);
 
-        int min = minValue.intValue();
-        int max = maxValue.intValue();
-        if (min == startTimeMs)
-            videonaPlayer.seekTo(max);
-        else if (max == finishTimeMs)
-            videonaPlayer.seekTo(min);
-
-        startTimeMs = min;
-        finishTimeMs = max;
-        updateTrimingTextTags();
+            startTimeMs = min;
+            finishTimeMs = max;
+            updateTrimingTextTags();
+        }else
+            shouldRestoreRangeSeekBar=false;
     }
 
 
