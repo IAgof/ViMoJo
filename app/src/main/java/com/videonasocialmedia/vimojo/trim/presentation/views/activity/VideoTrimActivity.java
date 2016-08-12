@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.activity;
+package com.videonasocialmedia.vimojo.trim.presentation.views.activity;
 /*
  * Copyright (C) 2015 Videona Socialmedia SL
  * http://www.videona.com
@@ -26,6 +26,10 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.TrimView;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.VideonaActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -196,6 +200,7 @@ public class VideoTrimActivity extends VideonaActivity implements TrimView,
             finishTimeMs = videoStopTime;
         }
         initTrimmingBars();
+
     }
 
     private void initTrimmingBars() {
@@ -203,9 +208,9 @@ public class VideoTrimActivity extends VideonaActivity implements TrimView,
         trimmingRangeSeekBar.setMaxValue(videoDuration);
         trimmingRangeSeekBar.setMinStartValue(startTimeMs);
         trimmingRangeSeekBar.setMaxStartValue(finishTimeMs);
-        trimmingRangeSeekBar.apply();
         trimmingRangeSeekBar.setOnRangeSeekbarChangeListener(this);
         updateTrimingTextTags();
+        shouldRestoreRangeSeekBar=false;
     }
 
     @Override
@@ -282,8 +287,7 @@ public class VideoTrimActivity extends VideonaActivity implements TrimView,
             startTimeMs = min;
             finishTimeMs = max;
             updateTrimingTextTags();
-        }else
-            shouldRestoreRangeSeekBar=false;
+        }
     }
 
 

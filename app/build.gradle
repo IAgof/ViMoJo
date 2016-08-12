@@ -96,7 +96,7 @@ dependencies {
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.karumi:dexter:2.2.2'
     compile 'com.jcraft:jsch:0.1.53'
-    compile 'com.crystal:crystalrangeseekbar:1.0.0'
+    compile 'com.crystal:crystalrangeseekbar:1.0.1'
 
     compile(name:'videona-sdk',ext:'aar')
 
