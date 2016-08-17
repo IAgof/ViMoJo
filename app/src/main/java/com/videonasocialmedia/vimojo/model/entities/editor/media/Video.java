@@ -91,6 +91,9 @@ public class Video extends Media {
                 video.getDuration(), null, null);
         fileDuration = getFileDuration(video.getMediaPath());
         fileStopTime = video.getFileStopTime();
+        if(video.isTrimmed()){
+            tempPath = video.getTempPath();
+        }
     }
 
     public int getFileDuration() {
@@ -118,7 +121,7 @@ public class Video extends Media {
 
     public void setTempPath() {
         if (tempPath == null) {
-            tempPath = Constants.PATH_APP_TEMP + "Temp_" + System.currentTimeMillis() + ".mp4";
+            tempPath = Constants.PATH_APP_TEMP + File.separator + "temp_" + System.currentTimeMillis() + ".mp4";
         }
     }
 
