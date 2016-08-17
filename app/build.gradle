@@ -32,7 +32,8 @@ android {
     }
     buildTypes {
         release {
-            resValue "string", "app_name", "Videona"
+            resValue "string", "app_name", "Vimojo"
+            buildConfigField "String", "FTP_HOST", "\"82.223.76.148\""
             buildConfigField "String", "MIXPANEL_TOKEN", "\"985b2aeb535dbc92b81fb5cce7ad1212\""
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

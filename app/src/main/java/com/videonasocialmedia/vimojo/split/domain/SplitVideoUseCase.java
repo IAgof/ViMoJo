@@ -3,7 +3,7 @@ package com.videonasocialmedia.vimojo.split.domain;
 import android.content.Context;
 import android.content.Intent;
 
-import com.videonasocialmedia.vimojo.VideonaApplication;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.trim.domain.TrimBackgroundService;
@@ -34,7 +34,7 @@ public class SplitVideoUseCase {
 
     public void trimVideoSplit(Video videoToEdit, final int startTimeMs, final int finishTimeMs) {
 
-        Context appContext = VideonaApplication.getAppContext();
+        Context appContext = VimojoApplication.getAppContext();
         Intent trimServiceIntent = new Intent(appContext, TrimBackgroundService.class);
         trimServiceIntent.putExtra("videoId", videoToEdit.getIdentifier());
         trimServiceIntent.putExtra("startTimeMs", startTimeMs);

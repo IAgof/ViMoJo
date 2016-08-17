@@ -34,7 +34,7 @@
 -keep class com.googlecode.** { *; }
 -keep class com.mp4parser.** { *; }
 
--keep public class com.videonasocialmedia.videona.utils.VideoUtils
+-keep public class com.videonasocialmedia.vimojo.utils.VideoUtils
 
 # Mixpanel
 -dontwarn com.mixpanel.**
@@ -108,3 +108,15 @@
 
 # Marshmallow removed Notification.setLatestEventInfo()
 -dontwarn android.app.Notification
+
+# jcraft
+
+-keep class com.jcraft.jsch.jce.*
+-keep class * extends com.jcraft.jsch.KeyExchange
+-keep class com.jcraft.jsch.**
+-keep class com.jcraft.jzlib.ZStream
+-keep class com.jcraft.jsch.Compression
+-keep class org.ietf.jgss.*
+
+-libraryjars /jsch-0.1.53.jar
+-dontwarn org.ietf.jgss.**

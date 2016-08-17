@@ -10,7 +10,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.Intent;
 
-import com.videonasocialmedia.vimojo.VideonaApplication;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
@@ -88,7 +88,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
 
     public void setTrim(int startTimeMs, int finishTimeMs) {
 
-        Context appContext = VideonaApplication.getAppContext();
+        Context appContext = VimojoApplication.getAppContext();
         Intent trimServiceIntent = new Intent(appContext, TrimBackgroundService.class);
         trimServiceIntent.putExtra("videoId", videoToEdit.getIdentifier());
         trimServiceIntent.putExtra("startTimeMs", startTimeMs);

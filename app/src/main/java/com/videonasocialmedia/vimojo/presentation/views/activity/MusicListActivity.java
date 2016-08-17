@@ -33,7 +33,7 @@ import butterknife.ButterKnife;
 /**
  *
  */
-public class MusicListActivity extends VideonaActivity implements MusicListView,
+public class MusicListActivity extends VimojoActivity implements MusicListView,
         MusicRecyclerViewClickListener, VideonaPlayerListener {
     @Bind(R.id.music_list)
     RecyclerView musicList;

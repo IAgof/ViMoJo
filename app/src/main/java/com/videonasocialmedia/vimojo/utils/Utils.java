@@ -31,7 +31,7 @@ import android.os.StatFs;
 import android.provider.MediaStore;
 
 import com.coremedia.iso.IsoFile;
-import com.videonasocialmedia.vimojo.VideonaApplication;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -95,7 +95,7 @@ public class Utils {
         File f = new File(Constants.PATH_APP_TEMP + File.separator + musicName + Constants.AUDIO_MUSIC_FILE_EXTENSION);
         if (!f.exists()) {
             try {
-                copyMusicResourceToTemp(VideonaApplication.getAppContext(), musicName, musicResourceId);
+                copyMusicResourceToTemp(VimojoApplication.getAppContext(), musicName, musicResourceId);
             } catch (IOException e) {
                 //TODO show error message
                 f = null;
@@ -334,7 +334,7 @@ public class Utils {
     }
 
     public static void addFileToVideoGallery(String file) {
-        MediaScannerConnection.scanFile(VideonaApplication.getAppContext(),
+        MediaScannerConnection.scanFile(VimojoApplication.getAppContext(),
                 new String[] { file }, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
             public void onScanCompleted(String path, Uri uri) {

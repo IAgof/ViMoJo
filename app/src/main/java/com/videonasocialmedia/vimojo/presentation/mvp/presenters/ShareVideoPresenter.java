@@ -7,7 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VideonaApplication;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.social.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
@@ -27,7 +27,7 @@ public class ShareVideoPresenter {
 
     public ShareVideoPresenter(ShareVideoView shareVideoView) {
         this.shareVideoView = shareVideoView;
-        sharedPreferences = VideonaApplication.getAppContext().getSharedPreferences(
+        sharedPreferences = VimojoApplication.getAppContext().getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
                 Context.MODE_PRIVATE);
     }
@@ -54,9 +54,9 @@ public class ShareVideoPresenter {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("video/*");
         intent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-                VideonaApplication.getAppContext().getResources().getString(R.string.sharedWithVideona));
+                VimojoApplication.getAppContext().getResources().getString(R.string.sharedWithVideona));
         intent.putExtra(Intent.EXTRA_TEXT,
-                VideonaApplication.getAppContext().getResources().getString(R.string.videonaTags));
+                VimojoApplication.getAppContext().getResources().getString(R.string.videonaTags));
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
 

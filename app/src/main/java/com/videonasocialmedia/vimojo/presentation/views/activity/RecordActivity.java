@@ -15,7 +15,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -31,15 +30,12 @@ import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.RecordPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -64,7 +60,7 @@ import butterknife.OnTouch;
 /**
  * RecordActivity manages a single live record.
  */
-public class RecordActivity extends VideonaActivity implements RecordView {
+public class RecordActivity extends VimojoActivity implements RecordView {
 
     private final String LOG_TAG = getClass().getSimpleName();
 

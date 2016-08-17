@@ -29,7 +29,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.VideonaActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -43,7 +43,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class VideoTrimActivity extends VideonaActivity implements TrimView,
+public class VideoTrimActivity extends VimojoActivity implements TrimView,
         OnRangeSeekbarChangeListener, VideonaPlayerListener {
 
     @Bind(R.id.text_start_trim)

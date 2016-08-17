@@ -38,7 +38,7 @@ import butterknife.OnClick;
 /**
  * Created by jca on 20/5/15.
  */
-public class GalleryActivity extends VideonaActivity implements ViewPager.OnPageChangeListener,
+public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageChangeListener,
         GalleryPagerView, OnSelectionModeListener, VideonaDialogListener {
 
     private final String MASTERS_FRAGMENT_TAG="MASTERS";

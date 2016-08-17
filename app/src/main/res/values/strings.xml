@@ -1629,7 +1629,7 @@ and Conditions.\n\n
     <string name="dialog_edit_remove_message">Remove clip</string>
     <string name="dialog_edit_remove_accept">Yes</string>
     <string name="dialog_edit_remove_cancel">No</string>
-    <string name="app_name">Vimojo</string>
+   <!-- <string name="app_name">Vimojo</string>-->
     <string name="uploadComplete">Upload complete</string>
     <string name="uploading">Uploading</string>
     <string name="trimError">The video couldn\'t be trimmed</string>

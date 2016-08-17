@@ -38,7 +38,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class VideoSplitActivity extends VideonaActivity implements SplitView, VideonaPlayerListener,
+public class VideoSplitActivity extends VimojoActivity implements SplitView, VideonaPlayerListener,
     SeekBar.OnSeekBarChangeListener {
 
     private static final String SPLIT_POSITION = "split_position";

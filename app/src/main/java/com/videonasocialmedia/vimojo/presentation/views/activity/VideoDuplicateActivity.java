@@ -46,7 +46,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class VideoDuplicateActivity extends VideonaActivity implements DuplicateView,
+public class VideoDuplicateActivity extends VimojoActivity implements DuplicateView,
         VideonaPlayerListener {
 
     private static final String DUPLICATE_VIDEO_POSITION = "duplicate_video_position";

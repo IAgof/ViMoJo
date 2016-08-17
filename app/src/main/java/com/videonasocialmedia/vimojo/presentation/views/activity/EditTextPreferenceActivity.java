@@ -25,7 +25,7 @@ import butterknife.OnClick;
 /**
  * Created by Veronica Lago Fominaya on 26/11/2015.
  */
-public abstract class EditTextPreferenceActivity extends VideonaActivity implements
+public abstract class EditTextPreferenceActivity extends VimojoActivity implements
         EditTextPreferenceView {
 
     protected Context context;
