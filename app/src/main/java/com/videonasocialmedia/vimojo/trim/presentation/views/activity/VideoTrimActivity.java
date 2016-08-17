@@ -89,7 +89,6 @@ public class VideoTrimActivity extends VideonaActivity implements TrimView,
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
         restoreState(savedInstanceState);
-
     }
 
     @Override
@@ -279,14 +278,24 @@ public class VideoTrimActivity extends VideonaActivity implements TrimView,
         if (!shouldRestoreRangeSeekBar) {
             int min = minValue.intValue();
             int max = maxValue.intValue();
-            if (min == startTimeMs)
-                videonaPlayer.seekTo(max);
-            else if (max == finishTimeMs)
-                videonaPlayer.seekTo(min);
 
             startTimeMs = min;
             finishTimeMs = max;
+
             updateTrimingTextTags();
+
+            Video trimmedVideo = new Video(video);
+            trimmedVideo.setFileStartTime(startTimeMs);
+            trimmedVideo.setFileStopTime(finishTimeMs);
+            List<Video> trimedMovieList = new LinkedList<>();
+            trimedMovieList.add(trimmedVideo);
+
+            videoDuration = video.getFileDuration();
+
+            videonaPlayer.initPreviewLists(trimedMovieList);
+            videonaPlayer.seekTo(startTimeMs);
+            videonaPlayer.initPreview(currentPosition);
+
         }
     }
 
