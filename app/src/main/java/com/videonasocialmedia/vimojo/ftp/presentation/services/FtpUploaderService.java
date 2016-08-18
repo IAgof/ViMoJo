@@ -50,7 +50,7 @@ public class FtpUploaderService extends Service implements FtpUploaderView {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Bundle extras = intent.getExtras();
-        final String videoPath = extras.getString("VIDEO_PATH", "no_path");
+        final String videoPath = extras.getString("VIDEO_FOLDER_PATH", "no_path");
         builder = prepareNotificationBuilder(videoPath);
 
         Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();

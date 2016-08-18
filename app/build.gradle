@@ -25,14 +25,15 @@ android {
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 1 // 27/06/2016
-        versionName "0.1"
+        versionName "0.2"
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
-            resValue "string", "app_name", "Videona"
+            resValue "string", "app_name", "Vimojo"
+            buildConfigField "String", "FTP_HOST", "\"82.223.76.148\""
             buildConfigField "String", "MIXPANEL_TOKEN", "\"985b2aeb535dbc92b81fb5cce7ad1212\""
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -96,6 +97,9 @@ dependencies {
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.karumi:dexter:2.2.2'
     compile 'com.jcraft:jsch:0.1.53'
+    compile 'com.crystal:crystalrangeseekbar:1.0.1'
+
+    compile(name:'videona-sdk',ext:'aar')
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"

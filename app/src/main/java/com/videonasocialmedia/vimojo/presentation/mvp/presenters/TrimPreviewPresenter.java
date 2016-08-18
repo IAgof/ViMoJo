@@ -7,13 +7,16 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import android.content.Context;
+import android.content.Intent;
+
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-
 import com.videonasocialmedia.vimojo.presentation.mvp.views.TrimView;
+import com.videonasocialmedia.vimojo.trim.domain.TrimBackgroundService;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -36,7 +39,6 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
      */
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
 
-    private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
 
     private TrimView trimView;
     protected UserEventTracker userEventTracker;
@@ -45,7 +47,6 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
     public TrimPreviewPresenter(TrimView trimView, UserEventTracker userEventTracker) {
         this.trimView = trimView;
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
         this.currentProject = loadCurrentProject();
         this.userEventTracker = userEventTracker;
     }
@@ -84,17 +85,15 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
         trimView.showError("No videos");
     }
 
-    private void modifyVideoStartTime(int startTime) {
-        modifyVideoDurationUseCase.modifyVideoStartTime(videoToEdit, startTime);
-    }
-
-    private void modifyVideoFinishTime(int finishTime) {
-        modifyVideoDurationUseCase.modifyVideoFinishTime(videoToEdit, finishTime);
-    }
 
     public void setTrim(int startTimeMs, int finishTimeMs) {
-        modifyVideoStartTime(startTimeMs);
-        modifyVideoFinishTime(finishTimeMs);
+
+        Context appContext = VimojoApplication.getAppContext();
+        Intent trimServiceIntent = new Intent(appContext, TrimBackgroundService.class);
+        trimServiceIntent.putExtra("videoId", videoToEdit.getIdentifier());
+        trimServiceIntent.putExtra("startTimeMs", startTimeMs);
+        trimServiceIntent.putExtra("finishTimeMs", finishTimeMs);
+        appContext.startService(trimServiceIntent);
         userEventTracker.trackClipTrimmed(currentProject);
     }
 }

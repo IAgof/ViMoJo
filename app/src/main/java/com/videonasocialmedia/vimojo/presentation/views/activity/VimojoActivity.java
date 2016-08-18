@@ -12,6 +12,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -19,6 +20,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.android.gms.analytics.Tracker;
 import com.karumi.dexter.Dexter;
@@ -31,7 +34,9 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VideonaApplication;
+import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.trim.domain.TrimBackgroundService;
+import com.videonasocialmedia.vimojo.trim.domain.TrimBroadCastReceveiver;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 
 import org.json.JSONException;
@@ -45,13 +50,14 @@ import java.util.List;
  * @author vlf
  * @since 04/05/2015
  */
-public abstract class VideonaActivity extends AppCompatActivity {
+public abstract class VimojoActivity extends AppCompatActivity {
 
     protected static final String ANDROID_PUSH_SENDER_ID = "783686583047";
     protected MixpanelAPI mixpanel;
     protected Tracker tracker;
     protected boolean criticalPermissionDenied = false;
     protected MultiplePermissionsListener dialogMultiplePermissionsListener;
+    private TrimBroadCastReceveiver trimBroadCastReceveiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,18 +69,22 @@ public abstract class VideonaActivity extends AppCompatActivity {
         mixpanel.getPeople().identify(mixpanel.getPeople().getDistinctId());
         mixpanel.getPeople().initPushHandling(ANDROID_PUSH_SENDER_ID);
         configPermissions();
-        VideonaApplication app = (VideonaApplication) getApplication();
+        VimojoApplication app = (VimojoApplication) getApplication();
         tracker = app.getTracker();
+
+
+        View root = ( (ViewGroup) findViewById(android.R.id.content) ).getChildAt(0);
+        trimBroadCastReceveiver = new TrimBroadCastReceveiver(root);
     }
 
     private void configPermissions() {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             dialogMultiplePermissionsListener = DialogOnAnyDeniedMultiplePermissionsListener.Builder
-                            .withContext(this)
-                            .withTitle("Camera & audio permission")
-                            .withMessage("Both camera and audio permission are needed to take awsome videos with Videona")
-                            .withButtonText(android.R.string.ok)
-                            .build();
+                    .withContext(this)
+                    .withTitle("Camera & audio permission")
+                    .withMessage("Both camera and audio permission are needed to take awsome videos with Videona")
+                    .withButtonText(android.R.string.ok)
+                    .build();
 //            new CustomPermissionListener(this, "titulo", "mensaje", "ok", null);
             Dexter.continuePendingRequestsIfPossible(dialogMultiplePermissionsListener);
         }
@@ -90,6 +100,7 @@ public abstract class VideonaActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         JSONObject activityProperties = new JSONObject();
+        unregisterReceiver(trimBroadCastReceveiver);
         try {
             activityProperties.put(AnalyticsConstants.ACTIVITY, getClass().getSimpleName());
             mixpanel.track(AnalyticsConstants.TIME_IN_ACTIVITY, activityProperties);
@@ -100,7 +111,10 @@ public abstract class VideonaActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        registerReceiver(trimBroadCastReceveiver, new IntentFilter(
+                TrimBackgroundService.ACTION));
         super.onResume();
+
     }
 
     @Override

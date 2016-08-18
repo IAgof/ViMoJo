@@ -45,6 +45,7 @@ import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlaye
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
+import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -56,7 +57,7 @@ import butterknife.OnClick;
 
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
-public class EditActivity extends VideonaActivity implements EditorView,
+public class EditActivity extends VimojoActivity implements EditorView,
         VideonaPlayerListener, VideoTimeLineRecyclerViewClickListener {
 
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;

@@ -107,7 +107,7 @@
                 android:layout_height="32dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="8dp"
-                android:src="@drawable/gatito_rules_pressed"/>
+                android:src="@drawable/ftp"/>
 
             <TextView
                 android:id="@+id/ftp"

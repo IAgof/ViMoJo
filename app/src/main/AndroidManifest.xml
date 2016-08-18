@@ -16,7 +16,7 @@
         android:name="com.videonasocialmedia.vimojo.permission.C2D_MESSAGE"
         android:protectionLevel="signature"/>
 
-    <uses-permission android:name="com.videonasocialmedia.videona.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="com.videonasocialmedia.vimojo.permission.C2D_MESSAGE"/>
 
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -28,7 +28,7 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
 
     <application
-        android:name="com.videonasocialmedia.vimojo.VideonaApplication"
+        android:name=".VimojoApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/VideonaTheme">
@@ -48,7 +48,7 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
 
-                <category android:name="com.videonasocialmedia.videona"/>
+                <category android:name="com.videonasocialmedia.vimojo"/>
             </intent-filter>
         </receiver>
 
@@ -227,7 +227,7 @@
         android:parentActivityName=".presentation.views.activity.RecordActivity"/>
 
         <activity
-        android:name=".presentation.views.activity.VideoTrimActivity"
+        android:name=".trim.presentation.views.activity.VideoTrimActivity"
         android:label="@string/app_name"
         android:launchMode="singleTop"
         android:parentActivityName=".presentation.views.activity.EditActivity"/>
@@ -260,6 +260,9 @@
             android:name=".presentation.views.services.ExportProjectService"
             android:exported="false"
             />
+
+        <service android:name=".trim.domain.TrimBackgroundService"
+                 android:exported="false"/>
 
         <service
             android:name=".ftp.presentation.services.FtpUploaderService"

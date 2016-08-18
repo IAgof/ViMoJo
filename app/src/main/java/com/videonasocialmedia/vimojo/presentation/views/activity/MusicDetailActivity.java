@@ -37,7 +37,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class MusicDetailActivity extends VideonaActivity implements MusicDetailView, VideonaPlayerListener {
+public class MusicDetailActivity extends VimojoActivity implements MusicDetailView, VideonaPlayerListener {
 
     public static String KEY_MUSIC_ID = "KEY_MUSIC_ID";
 

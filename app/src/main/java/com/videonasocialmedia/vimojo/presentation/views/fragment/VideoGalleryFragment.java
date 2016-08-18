@@ -262,7 +262,7 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
         selectedVideo = videoGalleryAdapter.getVideo(positionOnAdapter);
         String videoPath = selectedVideo.getMediaPath();
        /* Intent i = new Intent(getActivity(), VideoFullScreenPreviewActivity.class);
-        i.putExtra("VIDEO_PATH", videoPath);
+        i.putExtra("VIDEO_FOLDER_PATH", videoPath);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ActivityOptions options = ActivityOptions
                     .makeSceneTransitionAnimation(getActivity(),

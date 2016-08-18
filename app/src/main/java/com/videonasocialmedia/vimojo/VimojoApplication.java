@@ -22,14 +22,14 @@ import com.karumi.dexter.Dexter;
 import com.squareup.leakcanary.LeakCanary;
 import io.fabric.sdk.android.Fabric;
 
-public class VideonaApplication extends Application {
+public class VimojoApplication extends Application {
 
     private static Context context;
 
     Tracker appTracker;
 
     public static Context getAppContext() {
-        return VideonaApplication.context;
+        return VimojoApplication.context;
     }
 
     /**
