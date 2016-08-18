@@ -96,7 +96,10 @@ dependencies {
     compile 'com.github.paolorotolo:appintro:3.3.0'
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.karumi:dexter:2.2.2'
+    compile 'commons-net:commons-net:3.5'
     compile 'com.jcraft:jsch:0.1.53'
+    // https://mvnrepository.com/artifact/com.jcraft/jzlib
+    compile group: 'com.jcraft', name: 'jzlib', version: '1.1.1'
     compile 'com.crystal:crystalrangeseekbar:1.0.1'
 
     compile(name:'videona-sdk',ext:'aar')

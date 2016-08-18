@@ -118,5 +118,5 @@
 -keep class com.jcraft.jsch.Compression
 -keep class org.ietf.jgss.*
 
--libraryjars /jsch-0.1.53.jar
+#-libraryjars /jsch-0.1.53.jar
 -dontwarn org.ietf.jgss.**
