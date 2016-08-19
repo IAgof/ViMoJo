@@ -288,7 +288,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         try {
             appStartupSuperProperties.put(AnalyticsConstants.APP_USE_COUNT, ++appUseCount);
             appStartupSuperProperties.put(AnalyticsConstants.FIRST_TIME, state);
-            appStartupSuperProperties.put(AnalyticsConstants.APP, "Videona");
+            appStartupSuperProperties.put(AnalyticsConstants.APP, "ViMoJo");
             appStartupSuperProperties.put(AnalyticsConstants.FLAVOR, BuildConfig.FLAVOR);
             mixpanel.registerSuperProperties(appStartupSuperProperties);
         } catch (JSONException e) {
