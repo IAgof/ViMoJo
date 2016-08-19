@@ -16,20 +16,18 @@ public class SplitVideoUseCase {
 
     public void separateVideo(Video initialVideo, int positionInAdapter, int splitTimeMs) {
 
+        splitTimeMs += initialVideo.getStartTime();
+
         Video endVideo = new Video(initialVideo);
-
-
-        endVideo.setFileStartTime(splitTimeMs);
-        endVideo.setFileStopTime(initialVideo.getFileStopTime());
-        endVideo.setIsSplit(true);
-        initialVideo.setFileStopTime(splitTimeMs);
-        initialVideo.setIsSplit(true);
+        endVideo.setStartTime(splitTimeMs);
+        endVideo.setStopTime(initialVideo.getStopTime());
+        initialVideo.setStopTime(splitTimeMs);
 
         AddVideoToProjectUseCase addVideoToProjectUseCase = new AddVideoToProjectUseCase();
         addVideoToProjectUseCase.addVideoToProjectAtPosition(endVideo, positionInAdapter + 1);
 
-        trimVideoSplit(initialVideo, initialVideo.getFileStartTime(), initialVideo.getFileStopTime());
-        trimVideoSplit(endVideo, endVideo.getFileStartTime(), endVideo.getFileStopTime());
+        trimVideoSplit(initialVideo, initialVideo.getStartTime(), initialVideo.getStopTime());
+        trimVideoSplit(endVideo, endVideo.getStartTime(), endVideo.getStopTime());
     }
 
     public void trimVideoSplit(Video videoToEdit, final int startTimeMs, final int finishTimeMs) {

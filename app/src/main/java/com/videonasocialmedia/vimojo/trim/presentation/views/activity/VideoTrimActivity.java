@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -61,14 +62,17 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     private TrimPreviewPresenter presenter;
     private Video video;
     private int videoDuration = 1;
+    private int videoStartFile = 1;
     private int startTimeMs = 0;
     private int finishTimeMs = 100;
     private String TAG = "VideoTrimActivity";
     private int currentPosition = 0;
     private String VIDEO_POSITION = "video_position";
+    private String VIDEO_DURATION = "video_duration";
     private String START_TIME_TAG = "start_time_tag";
     private String STOP_TIME_TAG = "stop_time_tag";
     private boolean shouldRestoreRangeSeekBar = false;
+    private Video untrimmedVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +124,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             currentPosition = savedInstanceState.getInt(VIDEO_POSITION, 0);
             startTimeMs = savedInstanceState.getInt(START_TIME_TAG);
             finishTimeMs = savedInstanceState.getInt(STOP_TIME_TAG);
-
+            videoDuration = savedInstanceState.getInt(VIDEO_DURATION);
             shouldRestoreRangeSeekBar = true;
         }
     }
@@ -178,12 +182,13 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         outState.putInt(VIDEO_POSITION, videonaPlayer.getCurrentPosition());
         outState.putInt(START_TIME_TAG, startTimeMs);
         outState.putInt(STOP_TIME_TAG, finishTimeMs);
+        outState.putInt(VIDEO_DURATION, videoDuration);
         super.onSaveInstanceState(outState);
     }
 
     @OnClick(R.id.button_trim_accept)
     public void onClickTrimAccept() {
-        presenter.setTrim(startTimeMs, finishTimeMs);
+        presenter.setTrim(startTimeMs + videoStartFile, finishTimeMs + videoStartFile);
         navigateTo(EditActivity.class, videoIndexOnTrack);
         finish();
     }
@@ -194,10 +199,13 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     }
 
     @Override
-    public void showTrimBar(int videoStartTime, int videoStopTime, int videoFileDuration) {
+    public void showTrimBar(int videoStartTime, int videoStopTime, int videoDuration) {
         if (!shouldRestoreRangeSeekBar) {
             startTimeMs = videoStartTime;
+            videoStartFile = videoStartTime;
             finishTimeMs = videoStopTime;
+            this.videoDuration = videoDuration;
+
         }
         initTrimmingBars();
 
@@ -205,7 +213,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     private void initTrimmingBars() {
         trimmingRangeSeekBar.setMinValue(0f);
-        trimmingRangeSeekBar.setMaxValue(videoDuration);
+        trimmingRangeSeekBar.setMaxValue(videoDuration + startTimeMs);
         trimmingRangeSeekBar.setMinStartValue(startTimeMs);
         trimmingRangeSeekBar.setMaxStartValue(finishTimeMs);
         trimmingRangeSeekBar.setOnRangeSeekbarChangeListener(this);
@@ -247,14 +255,15 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     public void showPreview(List<Video> movieList) {
         video = movieList.get(0);
         // TODO(jliarte): check this workarround.
-        Video untrimmedVideo = new Video(video);
-        untrimmedVideo.setFileStartTime(0);
-        untrimmedVideo.setFileStopTime(video.getFileDuration());
+        untrimmedVideo = new Video(video);
+        untrimmedVideo.setStartTime(video.getStartTime());
+        untrimmedVideo.setStopTime(video.getStopTime());
+
         List<Video> untrimedMovieList = new LinkedList<>();
         untrimedMovieList.add(untrimmedVideo);
         // end of workarround.
 
-        videoDuration = video.getFileDuration();
+        videoDuration = video.getDuration();
 
         videonaPlayer.initPreviewLists(untrimedMovieList);
         videonaPlayer.initPreview(currentPosition);
@@ -275,18 +284,28 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void valueChanged(Number minValue, Number maxValue) {
+        Log.d(TAG, "ValueChanged minValue " + minValue + " maxValue " + maxValue);
         videonaPlayer.pausePreview();
         if (!shouldRestoreRangeSeekBar) {
             int min = minValue.intValue();
             int max = maxValue.intValue();
-            if (min == startTimeMs)
-                videonaPlayer.seekTo(max);
-            else if (max == finishTimeMs)
-                videonaPlayer.seekTo(min);
-
             startTimeMs = min;
             finishTimeMs = max;
             updateTrimingTextTags();
+            updateTimeVideoPlaying();
+
+        }
+    }
+
+    private void updateTimeVideoPlaying() {
+        if (untrimmedVideo != null){
+            untrimmedVideo.setStartTime(startTimeMs);
+            untrimmedVideo.setStopTime(finishTimeMs);
+            List<Video> untrimedMovieList = new LinkedList<>();
+            untrimedMovieList.add(untrimmedVideo);
+            videonaPlayer.initPreviewLists(untrimedMovieList);
+            seekTo(startTimeMs);
+            videonaPlayer.initPreview(currentPosition);
         }
     }
 
@@ -294,4 +313,5 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     @Override
     public void newClipPlayed(int currentClipIndex) {
     }
+
 }

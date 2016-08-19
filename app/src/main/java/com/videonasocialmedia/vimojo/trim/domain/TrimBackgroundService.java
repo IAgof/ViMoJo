@@ -25,12 +25,9 @@ public class TrimBackgroundService extends IntentService implements MediaTransco
     @Override
     protected void onHandleIntent(Intent intent) {
         //video= getExtras(video)
-        int startTimeMs, finishTimeMs;
-        int videoId;
-
-        videoId = intent.getIntExtra("videoId", -51456);
-        startTimeMs = intent.getIntExtra("startTimeMs", 0);
-        finishTimeMs = intent.getIntExtra("finishTimeMs", 0);
+        int videoId = intent.getIntExtra("videoId", -51456);
+        int startTimeMs = intent.getIntExtra("startTimeMs", 0);
+        int finishTimeMs = intent.getIntExtra("finishTimeMs", 0);
 
         getVideo(videoId);
         if (video != null) {

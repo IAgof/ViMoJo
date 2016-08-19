@@ -23,6 +23,6 @@ public class TrimBroadCastReceveiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
        // Snackbar.make(parent, R.string.trimError, Snackbar.LENGTH_LONG);
 
-        Snackbar.make(null,"error trimming", Snackbar.LENGTH_LONG);
+        Snackbar.make(parent,"error trimming", Snackbar.LENGTH_LONG);
     }
 }

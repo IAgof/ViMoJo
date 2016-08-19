@@ -73,7 +73,8 @@ public abstract class VimojoActivity extends AppCompatActivity {
         tracker = app.getTracker();
 
 
-        View root = ( (ViewGroup) findViewById(android.R.id.content) ).getChildAt(0);
+//        View root = ( (ViewGroup) findViewById(android.R.id.content) ).getChildAt(0);
+        View root = findViewById(android.R.id.content);
         trimBroadCastReceveiver = new TrimBroadCastReceveiver(root);
     }
 

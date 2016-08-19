@@ -7,7 +7,6 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
@@ -67,7 +66,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved {
     public void onVideosRetrieved(List<Video> videoList) {
         splitView.showPreview(videoList);
         Video video = videoList.get(0);
-        splitView.initSplitView(video.getFileStopTime() - video.getFileStartTime());
+        splitView.initSplitView(video.getStopTime() - video.getStartTime());
     }
 
     @Override
@@ -78,7 +77,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved {
 
     public void splitVideo(Video video, int positionInAdapter, int timeMs) {
         SplitVideoUseCase splitVideoUseCase= new SplitVideoUseCase();
-        splitVideoUseCase.separateVideo(video, positionInAdapter, timeMs);
+        splitVideoUseCase.separateVideo(video, positionInAdapter, video.getStartTime() + timeMs);
         userEventTracker.trackClipSplitted(currentProject);
     }
 
