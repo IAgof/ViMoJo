@@ -66,7 +66,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved {
     public void onVideosRetrieved(List<Video> videoList) {
         splitView.showPreview(videoList);
         Video video = videoList.get(0);
-        splitView.initSplitView(video.getStopTime() - video.getStartTime());
+        splitView.initSplitView(video.getStartTime(), video.getStopTime() - video.getStartTime());
     }
 
     @Override
@@ -77,7 +77,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved {
 
     public void splitVideo(Video video, int positionInAdapter, int timeMs) {
         SplitVideoUseCase splitVideoUseCase= new SplitVideoUseCase();
-        splitVideoUseCase.separateVideo(video, positionInAdapter, video.getStartTime() + timeMs);
+        splitVideoUseCase.separateVideo(video, positionInAdapter,timeMs);
         userEventTracker.trackClipSplitted(currentProject);
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface SplitView {
 
-    void initSplitView(int maxSeekBar);
+    void initSplitView(int startTime, int maxSeekBar);
 
     void playPreview();
 
