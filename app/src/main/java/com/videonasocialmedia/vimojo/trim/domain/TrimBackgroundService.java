@@ -1,7 +1,10 @@
 package com.videonasocialmedia.vimojo.trim.domain;
 
 import android.app.IntentService;
+import android.app.Service;
 import android.content.Intent;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -13,18 +16,20 @@ import java.util.List;
 /**
  *
  */
-public class TrimBackgroundService extends IntentService implements MediaTranscoderListener {
+public class TrimBackgroundService extends Service implements MediaTranscoderListener {
 
-    public static final String ACTION = "com.videonasocialmedia.android.service.receiver";
+    public static final String ACTION = "com.videonasocialmedia.vimojo.android.service.receiver";
     Video video;
 
-    public TrimBackgroundService() {
-        super("TrimService");
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        //video= getExtras(video)
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
         int startTimeMs, finishTimeMs;
         int videoId;
 
@@ -40,7 +45,10 @@ public class TrimBackgroundService extends IntentService implements MediaTransco
         } else {
             onTranscodeFailed(null);
         }
+
+        return START_NOT_STICKY;
     }
+
 
     private void getVideo(int videoId) {
         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
@@ -61,6 +69,7 @@ public class TrimBackgroundService extends IntentService implements MediaTransco
 
     @Override
     public void onTranscodeCompleted() {
+        video.setTempPathFinished(true);
         Intent intent = new Intent(ACTION);
         intent.putExtra("videoTrimmed", true);
         sendBroadcast(intent);

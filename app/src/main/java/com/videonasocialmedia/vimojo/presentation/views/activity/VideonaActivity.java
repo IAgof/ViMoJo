@@ -75,6 +75,7 @@ public abstract class VideonaActivity extends AppCompatActivity {
 
         View root = ( (ViewGroup) findViewById(android.R.id.content) ).getChildAt(0);
         trimBroadCastReceveiver = new TrimBroadCastReceveiver(root);
+
     }
 
     private void configPermissions() {

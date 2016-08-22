@@ -46,6 +46,8 @@ public class Video extends Media {
 
     private String tempPath;
 
+    private boolean isTempPathFinished = false;
+
     // TODO(jliarte): 14/06/16 this entity should not depend on MediaMetadataRetriever as it is part of android
     /* Needed to allow mockito inject it */
     private MediaMetadataRetriever retriever = new MediaMetadataRetriever();
@@ -120,6 +122,14 @@ public class Video extends Media {
         if (tempPath == null) {
             tempPath = Constants.PATH_APP_TEMP + "Temp_" + System.currentTimeMillis() + ".mp4";
         }
+    }
+
+    public boolean isTempPathFinished() {
+        return isTempPathFinished;
+    }
+
+    public void setTempPathFinished(boolean tempPathFinished) {
+        isTempPathFinished = tempPathFinished;
     }
 
     public void deleteTempVideo() {
