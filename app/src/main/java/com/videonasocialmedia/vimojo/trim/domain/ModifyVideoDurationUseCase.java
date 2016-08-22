@@ -20,7 +20,7 @@ public class ModifyVideoDurationUseCase {
         try {
             videoToEdit.setFileStartTime(startTimeMs);
             videoToEdit.setFileStopTime(finishTimeMs);
-
+            videoToEdit.setTempPathFinished(false);
             Future<Void> mFuture = MediaTranscoder.getInstance().transcodeVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
                     new VideonaFormat(), listener, null, null, startTimeMs, finishTimeMs);
         } catch (IOException e) {

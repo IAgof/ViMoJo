@@ -8,8 +8,11 @@
 package com.videonasocialmedia.vimojo.domain.editor.export;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
+
+import java.util.LinkedList;
 
 
 public class ExportProjectUseCase implements OnExportEndedListener {
@@ -25,7 +28,11 @@ public class ExportProjectUseCase implements OnExportEndedListener {
     }
 
     public void export() {
-        exporter.export();
+        if(isTempFilesFinished()) {
+           exporter.export();
+        } else {
+            export();
+        }
     }
 
     @Override
@@ -37,5 +44,28 @@ public class ExportProjectUseCase implements OnExportEndedListener {
     public void onExportSuccess(Video video) {
         onExportFinishedListener.onExportSuccess(video);
 
+    }
+
+    public boolean isTempFilesFinished() {
+        LinkedList<Media> medias = getMediasFromProject();
+        for (Media media:medias) {
+            Video video= (Video) media;
+            if (video.isTrimmed()){
+                if(!video.isTempPathFinished()){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private LinkedList<Media> getMediasFromProject() {
+        LinkedList<Media> medias = project.getMediaTrack().getItems();
+        return medias;
     }
 }

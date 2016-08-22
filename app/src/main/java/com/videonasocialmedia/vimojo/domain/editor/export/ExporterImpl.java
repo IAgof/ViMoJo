@@ -43,9 +43,8 @@ public class ExporterImpl implements Exporter {
     private ArrayList<String> videoTranscoded;
     private int numFilesToTranscoder = 1;
     private int numFilesTranscoded = 0;
-    private String trimTempPath = Constants.PATH_APP_TEMP + File.separator + "trim";
+    private String videoExportedTempPath = Constants.PATH_APP_TEMP + File.separator + "export";
     private String tempTranscodeDirectory = Constants.PATH_APP_TEMP + File.separator + "transcode";
-    private String pathVideoEdited;
 
     public ExporterImpl(Project project, OnExportEndedListener onExportEndedListener) {
         this.onExportEndedListener = onExportEndedListener;
@@ -54,17 +53,15 @@ public class ExporterImpl implements Exporter {
 
     @Override
     public void export() {
-        pathVideoEdited = Constants.PATH_APP_EDITED + File.separator + "V_EDIT_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".mp4";
+
         LinkedList<Media> medias = getMediasFromProject();
         ArrayList<String> videoTrimmedPaths = createVideoPathList(medias);
 
-        // TODO(javi.cabanas): 5/8/16 check if all trim services have been finished
         Movie result = appendFiles(videoTrimmedPaths);
         if (result != null) {
             saveFinalVideo(result);
-            Utils.cleanDirectory(new File(trimTempPath));
+            Utils.cleanDirectory(new File(videoExportedTempPath));
         }
-
     }
 
     private ArrayList<String> createVideoPathList(LinkedList<Media> medias) {
@@ -86,7 +83,7 @@ public class ExporterImpl implements Exporter {
     }
 
     private ArrayList<String> trimVideos(LinkedList<Media> medias) {
-        final File tempDir = new File(trimTempPath);
+        final File tempDir = new File(videoExportedTempPath);
         if (!tempDir.exists())
             tempDir.mkdirs();
         ArrayList<String> videoTrimmedPaths = new ArrayList<>();
@@ -95,7 +92,7 @@ public class ExporterImpl implements Exporter {
         int index = 0;
         do {
             try {
-                String videoTrimmedTempPath = trimTempPath + File.separator + "video_trimmed_" +
+                String videoTrimmedTempPath = videoExportedTempPath + File.separator + "video_trimmed_" +
                         index + ".mp4";
                 int startTime = medias.get(index).getFileStartTime();
                 int endTime = medias.get(index).getFileStopTime();
@@ -144,6 +141,7 @@ public class ExporterImpl implements Exporter {
     private void saveFinalVideo(Movie result) {
         try {
             long start = System.currentTimeMillis();
+            String pathVideoEdited = Constants.PATH_APP_EDITED + File.separator + "V_EDIT_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".mp4";
             com.videonasocialmedia.muxer.utils.Utils.createFile(result, pathVideoEdited);
             long spent = System.currentTimeMillis() - start;
             Log.d("WRITING VIDEO FILE", "time spent in millis: " + spent);
