@@ -62,7 +62,12 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
     private final Runnable updateTimeTask = new Runnable() {
         @Override
         public void run() {
-            updateSeekBarProgress();
+            try {
+                updateSeekBarProgress();
+            } catch (Exception e) {
+                Log.d(TAG, "Exception in update seekbar progress thread");
+                Log.d(TAG, String.valueOf(e));
+            }
         }
     };
     private Music music;
@@ -153,6 +158,15 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
         seekBar.setProgress(0); // TODO(jliarte): duplicated?
     }
 
+    public void setSeekBarEnabled(boolean seekBarEnabled) {
+        if (seekBarEnabled) {
+            seekBar.setVisibility(VISIBLE);
+        } else {
+            seekBar.setVisibility(GONE);
+        }
+
+    }
+
     public void setListener(VideonaPlayerListener videonaPlayerListener) {
         this.videonaPlayerListener = videonaPlayerListener;
     }
@@ -179,7 +193,7 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
 
     @Override
     public void seekTo(int timeInMsec) {
-        if (videoPlayer != null) {
+        if (videoPlayer != null && timeInMsec < totalVideoDuration) {
             currentTimePositionInList = timeInMsec;
             videoPlayer.seekTo(timeInMsec);
             seekBar.setProgress(timeInMsec);
@@ -522,7 +536,7 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
                 }
             } catch (Exception e) {
                 Log.d(TAG, "updateSeekBarProgress: exception updating videonaplayer seekbar");
-                Log.d(TAG, e.getMessage());
+                Log.d(TAG, String.valueOf(e));
             }
             handler.postDelayed(updateTimeTask, 20);
         }

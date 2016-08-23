@@ -87,7 +87,6 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
 
 
     public void setTrim(int startTimeMs, int finishTimeMs) {
-
         Context appContext = VimojoApplication.getAppContext();
         Intent trimServiceIntent = new Intent(appContext, TrimBackgroundService.class);
         trimServiceIntent.putExtra("videoId", videoToEdit.getIdentifier());
@@ -97,8 +96,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
         userEventTracker.trackClipTrimmed(currentProject);
     }
 
-    public void updateVideoTrim(int videoIndexOnTrack, int startTimeMs, int finishTimeMs){
-
+    public void updateVideoTrim(int videoIndexOnTrack, int startTimeMs, int finishTimeMs) {
         List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
         if (videoList != null) {
             ArrayList<Video> v = new ArrayList<>();
