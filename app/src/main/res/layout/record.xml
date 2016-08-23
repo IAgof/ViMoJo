@@ -24,7 +24,7 @@
             android:layout_toStartOf="@+id/controls"
             android:layout_marginRight="36dp"
             android:layout_marginBottom="16dp"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <ImageButton
                 android:layout_width="48dp"
@@ -68,10 +68,66 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00ffffff"
-                android:src="@drawable/ic_brightness_5_white_48px"
-                />
+                android:src="@drawable/ic_brightness_5_white_48px" />
 
         </LinearLayout>
+
+        <!-- esta es la copia de la barra principal -->
+        <LinearLayout
+            android:layout_above="@+id/settings_bar"
+            android:id="@+id/settings_bar_submenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorGreyTransparent"
+            android:visibility="visible">
+
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="#00ffffff"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_color_lens_white_48px"
+                />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:src="@drawable/ic_brightness_5_white_48px"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:src="@drawable/ic_brightness_5_white_48px"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:src="@drawable/ic_brightness_5_white_48px"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:src="@drawable/ic_brightness_5_white_48px"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:src="@drawable/ic_brightness_5_white_48px"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:src="@drawable/ic_brightness_5_white_48px" />
+
+        </LinearLayout>
+
+
 
         <LinearLayout
             android:id="@+id/hud"
@@ -85,7 +141,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:scaleType="fitCenter"
-                android:src="@android:drawable/ic_dialog_map"/>
+                android:src="@android:drawable/ic_dialog_map"
+                android:visibility="visible" />
 
             <ImageView
                 android:layout_width="wrap_content"
