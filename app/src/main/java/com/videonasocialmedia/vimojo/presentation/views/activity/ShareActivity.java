@@ -51,7 +51,7 @@ import butterknife.OnTouch;
 /**
  * Created by root on 31/05/16.
  */
-public class ShareActivity extends VideonaActivity implements ShareVideoView, VideoPlayerView,
+public class ShareActivity extends VimojoActivity implements ShareVideoView, VideoPlayerView,
         SocialNetworkAdapter.OnSocialNetworkClickedListener, SeekBar.OnSeekBarChangeListener {
 
     @Bind(R.id.coordinatorLayout)

@@ -19,7 +19,7 @@ import com.videonasocialmedia.vimojo.R;
  * @author vlf
  * @since 04/05/2015
  */
-public class LegalNoticeActivity extends VideonaActivity {
+public class LegalNoticeActivity extends VimojoActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

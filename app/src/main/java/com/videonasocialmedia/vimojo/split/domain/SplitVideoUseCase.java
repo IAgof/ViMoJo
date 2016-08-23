@@ -3,7 +3,7 @@ package com.videonasocialmedia.vimojo.split.domain;
 import android.content.Context;
 import android.content.Intent;
 
-import com.videonasocialmedia.vimojo.VideonaApplication;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.trim.domain.TrimBackgroundService;
@@ -16,25 +16,23 @@ public class SplitVideoUseCase {
 
     public void separateVideo(Video initialVideo, int positionInAdapter, int splitTimeMs) {
 
+        splitTimeMs += initialVideo.getStartTime();
+
         Video endVideo = new Video(initialVideo);
-
-
-        endVideo.setFileStartTime(splitTimeMs);
-        endVideo.setFileStopTime(initialVideo.getFileStopTime());
-        endVideo.setIsSplit(true);
-        initialVideo.setFileStopTime(splitTimeMs);
-        initialVideo.setIsSplit(true);
+        endVideo.setStartTime(splitTimeMs);
+        endVideo.setStopTime(initialVideo.getStopTime());
+        initialVideo.setStopTime(splitTimeMs);
 
         AddVideoToProjectUseCase addVideoToProjectUseCase = new AddVideoToProjectUseCase();
         addVideoToProjectUseCase.addVideoToProjectAtPosition(endVideo, positionInAdapter + 1);
 
-        trimVideoSplit(initialVideo, initialVideo.getFileStartTime(), initialVideo.getFileStopTime());
-        trimVideoSplit(endVideo, endVideo.getFileStartTime(), endVideo.getFileStopTime());
+        trimVideoSplit(initialVideo, initialVideo.getStartTime(), initialVideo.getStopTime());
+        trimVideoSplit(endVideo, endVideo.getStartTime(), endVideo.getStopTime());
     }
 
     public void trimVideoSplit(Video videoToEdit, final int startTimeMs, final int finishTimeMs) {
 
-        Context appContext = VideonaApplication.getAppContext();
+        Context appContext = VimojoApplication.getAppContext();
         Intent trimServiceIntent = new Intent(appContext, TrimBackgroundService.class);
         trimServiceIntent.putExtra("videoId", videoToEdit.getIdentifier());
         trimServiceIntent.putExtra("startTimeMs", startTimeMs);

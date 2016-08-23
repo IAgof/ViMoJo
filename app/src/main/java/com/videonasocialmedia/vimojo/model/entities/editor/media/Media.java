@@ -47,12 +47,12 @@ public abstract class Media extends EditorElement {
     /**
      * The start time of the media resource within the file it represents.
      */
-    protected int fileStartTime;
+    protected int startTime;
 
     /**
      * The stop time of the media resource within the file it represents.
      */
-    protected int fileStopTime;
+    protected int stopTime;
 
 
     /**
@@ -91,18 +91,18 @@ public abstract class Media extends EditorElement {
      * @param identifier    - Unique identifier of the media for the current project.
      * @param iconPath      - Path to a resource that allows represent the media in the view.
      * @param mediaPath     - Path to the resource file that this media represents.
-     * @param fileStartTime - Media item initial time in milliseconds within the file referenced
+     * @param startTime - Media item initial time in milliseconds within the file referenced
      * @param duration      - Media item duration in milliseconds within the file referenced
      * @param license       - Legal stuff.
      * @param authors       - List of authors of the media item.
      */
-    protected Media(int identifier, String iconPath, String mediaPath, int fileStartTime,
+    protected Media(int identifier, String iconPath, String mediaPath, int startTime,
                    int duration , ArrayList<User> authors, License license) {
         super(identifier, iconPath);
         this.mediaPath = mediaPath;
 //        this.source = new File(this.mediaPath);
-        this.fileStartTime = fileStartTime;
-        this.fileStopTime = duration;
+        this.startTime = startTime;
+        this.stopTime = duration;
         this.authors = authors;
         this.license = license;
     }
@@ -116,7 +116,7 @@ public abstract class Media extends EditorElement {
      *                         If null it will be used the iconPath as default.
      * @param title            - Human friendly title for the media item.
      * @param mediaPath        - Path to the resource file that this media represents.
-     * @param fileStartTime    - Media item initial time in milliseconds within the file referenced
+     * @param startTime    - Media item initial time in milliseconds within the file referenced
      * @param duration         - Media item duration in milliseconds within the file referenced
      * @param opening          - reference to a transition after the media item in the track.
      * @param ending           - reference to a transition before the media item in the track.
@@ -125,15 +125,15 @@ public abstract class Media extends EditorElement {
      * @param authors          - List of authors of the media item.
      */
     protected Media(int identifier, String iconPath, String selectedIconPath, String title,
-                    String mediaPath, int fileStartTime, int duration, Transition opening,
+                    String mediaPath, int startTime, int duration, Transition opening,
                     Transition ending, MediaMetadata metadata, ArrayList<User> authors,
                     License license) {
         super(identifier, iconPath, selectedIconPath);
         this.title = title;
         this.mediaPath = mediaPath;
 //        this.source = new File(this.mediaPath);
-        this.fileStartTime = fileStartTime;
-        this.fileStopTime = duration;
+        this.startTime = startTime;
+        this.stopTime = duration;
         this.opening = opening;
         this.ending = ending;
         this.metadata = metadata;
@@ -168,25 +168,25 @@ public abstract class Media extends EditorElement {
         this.mediaPath = mediaPath;
     }
 
-    public int getFileStartTime() {
-        return fileStartTime;
+    public int getStartTime() {
+        return startTime;
     }
 
-    public void setFileStartTime(int fileStartTime) {
-        this.fileStartTime = fileStartTime;
+    public void setStartTime(int startTime) {
+        this.startTime = startTime;
     }
 
     public int getDuration() {
-        return fileStopTime - fileStartTime;
+        return stopTime - startTime;
     }
 
 
-    public int getFileStopTime() {
-        return fileStopTime;
+    public int getStopTime() {
+        return stopTime;
     }
 
-    public void setFileStopTime(int fileStopTime) {
-        this.fileStopTime = fileStopTime;
+    public void setStopTime(int stopTime) {
+        this.stopTime = stopTime;
     }
 
     public MediaMetadata getMetadata() {

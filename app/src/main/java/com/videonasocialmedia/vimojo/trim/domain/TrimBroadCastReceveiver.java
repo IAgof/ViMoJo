@@ -21,7 +21,6 @@ public class TrimBroadCastReceveiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
         //// TODO:(alvaro.martinez) 22/08/16 Here manage error trimming case, define new user story
         boolean data = intent.getBooleanExtra("videoTrimmed", false);
       //  Snackbar.make(parent, R.string.trimError, Snackbar.LENGTH_LONG);

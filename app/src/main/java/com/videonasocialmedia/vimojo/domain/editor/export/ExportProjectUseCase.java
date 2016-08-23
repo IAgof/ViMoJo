@@ -28,11 +28,8 @@ public class ExportProjectUseCase implements OnExportEndedListener {
     }
 
     public void export() {
-        if(isTempFilesFinished()) {
-           exporter.export();
-        } else {
-            export();
-        }
+        waitForOutputFilesFinished();
+        exporter.export();
     }
 
     @Override
@@ -46,22 +43,20 @@ public class ExportProjectUseCase implements OnExportEndedListener {
 
     }
 
-    public boolean isTempFilesFinished() {
+    public void waitForOutputFilesFinished() {
         LinkedList<Media> medias = getMediasFromProject();
         for (Media media:medias) {
-            Video video= (Video) media;
-            if (video.isTrimmed()){
-                if(!video.isTempPathFinished()){
+            Video video = (Video) media;
+            if (video.isEdited()) {
+                while (!video.outputVideoIsFinished()) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    return false;
                 }
             }
         }
-        return true;
     }
 
     private LinkedList<Media> getMediasFromProject() {

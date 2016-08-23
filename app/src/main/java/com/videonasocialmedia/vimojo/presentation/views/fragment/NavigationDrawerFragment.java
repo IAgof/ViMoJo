@@ -22,7 +22,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VideonaApplication;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
@@ -58,7 +58,7 @@ public class NavigationDrawerFragment extends VideonaFragment implements Videona
         View view = inflater.inflate(R.layout.common_fragment_navigator, container, false);
         ButterKnife.bind(this, view);
 
-        VideonaApplication app = (VideonaApplication) getActivity().getApplication();
+        VimojoApplication app = (VimojoApplication) getActivity().getApplication();
         tracker = app.getTracker();
 
         return view;

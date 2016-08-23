@@ -38,7 +38,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class VideoSplitActivity extends VideonaActivity implements SplitView, VideonaPlayerListener,
+public class VideoSplitActivity extends VimojoActivity implements SplitView, VideonaPlayerListener,
     SeekBar.OnSeekBarChangeListener {
 
     private static final String SPLIT_POSITION = "split_position";
@@ -54,6 +54,7 @@ public class VideoSplitActivity extends VideonaActivity implements SplitView, Vi
     private Video video;
     private int currentSplitPosition = 0;
     private int currentVideoPosition = 0;
+    private int startTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,14 +194,14 @@ public class VideoSplitActivity extends VideonaActivity implements SplitView, Vi
             currentSplitPosition = progress;
             //splitSeekBar.setProgress(progress);
             refreshTimeTag(currentSplitPosition);
-            videonaPlayer.seekTo(video.getFileStartTime() + progress);
+            videonaPlayer.seekTo(video.getStartTime() + progress);
             videonaPlayer.setSeekBarProgress(progress);
         }
     }
 
     private void refreshTimeTag(int currentPosition) {
 
-        timeTag.setText(TimeUtils.toFormattedTime(currentPosition));
+        timeTag.setText(TimeUtils.toFormattedTime(currentPosition + startTime));
     }
 
     @Override
@@ -214,9 +215,10 @@ public class VideoSplitActivity extends VideonaActivity implements SplitView, Vi
     }
 
     @Override
-    public void initSplitView(int maxSeekBar) {
+    public void initSplitView(int startTime, int maxSeekBar) {
         splitSeekBar.setMax(maxSeekBar);
         splitSeekBar.setProgress(currentSplitPosition);
+        this.startTime = startTime;
         refreshTimeTag(currentSplitPosition);
     }
 

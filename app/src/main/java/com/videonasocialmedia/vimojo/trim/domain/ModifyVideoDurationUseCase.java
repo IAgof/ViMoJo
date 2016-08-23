@@ -3,7 +3,6 @@ package com.videonasocialmedia.vimojo.trim.domain;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
-import com.videonasocialmedia.transcoder.engine.MediaTrimmerEngine;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 
@@ -18,8 +17,8 @@ public class ModifyVideoDurationUseCase {
     public void trimVideo(Video videoToEdit, final int startTimeMs, final int finishTimeMs, MediaTranscoderListener listener) {
 
         try {
-            videoToEdit.setFileStartTime(startTimeMs);
-            videoToEdit.setFileStopTime(finishTimeMs);
+            videoToEdit.setStartTime(startTimeMs);
+            videoToEdit.setStopTime(finishTimeMs);
             videoToEdit.setTempPathFinished(false);
             Future<Void> mFuture = MediaTranscoder.getInstance().transcodeVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
                     new VideonaFormat(), listener, null, null, startTimeMs, finishTimeMs);

@@ -29,9 +29,12 @@ public class TimeUtils {
         remainingTime -= minutes * MilliSeconds.ONE_MINUTE;
 
         int seconds = remainingTime / MilliSeconds.ONE_SECOND;
+        remainingTime -= seconds * MilliSeconds.ONE_SECOND;
+
+        int milliseconds = remainingTime;
 
         return hours > 0 ? String.format("%02d:%02d:%02d", hours, minutes, seconds)
-                : String.format("%02d:%02d", minutes, seconds);
+                : String.format("%02d:%02d:%03d", minutes, seconds, milliseconds);
     }
 
 	public static String formatTimeinMinutesSeconds(String time){

@@ -34,7 +34,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VideonaApplication;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.trim.domain.TrimBackgroundService;
 import com.videonasocialmedia.vimojo.trim.domain.TrimBroadCastReceveiver;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
@@ -50,7 +50,7 @@ import java.util.List;
  * @author vlf
  * @since 04/05/2015
  */
-public abstract class VideonaActivity extends AppCompatActivity {
+public abstract class VimojoActivity extends AppCompatActivity {
 
     protected static final String ANDROID_PUSH_SENDER_ID = "783686583047";
     protected MixpanelAPI mixpanel;
@@ -69,11 +69,12 @@ public abstract class VideonaActivity extends AppCompatActivity {
         mixpanel.getPeople().identify(mixpanel.getPeople().getDistinctId());
         mixpanel.getPeople().initPushHandling(ANDROID_PUSH_SENDER_ID);
         configPermissions();
-        VideonaApplication app = (VideonaApplication) getApplication();
+        VimojoApplication app = (VimojoApplication) getApplication();
         tracker = app.getTracker();
 
 
-        View root = ( (ViewGroup) findViewById(android.R.id.content) ).getChildAt(0);
+//        View root = ( (ViewGroup) findViewById(android.R.id.content) ).getChildAt(0);
+        View root = findViewById(android.R.id.content);
         trimBroadCastReceveiver = new TrimBroadCastReceveiver(root);
 
     }

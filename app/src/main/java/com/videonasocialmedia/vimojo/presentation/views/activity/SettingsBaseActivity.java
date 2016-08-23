@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Veronica Lago Fominaya on 26/11/2015.
  */
-public class SettingsBaseActivity extends VideonaActivity implements VideonaDialogListener {
+public class SettingsBaseActivity extends VimojoActivity implements VideonaDialogListener {
 
     protected final int REQUEST_CODE_RATE_APP = 1;
 

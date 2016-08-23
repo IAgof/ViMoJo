@@ -46,7 +46,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class VideoDuplicateActivity extends VideonaActivity implements DuplicateView,
+public class VideoDuplicateActivity extends VimojoActivity implements DuplicateView,
         VideonaPlayerListener {
 
     private static final String DUPLICATE_VIDEO_POSITION = "duplicate_video_position";
@@ -228,7 +228,7 @@ public class VideoDuplicateActivity extends VideonaActivity implements Duplicate
     }
 
     private void showThumbVideo(ImageView imageThumbLeft) {
-        int microSecond = video.getFileStartTime() * 1000;
+        int microSecond = video.getStartTime() * 1000;
         BitmapPool bitmapPool = Glide.get(this).getBitmapPool();
         FileDescriptorBitmapDecoder decoder = new FileDescriptorBitmapDecoder(
                 new VideoBitmapDecoder(microSecond),

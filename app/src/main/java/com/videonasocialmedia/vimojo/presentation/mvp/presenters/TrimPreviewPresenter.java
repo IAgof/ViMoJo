@@ -10,7 +10,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.Intent;
 
-import com.videonasocialmedia.vimojo.VideonaApplication;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
@@ -71,13 +71,13 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
         trimView.showPreview(videoList);
         Video video = videoList.get(0);
         //showTimeTags(video);
-        trimView.showTrimBar(video.getFileStartTime(), video.getFileStopTime(), video.getFileDuration());
+        trimView.showTrimBar(video.getStartTime(), video.getStopTime(), video.getFileDuration());
     }
 
     private void showTimeTags(Video video) {
         trimView.refreshDurationTag(video.getDuration());
-        trimView.refreshStartTimeTag(video.getFileStartTime());
-        trimView.refreshStopTimeTag(video.getFileStopTime());
+        trimView.refreshStartTimeTag(video.getStartTime());
+        trimView.refreshStopTimeTag(video.getStopTime());
     }
 
     @Override
@@ -87,14 +87,27 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
 
 
     public void setTrim(int startTimeMs, int finishTimeMs) {
-
-        Context appContext = VideonaApplication.getAppContext();
+        Context appContext = VimojoApplication.getAppContext();
         Intent trimServiceIntent = new Intent(appContext, TrimBackgroundService.class);
         trimServiceIntent.putExtra("videoId", videoToEdit.getIdentifier());
         trimServiceIntent.putExtra("startTimeMs", startTimeMs);
         trimServiceIntent.putExtra("finishTimeMs", finishTimeMs);
         appContext.startService(trimServiceIntent);
         userEventTracker.trackClipTrimmed(currentProject);
+    }
+
+    public void updateVideoTrim(int videoIndexOnTrack, int startTimeMs, int finishTimeMs) {
+        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
+        if (videoList != null) {
+            ArrayList<Video> v = new ArrayList<>();
+            videoToEdit = (Video) videoList.get(videoIndexOnTrack);
+            v.add(videoToEdit);
+            onVideosRetrieved(v);
+            trimView.showPreview(v);
+            Video video = v.get(0);
+            trimView.showTrimBar(startTimeMs, finishTimeMs, video.getDuration());
+        }
+
     }
 }
 

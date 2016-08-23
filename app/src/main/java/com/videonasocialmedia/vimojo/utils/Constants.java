@@ -25,8 +25,8 @@ public class Constants {
 
 
     // Folders
-    final public static String FOLDER_VIDEONA_MASTERS = "Videona_Masters";
-    final public static String FOLDER_VIDEONA = "Videona";
+    final public static String FOLDER_VIDEONA_MASTERS = "Vimojo_Masters";
+    final public static String FOLDER_VIDEONA = "Vimojo";
     final public static String FOLDER_VIDEONA_TEMP = ".temporal";
 
     final public static String PATH_APP = Environment.getExternalStoragePublicDirectory(
@@ -52,5 +52,5 @@ public class Constants {
     final public static String VIDEO_TO_SHARE_PATH = "video_to_share_path";
 
 
-    public static final String NOTIFICATION_EXPORT_SERVICES_RECEIVER = "com.videonasocialmedia.videona";
+    public static final String NOTIFICATION_EXPORT_SERVICES_RECEIVER = "com.videonasocialmedia.vimojo";
 }

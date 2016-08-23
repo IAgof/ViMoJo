@@ -7,7 +7,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import com.videonasocialmedia.vimojo.VideonaApplication;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class SocialNetworkAppsProvider {
 
     public List<SocialNetwork> getSocialNetworksAppsInstalled() {
         List<SocialNetwork> socialNetworks = new ArrayList<>();
-        Context context = VideonaApplication.getAppContext();
+        Context context = VimojoApplication.getAppContext();
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
         shareIntent.setType("video/*");
         PackageManager pm = context.getPackageManager();

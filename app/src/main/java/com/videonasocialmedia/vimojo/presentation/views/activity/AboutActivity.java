@@ -28,7 +28,7 @@ import butterknife.OnClick;
  * @author vlf
  * @since 04/05/2015
  */
-public class AboutActivity extends VideonaActivity {
+public class AboutActivity extends VimojoActivity {
 
     @Bind(R.id.videona_version)
     TextView versionName;

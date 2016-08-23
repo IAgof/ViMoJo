@@ -32,7 +32,8 @@ android {
     }
     buildTypes {
         release {
-            resValue "string", "app_name", "Videona"
+
+            buildConfigField "String", "FTP_HOST", "\"82.223.76.148\""
             buildConfigField "String", "MIXPANEL_TOKEN", "\"985b2aeb535dbc92b81fb5cce7ad1212\""
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -96,7 +97,7 @@ dependencies {
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.karumi:dexter:2.2.2'
     compile 'com.jcraft:jsch:0.1.53'
-    compile 'com.crystal:crystalrangeseekbar:1.0.1'
+    compile 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
 
     compile(name:'videona-sdk',ext:'aar')
 
