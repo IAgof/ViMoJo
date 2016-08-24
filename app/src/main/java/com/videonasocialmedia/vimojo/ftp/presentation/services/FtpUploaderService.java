@@ -129,5 +129,10 @@ public class FtpUploaderService extends Service implements FtpUploaderView {
     public void hideNotification() {
 
     }
+
+    @Override
+    public void showErrorMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 }
 

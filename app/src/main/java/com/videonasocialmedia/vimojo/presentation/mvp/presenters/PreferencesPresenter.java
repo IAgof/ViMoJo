@@ -13,7 +13,6 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.ListPreference;
-
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideosUseCase;
@@ -60,8 +59,24 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      */
     public void checkAvailablePreferences() {
         checkUserAccountData();
+        checkUserFTPData();
         checkAvailableResolution();
         checkAvailableQuality();
+    }
+
+    private void checkUserFTPData() {
+        checkUserFTPPreference(ConfigPreferences.HOST);
+        checkUserFTPPreference(ConfigPreferences.USERNAMEFTP);
+        checkUserFTPPreference(ConfigPreferences.EDITED_VIDEO_DESTINATION);
+        checkUserFTPPreference(ConfigPreferences.UNEDITED_VIDEO_DESTINATION);
+    }
+
+    private void checkUserFTPPreference(String key) {
+
+        String data = sharedPreferences.getString(key, null);
+        if (data != null && !data.isEmpty())
+            preferencesView.setSummary(key, data);
+
     }
 
     /**

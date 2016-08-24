@@ -43,6 +43,36 @@
         </Preference>
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/title_FTP_Section">
+        <Preference
+            android:key="host"
+            android:title="@string/host_FTP">
+            <intent android:action=".presentation.views.activity.HostPreferenceActivity"/>
+        </Preference>
+        <Preference
+            android:key="usernameFTP"
+            android:title="@string/username_FTP">
+            <intent android:action=".presentation.views.activity.UserNameFTPPreferenceActivity"/>
+        </Preference>
+        <Preference
+            android:key="passwordFTP"
+            android:title="@string/password_FTP">
+            <intent android:action=".presentation.views.activity.PasswordFTPPreferenceActivity"/>
+        </Preference>
+        <Preference
+            android:key="EditedVideoDestinationFTP"
+            android:title="@string/edited_video_destination">
+            <intent android:action=".presentation.views.activity.EditedVideoDestinationPreferenceActivity"/>
+        </Preference>
+        <Preference
+            android:key="UneditedVideoDestinationFTP"
+            android:title="@string/unedited_video_destination">
+            <intent android:action=".presentation.views.activity.UneditedVideoDestinationPreferenceActivity"/>
+        </Preference>
+    </PreferenceCategory>
+
+
 
     <PreferenceCategory
         android:title="@string/title_camera_section">

@@ -123,6 +123,26 @@
     <string name="emailPreference">Email</string>
     <string name="save">Save</string>
 
+    <!--FTP Settings -->
+    <string name="title_FTP_Section">FTP Data</string>
+    <string name="host_FTP">Host</string>
+    <string name="removeHost">Remove host</string>
+    <string name="enterHost">Enter your host</string>
+    <string name="username_FTP">FTP Username</string>
+    <string name="enterUsername_FTP">Enter your username</string>
+    <string name="removeUsername_FTP">Remove username</string>
+    <string name="password_FTP">Password</string>
+    <string name="enterPassword_FTP">Enter your password</string>
+    <string name="removePassword_FTP">Remove password</string>
+    <string name="edited_video_destination">Edited Video destination</string>
+    <string name="enterEditedVideoDestination_FTP">Enter your destination</string>
+    <string name="removeEditedVideoDestination_FTP">Remove destination</string>
+    <string name="unedited_video_destination">Unedited Video destination</string>
+    <string name="enterUneditedVideoDestination_FTP">Enter your destination</string>
+    <string name="removeUneditedVideoDestination_FTP">Remove destination</string>
+    <string name="save_FTP">Save</string>
+
+
     <!-- Camera Settings -->
     <string name="title_camera_section">Camera</string>
     <string name="resolution">Resolution</string>
