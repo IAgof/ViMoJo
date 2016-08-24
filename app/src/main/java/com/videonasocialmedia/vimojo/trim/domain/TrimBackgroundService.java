@@ -15,10 +15,9 @@ import java.util.List;
 /**
  *
  */
-public class TrimBackgroundService extends Service implements MediaTranscoderListener {
+public class TrimBackgroundService extends Service {
 
     public static final String ACTION = "com.videonasocialmedia.vimojo.android.service.receiver";
-    Video video;
 
     @Nullable
     @Override
@@ -27,63 +26,70 @@ public class TrimBackgroundService extends Service implements MediaTranscoderLis
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(final Intent intent, int flags, int startId) {
+        final int videoId = intent.getIntExtra("videoId", -51456);
+        final int startTimeMs = intent.getIntExtra("startTimeMs", 0);
+        final int finishTimeMs = intent.getIntExtra("finishTimeMs", 0);
 
-        int videoId = intent.getIntExtra("videoId", -51456);
-        int startTimeMs = intent.getIntExtra("startTimeMs", 0);
-        int finishTimeMs = intent.getIntExtra("finishTimeMs", 0);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final Video video = getVideo(videoId);
+                MediaTranscoderListener trimUseCaseListener = new MediaTranscoderListener() {
+                    @Override
+                    public void onTranscodeProgress(double v) {
+                    }
 
-        getVideo(videoId);
-        if (video != null) {
-            ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
-            video.setTempPath();
-            modifyVideoDurationUseCase.trimVideo(video, startTimeMs, finishTimeMs, this);
-        } else {
-            onTranscodeFailed(null);
-        }
+                    @Override
+                    public void onTranscodeCompleted() {
+                        video.setTempPathFinished(true);
+                        sendTrimResultBroadcast(videoId, true);
+                    }
+
+                    @Override
+                    public void onTranscodeCanceled() {
+                        video.deleteTempVideo();
+                        sendTrimResultBroadcast(videoId, false);
+                    }
+
+                    @Override
+                    public void onTranscodeFailed(Exception e) {
+                        video.deleteTempVideo();
+                        sendTrimResultBroadcast(videoId, false);
+                    }
+
+                };
+                if (video != null) {
+                    ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
+                    video.setTempPath();
+                    modifyVideoDurationUseCase.trimVideo(video, startTimeMs, finishTimeMs, trimUseCaseListener);
+                } else {
+                    trimUseCaseListener.onTranscodeFailed(null);
+                }
+            }
+        }).start();
 
         return START_NOT_STICKY;
     }
 
-    private void getVideo(int videoId) {
+    private void sendTrimResultBroadcast(int videoId, boolean success) {
+        Intent intent = new Intent(ACTION);
+        intent.putExtra("videoTrimmed", success);
+        intent.putExtra("videoId", videoId);
+        sendBroadcast(intent);
+    }
+
+    private Video getVideo(int videoId) {
         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
         if (videoList != null) {
             for (Media media : videoList) {
                 if (media.getIdentifier() == videoId) {
-                    video = (Video) media;
+                    return (Video) media;
                 }
             }
         }
-    }
-
-    @Override
-    public void onTranscodeProgress(double v) {
-
-    }
-
-    @Override
-    public void onTranscodeCompleted() {
-        video.setTempPathFinished(true);
-        Intent intent = new Intent(ACTION);
-        intent.putExtra("videoTrimmed", true);
-        sendBroadcast(intent);
-    }
-
-    @Override
-    public void onTranscodeCanceled() {
-        video.deleteTempVideo();
-        Intent intent = new Intent(ACTION);
-        intent.putExtra("videoTrimmed", false);
-        sendBroadcast(intent);
-    }
-
-    @Override
-    public void onTranscodeFailed(Exception e) {
-        video.deleteTempVideo();
-        Intent intent = new Intent(ACTION);
-        intent.putExtra("videoTrimmed", false);
-        sendBroadcast(intent);
+        return null;
     }
 
 }

@@ -14,8 +14,7 @@ import com.videonasocialmedia.vimojo.trim.domain.TrimBackgroundService;
 
 public class SplitVideoUseCase {
 
-    public void separateVideo(Video initialVideo, int positionInAdapter, int splitTimeMs) {
-
+    public void splitVideo(Video initialVideo, int positionInAdapter, int splitTimeMs) {
         splitTimeMs += initialVideo.getStartTime();
 
         Video endVideo = new Video(initialVideo);
@@ -26,12 +25,11 @@ public class SplitVideoUseCase {
         AddVideoToProjectUseCase addVideoToProjectUseCase = new AddVideoToProjectUseCase();
         addVideoToProjectUseCase.addVideoToProjectAtPosition(endVideo, positionInAdapter + 1);
 
-        trimVideoSplit(initialVideo, initialVideo.getStartTime(), initialVideo.getStopTime());
-        trimVideoSplit(endVideo, endVideo.getStartTime(), endVideo.getStopTime());
+        trimVideoSplited(initialVideo, initialVideo.getStartTime(), initialVideo.getStopTime());
+        trimVideoSplited(endVideo, endVideo.getStartTime(), endVideo.getStopTime());
     }
 
-    public void trimVideoSplit(Video videoToEdit, final int startTimeMs, final int finishTimeMs) {
-
+    public void trimVideoSplited(Video videoToEdit, final int startTimeMs, final int finishTimeMs) {
         Context appContext = VimojoApplication.getAppContext();
         Intent trimServiceIntent = new Intent(appContext, TrimBackgroundService.class);
         trimServiceIntent.putExtra("videoId", videoToEdit.getIdentifier());
