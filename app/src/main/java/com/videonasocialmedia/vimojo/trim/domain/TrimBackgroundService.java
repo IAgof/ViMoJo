@@ -7,9 +7,11 @@ import android.support.annotation.Nullable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,6 +21,7 @@ public class TrimBackgroundService extends Service implements MediaTranscoderLis
 
     public static final String ACTION = "com.videonasocialmedia.vimojo.android.service.receiver";
     Video video;
+    protected Project currentProject;
 
     @Nullable
     @Override
@@ -39,7 +42,7 @@ public class TrimBackgroundService extends Service implements MediaTranscoderLis
             video.setTempPath();
             modifyVideoDurationUseCase.trimVideo(video, startTimeMs, finishTimeMs, this);
         } else {
-            onTranscodeFailed(null);
+            onTranscodeFailed(video.getTempPath(), null);
         }
 
         return START_NOT_STICKY;
@@ -63,27 +66,46 @@ public class TrimBackgroundService extends Service implements MediaTranscoderLis
     }
 
     @Override
-    public void onTranscodeCompleted() {
-        video.setTempPathFinished(true);
+    public void onTranscodeCompleted(String outPath) {
+        setTempPathFinished(outPath, true);
         Intent intent = new Intent(ACTION);
         intent.putExtra("videoTrimmed", true);
         sendBroadcast(intent);
     }
 
     @Override
-    public void onTranscodeCanceled() {
-        video.deleteTempVideo();
+    public void onTranscodeCanceled(String outPath) {
+        setTempPathFinished(outPath, false);
         Intent intent = new Intent(ACTION);
         intent.putExtra("videoTrimmed", false);
         sendBroadcast(intent);
     }
 
     @Override
-    public void onTranscodeFailed(Exception e) {
-        video.deleteTempVideo();
+    public void onTranscodeFailed(String outPath, Exception e) {
+        setTempPathFinished(outPath, false);
         Intent intent = new Intent(ACTION);
         intent.putExtra("videoTrimmed", false);
         sendBroadcast(intent);
+    }
+
+    private void setTempPathFinished(String outPath, boolean isTempPathFinished){
+
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
+
+        if (videoList != null) {
+            for (Media media : videoList) {;
+                Video vid = (Video) media;
+                if(vid.getTempPath().compareTo(outPath) == 0){
+                    if(isTempPathFinished){
+                        vid.setTempPathFinished(isTempPathFinished);
+                    } else {
+                        vid.deleteTempVideo();
+                    }
+                }
+            }
+        }
     }
 
 }
