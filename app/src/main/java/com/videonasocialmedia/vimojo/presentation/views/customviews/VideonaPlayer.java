@@ -62,7 +62,12 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
     private final Runnable updateTimeTask = new Runnable() {
         @Override
         public void run() {
-            updateSeekBarProgress();
+            try {
+                updateSeekBarProgress();
+            } catch (Exception e) {
+                Log.d(TAG, "Exception in update seekbar progress thread");
+                Log.d(TAG, String.valueOf(e));
+            }
         }
     };
     private Music music;
@@ -153,6 +158,15 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
         seekBar.setProgress(0); // TODO(jliarte): duplicated?
     }
 
+    public void setSeekBarEnabled(boolean seekBarEnabled) {
+        if (seekBarEnabled) {
+            seekBar.setVisibility(VISIBLE);
+        } else {
+            seekBar.setVisibility(GONE);
+        }
+
+    }
+
     public void setListener(VideonaPlayerListener videonaPlayerListener) {
         this.videonaPlayerListener = videonaPlayerListener;
     }
@@ -179,7 +193,7 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
 
     @Override
     public void seekTo(int timeInMsec) {
-        if (videoPlayer != null) {
+        if (videoPlayer != null && timeInMsec < totalVideoDuration) {
             currentTimePositionInList = timeInMsec;
             videoPlayer.seekTo(timeInMsec);
             seekBar.setProgress(timeInMsec);
@@ -195,13 +209,13 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
         currentVideoListIndex = position;
 
         int progress = videoStartTimes.get(currentVideoListIndex) -
-                videoList.get(currentVideoListIndex).getFileStartTime();
+                videoList.get(currentVideoListIndex).getStartTime();
 
         currentTimePositionInList = progress;
         seekBar.setProgress(progress);
 
         int timeInMsec = progress - videoStartTimes.get(currentVideoListIndex) +
-                videoList.get(currentVideoListIndex).getFileStartTime();
+                videoList.get(currentVideoListIndex).getStartTime();
 
         if (videoPlayer != null) {
             seekToNextVideo(videoList.get(position), timeInMsec);
@@ -235,7 +249,7 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
             Video video = getVideoByProgress(this.currentTimePositionInList);
             currentVideoListIndex = getVideoPositioninList(video);
             int timeInMsec = this.currentTimePositionInList - videoStartTimes.get(currentVideoListIndex) +
-                    videoList.get(currentVideoListIndex).getFileStartTime();
+                    videoList.get(currentVideoListIndex).getStartTime();
             if (isFullScreenBack) {
                 if (playButton.getVisibility() == View.INVISIBLE)
                     showPlayButton();
@@ -311,7 +325,7 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
                 currentVideoListIndex++;
                 if (hasNextVideoToPlay()) {
                     playNextVideo(videoList.get(currentVideoListIndex),
-                            videoList.get(currentVideoListIndex).getFileStartTime());
+                            videoList.get(currentVideoListIndex).getStartTime());
                 }
             }
         });
@@ -390,7 +404,7 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
                 currentVideoListIndex++;
                 if (hasNextVideoToPlay()) {
                     playNextVideo(videoList.get(currentVideoListIndex),
-                            videoList.get(currentVideoListIndex).getFileStartTime());
+                            videoList.get(currentVideoListIndex).getStartTime());
                 } else {
                     releaseView();
                 }
@@ -449,7 +463,7 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
                 currentVideoListIndex++;
                 if (hasNextVideoToPlay()) {
                     playNextVideo(videoList.get(currentVideoListIndex),
-                            videoList.get(currentVideoListIndex).getFileStartTime());
+                            videoList.get(currentVideoListIndex).getStartTime());
                 } else {
                     releaseView();
                 }
@@ -507,14 +521,14 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
                 if (currentVideoListIndex < videoList.size()) {
                     seekBar.setProgress(videoPlayer.getCurrentPosition() +
                             videoStartTimes.get(currentVideoListIndex) -
-                            videoList.get(currentVideoListIndex).getFileStartTime());
+                            videoList.get(currentVideoListIndex).getStartTime());
                     // refreshStartTimeTag(videoSeekBar.getProgress());
                     if (isEndOfVideo()) {
                         currentVideoListIndex++;
                         if (hasNextVideoToPlay()) {
 
                             playNextVideo(videoList.get(currentVideoListIndex),
-                                    videoList.get(currentVideoListIndex).getFileStartTime());
+                                    videoList.get(currentVideoListIndex).getStartTime());
                         } else {
                             releaseView();
                         }
@@ -522,7 +536,7 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
                 }
             } catch (Exception e) {
                 Log.d(TAG, "updateSeekBarProgress: exception updating videonaplayer seekbar");
-                Log.d(TAG, e.getMessage());
+                Log.d(TAG, String.valueOf(e));
             }
             handler.postDelayed(updateTimeTask, 20);
         }
@@ -572,7 +586,7 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
         currentVideoListIndex = 0;
         if (videoList.size() > 0)
             initVideoPlayer(videoList.get(currentVideoListIndex),
-                    videoList.get(currentVideoListIndex).getFileStartTime() + 100);
+                    videoList.get(currentVideoListIndex).getStartTime() + 100);
         seekBar.setProgress(0);
         currentTimePositionInList = 0;
         notifyNewClipPlayed();
@@ -641,7 +655,7 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
             if (playerHasVideos()) {
                 Video video = getVideoByProgress(progress);
                 int timeInMsec = progress - videoStartTimes.get(currentVideoListIndex) +
-                        videoList.get(currentVideoListIndex).getFileStartTime();
+                        videoList.get(currentVideoListIndex).getStartTime();
 
                 if (videoPlayer != null) {
                     playNextVideo(video, timeInMsec);

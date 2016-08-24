@@ -11,16 +11,11 @@
  */
 package com.videonasocialmedia.vimojo.model.entities.editor.media;
 
-import android.media.MediaMetadata;
 import android.media.MediaMetadataRetriever;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.transitions.Transition;
-import com.videonasocialmedia.vimojo.model.entities.licensing.License;
-import com.videonasocialmedia.vimojo.model.entities.social.User;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -39,12 +34,10 @@ public class Video extends Media {
      * The total duration of the file media resource
      */
     private int fileDuration;
-    /**
-     * Define if a video has been splitted before
-     */
-    private boolean isSplit;
 
     private String tempPath;
+
+    private boolean isTempPathFinished = false;
 
     // TODO(jliarte): 14/06/16 this entity should not depend on MediaMetadataRetriever as it is part of android
     /* Needed to allow mockito inject it */
@@ -71,13 +64,11 @@ public class Video extends Media {
 
             fileDuration = Integer.parseInt(retriever.extractMetadata(
                     MediaMetadataRetriever.METADATA_KEY_DURATION));
-            fileStartTime = 0;
-            fileStopTime = fileDuration;
-            isSplit = false;
+            startTime = 0;
+            stopTime = fileDuration;
         } catch (Exception e) {
             fileDuration = 0;
-            fileStopTime = 0;
-            isSplit = false;
+            stopTime = 0;
         }
     }
 
@@ -87,22 +78,17 @@ public class Video extends Media {
     }
 
     public Video(Video video) {
-        super(-1, null, video.getMediaPath(), video.getFileStartTime(),
+        super(-1, null, video.getMediaPath(), video.getStartTime(),
                 video.getDuration(), null, null);
         fileDuration = getFileDuration(video.getMediaPath());
-        fileStopTime = video.getFileStopTime();
+        stopTime = video.getStopTime();
+        if(video.isEdited()) {
+            tempPath = video.getTempPath();
+        }
     }
 
     public int getFileDuration() {
         return fileDuration;
-    }
-
-    public boolean getIsSplit() {
-        return isSplit;
-    }
-
-    public void setIsSplit(boolean isSplit) {
-        this.isSplit = isSplit;
     }
 
     private int getFileDuration(String path) {
@@ -117,9 +103,15 @@ public class Video extends Media {
     }
 
     public void setTempPath() {
-        if (tempPath == null) {
-            tempPath = Constants.PATH_APP_TEMP + "Temp_" + System.currentTimeMillis() + ".mp4";
-        }
+        tempPath = Constants.PATH_APP_TEMP + File.separator + "temp_" + System.currentTimeMillis() + ".mp4";
+    }
+
+    public boolean outputVideoIsFinished() {
+        return isTempPathFinished;
+    }
+
+    public void setTempPathFinished(boolean tempPathFinished) {
+        isTempPathFinished = tempPathFinished;
     }
 
     public void deleteTempVideo() {
@@ -135,7 +127,7 @@ public class Video extends Media {
             this.identifier = count.addAndGet(1);
     }
 
-    public boolean isTrimmed() {
+    public boolean isEdited() {
         return tempPath!=null;
     }
 

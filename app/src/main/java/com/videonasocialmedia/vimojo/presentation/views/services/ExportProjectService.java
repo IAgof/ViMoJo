@@ -5,10 +5,13 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import com.videonasocialmedia.vimojo.domain.editor.export.ExportProjectUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
+
+import java.util.LinkedList;
 
 /**
  * Created by  on 26/05/16.
