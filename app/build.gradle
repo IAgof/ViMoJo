@@ -99,7 +99,7 @@ dependencies {
     compile 'com.jcraft:jsch:0.1.53'
     compile 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
 
-    compile(name:'videona-sdk',ext:'aar')
+    compile(name:'videona-sdk-v0.0.1',ext:'aar')
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"
