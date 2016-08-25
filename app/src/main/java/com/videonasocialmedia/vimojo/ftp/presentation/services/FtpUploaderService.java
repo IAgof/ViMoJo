@@ -131,8 +131,8 @@ public class FtpUploaderService extends Service implements FtpUploaderView {
     }
 
     @Override
-    public void showErrorMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    public void showErrorMessage(int message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }
 

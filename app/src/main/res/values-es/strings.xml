@@ -24,6 +24,10 @@
     <string name="share_using">Compartir vídeo con</string>
     <string name="sharedWithVideona">"#videonatime"</string>
     <string name="videonaTags">"#VideonaTime"</string>
+    <string name="connectionFTPServerError">Fallo al conectar con el servidor FTP. Por favor, comprueba la conexion de internet o la dirección host </string>
+    <string name="loginError">Nombre de usuario o contraseña FTP incorrecta.</string>
+    <string name="fileError">Error al enviar al servidor FTP. Archivo no encontrado</string>
+    <string name="credentialFTPNull">Conexión a FTP no establecida. Por favor, configure los datos FTP en ajustes.</string>
 
     <!-- Editor Activity -->
     <string name="edit_title_name">Sala de edición</string>
@@ -117,6 +121,25 @@
     <string name="removeUsername">Borrar nombre de usuario</string>
     <string name="emailPreference">Email</string>
     <string name="save">Guardar</string>
+
+    <!--FTP Settings -->
+    <string name="title_FTP_Section">Datos FTP</string>
+    <string name="host_FTP">Host</string>
+    <string name="removeHost">Borrar host</string>
+    <string name="enterHost">Introduce host</string>
+    <string name="username_FTP">Nombre de usuario de FTP </string>
+    <string name="enterUsername_FTP">Introduce un nombre de usuario</string>
+    <string name="removeUsername_FTP">Borrar nombre de usuario</string>
+    <string name="password_FTP">Contraseña de FTP</string>
+    <string name="enterPassword_FTP">Introduce tu contraseña</string>
+    <string name="removePassword_FTP">Borrar contraseña</string>
+    <string name="edited_video_destination">Destino de videos editados</string>
+    <string name="enterEditedVideoDestination_FTP">Introduce destino</string>
+    <string name="removeEditedVideoDestination_FTP">Borrar destino</string>
+    <string name="unedited_video_destination">Destino de videos no editados</string>
+    <string name="enterUneditedVideoDestination_FTP">Introduce destino</string>
+    <string name="removeUneditedVideoDestination_FTP">Borrar destino</string>
+    <string name="save_FTP">Save</string>
 
     <!-- Camera Settings -->
     <string name="title_camera_section">Cámara</string>

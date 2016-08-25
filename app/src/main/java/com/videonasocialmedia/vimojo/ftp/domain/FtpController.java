@@ -2,10 +2,12 @@ package com.videonasocialmedia.vimojo.ftp.domain;
 
 import android.os.Handler;
 import android.os.Message;
+
 import com.videonasocialmedia.vimojo.ftp.FtpClient;
 import org.apache.commons.net.io.CopyStreamEvent;
 import org.apache.commons.net.io.CopyStreamListener;
 import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,8 +44,10 @@ public class FtpController implements CopyStreamListener {
                     previousTime = System.currentTimeMillis();
                     uploader.upload(host, user, password, srcPath, dst, FtpController.this);
                     handler.sendMessage(handler.obtainMessage(MSG_PROGRESS_FINISHED));
-                } catch (Exception e) {
-                    handler.sendMessage(handler.obtainMessage(MSG_PROGRESS_ERROR));
+                } catch (IOException e) {
+                    handler.sendMessage(handler.obtainMessage(MSG_PROGRESS_ERROR, FtpClient.FTPClientException.FTP_ERROR_IO));
+                } catch (FtpClient.FTPClientException e) {
+                    handler.sendMessage(handler.obtainMessage(MSG_PROGRESS_ERROR, e.getCode()));
                 }
                 handler = null;
             }
@@ -104,7 +108,7 @@ public class FtpController implements CopyStreamListener {
                     weakListener.get().onProgressUpdated((Integer) obj);
                     break;
                 case MSG_PROGRESS_ERROR:
-                    weakListener.get().onErrorFinished();
+                    weakListener.get().onErrorFinished((Integer) obj);
                     break;
                 case MSG_PROGRESS_FINISHED:
                     weakListener.get().onSuccessFinished();

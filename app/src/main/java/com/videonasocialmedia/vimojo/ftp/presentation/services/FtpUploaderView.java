@@ -11,5 +11,5 @@ public interface FtpUploaderView {
 
     void hideNotification();
 
-    void showErrorMessage(String message);
+    void showErrorMessage(int message);
 }

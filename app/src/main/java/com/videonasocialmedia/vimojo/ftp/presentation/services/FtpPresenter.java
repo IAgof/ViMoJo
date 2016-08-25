@@ -3,7 +3,9 @@ package com.videonasocialmedia.vimojo.ftp.presentation.services;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.VideonaApplication;
+import com.videonasocialmedia.vimojo.ftp.FtpClient;
 import com.videonasocialmedia.vimojo.ftp.domain.FtpController;
 import com.videonasocialmedia.vimojo.ftp.domain.ProgressListener;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -35,7 +37,7 @@ public class FtpPresenter implements ProgressListener {
         String password = sharedPreferences.getString(ConfigPreferences.PASSWORDFTP, null);
         String editedVideoDestination = sharedPreferences.getString(ConfigPreferences.EDITED_VIDEO_DESTINATION, null);
         if ((host == null) || (user == null) || (password == null)) {
-            view.showErrorMessage("FTP connection data not set. Please configure FTP in settings.");
+            view.showErrorMessage(R.string.credentialFTPNull);
             return;
         }
         FtpController ftpController = new FtpController();
@@ -50,7 +52,23 @@ public class FtpPresenter implements ProgressListener {
     }
 
     @Override
-    public void onErrorFinished() {
+    public void onErrorFinished(int errorCode) {
+
+        switch (errorCode) {
+            case FtpClient.FTPClientException.FTP_ERROR_FILE_NOT_FOUND:
+                view.showErrorMessage(R.string.fileError);
+                break;
+            case FtpClient.FTPClientException.FTP_ERROR_HOST_UNREACHABLE:
+                view.showErrorMessage(R.string.connectionFTPServerError);
+                break;
+            case FtpClient.FTPClientException.FTP_ERROR_UNAUTHORIZED:
+                view.showErrorMessage(R.string.loginError);
+                break;
+            case FtpClient.FTPClientException.FTP_ERROR_IO:
+                view.showErrorMessage(R.string.shareError);
+
+
+        }
 
     }
 
