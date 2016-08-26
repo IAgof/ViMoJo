@@ -14,9 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoGalleryPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoGalleryView;
+import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.VideoGalleryAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnSelectionModeListener;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnTransitionClickListener;
@@ -38,6 +40,8 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
 
     public static final int SELECTION_MODE_SINGLE = 0;
     public static final int SELECTION_MODE_MULTIPLE = 1;
+    public static final int GALLERY_COLS_LANDSCAPE = 6;
+    private static final int GALLERY_COLS_PORTRAIT = 4;
     protected TimeChangesHandler timeChangesHandler = new TimeChangesHandler();
     protected VideoGalleryAdapter videoGalleryAdapter;
     protected VideoGalleryPresenter videoGalleryPresenter;
@@ -80,7 +84,11 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
         ButterKnife.bind(this, v);
         if (videoGalleryPresenter == null)
             videoGalleryPresenter = new VideoGalleryPresenter(this);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this.getActivity(), 6,
+        int galleryColumns = GALLERY_COLS_LANDSCAPE;
+        if ( ((VimojoActivity)this.getActivity()).isPortraitOriented()) {
+            galleryColumns = GALLERY_COLS_PORTRAIT;
+        }
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this.getActivity(), galleryColumns,
                 GridLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         return v;
@@ -119,21 +127,6 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
         selectionSupport = MultiItemSelectionSupport.addTo(recyclerView);
     }
 
-    /*
-    private boolean hasItemsChecked() {
-        boolean result;
-        SparseBooleanArray selectedElements = selectionSupport.getCheckedItemPositions();
-        if(selectedElements != null) {
-            result = true;
-        } else {
-            result = false;
-        }
-        return result;
-    }
-    if(!hasItemsChecked())
-            onSelectionModeListener.onNoItemSelected();
-    */
-
     @Override
     public void onStart() {
         super.onStart();
@@ -165,12 +158,10 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
 
     @Override
     public void showLoading() {
-
     }
 
     @Override
     public void hideLoading() {
-
     }
 
     @Override
@@ -196,7 +187,6 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
 
     @Override
     public void showVideoTimeline() {
-
     }
 
     private void showTimeTag(final List<Video> videoList) {
@@ -219,7 +209,6 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
                         video.setDuration(0);
                     }
                 }
-
             }
         };
         Thread thread = new Thread(updateVideoTime);

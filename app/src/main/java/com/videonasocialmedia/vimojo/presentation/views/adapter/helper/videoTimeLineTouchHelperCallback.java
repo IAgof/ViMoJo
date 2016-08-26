@@ -6,11 +6,11 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 /**
  * Created by jca on 7/7/15.
  */
-public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
+public class videoTimeLineTouchHelperCallback extends ItemTouchHelper.Callback {
 
     private MovableItemsAdapter adapter;
 
-    public ItemTouchHelperCallback(MovableItemsAdapter adapter) {
+    public videoTimeLineTouchHelperCallback(MovableItemsAdapter adapter) {
         this.adapter = adapter;
     }
 
