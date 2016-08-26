@@ -24,6 +24,8 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.VideoView;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
@@ -34,6 +36,7 @@ import com.videonasocialmedia.vimojo.presentation.views.adapter.SocialNetworkAda
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import org.json.JSONException;
@@ -74,8 +77,6 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
     private ShareVideoPresenter presenter;
     private SocialNetworkAdapter mainSocialNetworkAdapter;
     private int videoPosition;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor preferencesEditor;
     private Handler updateSeekBarTaskHandler = new Handler();
     private boolean draggingSeekBar;
     private Runnable updateSeekBarTask = new Runnable() {
@@ -84,6 +85,9 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
             updateSeekbar();
         }
     };
+
+    private SharedPreferences sharedPreferences;
+    protected UserEventTracker userEventTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,11 +101,10 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        sharedPreferences =
-                getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
-                        Context.MODE_PRIVATE);
-        preferencesEditor = sharedPreferences.edit();
-        presenter = new ShareVideoPresenter(this);
+        this.userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
+        sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
+                Context.MODE_PRIVATE);
+        presenter = new ShareVideoPresenter(this, userEventTracker, sharedPreferences);
         presenter.onCreate();
 
         if (videoPosition == 0)
@@ -254,7 +257,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
     @OnClick(R.id.fab_share_room)
     public void showMoreNetworks() {
         updateNumTotalVideosShared();
-        trackVideoShared(null);
+        presenter.trackVideoShared("Other network");
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("video/*");
         Uri uri = Utils.obtainUriToShare(this, videoPath);
@@ -262,51 +265,6 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         startActivity(Intent.createChooser(intent, getString(R.string.share_using)));
     }
 
-    private void updateNumTotalVideosShared() {
-        int totalVideosShared = sharedPreferences.getInt(ConfigPreferences.TOTAL_VIDEOS_SHARED, 0);
-        preferencesEditor.putInt(ConfigPreferences.TOTAL_VIDEOS_SHARED, ++totalVideosShared);
-        preferencesEditor.commit();
-    }
-
-    private void trackVideoShared(SocialNetwork socialNetwork) {
-        trackVideoSharedSuperProperties();
-        String socialNetworkName = null;
-        if (socialNetwork != null)
-            socialNetworkName = socialNetwork.getName();
-        JSONObject socialNetworkProperties = new JSONObject();
-        try {
-            socialNetworkProperties.put(AnalyticsConstants.SOCIAL_NETWORK, socialNetworkName);
-            socialNetworkProperties.put(AnalyticsConstants.VIDEO_LENGTH, presenter.getVideoLength());
-            socialNetworkProperties.put(AnalyticsConstants.RESOLUTION, presenter.getResolution());
-            socialNetworkProperties.put(AnalyticsConstants.NUMBER_OF_CLIPS, presenter.getNumberOfClips());
-            socialNetworkProperties.put(AnalyticsConstants.TOTAL_VIDEOS_SHARED,
-                    sharedPreferences.getInt(ConfigPreferences.TOTAL_VIDEOS_SHARED, 0));
-            mixpanel.track(AnalyticsConstants.VIDEO_SHARED, socialNetworkProperties);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        mixpanel.getPeople().increment(AnalyticsConstants.TOTAL_VIDEOS_SHARED, 1);
-        mixpanel.getPeople().set(AnalyticsConstants.LAST_VIDEO_SHARED,
-                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date()));
-    }
-
-    private void trackVideoSharedSuperProperties() {
-        JSONObject updateSuperProperties = new JSONObject();
-        int numPreviousVideosShared;
-        try {
-            numPreviousVideosShared =
-                    mixpanel.getSuperProperties().getInt(AnalyticsConstants.TOTAL_VIDEOS_SHARED);
-        } catch (JSONException e) {
-            numPreviousVideosShared = 0;
-        }
-        try {
-            updateSuperProperties.put(AnalyticsConstants.TOTAL_VIDEOS_SHARED,
-                    ++numPreviousVideosShared);
-            mixpanel.registerSuperProperties(updateSuperProperties);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     @OnTouch(R.id.video_share_preview)
     public boolean togglePlayPause(MotionEvent event) {
@@ -323,10 +281,14 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         return result;
     }
 
+    private void updateNumTotalVideosShared() {
+        presenter.updateNumTotalVideosShared();
+    }
+
     @Override
     public void showShareNetworksAvailable(List<SocialNetwork> networks) {
         // TODO move this to presenter in merging alpha and stable.
-        SocialNetwork saveToGallery = new SocialNetwork(getString(R.string.save_to_gallery), "", "", this.getResources().getDrawable(R.drawable.activity_share_save_to_gallery), "");
+        SocialNetwork saveToGallery = new SocialNetwork("SaveToGallery",getString(R.string.save_to_gallery), "", "", this.getResources().getDrawable(R.drawable.activity_share_save_to_gallery), "");
         networks.add(saveToGallery);
         mainSocialNetworkAdapter.setSocialNetworkList(networks);
     }
@@ -364,7 +326,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
 
     @Override
     public void onSocialNetworkClicked(SocialNetwork socialNetwork) {
-        trackVideoShared(socialNetwork);
+        presenter.trackVideoShared(socialNetwork.getIdSocialNetwork());
         if (socialNetwork.getName().equals(getString(R.string.save_to_gallery))) {
             showMessage(R.string.video_saved);
             return;
