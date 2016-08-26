@@ -77,7 +77,7 @@ public class ToolbarNavigator extends LinearLayout implements EditNavigatorView 
             @Override
             public void onClick(View v) {
                 if (navigateToMusicButton.isEnabled()) {
-                    navigatorPresenter.checkMusicAndNavigate();
+                   // navigatorPresenter.checkMusicAndNavigate();
                 }
             }
         });
