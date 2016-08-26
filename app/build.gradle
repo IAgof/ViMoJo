@@ -40,7 +40,7 @@ android {
         }
         debug {
             buildConfigField "String", "MIXPANEL_TOKEN", "\"c6617213110cd2513dfc0ad97dbaee66\""
-            buildConfigField "String", "FTP_HOST", "\"82.223.76.148\""
+           // buildConfigField "String", "FTP_HOST", "\"82.223.76.148\""
         }
     }
     packagingOptions {

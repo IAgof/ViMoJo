@@ -10,4 +10,6 @@ public interface FtpUploaderView {
     void setNotificationProgress(int progress);
 
     void hideNotification();
+
+    void showErrorMessage(int message);
 }

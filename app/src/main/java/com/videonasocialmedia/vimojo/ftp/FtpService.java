@@ -9,5 +9,5 @@ import java.io.IOException;
  */
 public interface FtpService {
 
-    void upload(String host, String user, String pass, String srcFile, String dstFile, CopyStreamListener listener) throws IOException;
+    void upload(String host, String user, String pass, String srcFile, String dstFile, CopyStreamListener listener) throws IOException, FtpClient.FTPClientException;
 }
