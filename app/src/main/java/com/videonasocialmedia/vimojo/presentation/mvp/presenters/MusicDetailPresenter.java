@@ -72,7 +72,7 @@ public class MusicDetailPresenter implements GetMusicFromProjectCallback, OnVide
     }
 
     private Music retrieveLocalMusic(int musicId) {
-        Music result = new Music(R.drawable.imagebutton_music_background_rock, "audio_rock", R.raw.audio_rock, R.color.rock, "author");
+       /* Music result = new Music(R.drawable.gatito_rules, "audio_rock", R.raw.audio_rock, R.color.rock, "author");
         GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase();
         List<Music> musicList = getMusicListUseCase.getAppMusic();
 
@@ -80,8 +80,8 @@ public class MusicDetailPresenter implements GetMusicFromProjectCallback, OnVide
             if (musicId == music.getMusicResourceId()) {
                 result = music;
             }
-        }
-        return result;
+        }*/
+        return null;
     }
 
     private void setupScene(boolean isMusicOnProject) {

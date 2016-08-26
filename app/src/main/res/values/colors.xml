@@ -18,7 +18,7 @@
 
     <color name="colorButton">#0091ea</color>
     <color name="colorButtonAccent">#fe304b</color>
-    <color name="textColorButton">#FFFFFF</color>
+    <color name="textColorButton">#ffffff</color>
     <color name="textColorTitleToolbar">#FFFFFF</color>
     <color name="colorControlNormal">#FFFFFF</color>
     <color name="colorControlActivated">#808080</color>
