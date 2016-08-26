@@ -592,16 +592,13 @@ public class InitAppActivity extends VideonaActivity implements InitAppView, OnI
     }
 
     private void exitSplashScreen() {
-//        if(sharedPreferences.getBoolean(ConfigPreferences.FIRST_TIME, true)) {
-//            navigate(IntroAppActivity.class);
-//        } else {
+
         InAppNotification notification = mixpanel.getPeople().getNotificationIfAvailable();
         navigate(RecordActivity.class);
         if (notification != null) {
             Log.d("INAPP", "in-app notification received");
             mixpanel.getPeople().showGivenNotification(notification, this);
             mixpanel.getPeople().trackNotificationSeen(notification);
-//            }
         }
     }
 
