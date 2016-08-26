@@ -19,7 +19,6 @@ public class PasswordFTPPreferencePresenter extends EditTextPreferencePresenter 
     public void setPreference(String text) {
         editor.putString(ConfigPreferences.PASSWORDFTP, text);
         editor.commit();
-        editTextPreferenceView.setUserPropertyToMixpanel("$passwordTP", text);
         editTextPreferenceView.goBack();
     }
 

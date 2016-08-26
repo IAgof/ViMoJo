@@ -19,7 +19,6 @@ public class UneditedVideoDestinationPreferencePresenter extends EditTextPrefere
     public void setPreference(String text) {
         editor.putString(ConfigPreferences.UNEDITED_VIDEO_DESTINATION, text);
         editor.commit();
-        editTextPreferenceView.setUserPropertyToMixpanel("UneditedVideoDestinationFTP", text);
         editTextPreferenceView.goBack();
     }
 

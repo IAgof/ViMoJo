@@ -20,7 +20,6 @@ public class EditedVideoDestinationPreferencePresenter extends EditTextPreferenc
     public void setPreference(String text) {
         editor.putString(ConfigPreferences.EDITED_VIDEO_DESTINATION, text);
         editor.commit();
-        editTextPreferenceView.setUserPropertyToMixpanel("EditedVideoDestinationFTP", text);
         editTextPreferenceView.goBack();
     }
 

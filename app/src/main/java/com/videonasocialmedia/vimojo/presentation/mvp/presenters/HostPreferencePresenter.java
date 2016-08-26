@@ -20,7 +20,6 @@ public class HostPreferencePresenter extends EditTextPreferencePresenter {
     public void setPreference(String text) {
         editor.putString(ConfigPreferences.HOST, text);
         editor.commit();
-        editTextPreferenceView.setUserPropertyToMixpanel("$host", text);
         editTextPreferenceView.goBack();
     }
 

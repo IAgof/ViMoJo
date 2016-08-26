@@ -19,7 +19,6 @@ public class UsernameFTPPreferencePresenter extends EditTextPreferencePresenter 
     public void setPreference(String text) {
         editor.putString(ConfigPreferences.USERNAMEFTP, text);
         editor.commit();
-        editTextPreferenceView.setUserPropertyToMixpanel("$usernameFTP", text);
         editTextPreferenceView.goBack();
     }
 
