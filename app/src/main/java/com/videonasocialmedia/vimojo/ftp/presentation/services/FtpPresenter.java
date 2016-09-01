@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VideonaApplication;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.ftp.FtpClient;
 import com.videonasocialmedia.vimojo.ftp.domain.FtpController;
 import com.videonasocialmedia.vimojo.ftp.domain.ProgressListener;
@@ -27,7 +27,7 @@ public class FtpPresenter implements ProgressListener {
     public void startUpload(String videoPath) {
         //String host = BuildConfig.FTP_HOST;// TODO(javi.cabanas): 29/6/16 fetch host from settings
         //String host= "82.223.76.148
-        Context appContext = VideonaApplication.getAppContext();
+        Context appContext = VimojoApplication.getAppContext();
         sharedPreferences =
                 appContext.getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
                         Context.MODE_PRIVATE);
