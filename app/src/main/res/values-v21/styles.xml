@@ -22,7 +22,7 @@
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
         <item name="android:textColorPrimaryInverse">@color/colorAccent</item>
-        <item name="android:colorControlNormal">@color/colorControlNormal</item>
+        <item name="android:colorControlNormal">@color/colorSecondaryLight</item>
 
         <!-- Hide scrollbar in scrollViews -->
         <item name="android:scrollbarThumbHorizontal">@color/colorTransparent</item>
@@ -41,6 +41,7 @@
         <item name="android:editTextStyle">@style/VideonaEditText</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorPrimary">@color/colorPrimaryLight</item>
+
 
     </style>
 
