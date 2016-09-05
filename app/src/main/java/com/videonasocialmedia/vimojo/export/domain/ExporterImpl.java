@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.domain.editor.export;
+package com.videonasocialmedia.vimojo.export.domain;
 
 import android.os.SystemClock;
 import android.util.Log;

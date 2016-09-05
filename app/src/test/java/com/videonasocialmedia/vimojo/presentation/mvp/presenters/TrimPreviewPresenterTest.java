@@ -1,11 +1,14 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
-import com.videonasocialmedia.vimojo.presentation.mvp.views.TrimView;
+import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
+import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.After;
@@ -62,9 +65,15 @@ public class TrimPreviewPresenterTest {
     public void setTrimCallsTracking() {
         Project videonaProject = getAProject();
 
-        trimPreviewPresenter.setTrim(0, 10);
+        //trimPreviewPresenter.setTrim(0, 10);
+        trimPreviewPresenter.trackVideoTrimmed();
 
         Mockito.verify(mockedUserEventTracker).trackClipTrimmed(videonaProject);
+    }
+
+    @Test
+    public void setTrimUpdateVideoTimes(){
+
     }
 
     public Project getAProject() {

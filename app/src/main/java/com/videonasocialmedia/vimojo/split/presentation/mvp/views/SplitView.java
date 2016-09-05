@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.mvp.views;
+package com.videonasocialmedia.vimojo.split.presentation.mvp.views;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 

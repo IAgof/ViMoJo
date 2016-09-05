@@ -37,7 +37,7 @@ public class Profile {
     /**
      * Video bit rate
      */
-    private VideoQuality.Quality videoQuality;
+    private VideoQuality.Quality quality;
 
     /**
      * Maximum length of the project in millseconds;
@@ -62,11 +62,11 @@ public class Profile {
      * @param maxDuration - Maximum video duration allowed for the profile.
      * @param type        - Profile type.
      */
-    private Profile(VideoResolution.Resolution resolution, VideoQuality.Quality videoQuality, long maxDuration, ProfileType type) {
+    private Profile(VideoResolution.Resolution resolution, VideoQuality.Quality quality, long maxDuration, ProfileType type) {
         this.resolution = resolution;
         this.maxDuration = maxDuration;
         this.profileType = type;
-        this.videoQuality = videoQuality;
+        this.quality = quality;
     }
 
     /**
@@ -86,7 +86,7 @@ public class Profile {
         return INSTANCE;
     }
 
-    //getter and setter.
+    //getter and setter enum resolution.
     public VideoResolution.Resolution getResolution() {
         return resolution;
     }
@@ -96,13 +96,25 @@ public class Profile {
             this.resolution = resolution;
     }
 
-    //getter and setter video quality
-    public VideoQuality.Quality getVideoQuality() {
-        return videoQuality;
+    //getter resolution, width, height values.
+    public VideoResolution getVideoResolution(){
+        VideoResolution videoResolution = new VideoResolution(resolution);
+        return videoResolution;
     }
 
-    public void setVideoQuality(VideoQuality.Quality quality) {
-        this.videoQuality = quality;
+    //getter and setter enum quality
+    public VideoQuality.Quality getQuality() {
+        return quality;
+    }
+
+    public void setQuality(VideoQuality.Quality quality) {
+        this.quality = quality;
+    }
+
+    // getter videoBitRate;
+    public VideoQuality getVideoQuality() {
+        VideoQuality videoQuality = new VideoQuality(quality);
+        return videoQuality;
     }
 
     public long getMaxDuration() {

@@ -14,14 +14,14 @@ import java.util.concurrent.Future;
  */
 public class ModifyVideoDurationUseCase {
 
-    public void trimVideo(Video videoToEdit, final int startTimeMs, final int finishTimeMs, MediaTranscoderListener listener) {
+    public void trimVideo(Video videoToEdit, VideonaFormat format, final int startTimeMs, final int finishTimeMs, MediaTranscoderListener listener) {
 
         try {
             videoToEdit.setStartTime(startTimeMs);
             videoToEdit.setStopTime(finishTimeMs);
             videoToEdit.setTempPathFinished(false);
-            Future<Void> mFuture = MediaTranscoder.getInstance().transcodeVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
-                    new VideonaFormat(), listener, null, null, startTimeMs, finishTimeMs);
+            MediaTranscoder.getInstance().transcodeAndTrimVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
+                    format, listener,startTimeMs, finishTimeMs);
         } catch (IOException e) {
             // TODO(javi.cabanas): 2/8/16 mangage io expception on external library and send onTranscodeFailed if neccessary
         }

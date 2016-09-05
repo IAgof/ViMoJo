@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.domain.editor.export;
+package com.videonasocialmedia.vimojo.export.domain;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 

@@ -4,7 +4,10 @@ import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalIte
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.MediaTrack;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -69,6 +72,19 @@ public class ProjectTest {
         Project videonaProject = getAProject();
 
         assertThat(videonaProject.getMusic(), is(nullValue()));
+    }
+
+    @Test
+    public void getVideoParamsFromProjectProfileFree(){
+
+        Project videonaProject = getAProject();
+        VideoResolution resolution = videonaProject.getProfile().getVideoResolution();
+        VideoQuality quality = videonaProject.getProfile().getVideoQuality();
+
+        assertThat("videoBitRate", 5000*1000, CoreMatchers.is(quality.getVideoBitRate()));
+        assertThat("videoWidth", 1280, CoreMatchers.is(resolution.getWidth()));
+        assertThat("videoHeight", 720, CoreMatchers.is(resolution.getHeight()));
+
     }
 
     public Project getAProject() {

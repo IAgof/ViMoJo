@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.activity;
+package com.videonasocialmedia.vimojo.split.presentation.views.activity;
 /*
  * Copyright (C) 2015 Videona Socialmedia SL
  * http://www.videona.com
@@ -23,8 +23,12 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.SplitPreviewPresenter;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.SplitView;
+import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
+import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 

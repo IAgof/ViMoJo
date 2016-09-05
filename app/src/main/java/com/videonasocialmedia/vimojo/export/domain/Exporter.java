@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.domain.editor.export;
+package com.videonasocialmedia.vimojo.export.domain;
 
 /**
  * Created by jca on 27/5/15.

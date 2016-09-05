@@ -29,6 +29,7 @@ import static org.hamcrest.CoreMatchers.*;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class EditPresenterTest {
+
     @Mock GetMusicFromProjectUseCase getMusicFromProjectUseCase;
     @Mock GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     @InjectMocks private EditPresenter editPresenter;

@@ -5,8 +5,9 @@ import android.content.Intent;
 
 import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
+import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-import com.videonasocialmedia.vimojo.trim.domain.TrimBackgroundService;
+import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
 
 /**
  * Created by ruth on 4/08/16.
@@ -14,7 +15,7 @@ import com.videonasocialmedia.vimojo.trim.domain.TrimBackgroundService;
 
 public class SplitVideoUseCase {
 
-    public void splitVideo(Video initialVideo, int positionInAdapter, int splitTimeMs) {
+    public void splitVideo(Video initialVideo, int positionInAdapter, int splitTimeMs, OnSplitVideoListener listener) {
         splitTimeMs += initialVideo.getStartTime();
 
         Video endVideo = new Video(initialVideo);
@@ -25,16 +26,8 @@ public class SplitVideoUseCase {
         AddVideoToProjectUseCase addVideoToProjectUseCase = new AddVideoToProjectUseCase();
         addVideoToProjectUseCase.addVideoToProjectAtPosition(endVideo, positionInAdapter + 1);
 
-        trimVideoSplited(initialVideo, initialVideo.getStartTime(), initialVideo.getStopTime());
-        trimVideoSplited(endVideo, endVideo.getStartTime(), endVideo.getStopTime());
-    }
+        listener.trimVideo(initialVideo, initialVideo.getStartTime(), initialVideo.getStopTime());
+        listener.trimVideo(endVideo, endVideo.getStartTime(), endVideo.getStopTime());
 
-    public void trimVideoSplited(Video videoToEdit, final int startTimeMs, final int finishTimeMs) {
-        Context appContext = VimojoApplication.getAppContext();
-        Intent trimServiceIntent = new Intent(appContext, TrimBackgroundService.class);
-        trimServiceIntent.putExtra("videoId", videoToEdit.getIdentifier());
-        trimServiceIntent.putExtra("startTimeMs", startTimeMs);
-        trimServiceIntent.putExtra("finishTimeMs", finishTimeMs);
-        appContext.startService(trimServiceIntent);
     }
 }

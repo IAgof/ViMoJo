@@ -93,6 +93,10 @@ public class UserEventTracker {
         }
     }
 
+    public void trackClipAddedText(String position, int textLength, Project project){
+
+    }
+
     public void trackMusicSet(Project project) {
         JSONObject eventProperties = new JSONObject();
         try {
