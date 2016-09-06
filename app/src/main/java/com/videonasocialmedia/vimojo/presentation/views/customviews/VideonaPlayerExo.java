@@ -15,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
@@ -155,15 +154,15 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         // TODO(jliarte): 1/09/16 instantiate field when need to adjust volume
 //        AudioManager audioManager = (AudioManager) context.getApplicationContext()
 //                .getSystemService(Context.AUDIO_SERVICE);
-        initMusicPlayer(context);
+        initMusicPlayer();
         initClipList();
         initSeekBar();
         clipTimesRanges = new ArrayList<>();
     }
 
-    private void initMusicPlayer(Context context) {
-        if (videoHasMusic()) {
-            musicPlayer = MediaPlayer.create(context, Uri.fromFile(new File(music.getMediaPath())));
+    private void initMusicPlayer() {
+        if (musicPlayer == null && videoHasMusic()) {
+            musicPlayer = MediaPlayer.create(getContext(), music.getMusicResourceId());
             musicPlayer.setVolume(0.5f, 0.5f);
         }
     }
@@ -172,9 +171,11 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         if (player != null && isPlaying()) {
             try {
                 if (currentClipIndex < videoList.size()) {
-                    setSeekBarProgress(((int) player.getCurrentPosition()) +
+                    int progress = ((int) player.getCurrentPosition()) +
                             (int) clipTimesRanges.get(currentClipIndex).getLower() -
-                            videoList.get(currentClipIndex).getStartTime());
+                            videoList.get(currentClipIndex).getStartTime();
+                    setSeekBarProgress(progress);
+                    currentTimePositionInList = progress;
                     // detect end of trimming and play next clip or stop
                     if (isEndOfCurrentClip()) {
                         playNextClip();
@@ -333,10 +334,20 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     @Override
     public void pausePreview() {
-        if (player != null)
-            player.setPlayWhenReady(false);
+        pauseVideo();
+        pauseMusic();
         seekBarUpdaterHandler.removeCallbacksAndMessages(null);
         showPlayButton();
+    }
+
+    private void pauseVideo() {
+        if (player != null)
+            player.setPlayWhenReady(false);
+    }
+
+    private void pauseMusic() {
+        if (musicPlayer != null && musicPlayer.isPlaying())
+            musicPlayer.pause();
     }
 
     @Override
@@ -498,18 +509,31 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
                 break;
             case ExoPlayer.STATE_READY:
                 if (playWhenReady) {
+                    startMusicTrackPlayback();
 //                    player.seekTo(getClipPositionFromTimeLineTime());
                 }
-//                if (videoHasMusic()) {
-//                    muteVideo();
-//                    playMusicSyncWithVideo();
-//                } else {
-//                    releaseMusicPlayer();
-//                    videoPlayer.setVolume(0.5f, 0.5f);
-//                }
                 break;
             default:
                 break;
+        }
+    }
+
+    private void startMusicTrackPlayback() {
+        if (videoHasMusic()) {
+            muteVideo(true);
+            playMusicSyncWithVideo();
+        } else {
+//            releaseMusicPlayer();
+            muteVideo(false);
+        }
+    }
+
+    private void playMusicSyncWithVideo() {
+//        releaseMusicPlayer();
+        initMusicPlayer();
+        musicPlayer.seekTo(currentTimePositionInList);
+        if (!musicPlayer.isPlaying()) {
+            musicPlayer.start();
         }
     }
 
