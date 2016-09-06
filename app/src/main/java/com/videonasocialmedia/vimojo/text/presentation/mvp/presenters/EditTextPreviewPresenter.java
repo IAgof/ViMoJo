@@ -140,7 +140,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
         int height= (int)((SIZE_FONT*2)+30);
 
         final Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        bmp.eraseColor(Color.RED);
+        bmp.eraseColor(Color.TRANSPARENT);
 
         final Canvas canvas = new Canvas(bmp);
         int xPos=0;
@@ -163,7 +163,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
         final TextPaint textPaint = new TextPaint() {
 
             {
-                setColor(Color.BLACK);
+                setColor(Color.WHITE);
                 setTextAlign(align);
                 Context appContext = VimojoApplication.getAppContext();
                 setTypeface(Typeface.createFromAsset(appContext.getAssets(),"fonts/Roboto-Bold.ttf"));

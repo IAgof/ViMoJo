@@ -29,13 +29,17 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_marginTop="08dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="12dp"
+            android:layout_height="190dp"
+            android:id="@+id/imageVideoText"
+            />
     </RelativeLayout>
 
-    <ImageView
-        android:layout_width="320dp"
-        android:layout_height="160dp"
-        android:id="@+id/imageVideoText"
-        />
+
 
     <LinearLayout
         android:layout_width="match_parent"

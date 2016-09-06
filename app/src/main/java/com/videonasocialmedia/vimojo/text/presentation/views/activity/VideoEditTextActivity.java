@@ -75,9 +75,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     private int currentPosition = 0;
     private int videoDuration = 1;
     private String text;
-    private boolean stateButtomTop=true;
-    private boolean stateButtomCenter=false;
-    private boolean stateButtonBottom =false;
+    private boolean stateButtomTopIsActivated =true;
+    private boolean stateButtomCenterisActivated =false;
+    private boolean stateButtonBottomIsActivated =false;
    ;
 
     @Override
@@ -103,13 +103,13 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
 
-        button_editText_top.setActivated(stateButtomTop);
-        button_editText_center.setActivated(stateButtomCenter);
-        button_ediText_bottom.setActivated(stateButtonBottom);
+        button_editText_top.setActivated(stateButtomTopIsActivated);
+        button_editText_center.setActivated(stateButtomCenterisActivated);
+        button_ediText_bottom.setActivated(stateButtonBottomIsActivated);
 
         restoreState(savedInstanceState);
 
-        EditTextMaxCharPerLine.applyAutoWrap(textFile,10);
+        EditTextMaxCharPerLine.applyAutoWrap(textFile,30);
 
 
     }
@@ -141,9 +141,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         if (savedInstanceState != null) {
             currentPosition = savedInstanceState.getInt(VIDEO_POSITION, 0);
             text=savedInstanceState.getString(CURRENT_TEXT,null);
-            stateButtonBottom =savedInstanceState.getBoolean(STATE_BUTTON_BOTTOM);
-            stateButtomCenter=savedInstanceState.getBoolean(STATE_BUTTON_CENTER);
-            stateButtomTop=savedInstanceState.getBoolean(STATE_BUTTON_TOP);
+            stateButtonBottomIsActivated =savedInstanceState.getBoolean(STATE_BUTTON_BOTTOM);
+            stateButtomCenterisActivated =savedInstanceState.getBoolean(STATE_BUTTON_CENTER);
+            stateButtomTopIsActivated =savedInstanceState.getBoolean(STATE_BUTTON_TOP);
 
         }
     }
@@ -197,8 +197,8 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         outState.putInt(VIDEO_POSITION, videonaPlayer.getCurrentPosition());
         outState.putString(CURRENT_TEXT,text);
         outState.putBoolean(STATE_BUTTON_TOP, button_editText_top.isActivated());
-        outState.putBoolean(STATE_BUTTON_CENTER, button_editText_top.isActivated());
-        outState.putBoolean(STATE_BUTTON_BOTTOM, button_editText_top.isActivated());
+        outState.putBoolean(STATE_BUTTON_CENTER, button_editText_center.isActivated());
+        outState.putBoolean(STATE_BUTTON_BOTTOM, button_ediText_bottom.isActivated());
         //introducir imagen if path no es null
         super.onSaveInstanceState(outState);
     }
@@ -281,6 +281,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @Override
     public void showText(Drawable drawable) {
+
         image_view_text.setImageDrawable(drawable);
     }
 
@@ -296,11 +297,11 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
         } else {
 
-            if (button_editText_top.isActivated())
+            if (stateButtomTopIsActivated)
                 onClickAddTextTop();
-            if (button_editText_center.isActivated())
+            if (stateButtomCenterisActivated)
                 onClickAddTextCenter();
-            if (button_ediText_bottom.isActivated())
+            if (stateButtonBottomIsActivated)
                 onClickAddTextBottom();
 
 

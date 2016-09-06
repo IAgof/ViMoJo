@@ -25,13 +25,36 @@
         android:baselineAligned="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4">
+
+       <!-- <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer
             android:id="@+id/videona_player"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
-            android:layout_weight="4"/>
+            android:layout_weight="4"/>-->
+
+            <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer
+                android:id="@+id/videona_player"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                />
+
+            <ImageView
+                android:layout_width="320dp"
+                android:layout_marginTop="08dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="12dp"
+                android:paddingLeft="12dp"
+                android:layout_height="190dp"
+                android:id="@+id/imageVideoText"
+                />
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -88,6 +111,7 @@
                 android:inputType="textMultiLine"
                 android:lines="2"
                 android:maxLines="2"
+                android:textSize="15dp"
                 android:hint="Tap to type"
                 android:textColorHint="@color/colorSecondaryLight"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
@@ -97,13 +121,6 @@
 
         </RelativeLayout>
     </LinearLayout>
-
-    <ImageView
-        android:layout_marginTop="200dp"
-        android:layout_width="320dp"
-        android:layout_height="100dp"
-        android:id="@+id/imageVideoText"
-        />
 
 
     <ImageButton
