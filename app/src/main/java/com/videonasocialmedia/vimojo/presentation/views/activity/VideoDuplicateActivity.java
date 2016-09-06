@@ -34,7 +34,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePreviewPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer;
+import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -59,7 +59,7 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     @Bind(R.id.button_duplicate_decrement_video)
     ImageButton decrementVideoButton;
     @Bind(R.id.videona_player)
-    VideonaPlayer videonaPlayer;
+    VideonaPlayerExo videonaPlayer;
     int videoIndexOnTrack;
     private DuplicatePreviewPresenter presenter;
     private Video video;
@@ -84,7 +84,7 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
         presenter = new DuplicatePreviewPresenter(this, userEventTracker);
 
-        videonaPlayer.initVideoPreview(this);
+        videonaPlayer.setListener(this);
 
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
@@ -106,19 +106,20 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     @Override
     protected void onPause() {
         super.onPause();
-        videonaPlayer.pause();
+        videonaPlayer.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        videonaPlayer.onShown(this);
         presenter.loadProjectVideo(videoIndexOnTrack);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        videonaPlayer.destroy();
+        videonaPlayer.onDestroy();
     }
 
     private void restoreState(Bundle savedInstanceState) {

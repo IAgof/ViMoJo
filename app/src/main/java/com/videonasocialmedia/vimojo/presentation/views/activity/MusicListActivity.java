@@ -52,7 +52,7 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         ButterKnife.bind(this);
         setupToolbar();
         createExportReceiver();
-        videonaPlayer.initVideoPreview(this);
+        videonaPlayer.setListener(this);
         videonaPlayer.initPreview(0);
         presenter = new MusicListPresenter(this, videonaPlayer);
         initVideoListRecycler();
@@ -106,13 +106,14 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
     @Override
     protected void onPause() {
         super.onPause();
-        videonaPlayer.pause();
+        videonaPlayer.onPause();
         unregisterReceiver(exportReceiver);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        videonaPlayer.onShown(this);
         registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
     }
 

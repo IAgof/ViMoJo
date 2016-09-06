@@ -37,7 +37,7 @@
         android:orientation="horizontal"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer
+        <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
             android:id="@+id/videona_player"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
