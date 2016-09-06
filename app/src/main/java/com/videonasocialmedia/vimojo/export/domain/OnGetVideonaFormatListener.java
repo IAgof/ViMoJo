@@ -7,4 +7,5 @@ import com.videonasocialmedia.transcoder.format.VideonaFormat;
  */
 public interface OnGetVideonaFormatListener {
     public void onVideonaFormat(VideonaFormat videonaFormat);
+    public void onVideonaErrorFormat();
 }

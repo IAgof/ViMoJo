@@ -148,4 +148,9 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
     public void onVideonaFormat(VideonaFormat videonaFormat) {
         this.videoFormat = videonaFormat;
     }
+
+    @Override
+    public void onVideonaErrorFormat() {
+        // Error
+    }
 }

@@ -139,6 +139,26 @@ public class UserEventTrackerTest {
     }
 
     @Test
+    public void trackClipAddTextToClipCallsTrackWithEventAndProperties() throws JSONException {
+        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+        Project videonaProject = getAProject();
+        String position = "Center";
+        int lengthText = 27;
+
+        userEventTracker.trackClipAddedText(position, lengthText, videonaProject);
+
+        Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
+        UserEventTracker.Event trackedEvent = eventCaptor.getValue();
+
+        assertThat(trackedEvent.getName(), is(AnalyticsConstants.VIDEO_EDITED));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.EDIT_ACTION), is(AnalyticsConstants.EDIT_ACTION_TEXT));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.TEXT_POSITION), is(position));
+        assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.TEXT_LENGTH), is(lengthText));
+        assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(), videonaProject);
+
+    }
+
+    @Test
     public void trackMusicSetCallsTrackWithEventNameAndProperties() throws IllegalItemOnTrack, JSONException {
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker.getInstance(mockedMixpanelAPI));
         Project videonaProject = getAProject();

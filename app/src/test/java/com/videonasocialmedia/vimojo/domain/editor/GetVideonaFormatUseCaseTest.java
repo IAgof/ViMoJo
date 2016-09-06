@@ -76,4 +76,9 @@ public class GetVideonaFormatUseCaseTest implements OnGetVideonaFormatListener{
     public void onVideonaFormat(VideonaFormat videonaFormat) {
         this.videonaFormat = videonaFormat;
     }
+
+    @Override
+    public void onVideonaErrorFormat() {
+
+    }
 }

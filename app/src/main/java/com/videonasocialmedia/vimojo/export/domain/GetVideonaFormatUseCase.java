@@ -23,8 +23,12 @@ public class GetVideonaFormatUseCase {
         VideoResolution resolution = project.getProfile().getVideoResolution();
         VideoQuality quality = project.getProfile().getVideoQuality();
 
-        videonaFormat = new VideonaFormat(quality.getVideoBitRate(), resolution.getWidth(),
-                resolution.getHeight());
+        if(resolution!=null && quality!=null) {
+            videonaFormat = new VideonaFormat(quality.getVideoBitRate(), resolution.getWidth(),
+                    resolution.getHeight());
+        } else {
+            videonaFormat = new VideonaFormat();
+        }
 
         listener.onVideonaFormat(videonaFormat);
     }

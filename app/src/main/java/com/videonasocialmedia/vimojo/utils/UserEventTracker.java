@@ -95,6 +95,19 @@ public class UserEventTracker {
 
     public void trackClipAddedText(String position, int textLength, Project project){
 
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.EDIT_ACTION, AnalyticsConstants.EDIT_ACTION_TEXT);
+            eventProperties.put(AnalyticsConstants.TEXT_POSITION, position);
+            eventProperties.put(AnalyticsConstants.TEXT_LENGTH, textLength);
+            addProjectEventProperties(project, eventProperties);
+            Event trackingEvent = new Event(AnalyticsConstants.VIDEO_EDITED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(TAG, "trackClipDuplicated: error sending mixpanel VIDEO_EDITED duplicate event");
+            e.printStackTrace();
+        }
+
     }
 
     public void trackMusicSet(Project project) {
