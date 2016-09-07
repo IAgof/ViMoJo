@@ -51,6 +51,10 @@
     <string name="error">error</string>
     <string name="editTextActionLabel">Hecho</string>
 
+    <!--VideoEditText activity-->
+    <string name="error_videoEdit">El número máximo de líneas a dibujar son dos</string>
+    <string name="edit_text_hint_VideoEditTextt">Escribe el texto</string>
+
     <!-- Gallery activity -->
     <string name="confirmDeleteTitle">Eliminar</string>
     <string name="confirmDeleteTitle1">vídeo</string>
@@ -565,6 +569,7 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="dialog_edit_remove_accept">Si</string>
     <string name="dialog_edit_remove_cancel">No</string>
     <string name="trimError">El video no ha podido ser recortado</string>
+
 
 
 </resources>

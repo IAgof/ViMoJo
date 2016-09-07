@@ -36,6 +36,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/activity_edit_clip_duplicate_normal"
+        android:src="@drawable/activity_edit_clip_text_normal"
         />
 </LinearLayout>

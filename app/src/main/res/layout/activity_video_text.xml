@@ -36,8 +36,6 @@
             />
     </RelativeLayout>
 
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/activity_edit_clip_duplicate_normal"
+            android:src="@drawable/activity_text_top_normal"
             />
 
         <ImageButton
@@ -59,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/activity_edit_clip_trim_normal"
+            android:src="@drawable/activity_text_center_normal"
             />
 
         <ImageButton
@@ -68,7 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/activity_edit_clip_divide_normal"
+            android:src="@drawable/activity_text_lower_normal"
             />
 
     </LinearLayout>
@@ -83,7 +81,7 @@
         android:layout_marginRight="12dp"
         android:paddingTop="36dp"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:hint="Tap to type"
+        android:hint="@string/edit_text_hint_VideoEditText"
         android:textColorHint="@color/colorSecondaryLight"
         android:imeOptions="actionDone"
         android:imeActionId="@+id/convertText"

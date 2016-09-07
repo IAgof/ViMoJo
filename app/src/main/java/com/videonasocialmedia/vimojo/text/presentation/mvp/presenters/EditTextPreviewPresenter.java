@@ -21,13 +21,8 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
-import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
+import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,28 +31,18 @@ import java.util.List;
  */
 public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
-    /**
-     * LOG_TAG
-     */
     private final String LOG_TAG = getClass().getSimpleName();
 
     private Video videoToEdit;
-    private String position;
     private final int WIDTH_CANVAS= 1280;
     private final int HEIGTH_CANVAS = 720;
     private final float SIZE_FONT= 70f;
+    private final int NUM_MAX_LINES_TO_DRAW =2;
 
-    /**
-     * Get media list from project use case
-     */
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-
-
     private EditTextView editTextView;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
-    private Bitmap bitmap;
-
 
     public EditTextPreviewPresenter(EditTextView editTextView, UserEventTracker userEventTracker) {
         this.editTextView = editTextView;
@@ -85,14 +70,11 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
     public void onVideosRetrieved(List<Video> videoList) {
         editTextView.showPreview(videoList);
         Video video = videoList.get(0);
-        //editTextView.showTrimBar(video.getStartTime(), video.getStopTime(), video.getFileDuration());
-
     }
 
     @Override
     public void onNoVideosRetrieved() {
         editTextView.showError("No videos");
-
     }
 
     public void setTextToVideo(String text, int sizeX, int sizeY){
@@ -108,84 +90,121 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
     }
 
+    public void createDrawableWithText(String text, VideoEditTextActivity.TextPosition position) {
 
-    public boolean isTextValidAndNotEmply(String text1) {
-        if (isEmptyField(text1)) {
-            editTextView.showError("Introduce un texto");
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isEmptyField(String text) {
-        return text == null || text.length() == 0;
-    }
-
-
-    public void createDrawableWithText(String text, Paint.Align align) {
         TextPaint textPaint = null;
-
-        switch (align){
-            case LEFT:
-                textPaint= createPaint(Paint.Align.LEFT);
+        Context appContext = VimojoApplication.getAppContext();
+        Typeface typeFont;
+        switch (position){
+            case TOP:
+                typeFont= Typeface.createFromAsset(appContext.getAssets(),"fonts/Roboto-Bold.ttf");
+                textPaint= createPaint(Paint.Align.LEFT, typeFont);
                 break;
             case CENTER:
-                textPaint =createPaint(Paint.Align.CENTER);
+                typeFont= Typeface.createFromAsset(appContext.getAssets(),"fonts/Roboto-Bold.ttf");
+                textPaint =createPaint(Paint.Align.CENTER, typeFont);
+                break;
+
+            case BOTTOM:
+                typeFont= Typeface.createFromAsset(appContext.getAssets(),"fonts/Roboto-Light.ttf");
+                textPaint= createPaint(Paint.Align.LEFT, typeFont);
                 break;
         }
+        Bitmap bmp = createCanvas(text, WIDTH_CANVAS,HEIGTH_CANVAS, textPaint, position);
 
-        bitmap = createCanvas(text, WIDTH_CANVAS,textPaint, align);
-
-        Context appContext = VimojoApplication.getAppContext();
-        Drawable drawable = new BitmapDrawable(appContext.getResources(),bitmap);
+        Drawable drawable = new BitmapDrawable(appContext.getResources(),bmp);
         editTextView.showText(drawable);
-
     }
 
-    private Bitmap createCanvas(String text, int width, TextPaint textPaint, Paint.Align align) {
-        final Rect bounds= new Rect();
-        textPaint.getTextBounds(text,0,text.length(), bounds);
+    private Bitmap createCanvas(String text, int width,int height, TextPaint textPaint, VideoEditTextActivity.TextPosition position) {
 
-        final Bitmap bmp = Bitmap.createBitmap(WIDTH_CANVAS, HEIGTH_CANVAS, Bitmap.Config.ARGB_8888);
-        bmp.eraseColor(Color.RED);
+        final Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bmp.eraseColor(Color.TRANSPARENT);
 
         final Canvas canvas = new Canvas(bmp);
         int xPos=0;
         int yPos=0;
-        switch (align){
-            case LEFT:
+
+        switch (position){
+            case TOP:
                 xPos=10;
-                yPos = 10;
+                yPos=(int) SIZE_FONT;
                 break;
             case CENTER:
                 xPos = (canvas.getWidth() / 2);
-                yPos = (canvas.getHeight() / 2);
+                yPos = (int) ((canvas.getHeight() / 2) - ((textPaint.descent() + textPaint.ascent()) / 2));
                 break;
+            case BOTTOM:
+                xPos=10;
+                yPos=height-height/12;
         }
-        drawTextLines(text,textPaint, canvas, xPos, yPos);
+        drawTextLines(text,textPaint, canvas, xPos, yPos, position);
         return bmp;
-
     }
 
-    private TextPaint createPaint(final Paint.Align align) {
+    private TextPaint createPaint(final Paint.Align align, final Typeface typeface) {
         final TextPaint textPaint = new TextPaint() {
 
             {
                 setColor(Color.WHITE);
                 setTextAlign(align);
-                Context appContext = VimojoApplication.getAppContext();
-                setTypeface(Typeface.createFromAsset(appContext.getAssets(),"fonts/Roboto-Bold.ttf"));
+                setTypeface(typeface);
                 setTextSize(SIZE_FONT);
                 setAntiAlias(true);
             }
         };
         return textPaint;
+    }
+
+    private void drawTextLines(String text, TextPaint textPaint, Canvas canvas, int xPos, int yPos, VideoEditTextActivity.TextPosition position) {
+        int numLineTotal=0;
+
+
+        for (String line : text.split("\n")) {
+            numLineTotal++;
+        }
+
+        switch (position){
+            case TOP:
+                    drawNumMaxLine(text, textPaint, canvas, xPos, yPos);
+                break;
+
+            case CENTER:
+
+                if (numLineTotal<2){
+                    drawNumMaxLine(text, textPaint, canvas, xPos, yPos);
+
+                }else {
+                    yPos= (int) (yPos-SIZE_FONT);
+                    drawNumMaxLine(text, textPaint, canvas, xPos, yPos);
+                }
+                break;
+
+            case BOTTOM:
+
+                if (numLineTotal<2){
+                    drawNumMaxLine(text, textPaint, canvas, xPos, yPos);
+
+                }else {
+                    yPos= (int) (yPos-SIZE_FONT);
+                    drawNumMaxLine(text, textPaint, canvas, xPos, yPos);
+                }
+                break;
+
+        }
+
 
     }
-    private void drawTextLines(String text, TextPaint textPaint, Canvas canvas, int xPos, int yPos) {
+
+    private void drawNumMaxLine(String text, TextPaint textPaint, Canvas canvas, int xPos, int yPos) {
+        int numLinesToDraw=0;
+
         for (String line : text.split("\n")) {
-            canvas.drawText(line, xPos, yPos, textPaint);
-            yPos += textPaint.descent() - textPaint.ascent();
+            if(numLinesToDraw < NUM_MAX_LINES_TO_DRAW) {
+                canvas.drawText(line, xPos, yPos, textPaint);
+                yPos += textPaint.descent() - textPaint.ascent();
+                numLinesToDraw++;
+            }
         }
     }
 
