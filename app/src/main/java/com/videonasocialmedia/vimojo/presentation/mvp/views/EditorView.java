@@ -36,4 +36,5 @@ public interface EditorView {
 
     void expandFabMenu();
 
+    void resetPreview();
 }

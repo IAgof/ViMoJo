@@ -12,13 +12,12 @@ package com.videonasocialmedia.vimojo.trim.presentation.views.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.TextView;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -31,7 +30,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer;
+import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
@@ -39,6 +38,7 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.florescu.android.rangeseekbar.RangeSeekBar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -46,7 +46,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class VideoTrimActivity extends VimojoActivity implements TrimView,
-        RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayerListener, View.OnTouchListener {
+        RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayerListener {
 
     public static final float MS_CORRECTION_FACTOR = 1000f;
     public static final float MIN_TRIM_OFFSET = 0.35f;
@@ -55,7 +55,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     @Bind(R.id.trim_rangeSeekBar)
     RangeSeekBar trimmingRangeSeekBar;
     @Bind(R.id.videona_player)
-    VideonaPlayer videonaPlayer;
+    VideonaPlayerExo videonaPlayer;
 
     int videoIndexOnTrack;
     private TrimPreviewPresenter presenter;
@@ -88,9 +88,8 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         presenter = new TrimPreviewPresenter(this, userEventTracker);
         trimmingRangeSeekBar.setOnRangeSeekBarChangeListener(this);
         trimmingRangeSeekBar.setNotifyWhileDragging(true);
-        trimmingRangeSeekBar.setOnTouchListener(this);
         videonaPlayer.setSeekBarEnabled(false);
-        videonaPlayer.initVideoPreview(this);
+        videonaPlayer.setListener(this);
 
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
@@ -100,18 +99,19 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        videonaPlayer.destroy();
+        videonaPlayer.onDestroy();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        videonaPlayer.pause();
+        videonaPlayer.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        videonaPlayer.onShown(this);
         presenter.init(videoIndexOnTrack);
     }
 
@@ -249,9 +249,22 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     public void showPreview(List<Video> movieList) {
         video = movieList.get(0);
         videoDuration = video.getFileDuration();
+        ArrayList<Video> clipList = getUntrimmedClipList(video);
 
-        videonaPlayer.initPreviewLists(movieList);
-        videonaPlayer.initPreview(currentPosition);
+        videonaPlayer.initPreviewLists(clipList);
+//        videonaPlayer.initPreview(currentPosition);
+        // TODO(jliarte): 5/09/16 this will give problems with state restoring as in config changes, cause it overrides restored currentPosition
+        videonaPlayer.initPreview(video.getStartTime());
+    }
+
+    @NonNull
+    private ArrayList<Video> getUntrimmedClipList(Video video) {
+        Video untrimmedVideo = new Video(video);
+        untrimmedVideo.setStartTime(0);
+        untrimmedVideo.setStopTime(videoDuration);
+        ArrayList<Video> clipList = new ArrayList<>();
+        clipList.add(untrimmedVideo);
+        return clipList;
     }
 
     @Override
@@ -306,15 +319,5 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void newClipPlayed(int currentClipIndex) {
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        final int action = event.getAction();
-        if ((action & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-            // (jliarte): 22/08/16 end of trimming, update video times
-            updateTimeVideoPlaying();
-        }
-        return trimmingRangeSeekBar.onTouchEvent(event);
     }
 }

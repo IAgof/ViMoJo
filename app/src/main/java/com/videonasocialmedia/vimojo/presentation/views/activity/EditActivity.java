@@ -41,7 +41,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.VideoTimeLineAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.videoTimeLineTouchHelperCallback;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer;
+import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
@@ -73,7 +73,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
     @Bind(R.id.navigator)
     ToolbarNavigator navigator;
     @Bind(R.id.videona_player)
-    VideonaPlayer videonaPlayer;
+    VideonaPlayerExo videonaPlayer;
     @Bind(R.id.fab_edit_room)
     FloatingActionsMenu fabEditRoom;
     private List<Video> videoList;
@@ -119,7 +119,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
         editPresenter = new EditPresenter(this, videonaPlayer, navigator.getCallback(), userEventTracker);
 
-        videonaPlayer.initVideoPreview(this);
+        videonaPlayer.setListener(this);
 
         createProgressDialog();
         if (savedInstanceState != null) {
@@ -128,11 +128,9 @@ public class EditActivity extends VimojoActivity implements EditorView,
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        videonaPlayer.pause();
-        unregisterReceiver(receiver);
-        hideProgressDialog();
+    protected void onStart() {
+        super.onStart();
+        initVideoListRecycler();
     }
 
     @Override
@@ -145,13 +143,21 @@ public class EditActivity extends VimojoActivity implements EditorView,
                 this.currentVideoIndex = getIntent().getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
             }
         }
+        videonaPlayer.onShown(this);
         editPresenter.loadProject();
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        initVideoListRecycler();
+    protected void onPause() {
+        super.onPause();
+        videonaPlayer.onPause();
+        unregisterReceiver(receiver);
+        hideProgressDialog();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     private void initVideoListRecycler() {
@@ -188,11 +194,6 @@ public class EditActivity extends VimojoActivity implements EditorView,
         tintButton(editDuplicateButton, tintList);
         tintButton(editSplitButton, tintList);
         tintButton(editTrimButton, tintList);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
     @Override
@@ -308,6 +309,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
                     case DialogInterface.BUTTON_POSITIVE:
                         //Yes button clicked
                         timeLineAdapter.remove(selectedVideoRemovePosition);
+                        setSelectedClipIndex(Math.max(selectedVideoRemovePosition-1, 0));
                         editPresenter.removeVideoFromProject(selectedVideoRemovePosition);
                         break;
 
@@ -321,6 +323,11 @@ public class EditActivity extends VimojoActivity implements EditorView,
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
         builder.setMessage(R.string.dialog_edit_remove_message).setPositiveButton(R.string.dialog_edit_remove_accept, dialogClickListener)
                 .setNegativeButton(R.string.dialog_edit_remove_cancel, dialogClickListener).show();
+    }
+
+    private void setSelectedClipIndex(int selectedIndex) {
+        this.currentVideoIndex = selectedIndex;
+        timeLineAdapter.updateSelection(selectedIndex);
     }
 
     @Override
@@ -395,12 +402,16 @@ public class EditActivity extends VimojoActivity implements EditorView,
         editSplitButton.setEnabled(false);
         editDuplicateButton.setEnabled(false);
         videonaPlayer.releaseView();
-        videonaPlayer.setBlackBackgroundColor();
     }
 
     @Override
     public void expandFabMenu() {
         fabEditRoom.expand();
+    }
+
+    @Override
+    public void resetPreview() {
+        videonaPlayer.resetPreview();
     }
 
     @Override

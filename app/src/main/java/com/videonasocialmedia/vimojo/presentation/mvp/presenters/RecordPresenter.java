@@ -148,7 +148,7 @@ public class RecordPresenter {
         EventBus.getDefault().unregister(this);
         stopRecord();
         //recorder.onHostActivityPaused();
-        Log.d(LOG_TAG, "pause presenter");
+        Log.d(LOG_TAG, "onPause presenter");
         recordView.hideProgressDialog();
     }
 

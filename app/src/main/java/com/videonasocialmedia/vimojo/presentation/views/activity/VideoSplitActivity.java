@@ -25,7 +25,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.SplitView;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer;
+import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -44,7 +44,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView, Vid
     private static final String SPLIT_POSITION = "split_position";
     private static final String SPLIT_VIDEO_POSITION = "split_video_position";
     @Bind(R.id.videona_player)
-    VideonaPlayer videonaPlayer;
+    VideonaPlayerExo videonaPlayer;
     @Bind(R.id.text_time_split)
     TextView timeTag;
     @Bind(R.id.seekBar_split)
@@ -91,19 +91,20 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView, Vid
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        videonaPlayer.destroy();
+        videonaPlayer.onDestroy();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        videonaPlayer.pause();
+        videonaPlayer.onPause();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        videonaPlayer.onShown(this);
         presenter.loadProjectVideo(videoIndexOnTrack);
     }
 

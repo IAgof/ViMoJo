@@ -100,6 +100,7 @@ dependencies {
     // https://mvnrepository.com/artifact/com.jcraft/jzlib
     compile group: 'com.jcraft', name: 'jzlib', version: '1.1.1'
     compile 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
+    compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
 
     compile(name:'videona-sdk-v0.0.1',ext:'aar')
 

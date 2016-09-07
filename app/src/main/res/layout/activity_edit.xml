@@ -48,7 +48,7 @@
             <!--<include layout="@layout/edit_activities_navigation_buttons"/>-->
         </LinearLayout>
 
-        <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer
+        <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
             android:id="@+id/videona_player"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

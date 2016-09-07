@@ -23,11 +23,11 @@ import com.bumptech.glide.Glide;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -52,7 +52,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @Bind(R.id.scene_root)
     FrameLayout sceneRoot;
     @Bind(R.id.videona_player)
-    VideonaPlayer videonaPlayer;
+    VideonaPlayerExo videonaPlayer;
 
     private Scene acceptCancelScene;
     private Scene deleteSecene;
@@ -68,7 +68,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         setContentView(R.layout.activity_music_detail);
         ButterKnife.bind(this);
         initToolbar();
-        videonaPlayer.initVideoPreview(this);
+        videonaPlayer.setListener(this);
         videonaPlayer.initPreview(0);
 
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
@@ -120,13 +120,14 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @Override
     protected void onPause() {
         super.onPause();
-        videonaPlayer.pause();
+        videonaPlayer.onPause();
         unregisterReceiver(exportReceiver);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        videonaPlayer.onShown(this);
         registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
     }
 

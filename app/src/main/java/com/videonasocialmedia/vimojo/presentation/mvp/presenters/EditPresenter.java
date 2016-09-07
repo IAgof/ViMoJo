@@ -131,6 +131,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         editorView.hideProgressDialog();
         editorView.showMessage(R.string.add_videos_to_project);
         editorView.expandFabMenu();
+        editorView.resetPreview();
         projectModifiedCallBack.onProjectModified();
     }
 
