@@ -292,10 +292,11 @@ public class EditActivity extends VimojoActivity implements EditorView,
     public void setSelectedClip(int position) {
         currentVideoIndex = position;
         videonaPlayer.seekToClip(position);
+//        timeLineAdapter.updateSelection(position);
     }
 
     @Override
-    public void onClipLongClicked() {
+    public void onClipLongClicked(int adapterPosition) {
         videonaPlayer.pausePreview();
     }
 

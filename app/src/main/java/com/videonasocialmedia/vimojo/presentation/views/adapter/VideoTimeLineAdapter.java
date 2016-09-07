@@ -52,6 +52,7 @@ public class VideoTimeLineAdapter extends RecyclerView.Adapter<VideoTimeLineAdap
             Collections.swap(videoList, fromPosition, toPosition);
             selectedVideoPosition = toPosition;
             notifyItemMoved(fromPosition, toPosition);
+            notifyItemChanged(fromPosition);
             videoTimeLineListener.onClipMoved(fromPosition, toPosition);
         }
     }
@@ -59,6 +60,7 @@ public class VideoTimeLineAdapter extends RecyclerView.Adapter<VideoTimeLineAdap
     @Override
     public void finishMovement(int newPosition) {
         videoTimeLineListener.onClipClicked(newPosition);
+        updateSelection(newPosition);
     }
 
     @Override
@@ -188,6 +190,7 @@ public class VideoTimeLineAdapter extends RecyclerView.Adapter<VideoTimeLineAdap
         @Override
         public void onItemSelected() {
             thumb.setRotation(20);
+            videoTimeLineListener.onClipLongClicked(getAdapterPosition());
         }
 
         @Override
