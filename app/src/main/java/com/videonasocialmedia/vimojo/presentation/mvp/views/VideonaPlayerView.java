@@ -35,6 +35,8 @@ public interface VideonaPlayerView {
 
     void seekTo(int timeInMsec);
 
+    void seekClipTo(int seekTimeInMsec);
+
     void seekToClip(int position);
 
     void setMusic(Music music);

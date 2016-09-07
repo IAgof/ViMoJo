@@ -205,6 +205,11 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
     }
 
     @Override
+    public void seekClipTo(int seekTimeInMsec) {
+        // TODO(jliarte): 7/09/16 implement this method and set the other relative to whole time line
+    }
+
+    @Override
     public void seekToClip(int position) {
         currentVideoListIndex = position;
 

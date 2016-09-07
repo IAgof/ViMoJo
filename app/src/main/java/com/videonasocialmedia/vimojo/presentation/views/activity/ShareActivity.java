@@ -33,17 +33,11 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.ShareVideoPrese
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.SocialNetworkAdapter;
-import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
@@ -119,12 +113,9 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         initNetworksList();
     }
 
-
-
     @Override
     protected void onPause() {
         super.onPause();
-
         pauseVideo();
         videoPosition = videoPreview.getCurrentPosition();
     }

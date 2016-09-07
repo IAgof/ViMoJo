@@ -365,6 +365,16 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     }
 
     @Override
+    public void seekClipTo(int seekTimeInMsec) {
+        if (player != null && seekTimeInMsec < totalVideoDuration) {
+            currentTimePositionInList = seekTimeInMsec -
+                    videoList.get(currentClipIndex).getStartTime() +
+                    (int) clipTimesRanges.get(currentClipIndex).getLower();
+            player.seekTo(seekTimeInMsec);
+        }
+    }
+
+    @Override
     public void seekToClip(int position) {
         pausePreview();
         currentClipIndex = position;

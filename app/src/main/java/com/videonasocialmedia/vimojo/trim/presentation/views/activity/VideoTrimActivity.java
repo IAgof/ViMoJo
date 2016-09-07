@@ -214,7 +214,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         trimmingRangeSeekBar.setRangeValues(0f, (float) videoDuration / MS_CORRECTION_FACTOR);
         trimmingRangeSeekBar.setSelectedMinValue(seekBarMinPosition);
         trimmingRangeSeekBar.setSelectedMaxValue(seekBarMaxPosition);
-        videonaPlayer.seekTo(startTimeMs);
+        videonaPlayer.seekClipTo(startTimeMs);
     }
 
     @Override
@@ -242,29 +242,25 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void seekTo(int timeInMsec) {
-        videonaPlayer.seekTo(timeInMsec);
+        videonaPlayer.seekClipTo(timeInMsec);
     }
 
     @Override
     public void showPreview(List<Video> movieList) {
-        video = movieList.get(0);
+        // (jliarte): 7/09/16 work on a copy to not modify original one until user accepts trimming
+        video = new Video(movieList.get(0));
         videoDuration = video.getFileDuration();
-        ArrayList<Video> clipList = getUntrimmedClipList(video);
+        ArrayList<Video> clipList = new ArrayList<>();
+        clipList.add(video);
 
         videonaPlayer.initPreviewLists(clipList);
-//        videonaPlayer.initPreview(currentPosition);
-        // TODO(jliarte): 5/09/16 this will give problems with state restoring as in config changes, cause it overrides restored currentPosition
-        videonaPlayer.initPreview(video.getStartTime());
+//        initCurrentPosition();
+        videonaPlayer.initPreview(currentPosition);
     }
 
-    @NonNull
-    private ArrayList<Video> getUntrimmedClipList(Video video) {
-        Video untrimmedVideo = new Video(video);
-        untrimmedVideo.setStartTime(0);
-        untrimmedVideo.setStopTime(videoDuration);
-        ArrayList<Video> clipList = new ArrayList<>();
-        clipList.add(untrimmedVideo);
-        return clipList;
+    private void initCurrentPosition() {
+        // TODO(jliarte): 5/09/16 this will give problems with state restoring as in config changes, cause it overrides restored currentPosition
+        if (currentPosition == -1) currentPosition = video.getStartTime();
     }
 
     @Override
@@ -278,7 +274,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void onRangeSeekBarValuesChanged(RangeSeekBar bar, Object minValue, Object maxValue) {
-        Log.d(TAG, " setRangeChangeListener " + minValue + " - " + maxValue);
+//        Log.d(TAG, " setRangeChangeListener " + minValue + " - " + maxValue);
         videonaPlayer.pausePreview();
 
         try {
@@ -292,14 +288,16 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
             if (seekBarMinPosition != minValueFloat) {
                 seekBarMinPosition = minValueFloat;
+                video.setStartTime(startTimeMs);
                 currentPosition = startTimeMs;
             }
             if (seekBarMaxPosition != maxValueFloat) {
                 seekBarMaxPosition = maxValueFloat;
+                video.setStopTime(finishTimeMs);
                 currentPosition = finishTimeMs;
             }
-
-            videonaPlayer.seekTo(currentPosition);
+            videonaPlayer.seekClipTo(currentPosition);
+            videonaPlayer.updatePreviewTimeLists();
             updateTrimmingTextTags();
         } catch (Exception e) {
             Log.d(TAG, "Exception updating range seekbar selection values");
@@ -313,7 +311,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             video.setStartTime(startTimeMs);
             video.setStopTime(finishTimeMs);
             videonaPlayer.updatePreviewTimeLists();
-            videonaPlayer.seekTo(currentPosition);
+            videonaPlayer.seekClipTo(currentPosition);
         }
     }
 
