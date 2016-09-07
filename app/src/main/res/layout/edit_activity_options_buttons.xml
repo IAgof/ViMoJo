@@ -30,4 +30,12 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/activity_edit_clip_divide_normal"
         />
+    <ImageButton
+        android:id="@+id/button_edit_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/activity_edit_clip_duplicate_normal"
+        />
 </LinearLayout>
