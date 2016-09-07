@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.text.presentation.views.activity;
 
 import android.content.Intent;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -41,8 +42,7 @@ import butterknife.OnTextChanged;
  */
 public class VideoEditTextActivity extends VimojoActivity implements EditTextView,VideonaPlayerListener{
 
-    public static final float MS_CORRECTION_FACTOR = 1000f;
-    public static final float MIN_TRIM_OFFSET = 0.35f;
+
     private static final String STATE_BUTTON_TOP = "state_button_top";
     private static final String STATE_BUTTON_CENTER = "state_button_center";
     private static final String STATE_BUTTON_BOTTOM ="state_button_bottom" ;
@@ -64,21 +64,16 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     ImageView image_view_text;
 
 
-
     int videoIndexOnTrack;
     private EditTextPreviewPresenter presenter;
     private Video video;
-    private String path;
-    private int startTimeMs = 0;
-    private int finishTimeMs = 100;
-    private String TAG = "VideoTrimActivity";
+    private String TAG = "VideoTextActivity";
     private int currentPosition = 0;
-    private int videoDuration = 1;
     private String text;
     private boolean stateButtomTopIsActivated =true;
     private boolean stateButtomCenterisActivated =false;
     private boolean stateButtonBottomIsActivated =false;
-   ;
+    private Drawable drawableText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +125,8 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     protected void onResume() {
         super.onResume();
         presenter.init(videoIndexOnTrack);
+        image_view_text.setMaxHeight(videonaPlayer.getHeight());
+        image_view_text.setMaxWidth(videonaPlayer.getWidth());
     }
 
     @Override
@@ -239,7 +236,8 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @OnClick(R.id.button_editText_accept)
     public void onClickTrimAccept() {
-        //presenter.setText(bitmap, witdth, height, xPos, yPosy);
+
+        presenter.setTextToVideo(text, 1280, 720);
         navigateTo(EditActivity.class, videoIndexOnTrack);
         finish();
     }
@@ -268,7 +266,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @Override
     public void showPreview(List<Video> movieList) {
         video = movieList.get(0);
-        videoDuration = video.getFileDuration();
         videonaPlayer.initPreviewLists(movieList);
         videonaPlayer.initPreview(currentPosition);
         onTextChanged();
@@ -281,16 +278,13 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @Override
     public void showText(Drawable drawable) {
-
+        drawableText = drawable;
         image_view_text.setImageDrawable(drawable);
     }
 
 
-    @Override
-    public void newClipPlayed(int currentClipIndex) {
-    }
-
-    @OnTextChanged(R.id.text_activityText) void onTextChanged() {
+    @OnTextChanged(R.id.text_activityText)
+    void onTextChanged() {
 
         if (null != textFile.getLayout() && textFile.getLayout().getLineCount() > 2) {
             showError("El máximo número de líneas es 2");
@@ -309,4 +303,8 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
 
+    @Override
+    public void newClipPlayed(int currentClipIndex) {
+
+    }
 }
