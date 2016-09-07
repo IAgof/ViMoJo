@@ -204,10 +204,10 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             updateTrimmingTextTags();
             updateTimeVideoPlaying();
             activityStateHasChanged = false;
+        } else {
+            startTimeMs = videoStartTime;
+            finishTimeMs = videoStopTime;
         }
-
-        startTimeMs = videoStartTime;
-        finishTimeMs = videoStopTime;
 
         seekBarMinPosition = (float) startTimeMs / MS_CORRECTION_FACTOR;
         seekBarMaxPosition = (float) finishTimeMs / MS_CORRECTION_FACTOR;
