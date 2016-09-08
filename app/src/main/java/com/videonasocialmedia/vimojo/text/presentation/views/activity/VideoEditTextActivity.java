@@ -89,17 +89,13 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         ab.setDisplayHomeAsUpEnabled(true);
 
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-
         presenter = new EditTextPreviewPresenter(this, userEventTracker);
-
         videonaPlayer.setSeekBarEnabled(false);
-
-        videonaPlayer.initVideoPreview(this);
+        videonaPlayer.setListener(this);
 
         Intent intent = getIntent();
 
         setupActivityButtons();
-
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
         button_editText_top.setSelected(true);
         button_editText_center.setSelected(false);
@@ -122,13 +118,13 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        videonaPlayer.destroy();
+        videonaPlayer.onDestroy();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        videonaPlayer.pause();
+        videonaPlayer.onPause();
     }
 
     @Override

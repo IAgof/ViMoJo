@@ -21,6 +21,13 @@
         android:background="#00000000"
         android:src="@drawable/common_icon_play"
         />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitStart"
+        android:id="@+id/image_text_preview"
+        android:layout_alignBottom="@+id/video_editor_preview"
+        />
 
     <SeekBar
         android:id="@+id/seekbar_editor_preview"
