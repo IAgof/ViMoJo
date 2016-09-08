@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.presentation.views.customviews;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaCodec;
 import android.media.MediaPlayer;
@@ -15,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
@@ -43,6 +45,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
+import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,6 +82,8 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     SeekBar seekBar;
     @Bind(R.id.button_editor_play_pause)
     ImageButton playButton;
+    @Bind(R.id.image_text_preview)
+    ImageView imagenTextPreview;
 
     private final View videonaPlayerView;
     private VideonaPlayerListener videonaPlayerListener;
@@ -419,6 +424,14 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     private void setBlackBackgroundColor() {
         videoPreview.setBackgroundColor(Color.BLACK);
+    }
+
+    public void setImagenText(String text, String textPosition){
+        imagenTextPreview.setMaxHeight(videoPreview.getHeight());
+        imagenTextPreview.setMaxWidth(videoPreview.getWidth());
+        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition);
+        imagenTextPreview.setImageDrawable(textDrawable);
+
     }
 
     /** End of VideonaPlayerView methods **/

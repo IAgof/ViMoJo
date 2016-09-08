@@ -42,6 +42,7 @@
                 android:layout_height="wrap_content"
                 android:scaleType="fitStart"
                 android:id="@+id/imageVideoText"
+                android:layout_alignBottom="@+id/videona_player"
                 />
         </RelativeLayout>
 
