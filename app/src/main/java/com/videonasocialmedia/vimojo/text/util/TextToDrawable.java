@@ -51,7 +51,7 @@ public class TextToDrawable {
         return drawable;
     }
 
-    private static VideoEditTextActivity.TextPosition getTypePositionFromString(String position) {
+    public static VideoEditTextActivity.TextPosition getTypePositionFromString(String position) {
         if(position.compareTo(VideoEditTextActivity.TextPosition.BOTTOM.name()) == 0){
             return VideoEditTextActivity.TextPosition.BOTTOM;
         }

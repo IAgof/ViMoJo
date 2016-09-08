@@ -19,4 +19,5 @@ public interface SplitView {
 
     void showError(String message);
 
+    void showText(String text, String position);
 }

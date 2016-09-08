@@ -31,8 +31,11 @@ import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.text.presentation.views.customviews.EditTextMaxCharPerLine;
+import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.utils.Utils;
+
 import java.util.List;
 
 import butterknife.Bind;
@@ -72,7 +75,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     int videoIndexOnTrack;
     private EditTextPreviewPresenter presenter;
-    private Video video;
     private int currentPosition = 0;
     private String text;
 
@@ -210,17 +212,14 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @OnClick(R.id.button_editText_top)
     public void onClickAddTextTop(){
-
-        button_editText_top.setSelected(true);
-        button_editText_center.setSelected(false);
-        button_ediText_bottom.setSelected(false);
+        paintPositionEditText(TextPosition.TOP);
         setText(TextPosition.TOP);
         hideKeyboard(textFile);
     }
 
     private void setText(TextPosition textPosition) {
         text = getTextKeyboard();
-        presenter.createDrawableWithText(text, textPosition);
+        presenter.createDrawableWithText(text, textPosition.name());
     }
 
     @NonNull
@@ -231,9 +230,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @OnClick(R.id.button_editText_center)
     public void onClickAddTextCenter(){
 
-        button_editText_top.setSelected(false);
-        button_editText_center.setSelected(true);
-        button_ediText_bottom.setSelected(false);
+        paintPositionEditText(TextPosition.CENTER);
         setText(TextPosition.CENTER);
         hideKeyboard(textFile);
     }
@@ -241,11 +238,27 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @OnClick(R.id.button_editText_bottom)
     public void onClickAddTextBottom(){
 
-        button_editText_top.setSelected(false);
-        button_editText_center.setSelected(false);
-        button_ediText_bottom.setSelected(true);
+        paintPositionEditText(TextPosition.BOTTOM);
         setText(TextPosition.BOTTOM);
         hideKeyboard(textFile);
+    }
+
+    public void paintPositionEditText(TextPosition position) {
+        if(position == TextPosition.BOTTOM) {
+            button_editText_top.setSelected(false);
+            button_editText_center.setSelected(false);
+            button_ediText_bottom.setSelected(true);
+        }
+        if(position == TextPosition.CENTER){
+            button_editText_top.setSelected(false);
+            button_editText_center.setSelected(true);
+            button_ediText_bottom.setSelected(false);
+        }
+        if(position == TextPosition.TOP){
+            button_editText_top.setSelected(true);
+            button_editText_center.setSelected(false);
+            button_ediText_bottom.setSelected(false);
+        }
     }
 
     @OnClick(R.id.button_editText_accept)
@@ -277,9 +290,10 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @Override
     public void showPreview(List<Video> movieList) {
-        video = movieList.get(0);
+
         videonaPlayer.initPreviewLists(movieList);
         videonaPlayer.initPreview(currentPosition);
+        videonaPlayer.clearImagenText();
         EditTextMaxCharPerLine.applyAutoWrap(textFile,30);
         onTextChanged();
     }
@@ -292,6 +306,17 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @Override
     public void showText(Drawable drawable) {
        image_view_text.setImageDrawable(drawable);
+    }
+
+    @Override
+    public void initTextKeyboard(String text, String position) {
+        textFile.setText(text);
+        TextPosition positionText = TextToDrawable.getTypePositionFromString(position);
+        paintPositionEditText(positionText);
+        setText(positionText);
+    }
+
+    private void getValueTextPosition(String position) {
     }
 
     @Override

@@ -272,6 +272,15 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         rendererBuildingState = RENDERER_BUILDING_STATE_BUILDING;
         maybeReportPlayerState();
         rendererBuilder.buildRenderers(this, Uri.fromFile(new File(clipToPlay.getMediaPath())));
+        if(clipToPlay.isTextToVideoAdded()) {
+            setImagenText(clipToPlay.getTextToVideo(), clipToPlay.getTextPositionToVideo());
+        } else {
+            clearImagenText();
+        }
+    }
+
+    public void clearImagenText() {
+        imagenTextPreview.setImageDrawable(null);
     }
 
     private boolean playerHasVideos() {
@@ -284,7 +293,6 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         }
         return 0;
     }
-
     private void maybeReportPlayerState() {
         // TODO(jliarte): 31/08/16 is this necessary?
 //        boolean playWhenReady = player.getPlayWhenReady();

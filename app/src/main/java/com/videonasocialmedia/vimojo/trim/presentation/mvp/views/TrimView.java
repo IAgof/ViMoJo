@@ -25,6 +25,8 @@ public interface TrimView {
 
     void showPreview(List<Video> movieList);
 
+    void showText(String text, String position);
+
     void showError(String message);
 
 }

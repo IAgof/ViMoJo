@@ -24,7 +24,9 @@ public class ModifyVideoTextAndPositionUseCase {
 
             videoToEdit.setTempPathFinished(false);
             videoToEdit.setTempPath();
-            //videoToEdit.setText(text, textPosition);
+            videoToEdit.setTextToVideoAdded(true);
+            videoToEdit.setTextToVideo(text);
+            videoToEdit.setTextPositionToVideo(textPosition);
 
             if(videoToEdit.isEdited()) {
                 transcodeTrimAndOverlayImageToVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),

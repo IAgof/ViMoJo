@@ -39,6 +39,10 @@ public class Video extends Media {
 
     private boolean isTempPathFinished = false;
 
+    private String textToVideo;
+    private String textPositionToVideo;
+    private boolean isTextToVideoAdded = false;
+
     // TODO(jliarte): 14/06/16 this entity should not depend on MediaMetadataRetriever as it is part of android
     /* Needed to allow mockito inject it */
     private MediaMetadataRetriever retriever = new MediaMetadataRetriever();
@@ -82,6 +86,9 @@ public class Video extends Media {
                 video.getDuration(), null, null);
         fileDuration = getFileDuration(video.getMediaPath());
         stopTime = video.getStopTime();
+        isTextToVideoAdded = video.isTextToVideoAdded;
+        textToVideo= video.getTextToVideo();
+        textPositionToVideo = video.getTextPositionToVideo();
         if(video.isEdited()) {
             tempPath = video.getTempPath();
         }
@@ -133,5 +140,30 @@ public class Video extends Media {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+
+    public String getTextToVideo() {
+        return textToVideo;
+    }
+
+    public void setTextToVideo(String textToVideo) {
+        this.textToVideo = textToVideo;
+    }
+
+    public String getTextPositionToVideo() {
+        return textPositionToVideo;
+    }
+
+    public void setTextPositionToVideo(String textPositionToVideo) {
+        this.textPositionToVideo = textPositionToVideo;
+    }
+
+    public boolean isTextToVideoAdded() {
+        return isTextToVideoAdded;
+    }
+
+    public void setTextToVideoAdded(boolean textToVideoAdded) {
+        isTextToVideoAdded = textToVideoAdded;
     }
 }
