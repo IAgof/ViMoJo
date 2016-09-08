@@ -1,38 +1,25 @@
 package com.videonasocialmedia.vimojo.export;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.text.TextPaint;
 
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
 import com.videonasocialmedia.transcoder.overlay.Image;
-import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatUseCase;
 import com.videonasocialmedia.vimojo.export.domain.OnGetVideonaFormatListener;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-import com.videonasocialmedia.vimojo.text.domain.AddTextToVideoUseCase;
+import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -46,7 +33,7 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
     private VideonaFormat videoFormat;
 
     public ExportTempBackgroundService(){
-        getVideonaFormatUseCase = new GetVideonaFormatUseCase();
+       // getVideonaFormatUseCase = new GetVideonaFormatUseCase();
        // getVideonaFormatUseCase.getVideonaFormatFromProject(this);
         videoFormat = new VideonaFormat();
     }
@@ -69,8 +56,6 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
         final boolean isAddedText = intent.getBooleanExtra(ExportIntentConstants.IS_TEXT_ADDED, false);
         final String text = intent.getStringExtra(ExportIntentConstants.TEXT_TO_ADD);
         final String textPosition = intent.getStringExtra(ExportIntentConstants.TEXT_POSITION);
-
-
 
 
         new Thread(new Runnable() {
@@ -126,19 +111,20 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
         return START_NOT_STICKY;
     }
 
-    private void addTextToVideo(Video video, MediaTranscoderListener useCaseListener, VideonaFormat videoFormat, String text, String textPosition) {
-        AddTextToVideoUseCase addTextToVideoUseCase = new AddTextToVideoUseCase();
+    private void addTextToVideo(Video video, MediaTranscoderListener useCaseListener,
+                                VideonaFormat videoFormat, String text, String textPosition) {
 
-        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition);
+        ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase = new ModifyVideoTextAndPositionUseCase();
+        modifyVideoTextAndPositionUseCase.addTextToVideo(video, videoFormat, text, textPosition, useCaseListener);
 
-        Image imageText = new Image(textDrawable,Constants.DEFAULT_VIMOJO_WIDTH,Constants.DEFAULT_VIMOJO_HEIGHT);
-
-        addTextToVideoUseCase.addTextToVideo(video, videoFormat, imageText, useCaseListener);
     }
 
-    private void trimVideo(Video video, MediaTranscoderListener useCaseListener, VideonaFormat videoFormat, int startTimeMs, int finishTimeMs) {
+    private void trimVideo(Video video, MediaTranscoderListener useCaseListener, VideonaFormat videoFormat,
+                           int startTimeMs, int finishTimeMs) {
+
         ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
         modifyVideoDurationUseCase.trimVideo(video, videoFormat, startTimeMs, finishTimeMs, useCaseListener);
+
     }
 
     private void trimVideoAndAddText(Video video, MediaTranscoderListener useCaseListener,
