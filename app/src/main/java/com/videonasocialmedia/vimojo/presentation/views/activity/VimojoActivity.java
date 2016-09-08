@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.gms.analytics.Tracker;
 import com.karumi.dexter.Dexter;
@@ -35,8 +34,8 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.VimojoApplication;
-import com.videonasocialmedia.vimojo.trim.domain.TrimBackgroundService;
-import com.videonasocialmedia.vimojo.trim.domain.TrimBroadCastReceveiver;
+import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
+import com.videonasocialmedia.vimojo.export.ExportTempBroadCastReceveiver;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 
 import org.json.JSONException;
@@ -57,7 +56,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
     protected Tracker tracker;
     protected boolean criticalPermissionDenied = false;
     protected MultiplePermissionsListener dialogMultiplePermissionsListener;
-    private TrimBroadCastReceveiver trimBroadCastReceveiver;
+    private ExportTempBroadCastReceveiver exportTempBroadCastReceveiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +74,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
 
 //        View root = ( (ViewGroup) findViewById(android.R.id.content) ).getChildAt(0);
         View root = findViewById(android.R.id.content);
-        trimBroadCastReceveiver = new TrimBroadCastReceveiver(root);
+        exportTempBroadCastReceveiver = new ExportTempBroadCastReceveiver(root);
 
     }
 
@@ -102,7 +101,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         JSONObject activityProperties = new JSONObject();
-        unregisterReceiver(trimBroadCastReceveiver);
+        unregisterReceiver(exportTempBroadCastReceveiver);
         try {
             activityProperties.put(AnalyticsConstants.ACTIVITY, getClass().getSimpleName());
             mixpanel.track(AnalyticsConstants.TIME_IN_ACTIVITY, activityProperties);
@@ -113,8 +112,8 @@ public abstract class VimojoActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        registerReceiver(trimBroadCastReceveiver, new IntentFilter(
-                TrimBackgroundService.ACTION));
+        registerReceiver(exportTempBroadCastReceveiver, new IntentFilter(
+                ExportTempBackgroundService.ACTION));
         super.onResume();
 
     }

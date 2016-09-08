@@ -53,4 +53,7 @@ public class Constants {
 
 
     public static final String NOTIFICATION_EXPORT_SERVICES_RECEIVER = "com.videonasocialmedia.vimojo";
+
+    public static final int DEFAULT_VIMOJO_WIDTH = 1280;
+    public static final int DEFAULT_VIMOJO_HEIGHT = 720;
 }

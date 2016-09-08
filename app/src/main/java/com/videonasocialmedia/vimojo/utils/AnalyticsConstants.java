@@ -106,6 +106,9 @@ public class AnalyticsConstants {
     public static final String EDIT_ACTION_SPLIT = "Split";
     public static final String EDIT_ACTION_DUPLICATE = "Duplicate";
     public static final String EDIT_ACTION_MUSIC_SET = "Music set";
+    public static final String EDIT_ACTION_TEXT = "Text to video";
+    public static final String TEXT_POSITION = "Text position";
+    public static final String TEXT_LENGTH = "Text length";
     public static final String NUMBER_OF_DUPLICATES = "numberOfDuplicates";
     public static final String MUSIC_TITLE = "musicTitle";
 }

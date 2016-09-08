@@ -3,11 +3,14 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.media.MediaMetadataRetriever;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 
-import com.videonasocialmedia.vimojo.presentation.mvp.views.SplitView;
+import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
+import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
+import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.test.shadows.MediaMetadataRetrieverShadow;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -71,7 +74,8 @@ public class SplitPreviewPresenterTest {
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(mockedSplitView, mockedUserEventTracker);
         Project videonaProject = getAProject();
 
-        presenter.splitVideo(injectedVideo, 0, 10);
+       // presenter.splitVideo(injectedVideo, 0, 10);
+        presenter.trackSplitVideo();
 
         Mockito.verify(mockedUserEventTracker).trackClipSplitted(videonaProject);
     }

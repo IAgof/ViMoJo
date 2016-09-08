@@ -45,6 +45,8 @@ import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlaye
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
+import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
+import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -66,6 +68,8 @@ public class EditActivity extends VimojoActivity implements EditorView,
     ImageButton editDuplicateButton;
     @Bind(R.id.button_edit_trim)
     ImageButton editTrimButton;
+    @Bind(R.id.button_edit_editText)
+    ImageButton editTextButton;
     @Bind(R.id.button_edit_split)
     ImageButton editSplitButton;
     @Bind(R.id.recyclerview_editor_timeline)
@@ -194,6 +198,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
         tintButton(editDuplicateButton, tintList);
         tintButton(editSplitButton, tintList);
         tintButton(editTrimButton, tintList);
+        tintButton(editTextButton,tintList);
     }
 
     @Override
@@ -255,6 +260,13 @@ public class EditActivity extends VimojoActivity implements EditorView,
         if (!editDuplicateButton.isEnabled())
             return;
         navigateTo(VideoDuplicateActivity.class, currentVideoIndex);
+    }
+
+    @OnClick(R.id.button_edit_editText)
+    public void onClickEditEditText() {
+        if (!editTextButton.isEnabled())
+            return;
+        navigateTo(VideoEditTextActivity.class, currentVideoIndex);
     }
 
     public void navigateTo(Class cls, int currentVideoIndex) {
@@ -395,6 +407,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
         editTrimButton.setEnabled(true);
         editSplitButton.setEnabled(true);
         editDuplicateButton.setEnabled(true);
+        editTextButton.setEnabled(true);
     }
 
     @Override
@@ -402,6 +415,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
         editTrimButton.setEnabled(false);
         editSplitButton.setEnabled(false);
         editDuplicateButton.setEnabled(false);
+        editTextButton.setEnabled(false);
         videonaPlayer.releaseView();
     }
 
