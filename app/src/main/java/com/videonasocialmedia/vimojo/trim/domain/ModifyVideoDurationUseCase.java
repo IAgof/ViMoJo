@@ -4,6 +4,7 @@ package com.videonasocialmedia.vimojo.trim.domain;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.overlay.Overlay;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 
 import java.io.IOException;
@@ -14,7 +15,8 @@ import java.util.concurrent.Future;
  */
 public class ModifyVideoDurationUseCase {
 
-    public void trimVideo(Video videoToEdit, VideonaFormat format, final int startTimeMs, final int finishTimeMs, MediaTranscoderListener listener) {
+    public void trimVideo(Video videoToEdit, VideonaFormat format, final int startTimeMs,
+                          final int finishTimeMs, MediaTranscoderListener listener) {
 
         try {
             videoToEdit.setStartTime(startTimeMs);
@@ -23,6 +25,21 @@ public class ModifyVideoDurationUseCase {
             videoToEdit.setTempPath();
             MediaTranscoder.getInstance().transcodeAndTrimVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
                     format, listener,startTimeMs, finishTimeMs);
+        } catch (IOException e) {
+            // TODO(javi.cabanas): 2/8/16 mangage io expception on external library and send onTranscodeFailed if neccessary
+        }
+    }
+
+    public void trimVideoAndAddText(Video videoToEdit, VideonaFormat format, Overlay overlay, final int startTimeMs,
+                                    final int finishTimeMs, MediaTranscoderListener listener) {
+
+        try {
+            videoToEdit.setStartTime(startTimeMs);
+            videoToEdit.setStopTime(finishTimeMs);
+            videoToEdit.setTempPathFinished(false);
+            videoToEdit.setTempPath();
+            MediaTranscoder.getInstance().transcodeTrimAndOverlayImageToVideo(videoToEdit.getMediaPath(),
+                                videoToEdit.getTempPath(),format, listener, overlay,startTimeMs, finishTimeMs);
         } catch (IOException e) {
             // TODO(javi.cabanas): 2/8/16 mangage io expception on external library and send onTranscodeFailed if neccessary
         }

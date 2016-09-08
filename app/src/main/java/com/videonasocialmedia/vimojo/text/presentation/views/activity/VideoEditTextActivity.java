@@ -25,6 +25,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
+import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.presenters.EditTextPreviewPresenter;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer;
@@ -58,7 +59,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @Bind(R.id.text_activityText)
     EditText textFile;
     @Bind(R.id.videona_player)
-    VideonaPlayer videonaPlayer;
+    VideonaPlayerExo videonaPlayer;
     @Bind(R.id.button_editText_center)
     ImageButton button_editText_center;
     @Bind(R.id.button_editText_top)
@@ -92,10 +93,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
         presenter = new EditTextPreviewPresenter(this, userEventTracker);
 
-        videonaPlayer.setSeekBarEnabled(false);
-
-        videonaPlayer.initVideoPreview(this);
-
         Intent intent = getIntent();
 
         setupActivityButtons();
@@ -122,18 +119,19 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        videonaPlayer.destroy();
+        videonaPlayer.onDestroy();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        videonaPlayer.pause();
+        videonaPlayer.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        videonaPlayer.onShown(this);
         presenter.init(videoIndexOnTrack);
         image_view_text.setMaxHeight(videonaPlayer.getHeight());
         image_view_text.setMaxWidth(videonaPlayer.getWidth());

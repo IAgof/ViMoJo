@@ -104,7 +104,12 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
                 if (video != null) {
 
                     if(isAddedText){
-                        addTextToVideo(video, useCaseListener, videoFormat, text, textPosition);
+                        if(isVideoTrimmed){
+                            trimVideoAndAddText(video,useCaseListener,videoFormat,text, textPosition,
+                                    startTimeMs, finishTimeMs);
+                        } else {
+                            addTextToVideo(video, useCaseListener, videoFormat, text, textPosition);
+                        }
                     }
 
                     if(isVideoTrimmed) {
@@ -134,6 +139,18 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
     private void trimVideo(Video video, MediaTranscoderListener useCaseListener, VideonaFormat videoFormat, int startTimeMs, int finishTimeMs) {
         ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
         modifyVideoDurationUseCase.trimVideo(video, videoFormat, startTimeMs, finishTimeMs, useCaseListener);
+    }
+
+    private void trimVideoAndAddText(Video video, MediaTranscoderListener useCaseListener,
+                                     VideonaFormat videoFormat, String text, String textPosition,
+                                     int startTimeMs, int finishTimeMs){
+
+        ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
+
+        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition);
+        Image imageText = new Image(textDrawable,Constants.DEFAULT_VIMOJO_WIDTH,Constants.DEFAULT_VIMOJO_HEIGHT);
+
+        modifyVideoDurationUseCase.trimVideoAndAddText(video,videoFormat, imageText,startTimeMs,finishTimeMs, useCaseListener);
     }
 
 
