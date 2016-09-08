@@ -46,14 +46,12 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
  */
 public class VideoEditTextActivity extends VimojoActivity implements EditTextView,VideonaPlayerListener{
 
-    public static final float MS_CORRECTION_FACTOR = 1000f;
-    public static final float MIN_TRIM_OFFSET = 0.35f;
     private final String STATE_BUTTON_TOP = "state_button_top";
     private final String STATE_BUTTON_CENTER = "state_button_center";
     private final String STATE_BUTTON_BOTTOM ="state_button_bottom" ;
     private final String VIDEO_POSITION = "video_position";
     private final String CURRENT_TEXT = "current_text";
-    private final String  TEXT_TO_ADD="image_of_text";
+    private final String TEXT_TO_ADD = "image_of_text";
     boolean numLineEditTextTwo =false;
     public enum TextPosition{TOP, CENTER, BOTTOM}
 
@@ -74,10 +72,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     int videoIndexOnTrack;
     private EditTextPreviewPresenter presenter;
     private Video video;
-    private int startTimeMs = 0;
-    private int finishTimeMs = 100;
     private int currentPosition = 0;
-    private int videoDuration = 1;
     private String text;
 
     @Override
@@ -257,13 +252,14 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     @OnClick(R.id.button_editText_accept)
-    public void onClickTrimAccept() {
+    public void onClickEditTextAccept() {
+        presenter.setTextToVideo(getTextKeyboard(),getTextPositionSelected());
         navigateTo(EditActivity.class, videoIndexOnTrack);
         finish();
     }
 
     @OnClick(R.id.button_editText_cancel)
-    public void onClickTrimCancel() {
+    public void onClickEditTextCancel() {
         navigateTo(EditActivity.class, videoIndexOnTrack);
     }
 
@@ -285,7 +281,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @Override
     public void showPreview(List<Video> movieList) {
         video = movieList.get(0);
-        videoDuration = video.getFileDuration();
         videonaPlayer.initPreviewLists(movieList);
         videonaPlayer.initPreview(currentPosition);
         EditTextMaxCharPerLine.applyAutoWrap(textFile,30);
@@ -339,6 +334,21 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
             setText(TextPosition.BOTTOM);
             return;
         }
+    }
+
+    public TextPosition getTextPositionSelected() {
+
+        if (button_editText_top.isSelected()) {
+            return TextPosition.TOP;
+        }
+        if (button_editText_center.isSelected()) {
+            return TextPosition.CENTER;
+        }
+        if (button_ediText_bottom.isSelected()) {
+            return TextPosition.BOTTOM;
+        }
+        // default
+        return TextPosition.CENTER;
     }
 
     private void hideKeyboard(View v) {

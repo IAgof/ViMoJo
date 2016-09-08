@@ -34,10 +34,14 @@ public class Profile {
      */
     private VideoResolution.Resolution resolution;
 
+    private VideoResolution videoResolution;
+
     /**
      * Video bit rate
      */
     private VideoQuality.Quality quality;
+
+    private VideoQuality videoQuality;
 
     /**
      * Maximum length of the project in millseconds;
@@ -64,9 +68,11 @@ public class Profile {
      */
     private Profile(VideoResolution.Resolution resolution, VideoQuality.Quality quality, long maxDuration, ProfileType type) {
         this.resolution = resolution;
+        this.videoResolution = new VideoResolution(resolution);
         this.maxDuration = maxDuration;
         this.profileType = type;
         this.quality = quality;
+        this.videoQuality = new VideoQuality(quality);
     }
 
     /**
@@ -98,7 +104,6 @@ public class Profile {
 
     //getter resolution, width, height values.
     public VideoResolution getVideoResolution(){
-        VideoResolution videoResolution = new VideoResolution(resolution);
         return videoResolution;
     }
 
@@ -113,7 +118,6 @@ public class Profile {
 
     // getter videoBitRate;
     public VideoQuality getVideoQuality() {
-        VideoQuality videoQuality = new VideoQuality(quality);
         return videoQuality;
     }
 

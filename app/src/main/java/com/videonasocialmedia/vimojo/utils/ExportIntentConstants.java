@@ -23,7 +23,7 @@ public class ExportIntentConstants {
     public final static String TEXT_TO_ADD = "textToAdd";
     public final static String TEXT_SIZE_X = "textSizeX";
     public final static String TEXT_SIZE_Y = "textSizeY";
+    public static final String TEXT_POSITION = "textPosition";
     public final static String TEXT_POSITION_X = "textPositionX";
     public final static String TEXT_POSITION_Y = "textPositionY";
-
 }

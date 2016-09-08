@@ -20,6 +20,7 @@ public class ModifyVideoDurationUseCase {
             videoToEdit.setStartTime(startTimeMs);
             videoToEdit.setStopTime(finishTimeMs);
             videoToEdit.setTempPathFinished(false);
+            videoToEdit.setTempPath();
             MediaTranscoder.getInstance().transcodeAndTrimVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
                     format, listener,startTimeMs, finishTimeMs);
         } catch (IOException e) {
