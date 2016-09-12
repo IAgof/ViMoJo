@@ -43,6 +43,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:id="@+id/layout_options_buttons">
 
         <ImageButton
@@ -79,13 +80,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="false"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:paddingTop="36dp"
+        android:layout_margin="12dp"
+        android:padding="16dp"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:hint="@string/edit_text_hint_VideoEditText"
         android:textColorHint="@color/colorSecondaryLight"
         android:imeOptions="actionDone"
+        android:background="@drawable/rectangle_edittext"
         android:imeActionId="@+id/convertText"
         android:lines="2"
         android:maxLines="2"

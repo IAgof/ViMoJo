@@ -12,51 +12,49 @@ import java.util.Arrays;
 public class EditTextMaxCharPerLine implements InputFilter {
 
 
-        private final int mLineChars;
+    private final int maxCharsPerLine;
 
-        public EditTextMaxCharPerLine(int pLineChars) {
-            mLineChars = pLineChars;
+    public EditTextMaxCharPerLine(int maxChars) {
+            maxCharsPerLine = maxChars;
         }
 
-        @Override
-        public CharSequence filter(CharSequence src, int srcStart, int srcEnd, Spanned dest, int destStart, int destEnd) {
-            CharSequence original = dest.subSequence(0,destStart);
-            CharSequence replacement = src.subSequence(srcStart,srcEnd);
+    @Override
+    public CharSequence filter(CharSequence src, int srcStart, int srcEnd, Spanned dest, int destStart, int destEnd) {
+        CharSequence currentText = dest.subSequence(0,destStart);
+        CharSequence newTextWritten = src.subSequence(srcStart,srcEnd);
 
-            if(replacement.length() < 1){
-                return null;
-            }
-
-            int lastLineCharIndex = -1;
-
-            for (int j = destStart - 1; j >= 0; j--){
-                if(original.charAt(j) == '\n'){
-                    lastLineCharIndex = j;
-                    break;
-                }
-            }
-
-            int charsAfterLine = lastLineCharIndex < 0 ? original.length() : original.length() - lastLineCharIndex;
-
-            StringBuilder sb = new StringBuilder();
-
-            for (int k = 0; k < replacement.length(); k++){
-
-                if(charsAfterLine == mLineChars+1){
-                    charsAfterLine = 0;
-                    sb.append('\n');
-                }
-
-                sb.append(replacement.charAt(k));
-                charsAfterLine++;
-
-            }
-
-
-            return sb;
+        if(newTextWritten.length() < 1){
+            return null;
         }
 
-        public static void applyAutoWrap(EditText et, int wrapLength){
+        StringBuilder stringBuilder = new StringBuilder();
+        int lastLineCharIndex = findLastLineCharIndex(destStart, currentText);
+        int charsAfterLine = lastLineCharIndex < 0 ? currentText.length() : currentText.length() - lastLineCharIndex;
+
+        if (charsAfterLine + newTextWritten.length() < maxCharsPerLine) {
+            return null;
+        } else {
+            int remainingCharSize = maxCharsPerLine - charsAfterLine;
+            stringBuilder.append(newTextWritten.subSequence(0, Math.max(0, remainingCharSize -1))+"\n");
+            if (newTextWritten.length() >= remainingCharSize) {
+                stringBuilder.append(newTextWritten.toString().substring(remainingCharSize-1));
+            }
+            return stringBuilder;
+        }
+    }
+
+    private int findLastLineCharIndex(int destStart, CharSequence currentText) {
+        int lastLineCharIndex = -1;
+        for (int j = destStart - 1; j >= 0; j--){
+            if(currentText.charAt(j) == '\n'){
+                lastLineCharIndex = j;
+                break;
+            }
+        }
+        return lastLineCharIndex;
+    }
+
+    public static void applyAutoWrap(EditText et, int wrapLength){
             InputFilter[] filters = et.getFilters();
             InputFilter[] newFilters = Arrays.copyOf(filters, filters.length + 1);
             newFilters[filters.length] = new EditTextMaxCharPerLine(wrapLength);

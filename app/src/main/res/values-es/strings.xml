@@ -53,7 +53,8 @@
 
     <!--VideoEditText activity-->
     <string name="error_videoEdit">El número máximo de líneas a dibujar son dos</string>
-    <string name="edit_text_hint_VideoEditTextt">Escribe el texto</string>
+    <string name="edit_text_hint_VideoEditText">Escribe aquí tu texto</string>
+
 
     <!-- Gallery activity -->
     <string name="confirmDeleteTitle">Eliminar</string>

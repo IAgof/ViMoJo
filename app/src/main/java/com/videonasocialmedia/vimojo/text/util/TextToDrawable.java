@@ -106,12 +106,8 @@ public class TextToDrawable {
     }
 
     private static void drawTextLines(String text, TextPaint textPaint, Canvas canvas, int xPos, int yPos, VideoEditTextActivity.TextPosition position) {
-        int numLineTotal=0;
-
-
-        for (String line : text.split("\n")) {
-            numLineTotal++;
-        }
+        if (text == null) return;
+        int numLineTotal = text.split("\n").length;
 
         switch (position){
             case TOP:
@@ -146,14 +142,10 @@ public class TextToDrawable {
     }
 
     private static void drawNumMaxLine(String text, TextPaint textPaint, Canvas canvas, int xPos, int yPos) {
-        int numLinesToDraw=0;
-
-        for (String line : text.split("\n")) {
-            if(numLinesToDraw < NUM_MAX_LINES_TO_DRAW) {
-                canvas.drawText(line, xPos, yPos, textPaint);
-                yPos += textPaint.descent() - textPaint.ascent();
-                numLinesToDraw++;
-            }
+        String[] textLines = text.split("\n");
+        for (int lineIndex = 0; (lineIndex < textLines.length && lineIndex < NUM_MAX_LINES_TO_DRAW); ++lineIndex) {
+            canvas.drawText(textLines[lineIndex], xPos, yPos, textPaint);
+            yPos += textPaint.descent() - textPaint.ascent();
         }
     }
 

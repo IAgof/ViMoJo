@@ -91,19 +91,22 @@
 
             <EditText
                 android:id="@+id/text_activityText"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/layout_options_buttons"
                 android:layout_marginTop="36dp"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
+                android:layout_marginRight="12dp"
+                android:padding="12dp"
                 android:inputType="textMultiLine"
                 android:lines="2"
                 android:maxLines="2"
-                android:textSize="15dp"
+                android:ems="30"
+                android:textSize="13sp"
+                android:background="@drawable/rectangle_edittext"
                 android:hint="@string/edit_text_hint_VideoEditText"
                 android:textColorHint="@color/colorSecondaryLight"
+                android:imeOptions="actionDone"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                 />
 
