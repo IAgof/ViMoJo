@@ -63,4 +63,8 @@ public interface RecordView {
     void hideProgressDialog();
 
     void finishActivityForResult(String path);
+
+    void hidePrincipalViews ();
+
+    void showPrincipalViews ();
 }

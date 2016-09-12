@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -80,6 +81,21 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ImageButton flashButton;
     @Bind(R.id.rotateDeviceHint)
     ImageView rotateDeviceHint;
+    @Bind(R.id.clear_button)
+    ImageButton clearButton;
+    @Bind(R.id.hud)
+    View hud;
+    @Bind(R.id.control_chronometer_and_rec_point)
+    View layoutChonometerAndRecPoint;
+    @Bind(R.id.picometer)
+    View picometer;
+    @Bind(R.id.settings_button)
+    ImageButton settingsButtons;
+    @Bind(R.id.edit_button)
+    ImageButton editButton;
+    @Bind(R.id.controls)
+    View controlsView;
+
 
     private RecordPresenter recordPresenter;
     private boolean buttonBackPressed;
@@ -323,6 +339,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     private void showRecordingIndicator() {
         recordingIndicator.setVisibility(View.VISIBLE);
+        layoutChonometerAndRecPoint.setBackgroundColor(getResources().getColor(R.color.colorGreyTransparent));
         AnimationDrawable frameAnimation = (AnimationDrawable) recordingIndicator.getDrawable();
         frameAnimation.setCallback(recordingIndicator);
         frameAnimation.setVisible(true, true);
@@ -336,6 +353,10 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     private void hideRecordingIndicator() {
         recordingIndicator.setVisibility(View.INVISIBLE);
+        if(clearButton.isActivated()==true){
+            layoutChonometerAndRecPoint.setBackgroundColor(Color.TRANSPARENT);
+        }
+
     }
 
 
@@ -473,6 +494,45 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         }
     }
 
+    @Override
+    public void hidePrincipalViews() {
+        clearButton.setImageResource(R.drawable.activity_record_icon_shrink);
+        clearButton.setActivated(true);
+
+        recButton.setAlpha((float) 0.5);
+        hud.setVisibility(View.INVISIBLE);
+        picometer.setVisibility(View.INVISIBLE);
+        rotateCameraButton.setVisibility(View.INVISIBLE);
+        flashButton.setVisibility(View.INVISIBLE);
+        shareButton.setVisibility(View.INVISIBLE);
+        settingsButtons.setVisibility(View.INVISIBLE);
+        editButton.setVisibility(View.INVISIBLE);
+        controlsView.setBackgroundResource(0);
+
+        if(recordingIndicator.getVisibility()==View.INVISIBLE) {
+            layoutChonometerAndRecPoint.setBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+
+    @Override
+    public void showPrincipalViews() {
+        clearButton.setImageResource(R.drawable.activity_record_icon_clear);
+        clearButton.setActivated(false);
+
+        recButton.setAlpha((float) 1);
+        hud.setVisibility(View.VISIBLE);
+        //picometer.setVisibility(View.VISIBLE);
+        rotateCameraButton.setVisibility(View.VISIBLE);
+        flashButton.setVisibility(View.VISIBLE);
+        shareButton.setVisibility(View.VISIBLE);
+        settingsButtons.setVisibility(View.VISIBLE);
+        editButton.setVisibility(View.VISIBLE);
+        controlsView.setBackgroundResource(R.drawable.activity_record_icon_rec_circle);
+        layoutChonometerAndRecPoint.setBackgroundColor(getResources().getColor(R.color.colorGreyTransparent));
+
+
+    }
+
     private void trackVideoExported() {
         JSONObject videoExportedProperties = new JSONObject();
         try {
@@ -559,6 +619,16 @@ public class RecordActivity extends VimojoActivity implements RecordView {
             startService(intent);
             showProgressDialog();
             mixpanel.timeEvent(AnalyticsConstants.VIDEO_EXPORTED);
+        }
+    }
+
+    @OnClick (R.id.clear_button)
+    public void clearAndShrinkScreen(){
+
+        if(clearButton.isActivated()==true){
+            showPrincipalViews();
+        }else {
+            hidePrincipalViews();
         }
     }
 

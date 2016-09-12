@@ -15,11 +15,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/clear_button"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/activity_record_icon_clear"
+            android:background="@null"
+            android:scaleType="fitCenter"
             android:layout_marginTop="8dp"
             android:layout_marginLeft="16dp" />
 
@@ -44,82 +46,103 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/hud"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginTop="8dp"
-            android:background="@color/colorGreyTransparent"
             android:layout_marginRight="16dp">
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_battery_charged"
-                android:visibility="visible"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp" />
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_memory"
-                android:layout_marginLeft="16dp" />
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_resolution_1080"
-                android:layout_marginLeft="16dp" />
-
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_geolocation_pressed"
-                android:layout_marginLeft="16dp" />
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_microphone_pressed"
-                android:layout_marginLeft="16dp" />
-
-            <ImageView
-                android:id="@+id/imageRecPoint"
+            <LinearLayout
+                android:id="@+id/hud"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center_vertical"
-                android:alpha="0.5"
-                android:background="@color/colorGreyTransparent"
-                android:paddingLeft="4dp"
-                android:src="@anim/activity_record_drawable_rec_progress"
-                android:visibility="invisible"
-                android:layout_marginLeft="8dp" />
+                android:layout_height="match_parent"
+                android:background="@color/colorGreyTransparent">
 
-            <Chronometer
-                android:id="@+id/chronometer_record"
+                <ImageView
+                    android:id="@+id/activity_record_icon_battery"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_icon_battery_charged"
+                    android:visibility="visible"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp" />
+
+                <ImageView
+                    android:id="@+id/activity_record_icon_memory"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:visibility="visible"
+                    android:src="@drawable/activity_record_icon_memory"
+                    android:layout_marginLeft="16dp" />
+
+                <ImageView
+                    android:id="@+id/activity_record_icon_resolution"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:visibility="visible"
+                    android:src="@drawable/activity_record_icon_resolution_1080"
+                    android:layout_marginLeft="16dp" />
+
+                <ImageView
+                    android:id="@+id/activity_record_icon_geolocation"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:visibility="visible"
+                    android:src="@drawable/activity_record_icon_geolocation_pressed"
+                    android:layout_marginLeft="16dp" />
+
+                <ImageView
+                    android:id="@+id/activity_record_icon_microphone_"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:visibility="visible"
+                    android:src="@drawable/activity_record_icon_microphone_pressed"
+                    android:layout_marginLeft="16dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/control_chronometer_and_rec_point"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center_vertical"
-                android:alpha="0.5"
-                android:gravity="center_vertical"
-                android:paddingLeft="8dp"
-                android:paddingRight="16dp"
-                android:text="00:00"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:visibility="visible" />
+                android:layout_height="match_parent"
+                android:background="@color/colorGreyTransparent">
+
+                <ImageView
+                        android:id="@+id/imageRecPoint"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_gravity="center_vertical"
+                        android:alpha="0.5"
+                        android:paddingLeft="4dp"
+                        android:src="@anim/activity_record_drawable_rec_progress"
+                        android:visibility="invisible"
+                        android:layout_marginLeft="8dp" />
+
+                    <Chronometer
+                        android:id="@+id/chronometer_record"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_gravity="center_vertical"
+                        android:alpha="0.5"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="16dp"
+                        android:text="00:00"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:visibility="visible" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <!-- Zoom -->
@@ -169,7 +192,8 @@
             android:layout_height="210dp"
             android:layout_alignParentRight="true"
             android:layout_centerInParent="true"
-            android:background="@drawable/activity_record_icon_rec_circle">
+            android:background="@drawable/activity_record_icon_rec_circle"
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
