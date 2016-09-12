@@ -18,17 +18,17 @@ import java.io.IOException;
  */
 public class ModifyVideoTextAndPositionUseCase {
 
-    public void addTextToVideo (Video videoToEdit, VideonaFormat format, String text, String textPosition,
+    public void addTextToVideo(Video videoToEdit, VideonaFormat format, String text, String textPosition,
                                 MediaTranscoderListener listener) {
         try {
 
+            videoToEdit.setTextToVideo(text);
+            videoToEdit.setTextPositionToVideo(textPosition);
             videoToEdit.setTempPathFinished(false);
             videoToEdit.setTempPath();
             videoToEdit.setTextToVideoAdded(true);
-            videoToEdit.setTextToVideo(text);
-            videoToEdit.setTextPositionToVideo(textPosition);
 
-            if(videoToEdit.isEdited()) {
+            if(videoToEdit.isTrimmedVideo()) {
                 transcodeTrimAndOverlayImageToVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
                         format, listener, text, textPosition, videoToEdit.getStartTime(), videoToEdit.getStartTime());
             } else {

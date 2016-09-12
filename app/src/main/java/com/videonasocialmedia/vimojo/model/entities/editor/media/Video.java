@@ -43,6 +43,8 @@ public class Video extends Media {
     private String textPositionToVideo;
     private boolean isTextToVideoAdded = false;
 
+    private boolean isTrimmedVideo = false;
+
     // TODO(jliarte): 14/06/16 this entity should not depend on MediaMetadataRetriever as it is part of android
     /* Needed to allow mockito inject it */
     private MediaMetadataRetriever retriever = new MediaMetadataRetriever();
@@ -110,7 +112,8 @@ public class Video extends Media {
     }
 
     public void setTempPath() {
-        tempPath = Constants.PATH_APP_TEMP + File.separator + "temp_" + System.currentTimeMillis() + ".mp4";
+        tempPath = Constants.PATH_APP_TEMP + File.separator + "temp_" + identifier
+                + "_" + System.currentTimeMillis() + ".mp4";
     }
 
     public boolean outputVideoIsFinished() {
@@ -165,5 +168,13 @@ public class Video extends Media {
 
     public void setTextToVideoAdded(boolean textToVideoAdded) {
         isTextToVideoAdded = textToVideoAdded;
+    }
+
+    public boolean isTrimmedVideo() {
+        return isTrimmedVideo;
+    }
+
+    public void setTrimmedVideo(boolean trimmedVideo) {
+        isTrimmedVideo = trimmedVideo;
     }
 }

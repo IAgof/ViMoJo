@@ -428,6 +428,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         showPlayButton();
         initPreview(0);
         setSeekBarProgress(0);
+        clearImagenText();
     }
 
     private void setBlackBackgroundColor() {

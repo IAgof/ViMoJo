@@ -113,6 +113,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     public void onRemoveMediaItemFromTrackSuccess() {
         editorView.updateProject();
         projectModifiedCallBack.onProjectModified();
+
     }
 
     @Override

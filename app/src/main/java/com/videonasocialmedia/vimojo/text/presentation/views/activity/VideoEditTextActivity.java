@@ -100,8 +100,8 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
         setupActivityButtons();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
-        button_editText_top.setSelected(true);
-        button_editText_center.setSelected(false);
+        button_editText_top.setSelected(false);
+        button_editText_center.setSelected(true);
         button_ediText_bottom.setSelected(false);
 
         restoreState(savedInstanceState);
