@@ -30,6 +30,20 @@ android {
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
+
+    productFlavors {
+        HispanoPost {
+            applicationId "com.videonasocialmedia.hispanopost"
+            versionCode 1
+            versionName "0.0"
+            resValue "string", "app_name", "HispanoPost"
+        }
+
+        Vimojo{
+
+        }
+    }
+
     buildTypes {
         release {
             resValue "string", "app_name", "Vimojo"
