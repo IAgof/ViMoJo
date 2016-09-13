@@ -30,7 +30,7 @@ public class ModifyVideoTextAndPositionUseCase {
 
             if(videoToEdit.isTrimmedVideo()) {
                 transcodeTrimAndOverlayImageToVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
-                        format, listener, text, textPosition, videoToEdit.getStartTime(), videoToEdit.getStartTime());
+                        format, listener, text, textPosition, videoToEdit.getStartTime(), videoToEdit.getStopTime());
             } else {
                 transcodeTrimAndOverlayImageToVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
                         format, listener, text, textPosition);
