@@ -126,7 +126,7 @@
                         android:paddingLeft="4dp"
                         android:src="@anim/activity_record_drawable_rec_progress"
                         android:visibility="invisible"
-                        android:layout_marginLeft="8dp" />
+                        />
 
                     <Chronometer
                         android:id="@+id/chronometer_record"
@@ -476,6 +476,19 @@
             android:visibility="gone"/>
 
         <!-- Picometro -->
+         <ImageButton
+             android:id="@+id/button_record_screen_clean"
+             android:layout_width="72dp"
+             android:layout_height="72dp"
+             android:layout_alignParentBottom="true"
+             android:layout_alignParentRight="true"
+             android:layout_marginBottom="16dp"
+             android:layout_marginRight="16dp"
+             android:background="@null"
+             android:alpha="0.5"
+             android:scaleType="fitCenter"
+             android:src="@drawable/activity_record_icon_rec"
+             android:visibility="gone"/>
 
 
     </RelativeLayout>

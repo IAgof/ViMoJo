@@ -67,6 +67,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Bind(R.id.button_record)
     ImageButton recButton;
+    @Bind(R.id.button_record_screen_clean)
+    ImageButton recButtonScreenClean;
     @Bind(R.id.button_share)
     ImageButton shareButton;
     @Bind(R.id.cameraPreview)
@@ -86,15 +88,18 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     @Bind(R.id.hud)
     View hud;
     @Bind(R.id.control_chronometer_and_rec_point)
-    View layoutChonometerAndRecPoint;
+    View chronometerAndRecPointView;
     @Bind(R.id.picometer)
     View picometer;
-    @Bind(R.id.settings_button)
-    ImageButton settingsButtons;
-    @Bind(R.id.edit_button)
-    ImageButton editButton;
     @Bind(R.id.controls)
     View controlsView;
+    @Bind(R.id.zoom_bar)
+    View zommBarView;
+    @Bind(R.id.settings_bar)
+    View settingsBar;
+    @Bind(R.id.settings_bar_submenu)
+    View settingsBarSubmenu;
+
 
 
     private RecordPresenter recordPresenter;
@@ -285,11 +290,23 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         return true;
     }
 
+    @OnTouch(R.id.button_record_screen_clean)
+    boolean onTouchScreenClean(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (!recording) {
+                recordPresenter.requestRecord();
+            } else {
+                recordPresenter.stopRecord();
+            }
+        }
+        return true;
+    }
 
     @Override
     public void showRecordButton() {
         recButton.setImageResource(R.drawable.activity_record_icon_rec_normal);
         recButton.setAlpha(1f);
+        recButtonScreenClean.setImageResource(R.drawable.activity_record_icon_rec_normal);
         recording = false;
         unLockNavigator();
 
@@ -299,6 +316,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     public void showStopButton() {
         recButton.setImageResource(R.drawable.activity_record_icon_stop_normal);
         recButton.setAlpha(1f);
+        recButtonScreenClean.setImageResource(R.drawable.activity_record_icon_stop_normal);
         recording = true;
         lockNavigator();
     }
@@ -339,10 +357,10 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     private void showRecordingIndicator() {
         recordingIndicator.setVisibility(View.VISIBLE);
-        layoutChonometerAndRecPoint.setBackgroundColor(getResources().getColor(R.color.colorGreyTransparent));
         AnimationDrawable frameAnimation = (AnimationDrawable) recordingIndicator.getDrawable();
         frameAnimation.setCallback(recordingIndicator);
         frameAnimation.setVisible(true, true);
+
     }
 
     @Override
@@ -353,9 +371,6 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     private void hideRecordingIndicator() {
         recordingIndicator.setVisibility(View.INVISIBLE);
-        if(clearButton.isActivated()==true){
-            layoutChonometerAndRecPoint.setBackgroundColor(Color.TRANSPARENT);
-        }
 
     }
 
@@ -499,19 +514,14 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         clearButton.setImageResource(R.drawable.activity_record_icon_shrink);
         clearButton.setActivated(true);
 
-        recButton.setAlpha((float) 0.5);
+        recButtonScreenClean.setVisibility(View.VISIBLE);
         hud.setVisibility(View.INVISIBLE);
+        controlsView.setVisibility(View.INVISIBLE);
         picometer.setVisibility(View.INVISIBLE);
-        rotateCameraButton.setVisibility(View.INVISIBLE);
-        flashButton.setVisibility(View.INVISIBLE);
-        shareButton.setVisibility(View.INVISIBLE);
-        settingsButtons.setVisibility(View.INVISIBLE);
-        editButton.setVisibility(View.INVISIBLE);
-        controlsView.setBackgroundResource(0);
-
-        if(recordingIndicator.getVisibility()==View.INVISIBLE) {
-            layoutChonometerAndRecPoint.setBackgroundColor(Color.TRANSPARENT);
-        }
+        zommBarView.setVisibility(View.INVISIBLE);
+        settingsBarSubmenu.setVisibility(View.INVISIBLE);
+        settingsBar.setVisibility(View.INVISIBLE);
+        chronometerAndRecPointView.setBackgroundColor(Color.TRANSPARENT);
     }
 
     @Override
@@ -519,18 +529,10 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         clearButton.setImageResource(R.drawable.activity_record_icon_clear);
         clearButton.setActivated(false);
 
-        recButton.setAlpha((float) 1);
         hud.setVisibility(View.VISIBLE);
-        //picometer.setVisibility(View.VISIBLE);
-        rotateCameraButton.setVisibility(View.VISIBLE);
-        flashButton.setVisibility(View.VISIBLE);
-        shareButton.setVisibility(View.VISIBLE);
-        settingsButtons.setVisibility(View.VISIBLE);
-        editButton.setVisibility(View.VISIBLE);
-        controlsView.setBackgroundResource(R.drawable.activity_record_icon_rec_circle);
-        layoutChonometerAndRecPoint.setBackgroundColor(getResources().getColor(R.color.colorGreyTransparent));
-
-
+        controlsView.setVisibility(View.VISIBLE);
+        recButtonScreenClean.setVisibility(View.GONE);
+        chronometerAndRecPointView.setBackgroundColor(getResources().getColor(R.color.colorGreyTransparent));
     }
 
     private void trackVideoExported() {
