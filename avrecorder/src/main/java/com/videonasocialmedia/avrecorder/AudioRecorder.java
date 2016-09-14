@@ -13,7 +13,7 @@ import java.io.IOException;
  * <p/>
  * Example usage:
  * <ul>
- * <li>AVRecorder recorder = new AVRecorder(mSessionConfig);</li>
+ * <li>AudioVideoRecorder recorder = new AudioVideoRecorder(mSessionConfig);</li>
  * <li>recorder.startRecording();</li>
  * <li>recorder.stopRecording();</li>
  * <li>(Optional) recorder.reset(mNewSessionConfig);</li>
@@ -29,15 +29,17 @@ public class AudioRecorder {
     protected MicrophoneEncoder mMicEncoder;
     private boolean mIsRecording;
     private boolean released;
+    private final int NUM_TRACKS = 1;
 
 
-    public AudioRecorder(SessionAudioConfig config) throws IOException{
+    public AudioRecorder(SessionConfig config) throws IOException{
         init(config);
     }
 
-    private void init(SessionAudioConfig config) throws IOException {
-
+    private void init(SessionConfig config) throws IOException {
         mMicEncoder = new MicrophoneEncoder(config);
+        // Muxer only have one track, record only audio
+        config.getMuxer().setmExpectedNumTracks(NUM_TRACKS);
         mIsRecording = false;
         released = false;
 
@@ -66,7 +68,7 @@ public class AudioRecorder {
      *
      * @param config
      */
-    public void reset(SessionAudioConfig config) throws IOException {
+    public void reset(SessionConfig config) throws IOException {
         mMicEncoder.reset(config);
         mIsRecording = false;
     }

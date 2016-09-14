@@ -11,12 +11,10 @@ import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
  */
 public class SessionConfig {
 
-    private final VideoEncoderConfig mVideoConfig;
-    private final AudioEncoderConfig mAudioConfig;
+    private VideoEncoderConfig mVideoConfig;
+    private AudioEncoderConfig mAudioConfig;
     private File mOutputDirectory;
     private Muxer mMuxer;
-    private boolean mIsAdaptiveBitrate;
-    private boolean mAttachLocation;
 
     /**
      * Creates a new session configuration to record
@@ -28,6 +26,13 @@ public class SessionConfig {
         mAudioConfig = new AudioEncoderConfig(1, 48000, 192 * 1000);
         File outputFile = createOutputFile(destinationFolderPath);
         mMuxer = AndroidMuxer.create(outputFile.getAbsolutePath(), Muxer.FORMAT.MPEG4);
+    }
+
+    public SessionConfig(String destinationFolderPath, int numTracks) {
+        mVideoConfig = new VideoEncoderConfig(1280, 720, 5 * 1000 * 1000);
+        mAudioConfig = new AudioEncoderConfig(1, 48000, 192 * 1000);
+        File outputFile = createOutputFile(destinationFolderPath);
+        mMuxer = AndroidMuxer.create(outputFile.getAbsolutePath(), Muxer.FORMAT.MPEG4, numTracks);
     }
 
     /**
@@ -47,6 +52,7 @@ public class SessionConfig {
         File outputFile = createOutputFile(destinationFolderPath);
         mMuxer = AndroidMuxer.create(outputFile.getAbsolutePath(), Muxer.FORMAT.MPEG4);
     }
+
 
     public SessionConfig(Muxer muxer, VideoEncoderConfig videoConfig, AudioEncoderConfig audioConfig) {
         mVideoConfig = checkNotNull(videoConfig);
@@ -110,23 +116,6 @@ public class SessionConfig {
 
     public int getAudioSamplerate() {
         return mAudioConfig.getSampleRate();
-    }
-
-    public boolean isAdaptiveBitrate() {
-        return mIsAdaptiveBitrate;
-    }
-
-    public void setUseAdaptiveBitrate(boolean useAdaptiveBit) {
-        mIsAdaptiveBitrate = useAdaptiveBit;
-    }
-
-
-    public boolean shouldAttachLocation() {
-        return mAttachLocation;
-    }
-
-    public void setAttachLocation(boolean mAttachLocation) {
-        this.mAttachLocation = mAttachLocation;
     }
 
 }

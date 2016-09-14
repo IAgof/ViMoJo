@@ -37,21 +37,14 @@ public class MicrophoneEncoder implements Runnable {
     private boolean mRecordingRequested;
 
     public MicrophoneEncoder(SessionConfig config) throws IOException {
-        init(config.getNumAudioChannels(),config.getAudioBitrate(), config.getAudioSamplerate(),
-                config.getMuxer());
+        init(config);
     }
 
-    public MicrophoneEncoder(SessionAudioConfig config) throws IOException {
-        init(config.getNumAudioChannels(),config.getAudioBitrate(), config.getAudioSamplerate(),
+    private void init(SessionConfig config) throws IOException {
+        mEncoderCore = new AudioEncoderCore(config.getNumAudioChannels(),
+                config.getAudioBitrate(),
+                config.getAudioSamplerate(),
                 config.getMuxer());
-    }
-
-    private void init(int numAudioChannels, int audioBitRate, int audioSampleRate,
-                      Muxer muxer) throws IOException {
-        mEncoderCore = new AudioEncoderCore(numAudioChannels,
-                audioBitRate,
-                audioSampleRate,
-                muxer);
         mMediaCodec = null;
         mThreadReady = false;
         mThreadRunning = false;
@@ -81,15 +74,7 @@ public class MicrophoneEncoder implements Runnable {
     public void reset(SessionConfig config) throws IOException {
         if (VERBOSE) Log.i(TAG, "reset");
         if (mThreadRunning) Log.e(TAG, "reset called before stop completed");
-        init(config.getNumAudioChannels(),config.getAudioBitrate(), config.getAudioSamplerate(),
-                config.getMuxer());
-    }
-
-    public void reset(SessionAudioConfig config) throws IOException {
-        if (VERBOSE) Log.i(TAG, "reset");
-        if (mThreadRunning) Log.e(TAG, "reset called before stop completed");
-        init(config.getNumAudioChannels(),config.getAudioBitrate(), config.getAudioSamplerate(),
-                config.getMuxer());
+        init(config);
     }
 
     public void release() {
