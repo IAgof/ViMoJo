@@ -13,7 +13,7 @@ import java.io.IOException;
  * <p/>
  * Example usage:
  * <ul>
- * <li>AVRecorder recorder = new AVRecorder(mSessionConfig);</li>
+ * <li>AudioVideoRecorder recorder = new AudioVideoRecorder(mSessionConfig);</li>
  * <li>recorder.setPreviewDisplay(mPreviewDisplay);</li>
  * <li>recorder.startRecording();</li>
  * <li>recorder.stopRecording();</li>
@@ -25,10 +25,10 @@ import java.io.IOException;
  *
  * @hide
  */
-public class AVRecorder {
+public class VideoMuteRecorder {
 
+    protected final int NUM_TRACKS = 1;
     protected CameraEncoder mCamEncoder;
-    protected MicrophoneEncoder mMicEncoder;
     private SessionConfig mConfig;
     private boolean mIsRecording;
     private boolean released;
@@ -36,19 +36,20 @@ public class AVRecorder {
     // To flash support
     private boolean cameraChanged;
 
-    public AVRecorder(SessionConfig config, Drawable watermark) throws IOException {
+    public VideoMuteRecorder(SessionConfig config, Drawable watermark) throws IOException {
         init(config);
         setWatermark(watermark);
     }
 
-    public AVRecorder (SessionConfig config) throws IOException{
+    public VideoMuteRecorder(SessionConfig config) throws IOException{
         init(config);
     }
 
     private void init(SessionConfig config) throws IOException {
         mCamEncoder = new CameraEncoder(config);
-        mMicEncoder = new MicrophoneEncoder(config);
         mConfig = config;
+        // Muxer only have one track, video mute
+        mConfig.getMuxer().setmExpectedNumTracks(NUM_TRACKS);
         mIsRecording = false;
         released = false;
         cameraChanged = false;
@@ -145,7 +146,6 @@ public class AVRecorder {
 
     public void startRecording() {
         mIsRecording = true;
-        mMicEncoder.startRecording();
         mCamEncoder.startRecording();
     }
 
@@ -155,7 +155,6 @@ public class AVRecorder {
 
     public void stopRecording() {
         Log.d("AVRecoder", "Stop: starting stop process");
-        mMicEncoder.stopRecording();
         mCamEncoder.stopRecording();
         mIsRecording = false;
     }
@@ -168,8 +167,7 @@ public class AVRecorder {
      */
     public void reset(SessionConfig config) throws IOException {
         mCamEncoder.reset(config);
-        mMicEncoder.reset(config);
-        mConfig = config;
+        mConfig =  config;
         mIsRecording = false;
     }
 
@@ -178,7 +176,6 @@ public class AVRecorder {
      * this instance may no longer be used.
      */
     public void release() {
-        mMicEncoder.release();
         mCamEncoder.release();
         released = true;
 

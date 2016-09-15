@@ -42,6 +42,26 @@ public class AndroidMuxer extends Muxer {
         return new AndroidMuxer(outputFile, format);
     }
 
+    private AndroidMuxer(String outputFile, FORMAT format, int numTracks) {
+        super(outputFile, format, numTracks);
+        try {
+            switch (format) {
+                case MPEG4:
+                    mMuxer = new MediaMuxer(outputFile, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unrecognized format!");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("MediaMuxer creation failed", e);
+        }
+        mStarted = false;
+    }
+
+    public static AndroidMuxer create(String outputFile, FORMAT format, int numTracks) {
+        return new AndroidMuxer(outputFile, format, numTracks);
+    }
+
     @Override
     public int addTrack(MediaFormat trackFormat) {
         super.addTrack(trackFormat);

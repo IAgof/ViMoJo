@@ -19,8 +19,9 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.videonasocialmedia.avrecorder.AVRecorder;
+import com.videonasocialmedia.avrecorder.AudioVideoRecorder;
 import com.videonasocialmedia.avrecorder.SessionConfig;
+import com.videonasocialmedia.avrecorder.VideoMuteRecorder;
 import com.videonasocialmedia.avrecorder.event.CameraEncoderResetEvent;
 import com.videonasocialmedia.avrecorder.event.CameraOpenedEvent;
 import com.videonasocialmedia.avrecorder.event.MuxerFinishedEvent;
@@ -63,7 +64,7 @@ public class RecordPresenter {
     private RecordView recordView;
     private SessionConfig config;
     private AddVideoToProjectUseCase addVideoToProjectUseCase;
-    private AVRecorder recorder;
+    private AudioVideoRecorder recorder;
     private int recordedVideosNumber;
     private MixpanelAPI mixpanel;
     private Effect selectedShaderEffect;
@@ -112,7 +113,7 @@ public class RecordPresenter {
     private void initRecorder(GLCameraView cameraPreview) {
         config = new SessionConfig(Constants.PATH_APP_TEMP);
         try {
-            recorder = new AVRecorder(config);
+            recorder = new AudioVideoRecorder(config);
             recorder.setPreviewDisplay(cameraPreview);
             firstTimeRecording = true;
         } catch (IOException ioe) {
