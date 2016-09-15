@@ -20,11 +20,12 @@ import android.widget.ImageButton;
 
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer;
+import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundListPresenter;
@@ -48,7 +49,7 @@ public class SoundListActivity  extends VimojoActivity implements SoundListView,
     @Bind(R.id.sound_list)
     RecyclerView soundList;
     @Bind(R.id.videona_player)
-    VideonaPlayer videonaPlayer;
+    VideonaPlayerExo videonaPlayer;
     @Bind(R.id.button_microphone)
     ImageButton buttonMicrophone;
 
@@ -67,8 +68,7 @@ public class SoundListActivity  extends VimojoActivity implements SoundListView,
         setupToolbar();
         createExportReceiver();
         videonaPlayer.setListener(this);
-        videonaPlayer.initPreview(0);
-        presenter = new SoundListPresenter(this, videonaPlayer);
+        presenter = new SoundListPresenter(this);
         initVideoListRecycler();
         presenter.onCreate();
     }
@@ -168,6 +168,18 @@ public class SoundListActivity  extends VimojoActivity implements SoundListView,
     @Override
     public void showVideoList(List<Music> musicList) {
         soundAdapter.setMusicList(musicList);
+    }
+
+    @Override
+    public void bindVideoList(List<Video> movieList) {
+
+        videonaPlayer.bindVideoList(movieList);
+        videonaPlayer.seekToClip(0);
+    }
+
+    @Override
+    public void resetPreview() {
+        videonaPlayer.resetPreview();
     }
 
     @Override

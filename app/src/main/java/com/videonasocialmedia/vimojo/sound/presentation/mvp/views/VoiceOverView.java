@@ -10,14 +10,6 @@ import java.util.List;
 public interface VoiceOverView {
 
     void initVoiceOverView(int startTime, int maxSeekBar);
-
-    void playPreview();
-
-    void pausePreview();
-
-    void showPreview(List<Video> movieList);
-
-    void showError(String message);
-
-    void showText(String text, String position);
+    void bindVideoList(List<Video> movieList);
+    void resetPreview();
 }

@@ -18,10 +18,8 @@ public class SoundListPresenter implements OnVideosRetrieved {
     private List<Music> availableMusic;
     private SoundListView soundListView;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    private VideonaPlayerView playerView;
 
-    public SoundListPresenter(SoundListView soundListView, VideonaPlayerView playerView) {
-        this.playerView = playerView;
+    public SoundListPresenter(SoundListView soundListView) {
         GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase();
         availableMusic = getMusicListUseCase.getAppMusic();
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
@@ -42,11 +40,12 @@ public class SoundListPresenter implements OnVideosRetrieved {
 
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
-        playerView.bindVideoList(videoList);
+        soundListView.bindVideoList(videoList);
     }
 
     @Override
     public void onNoVideosRetrieved() {
         //TODO Show error
+        soundListView.resetPreview();
     }
 }

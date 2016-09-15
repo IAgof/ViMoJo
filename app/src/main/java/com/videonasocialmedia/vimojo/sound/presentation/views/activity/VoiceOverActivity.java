@@ -64,7 +64,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
 
     int videoIndexOnTrack;
     private VoiceOverPresenter presenter;
-    private Video video;
     private int currentVoiceOverPosition = 0;
     private int currentProjectPosition = 0;
     private int startTime = 0;
@@ -83,8 +82,9 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
         ab.setDisplayHomeAsUpEnabled(true);
 
 
-        presenter = new VoiceOverPresenter(this, videonaPlayer);
+        presenter = new VoiceOverPresenter(this);
         videonaPlayer.setSeekBarEnabled(false);
+        videonaPlayer.setListener(this);
         presenter.onCreate();
 
         seekBarVoiceOver.setProgress(0);
@@ -204,8 +204,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
             currentVoiceOverPosition = progress;
             //splitSeekBar.setProgress(progress);
             refreshTimeTag(currentVoiceOverPosition);
-            videonaPlayer.seekClipTo(video.getStartTime() + progress);
-            videonaPlayer.setSeekBarProgress(progress);
+            videonaPlayer.seekTo(progress);
         }
     }
 
@@ -234,30 +233,15 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
 
 
     @Override
-    public void playPreview() {
-        videonaPlayer.playPreview();
+    public void bindVideoList(List<Video> movieList) {
+
+        videonaPlayer.bindVideoList(movieList);
+        videonaPlayer.seekToClip(0);
     }
 
     @Override
-    public void pausePreview() {
-        videonaPlayer.pausePreview();
-    }
-
-    @Override
-    public void showPreview(List<Video> movieList) {
-        video = movieList.get(0);
-        videonaPlayer.initPreviewLists(movieList);
-        videonaPlayer.initPreview(currentProjectPosition);
-    }
-
-    @Override
-    public void showError(String message) {
-
-    }
-
-    @Override
-    public void showText(String text, String position) {
-        videonaPlayer.setImagenText(text, position);
+    public void resetPreview() {
+        videonaPlayer.resetPreview();
     }
 
     @Override

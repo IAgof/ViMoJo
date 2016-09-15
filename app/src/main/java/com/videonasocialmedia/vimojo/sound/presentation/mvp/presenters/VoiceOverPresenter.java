@@ -41,10 +41,8 @@ public class VoiceOverPresenter implements OnVideosRetrieved{
     private VoiceOverView voiceOverView;
     public UserEventTracker userEventTracker;
     public Project currentProject;
-    private VideonaPlayerView playerView;
 
-    public VoiceOverPresenter(VoiceOverView voiceOverView, VideonaPlayerView playerView) {
-        this.playerView = playerView;
+    public VoiceOverPresenter(VoiceOverView voiceOverView) {
         this.voiceOverView = voiceOverView;
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         this.currentProject = loadCurrentProject();
@@ -69,18 +67,13 @@ public class VoiceOverPresenter implements OnVideosRetrieved{
 
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
-        voiceOverView.showPreview(videoList);
-
-        for (Video video:videoList) {
-            if(video.isTextToVideoAdded())
-                voiceOverView.showText(video.getTextToVideo(), video.getTextPositionToVideo());
-            voiceOverView.initVoiceOverView(video.getStartTime(), video.getStopTime() - video.getStartTime());
-        }
+        voiceOverView.bindVideoList(videoList);
+        voiceOverView.initVoiceOverView(0, currentProject.getDuration());
     }
 
     @Override
     public void onNoVideosRetrieved() {
-        voiceOverView.showError("No videos");
+        voiceOverView.resetPreview();
     }
 
 

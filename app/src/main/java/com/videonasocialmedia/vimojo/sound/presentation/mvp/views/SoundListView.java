@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.views;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 
 import java.util.List;
 
@@ -9,4 +10,6 @@ import java.util.List;
  */
 public interface SoundListView {
     void showVideoList(List<Music> musicList);
+    void bindVideoList(List<Video> movieList);
+    void resetPreview();
 }

@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".presentation.views.activity.EditActivity">
+    tools:context=".sound.presentation.views.activity.SoundListActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -37,7 +37,7 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer
+        <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
             android:id="@+id/videona_player"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
