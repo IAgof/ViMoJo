@@ -41,6 +41,12 @@ android {
             versionName "0.0"
             resValue "string", "app_name", "HispanoPost"
         }
+        shoulderpod {
+            applicationId "com.videonasocialmedia.vimojo.shoulderpod"
+            versionCode 1
+            versionName "0.0"
+            resValue "string", "app_name", "Shoulderpod"
+        }
 
     }
 
