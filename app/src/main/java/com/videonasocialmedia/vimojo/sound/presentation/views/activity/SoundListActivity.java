@@ -1,4 +1,8 @@
-package com.videonasocialmedia.vimojo.presentation.views.activity;
+package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
+
+/**
+ * Created by ruth on 13/09/16.
+ */
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,50 +16,59 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
+import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.MusicListPresenter;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicListView;
-
-import com.videonasocialmedia.vimojo.presentation.views.adapter.MusicListAdapter;
-import com.videonasocialmedia.vimojo.presentation.views.listener.MusicRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundListPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundListView;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundRecyclerViewClickListener;
+import com.videonasocialmedia.vimojo.sound.presentation.views.adapter.SoundListAdapter;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  *
  */
-public class MusicListActivity extends VimojoActivity implements MusicListView,
-        MusicRecyclerViewClickListener, VideonaPlayerListener {
-    @Bind(R.id.music_list)
-    RecyclerView musicList;
+public class SoundListActivity  extends VimojoActivity implements SoundListView,
+        SoundRecyclerViewClickListener, VideonaPlayerListener {
+
+    @Bind(R.id.sound_list)
+    RecyclerView soundList;
     @Bind(R.id.videona_player)
     VideonaPlayer videonaPlayer;
+    @Bind(R.id.button_microphone)
+    ImageButton buttonMicrophone;
 
-    private MusicListAdapter musicAdapter;
-    private MusicListPresenter presenter;
+    private SoundListAdapter soundAdapter;
+    private SoundListPresenter presenter;
 
     private BroadcastReceiver exportReceiver;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_music_list);
+        setContentView(R.layout.activity_sound_list);
         ButterKnife.bind(this);
         setupToolbar();
         createExportReceiver();
         videonaPlayer.setListener(this);
         videonaPlayer.initPreview(0);
-        presenter = new MusicListPresenter(this, videonaPlayer);
+        presenter = new SoundListPresenter(this, videonaPlayer);
         initVideoListRecycler();
         presenter.onCreate();
     }
@@ -80,7 +93,7 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
                     if (resultCode == RESULT_OK) {
                         goToShare(videoToSharePath);
                     } else {
-                        Snackbar.make(musicList, R.string.shareError, Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(soundList, R.string.shareError, Snackbar.LENGTH_LONG).show();
                     }
                 }
             }
@@ -89,13 +102,13 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
     }
 
     private void initVideoListRecycler() {
-        musicAdapter = new MusicListAdapter();
-        musicAdapter.setMusicRecyclerViewClickListener(this);
+        soundAdapter = new SoundListAdapter();
+        soundAdapter.setSoundRecyclerViewClickListener(this);
         presenter.getAvailableMusic();
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        musicList.setLayoutManager(layoutManager);
-        musicList.setAdapter(musicAdapter);
+        soundList.setLayoutManager(layoutManager);
+        soundList.setAdapter(soundAdapter);
     }
 
     public void goToShare(String videoToSharePath) {
@@ -154,7 +167,7 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
 
     @Override
     public void showVideoList(List<Music> musicList) {
-        musicAdapter.setMusicList(musicList);
+        soundAdapter.setMusicList(musicList);
     }
 
     @Override
@@ -169,4 +182,12 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
 
     }
 
-}
+    @OnClick(R.id.button_microphone)
+        public void goToVoiceOver() {
+        navigateTo(VoiceOverActivity.class);
+        }
+    }
+
+
+
+

@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.activity;
+package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,6 +23,11 @@ import com.bumptech.glide.Glide;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.MusicDetailPresenter;
@@ -60,6 +65,8 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     private MusicDetailPresenter musicDetailPresenter;
 
     private BroadcastReceiver exportReceiver;
+    private int musicId;
+
 
 
     @Override
@@ -75,7 +82,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         musicDetailPresenter = new MusicDetailPresenter(this, videonaPlayer, userEventTracker);
         try {
             Bundle extras = this.getIntent().getExtras();
-            int musicId = extras.getInt(KEY_MUSIC_ID);
+            musicId = extras.getInt(KEY_MUSIC_ID);
             musicDetailPresenter.onCreate(musicId);
         } catch (Exception e) {
             //TODO show snackbar with error message
@@ -209,6 +216,15 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         ButterKnife.bind(this);
     }
 
+    @Override
+    public void goToEdit(String musicTitle) {
+        Intent i = new Intent(this, EditActivity.class);
+        //i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.putExtra(Constants.MUSIC_SELECTED_TITLE, musicTitle);
+        startActivity(i);
+
+    }
+
     @Nullable
     @OnClick(R.id.select_music)
     public void selectMusic() {
@@ -230,7 +246,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     }
 
     private void goToMusicList() {
-        Intent intent = new Intent(this, MusicListActivity.class);
+        Intent intent = new Intent(this, SoundListActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();

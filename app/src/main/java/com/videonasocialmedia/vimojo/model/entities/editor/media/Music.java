@@ -18,16 +18,19 @@ public class Music extends Audio {
     //TODO refactorizar nombre
     private String musicTitle;
     private String author;
+    private String durationMusic;
     private int iconResourceId;
 
-    public Music(int iconResourceId, String musicTitle, int musicResourceId, int colorResourceId, String author) {
+    public Music(int iconResourceId, String musicTitle, int musicResourceId, int colorResourceId, String author, String durationMusic) {
         super(musicResourceId, "", "", musicTitle, "", 0, 0, null, null, null, null, null);
         this.musicResourceId = musicResourceId;
         this.colorResourceId = colorResourceId;
         this.musicTitle = musicTitle;
         this.iconResourceId = iconResourceId;
         this.author = author;
+        this.durationMusic=durationMusic;
     }
+
 
     public int getMusicResourceId() {
         return musicResourceId;
@@ -64,6 +67,9 @@ public class Music extends Audio {
     public String getAuthor() {
         return author;
     }
+
+    public String getDurationMusic(){
+        return durationMusic;}
 
     @Override
     public void setIdentifier() {
