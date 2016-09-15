@@ -32,15 +32,14 @@ android {
     }
     buildTypes {
         release {
-            resValue "string", "app_name", "Vimojo"
-            buildConfigField "String", "FTP_HOST", "\"82.223.76.148\""
             buildConfigField "String", "MIXPANEL_TOKEN", "\"6f46145c03bf5cf5104bb3536059d994\""
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [ appName: "Vimojo", fabricApiKey: " 1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
         }
         debug {
             buildConfigField "String", "MIXPANEL_TOKEN", "\"c6617213110cd2513dfc0ad97dbaee66\""
-           // buildConfigField "String", "FTP_HOST", "\"82.223.76.148\""
+            manifestPlaceholders = [ appName: "Vimojo", fabricApiKey: "eba78720f87307ca48dfa4200dd90914ff6653f2"]
         }
     }
     packagingOptions {
@@ -118,7 +117,7 @@ dependencies {
     }
     androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.1@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.2@aar') {
         transitive = true;
     }
 
