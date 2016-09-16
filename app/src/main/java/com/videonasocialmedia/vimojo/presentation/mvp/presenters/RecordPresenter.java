@@ -21,7 +21,6 @@ import android.util.Log;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.avrecorder.AudioVideoRecorder;
 import com.videonasocialmedia.avrecorder.SessionConfig;
-import com.videonasocialmedia.avrecorder.VideoMuteRecorder;
 import com.videonasocialmedia.avrecorder.event.CameraEncoderResetEvent;
 import com.videonasocialmedia.avrecorder.event.CameraOpenedEvent;
 import com.videonasocialmedia.avrecorder.event.MuxerFinishedEvent;

@@ -12,4 +12,8 @@ public interface VoiceOverView {
     void initVoiceOverView(int startTime, int maxSeekBar);
     void bindVideoList(List<Video> movieList);
     void resetPreview();
+    void playVideo();
+    void pauseVideo();
+    void updateSeekBar(int progress);
+    void navigateToEditActivity();
 }

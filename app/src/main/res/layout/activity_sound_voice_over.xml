@@ -30,21 +30,25 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <SeekBar
-            android:id="@+id/seekBar_voice_over"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
-            android:layout_marginBottom="0dp"
-            android:background="@null"
-            android:maxHeight="30dp"
-            android:paddingBottom="0dp"
-            android:progressDrawable="@color/colorAccent"
-            android:splitTrack="false"
-            android:thumb="@drawable/activity_edit_clip_divide_indicator_seekbar"
-            />
+            android:layout_height="48dp"
+            android:id="@+id/linear_layout_progressbar_voice_over"
+            android:layout_marginTop="12dp">
+
+            <ProgressBar
+                android:id="@+id/progressBar_voice_over"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="24dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginBottom="0dp"
+                android:indeterminate="false"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,9 +56,9 @@
             android:id="@+id/times_seekBar"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
+            android:paddingTop="12dp"
             android:orientation="horizontal"
-            android:layout_alignBottom="@+id/seekBar_voice_over"
-            android:layout_alignStart="@+id/seekBar_voice_over">
+            android:layout_alignBottom="@+id/linear_layout_progressbar_voice_over">
 
             <TextView
                 android:id="@+id/text_time_start_voice_over"

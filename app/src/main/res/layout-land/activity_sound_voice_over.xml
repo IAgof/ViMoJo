@@ -39,19 +39,23 @@
             android:layout_marginTop="8dp"
             android:layout_weight="3">
 
-            <SeekBar
-                android:id="@+id/seekBar_voice_over"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:background="@null"
-                android:maxHeight="30dp"
-                android:progressDrawable="@color/colorAccent"
-                android:splitTrack="false"
-                android:thumb="@drawable/activity_edit_clip_divide_indicator_seekbar"
-                />
+                android:id="@+id/linear_layout_progressbar_voice_over"
+                android:layout_marginTop="12dp">
 
+                <ProgressBar
+                    android:id="@+id/progressBar_voice_over"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:indeterminate="false"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="24dp" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -60,8 +64,8 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="24dp"
                 android:orientation="horizontal"
-                android:layout_alignBottom="@+id/seekBar_voice_over"
-                android:layout_alignStart="@+id/seekBar_voice_over">
+                android:layout_alignBottom="@+id/linear_layout_progressbar_voice_over"
+                android:layout_alignStart="@+id/linear_layout_progressbar_voice_over">
 
                 <TextView
                     android:id="@+id/text_time_start_voice_over"

@@ -488,7 +488,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         playButton.setVisibility(View.VISIBLE);
     }
 
-    private void hidePlayButton() {
+    public void hidePlayButton() {
         playButton.setVisibility(View.INVISIBLE);
     }
 
@@ -569,7 +569,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         }
     }
 
-    private void muteVideo(boolean shouldMute) {
+    public void muteVideo(boolean shouldMute) {
         // TODO(jliarte): 1/09/16 test mute
         if (player != null)
             if (shouldMute) {

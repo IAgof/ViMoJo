@@ -70,6 +70,7 @@ public class AudioRecorder {
      */
     public void reset(SessionConfig config) throws IOException {
         mMicEncoder.reset(config);
+        config.getMuxer().setmExpectedNumTracks(NUM_TRACKS);
         mIsRecording = false;
     }
 
