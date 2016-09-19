@@ -5,7 +5,9 @@ import android.content.Context;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +23,16 @@ public class MusicSource {
     public List<Music> retrieveLocalMusic() {
         if (localMusic.size() == 0)
             populateLocalMusic();
+            addPathToMusic(localMusic);
         return localMusic;
+    }
+
+    private void addPathToMusic(List<Music> localMusic) {
+
+        for(Music music: localMusic){
+            File musicFile = Utils.getMusicFileByName(music.getMusicTitle(),music.getMusicResourceId());
+            music.setMediaPath(musicFile.getAbsolutePath());
+        }
     }
 
     private void populateLocalMusic() {

@@ -3,6 +3,8 @@ package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 import com.videonasocialmedia.avrecorder.AudioRecorder;
 import com.videonasocialmedia.avrecorder.SessionConfig;
 import com.videonasocialmedia.avrecorder.event.MuxerFinishedEvent;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.editor.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExporterImpl;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -41,8 +43,10 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
      * Get media list from project use case
      */
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-
     private MergeVoiceOverAudiosUseCase mergeVoiceOverAudiosUseCase;
+    private AddMusicToProjectUseCase addMusicToProjectUseCase;
+
+
 
     private VoiceOverView voiceOverView;
     public UserEventTracker userEventTracker;
@@ -54,6 +58,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
         this.voiceOverView = voiceOverView;
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         mergeVoiceOverAudiosUseCase = new MergeVoiceOverAudiosUseCase(this);
+        addMusicToProjectUseCase = new AddMusicToProjectUseCase();
         this.currentProject = loadCurrentProject();
 
         initAudioRecorder();
@@ -175,7 +180,11 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
 
     @Override
     public void onMergeVoiceOverAudioSuccess(String outputPath) {
-      //  Music voiceOver = new Music(null,"Audio recorded")
+
+       Music voiceOver = new Music(R.drawable.gatito_rules_pressed, "Voice over recorded", R.raw.audio_hiphop,
+               outputPath, R.color.folk, "Author", "04:35");
+
+        addMusicToProjectUseCase.addMusicToTrack(voiceOver, 0);
 
         voiceOverView.navigateToEditActivity();
 
