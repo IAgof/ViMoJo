@@ -31,7 +31,6 @@ public class Music extends Audio {
         this.durationMusic=durationMusic;
     }
 
-
     public int getMusicResourceId() {
         return musicResourceId;
     }

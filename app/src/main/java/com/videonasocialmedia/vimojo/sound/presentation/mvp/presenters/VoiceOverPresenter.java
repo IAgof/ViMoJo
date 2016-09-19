@@ -7,6 +7,7 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.export.domain.ExporterImpl;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.sound.domain.MergeVoiceOverAudiosUseCase;
@@ -60,7 +61,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
 
     public void initAudioRecorder() {
         try {
-            sessionConfig = new SessionConfig(Constants.PATH_APP_TEMP_AUDIO);
+            sessionConfig = new SessionConfig(Constants.PATH_APP_TEMP_AUDIO, 1);
             audioRecorder = new AudioRecorder(sessionConfig);
             firstTimeRecording = true;
         } catch (IOException e) {
@@ -140,7 +141,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     private void resetAudioRecorder() throws IOException {
-        sessionConfig = new SessionConfig(Constants.PATH_APP_TEMP_AUDIO);
+        sessionConfig = new SessionConfig(Constants.PATH_APP_TEMP_AUDIO, 1);
         audioRecorder.reset(sessionConfig);
 
         startRecording();
@@ -161,7 +162,6 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     public void onEventMainThread(MuxerFinishedEvent e) {
-
         renameAudioRecorded(numAudiosRecorded++);
 
     }
@@ -175,7 +175,10 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
 
     @Override
     public void onMergeVoiceOverAudioSuccess(String outputPath) {
+      //  Music voiceOver = new Music(null,"Audio recorded")
+
         voiceOverView.navigateToEditActivity();
+
     }
 
     @Override

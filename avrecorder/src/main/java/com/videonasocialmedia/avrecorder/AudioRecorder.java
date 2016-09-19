@@ -38,8 +38,6 @@ public class AudioRecorder {
 
     private void init(SessionConfig config) throws IOException {
         mMicEncoder = new MicrophoneEncoder(config);
-        // Muxer only have one track, record only audio
-        config.getMuxer().setmExpectedNumTracks(NUM_TRACKS);
         mIsRecording = false;
         released = false;
 
@@ -70,7 +68,6 @@ public class AudioRecorder {
      */
     public void reset(SessionConfig config) throws IOException {
         mMicEncoder.reset(config);
-        config.getMuxer().setmExpectedNumTracks(NUM_TRACKS);
         mIsRecording = false;
     }
 

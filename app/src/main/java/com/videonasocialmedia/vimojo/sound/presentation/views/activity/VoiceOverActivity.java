@@ -221,6 +221,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
         builder.setMessage("¿Desea descartar la locución y volver a grabarla de nuevo?").setPositiveButton("Aceptar", dialogClickListener)
                 .setNegativeButton("Declinar", dialogClickListener).show();
+
     }
 
     private void resetVoiceRecorder() {

@@ -22,7 +22,7 @@ import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
  */
 public abstract class Muxer {
     private static final String TAG = "Muxer";
-    protected int mExpectedNumTracks = 2; // default two tracks, audio and video
+    protected int mExpectedNumTracks; // default two tracks, audio and video
     protected FORMAT mFormat;
     protected String mOutputPath;
     protected int mNumTracks;
@@ -37,6 +37,7 @@ public abstract class Muxer {
         mFormat = format;
         mNumTracks = 0;
         mNumTracksFinished = 0;
+        mExpectedNumTracks = 2;
         mFirstPts = 0;
         mLastPts = new long[mExpectedNumTracks];
         for (int i = 0; i < mLastPts.length; i++) {
@@ -134,7 +135,7 @@ public abstract class Muxer {
     public abstract void forceStop();
 
     protected boolean allTracksFinished() {
-        Log.w("MUXER", "Tracks finished"+mNumTracksFinished);
+        Log.w("MUXER", "Tracks finished "+mNumTracksFinished);
         return (mNumTracks == mNumTracksFinished);
     }
 

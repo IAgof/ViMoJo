@@ -48,8 +48,6 @@ public class VideoMuteRecorder {
     private void init(SessionConfig config) throws IOException {
         mCamEncoder = new CameraEncoder(config);
         mConfig = config;
-        // Muxer only have one track, video mute
-        mConfig.getMuxer().setmExpectedNumTracks(NUM_TRACKS);
         mIsRecording = false;
         released = false;
         cameraChanged = false;
