@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/VideonaTheme.PopupOverlay"/>
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:baselineAligned="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
+            android:id="@+id/videona_player"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="4"/>
+
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_weight="3">
+
+            <TextView
+                android:id="@+id/textView_seekBar_volume_sound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="75dp"
+                android:layout_marginBottom="16dp"
+                android:text="00 %"
+                android:textSize="12sp"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:visibility="visible"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" />
+
+            <SeekBar
+                android:id="@+id/seekBar_volume_sound"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:indeterminate="false"
+                android:layout_gravity="center_horizontal"
+                android:progressTint="@color/colorSecondaryLight"
+                android:progressBackgroundTintMode="src_over"
+                android:layout_below="@+id/textView_seekBar_volume_sound"
+                android:layout_centerHorizontal="true"
+                android:thumb="@drawable/common_video_seekbar_advance_pressed"/>
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/activity_edit_sound_voice_normal"
+                android:layout_marginLeft="8dp"
+                android:layout_marginBottom="8dp"
+                android:scaleType="fitXY"
+                android:layout_above="@+id/seekBar_volume_sound"
+                android:layout_alignStart="@+id/seekBar_volume_sound" />
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/activity_edit_sound_normal"
+                android:layout_marginRight="16dp"
+                android:scaleType="fitXY"
+                android:layout_above="@+id/seekBar_volume_sound"
+                android:layout_alignEnd="@+id/seekBar_volume_sound"
+                android:layout_marginBottom="8dp"
+                />
+
+
+
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/button_volume_sound_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:layout_gravity="bottom|left"
+        android:layout_margin="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/activity_edit_common_icon_cancel"
+        />
+
+    <ImageButton
+        android:id="@+id/button_volume_sound_accept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/activity_edit_common_icon_accept"
+        />
+
+</android.support.design.widget.CoordinatorLayout>
