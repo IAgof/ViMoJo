@@ -68,7 +68,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     int videoIndexOnTrack;
     private VoiceOverPresenter presenter;
     private int currentVoiceOverPosition = 0;
-    private int currentProjectPosition = 0;
     private int startTime = 0;
 
     private CountDownTimer timer;
@@ -89,14 +88,12 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
+        restoreState(savedInstanceState);
+
         presenter = new VoiceOverPresenter(this);
         videonaPlayer.setSeekBarEnabled(false);
         videonaPlayer.setListener(this);
         presenter.onCreate();
-
-        timeTag.setText(TimeUtils.toFormattedTime(0));
-
-        restoreState(savedInstanceState);
 
         buttonRecordVoiceOver.setOnTouchListener(this);
     }
@@ -104,7 +101,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             currentVoiceOverPosition = savedInstanceState.getInt(VOICE_OVER_POSITION, 0);
-            currentProjectPosition = savedInstanceState.getInt(VOICE_OVER_PROJECT_POSITION, 0);
         }
     }
 
@@ -186,8 +182,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(VOICE_OVER_PROJECT_POSITION, videonaPlayer.getCurrentPosition()  );
-        outState.putInt(VOICE_OVER_POSITION, currentVoiceOverPosition);
+        outState.putInt(VOICE_OVER_POSITION, videonaPlayer.getCurrentPosition());
         super.onSaveInstanceState(outState);
     }
 
@@ -249,7 +244,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
         progressBarVoiceOver.setMax(maxSeekBar);
         progressBarVoiceOver.setScaleY(5f);
         maxDuration = maxSeekBar;
-        millisecondsLeft = maxSeekBar;
+        millisecondsLeft = maxSeekBar - currentVoiceOverPosition;
         this.startTime = startTime;
         timeStart.setText(TimeUtils.toFormattedTime(startTime));
         timeFinal.setText(TimeUtils.toFormattedTime(maxSeekBar));
@@ -262,6 +257,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
 
         videonaPlayer.bindVideoList(movieList);
         videonaPlayer.seekToClip(0);
+        videonaPlayer.seekTo(currentVoiceOverPosition);
         videonaPlayer.muteVideo(true);
         videonaPlayer.hidePlayButton();
         // Disable ontouch view playerExo. Now you can't play/pause video.
@@ -330,6 +326,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
                 millisecondsLeft=(int)milliTillFinish;
                 int timeProgress = maxDuration - (int) milliTillFinish;
                 progressBarVoiceOver.setProgress(timeProgress);
+                currentVoiceOverPosition = timeProgress;
                 refreshTimeTag(timeProgress);
             }
 
