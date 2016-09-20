@@ -186,12 +186,10 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        //Yes button clicked
-                        resetVolumeSoundHadBeenSet();
+                        navigateTo(VoiceOverActivity.class);
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
-                        //No button clicked
                         break;
                 }
             }
@@ -200,13 +198,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         // TODO:(ruth.delToro) 19/09/16 Define these strings, es and eng
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
         builder.setMessage("¿Desea descartar la locución y volver a grabarla de nuevo?").setPositiveButton("Aceptar", dialogClickListener)
-                .setNegativeButton("Declinar", dialogClickListener).show();
-    }
-
-    private void resetVolumeSoundHadBeenSet() {
-        seekBarVolume.setProgress(50);
-        textSeekBarVolume.setText("50 %");
-        videonaPlayer.seekTo(0);
+                .setNegativeButton("Cancelar", dialogClickListener).show();
     }
 
     @Override
