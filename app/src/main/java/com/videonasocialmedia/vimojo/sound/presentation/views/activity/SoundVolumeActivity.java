@@ -1,9 +1,8 @@
 package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -14,10 +13,12 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.google.android.exoplayer.DummyTrackRenderer;
 import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
+import com.google.android.exoplayer.TrackRenderer;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -28,14 +29,16 @@ import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlaye
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
-import com.videonasocialmedia.vimojo.sources.MusicSource;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo.TYPE_AUDIO;
 
 /**
  * Created by ruth on 19/09/16.
@@ -58,11 +61,13 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Bind (R.id.button_volume_sound_cancel)
     ImageButton buttonVolumeSoundCancel;
     int videoIndexOnTrack;
-    MediaPlayer musicPlayer;
     private int currentSoundVolumePosition = 0;
     private int currentProjectPosition = 0;
+    private TrackRenderer audioRenderer;
+    Music voiceOver;
     ExoPlayer exoPlayer;
-    List<Music> musicList;
+
+
 
 
     @Override
@@ -78,12 +83,18 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
+        String voiceOverPath = Constants.PATH_APP_EDITED + File.separator + "AUD_Prueba.mp4";
+        voiceOver = new Music(R.drawable.gatito_rules_pressed, "Voice over recorded", R.raw.audio_hiphop,
+                voiceOverPath, R.color.folk, "Author", "04:35");
+
         presenter = new SoundVolumePresenter(this);
         videonaPlayer.setListener(this);
         seekBarVolume.setOnSeekBarChangeListener(this);
         presenter.onCreate();
         seekBarVolume.setProgress(50);
         textSeekBarVolume.setText("50 %");
+
+
 
         restoreState(savedInstanceState);
     }
@@ -214,15 +225,8 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         textSeekBarVolume.setText(progress+" % ");
-
-        /*GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase();
-        musicList = getMusicListUseCase.getAppMusic();
-        Music music=musicList.get(0);
-        videonaPlayer.setMusic(music);
-        float initialVolume = 0.5f;
-        float incrementVolume= (float)((progress*0.01)-0.5);
-        float finalVolume=initialVolume+incrementVolume;
-        videonaPlayer.changeVolume(finalVolume);*/
+        float finalVolume=(float)((progress*0.01));
+        videonaPlayer.changeVolume(finalVolume);
     }
 
     @Override
@@ -239,6 +243,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     public void bindVideoList(List<Video> movieList) {
         videonaPlayer.bindVideoList(movieList);
         videonaPlayer.seekToClip(0);
+        videonaPlayer.setMusic(voiceOver);
     }
 
 
