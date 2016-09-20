@@ -196,6 +196,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     @OnClick(R.id.button_voice_over_accept)
     public void onClickVoiceOverAccept() {
         presenter.addVoiceOver();
+        navigateTo(SoundVolumeActivity.class);
     }
 
     @OnClick(R.id.button_voice_over_cancel)

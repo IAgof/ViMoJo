@@ -117,6 +117,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
             }
         }
     };
+    private float volumeMusic=0.5f;
 
     public VideonaPlayerExo(Context context) {
         super(context);
@@ -168,7 +169,14 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     private void initMusicPlayer() {
         if (musicPlayer == null && videoHasMusic()) {
             musicPlayer = MediaPlayer.create(getContext(), music.getMusicResourceId());
-            musicPlayer.setVolume(0.5f, 0.5f);
+            musicPlayer.setVolume(volumeMusic, volumeMusic);
+        }
+    }
+
+   public void changeVolume(float volume){
+        if(musicPlayer!=null){
+            musicPlayer.setVolume(volume,volume);
+            volumeMusic=volume;
         }
     }
 
@@ -701,7 +709,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     /** End of MediaCodecAudioTrackRenderer.EventListener **/
 
-    private class RendererBuilder {
+    public class RendererBuilder {
         private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
         private static final int BUFFER_SEGMENT_COUNT = 256;
 
