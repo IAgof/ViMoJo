@@ -171,16 +171,18 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
             musicPlayer = MediaPlayer.create(getContext(), Uri.parse(music.getMediaPath()));
             musicPlayer.setVolume(volumeMusic, volumeMusic);
         }
+
     }
 
    public void changeVolume(float volume){
+
        player.sendMessage(rendererBuilder.getAudioRenderer(), MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,1f-volume);
 
-       if(musicPlayer!=null){
-            musicPlayer.setVolume(volume,volume);
-            volumeMusic=volume;
-        }
-    }
+      if( musicPlayer!=null){
+          musicPlayer.setVolume(volume,volume);
+      }
+       volumeMusic=volume;
+   }
 
     private void updateSeekBarProgress() {
         if (player != null && isPlaying()) {
@@ -717,12 +719,11 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
         private final Context context;
         private final String userAgent;
+        private MediaCodecAudioTrackRenderer audioRenderer;
 
         public MediaCodecAudioTrackRenderer getAudioRenderer() {
             return audioRenderer;
         }
-
-        private MediaCodecAudioTrackRenderer audioRenderer;
 
 
         public RendererBuilder(Context context, String userAgent) {

@@ -196,7 +196,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     @OnClick(R.id.button_voice_over_accept)
     public void onClickVoiceOverAccept() {
         presenter.addVoiceOver();
-        navigateTo(SoundVolumeActivity.class);
     }
 
     @OnClick(R.id.button_voice_over_cancel)
@@ -290,11 +289,13 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     }
 
     @Override
-    public void navigateToEditActivity() {
-        Intent intent = new Intent(this, EditActivity.class);
+    public void navigateToSoundVolumeActivity() {
+        Intent intent = new Intent(this, SoundVolumeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
+
+
 
     @Override
     public void newClipPlayed(int currentClipIndex) {

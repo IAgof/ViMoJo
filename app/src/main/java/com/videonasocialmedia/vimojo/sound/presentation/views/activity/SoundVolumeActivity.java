@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,13 +11,7 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import com.google.android.exoplayer.DummyTrackRenderer;
-import com.google.android.exoplayer.ExoPlayer;
-import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
-import com.google.android.exoplayer.TrackRenderer;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -30,15 +23,12 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerLi
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.utils.Constants;
-
 import java.io.File;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import static com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo.TYPE_AUDIO;
 
 /**
  * Created by ruth on 19/09/16.
@@ -61,11 +51,9 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Bind (R.id.button_volume_sound_cancel)
     ImageButton buttonVolumeSoundCancel;
     int videoIndexOnTrack;
-    private int currentSoundVolumePosition = 0;
+    private int currentSoundVolumePosition =50;
     private int currentProjectPosition = 0;
-    private TrackRenderer audioRenderer;
     Music voiceOver;
-    ExoPlayer exoPlayer;
 
 
 
@@ -83,20 +71,13 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        String voiceOverPath = Constants.PATH_APP_EDITED + File.separator + "AUD_Prueba.mp4";
-        voiceOver = new Music(R.drawable.gatito_rules_pressed, "Voice over recorded", R.raw.audio_hiphop,
-                voiceOverPath, R.color.folk, "Author", "04:35");
-
+        restoreState(savedInstanceState);
         presenter = new SoundVolumePresenter(this);
         videonaPlayer.setListener(this);
         seekBarVolume.setOnSeekBarChangeListener(this);
         presenter.onCreate();
-        seekBarVolume.setProgress(50);
-        textSeekBarVolume.setText("50 %");
-
-
-
-        restoreState(savedInstanceState);
+        seekBarVolume.setProgress(currentSoundVolumePosition);
+        textSeekBarVolume.setText(currentSoundVolumePosition+" % ");
     }
 
     private void restoreState(Bundle savedInstanceState) {
@@ -160,7 +141,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
                 //navigateTo(TutorialActivity.class);
                 return true;
             default:
-
         }
 
         return super.onOptionsItemSelected(item);
@@ -182,7 +162,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(SOUND_VOLUME_PROJECT_POSITION, videonaPlayer.getCurrentPosition()  );
+        outState.putInt(SOUND_VOLUME_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
         outState.putInt(SOUND_VOLUME_POSITION_VOLUME, seekBarVolume.getProgress());
         super.onSaveInstanceState(outState);
     }
@@ -218,7 +198,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
         // TODO:(ruth.delToro) 19/09/16 Define these strings, es and eng
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-        builder.setMessage("¿Desea descartar la locución y volver a grabarla de nuevo?").setPositiveButton("Aceptar", dialogClickListener)
+        builder.setMessage("¿Desea descartar los cambios y volver a grabarla de nuevo?").setPositiveButton("Aceptar", dialogClickListener)
                 .setNegativeButton("Cancelar", dialogClickListener).show();
     }
 
@@ -242,14 +222,23 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     public void bindVideoList(List<Video> movieList) {
         videonaPlayer.bindVideoList(movieList);
-        videonaPlayer.seekToClip(0);
-        videonaPlayer.setMusic(voiceOver);
+        videonaPlayer.seekTo(currentProjectPosition);
     }
 
 
     @Override
     public void resetPreview() {
         videonaPlayer.resetPreview();
+    }
+
+    @Override
+    public void setMusic(Music music) {
+        String voiceOverPath = Constants.PATH_APP_EDITED + File.separator + "AUD_Prueba.mp4";
+        voiceOver = new Music(R.drawable.gatito_rules_pressed, "Voice over recorded", R.raw.audio_hiphop,
+                voiceOverPath, R.color.folk, "Author", "04:35");
+        videonaPlayer.setMusic(voiceOver);
+       // videonaPlayer.setMusic(music);
+        videonaPlayer.changeVolume(currentSoundVolumePosition*0.01f);
     }
 
     @Override

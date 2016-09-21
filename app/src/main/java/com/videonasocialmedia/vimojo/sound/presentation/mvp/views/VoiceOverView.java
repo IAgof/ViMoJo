@@ -15,5 +15,5 @@ public interface VoiceOverView {
     void playVideo();
     void pauseVideo();
     void updateSeekBar(int progress);
-    void navigateToEditActivity();
+    void navigateToSoundVolumeActivity();
 }
