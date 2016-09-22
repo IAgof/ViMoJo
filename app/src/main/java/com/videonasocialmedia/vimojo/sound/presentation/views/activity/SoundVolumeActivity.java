@@ -1,10 +1,14 @@
 package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -17,15 +21,19 @@ import android.widget.TextView;
 import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
+import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.sources.MusicSource;
@@ -64,6 +72,25 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     ExoPlayer exoPlayer;
     List<Music> musicList;
 
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            if (bundle != null) {
+                String videoToSharePath = bundle.getString(ExportProjectService.FILEPATH);
+                int resultCode = bundle.getInt(ExportProjectService.RESULT);
+                if (resultCode == RESULT_OK) {
+                    goToMixAudio(videoToSharePath);
+                } else {
+
+                    //showError(R.string.addMediaItemToTrackError);
+                }
+            }
+        }
+    };
+    private Music[] testMusic;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +113,16 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         textSeekBarVolume.setText("50 %");
 
         restoreState(savedInstanceState);
+
+        testMusic = new Music[1];
+
+        GetMusicFromProjectUseCase getMusicFromProject = new GetMusicFromProjectUseCase();
+        getMusicFromProject.getMusicFromProject(new GetMusicFromProjectCallback() {
+            @Override
+            public void onMusicRetrieved(Music music) {
+                testMusic[0] = music;
+            }
+        });
     }
 
     private void restoreState(Bundle savedInstanceState) {
@@ -104,6 +141,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterReceiver(receiver);
         videonaPlayer.onPause();
 
     }
@@ -111,6 +149,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     protected void onResume() {
         super.onResume();
+        registerReceiver(receiver, new IntentFilter(ExportProjectService.NOTIFICATION));
         videonaPlayer.onShown(this);
     }
 
@@ -183,9 +222,16 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         finish();
     }
 
+    private void goToMixAudio(String videoToSharePath) {
+
+        presenter.setVolume(videoToSharePath, testMusic[0].getMediaPath(),seekBarVolume.getProgress()/100);
+    }
+
     @OnClick(R.id.button_volume_sound_accept)
     public void onClickVolumeSoundAccept(){
-        navigateTo(EditActivity.class);
+        Intent intent = new Intent(this, ExportProjectService.class);
+        Snackbar.make(videonaPlayer,"Starting mixing audio", Snackbar.LENGTH_INDEFINITE).show();
+        this.startService(intent);
     }
 
     @OnClick(R.id.button_volume_sound_cancel)
@@ -245,6 +291,11 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     public void resetPreview() {
         videonaPlayer.resetPreview();
+    }
+
+    @Override
+    public void goToEditActivity() {
+        navigateTo(EditActivity.class);
     }
 
     @Override
