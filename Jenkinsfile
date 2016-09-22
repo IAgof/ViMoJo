@@ -12,7 +12,7 @@ node {
   echo "My branch is: ${env.BRANCH_NAME}"
 
   // runs all the tests
-  sh "./gradlew cleanTest test --tests * --rerun-tasks"
+  sh "./gradlew cleanTest test"
 
   def flavor = flavor(env.BRANCH_NAME)
   echo "Building flavor ${flavor}"
