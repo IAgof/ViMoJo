@@ -22,7 +22,8 @@
             android:src="@drawable/activity_record_icon_clear"
             android:background="@null"
             android:scaleType="fitCenter"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_alignParentBottom="true"
             android:layout_marginLeft="16dp" />
 
         <LinearLayout
@@ -482,7 +483,7 @@
              android:layout_height="72dp"
              android:layout_alignParentBottom="true"
              android:layout_alignParentRight="true"
-             android:layout_marginBottom="16dp"
+             android:layout_marginBottom="8dp"
              android:layout_marginRight="16dp"
              android:background="@null"
              android:alpha="0.5"

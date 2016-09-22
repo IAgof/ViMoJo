@@ -51,7 +51,7 @@ public class MusicDetailPresenter implements GetMusicFromProjectCallback, OnVide
         return Project.getInstance(null, null, null);
     }
 
-    public void onCreate(int musicId) {
+    public void onResume(int musicId) {
         this.musicId = musicId;
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
         getMusicFromProjectUseCase.getMusicFromProject(this);

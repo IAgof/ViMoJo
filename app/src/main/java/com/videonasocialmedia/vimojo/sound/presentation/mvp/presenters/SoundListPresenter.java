@@ -26,7 +26,7 @@ public class SoundListPresenter implements OnVideosRetrieved {
         this.soundListView = soundListView;
     }
 
-    public void onCreate() {
+    public void onResume() {
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 

@@ -80,13 +80,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
 
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
         musicDetailPresenter = new MusicDetailPresenter(this, videonaPlayer, userEventTracker);
-        try {
-            Bundle extras = this.getIntent().getExtras();
-            musicId = extras.getInt(KEY_MUSIC_ID);
-            musicDetailPresenter.onCreate(musicId);
-        } catch (Exception e) {
-            //TODO show snackbar with error message
-        }
         createExportReceiver();
     }
 
@@ -135,6 +128,13 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
+        try {
+            Bundle extras = this.getIntent().getExtras();
+            musicId = extras.getInt(KEY_MUSIC_ID);
+            musicDetailPresenter.onResume(musicId);
+        } catch (Exception e) {
+            //TODO show snackbar with error message
+        }
         registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
     }
 

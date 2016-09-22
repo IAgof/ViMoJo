@@ -35,7 +35,7 @@ public class SoundVolumePresenter implements OnVideosRetrieved, GetMusicFromProj
         return Project.getInstance(null, null, null);
     }
 
-    public void onCreate() {
+    public void onResume() {
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
         getMusicFromProjectUseCase.getMusicFromProject(this);
 

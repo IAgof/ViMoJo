@@ -7,16 +7,13 @@ import android.os.CountDownTimer;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.videonasocialmedia.vimojo.R;
@@ -47,6 +44,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     private static final String VOICE_OVER_POSITION = "voice_over_position";
     private static final String VOICE_OVER_PROJECT_POSITION = "voice_over_project_position";
     private static final String TAG = "VoiceOverActivity";
+    private static final String STATE_BUTTON_RECORD = "state_button_record";
 
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
@@ -73,6 +71,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     private CountDownTimer timer;
     private int millisecondsLeft;
     private int maxDuration;
+    private boolean buttonRecordIsInStop=false;
 
 
     @Override
@@ -89,18 +88,18 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
         ab.setDisplayHomeAsUpEnabled(true);
 
         restoreState(savedInstanceState);
+        changeVisibilityAndResouceButton(buttonRecordIsInStop);
 
         presenter = new VoiceOverPresenter(this);
         videonaPlayer.setSeekBarEnabled(false);
         videonaPlayer.setListener(this);
-        presenter.onCreate();
-
         buttonRecordVoiceOver.setOnTouchListener(this);
     }
 
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             currentVoiceOverPosition = savedInstanceState.getInt(VOICE_OVER_POSITION, 0);
+            buttonRecordIsInStop=savedInstanceState.getBoolean(STATE_BUTTON_RECORD,false);
         }
     }
 
@@ -121,8 +120,8 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     @Override
     protected void onResume() {
         super.onResume();
-        presenter.onResume();
         videonaPlayer.onShown(this);
+        presenter.onResume();
     }
 
     @Override
@@ -183,6 +182,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(VOICE_OVER_POSITION, videonaPlayer.getCurrentPosition());
+        outState.putBoolean(STATE_BUTTON_RECORD, buttonRecordIsInStop);
         super.onSaveInstanceState(outState);
     }
 
@@ -228,7 +228,8 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
         presenter.cleanDirectory();
         progressBarVoiceOver.setProgress(0);
         refreshTimeTag(0);
-        buttonRecordVoiceOver.setImageResource(R.drawable.activity_edit_sound_voice_record_normal);
+        buttonRecordIsInStop=false;
+        changeVisibilityAndResouceButton(buttonRecordIsInStop);
         millisecondsLeft = maxDuration;
         videonaPlayer.seekTo(0);
     }
@@ -314,12 +315,15 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
         if(event.getAction() == MotionEvent.ACTION_UP){
             // Stop recording and save file
             presenter.stopRecording();
-            buttonRecordVoiceOver.setImageResource(R.drawable.activity_edit_sound_voice_record_add);
+            buttonRecordIsInStop =true;
+            changeVisibilityAndResouceButton(buttonRecordIsInStop);
+
             timer.cancel();
             return true;
         }
         return false;
     }
+
 
     public void timerStart(int timeLengthMilli) {
         timer = new CountDownTimer(timeLengthMilli, 100) {
@@ -336,10 +340,25 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
             @Override
             public void onFinish() {
                 presenter.stopRecording();
-                buttonRecordVoiceOver.setImageResource(R.drawable.activity_edit_sound_voice_record_add);
+                buttonRecordIsInStop =true;
+                changeVisibilityAndResouceButton(buttonRecordIsInStop);
                 refreshTimeTag(maxDuration);
             }
         }.start();
+    }
+
+    private void changeVisibilityAndResouceButton(boolean buttonRecordIsInStop) {
+
+        if (buttonRecordIsInStop == true) {
+            buttonRecordVoiceOver.setImageResource(R.drawable.activity_edit_sound_voice_record_add);
+            buttonVoiceOverAccept.setVisibility(View.VISIBLE);
+            buttonVoiceOverCancel.setVisibility(View.VISIBLE);
+
+        } else{
+            buttonRecordVoiceOver.setImageResource(R.drawable.activity_edit_sound_voice_record_normal);
+            buttonVoiceOverAccept.setVisibility(View.INVISIBLE);
+            buttonVoiceOverCancel.setVisibility(View.INVISIBLE);
+        }
     }
 
     public static void enableDisableView(View view, boolean enabled) {

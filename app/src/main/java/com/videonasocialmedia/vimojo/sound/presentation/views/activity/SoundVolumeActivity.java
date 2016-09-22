@@ -75,7 +75,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         presenter = new SoundVolumePresenter(this);
         videonaPlayer.setListener(this);
         seekBarVolume.setOnSeekBarChangeListener(this);
-        presenter.onCreate();
         seekBarVolume.setProgress(currentSoundVolumePosition);
         textSeekBarVolume.setText(currentSoundVolumePosition+" % ");
     }
@@ -104,6 +103,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
+        presenter.onResume();
     }
 
     @Override
@@ -195,11 +195,11 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
                 }
             }
         };
-
-        // TODO:(ruth.delToro) 19/09/16 Define these strings, es and eng
+        
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-        builder.setMessage("¿Desea descartar los cambios y volver a grabarla de nuevo?").setPositiveButton("Aceptar", dialogClickListener)
-                .setNegativeButton("Cancelar", dialogClickListener).show();
+        builder.setMessage(R.string.exitSoundVolumeActivity).setPositiveButton(R.string.acceptExitSoundVolumeActivity, dialogClickListener)
+                .setNegativeButton(R.string.cancelExitSoundVolumeActvity, dialogClickListener).show();
+
     }
 
     @Override

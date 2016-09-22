@@ -18,6 +18,8 @@ public class TimeUtils {
         public static final int ONE_MINUTE = (1000 * 60);
         public static final int ONE_HOUR = (1000 * 60 * 60);
     }
+
+
 	
     public static String toFormattedTime(int time) {
         int remainingTime = time;
@@ -37,9 +39,39 @@ public class TimeUtils {
                 : String.format("%02d:%02d:%03d", minutes, seconds, milliseconds);
     }
 
+    public static String toFormattedTimeHoursMinutes(int time) {
+        int remainingTime = time;
+
+
+        int hours = remainingTime / MilliSeconds.ONE_HOUR;
+        remainingTime -= hours * MilliSeconds.ONE_HOUR;
+
+        int minutes = remainingTime / MilliSeconds.ONE_MINUTE;
+        remainingTime -= minutes * MilliSeconds.ONE_MINUTE;
+
+        int seconds = remainingTime / MilliSeconds.ONE_SECOND;
+        remainingTime -= seconds * MilliSeconds.ONE_SECOND;
+
+        int milliseconds = remainingTime;
+
+        if(hours>0)
+            return  String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+        if (hours<=0 && minutes>0)
+            return   String.format("%02d:%02d", minutes, seconds);
+
+        if(minutes<=0)
+            return  String.format(":%02d",seconds);
+
+        return "00:00"; // default
+    }
+
+
 	public static String formatTimeinMinutesSeconds(String time){
 		int timeInt= Integer.parseInt(time);
 		return toFormattedTime(timeInt);
 	}
+
+
 
 }

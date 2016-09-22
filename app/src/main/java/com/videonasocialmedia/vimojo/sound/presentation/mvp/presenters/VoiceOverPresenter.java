@@ -75,16 +75,13 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     public void onResume(){
+        getMediaListFromProjectUseCase.getMediaListFromProject(this);
         EventBus.getDefault().register(this);
     }
 
     public void onPause(){
         EventBus.getDefault().unregister(this);
         stopRecording();
-    }
-
-    public void onCreate() {
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 
     private Project loadCurrentProject() {
