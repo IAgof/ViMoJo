@@ -195,7 +195,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
                 }
             }
         };
-        
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
         builder.setMessage(R.string.exitSoundVolumeActivity).setPositiveButton(R.string.acceptExitSoundVolumeActivity, dialogClickListener)
                 .setNegativeButton(R.string.cancelExitSoundVolumeActvity, dialogClickListener).show();
