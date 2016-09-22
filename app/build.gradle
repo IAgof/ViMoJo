@@ -102,7 +102,7 @@ dependencies {
     compile 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
 
-    compile(name:'videona-sdk-v0.0.5',ext:'aar')
+    compile(name:'videona-sdk-v0.0.6',ext:'aar')
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"
