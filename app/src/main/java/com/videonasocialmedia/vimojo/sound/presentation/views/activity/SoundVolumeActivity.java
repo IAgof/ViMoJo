@@ -85,7 +85,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
             }
         }
     };
-    private Music[] testMusic;
+    private Music soundVolumeMusic;
 
 
     @Override
@@ -208,11 +208,12 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
     private void goToMixAudio(String videoToSharePath) {
 
-        presenter.setVolume(videoToSharePath, testMusic[0].getMediaPath(),seekBarVolume.getProgress()/100);
+        presenter.setVolume(videoToSharePath,soundVolumeMusic.getMediaPath(),seekBarVolume.getProgress()/100);
     }
 
     @OnClick(R.id.button_volume_sound_accept)
     public void onClickVolumeSoundAccept(){
+        presenter.removeMusicFromProject(soundVolumeMusic);
         Intent intent = new Intent(this, ExportProjectService.class);
         Snackbar.make(videonaPlayer,"Starting mixing audio", Snackbar.LENGTH_INDEFINITE).show();
         this.startService(intent);
@@ -272,11 +273,8 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
     @Override
     public void setMusic(Music music) {
-        String voiceOverPath = Constants.PATH_APP_EDITED + File.separator + "AUD_Prueba.mp4";
-        voiceOver = new Music(R.drawable.gatito_rules_pressed, "Voice over recorded", R.raw.audio_hiphop,
-                voiceOverPath, R.color.folk, "Author", "04:35");
-        videonaPlayer.setMusic(voiceOver);
-       // videonaPlayer.setMusic(music);
+        soundVolumeMusic = music;
+        videonaPlayer.setMusic(music);
         videonaPlayer.changeVolume(currentSoundVolumePosition*0.01f);
     }
 

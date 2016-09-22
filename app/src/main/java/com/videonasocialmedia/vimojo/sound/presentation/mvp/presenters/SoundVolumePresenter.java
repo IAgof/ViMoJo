@@ -5,6 +5,7 @@ import android.support.design.widget.Snackbar;
 
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
@@ -21,10 +22,11 @@ import java.util.List;
 /**
  * Created by ruth on 19/09/16.
  */
-public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListener {
-public class SoundVolumePresenter implements OnVideosRetrieved, GetMusicFromProjectCallback {
+public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListener,
+        GetMusicFromProjectCallback {
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+    private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
     private MixAudioUseCase mixAudioUseCase;
     private SoundVolumeView soundVolumeView;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
@@ -35,6 +37,7 @@ public class SoundVolumePresenter implements OnVideosRetrieved, GetMusicFromProj
     public SoundVolumePresenter(SoundVolumeView soundVolumeView){
         this.soundVolumeView=soundVolumeView;
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+        removeMusicFromProjectUseCase = new RemoveMusicFromProjectUseCase();
         mixAudioUseCase = new MixAudioUseCase(this);
         getMusicFromProjectUseCase= new GetMusicFromProjectUseCase();
         this.currentProject = loadCurrentProject();
@@ -78,5 +81,10 @@ public class SoundVolumePresenter implements OnVideosRetrieved, GetMusicFromProj
     @Override
     public void onMusicRetrieved(Music music) {
         soundVolumeView.setMusic(music);
+    }
+
+    public void removeMusicFromProject(Music removeMusic) {
+
+        removeMusicFromProjectUseCase.removeMusicFromProject(removeMusic, 0);
     }
 }

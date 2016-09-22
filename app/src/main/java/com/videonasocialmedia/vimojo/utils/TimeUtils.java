@@ -19,8 +19,6 @@ public class TimeUtils {
         public static final int ONE_HOUR = (1000 * 60 * 60);
     }
 
-
-	
     public static String toFormattedTime(int time) {
         int remainingTime = time;
 

@@ -7,6 +7,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +46,8 @@ public class MixAudioUseCase implements OnAudioMixerListener {
         Music musicMixed = new Music(R.drawable.gatito_rules_pressed, "Voice over recorded", R.raw.audio_hiphop,
                 outputFile, R.color.folk, "Author", "04:35");
         addMusicToProjectUseCase.addMusicToTrack(musicMixed, 0);
+
+        //Utils.cleanDirectory(new File(Constants.PATH_APP_TEMP_AUDIO));
 
         listener.onMixAudioSuccess();
     }
