@@ -17,9 +17,6 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import com.google.android.exoplayer.ExoPlayer;
-import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
@@ -36,9 +33,8 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerLi
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
-import com.videonasocialmedia.vimojo.sources.MusicSource;
 import com.videonasocialmedia.vimojo.utils.Constants;
-
+import java.io.File;
 import java.util.List;
 
 import butterknife.Bind;
@@ -66,11 +62,11 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Bind (R.id.button_volume_sound_cancel)
     ImageButton buttonVolumeSoundCancel;
     int videoIndexOnTrack;
-    MediaPlayer musicPlayer;
-    private int currentSoundVolumePosition = 0;
+    private int currentSoundVolumePosition =50;
     private int currentProjectPosition = 0;
-    ExoPlayer exoPlayer;
-    List<Music> musicList;
+    Music voiceOver;
+
+
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -105,24 +101,12 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
+        restoreState(savedInstanceState);
         presenter = new SoundVolumePresenter(this);
         videonaPlayer.setListener(this);
         seekBarVolume.setOnSeekBarChangeListener(this);
-        presenter.onCreate();
-        seekBarVolume.setProgress(50);
-        textSeekBarVolume.setText("50 %");
-
-        restoreState(savedInstanceState);
-
-        testMusic = new Music[1];
-
-        GetMusicFromProjectUseCase getMusicFromProject = new GetMusicFromProjectUseCase();
-        getMusicFromProject.getMusicFromProject(new GetMusicFromProjectCallback() {
-            @Override
-            public void onMusicRetrieved(Music music) {
-                testMusic[0] = music;
-            }
-        });
+        seekBarVolume.setProgress(currentSoundVolumePosition);
+        textSeekBarVolume.setText(currentSoundVolumePosition+" % ");
     }
 
     private void restoreState(Bundle savedInstanceState) {
@@ -151,6 +135,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         super.onResume();
         registerReceiver(receiver, new IntentFilter(ExportProjectService.NOTIFICATION));
         videonaPlayer.onShown(this);
+        presenter.onResume();
     }
 
     @Override
@@ -188,7 +173,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
                 //navigateTo(TutorialActivity.class);
                 return true;
             default:
-
         }
 
         return super.onOptionsItemSelected(item);
@@ -210,7 +194,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(SOUND_VOLUME_PROJECT_POSITION, videonaPlayer.getCurrentPosition()  );
+        outState.putInt(SOUND_VOLUME_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
         outState.putInt(SOUND_VOLUME_POSITION_VOLUME, seekBarVolume.getProgress());
         super.onSaveInstanceState(outState);
     }
@@ -251,24 +235,17 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
             }
         };
 
-        // TODO:(ruth.delToro) 19/09/16 Define these strings, es and eng
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-        builder.setMessage("¿Desea descartar la locución y volver a grabarla de nuevo?").setPositiveButton("Aceptar", dialogClickListener)
-                .setNegativeButton("Cancelar", dialogClickListener).show();
+        builder.setMessage(R.string.exitSoundVolumeActivity).setPositiveButton(R.string.acceptExitSoundVolumeActivity, dialogClickListener)
+                .setNegativeButton(R.string.cancelExitSoundVolumeActvity, dialogClickListener).show();
+
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         textSeekBarVolume.setText(progress+" % ");
-
-        /*GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase();
-        musicList = getMusicListUseCase.getAppMusic();
-        Music music=musicList.get(0);
-        videonaPlayer.setMusic(music);
-        float initialVolume = 0.5f;
-        float incrementVolume= (float)((progress*0.01)-0.5);
-        float finalVolume=initialVolume+incrementVolume;
-        videonaPlayer.changeVolume(finalVolume);*/
+        float finalVolume=(float)((progress*0.01));
+        videonaPlayer.changeVolume(finalVolume);
     }
 
     @Override
@@ -284,13 +261,23 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     public void bindVideoList(List<Video> movieList) {
         videonaPlayer.bindVideoList(movieList);
-        videonaPlayer.seekToClip(0);
+        videonaPlayer.seekTo(currentProjectPosition);
     }
 
 
     @Override
     public void resetPreview() {
         videonaPlayer.resetPreview();
+    }
+
+    @Override
+    public void setMusic(Music music) {
+        String voiceOverPath = Constants.PATH_APP_EDITED + File.separator + "AUD_Prueba.mp4";
+        voiceOver = new Music(R.drawable.gatito_rules_pressed, "Voice over recorded", R.raw.audio_hiphop,
+                voiceOverPath, R.color.folk, "Author", "04:35");
+        videonaPlayer.setMusic(voiceOver);
+       // videonaPlayer.setMusic(music);
+        videonaPlayer.changeVolume(currentSoundVolumePosition*0.01f);
     }
 
     @Override

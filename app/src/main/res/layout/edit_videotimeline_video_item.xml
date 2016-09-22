@@ -50,7 +50,39 @@
             android:src="@drawable/activity_edit_clip_delete"
             android:visibility="gone"
             />
-
     </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_margin="3dp"
+        android:background="#aa333333"
+        android:layout_alignBottom="@+id/timeline_video_thumb"
+        android:layout_alignStart="@+id/timeline_video_thumb">
+
+        <TextView
+            android:id="@+id/text_duration_clip"
+            android:layout_width="45dp"
+            android:layout_height="18dp"
+            android:text="00:00"
+            android:paddingRight="2dp"
+            android:gravity="end"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/textColorGalleryVideoDuration"/>
+
+        <ImageButton
+            android:id="@+id/gallery_preview_button"
+            android:layout_centerInParent="true"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginLeft="2dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/activity_gallery_icon_play_normal" />
+    </RelativeLayout>
+
 
 </RelativeLayout>

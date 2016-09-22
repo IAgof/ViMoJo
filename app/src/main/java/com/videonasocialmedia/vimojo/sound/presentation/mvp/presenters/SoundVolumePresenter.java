@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.support.design.widget.Snackbar;
 
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.domain.MixAudioUseCase;
@@ -19,10 +22,12 @@ import java.util.List;
  * Created by ruth on 19/09/16.
  */
 public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListener {
+public class SoundVolumePresenter implements OnVideosRetrieved, GetMusicFromProjectCallback {
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private MixAudioUseCase mixAudioUseCase;
     private SoundVolumeView soundVolumeView;
+    private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
 
     public UserEventTracker userEventTracker;
     public Project currentProject;
@@ -31,6 +36,7 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
         this.soundVolumeView=soundVolumeView;
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         mixAudioUseCase = new MixAudioUseCase(this);
+        getMusicFromProjectUseCase= new GetMusicFromProjectUseCase();
         this.currentProject = loadCurrentProject();
     }
 
@@ -38,8 +44,10 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
         return Project.getInstance(null, null, null);
     }
 
-    public void onCreate() {
+    public void onResume() {
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
+        getMusicFromProjectUseCase.getMusicFromProject(this);
+
     }
 
     @Override
@@ -65,5 +73,10 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
     @Override
     public void onMixAudioError() {
 
+    }
+
+    @Override
+    public void onMusicRetrieved(Music music) {
+        soundVolumeView.setMusic(music);
     }
 }

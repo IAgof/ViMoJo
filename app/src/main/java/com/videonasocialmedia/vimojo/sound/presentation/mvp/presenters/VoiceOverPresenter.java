@@ -75,16 +75,13 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     public void onResume(){
+        getMediaListFromProjectUseCase.getMediaListFromProject(this);
         EventBus.getDefault().register(this);
     }
 
     public void onPause(){
         EventBus.getDefault().unregister(this);
         stopRecording();
-    }
-
-    public void onCreate() {
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 
     private Project loadCurrentProject() {
@@ -181,12 +178,12 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     @Override
     public void onMergeVoiceOverAudioSuccess(String outputPath) {
 
-       Music voiceOver = new Music(R.drawable.gatito_rules_pressed, "Voice over recorded", R.raw.audio_hiphop,
+       Music voiceOver = new Music(R.drawable.gatito_rules_pressed, "Voice over recorded", 0,
                outputPath, R.color.folk, "Author", "04:35");
 
         addMusicToProjectUseCase.addMusicToTrack(voiceOver, 0);
+        voiceOverView.navigateToSoundVolumeActivity();
 
-        voiceOverView.navigateToEditActivity();
 
     }
 

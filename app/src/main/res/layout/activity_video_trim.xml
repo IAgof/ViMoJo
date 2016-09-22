@@ -41,11 +41,11 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             rsb:textAboveThumbsColor="@android:color/holo_green_light"
-
             app:background_color="@null"
             app:bar_color="@color/colorPrimaryLight"
             app:bar_height="48dp"
             app:selected_bar_color="@color/colorDivider"
+            app:showLabels="false"
             />
 
         <!--<TextView-->

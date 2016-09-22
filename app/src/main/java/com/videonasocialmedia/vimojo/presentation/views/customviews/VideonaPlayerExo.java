@@ -168,17 +168,21 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     private void initMusicPlayer() {
         if (musicPlayer == null && videoHasMusic()) {
-            musicPlayer = MediaPlayer.create(getContext(), music.getMusicResourceId());
+            musicPlayer = MediaPlayer.create(getContext(), Uri.parse(music.getMediaPath()));
             musicPlayer.setVolume(volumeMusic, volumeMusic);
         }
+
     }
 
    public void changeVolume(float volume){
-        if(musicPlayer!=null){
-            musicPlayer.setVolume(volume,volume);
-            volumeMusic=volume;
-        }
-    }
+
+       player.sendMessage(rendererBuilder.getAudioRenderer(), MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,1f-volume);
+
+      if( musicPlayer!=null){
+          musicPlayer.setVolume(volume,volume);
+      }
+       volumeMusic=volume;
+   }
 
     private void updateSeekBarProgress() {
         if (player != null && isPlaying()) {
@@ -560,7 +564,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     private void startMusicTrackPlayback() {
         if (videoHasMusic()) {
-            muteVideo(true);
+            //muteVideo(true);
             playMusicSyncWithVideo();
         } else {
 //            releaseMusicPlayer();
@@ -715,6 +719,12 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
         private final Context context;
         private final String userAgent;
+        private MediaCodecAudioTrackRenderer audioRenderer;
+
+        public MediaCodecAudioTrackRenderer getAudioRenderer() {
+            return audioRenderer;
+        }
+
 
         public RendererBuilder(Context context, String userAgent) {
             this.context = context;
@@ -735,7 +745,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
             MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(context,
                     sampleSource, MediaCodecSelector.DEFAULT, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000,
                     mainHandler, player, 50);
-            MediaCodecAudioTrackRenderer audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource,
+            audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource,
                     MediaCodecSelector.DEFAULT, null, true, mainHandler, player,
                     AudioCapabilities.getCapabilities(context), AudioManager.STREAM_MUSIC);
             // (jliarte): 1/09/16 maybe it's easier with the traditional method using audio manager,

@@ -70,7 +70,6 @@ public class SoundListActivity  extends VimojoActivity implements SoundListView,
         videonaPlayer.setListener(this);
         presenter = new SoundListPresenter(this);
         initVideoListRecycler();
-        presenter.onCreate();
     }
 
     private void setupToolbar() {
@@ -128,6 +127,7 @@ public class SoundListActivity  extends VimojoActivity implements SoundListView,
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
+        presenter.onResume();
         registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
     }
 
@@ -184,9 +184,9 @@ public class SoundListActivity  extends VimojoActivity implements SoundListView,
 
     @Override
     public void onClick(Music music) {
-        Intent i = new Intent(this, MusicDetailActivity.class);
+        /*Intent i = new Intent(this, MusicDetailActivity.class);
         i.putExtra(MusicDetailActivity.KEY_MUSIC_ID, music.getMusicResourceId());
-        startActivity(i);
+        startActivity(i);*/
     }
 
     @Override

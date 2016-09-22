@@ -129,6 +129,7 @@
         android:layout_margin="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/activity_edit_common_icon_cancel"
+        android:visibility="invisible"
         />
 
     <ImageButton
@@ -141,6 +142,7 @@
         android:layout_marginRight="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/activity_edit_common_icon_accept"
+        android:visibility="invisible"
         />
 
 </android.support.design.widget.CoordinatorLayout>

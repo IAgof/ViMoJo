@@ -72,6 +72,11 @@
     <string name="mastersFolderTitle">Raw</string>
     <string name="editedFolderTitle">Edited</string>
 
+    <!--SoundVolumeActivity-->
+    <string name="exitSoundVolumeActivity" >Are you sure do you want to discard the changes and return to record again?</string>
+    <string name="acceptExitSoundVolumeActivity">Yes</string>
+    <string name="cancelExitSoundVolumeActvity">No</string>
+
     <!-- Trim fragment -->
     <string name="confirmTrim">Done</string>
 
@@ -1661,5 +1666,7 @@ and Conditions.\n\n
     <string name="uploadComplete">Upload complete</string>
     <string name="uploading">Uploading</string>
     <string name="trimError">The video couldn\'t be trimmed</string>
+
+
 
 </resources>
