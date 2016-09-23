@@ -118,6 +118,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         }
     };
     private float volumeMusic=0.5f;
+    private final float DEFAULT_VOLUME = 0.5f;
 
     public VideonaPlayerExo(Context context) {
         super(context);
@@ -564,11 +565,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     private void startMusicTrackPlayback() {
         if (videoHasMusic()) {
-            //muteVideo(true);
             playMusicSyncWithVideo();
-        } else {
-//            releaseMusicPlayer();
-            muteVideo(false);
         }
     }
 
@@ -585,9 +582,11 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         // TODO(jliarte): 1/09/16 test mute
         if (player != null)
             if (shouldMute) {
-                player.setSelectedTrack(TYPE_AUDIO, ExoPlayer.TRACK_DISABLED);
+                volumeMusic = 0f;
+                player.sendMessage(rendererBuilder.getAudioRenderer(), MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,volumeMusic);
             } else {
-                player.setSelectedTrack(TYPE_AUDIO, ExoPlayer.TRACK_DEFAULT);
+                volumeMusic = DEFAULT_VOLUME;
+                player.sendMessage(rendererBuilder.getAudioRenderer(), MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,DEFAULT_VOLUME);
             }
     }
 
@@ -627,6 +626,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         pushSurface(false);
         player.prepare(renderers);
         player.seekTo(getClipPositionFromTimeLineTime());
+        changeVolume(volumeMusic);
         rendererBuildingState = RENDERER_BUILDING_STATE_BUILT;
     }
 

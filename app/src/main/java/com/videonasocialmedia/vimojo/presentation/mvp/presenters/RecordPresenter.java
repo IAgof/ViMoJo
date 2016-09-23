@@ -126,7 +126,7 @@ public class RecordPresenter {
 
     public void onResume() {
         EventBus.getDefault().register(this);
-        //recorder.onHostActivityResumed();
+        recorder.onHostActivityResumed();
         if (!externalIntent)
             showThumbAndNumber();
         Log.d(LOG_TAG, "resume presenter");
@@ -147,7 +147,7 @@ public class RecordPresenter {
     public void onPause() {
         EventBus.getDefault().unregister(this);
         stopRecord();
-        //recorder.onHostActivityPaused();
+        recorder.onHostActivityPaused();
         Log.d(LOG_TAG, "onPause presenter");
         recordView.hideProgressDialog();
     }

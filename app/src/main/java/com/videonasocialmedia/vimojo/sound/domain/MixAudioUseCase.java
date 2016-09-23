@@ -22,14 +22,21 @@ public class MixAudioUseCase implements OnAudioMixerListener {
     private final AddMusicToProjectUseCase addMusicToProjectUseCase;
     String outputFile = Constants.PATH_APP_TEMP + File.separator + "AudioMixed.m4a";
     private OnMixAudioListener listener;
+    private float volume = 0.5f;
 
     public MixAudioUseCase(OnMixAudioListener listener){
 
         addMusicToProjectUseCase = new AddMusicToProjectUseCase();
         this.listener = listener;
+
+        File f = new File(outputFile);
+        if(f.exists())
+            f.delete();
     }
 
     public void mixAudio(String inputFileOne, String inputFileTwo, float volume){
+
+        this.volume = volume;
 
         try {
             Future<Void> mFuture = MediaTranscoder.getInstance().mixTwoAudioFiles(inputFileOne, inputFileTwo,
@@ -41,13 +48,11 @@ public class MixAudioUseCase implements OnAudioMixerListener {
     }
 
     @Override
-    public void onAudioMixerSuccess(String outputFile) {
+    public void onAudioMixerSuccess(String outputFileMixed) {
 
-        Music musicMixed = new Music(R.drawable.gatito_rules_pressed, "Voice over recorded", R.raw.audio_hiphop,
-                outputFile, R.color.folk, "Author", "04:35");
-        addMusicToProjectUseCase.addMusicToTrack(musicMixed, 0);
+        addMusicToProjectUseCase.addMusicToTrack(new Music(outputFileMixed, volume), 0);
 
-        //Utils.cleanDirectory(new File(Constants.PATH_APP_TEMP_AUDIO));
+        Utils.cleanDirectory(new File(Constants.PATH_APP_TEMP_AUDIO));
 
         listener.onMixAudioSuccess();
     }

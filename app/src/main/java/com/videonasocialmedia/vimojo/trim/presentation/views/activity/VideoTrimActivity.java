@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
@@ -163,7 +164,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     }
 
     public void navigateTo(Class cls) {
-        startActivity(new Intent(getApplicationContext(), cls));
+        startActivity(new Intent(VimojoApplication.getAppContext(), cls));
     }
 
     @Override
@@ -173,9 +174,10 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     }
 
     private void navigateTo(Class cls, int currentVideoIndex) {
-        Intent intent = new Intent(this, cls);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
         startActivity(intent);
+        finish();
     }
 
     @Override
@@ -190,7 +192,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     public void onClickTrimAccept() {
         presenter.setTrim(startTimeMs, finishTimeMs);
         navigateTo(EditActivity.class, videoIndexOnTrack);
-        finish();
+
     }
 
     @OnClick(R.id.button_trim_cancel)

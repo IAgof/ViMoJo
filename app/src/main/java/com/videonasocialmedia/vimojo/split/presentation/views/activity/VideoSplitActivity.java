@@ -159,12 +159,12 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView, Vid
             intent.putExtra("SHARE", false);
         }
         startActivity(intent);
+        finish();
     }
 
     @Override
     public void onBackPressed() {
         navigateTo(EditActivity.class, videoIndexOnTrack);
-        finish();
     }
 
     @Override

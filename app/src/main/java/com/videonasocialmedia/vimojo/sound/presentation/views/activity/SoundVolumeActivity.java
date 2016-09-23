@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -18,12 +16,9 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
@@ -34,7 +29,8 @@ import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectSe
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import java.io.File;
+import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
+
 import java.util.List;
 
 import butterknife.Bind;
@@ -48,6 +44,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
     private static final String SOUND_VOLUME_POSITION_VOLUME = "sound_volume_position";
     private static final String SOUND_VOLUME_PROJECT_POSITION = "sound_volume_project_position";
+    private static final String VOICE_OVER_RECORDED_PATH = "voice_over_recorded_path";
     private static final String TAG = "SoundVolumeActivity";
 
     @Bind(R.id.videona_player)
@@ -64,9 +61,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     int videoIndexOnTrack;
     private int currentSoundVolumePosition =50;
     private int currentProjectPosition = 0;
-    Music voiceOver;
-
-
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -74,10 +68,10 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                String videoToSharePath = bundle.getString(ExportProjectService.FILEPATH);
+                String videoTemPathMixAudio = bundle.getString(ExportProjectService.FILEPATH);
                 int resultCode = bundle.getInt(ExportProjectService.RESULT);
                 if (resultCode == RESULT_OK) {
-                    goToMixAudio(videoToSharePath);
+                    goToMixAudio(videoTemPathMixAudio);
                 } else {
 
                     //showError(R.string.addMediaItemToTrackError);
@@ -85,7 +79,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
             }
         }
     };
-    private Music soundVolumeMusic;
+    private String soundVoiceOverPath;
 
 
     @Override
@@ -101,6 +95,9 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
+        Intent intent = getIntent();
+        soundVoiceOverPath = intent.getStringExtra(ExportIntentConstants.VOICE_OVER_RECORDED_PATH);
+
         restoreState(savedInstanceState);
         presenter = new SoundVolumePresenter(this);
         videonaPlayer.setListener(this);
@@ -113,6 +110,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         if (savedInstanceState != null) {
             currentSoundVolumePosition = savedInstanceState.getInt(SOUND_VOLUME_POSITION_VOLUME, 0);
             currentProjectPosition = savedInstanceState.getInt(SOUND_VOLUME_PROJECT_POSITION, 0);
+            soundVoiceOverPath = savedInstanceState.getString(VOICE_OVER_RECORDED_PATH);
         }
     }
 
@@ -135,7 +133,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         super.onResume();
         registerReceiver(receiver, new IntentFilter(ExportProjectService.NOTIFICATION));
         videonaPlayer.onShown(this);
-        presenter.onResume();
+        presenter.init();
     }
 
     @Override
@@ -179,15 +177,17 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     }
 
     public void navigateTo(Class cls) {
-        Intent intent = new Intent(getApplicationContext(), cls);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         if (cls == GalleryActivity.class) {
             intent.putExtra("SHARE", false);
         }
         startActivity(intent);
+        finish();
     }
 
     @Override
     public void onBackPressed() {
+
         navigateTo(EditActivity.class, videoIndexOnTrack);
         finish();
     }
@@ -196,6 +196,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(SOUND_VOLUME_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
         outState.putInt(SOUND_VOLUME_POSITION_VOLUME, seekBarVolume.getProgress());
+        outState.putString(VOICE_OVER_RECORDED_PATH, soundVoiceOverPath);
         super.onSaveInstanceState(outState);
     }
 
@@ -206,14 +207,14 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         finish();
     }
 
-    private void goToMixAudio(String videoToSharePath) {
+    private void goToMixAudio(String videoTemPathMixAudio) {
 
-        presenter.setVolume(videoToSharePath,soundVolumeMusic.getMediaPath(),seekBarVolume.getProgress()/100);
+        presenter.setVolume(soundVoiceOverPath, videoTemPathMixAudio ,seekBarVolume.getProgress()/100);
     }
 
     @OnClick(R.id.button_volume_sound_accept)
     public void onClickVolumeSoundAccept(){
-        presenter.removeMusicFromProject(soundVolumeMusic);
+
         Intent intent = new Intent(this, ExportProjectService.class);
         Snackbar.make(videonaPlayer,"Starting mixing audio", Snackbar.LENGTH_INDEFINITE).show();
         this.startService(intent);
@@ -221,6 +222,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
     @OnClick(R.id.button_volume_sound_cancel)
     public void onClickVolumeSoundCancel(){
+
 
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
@@ -245,8 +247,8 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         textSeekBarVolume.setText(progress+" % ");
-        float finalVolume=(float)((progress*0.01));
-        videonaPlayer.changeVolume(finalVolume);
+        videonaPlayer.changeVolume(progress / 100);
+        currentSoundVolumePosition = progress;
     }
 
     @Override
@@ -263,6 +265,8 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     public void bindVideoList(List<Video> movieList) {
         videonaPlayer.bindVideoList(movieList);
         videonaPlayer.seekTo(currentProjectPosition);
+        videonaPlayer.setMusic(new Music(soundVoiceOverPath));
+        videonaPlayer.changeVolume(currentSoundVolumePosition*0.01f);
     }
 
 
@@ -271,15 +275,11 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         videonaPlayer.resetPreview();
     }
 
-    @Override
-    public void setMusic(Music music) {
-        soundVolumeMusic = music;
-        videonaPlayer.setMusic(music);
-        videonaPlayer.changeVolume(currentSoundVolumePosition*0.01f);
-    }
 
     @Override
     public void goToEditActivity() {
+
+        // Add volume to project
         navigateTo(EditActivity.class);
     }
 

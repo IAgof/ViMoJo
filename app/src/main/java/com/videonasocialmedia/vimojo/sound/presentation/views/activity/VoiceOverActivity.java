@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
@@ -27,7 +28,9 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerLi
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverView;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.util.List;
 
@@ -45,6 +48,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     private static final String VOICE_OVER_PROJECT_POSITION = "voice_over_project_position";
     private static final String TAG = "VoiceOverActivity";
     private static final String STATE_BUTTON_RECORD = "state_button_record";
+    public static final int IMAGE_REC_WIDTH = 256;
 
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
@@ -88,6 +92,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
         ab.setDisplayHomeAsUpEnabled(true);
 
         restoreState(savedInstanceState);
+
         changeVisibilityAndResouceButton(buttonRecordIsInStop);
 
         presenter = new VoiceOverPresenter(this);
@@ -166,22 +171,22 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     }
 
     public void navigateTo(Class cls) {
-        Intent intent = new Intent(getApplicationContext(), cls);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         if (cls == GalleryActivity.class) {
             intent.putExtra("SHARE", false);
         }
         startActivity(intent);
+        finish();
     }
 
     @Override
     public void onBackPressed() {
         navigateTo(EditActivity.class, videoIndexOnTrack);
-        finish();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(VOICE_OVER_POSITION, videonaPlayer.getCurrentPosition());
+        outState.putInt(VOICE_OVER_POSITION, currentVoiceOverPosition);
         outState.putBoolean(STATE_BUTTON_RECORD, buttonRecordIsInStop);
         super.onSaveInstanceState(outState);
     }
@@ -245,6 +250,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
         progressBarVoiceOver.setIndeterminate(false);
         progressBarVoiceOver.setMax(maxSeekBar);
         progressBarVoiceOver.setScaleY(5f);
+        progressBarVoiceOver.setProgress(currentVoiceOverPosition);
         maxDuration = maxSeekBar;
         millisecondsLeft = maxSeekBar - currentVoiceOverPosition;
         this.startTime = startTime;
@@ -260,8 +266,8 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
         videonaPlayer.bindVideoList(movieList);
         videonaPlayer.seekToClip(0);
         videonaPlayer.seekTo(currentVoiceOverPosition);
-        videonaPlayer.muteVideo(true);
         videonaPlayer.hidePlayButton();
+        videonaPlayer.changeVolume(1f);
         // Disable ontouch view playerExo. Now you can't play/pause video.
         enableDisableView(videonaPlayer,false);
     }
@@ -275,7 +281,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     public void playVideo() {
         videonaPlayer.playPreview();
         videonaPlayer.hidePlayButton();
-        videonaPlayer.muteVideo(true);
+        videonaPlayer.changeVolume(1f);
     }
 
     @Override
@@ -285,13 +291,10 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     }
 
     @Override
-    public void updateSeekBar(int progress) {
-        progressBarVoiceOver.setProgress(progress);
-    }
+    public void navigateToSoundVolumeActivity(String voiceOverRecordedPath) {
 
-    @Override
-    public void navigateToSoundVolumeActivity() {
         Intent intent = new Intent(this, SoundVolumeActivity.class);
+        intent.putExtra(ExportIntentConstants.VOICE_OVER_RECORDED_PATH, voiceOverRecordedPath);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -300,6 +303,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
 
     @Override
     public void newClipPlayed(int currentClipIndex) {
+
     }
 
 
@@ -307,9 +311,12 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     public boolean onTouch(View v, MotionEvent event) {
         if(event.getAction() == MotionEvent.ACTION_DOWN){
             // start recording.
-            presenter.requestRecord();
-            buttonRecordVoiceOver.setImageResource(R.drawable.activity_edit_sound_voice_record_pressed);
-            timerStart(millisecondsLeft);
+            if(millisecondsLeft > 0){
+                presenter.requestRecord();
+                buttonRecordVoiceOver.setImageBitmap(Utils.decodeSampledBitmapFromResource(getResources(),
+                        R.drawable.activity_edit_sound_voice_record_pressed, IMAGE_REC_WIDTH, IMAGE_REC_WIDTH));
+                timerStart(millisecondsLeft);
+            }
             return true;
         }
         if(event.getAction() == MotionEvent.ACTION_UP){
@@ -341,6 +348,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
             public void onFinish() {
                 presenter.stopRecording();
                 buttonRecordIsInStop =true;
+                progressBarVoiceOver.setProgress(maxDuration);
                 changeVisibilityAndResouceButton(buttonRecordIsInStop);
                 refreshTimeTag(maxDuration);
             }
@@ -350,12 +358,14 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     private void changeVisibilityAndResouceButton(boolean buttonRecordIsInStop) {
 
         if (buttonRecordIsInStop == true) {
-            buttonRecordVoiceOver.setImageResource(R.drawable.activity_edit_sound_voice_record_add);
+            buttonRecordVoiceOver.setImageBitmap(Utils.decodeSampledBitmapFromResource(getResources(),
+                    R.drawable.activity_edit_sound_voice_record_add, IMAGE_REC_WIDTH, IMAGE_REC_WIDTH));
             buttonVoiceOverAccept.setVisibility(View.VISIBLE);
             buttonVoiceOverCancel.setVisibility(View.VISIBLE);
 
         } else{
-            buttonRecordVoiceOver.setImageResource(R.drawable.activity_edit_sound_voice_record_normal);
+            buttonRecordVoiceOver.setImageBitmap(Utils.decodeSampledBitmapFromResource(getResources(),
+                    R.drawable.activity_edit_sound_voice_record_normal, IMAGE_REC_WIDTH, IMAGE_REC_WIDTH));
             buttonVoiceOverAccept.setVisibility(View.INVISIBLE);
             buttonVoiceOverCancel.setVisibility(View.INVISIBLE);
         }

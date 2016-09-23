@@ -14,6 +14,5 @@ public interface VoiceOverView {
     void resetPreview();
     void playVideo();
     void pauseVideo();
-    void updateSeekBar(int progress);
-    void navigateToSoundVolumeActivity();
+    void navigateToSoundVolumeActivity(String voiceOverRecordedPath);
 }

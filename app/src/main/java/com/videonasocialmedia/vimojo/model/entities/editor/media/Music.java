@@ -7,10 +7,6 @@
 
 package com.videonasocialmedia.vimojo.model.entities.editor.media;
 
-import com.videonasocialmedia.vimojo.utils.Utils;
-
-import java.io.File;
-
 /**
  * @deprecated
  */
@@ -24,7 +20,8 @@ public class Music extends Audio {
     private String author;
     private String durationMusic;
     private int iconResourceId;
-    private String musicPath;
+
+    private float volume = 0.5f;
 
     public Music(int iconResourceId, String musicTitle, int musicResourceId, int colorResourceId,
                  String author, String durationMusic) {
@@ -41,13 +38,25 @@ public class Music extends Audio {
 
     public Music(int iconResourceId, String musicTitle, int musicResourceId, String musicPath, int colorResourceId, String author, String durationMusic) {
         super(musicResourceId, "", "", musicTitle, musicPath, 0, 0, null, null, null, null, null);
-        this.musicPath = musicPath;
         this.musicResourceId = musicResourceId;
         this.colorResourceId = colorResourceId;
         this.musicTitle = musicTitle;
         this.iconResourceId = iconResourceId;
         this.author = author;
         this.durationMusic=durationMusic;
+    }
+
+    public Music(String musicPath){
+        super(0,"","", "", musicPath, 0, 0, null, null, null, null, null);
+    }
+
+    public Music(String musicPath, float volume){
+        super(0,"","", "", musicPath, 0, 0, null, null, null, null, null);
+        this.volume = volume;
+    }
+
+    public float getVolume() {
+        return volume;
     }
 
     public int getMusicResourceId() {

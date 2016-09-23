@@ -13,5 +13,4 @@ public interface SoundVolumeView {
     void bindVideoList(List<Video> movieList);
     void resetPreview();
     void goToEditActivity();
-    void setMusic(Music music);
 }

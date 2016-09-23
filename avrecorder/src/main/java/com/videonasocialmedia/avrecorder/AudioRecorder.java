@@ -28,11 +28,13 @@ public class AudioRecorder {
 
     protected MicrophoneEncoder mMicEncoder;
     private boolean mIsRecording;
-    private boolean released;
+    private boolean released = false;
     private final int NUM_TRACKS = 1;
+    private SessionConfig config;
 
 
     public AudioRecorder(SessionConfig config) throws IOException{
+        this.config = config;
         init(config);
     }
 
@@ -87,11 +89,16 @@ public class AudioRecorder {
     }
 
     public void onHostActivityPaused() {
-       // mMicEncoder.onHostActivityPaused();
+       release();
     }
 
     public void onHostActivityResumed() {
-       // mMicEncoder.onHostActivityResumed();
+        if(isReleased())
+            try {
+                init(config);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
     }
 
 

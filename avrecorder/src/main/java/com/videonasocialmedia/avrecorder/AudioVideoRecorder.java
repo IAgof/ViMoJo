@@ -192,6 +192,7 @@ public class AudioVideoRecorder {
     public void onHostActivityPaused() {
         mCamEncoder.onHostActivityPaused();
         //mMicEncoder.onHostActivityPaused();
+        mMicEncoder.release();
     }
 
     public void onHostActivityResumed() {
