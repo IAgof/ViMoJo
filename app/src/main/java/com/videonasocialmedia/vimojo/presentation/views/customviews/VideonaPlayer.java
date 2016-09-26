@@ -618,7 +618,7 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
     }
 
     @Override
-    public void setSeekBarEnabled(boolean seekBarEnabled) {
+    public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
         if (seekBarEnabled) {
             seekBar.setVisibility(VISIBLE);
         } else {

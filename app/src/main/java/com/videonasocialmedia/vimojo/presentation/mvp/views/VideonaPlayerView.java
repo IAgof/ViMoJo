@@ -45,7 +45,7 @@ public interface VideonaPlayerView {
 
     void setSeekBarProgress(int progress);
 
-    void setSeekBarEnabled(boolean seekBarEnabled);
+    void setSeekBarLayoutEnabled(boolean seekBarEnabled);
 
     void resetPreview();
 }

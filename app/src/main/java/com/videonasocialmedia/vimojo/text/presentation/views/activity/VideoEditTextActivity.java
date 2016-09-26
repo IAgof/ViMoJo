@@ -93,7 +93,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
         presenter = new EditTextPreviewPresenter(this, userEventTracker);
-        videonaPlayer.setSeekBarEnabled(false);
+        videonaPlayer.setSeekBarLayoutEnabled(false);
         videonaPlayer.setListener(this);
 
         Intent intent = getIntent();

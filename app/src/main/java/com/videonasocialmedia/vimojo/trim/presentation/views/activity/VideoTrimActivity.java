@@ -12,7 +12,6 @@ package com.videonasocialmedia.vimojo.trim.presentation.views.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -88,7 +87,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         presenter = new TrimPreviewPresenter(this, userEventTracker);
         trimmingRangeSeekBar.setOnRangeSeekBarChangeListener(this);
         trimmingRangeSeekBar.setNotifyWhileDragging(true);
-        videonaPlayer.setSeekBarEnabled(false);
+        videonaPlayer.setSeekBarLayoutEnabled(false);
         videonaPlayer.setListener(this);
 
         Intent intent = getIntent();

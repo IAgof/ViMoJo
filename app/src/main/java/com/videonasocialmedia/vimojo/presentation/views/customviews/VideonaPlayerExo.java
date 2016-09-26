@@ -17,9 +17,10 @@ import android.view.Surface;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-
+import android.widget.TextView;
 import com.google.android.exoplayer.CodecCounters;
 import com.google.android.exoplayer.DummyTrackRenderer;
 import com.google.android.exoplayer.ExoPlaybackException;
@@ -46,6 +47,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
+import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,6 +86,13 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     ImageButton playButton;
     @Bind(R.id.image_text_preview)
     ImageView imagenTextPreview;
+    @Bind(R.id.video_view_time_current)
+    TextView textTimeCurrentSeekbar;
+    @Bind(R.id.video_view_time_project)
+    TextView textTimeProjectSeekbar;
+    @Bind(R.id.video_view_seekbar_layout)
+    LinearLayout seekBarLayout;
+
 
     private final View videonaPlayerView;
     private VideonaPlayerListener videonaPlayerListener;
@@ -333,6 +342,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
             int clipStopTime = this.totalVideoDuration + clip.getDuration();
             clipTimesRanges.add(new Range(clipStartTime, clipStopTime));
             this.totalVideoDuration = clipStopTime;
+            textTimeProjectSeekbar.setText(TimeUtils.toFormattedTimeHoursMinutesSecond(totalVideoDuration));
         }
     }
 
@@ -408,17 +418,19 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         return currentTimePositionInList;
     }
 
+
     @Override
     public void setSeekBarProgress(int progress) {
         seekBar.setProgress(progress);
     }
 
+
     @Override
-    public void setSeekBarEnabled(boolean seekBarEnabled) {
+    public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
         if (seekBarEnabled) {
-            seekBar.setVisibility(VISIBLE);
+            seekBarLayout.setVisibility(VISIBLE);
         } else {
-            seekBar.setVisibility(GONE);
+            seekBarLayout.setVisibility(GONE);
         }
     }
 
@@ -468,7 +480,8 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     /** Seekbar listener methods **/
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
+        textTimeCurrentSeekbar.setText(TimeUtils.toFormattedTimeHoursMinutesSecond(progress));
         if (fromUser) {
             if (isPlaying()) pausePreview();
             if (playerHasVideos()) {
@@ -499,6 +512,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        showPlayButton();
 
     }
     /** end of Seekbar listener methods **/
@@ -512,6 +526,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         } else {
             pausePreview();
             seekToClip(0);
+            //textTimeCurrentSeekbar.setText(TimeUtils.formatMs(seekBar.getProgress()));
         }
         notifyNewClipPlayed();
     }
@@ -592,7 +607,8 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     public void onPlayerError(ExoPlaybackException error) {
 
     }
-    /** end of exo player listener **/
+
+
 
     public Handler getMainHandler() {
         return mainHandler;

@@ -37,6 +37,37 @@ public class TimeUtils {
                 : String.format("%02d:%02d:%03d", minutes, seconds, milliseconds);
     }
 
+    public static String toFormattedTimeHoursMinutesSecond(int time) {
+        int remainingTime = time;
+
+        int hours = remainingTime / MilliSeconds.ONE_HOUR;
+        remainingTime -= hours * MilliSeconds.ONE_HOUR;
+
+        int minutes = remainingTime / MilliSeconds.ONE_MINUTE;
+        remainingTime -= minutes * MilliSeconds.ONE_MINUTE;
+
+        int seconds = remainingTime / MilliSeconds.ONE_SECOND;
+        remainingTime -= seconds * MilliSeconds.ONE_SECOND;
+
+        int milliseconds = remainingTime;
+
+        if (remainingTime> MilliSeconds.ONE_SECOND/2){
+            seconds++;
+        }
+
+        if(hours>0)
+            return  String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+        if (hours<=0 && minutes>0)
+            return   String.format("%02d:%02d", minutes, seconds);
+
+        if(minutes<=0)
+            return  String.format("%02d:%02d", minutes, seconds);
+
+        return "--:--"; // default
+    }
+
+
 	public static String formatTimeinMinutesSeconds(String time){
 		int timeInt= Integer.parseInt(time);
 		return toFormattedTime(timeInt);

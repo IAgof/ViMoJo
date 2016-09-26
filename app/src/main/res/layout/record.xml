@@ -22,7 +22,8 @@
             android:src="@drawable/activity_record_icon_clear"
             android:background="@null"
             android:scaleType="fitCenter"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:layout_alignParentBottom="true"
             android:layout_marginLeft="16dp" />
 
         <LinearLayout
