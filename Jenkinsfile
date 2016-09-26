@@ -13,6 +13,8 @@ node {
 
   // runs all the tests
   sh "./gradlew cleanTest test"
+  // run checkstyle
+  sh "./gradlew checkstyle"
 
 //  def flavor = flavor(env.BRANCH_NAME)
 //  echo "Building flavor ${flavor}"
@@ -20,6 +22,11 @@ node {
 //  //build your gradle flavor, passes the current build number as a parameter to gradle
 //  sh "./gradlew clean assemble${flavor}Debug -PBUILD_NUMBER=${env.BUILD_NUMBER}"
   sh "./gradlew clean assembleDebug -PBUILD_NUMBER=${env.BUILD_NUMBER}"
+
+  stage 'Report'
+//    step([$class: 'JUnitResultArchiver', testResults: 'gitlist-PHP/build/logs/junit.xml'])
+    step([$class: 'hudson.plugins.checkstyle.CheckStylePublisher', checkstyle: 'app/build/reports/checkstyle/checkstyle.html'])
+//    step([$class: 'hudson.plugins.dry.DryPublisher', CopyPasteDetector: 'gitlist-PHP/build/logs/phpcpd.xml'])
 
   stage 'Stage Archive'
   //tell Jenkins to archive the apks
