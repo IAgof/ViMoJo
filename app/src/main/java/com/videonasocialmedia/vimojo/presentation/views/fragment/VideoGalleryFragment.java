@@ -125,6 +125,7 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
             }
         });
         selectionSupport = MultiItemSelectionSupport.addTo(recyclerView);
+        // multiple mode ON, but fail when validate activity selectionSupport.setChoiceMode(MultiItemSelectionSupport.ChoiceMode.MULTIPLE);
     }
 
     @Override

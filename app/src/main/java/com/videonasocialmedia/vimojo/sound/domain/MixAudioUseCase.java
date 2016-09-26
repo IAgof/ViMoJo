@@ -20,7 +20,7 @@ import java.util.concurrent.Future;
 public class MixAudioUseCase implements OnAudioMixerListener {
 
     private final AddMusicToProjectUseCase addMusicToProjectUseCase;
-    String outputFile = Constants.PATH_APP_TEMP + File.separator + "AudioMixed.m4a";
+    String outputFile = Constants.PATH_APP_TEMP + File.separator + "AudioMixed" + ".m4a";
     private OnMixAudioListener listener;
     private float volume = 0.5f;
 

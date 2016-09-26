@@ -47,7 +47,6 @@ android {
         exclude 'LICENSE.txt'
     }
     dexOptions {
-        incremental true
         javaMaxHeapSize "2048M"
     }
     lintOptions {
