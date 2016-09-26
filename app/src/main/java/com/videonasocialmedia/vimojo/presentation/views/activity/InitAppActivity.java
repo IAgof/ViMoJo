@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.karumi.dexter.Dexter;
@@ -43,6 +44,7 @@ import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.AppStart;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,6 +83,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     TextView versionName;
     @Bind(R.id.init_root_view)
     ViewGroup initRootView;
+    @Bind(R.id.splash_screen)
+    ImageView splashScreen;
     private long MINIMUN_WAIT_TIME = 900;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -106,6 +110,9 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         setVersionCode();
         createPermissionListeners();
         Dexter.continuePendingRequestsIfPossible(compositePermissionsListener);
+
+        splashScreen.setImageBitmap(Utils.decodeSampledBitmapFromResource(getResources(),
+                R.drawable.splash_screen, 1280, 720));
 
     }
 
