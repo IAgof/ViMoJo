@@ -25,6 +25,9 @@ task checkstyle(type: Checkstyle) {
 
     reports {
         xml.enabled = true
+        xml {
+            destination "${project.rootDir}/app/build/reports/checkstyle/checkstyle-results.xml"
+        }
     }
 
     classpath = files()
