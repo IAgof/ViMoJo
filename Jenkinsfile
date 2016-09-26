@@ -13,8 +13,6 @@ node {
 
   // runs all the tests
   sh "./gradlew cleanTest test"
-  // run checkstyle
-  sh "./gradlew checkstyle"
 
 //  def flavor = flavor(env.BRANCH_NAME)
 //  echo "Building flavor ${flavor}"
@@ -25,7 +23,9 @@ node {
 
   stage 'Report'
 //    step([$class: 'CheckStylePublisher', pattern: '**/checkstyle-result.xml'])
-    step([$class: 'hudson.plugins.checkstyle.CheckStylePublisher', checkstyle: 'app/build/reports/checkstyle/checkstyle-result.xml'])
+  // run checkstyle
+  sh "./gradlew checkstyle"
+  step([$class: 'hudson.plugins.checkstyle.CheckStylePublisher', checkstyle: 'app/build/reports/checkstyle/checkstyle-result.xml'])
 //    step([$class: 'JUnitResultArchiver', testResults: 'gitlist-PHP/build/logs/junit.xml'])
 //    step([$class: 'hudson.plugins.dry.DryPublisher', CopyPasteDetector: 'gitlist-PHP/build/logs/phpcpd.xml'])
 
