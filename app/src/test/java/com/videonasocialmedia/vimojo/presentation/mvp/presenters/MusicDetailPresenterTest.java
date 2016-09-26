@@ -62,7 +62,7 @@ public class MusicDetailPresenterTest {
     public void addMusicCallsTrackMusicSet() {
         MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(musicDetailView, playerView, mockedUserEventTracker);
         Project videonaProject = getAProject();
-        Music music = new Music(1, "Music title", 2, 3, "Music Author");
+        Music music = new Music(1, "Music title", 2, 3, "Music Author", "3");
         musicDetailPresenter.onMusicRetrieved(music);
 
         musicDetailPresenter.addMusic();

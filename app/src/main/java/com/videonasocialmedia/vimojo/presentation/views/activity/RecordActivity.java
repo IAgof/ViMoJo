@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.RecordPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
@@ -227,7 +228,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(LOG_TAG, "onResume");
+        Log.d(LOG_TAG, "init");
         registerReceiver(receiver, new IntentFilter(ExportProjectService.NOTIFICATION));
         recordPresenter.onResume();
         recording = false;
@@ -607,9 +608,9 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         if (!recording) {
             //TODO(alvaro 130616) Save flash state
             recordPresenter.setFlashOff();
-            Intent edit = new Intent(this, EditActivity.class);
-            //edit.putExtra("SHARE", false);
-            startActivity(edit);
+            Intent intent = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 

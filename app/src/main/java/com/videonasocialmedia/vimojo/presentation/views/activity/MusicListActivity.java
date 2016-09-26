@@ -23,6 +23,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicListView;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.MusicListAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.listener.MusicRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;

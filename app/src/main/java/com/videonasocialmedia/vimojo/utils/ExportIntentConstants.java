@@ -23,4 +23,10 @@ public class ExportIntentConstants {
     public final static String TEXT_TO_ADD = "textToAdd";
     public static final String TEXT_POSITION = "textPosition";
 
+    /**
+     * Voice over activity
+     */
+    public static final String VOICE_OVER_RECORDED_PATH= "voiceOverRecordedPath";
+
+
 }

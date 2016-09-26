@@ -126,6 +126,8 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
             }
         }
     };
+    private float volumeMusic=0.5f;
+    private final float DEFAULT_VOLUME = 0.5f;
 
     public VideonaPlayerExo(Context context) {
         super(context);
@@ -176,10 +178,21 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     private void initMusicPlayer() {
         if (musicPlayer == null && videoHasMusic()) {
-            musicPlayer = MediaPlayer.create(getContext(), music.getMusicResourceId());
-            musicPlayer.setVolume(0.5f, 0.5f);
+            musicPlayer = MediaPlayer.create(getContext(), Uri.parse(music.getMediaPath()));
+            musicPlayer.setVolume(volumeMusic, volumeMusic);
         }
+
     }
+
+   public void changeVolume(float volume){
+
+       player.sendMessage(rendererBuilder.getAudioRenderer(), MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,1f-volume);
+
+      if( musicPlayer!=null){
+          musicPlayer.setVolume(volume,volume);
+      }
+       volumeMusic=volume;
+   }
 
     private void updateSeekBarProgress() {
         if (player != null && isPlaying()) {
@@ -501,7 +514,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         playButton.setVisibility(View.VISIBLE);
     }
 
-    private void hidePlayButton() {
+    public void hidePlayButton() {
         playButton.setVisibility(View.INVISIBLE);
     }
 
@@ -567,11 +580,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     private void startMusicTrackPlayback() {
         if (videoHasMusic()) {
-            muteVideo(true);
             playMusicSyncWithVideo();
-        } else {
-//            releaseMusicPlayer();
-            muteVideo(false);
         }
     }
 
@@ -584,13 +593,15 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         }
     }
 
-    private void muteVideo(boolean shouldMute) {
+    public void muteVideo(boolean shouldMute) {
         // TODO(jliarte): 1/09/16 test mute
         if (player != null)
             if (shouldMute) {
-                player.setSelectedTrack(TYPE_AUDIO, ExoPlayer.TRACK_DISABLED);
+                volumeMusic = 0f;
+                player.sendMessage(rendererBuilder.getAudioRenderer(), MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,volumeMusic);
             } else {
-                player.setSelectedTrack(TYPE_AUDIO, ExoPlayer.TRACK_DEFAULT);
+                volumeMusic = DEFAULT_VOLUME;
+                player.sendMessage(rendererBuilder.getAudioRenderer(), MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,DEFAULT_VOLUME);
             }
     }
 
@@ -631,6 +642,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         pushSurface(false);
         player.prepare(renderers);
         player.seekTo(getClipPositionFromTimeLineTime());
+        changeVolume(volumeMusic);
         rendererBuildingState = RENDERER_BUILDING_STATE_BUILT;
     }
 
@@ -717,12 +729,18 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     /** End of MediaCodecAudioTrackRenderer.EventListener **/
 
-    private class RendererBuilder {
+    public class RendererBuilder {
         private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
         private static final int BUFFER_SEGMENT_COUNT = 256;
 
         private final Context context;
         private final String userAgent;
+        private MediaCodecAudioTrackRenderer audioRenderer;
+
+        public MediaCodecAudioTrackRenderer getAudioRenderer() {
+            return audioRenderer;
+        }
+
 
         public RendererBuilder(Context context, String userAgent) {
             this.context = context;
@@ -743,7 +761,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
             MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(context,
                     sampleSource, MediaCodecSelector.DEFAULT, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000,
                     mainHandler, player, 50);
-            MediaCodecAudioTrackRenderer audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource,
+            audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource,
                     MediaCodecSelector.DEFAULT, null, true, mainHandler, player,
                     AudioCapabilities.getCapabilities(context), AudioManager.STREAM_MUSIC);
             // (jliarte): 1/09/16 maybe it's easier with the traditional method using audio manager,

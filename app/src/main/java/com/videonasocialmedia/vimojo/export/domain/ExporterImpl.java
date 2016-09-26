@@ -124,7 +124,8 @@ public class ExporterImpl implements Exporter {
 
             Music music = (Music) project.getAudioTracks().get(0).getItems().getFirst();
             // TODO(alvaro) 060616 check if music is downloaded in a repository, not here.
-            File musicFile = Utils.getMusicFileByName(music.getMusicTitle(), music.getMusicResourceId());
+            //File musicFile = Utils.getMusicFileByName(music.getMusicTitle(), music.getMusicResourceId());
+            File musicFile = new File(music.getMediaPath());
             if (musicFile == null) {
                 onExportEndedListener.onExportError("Music not found");
             }

@@ -22,7 +22,7 @@ import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
  */
 public abstract class Muxer {
     private static final String TAG = "Muxer";
-    private final int mExpectedNumTracks = 2;           // TODO: Make this configurable?
+    protected int mExpectedNumTracks; // default two tracks, audio and video
     protected FORMAT mFormat;
     protected String mOutputPath;
     protected int mNumTracks;
@@ -37,7 +37,23 @@ public abstract class Muxer {
         mFormat = format;
         mNumTracks = 0;
         mNumTracksFinished = 0;
+        mExpectedNumTracks = 2;
         mFirstPts = 0;
+        mLastPts = new long[mExpectedNumTracks];
+        for (int i = 0; i < mLastPts.length; i++) {
+            mLastPts[i] = 0;
+        }
+        mEventBus = EventBus.getDefault();
+    }
+
+    protected Muxer(String outputPath, FORMAT format, int numTracks) {
+        Log.i(TAG, "Created muxer for output: " + outputPath);
+        mOutputPath = checkNotNull(outputPath);
+        mFormat = format;
+        mNumTracks = 0;
+        mNumTracksFinished = 0;
+        mFirstPts = 0;
+        mExpectedNumTracks = numTracks;
         mLastPts = new long[mExpectedNumTracks];
         for (int i = 0; i < mLastPts.length; i++) {
             mLastPts[i] = 0;
@@ -58,6 +74,14 @@ public abstract class Muxer {
      */
     public String getOutputPath() {
         return mOutputPath;
+    }
+
+    public int getmExpectedNumTracks() {
+        return mExpectedNumTracks;
+    }
+
+    public void setmExpectedNumTracks(int mExpectedNumTracks) {
+        this.mExpectedNumTracks = mExpectedNumTracks;
     }
 
     /**
@@ -111,7 +135,7 @@ public abstract class Muxer {
     public abstract void forceStop();
 
     protected boolean allTracksFinished() {
-        Log.w("MUXER", "Tracks finished"+mNumTracksFinished);
+        Log.w("MUXER", "Tracks finished "+mNumTracksFinished);
         return (mNumTracks == mNumTracksFinished);
     }
 

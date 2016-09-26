@@ -51,7 +51,7 @@ public class MusicDetailPresenter implements GetMusicFromProjectCallback, OnVide
         return Project.getInstance(null, null, null);
     }
 
-    public void onCreate(int musicId) {
+    public void onResume(int musicId) {
         this.musicId = musicId;
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
         getMusicFromProjectUseCase.getMusicFromProject(this);
@@ -72,7 +72,9 @@ public class MusicDetailPresenter implements GetMusicFromProjectCallback, OnVide
     }
 
     private Music retrieveLocalMusic(int musicId) {
-       /* Music result = new Music(R.drawable.gatito_rules, "audio_rock", R.raw.audio_rock, R.color.rock, "author");
+
+        Music result = new Music(R.drawable.gatito_rules, "audio_rock", R.raw.audio_folk, R.color.rock, "author", "04:23");
+
         GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase();
         List<Music> musicList = getMusicListUseCase.getAppMusic();
 
@@ -80,8 +82,8 @@ public class MusicDetailPresenter implements GetMusicFromProjectCallback, OnVide
             if (musicId == music.getMusicResourceId()) {
                 result = music;
             }
-        }*/
-        return null;
+        }
+        return result;
     }
 
     private void setupScene(boolean isMusicOnProject) {
@@ -103,6 +105,8 @@ public class MusicDetailPresenter implements GetMusicFromProjectCallback, OnVide
         addMusicToProjectUseCase.addMusicToTrack(music, 0);
         userEventTracker.trackMusicSet(currentProject);
         setupScene(musicAddedToProject);
+        musicDetailView.goToEdit(music.getMusicTitle());
+
     }
 
     @Override

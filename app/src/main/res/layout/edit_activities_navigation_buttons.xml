@@ -22,7 +22,7 @@
         android:layout_weight="1"
         android:scaleType="fitCenter"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/activity_edit_music_normal"
+        android:src="@drawable/activity_edit_sound_normal"
         />
 
     <ImageButton

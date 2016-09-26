@@ -28,6 +28,7 @@ public class Constants {
     final public static String FOLDER_VIDEONA_MASTERS = "Vimojo_Masters";
     final public static String FOLDER_VIDEONA = "Vimojo";
     final public static String FOLDER_VIDEONA_TEMP = ".temporal";
+    final public static String FOLDER_VIDEONA_TEMP_AUDIO = ".temporalAudio";
 
     final public static String PATH_APP = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DCIM) + File.separator + FOLDER_VIDEONA;
@@ -38,6 +39,8 @@ public class Constants {
             Environment.DIRECTORY_DCIM) + File.separator + FOLDER_VIDEONA_MASTERS;
 
     final public static String PATH_APP_TEMP = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP;
+
+    final public static String PATH_APP_TEMP_AUDIO = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP_AUDIO;
    // final public static String VIDEO_MUSIC_TEMP_FILE = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP + File.separator + "tempAV.mp4";
 
     final public static String AUDIO_MUSIC_FILE_EXTENSION = ".m4a";
@@ -50,6 +53,7 @@ public class Constants {
     // EXTRAS INTENT EDIT
     final public static String CURRENT_VIDEO_INDEX = "current_video_index";
     final public static String VIDEO_TO_SHARE_PATH = "video_to_share_path";
+    final public static String MUSIC_SELECTED_TITLE = "music_selected";
 
 
     public static final String NOTIFICATION_EXPORT_SERVICES_RECEIVER = "com.videonasocialmedia.vimojo";
