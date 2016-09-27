@@ -119,7 +119,7 @@ public class ExporterImpl implements Exporter {
 
     private Movie appendFiles(ArrayList<String> videoTranscoded) {
         Movie result;
-        if (isMusicOnProject()) {
+        if (project.isMusicOnProject()) {
             Movie merge = appendVideos(videoTranscoded, false);
 
             Music music = (Music) project.getAudioTracks().get(0).getItems().getFirst();
@@ -150,10 +150,6 @@ public class ExporterImpl implements Exporter {
         } catch (IOException | NullPointerException e) {
             onExportEndedListener.onExportError(String.valueOf(e));
         }
-    }
-
-    private boolean isMusicOnProject() {
-        return project.getAudioTracks().size() > 0 && project.getAudioTracks().get(0).getItems().size() > 0;
     }
 
     private Movie appendVideos(ArrayList<String> videoTranscodedPaths, boolean addOriginalAudio) {
