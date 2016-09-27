@@ -337,6 +337,11 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     private void setSeekBarTotalVideoDuration() {
         seekBar.setMax(totalVideoDuration);
+        updateTextProjectDuration(totalVideoDuration);
+    }
+
+    private void updateTextProjectDuration(int totalProjectDuration) {
+        textTimeProjectSeekbar.setText(TimeUtils.toFormattedTimeHoursMinutesSecond(totalProjectDuration));
     }
 
     @Override
@@ -355,7 +360,6 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
             int clipStopTime = this.totalVideoDuration + clip.getDuration();
             clipTimesRanges.add(new Range(clipStartTime, clipStopTime));
             this.totalVideoDuration = clipStopTime;
-            textTimeProjectSeekbar.setText(TimeUtils.toFormattedTimeHoursMinutesSecond(totalVideoDuration));
         }
     }
 
@@ -435,6 +439,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     @Override
     public void setSeekBarProgress(int progress) {
         seekBar.setProgress(progress);
+        textTimeCurrentSeekbar.setText(TimeUtils.toFormattedTimeHoursMinutesSecond(progress));
     }
 
 
@@ -453,6 +458,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         showPlayButton();
         initPreview(0);
         setSeekBarProgress(0);
+        updateTextProjectDuration(0);
         clearImagenText();
     }
 
@@ -494,7 +500,6 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     /** Seekbar listener methods **/
     @Override
     public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
-        textTimeCurrentSeekbar.setText(TimeUtils.toFormattedTimeHoursMinutesSecond(progress));
         if (fromUser) {
             if (isPlaying()) pausePreview();
             if (playerHasVideos()) {
