@@ -15,12 +15,16 @@ public class GetMusicFromProjectUseCase {
     }
 
     public void getMusicFromProject(GetMusicFromProjectCallback listener) {
+        if (!project.isMusicOnProject()){
+            return;
+        }
+
         Music music = null;
         try {
             music = (Music) project.getAudioTracks().get(0).getItems().get(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        listener.onMusicRetrieved(music);
+          listener.onMusicRetrieved(music);
     }
 }

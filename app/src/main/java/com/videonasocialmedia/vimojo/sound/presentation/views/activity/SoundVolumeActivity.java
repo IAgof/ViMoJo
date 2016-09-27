@@ -209,7 +209,9 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
     private void goToMixAudio(String videoTemPathMixAudio) {
 
-        presenter.setVolume(soundVoiceOverPath, videoTemPathMixAudio ,seekBarVolume.getProgress()/100);
+        float volumen = (float) (seekBarVolume.getProgress() * 0.01);
+
+        presenter.setVolume(soundVoiceOverPath, videoTemPathMixAudio ,volumen);
     }
 
     @OnClick(R.id.button_volume_sound_accept)

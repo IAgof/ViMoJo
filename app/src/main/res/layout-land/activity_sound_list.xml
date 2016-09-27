@@ -56,14 +56,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:id="@+id/layout_options_sound_activity">
 
                 <ImageButton
                     android:id="@+id/button_music"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:scaleType="fitCenter"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/activity_edit_sound_music_normal"
@@ -71,8 +70,9 @@
 
                 <ImageButton
                     android:id="@+id/button_microphone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:scaleType="fitCenter"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/activity_edit_sound_voice_normal"

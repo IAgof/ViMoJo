@@ -96,7 +96,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
         changeVisibilityAndResouceButton(buttonRecordIsInStop);
 
         presenter = new VoiceOverPresenter(this);
-        videonaPlayer.setSeekBarEnabled(false);
+        videonaPlayer.setSeekBarLayoutEnabled(false);
         videonaPlayer.setListener(this);
         buttonRecordVoiceOver.setOnTouchListener(this);
     }

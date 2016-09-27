@@ -44,9 +44,6 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
      */
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private MergeVoiceOverAudiosUseCase mergeVoiceOverAudiosUseCase;
-    private AddMusicToProjectUseCase addMusicToProjectUseCase;
-
-
 
     private VoiceOverView voiceOverView;
     public UserEventTracker userEventTracker;
@@ -58,7 +55,6 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
         this.voiceOverView = voiceOverView;
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         mergeVoiceOverAudiosUseCase = new MergeVoiceOverAudiosUseCase(this);
-        addMusicToProjectUseCase = new AddMusicToProjectUseCase();
         this.currentProject = loadCurrentProject();
 
         initAudioRecorder();

@@ -55,11 +55,14 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
 
     @Override
     public void onMixAudioSuccess() {
+
+        currentProject.setMusicOnProject(true);
         soundVolumeView.goToEditActivity();
     }
 
     @Override
     public void onMixAudioError() {
+        currentProject.setMusicOnProject(false);
     }
 
 }

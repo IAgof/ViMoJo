@@ -22,7 +22,6 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinis
  */
 public class AddMusicToProjectUseCase {
 
-
     /**
      * @deprecated use instead the the method without listener and register your listener using event bus
      * @param music
@@ -50,6 +49,7 @@ public class AddMusicToProjectUseCase {
         try {
             audioTrack = obtainAudioTrack(trackIndex);
             audioTrack.insertItem(music);
+
         } catch (IndexOutOfBoundsException | IllegalItemOnTrack exception) {
             exception.printStackTrace();
         }
