@@ -12,6 +12,7 @@ import com.videonasocialmedia.transcoder.overlay.Image;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatUseCase;
 import com.videonasocialmedia.vimojo.export.domain.OnGetVideonaFormatListener;
+import com.videonasocialmedia.vimojo.export.domain.RelaunchExportTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
@@ -55,6 +56,8 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
 
                 final int videoId = intent.getIntExtra(ExportIntentConstants.VIDEO_ID, -51456);
 
+                final boolean isVideoRelaunch = intent.getBooleanExtra(ExportIntentConstants.RELAUNCH_EXPORT_TEMP, false);
+
                 final boolean isVideoTrimmed = intent.getBooleanExtra(ExportIntentConstants.IS_VIDEO_TRIMMED, false);
                 final int startTimeMs = intent.getIntExtra(ExportIntentConstants.START_TIME_MS, 0);
                 final int finishTimeMs = intent.getIntExtra(ExportIntentConstants.FINISH_TIME_MS, 0);
@@ -79,17 +82,29 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
                     @Override
                     public void onTranscodeCanceled() {
                         video.deleteTempVideo();
+                        if(video.isTrimmedVideo())
+                            video.setTrimmedVideo(false);
+                        if(video.isTextToVideoAdded())
+                            video.setTextToVideoAdded(false);
                         sendResultBroadcast(videoId, false);
                     }
 
                     @Override
                     public void onTranscodeFailed(Exception e) {
                         video.deleteTempVideo();
+                        if(video.isTrimmedVideo())
+                            video.setTrimmedVideo(false);
+                        if(video.isTextToVideoAdded())
+                            video.setTextToVideoAdded(false);
                         sendResultBroadcast(videoId, false);
                     }
 
                 };
                 if (video != null) {
+
+                    if(isVideoRelaunch){
+                        relaunchExportVideo(video, useCaseListener, videoFormat);
+                    }
 
                     if(isAddedText){
                         addTextToVideo(video, useCaseListener, videoFormat, text, textPosition);
@@ -107,6 +122,13 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
         }).start();
 
         return START_NOT_STICKY;
+    }
+
+    private void relaunchExportVideo(Video video, MediaTranscoderListener useCaseListener, VideonaFormat videoFormat) {
+
+        RelaunchExportTempBackgroundUseCase useCase = new RelaunchExportTempBackgroundUseCase();
+        useCase.relaunchExport(video, useCaseListener, videoFormat);
+
     }
 
     private void addTextToVideo(Video video, MediaTranscoderListener useCaseListener,

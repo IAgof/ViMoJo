@@ -50,6 +50,8 @@ public class Video extends Media {
     private MediaMetadataRetriever retriever = new MediaMetadataRetriever();
     private int duration;
 
+    private int numTriesToExportVideo = 0;
+
 
     /**
      * protected default empty constructor, trying to get injectMocks working
@@ -177,4 +179,13 @@ public class Video extends Media {
     public void setTrimmedVideo(boolean trimmedVideo) {
         isTrimmedVideo = trimmedVideo;
     }
+
+    public int getNumTriesToExportVideo() {
+        return numTriesToExportVideo;
+    }
+
+    public void increaseNumTriesToExportVideo(){
+        numTriesToExportVideo++;
+    }
+
 }

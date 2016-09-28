@@ -25,7 +25,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 3 // 24/08/2016
-        versionName "0.4"
+        versionName "0.4.1"
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true

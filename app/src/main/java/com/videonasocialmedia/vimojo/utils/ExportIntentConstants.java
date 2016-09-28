@@ -28,5 +28,10 @@ public class ExportIntentConstants {
      */
     public static final String VOICE_OVER_RECORDED_PATH= "voiceOverRecordedPath";
 
+    /**
+     * Relaunch
+     */
+    public static final String RELAUNCH_EXPORT_TEMP= "relaunch_export_temp";
+
 
 }
