@@ -33,6 +33,13 @@ task checkstyle(type: Checkstyle) {
     classpath = files()
 }
 
+task listFlavors {
+    android.productFlavors.all {
+        flavor ->
+            println(flavor.name)
+    }
+}
+
 repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
