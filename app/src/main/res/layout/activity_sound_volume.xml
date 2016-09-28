@@ -55,7 +55,7 @@
             <ImageView
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:src="@drawable/activity_edit_sound_voice_normal"
+                android:src="@drawable/activity_edit_sound_normal"
                 android:layout_marginRight="4dp"
                 android:layout_gravity="left"
                 android:scaleType="fitXY"
@@ -80,7 +80,7 @@
             <ImageView
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:src="@drawable/activity_edit_sound_normal"
+                android:src="@drawable/activity_edit_sound_voice_normal"
                 android:layout_marginLeft="4dp"
                 android:layout_gravity="right"
                 android:scaleType="fitXY"
