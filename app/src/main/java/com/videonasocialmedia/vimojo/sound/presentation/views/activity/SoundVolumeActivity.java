@@ -282,6 +282,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     public void goToEditActivity() {
 
         // Add volume to project
+
         navigateTo(EditActivity.class);
     }
 

@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.sound.domain.OnMixAudioListener;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -23,6 +24,9 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
 
     public UserEventTracker userEventTracker;
     public Project currentProject;
+
+    private String voiceOverRecordedPath;
+    private String tempVideoProjectExportedPath;
 
     public SoundVolumePresenter(SoundVolumeView soundVolumeView){
         this.soundVolumeView=soundVolumeView;
@@ -52,18 +56,33 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
     public void setVolume(String voiceOverPath, String videoTemPathMixAudio, float volume){
         currentProject.setMusicOnProject(false);
         mixAudioUseCase.mixAudio(voiceOverPath, videoTemPathMixAudio,volume);
+        voiceOverRecordedPath = voiceOverPath;
+        tempVideoProjectExportedPath = videoTemPathMixAudio;
     }
 
     @Override
     public void onMixAudioSuccess() {
-
+        cleanTempFiles();
         currentProject.setMusicOnProject(true);
         soundVolumeView.goToEditActivity();
     }
 
     @Override
     public void onMixAudioError() {
+        cleanTempFiles();
         currentProject.setMusicOnProject(false);
+    }
+
+    private void cleanTempFiles(){
+
+        File fVoiceOver = new File(voiceOverRecordedPath);
+        if(fVoiceOver.exists()){
+            fVoiceOver.delete();
+        }
+        File fTempVideoExported = new File(tempVideoProjectExportedPath);
+        if(fTempVideoExported.exists()){
+            fTempVideoExported.delete();
+        }
     }
 
 }

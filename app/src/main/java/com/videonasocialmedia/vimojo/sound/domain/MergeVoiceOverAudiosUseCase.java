@@ -56,7 +56,7 @@ public class MergeVoiceOverAudiosUseCase {
 
     private void saveFinalVideo(Movie result) {
         try {
-            String pathAudioEdited = Constants.PATH_APP_EDITED + File.separator + "AUD_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".mp4";
+            String pathAudioEdited = Constants.PATH_APP_TEMP + File.separator + "AUD_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".mp4";
             com.videonasocialmedia.muxer.utils.Utils.createFile(result, pathAudioEdited);
             listener.onMergeVoiceOverAudioSuccess(pathAudioEdited);
         } catch (IOException | NullPointerException e) {
