@@ -249,7 +249,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         textSeekBarVolume.setText(progress+" % ");
-        videonaPlayer.changeVolume(progress / 100);
+        videonaPlayer.changeVolume(progress *0.01f);
         currentSoundVolumePosition = progress;
     }
 
