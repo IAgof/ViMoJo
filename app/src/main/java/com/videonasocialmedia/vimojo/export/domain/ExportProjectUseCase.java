@@ -21,6 +21,8 @@ public class ExportProjectUseCase implements OnExportEndedListener {
     private Exporter exporter;
     private Project project;
 
+    private final int MAX_SECONDS_WAITING_FOR_TEMP_FILES = 20;
+
     public ExportProjectUseCase(OnExportFinishedListener onExportFinishedListener) {
         this.onExportFinishedListener = onExportFinishedListener;
         project = Project.getInstance(null, null, null);
@@ -45,11 +47,16 @@ public class ExportProjectUseCase implements OnExportEndedListener {
 
     public void waitForOutputFilesFinished() {
         LinkedList<Media> medias = getMediasFromProject();
+        int countWaiting = 0;
         for (Media media:medias) {
             Video video = (Video) media;
             if (video.isEdited()) {
                 while (!video.outputVideoIsFinished()) {
                     try {
+                        if(countWaiting > MAX_SECONDS_WAITING_FOR_TEMP_FILES){
+                            break;
+                        }
+                        countWaiting++;
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
