@@ -10,8 +10,7 @@ import java.util.Arrays;
  * Created by ruth on 5/09/16.
  */
 public class EditTextMaxCharPerLine implements InputFilter {
-
-
+    
     private final int maxCharsPerLine;
 
     public EditTextMaxCharPerLine(int maxChars) {
@@ -35,9 +34,9 @@ public class EditTextMaxCharPerLine implements InputFilter {
             return null;
         } else {
             int remainingCharSize = maxCharsPerLine - charsAfterLine;
-            stringBuilder.append(newTextWritten.subSequence(0, Math.max(0, remainingCharSize -1))+"\n");
+            stringBuilder.append(newTextWritten.subSequence(0, Math.max(0, remainingCharSize))+"\n");
             if (newTextWritten.length() >= remainingCharSize) {
-                stringBuilder.append(newTextWritten.toString().substring(remainingCharSize-1));
+                stringBuilder.append(newTextWritten.subSequence(remainingCharSize,newTextWritten.length()));
             }
             return stringBuilder;
         }
