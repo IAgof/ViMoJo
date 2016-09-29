@@ -294,11 +294,6 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         rendererBuildingState = RENDERER_BUILDING_STATE_BUILDING;
         maybeReportPlayerState();
         rendererBuilder.buildRenderers(this, Uri.fromFile(new File(clipToPlay.getMediaPath())));
-        if(clipToPlay.isTextToVideoAdded()) {
-            setImagenText(clipToPlay.getTextToVideo(), clipToPlay.getTextPositionToVideo());
-        } else {
-            clearImagenText();
-        }
     }
 
     public void clearImagenText() {
@@ -561,7 +556,8 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     /** exo player listener **/
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-//        Log.d(TAG, "Playwhenready: "+playWhenReady+" state: "+playbackState);
+        Log.d(TAG, "Playwhenready: "+playWhenReady+" state: "+playbackState);
+        clearImagenText();
         switch(playbackState) {
             case ExoPlayer.STATE_BUFFERING:
                 break;
@@ -573,6 +569,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
             case ExoPlayer.STATE_PREPARING:
                 break;
             case ExoPlayer.STATE_READY:
+                updateClipTextPreview();
                 if (playWhenReady) {
                     startMusicTrackPlayback();
 //                    player.seekTo(getClipPositionFromTimeLineTime());
@@ -581,6 +578,18 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
             default:
                 break;
         }
+    }
+
+    public void updateClipTextPreview() {
+        if(getCurrentClip().isTextToVideoAdded()) {
+            setImagenText(getCurrentClip().getTextToVideo(), getCurrentClip().getTextPositionToVideo());
+        } else {
+            clearImagenText();
+        }
+    }
+
+    private Video getCurrentClip() {
+        return videoList.get(currentClipIndex);
     }
 
     private void startMusicTrackPlayback() {
