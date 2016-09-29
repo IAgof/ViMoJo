@@ -184,9 +184,9 @@ public class SoundListActivity  extends VimojoActivity implements SoundListView,
 
     @Override
     public void onClick(Music music) {
-        /*Intent i = new Intent(this, MusicDetailActivity.class);
+        Intent i = new Intent(this, MusicDetailActivity.class);
         i.putExtra(MusicDetailActivity.KEY_MUSIC_ID, music.getMusicResourceId());
-        startActivity(i);*/
+        startActivity(i);
     }
 
     @Override

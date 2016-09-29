@@ -73,7 +73,7 @@ public class MusicDetailPresenter implements GetMusicFromProjectCallback, OnVide
 
     private Music retrieveLocalMusic(int musicId) {
 
-        Music result = new Music(R.drawable.gatito_rules, "audio_rock", R.raw.audio_folk, R.color.rock, "author", "04:23");
+        Music result = new Music("");
 
         GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase();
         List<Music> musicList = getMusicListUseCase.getAppMusic();
