@@ -85,7 +85,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     @Bind(R.id.button_editor_play_pause)
     ImageButton playButton;
     @Bind(R.id.image_text_preview)
-    ImageView imagenTextPreview;
+    ImageView imageTextPreview;
     @Bind(R.id.video_view_time_current)
     TextView textTimeCurrentSeekbar;
     @Bind(R.id.video_view_time_project)
@@ -295,14 +295,14 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         maybeReportPlayerState();
         rendererBuilder.buildRenderers(this, Uri.fromFile(new File(clipToPlay.getMediaPath())));
         if(clipToPlay.isTextToVideoAdded()) {
-            setImagenText(clipToPlay.getTextToVideo(), clipToPlay.getTextPositionToVideo());
+            setImageText(clipToPlay.getTextToVideo(), clipToPlay.getTextPositionToVideo());
         } else {
-            clearImagenText();
+            clearImageText();
         }
     }
 
-    public void clearImagenText() {
-        imagenTextPreview.setImageDrawable(null);
+    public void clearImageText() {
+        imageTextPreview.setImageDrawable(null);
     }
 
     private boolean playerHasVideos() {
@@ -459,18 +459,18 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         initPreview(0);
         setSeekBarProgress(0);
         updateTextProjectDuration(0);
-        clearImagenText();
+        clearImageText();
     }
 
     private void setBlackBackgroundColor() {
         videoPreview.setBackgroundColor(Color.BLACK);
     }
 
-    public void setImagenText(String text, String textPosition){
-        imagenTextPreview.setMaxHeight(videoPreview.getHeight());
-        imagenTextPreview.setMaxWidth(videoPreview.getWidth());
+    public void setImageText(String text, String textPosition){
+        imageTextPreview.setMaxHeight(videoPreview.getHeight());
+        imageTextPreview.setMaxWidth(videoPreview.getWidth());
         Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition);
-        imagenTextPreview.setImageDrawable(textDrawable);
+        imageTextPreview.setImageDrawable(textDrawable);
 
     }
 

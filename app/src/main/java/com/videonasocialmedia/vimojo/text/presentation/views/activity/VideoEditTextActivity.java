@@ -56,6 +56,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     private final String TEXT_TO_ADD = "image_of_text";
     boolean hasTypedMoreThanTwoLines =false;
     private String typedText;
+    private boolean stateWasRestored = false;
 
     public enum TextPosition{TOP, CENTER, BOTTOM}
 
@@ -100,6 +101,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
         setupActivityButtons();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
+        stateWasRestored=false;
         button_editText_top.setSelected(false);
         button_editText_center.setSelected(true);
         button_ediText_bottom.setSelected(false);
@@ -151,7 +153,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
             button_ediText_bottom.setSelected(savedInstanceState.getBoolean(STATE_BUTTON_BOTTOM));
             button_editText_center.setSelected(savedInstanceState.getBoolean(STATE_BUTTON_CENTER));
             button_editText_top.setSelected(savedInstanceState.getBoolean(STATE_BUTTON_TOP));
-
+            stateWasRestored=true;
         }
     }
 
@@ -294,7 +296,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
         videonaPlayer.initPreviewLists(movieList);
         videonaPlayer.initPreview(currentPosition);
-        videonaPlayer.clearImagenText();
+        videonaPlayer.clearImageText();
         EditTextMaxCharPerLine.applyAutoWrap(clipText,30);
         onTextChanged();
     }
@@ -312,6 +314,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @Override
     public void initTextKeyboard(String text, String position) {
         clipText.setText(text);
+        if(stateWasRestored){
+            position = getTextPositionSelected().name();
+        }
         TextPosition positionText = TextToDrawable.getTypePositionFromString(position);
         paintPositionEditText(positionText);
         createDrawableFromText(typedText, positionText);
