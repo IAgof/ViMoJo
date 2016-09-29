@@ -34,15 +34,11 @@ public class Video extends Media {
      * The total duration of the file media resource
      */
     private int fileDuration;
-
     private String tempPath;
-
-    private boolean isTempPathFinished = false;
-
     private String textToVideo;
     private String textPositionToVideo;
+    private boolean isTempPathFinished = false;
     private boolean isTextToVideoAdded = false;
-
     private boolean isTrimmedVideo = false;
 
     // TODO(jliarte): 14/06/16 this entity should not depend on MediaMetadataRetriever as it is part of android
@@ -88,14 +84,16 @@ public class Video extends Media {
     public Video(Video video) {
         super(-1, null, video.getMediaPath(), video.getStartTime(),
                 video.getDuration(), null, null);
-        fileDuration = getFileDuration(video.getMediaPath());
+        fileDuration = video.getFileDuration();
         stopTime = video.getStopTime();
-        isTextToVideoAdded = video.isTextToVideoAdded;
+        isTextToVideoAdded = video.isTextToVideoAdded();
         textToVideo= video.getTextToVideo();
         textPositionToVideo = video.getTextPositionToVideo();
         if(video.isEdited()) {
             tempPath = video.getTempPath();
         }
+        isTempPathFinished = video.outputVideoIsFinished();
+        isTrimmedVideo = video.isTrimmedVideo();
     }
 
     public int getFileDuration() {
