@@ -32,6 +32,7 @@ import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -73,7 +74,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @Bind(R.id.imageVideoText)
     ImageView image_view_text;
 
-
+    private Video video;
     int videoIndexOnTrack;
     private EditTextPreviewPresenter presenter;
     private int currentPosition = 0;
@@ -293,10 +294,12 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @Override
     public void showPreview(List<Video> movieList) {
-
-        videonaPlayer.initPreviewLists(movieList);
+        video = new Video(movieList.get(0));
+        ArrayList<Video> clipList = new ArrayList<>();
+        video.setTextToVideoAdded(false);
+        clipList.add(video);
+        videonaPlayer.initPreviewLists(clipList);
         videonaPlayer.initPreview(currentPosition);
-        videonaPlayer.clearImageText();
         EditTextMaxCharPerLine.applyAutoWrap(clipText,MAX_CHARS_PER_LINE);
         onTextChanged();
     }
@@ -324,7 +327,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @Override
     public void newClipPlayed(int currentClipIndex) {
-        videonaPlayer.clearImageText();
     }
 
     @OnTextChanged(R.id.text_activityText)
