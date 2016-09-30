@@ -22,36 +22,21 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinis
  */
 public class AddMusicToProjectUseCase {
 
-    /**
-     * @deprecated use instead the the method without listener and register your listener using event bus
-     * @param music
-     * @param trackIndex
-     * @param listener
-     *
-     */
-    public void addMusicToTrack(Music music, int trackIndex, OnAddMediaFinishedListener listener) {
-        AudioTrack audioTrack = obtainAudioTrack(trackIndex);
-        try {
-            audioTrack.insertItem(music);
-            listener.onAddMediaItemToTrackSuccess(music);
-        } catch (IllegalItemOnTrack illegalItemOnTrack) {
-            illegalItemOnTrack.printStackTrace();
-            listener.onAddMediaItemToTrackError();
-        }
-    }
 
     private AudioTrack obtainAudioTrack(int trackIndex) {
         return Project.getInstance(null, null, null).getAudioTracks().get(trackIndex);
     }
 
-    public void addMusicToTrack(Music music, int trackIndex) {
+    public void addMusicToTrack(Music music, int trackIndex, OnAddMediaFinishedListener listener) {
         AudioTrack audioTrack = null;
         try {
             audioTrack = obtainAudioTrack(trackIndex);
-            audioTrack.insertItem(music);
+            audioTrack.insertItemAt(0,music);
+            listener.onAddMediaItemToTrackSuccess(music);
 
         } catch (IndexOutOfBoundsException | IllegalItemOnTrack exception) {
             exception.printStackTrace();
+            listener.onAddMediaItemToTrackError();
         }
     }
 

@@ -28,7 +28,7 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerLi
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverView;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
@@ -294,7 +294,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     public void navigateToSoundVolumeActivity(String voiceOverRecordedPath) {
 
         Intent intent = new Intent(this, SoundVolumeActivity.class);
-        intent.putExtra(ExportIntentConstants.VOICE_OVER_RECORDED_PATH, voiceOverRecordedPath);
+        intent.putExtra(IntentConstants.VOICE_OVER_RECORDED_PATH, voiceOverRecordedPath);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

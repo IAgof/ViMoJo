@@ -20,6 +20,7 @@ import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDeta
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditNavigatorPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundListActivity;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
@@ -156,7 +157,7 @@ public class ToolbarNavigator extends LinearLayout implements EditNavigatorView 
             navigateTo(SoundListActivity.class);
         } else {
             Intent i = new Intent(context, MusicDetailActivity.class);
-            i.putExtra(MusicDetailActivity.KEY_MUSIC_ID, music.getMusicResourceId());
+            i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, music.getMediaPath());
             context.startActivity(i);
         }
     }

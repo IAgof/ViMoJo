@@ -23,6 +23,9 @@ import com.bumptech.glide.Glide;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
@@ -35,7 +38,10 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -43,8 +49,6 @@ import butterknife.OnClick;
 
 
 public class MusicDetailActivity extends VimojoActivity implements MusicDetailView, VideonaPlayerListener {
-
-    public static String KEY_MUSIC_ID = "KEY_MUSIC_ID";
 
     @Bind(R.id.music_title)
     TextView musicTitle;
@@ -61,13 +65,10 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
 
     private Scene acceptCancelScene;
     private Scene deleteSecene;
-
-    private MusicDetailPresenter musicDetailPresenter;
-
+    private MusicDetailPresenter presenter;
     private BroadcastReceiver exportReceiver;
-    private int musicId;
-
-
+    private String musicPath;
+    private Music music;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,10 +77,9 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         ButterKnife.bind(this);
         initToolbar();
         videonaPlayer.setListener(this);
-        videonaPlayer.initPreview(0);
 
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-        musicDetailPresenter = new MusicDetailPresenter(this, videonaPlayer, userEventTracker);
+        presenter = new MusicDetailPresenter(this, userEventTracker);
         createExportReceiver();
     }
 
@@ -103,7 +103,8 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
                     if (resultCode == RESULT_OK) {
                         goToShare(videoToSharePath);
                     } else {
-                        Snackbar.make(sceneRoot, R.string.shareError, Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(sceneRoot, R.string.shareError,
+                                Snackbar.LENGTH_LONG).show();
                     }
                 }
             }
@@ -130,12 +131,12 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         videonaPlayer.onShown(this);
         try {
             Bundle extras = this.getIntent().getExtras();
-            musicId = extras.getInt(KEY_MUSIC_ID);
-            musicDetailPresenter.onResume(musicId);
+            musicPath = extras.getString(IntentConstants.MUSIC_DETAIL_SELECTED);
         } catch (Exception e) {
             //TODO show snackbar with error message
         }
         registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
+        presenter.onResume(musicPath);
     }
 
     @Override
@@ -173,26 +174,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     }
 
     @Override
-    public void showAuthor(String author) {
-        musicAuthor.setText(author);
-    }
-
-    @Override
-    public void showTitle(String title) {
-        musicTitle.setText(title);
-    }
-
-    @Override
-    public void showImage(String imagePath) {
-        Glide.with(this).load(imagePath).into(musicImage);
-    }
-
-    @Override
-    public void showImage(int resourceId) {
-        musicImage.setImageResource(resourceId);
-    }
-
-    @Override
     public void setupScene(boolean musicInProject) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             acceptCancelScene = Scene.getSceneForLayout(sceneRoot,
@@ -217,18 +198,42 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     }
 
     @Override
+    public void bindVideoList(List<Video> movieList) {
+
+        videonaPlayer.bindVideoList(movieList);
+        videonaPlayer.seekToClip(0);
+    }
+
+    @Override
+    public void setMusic(Music music, boolean scene) {
+        setupScene(scene);
+        videonaPlayer.setMusic(music);
+        videonaPlayer.changeVolume(1f);
+        updateCoverInfo(music);
+        this.music = music;
+    }
+
+    private void updateCoverInfo(Music music) {
+        musicAuthor.setText(music.getAuthor());
+        musicTitle.setText(music.getTitle());
+        Glide.with(VimojoApplication.getAppContext()).load(music.getIconPath()).into(musicImage);
+    }
+
+    @Override
     public void goToEdit(String musicTitle) {
-        Intent i = new Intent(this, EditActivity.class);
-        //i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent i = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
         i.putExtra(Constants.MUSIC_SELECTED_TITLE, musicTitle);
         startActivity(i);
+        finish();
 
     }
 
     @Nullable
     @OnClick(R.id.select_music)
     public void selectMusic() {
-        musicDetailPresenter.addMusic();
+
+        presenter.addMusic(music);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             TransitionManager.go(deleteSecene);
         } else {
@@ -241,12 +246,12 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @Nullable
     @OnClick(R.id.delete_music)
     public void deleteMusic() {
-        musicDetailPresenter.removeMusic();
+        presenter.removeMusic(music);
         goToMusicList();
     }
 
     private void goToMusicList() {
-        Intent intent = new Intent(this, SoundListActivity.class);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), SoundListActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
@@ -256,17 +261,9 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @Nullable
     @OnClick(R.id.cancel_music)
     public void onBackPressed() {
-        if (musicDetailPresenter.isMusicAddedToProject())
-            goToEditActivity();
-        else
             goToMusicList();
     }
 
-    private void goToEditActivity() {
-        Intent intent = new Intent(this, EditActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-    }
 
     @Override
     public void newClipPlayed(int currentClipIndex) {

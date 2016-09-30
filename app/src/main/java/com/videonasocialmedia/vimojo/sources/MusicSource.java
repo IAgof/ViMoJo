@@ -50,7 +50,7 @@ public class MusicSource {
 
 
         localMusic.add(new Music(R.drawable.gatito_rules_pressed, "We beat as one",
-                R.raw.free_the_gold_wind, R.color.folk, "Harlin James, Paul Lewis", "03:30"));
+                R.raw.we_beat_as_one_b, R.color.folk, "Harlin James, Paul Lewis", "03:30"));
 
     }
 

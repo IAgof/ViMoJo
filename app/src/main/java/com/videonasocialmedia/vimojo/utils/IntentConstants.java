@@ -3,7 +3,7 @@ package com.videonasocialmedia.vimojo.utils;
 /**
  * Created by alvaro on 5/09/16.
  */
-public class ExportIntentConstants {
+public class IntentConstants {
 
     public final static String VIDEO_ID = "videoId";
     public final static String VIDEO_EXPORTED = "videoExported";
@@ -33,5 +33,9 @@ public class ExportIntentConstants {
      */
     public static final String RELAUNCH_EXPORT_TEMP= "relaunch_export_temp";
 
+    /**
+     * Music Detail
+     */
+    public static final String MUSIC_DETAIL_SELECTED= "music_detail_selected";
 
 }

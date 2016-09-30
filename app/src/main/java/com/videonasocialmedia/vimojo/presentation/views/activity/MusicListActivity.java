@@ -25,6 +25,7 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.MusicRecyclerVi
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
 
@@ -160,7 +161,7 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
     @Override
     public void onClick(Music music) {
         Intent i = new Intent(this, MusicDetailActivity.class);
-        i.putExtra(MusicDetailActivity.KEY_MUSIC_ID, music.getMusicResourceId());
+        i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, music.getMediaPath());
         startActivity(i);
     }
 

@@ -3,15 +3,7 @@ package com.videonasocialmedia.vimojo.text.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
 
 import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -23,7 +15,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetriev
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
-import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,10 +78,10 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
         Context appContext = VimojoApplication.getAppContext();
         Intent textToVideoServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-        textToVideoServiceIntent.putExtra(ExportIntentConstants.VIDEO_ID, videoToEdit.getIdentifier());
-        textToVideoServiceIntent.putExtra(ExportIntentConstants.IS_TEXT_ADDED, true);
-        textToVideoServiceIntent.putExtra(ExportIntentConstants.TEXT_TO_ADD, text);
-        textToVideoServiceIntent.putExtra(ExportIntentConstants.TEXT_POSITION, textPositionSelected.name());
+        textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoToEdit.getIdentifier());
+        textToVideoServiceIntent.putExtra(IntentConstants.IS_TEXT_ADDED, true);
+        textToVideoServiceIntent.putExtra(IntentConstants.TEXT_TO_ADD, text);
+        textToVideoServiceIntent.putExtra(IntentConstants.TEXT_POSITION, textPositionSelected.name());
         appContext.startService(textToVideoServiceIntent);
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
     }

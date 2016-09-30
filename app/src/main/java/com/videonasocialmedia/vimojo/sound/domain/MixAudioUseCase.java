@@ -5,7 +5,9 @@ import com.videonasocialmedia.transcoder.audio_mixer.AudioMixer;
 import com.videonasocialmedia.transcoder.audio_mixer.listener.OnAudioMixerListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddMusicToProjectUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
@@ -17,7 +19,7 @@ import java.util.concurrent.Future;
  * Created by alvaro on 22/09/16.
  */
 
-public class MixAudioUseCase implements OnAudioMixerListener {
+public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinishedListener {
 
     private final AddMusicToProjectUseCase addMusicToProjectUseCase;
     String outputFile = Constants.PATH_APP_TEMP + File.separator + "AudioMixed" + ".m4a";
@@ -50,11 +52,7 @@ public class MixAudioUseCase implements OnAudioMixerListener {
     @Override
     public void onAudioMixerSuccess(String outputFileMixed) {
 
-        addMusicToProjectUseCase.addMusicToTrack(new Music(outputFileMixed, volume), 0);
-
-        Utils.cleanDirectory(new File(Constants.PATH_APP_TEMP_AUDIO));
-
-        listener.onMixAudioSuccess();
+        addMusicToProjectUseCase.addMusicToTrack(new Music(outputFileMixed, volume), 0, this);
     }
 
     @Override
@@ -69,6 +67,18 @@ public class MixAudioUseCase implements OnAudioMixerListener {
 
     @Override
     public void onAudioMixerCanceled() {
+
+    }
+
+    @Override
+    public void onAddMediaItemToTrackError() {
+
+    }
+
+    @Override
+    public void onAddMediaItemToTrackSuccess(Media media) {
+        Utils.cleanDirectory(new File(Constants.PATH_APP_TEMP_AUDIO));
+        listener.onMixAudioSuccess();
 
     }
 }

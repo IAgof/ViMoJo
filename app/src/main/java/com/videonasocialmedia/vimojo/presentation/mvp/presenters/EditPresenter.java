@@ -53,16 +53,14 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
      * Editor View
      */
     private EditorView editorView;
-    private VideonaPlayerView videonaPlayerView;
     private List<Video> videoList;
     protected UserEventTracker userEventTracker;
     private Project currentProject;
 
-    public EditPresenter(EditorView editorView, VideonaPlayerView videonaPlayerView,
+    public EditPresenter(EditorView editorView,
                          ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack,
                          UserEventTracker userEventTracker) {
         this.editorView = editorView;
-        this.videonaPlayerView = videonaPlayerView;
         this.projectModifiedCallBack = projectModifiedCallBack;
 
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
@@ -101,6 +99,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     @Override
     public void onAddMediaItemToTrackSuccess(Media media) {
+
     }
 
     @Override
@@ -147,7 +146,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     public void onMediaReordered(Media media, int newPosition) {
         //If everything was right the UI is already updated since the user did the reordering
         userEventTracker.trackClipsReordered(currentProject);
-        videonaPlayerView.pausePreview();
         // (jliarte): 24/08/16 probando fix del reorder. Si actualizamos el proyecto al
         //          reordenar, como se reordena en cada cambio de celda, no sólo al final,
         //          generamos overhead innecesario en la actividad y además de esto, se para el
@@ -172,6 +170,11 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     @Override
     public void onMusicRetrieved(Music music) {
-        videonaPlayerView.setMusic(music);
+        editorView.setMusic(music);
+    }
+
+    @Override
+    public void noMusicOnProject() {
+
     }
 }

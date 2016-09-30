@@ -17,7 +17,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
-import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 
@@ -90,10 +90,10 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
     public void setTrim(int startTimeMs, int finishTimeMs) {
         Context appContext = VimojoApplication.getAppContext();
         Intent trimServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-        trimServiceIntent.putExtra(ExportIntentConstants.VIDEO_ID, videoToEdit.getIdentifier());
-        trimServiceIntent.putExtra(ExportIntentConstants.IS_VIDEO_TRIMMED, true);
-        trimServiceIntent.putExtra(ExportIntentConstants.START_TIME_MS, startTimeMs);
-        trimServiceIntent.putExtra(ExportIntentConstants.FINISH_TIME_MS, finishTimeMs);
+        trimServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoToEdit.getIdentifier());
+        trimServiceIntent.putExtra(IntentConstants.IS_VIDEO_TRIMMED, true);
+        trimServiceIntent.putExtra(IntentConstants.START_TIME_MS, startTimeMs);
+        trimServiceIntent.putExtra(IntentConstants.FINISH_TIME_MS, finishTimeMs);
         appContext.startService(trimServiceIntent);
         trackVideoTrimmed();
     }

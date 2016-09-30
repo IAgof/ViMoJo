@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
@@ -33,6 +34,7 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundListView;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.sound.presentation.views.adapter.SoundListAdapter;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
 
@@ -55,10 +57,7 @@ public class SoundListActivity  extends VimojoActivity implements SoundListView,
 
     private SoundListAdapter soundAdapter;
     private SoundListPresenter presenter;
-
     private BroadcastReceiver exportReceiver;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,9 +183,10 @@ public class SoundListActivity  extends VimojoActivity implements SoundListView,
 
     @Override
     public void onClick(Music music) {
-        Intent i = new Intent(this, MusicDetailActivity.class);
-        i.putExtra(MusicDetailActivity.KEY_MUSIC_ID, music.getMusicResourceId());
+        Intent i = new Intent(VimojoApplication.getAppContext(), MusicDetailActivity.class);
+        i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, music.getMediaPath());
         startActivity(i);
+        finish();
     }
 
     @Override

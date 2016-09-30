@@ -1,17 +1,16 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
@@ -20,30 +19,26 @@ import java.util.List;
 /**
  *
  */
-public class MusicDetailPresenter implements GetMusicFromProjectCallback, OnVideosRetrieved {
+public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback, OnAddMediaFinishedListener {
 
     private AddMusicToProjectUseCase addMusicToProjectUseCase;
     private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
     private MusicDetailView musicDetailView;
-    private VideonaPlayerView playerView;
-    private Music music;
-    private int musicId;
-    private boolean musicAddedToProject;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
+    private Music musicSelected;
 
-    public MusicDetailPresenter(MusicDetailView musicDetailView, VideonaPlayerView playerView,
-                                UserEventTracker userEventTracker) {
+    public MusicDetailPresenter(MusicDetailView musicDetailView, UserEventTracker userEventTracker) {
         this.musicDetailView = musicDetailView;
-        this.playerView = playerView;
         addMusicToProjectUseCase = new AddMusicToProjectUseCase();
         removeMusicFromProjectUseCase = new RemoveMusicFromProjectUseCase();
-        getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+        getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
         this.currentProject = loadCurrentProject();
         this.userEventTracker = userEventTracker;
+        musicSelected = new Music("");
     }
 
     private Project loadCurrentProject() {
@@ -51,67 +46,38 @@ public class MusicDetailPresenter implements GetMusicFromProjectCallback, OnVide
         return Project.getInstance(null, null, null);
     }
 
-    public void onResume(int musicId) {
-        this.musicId = musicId;
+    public void onResume(String musicPath) {
+        musicSelected = retrieveLocalMusic(musicPath);
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
         getMusicFromProjectUseCase.getMusicFromProject(this);
+
     }
 
-
-    @Override
-    public void onMusicRetrieved(Music music) {
-        if (music == null) {
-            this.music = retrieveLocalMusic(musicId);
-            musicAddedToProject = false;
-        } else {
-            this.music = music;
-            musicAddedToProject = true;
-        }
-        setupScene(musicAddedToProject);
-        playerView.setMusic(this.music);
+    public void removeMusic(Music music) {
+        currentProject.setMusicOnProject(false);
+        removeMusicFromProjectUseCase.removeMusicFromProject(music, 0);
+        userEventTracker.trackMusicSet(currentProject);
     }
 
-    private Music retrieveLocalMusic(int musicId) {
-
-        Music result = new Music("");
-
+    private Music retrieveLocalMusic(String musicPath) {
+        Music result = null;
         GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase();
         List<Music> musicList = getMusicListUseCase.getAppMusic();
-
         for (Music music : musicList) {
-            if (musicId == music.getMusicResourceId()) {
+            if (musicPath.compareTo(music.getMediaPath()) == 0) {
                 result = music;
             }
         }
         return result;
     }
 
-    private void setupScene(boolean isMusicOnProject) {
-        musicDetailView.showTitle(music.getMusicTitle());
-        musicDetailView.showAuthor(music.getAuthor());
-        musicDetailView.showImage(music.getIconResourceId());
-        musicDetailView.setupScene(isMusicOnProject);
-    }
-
-    public void removeMusic() {
-        musicAddedToProject = false;
-        removeMusicFromProjectUseCase.removeMusicFromProject(music, 0);
-        userEventTracker.trackMusicSet(currentProject);
-    }
-
-
-    public void addMusic() {
-        musicAddedToProject = true;
-        addMusicToProjectUseCase.addMusicToTrack(music, 0);
-        userEventTracker.trackMusicSet(currentProject);
-        setupScene(musicAddedToProject);
-        musicDetailView.goToEdit(music.getMusicTitle());
-
+    public void addMusic(Music music) {
+        addMusicToProjectUseCase.addMusicToTrack(music, 0, this);
     }
 
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
-        playerView.bindVideoList(videoList);
+        musicDetailView.bindVideoList(videoList);
     }
 
     @Override
@@ -119,7 +85,30 @@ public class MusicDetailPresenter implements GetMusicFromProjectCallback, OnVide
         //TODO (javi.cabanas) show error
     }
 
-    public boolean isMusicAddedToProject() {
-        return musicAddedToProject;
+    @Override
+    public void onMusicRetrieved(Music musicOnProject) {
+        if(musicOnProject.getMediaPath().compareTo(musicSelected.getMediaPath()) == 0) {
+            musicDetailView.setMusic(musicOnProject, true);
+        } else {
+            musicDetailView.setMusic(musicSelected, false);
+        }
+    }
+
+    @Override
+    public void noMusicOnProject() {
+        if(musicSelected!=null)
+            musicDetailView.setMusic(musicSelected, false);
+    }
+
+    @Override
+    public void onAddMediaItemToTrackError() {
+
+    }
+
+    @Override
+    public void onAddMediaItemToTrackSuccess(Media media) {
+        currentProject.setMusicOnProject(true);
+        userEventTracker.trackMusicSet(currentProject);
+        musicDetailView.goToEdit(media.getTitle());
     }
 }
