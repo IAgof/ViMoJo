@@ -297,7 +297,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         videonaPlayer.initPreviewLists(movieList);
         videonaPlayer.initPreview(currentPosition);
         videonaPlayer.clearImageText();
-        EditTextMaxCharPerLine.applyAutoWrap(clipText,30);
+        EditTextMaxCharPerLine.applyAutoWrap(clipText,MAX_CHARS_PER_LINE);
         onTextChanged();
     }
 
@@ -322,11 +322,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         createDrawableFromText(typedText, positionText);
     }
 
-    private void getValueTextPosition(String position) {
-    }
-
     @Override
     public void newClipPlayed(int currentClipIndex) {
+        videonaPlayer.clearImageText();
     }
 
     @OnTextChanged(R.id.text_activityText)
@@ -334,7 +332,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         typedText = getTextFromEditText();
         updateTextinPreview();
 
-        if (null != clipText.getLayout() && clipText.getLayout().getLineCount() > 2) {
+        if (null != clipText.getLayout() && clipText.getLayout().getLineCount() > MAX_LINES) {
             if(!hasTypedMoreThanTwoLines){
                 showError(getString(R.string.error_videoEdit));
                 hideKeyboard(clipText);

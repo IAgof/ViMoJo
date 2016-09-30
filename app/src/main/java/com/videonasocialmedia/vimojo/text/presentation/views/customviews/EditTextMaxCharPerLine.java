@@ -10,7 +10,7 @@ import java.util.Arrays;
  * Created by ruth on 5/09/16.
  */
 public class EditTextMaxCharPerLine implements InputFilter {
-    
+
     private final int maxCharsPerLine;
 
     public EditTextMaxCharPerLine(int maxChars) {
@@ -32,14 +32,21 @@ public class EditTextMaxCharPerLine implements InputFilter {
 
         if (charsAfterLine + newTextWritten.length() < maxCharsPerLine) {
             return null;
-        } else {
-            int remainingCharSize = maxCharsPerLine - charsAfterLine;
-            stringBuilder.append(newTextWritten.subSequence(0, Math.max(0, remainingCharSize))+"\n");
-            if (newTextWritten.length() >= remainingCharSize) {
-                stringBuilder.append(newTextWritten.subSequence(remainingCharSize,newTextWritten.length()));
-            }
-            return stringBuilder;
         }
+
+        if (charsAfterLine + newTextWritten.length()>=maxCharsPerLine) {
+            int remainingCharSize = maxCharsPerLine - charsAfterLine;
+            stringBuilder.append(newTextWritten.subSequence(0, Math.max(0, remainingCharSize)) + "\n");
+
+            if (newTextWritten.length() < remainingCharSize) {
+                return stringBuilder;
+
+            } else {
+                return stringBuilder.substring(remainingCharSize);
+            }
+
+        }
+        return stringBuilder;
     }
 
     private int findLastLineCharIndex(int destStart, CharSequence currentText) {
