@@ -47,6 +47,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import java.io.File;
@@ -85,7 +86,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     @Bind(R.id.button_editor_play_pause)
     ImageButton playButton;
     @Bind(R.id.image_text_preview)
-    ImageView imagenTextPreview;
+    ImageView imageTextPreview;
     @Bind(R.id.video_view_time_current)
     TextView textTimeCurrentSeekbar;
     @Bind(R.id.video_view_time_project)
@@ -296,8 +297,8 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         rendererBuilder.buildRenderers(this, Uri.fromFile(new File(clipToPlay.getMediaPath())));
     }
 
-    public void clearImagenText() {
-        imagenTextPreview.setImageDrawable(null);
+    public void clearImageText() {
+        imageTextPreview.setImageDrawable(null);
     }
 
     private boolean playerHasVideos() {
@@ -454,19 +455,16 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         initPreview(0);
         setSeekBarProgress(0);
         updateTextProjectDuration(0);
-        clearImagenText();
+        clearImageText();
     }
 
     private void setBlackBackgroundColor() {
         videoPreview.setBackgroundColor(Color.BLACK);
     }
 
-    public void setImagenText(String text, String textPosition){
-        imagenTextPreview.setMaxHeight(videoPreview.getHeight());
-        imagenTextPreview.setMaxWidth(videoPreview.getWidth());
-        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition);
-        imagenTextPreview.setImageDrawable(textDrawable);
-
+    public void setImageText(String text, String textPosition){
+        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition, Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+        imageTextPreview.setImageDrawable(textDrawable);
     }
 
     /** End of VideonaPlayerView methods **/

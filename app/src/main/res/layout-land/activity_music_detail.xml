@@ -72,7 +72,7 @@
                         android:layout_marginLeft="4dp"
                         android:minHeight="140dp"
                         android:scaleType="centerCrop"
-                        tools:src="@drawable/imagebutton_music_background_folk"/>
+                        tools:src="@drawable/gatito_rules_pressed"/>
 
                     <TextView
                         android:id="@+id/music_title"

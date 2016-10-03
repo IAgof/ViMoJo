@@ -261,7 +261,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void showText(String text, String position) {
-        videonaPlayer.setImagenText(text,position);
+        videonaPlayer.setImageText(text,position);
     }
 
     private void initCurrentPosition() {

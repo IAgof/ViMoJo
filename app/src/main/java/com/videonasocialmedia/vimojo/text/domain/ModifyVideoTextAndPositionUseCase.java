@@ -63,9 +63,9 @@ public class ModifyVideoTextAndPositionUseCase {
 
     @NonNull
     public Image getImageFromTextAndPosition(String text, String textPosition) {
-        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition);
+        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition, Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
 
-        return new Image(textDrawable, Constants.DEFAULT_VIMOJO_WIDTH,Constants.DEFAULT_VIMOJO_HEIGHT);
+        return new Image(textDrawable, Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 
 
