@@ -87,17 +87,11 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     @Override
     public void onMusicRetrieved(Music musicOnProject) {
-        if(musicOnProject.getMediaPath().compareTo(musicSelected.getMediaPath()) == 0) {
+        if(musicOnProject!= null && musicOnProject.getMediaPath().compareTo(musicSelected.getMediaPath()) == 0) {
             musicDetailView.setMusic(musicOnProject, true);
         } else {
             musicDetailView.setMusic(musicSelected, false);
         }
-    }
-
-    @Override
-    public void noMusicOnProject() {
-        if(musicSelected!=null)
-            musicDetailView.setMusic(musicSelected, false);
     }
 
     @Override

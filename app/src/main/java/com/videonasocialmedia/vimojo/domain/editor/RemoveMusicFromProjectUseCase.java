@@ -62,7 +62,7 @@ public class RemoveMusicFromProjectUseCase {
             Media audio = audioTrack.getItems().get(musicIndex);
             if (audio.equals(music)) {
                 try {
-                    audioTrack.deleteItemAt(musicIndex);
+                    audioTrack.deleteItem(audio);
                 } catch (IllegalItemOnTrack | IllegalOrphanTransitionOnTrack exception) {
                     //TODO treat exception properly
                 }

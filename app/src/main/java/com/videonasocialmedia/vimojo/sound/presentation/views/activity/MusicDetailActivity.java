@@ -174,7 +174,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     }
 
     @Override
-    public void setupScene(boolean musicInProject) {
+    public void musicSelectedOptions(boolean musicInProject) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             acceptCancelScene = Scene.getSceneForLayout(sceneRoot,
                     R.layout.activity_music_detail_scene_accept_cancel, this);
@@ -206,7 +206,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
 
     @Override
     public void setMusic(Music music, boolean scene) {
-        setupScene(scene);
+        musicSelectedOptions(scene);
         videonaPlayer.setMusic(music);
         videonaPlayer.changeVolume(1f);
         updateCoverInfo(music);

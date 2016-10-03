@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface MusicDetailView {
 
-    void setupScene(boolean isMusicInProject);
+    void musicSelectedOptions(boolean isMusicInProject);
 
     void bindVideoList(List<Video> movieList);
 

@@ -165,7 +165,8 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     public void loadProject() {
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
-        getMusicFromProjectUseCase.getMusicFromProject(this);
+        if(currentProject.isMusicOnProject())
+            getMusicFromProjectUseCase.getMusicFromProject(this);
     }
 
     @Override
@@ -173,8 +174,4 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         editorView.setMusic(music);
     }
 
-    @Override
-    public void noMusicOnProject() {
-
-    }
 }

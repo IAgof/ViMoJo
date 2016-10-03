@@ -34,10 +34,6 @@ public class EditNavigatorPresenter {
                 navigatorView.goToMusic(music);
             }
 
-            @Override
-            public void noMusicOnProject() {
-
-            }
         });
     }
 
