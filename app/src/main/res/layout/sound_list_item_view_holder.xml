@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_margin="8dp"
-            tools:src="@drawable/imagebutton_music_background_folk"/>
+            tools:src="@drawable/gatito_rules_pressed"/>
 
         <TextView
             android:id="@+id/music_duration"

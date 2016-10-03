@@ -63,7 +63,7 @@
                     android:minHeight="150dp"
                     android:paddingBottom="?attr/actionBarSize"
                     android:scaleType="centerCrop"
-                    tools:src="@drawable/imagebutton_music_background_folk"/>
+                    tools:src="@drawable/gatito_rules_pressed"/>
 
                 <TextView
                     android:id="@+id/music_title"
