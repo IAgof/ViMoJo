@@ -3,7 +3,6 @@ package com.videonasocialmedia.vimojo.domain.editor;
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
-import com.videonasocialmedia.vimojo.model.entities.editor.track.AudioTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 
 import org.junit.After;
@@ -12,11 +11,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+
 
 /**
  * Created by alvaro on 3/10/16.
@@ -54,6 +51,8 @@ public class RemoveMusicFromProjectUseCaseTest {
 
         Project project = getAProjectWithMusicAdded();
         Music music = project.getMusic();
+
+        assertNotNull(music);
 
         new RemoveMusicFromProjectUseCase().removeMusicFromProject(music, 0);
 

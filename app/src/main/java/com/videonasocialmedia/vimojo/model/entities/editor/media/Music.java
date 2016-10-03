@@ -30,7 +30,6 @@ public class Music extends Audio {
         this.iconResourceId = iconResourceId;
         this.author = author;
         this.durationMusic=durationMusic;
-        this.volume = 1f;
 
     }
 
@@ -42,12 +41,10 @@ public class Music extends Audio {
         this.iconResourceId = iconResourceId;
         this.author = author;
         this.durationMusic=durationMusic;
-        this.volume = 1f;
     }
 
     public Music(String musicPath){
         super(0,"","", "", musicPath, 0, 0, null, null, null, null, null);
-        this.volume = 1f;
     }
 
     public Music(String musicPath, float volume){

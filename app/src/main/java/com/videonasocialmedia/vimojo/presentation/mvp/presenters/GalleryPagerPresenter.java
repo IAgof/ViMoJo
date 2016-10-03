@@ -28,7 +28,6 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         OnRemoveMediaFinishedListener, OnExportFinishedListener {
 
     RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
-    RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
     AddVideoToProjectUseCase addVideoToProjectUseCase;
     GalleryPagerView galleryPagerView;
     ExportProjectUseCase exportProjectUseCase;
@@ -40,7 +39,6 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     public GalleryPagerPresenter(GalleryPagerView galleryPagerView) {
         this.galleryPagerView = galleryPagerView;
         removeVideoFromProjectUseCase = new RemoveVideoFromProjectUseCase();
-        removeMusicFromProjectUseCase = new RemoveMusicFromProjectUseCase();
         addVideoToProjectUseCase = new AddVideoToProjectUseCase();
     }
 
