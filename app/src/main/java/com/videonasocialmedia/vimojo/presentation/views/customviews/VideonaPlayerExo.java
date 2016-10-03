@@ -423,7 +423,6 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     @Override
     public void setMusic(Music music) {
         this.music = music;
-
         initMusicPlayer();
         musicPlayer.seekTo(currentTimePositionInList);
     }
@@ -616,7 +615,8 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     }
 
     public void muteVideo(boolean shouldMute) {
-        // TODO(jliarte): 1/09/16 test mute
+
+       /* // TODO(jliarte): 1/09/16 test mute
         if (player != null)
             if (shouldMute) {
                 volumeMusic = 0f;
@@ -625,6 +625,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
                 volumeMusic = DEFAULT_VOLUME;
                 player.sendMessage(rendererBuilder.getAudioRenderer(), MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,DEFAULT_VOLUME);
             }
+            */
     }
 
     private boolean videoHasMusic() {

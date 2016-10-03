@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
@@ -19,6 +20,7 @@ import java.util.List;
 public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListener {
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+    private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
     private MixAudioUseCase mixAudioUseCase;
     private SoundVolumeView soundVolumeView;
 
@@ -31,6 +33,7 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
     public SoundVolumePresenter(SoundVolumeView soundVolumeView){
         this.soundVolumeView=soundVolumeView;
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+        removeMusicFromProjectUseCase = new RemoveMusicFromProjectUseCase();
         mixAudioUseCase = new MixAudioUseCase(this);
         this.currentProject = loadCurrentProject();
     }
@@ -54,7 +57,6 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
     }
 
     public void setVolume(String voiceOverPath, String videoTemPathMixAudio, float volume){
-        currentProject.setMusicOnProject(false);
         mixAudioUseCase.mixAudio(voiceOverPath, videoTemPathMixAudio,volume);
         voiceOverRecordedPath = voiceOverPath;
         tempVideoProjectExportedPath = videoTemPathMixAudio;
@@ -85,4 +87,9 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
         }
     }
 
+    public void checkMusicOnProject() {
+        if(currentProject.isMusicOnProject())
+          currentProject.setMusicOnProject(false);
+
+    }
 }

@@ -46,7 +46,7 @@ public class MusicSource {
 
 
         localMusic.add(new Music(R.drawable.gatito_rules_pressed, "Sorrow and sadness",
-                R.raw.sorrow_and_sadness_b, R.color.folk, "David Jhon, Vanacore EhrenEbbage", "01:33"));
+                R.raw.sorrow_and_sadness_b, R.color.folk, "David Jhon, Vanacore Ehrenebbage", "01:33"));
 
 
         localMusic.add(new Music(R.drawable.gatito_rules_pressed, "We beat as one",

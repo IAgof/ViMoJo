@@ -217,6 +217,9 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @OnClick(R.id.button_volume_sound_accept)
     public void onClickVolumeSoundAccept(){
 
+        // if music has been selected before, delete
+        presenter.checkMusicOnProject();
+
         Intent intent = new Intent(this, ExportProjectService.class);
         Snackbar.make(videonaPlayer,"Starting mixing audio", Snackbar.LENGTH_INDEFINITE).show();
         this.startService(intent);

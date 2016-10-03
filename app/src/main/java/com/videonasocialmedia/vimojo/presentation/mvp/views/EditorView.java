@@ -31,8 +31,6 @@ public interface EditorView {
 
     void setMusic(Music music);
 
-    void setMusic(Music music, float volume);
-
     void updateProject();
 
     void enableEditActions();
