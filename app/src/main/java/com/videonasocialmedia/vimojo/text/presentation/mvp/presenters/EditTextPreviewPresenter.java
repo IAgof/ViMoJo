@@ -76,9 +76,9 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
         editTextView.showError("No videos");
     }
 
-    public void createDrawableWithText(String text, String position) {
+    public void createDrawableWithText(String text, String position, int width, int height) {
 
-        Drawable drawable = TextToDrawable.createDrawableWithTextAndPosition(text,position);
+        Drawable drawable = TextToDrawable.createDrawableWithTextAndPosition(text, position, width, height);
         editTextView.showText(drawable);
     }
 

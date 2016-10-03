@@ -47,6 +47,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import java.io.File;
@@ -467,11 +468,8 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     }
 
     public void setImageText(String text, String textPosition){
-        imageTextPreview.setMaxHeight(videoPreview.getHeight());
-        imageTextPreview.setMaxWidth(videoPreview.getWidth());
-        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition);
+        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition, Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
         imageTextPreview.setImageDrawable(textDrawable);
-
     }
 
     /** End of VideonaPlayerView methods **/

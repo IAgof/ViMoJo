@@ -8,13 +8,11 @@ import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
 import com.videonasocialmedia.transcoder.overlay.Image;
-import com.videonasocialmedia.transcoder.overlay.Overlay;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.IOException;
-import java.util.concurrent.Future;
 
 /**
  * Created by jca on 27/5/15.
@@ -69,7 +67,7 @@ public class ModifyVideoDurationUseCase {
 
     @NonNull
     public Image getImageFromTextAndPosition(String text, String textPosition) {
-        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition);
+        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition, Constants.DEFAULT_VIMOJO_WIDTH,Constants.DEFAULT_VIMOJO_HEIGHT);
 
         return new Image(textDrawable, Constants.DEFAULT_VIMOJO_WIDTH,Constants.DEFAULT_VIMOJO_HEIGHT);
     }
