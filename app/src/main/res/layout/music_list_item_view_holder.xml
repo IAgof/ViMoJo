@@ -18,7 +18,7 @@
             android:id="@+id/music_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:src="@drawable/imagebutton_music_background_folk"/>
+            tools:src="@drawable/gatito_rules_pressed"/>
 
         <TextView
 
