@@ -66,9 +66,6 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
         editTextView.showPreview(videoList);
-        Video video = videoList.get(0);
-        if(video.isTextToVideoAdded())
-            editTextView.initTextKeyboard(video.getTextToVideo(),video.getTextPositionToVideo());
     }
 
     @Override

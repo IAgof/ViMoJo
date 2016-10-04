@@ -25,6 +25,6 @@ public interface EditTextView {
 
     void showText(Drawable drawable);
 
-    void initTextKeyboard(String text, String position);
+    void initTextToVideoAdded(String text, String position);
 
 }

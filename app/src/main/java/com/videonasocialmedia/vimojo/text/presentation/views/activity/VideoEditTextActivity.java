@@ -56,7 +56,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     private final String CURRENT_TEXT = "current_text";
     private final String TEXT_TO_ADD = "image_of_text";
     boolean hasTypedMoreThanTwoLines =false;
-    private String typedText;
+
     private boolean stateWasRestored = false;
 
     public enum TextPosition{TOP, CENTER, BOTTOM}
@@ -78,7 +78,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     int videoIndexOnTrack;
     private EditTextPreviewPresenter presenter;
     private int currentPosition = 0;
-    private String text;
+    private String typedText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,7 +227,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @OnClick(R.id.button_editText_bottom)
     public void onClickAddTextBottom(){
-
         paintPositionEditText(TextPosition.BOTTOM);
         createDrawableFromText(typedText, TextPosition.BOTTOM);
         hideKeyboard(clipText);
@@ -296,6 +295,8 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         clipList.add(video);
         videonaPlayer.initPreviewLists(clipList);
         videonaPlayer.initPreview(currentPosition);
+        if(movieList.get(0).isTextToVideoAdded())
+            initTextToVideoAdded(video.getTextToVideo(),video.getTextPositionToVideo());
         MaxCharPerLineInputFilter.applyAutoWrap(clipText,MAX_CHARS_PER_LINE);
         onTextChanged();
     }
@@ -311,10 +312,12 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     @Override
-    public void initTextKeyboard(String text, String position) {
-        clipText.setText(text);
+    public void initTextToVideoAdded(String text, String position) {
         if(stateWasRestored){
             position = getTextPositionSelected().name();
+            typedText = getTextFromEditText();
+        }else{
+            clipText.setText(text);
         }
         TextPosition positionText = TextToDrawable.getTypePositionFromString(position);
         paintPositionEditText(positionText);
