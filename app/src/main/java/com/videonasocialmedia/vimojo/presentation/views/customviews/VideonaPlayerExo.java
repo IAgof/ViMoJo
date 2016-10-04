@@ -555,7 +555,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         Log.d(TAG, "Playwhenready: "+playWhenReady+" state: "+playbackState);
-        clearImagenText();
+        clearImageText();
         switch(playbackState) {
             case ExoPlayer.STATE_BUFFERING:
                 break;
@@ -580,9 +580,9 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     public void updateClipTextPreview() {
         if(getCurrentClip().isTextToVideoAdded()) {
-            setImagenText(getCurrentClip().getTextToVideo(), getCurrentClip().getTextPositionToVideo());
+            setImageText(getCurrentClip().getTextToVideo(), getCurrentClip().getTextPositionToVideo());
         } else {
-            clearImagenText();
+            clearImageText();
         }
     }
 

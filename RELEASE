@@ -1,0 +1,4 @@
+v0.4.3
+- Improved Text view in video editing. Bug fixes and cleaning
+- Change drawable in activity_music_detail
+- Adjusted the width and height of the Canvas with the text in video preview
