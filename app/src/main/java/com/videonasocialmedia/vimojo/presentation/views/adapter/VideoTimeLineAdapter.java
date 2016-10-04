@@ -60,7 +60,7 @@ public class VideoTimeLineAdapter extends RecyclerView.Adapter<VideoTimeLineAdap
 
     @Override
     public void finishMovement(int newPosition) {
-        videoTimeLineListener.onClipClicked(newPosition);
+        videoTimeLineListener.onClipReordered(newPosition);
         updateSelection(newPosition);
     }
 
@@ -83,8 +83,6 @@ public class VideoTimeLineAdapter extends RecyclerView.Adapter<VideoTimeLineAdap
     }
 
     public void updateSelection(int positionSelected) {
-        if (positionSelected == selectedVideoPosition)
-            return;
         notifyItemChanged(selectedVideoPosition);
         selectedVideoPosition = positionSelected;
         notifyItemChanged(selectedVideoPosition);
