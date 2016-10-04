@@ -22,6 +22,12 @@ public class Profile {
 
     private static Profile INSTANCE;
 
+    public void clear() {
+        if (INSTANCE != null) {
+            INSTANCE = null;
+        }
+    }
+
     /**
      * possible profileTypes
      */
