@@ -33,7 +33,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.MusicDetailPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
@@ -251,7 +251,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     }
 
     private void goToMusicList() {
-        Intent intent = new Intent(VimojoApplication.getAppContext(), SoundListActivity.class);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), MusicListActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();

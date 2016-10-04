@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by ruth on 13/09/16.
  */
-public interface SoundListView {
+public interface MusicListView {
     void showVideoList(List<Music> musicList);
     void bindVideoList(List<Video> movieList);
     void resetPreview();

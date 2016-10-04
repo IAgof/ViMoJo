@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
+package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 import com.videonasocialmedia.vimojo.domain.editor.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -10,6 +10,9 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 

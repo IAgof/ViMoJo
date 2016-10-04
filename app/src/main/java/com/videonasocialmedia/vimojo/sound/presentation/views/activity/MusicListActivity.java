@@ -29,8 +29,8 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundListPresenter;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundListView;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.sound.presentation.views.adapter.SoundListAdapter;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -45,7 +45,7 @@ import butterknife.OnClick;
 /**
  *
  */
-public class SoundListActivity  extends VimojoActivity implements SoundListView,
+public class MusicListActivity extends VimojoActivity implements MusicListView,
         SoundRecyclerViewClickListener, VideonaPlayerListener {
 
     @Bind(R.id.sound_list)
@@ -56,7 +56,7 @@ public class SoundListActivity  extends VimojoActivity implements SoundListView,
     ImageButton buttonMicrophone;
 
     private SoundListAdapter soundAdapter;
-    private SoundListPresenter presenter;
+    private MusicListPresenter presenter;
     private BroadcastReceiver exportReceiver;
 
     @Override
@@ -67,7 +67,7 @@ public class SoundListActivity  extends VimojoActivity implements SoundListView,
         setupToolbar();
         createExportReceiver();
         videonaPlayer.setListener(this);
-        presenter = new SoundListPresenter(this);
+        presenter = new MusicListPresenter(this);
         initVideoListRecycler();
     }
 
