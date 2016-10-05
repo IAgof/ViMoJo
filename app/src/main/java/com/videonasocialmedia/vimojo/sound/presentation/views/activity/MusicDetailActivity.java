@@ -50,10 +50,14 @@ import butterknife.OnClick;
 
 public class MusicDetailActivity extends VimojoActivity implements MusicDetailView, VideonaPlayerListener {
 
+    private static final String MUSIC_DETAIL_PROJECT_POSITION = "music_detail_project_position";
+
     @Bind(R.id.music_title)
     TextView musicTitle;
     @Bind(R.id.music_author)
     TextView musicAuthor;
+    @Bind(R.id.music_duration)
+    TextView musicDuration;
     @Nullable
     @Bind(R.id.music_image)
     ImageView musicImage;
@@ -69,6 +73,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     private BroadcastReceiver exportReceiver;
     private String musicPath;
     private Music music;
+    private int currentProjectPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,11 +81,17 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         setContentView(R.layout.activity_music_detail);
         ButterKnife.bind(this);
         initToolbar();
+        restoreState(savedInstanceState);
         videonaPlayer.setListener(this);
-
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
         presenter = new MusicDetailPresenter(this, userEventTracker);
         createExportReceiver();
+    }
+
+    private void restoreState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            currentProjectPosition = savedInstanceState.getInt(MUSIC_DETAIL_PROJECT_POSITION, 0);
+        }
     }
 
     private void initToolbar() {
@@ -116,6 +127,12 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         Intent intent = new Intent(this, ShareActivity.class);
         intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoToSharePath);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(MUSIC_DETAIL_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -201,7 +218,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     public void bindVideoList(List<Video> movieList) {
 
         videonaPlayer.bindVideoList(movieList);
-        videonaPlayer.seekToClip(0);
+        videonaPlayer.seekTo(currentProjectPosition);
     }
 
     @Override
@@ -216,7 +233,10 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     private void updateCoverInfo(Music music) {
         musicAuthor.setText(music.getAuthor());
         musicTitle.setText(music.getTitle());
-        Glide.with(VimojoApplication.getAppContext()).load(music.getIconPath()).into(musicImage);
+        musicDuration.setText(music.getDurationMusic());
+        Glide.with(VimojoApplication.getAppContext()).load(music.getIconResourceId()).error(R.drawable.gatito_rules_pressed);
+        musicImage.setImageResource(music.getIconResourceId());
+        //
     }
 
     @Override

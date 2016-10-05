@@ -20,6 +20,7 @@ import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDeta
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditNavigatorPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
@@ -79,7 +80,7 @@ public class ToolbarNavigator extends LinearLayout implements EditNavigatorView 
             public void onClick(View v) {
                 if (navigateToMusicButton.isEnabled()) {
                    //navigatorPresenter.checkMusicAndNavigate();
-                    navigateTo(MusicListActivity.class);
+                    navigateTo(SoundActivity.class);
                 }
             }
         });

@@ -55,7 +55,7 @@
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                android:layout_margin="8dp"
                 app:cardCornerRadius="4dp"
                 app:cardElevation="4dp">
 
@@ -67,26 +67,30 @@
 
                     <ImageView
                         android:id="@+id/music_image"
+                        android:layout_width="64dp"
+                        android:layout_height="114dp"
+                        android:scaleType="centerCrop"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="4dp"
+                        android:paddingBottom="40dp"
+                        tools:src="@drawable/gatito_rules_pressed"/>
+
+                    <LinearLayout
+                        android:id="@+id/layout_description_music"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginLeft="4dp"
-                        android:minHeight="140dp"
-                        android:scaleType="centerCrop"
-                        tools:src="@drawable/imagebutton_music_background_folk"/>
+                        android:orientation="vertical"
+                        android:layout_toRightOf= "@+id/music_image"
+                        android:layout_centerVertical="true"
+                        android:paddingBottom="40dp"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginRight="8dp">
 
                     <TextView
                         android:id="@+id/music_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@+id/music_image"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_marginTop="8dp"
-                        android:background="#000"
-                        android:paddingLeft="4dp"
-                        android:paddingRight="4dp"
-                        android:textColor="@color/textColorTitleToolbar"
+                        android:textColor="@color/textColorPrimary"
                         android:textSize="16sp"
                         tools:text="El título de la canción"
                         />
@@ -95,28 +99,33 @@
                         android:id="@+id/music_author"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@id/music_image"
-                        android:layout_below="@id/music_title"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
                         android:layout_marginTop="4dp"
-                        android:background="#000"
-                        android:paddingLeft="4dp"
-                        android:paddingRight="4dp"
-                        android:textColor="@color/textColorTitleToolbar"
+                        android:textColor="@color/colorSecondaryLight"
+                        android:textSize="14sp"
                         tools:text="El autor de la canción"
                         />
+
+                    <TextView
+                        android:id="@+id/music_duration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@color/colorSecondary"
+                        android:textSize="12sp"
+                        tools:text="La duración de la canción"
+                        />
+                    </LinearLayout>
 
                     <FrameLayout
                         android:id="@+id/scene_root"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/music_image"
+                        android:layout_below="@id/layout_description_music"
                         android:layout_centerHorizontal="true"
                         android:layout_marginLeft="4dp"
                         android:layout_marginTop="8dp"
                         tools:layout="@layout/activity_music_detail_scene_accept_cancel"
-                        tools:layout_height="50dp"/>
+                        tools:layout_height="40dp"/>
 
                 </RelativeLayout>
 
