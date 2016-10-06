@@ -505,6 +505,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
             if (playerHasVideos()) {
                 hidePlayButton();
                 seekTo(progress);
+                notifyNewClipPlayed();
             } else {
                 setSeekBarProgress(0);
             }
