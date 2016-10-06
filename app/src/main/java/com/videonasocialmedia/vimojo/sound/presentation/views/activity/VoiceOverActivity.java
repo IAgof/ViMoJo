@@ -242,7 +242,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
 
     private void refreshTimeTag(int currentPosition) {
 
-        timeTag.setText(TimeUtils.toFormattedTime(currentPosition + startTime));
+        timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(currentPosition + startTime));
     }
 
     @Override
@@ -254,8 +254,8 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
         maxDuration = maxSeekBar;
         millisecondsLeft = maxSeekBar - currentVoiceOverPosition;
         this.startTime = startTime;
-        timeStart.setText(TimeUtils.toFormattedTime(startTime));
-        timeFinal.setText(TimeUtils.toFormattedTime(maxSeekBar));
+        timeStart.setText(TimeUtils.toFormattedTimeWithMilliSecond(startTime));
+        timeFinal.setText(TimeUtils.toFormattedTimeWithMilliSecond(maxSeekBar));
         refreshTimeTag(currentVoiceOverPosition);
     }
 
