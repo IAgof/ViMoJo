@@ -64,6 +64,7 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 public class EditActivity extends VimojoActivity implements EditorView,
         VideonaPlayerListener, VideoTimeLineRecyclerViewClickListener {
 
+    private static final String CURRENT_TIME_POSITION = "current_time_position";
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;
     private final int NUM_COLUMNS_GRID_TIMELINE_VERTICAL = 4;
     @Bind(R.id.button_edit_duplicate)
@@ -84,6 +85,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
     FloatingActionsMenu fabEditRoom;
     private List<Video> videoList;
     private int currentVideoIndex = 0;
+    private int currentProjectTimePosition = 0;
     private EditPresenter editPresenter;
     private VideoTimeLineAdapter timeLineAdapter;
     private AlertDialog progressDialog;
@@ -130,6 +132,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
         createProgressDialog();
         if (savedInstanceState != null) {
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
+            currentProjectTimePosition = savedInstanceState.getInt(CURRENT_TIME_POSITION, 0);
         }
     }
 
@@ -372,6 +375,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
+        outState.putInt(CURRENT_TIME_POSITION, videonaPlayer.getCurrentPosition());
         super.onSaveInstanceState(outState);
     }
 
@@ -406,7 +410,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
         videoListRecyclerView.scrollToPosition(currentVideoIndex);
         timeLineAdapter.notifyDataSetChanged();
         videonaPlayer.bindVideoList(videoList);
-        videonaPlayer.seekToClip(currentVideoIndex);
+        videonaPlayer.seekTo(currentProjectTimePosition);
     }
 
     @Override
