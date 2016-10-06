@@ -8,7 +8,7 @@
  * Veronica Lago Fominaya
  */
 
-package com.videonasocialmedia.vimojo.domain.editor;
+package com.videonasocialmedia.vimojo.sound.domain;
 
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;

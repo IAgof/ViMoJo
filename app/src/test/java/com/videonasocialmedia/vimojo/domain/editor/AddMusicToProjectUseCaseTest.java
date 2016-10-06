@@ -14,6 +14,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.AudioTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
+import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 
 import org.junit.After;
 import org.junit.Before;

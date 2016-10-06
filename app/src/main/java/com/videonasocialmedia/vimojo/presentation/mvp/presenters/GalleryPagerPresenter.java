@@ -11,7 +11,6 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;

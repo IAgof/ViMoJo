@@ -1,10 +1,10 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
-import com.videonasocialmedia.vimojo.domain.editor.AddMusicToProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.RemoveMusicFromProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
