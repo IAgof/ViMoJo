@@ -29,7 +29,7 @@ import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectSe
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
 
@@ -96,7 +96,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         ab.setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        soundVoiceOverPath = intent.getStringExtra(ExportIntentConstants.VOICE_OVER_RECORDED_PATH);
+        soundVoiceOverPath = intent.getStringExtra(IntentConstants.VOICE_OVER_RECORDED_PATH);
 
         restoreState(savedInstanceState);
         presenter = new SoundVolumePresenter(this);
@@ -216,6 +216,9 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
     @OnClick(R.id.button_volume_sound_accept)
     public void onClickVolumeSoundAccept(){
+
+        // if music has been selected before, delete
+        presenter.checkMusicOnProject();
 
         Intent intent = new Intent(this, ExportProjectService.class);
         Snackbar.make(videonaPlayer,"Starting mixing audio", Snackbar.LENGTH_INDEFINITE).show();

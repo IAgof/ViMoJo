@@ -15,9 +15,6 @@ public class GetMusicFromProjectUseCase {
     }
 
     public void getMusicFromProject(GetMusicFromProjectCallback listener) {
-        if (!project.isMusicOnProject()){
-            return;
-        }
 
         Music music = null;
         try {

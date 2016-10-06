@@ -2,13 +2,11 @@ package com.videonasocialmedia.vimojo.export;
 
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
-import com.videonasocialmedia.transcoder.overlay.Image;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatUseCase;
 import com.videonasocialmedia.vimojo.export.domain.OnGetVideonaFormatListener;
@@ -16,10 +14,8 @@ import com.videonasocialmedia.vimojo.export.domain.RelaunchExportTempBackgroundU
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
-import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
-import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
 
@@ -54,17 +50,17 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
             @Override
             public void run() {
 
-                final int videoId = intent.getIntExtra(ExportIntentConstants.VIDEO_ID, -51456);
+                final int videoId = intent.getIntExtra(IntentConstants.VIDEO_ID, -51456);
 
-                final boolean isVideoRelaunch = intent.getBooleanExtra(ExportIntentConstants.RELAUNCH_EXPORT_TEMP, false);
+                final boolean isVideoRelaunch = intent.getBooleanExtra(IntentConstants.RELAUNCH_EXPORT_TEMP, false);
 
-                final boolean isVideoTrimmed = intent.getBooleanExtra(ExportIntentConstants.IS_VIDEO_TRIMMED, false);
-                final int startTimeMs = intent.getIntExtra(ExportIntentConstants.START_TIME_MS, 0);
-                final int finishTimeMs = intent.getIntExtra(ExportIntentConstants.FINISH_TIME_MS, 0);
+                final boolean isVideoTrimmed = intent.getBooleanExtra(IntentConstants.IS_VIDEO_TRIMMED, false);
+                final int startTimeMs = intent.getIntExtra(IntentConstants.START_TIME_MS, 0);
+                final int finishTimeMs = intent.getIntExtra(IntentConstants.FINISH_TIME_MS, 0);
 
-                final boolean isAddedText = intent.getBooleanExtra(ExportIntentConstants.IS_TEXT_ADDED, false);
-                final String text = intent.getStringExtra(ExportIntentConstants.TEXT_TO_ADD);
-                final String textPosition = intent.getStringExtra(ExportIntentConstants.TEXT_POSITION);
+                final boolean isAddedText = intent.getBooleanExtra(IntentConstants.IS_TEXT_ADDED, false);
+                final String text = intent.getStringExtra(IntentConstants.TEXT_TO_ADD);
+                final String textPosition = intent.getStringExtra(IntentConstants.TEXT_POSITION);
 
 
                 final Video video = getVideo(videoId);
@@ -149,8 +145,8 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
 
     private void sendResultBroadcast(int videoId, boolean success) {
         Intent intent = new Intent(ACTION);
-        intent.putExtra(ExportIntentConstants.VIDEO_EXPORTED, success);
-        intent.putExtra(ExportIntentConstants.VIDEO_ID, videoId);
+        intent.putExtra(IntentConstants.VIDEO_EXPORTED, success);
+        intent.putExtra(IntentConstants.VIDEO_ID, videoId);
         sendBroadcast(intent);
     }
 

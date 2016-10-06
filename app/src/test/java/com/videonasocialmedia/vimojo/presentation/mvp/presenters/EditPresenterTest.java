@@ -68,6 +68,6 @@ public class EditPresenterTest {
     // Seems not needed since we already use @InjectMocks annotation
     @NonNull
     public EditPresenter getEditPresenter() {
-        return new EditPresenter(mockedEditorView, mockedVideonaPlayerView, mockedProjectModifiedCallback, mockedUserEventTracker);
+        return new EditPresenter(mockedEditorView, mockedProjectModifiedCallback, mockedUserEventTracker);
     }
 }

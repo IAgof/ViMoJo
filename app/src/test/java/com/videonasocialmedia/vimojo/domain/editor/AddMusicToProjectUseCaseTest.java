@@ -13,11 +13,14 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.AudioTrack;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
+import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -29,6 +32,10 @@ import static org.junit.Assert.assertEquals;
 //@PowerMockRunnerDelegate(RobolectricTestRunner.class) // But when we finally successfully mock it it seems we can get rid of Robolectric here
 @PrepareForTest({AddMusicToProjectUseCase.class})
 public class AddMusicToProjectUseCaseTest {
+
+    @Mock
+    OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -46,7 +53,7 @@ public class AddMusicToProjectUseCaseTest {
         Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
         Music musicToAdd = new Music(42, "musicNameId", 3, 2, "author","2");
 
-        new AddMusicToProjectUseCase().addMusicToTrack(musicToAdd, 0);
+        new AddMusicToProjectUseCase().addMusicToTrack(musicToAdd, 0, mockedOnAddMediaFinishedListener);
         AudioTrack projectAudioTrack = videonaProject.getAudioTracks().get(0);
 
         assert ( projectAudioTrack.getItems().size() == 1 );
@@ -106,7 +113,7 @@ public class AddMusicToProjectUseCaseTest {
         Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
         Music musicToAdd = new Music(42, "musicNameId", 3, 2, "","");
 
-        new AddMusicToProjectUseCase().addMusicToTrack(musicToAdd, 1);
+        new AddMusicToProjectUseCase().addMusicToTrack(musicToAdd, 1, mockedOnAddMediaFinishedListener);
         AudioTrack projectAudioTrack = videonaProject.getAudioTracks().get(0);
 
         assertEquals(projectAudioTrack.getItems().size(), 0);
