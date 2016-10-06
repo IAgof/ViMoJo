@@ -369,8 +369,8 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     @Override
     public void pausePreview() {
-        pauseVideo();
         pauseMusic();
+        pauseVideo();
         seekBarUpdaterHandler.removeCallbacksAndMessages(null);
         showPlayButton();
     }
