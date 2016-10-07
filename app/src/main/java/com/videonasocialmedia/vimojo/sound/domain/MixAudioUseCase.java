@@ -38,8 +38,8 @@ public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinished
         this.volume = volume;
 
         try {
-            Future<Void> mFuture = MediaTranscoder.getInstance().mixTwoAudioFiles(inputFileOne, inputFileTwo,
-                    volume, Constants.PATH_APP_TEMP_AUDIO, outputFile, this);
+            Future<Void> mFuture = MediaTranscoder.getInstance().mixAudioTwoFiles(inputFileOne, inputFileTwo,
+                    1-volume, Constants.PATH_APP_TEMP_AUDIO, outputFile, this);
         } catch (IOException e) {
             e.printStackTrace();
         }
