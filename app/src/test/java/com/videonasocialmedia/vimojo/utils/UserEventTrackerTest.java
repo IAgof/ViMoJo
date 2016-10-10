@@ -188,12 +188,12 @@ public class UserEventTrackerTest {
 
     @Test
     public void trackVideoSharedPropertiesCallsTrackWithEventNameAndProperties() throws JSONException {
-
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker.getInstance(mockedMixpanelAPI));
         Project videonaProject = getAProject();
 
         String socialNetworkId = "SocialNetwork";
-        VideoResolution videoResolution = new VideoResolution(videonaProject.getProfile().getResolution());
+        Profile profile = videonaProject.getProfile();
+        VideoResolution videoResolution = new VideoResolution(profile.getResolution());
 
         int totalVideoShared = 2;
         userEventTracker.trackVideoShared(socialNetworkId, videonaProject,totalVideoShared);

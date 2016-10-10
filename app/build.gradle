@@ -9,6 +9,36 @@ buildscript {
 }
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'checkstyle'
+
+checkstyle {
+    toolVersion = '7.1.1'
+}
+
+task checkstyle(type: Checkstyle) {
+    // Cleaning the old log because of the creation of the new ones (not sure if totaly needed)
+    delete fileTree(dir: "${project.rootDir}/app/build/reports/checkstyle")
+    configFile file("${project.rootDir}/checkstyle.xml")
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    reports {
+        xml.enabled = true
+        xml {
+            destination "${project.rootDir}/app/build/reports/checkstyle/checkstyle-result.xml"
+        }
+    }
+
+    classpath = files()
+}
+
+task listFlavors {
+    android.productFlavors.all {
+        flavor ->
+            println(flavor.name)
+    }
+}
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -39,6 +69,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
+            ext.betaDistributionGroupAliases="videona-dev-team"
             buildConfigField "String", "MIXPANEL_TOKEN", "\"c6617213110cd2513dfc0ad97dbaee66\""
            // buildConfigField "String", "FTP_HOST", "\"82.223.76.148\""
         }
