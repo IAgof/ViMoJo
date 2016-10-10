@@ -1,3 +1,6 @@
+v0.4.5
+- Fixed video timeline clips reordering not updating selected clip and video preview seekbar times
+
 v0.4.4
 - Minor fixes in text autowrap and activity state changes for Text view in video editing
 
