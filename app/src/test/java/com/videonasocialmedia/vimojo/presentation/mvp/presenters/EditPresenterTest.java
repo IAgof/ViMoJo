@@ -50,10 +50,21 @@ public class EditPresenterTest {
     }
 
     @Test
-    public void loadProjectCallsGetMusicFromProjectUseCase() {
-        editPresenter.loadProject();
+    public void constructorSetsCurrentProject() {
+        Project videonaProject = getAProject();
+        assertThat(editPresenter.currentProject, is(videonaProject));
+    }
 
-        Mockito.verify(getMusicFromProjectUseCase).getMusicFromProject(editPresenter);
+    @Test
+    public void loadProjectCallsGetMediaListFromProjectUseCase() {
+        editPresenter.loadProject();
+        Mockito.verify(getMediaListFromProjectUseCase).getMediaListFromProject(editPresenter);
+    }
+
+    @Test
+    public void loadProjectCallsGetMusicFromProjectUseCaseIfProjectHasMusic() {
+        Project videonaProject = getAProject();
+        // TODO:(alvaro.martinez) 10/10/16 Check and improve isMusicOnProject, setter not needed.
     }
 
     @Test
@@ -69,5 +80,9 @@ public class EditPresenterTest {
     @NonNull
     public EditPresenter getEditPresenter() {
         return new EditPresenter(mockedEditorView, mockedProjectModifiedCallback, mockedUserEventTracker);
+    }
+
+    public Project getAProject() {
+        return Project.getInstance("title", "/path", Profile.getInstance(Profile.ProfileType.free));
     }
 }

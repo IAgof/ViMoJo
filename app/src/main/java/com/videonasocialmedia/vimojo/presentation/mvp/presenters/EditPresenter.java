@@ -55,7 +55,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     private EditorView editorView;
     private List<Video> videoList;
     protected UserEventTracker userEventTracker;
-    private Project currentProject;
+    protected Project currentProject;
 
     public EditPresenter(EditorView editorView,
                          ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack,
