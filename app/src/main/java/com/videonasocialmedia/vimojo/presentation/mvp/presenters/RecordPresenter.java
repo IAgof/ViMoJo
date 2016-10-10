@@ -107,6 +107,7 @@ public class RecordPresenter {
             initRecorder(cameraPreview);
         }
         hideInitialsButtons();
+        recordView.hidePrincipalViews();
     }
 
     private void initRecorder(GLCameraView cameraPreview) {

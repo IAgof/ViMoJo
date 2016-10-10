@@ -512,7 +512,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void hidePrincipalViews() {
-        clearButton.setImageResource(R.drawable.activity_record_icon_shrink);
+        clearButton.setImageResource(R.drawable.activity_record_icon_expand);
         clearButton.setActivated(true);
 
         recButtonScreenClean.setVisibility(View.VISIBLE);
@@ -527,7 +527,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void showPrincipalViews() {
-        clearButton.setImageResource(R.drawable.activity_record_icon_clear);
+        clearButton.setImageResource(R.drawable.activity_record_icon_shrink);
         clearButton.setActivated(false);
 
         hud.setVisibility(View.VISIBLE);
