@@ -175,7 +175,14 @@ public class Project {
     }
 
     public void clear() {
-        INSTANCE = new Project(null, null, null);
+//        INSTANCE = new Project(null, null, null);
+        if (INSTANCE != null) {
+            Profile projectProfile = INSTANCE.getProfile();
+            if (projectProfile != null) {
+                projectProfile.clear();
+            }
+            INSTANCE = null;
+        }
     }
 
     public int numberOfClips() {

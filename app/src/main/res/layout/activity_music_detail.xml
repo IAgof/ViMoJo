@@ -33,6 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:baselineAligned="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
@@ -56,27 +57,31 @@
 
                 <ImageView
                     android:id="@+id/music_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
-                    android:minHeight="150dp"
-                    android:paddingBottom="?attr/actionBarSize"
+                    android:layout_centerVertical="true"
                     android:scaleType="centerCrop"
-                    tools:src="@drawable/gatito_rules_pressed"/>
+                    android:paddingBottom="?attr/actionBarSize"
+                    tools:src="@drawable/gatito_rules_pressed"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/layout_description_music"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/music_image"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_centerVertical="true"
+                    android:paddingBottom="?attr/actionBarSize"
+                    android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/music_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignStart="@+id/music_image"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="16dp"
-                    android:background="#000"
-                    android:paddingLeft="4dp"
-                    android:paddingRight="4dp"
-                    android:textColor="@color/textColorTitleToolbar"
+                    android:textColor="@color/textColorPrimary"
                     android:textSize="18sp"
                     tools:text="El título de la canción"
                     />
@@ -85,30 +90,35 @@
                     android:id="@+id/music_author"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignStart="@id/music_image"
-                    android:layout_below="@id/music_title"
-                    android:layout_marginLeft="16dp"
                     android:layout_marginTop="4dp"
-                    android:background="#000"
-                    android:paddingLeft="4dp"
-                    android:paddingRight="4dp"
-                    android:textColor="@color/textColorTitleToolbar"
-                    android:textSize="16sp"
+                    android:textColor="@color/colorSecondaryLight"
+                    android:textSize="14sp"
                     tools:text="El autor de la canción"
                     />
 
-                <FrameLayout
-                    android:id="@+id/scene_root"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="?attr/actionBarSize"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginTop="8dp"
-                    android:minHeight="40dp"
+                <TextView
+                    android:id="@+id/music_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/colorSecondary"
+                    android:textSize="14sp"
+                    tools:text="La duración de la canción"
+                    />
+                </LinearLayout>
 
-                    tools:layout="@layout/activity_music_detail_scene_accept_cancel"/>
+            <FrameLayout
+                android:id="@+id/scene_root"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="?attr/actionBarSize"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="8dp"
+                android:minHeight="40dp"
+                tools:layout="@layout/activity_music_detail_scene_accept_cancel"/>
+
             </RelativeLayout>
 
         </android.support.v7.widget.CardView>

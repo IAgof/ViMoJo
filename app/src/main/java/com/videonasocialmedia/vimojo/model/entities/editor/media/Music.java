@@ -7,9 +7,6 @@
 
 package com.videonasocialmedia.vimojo.model.entities.editor.media;
 
-/**
- * @deprecated
- */
 public class Music extends Audio {
 
     //TODO en el futuro no será un recurso sino que se obtendrá

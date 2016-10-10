@@ -220,7 +220,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void refreshDurationTag(int duration) {
-        durationTag.setText(TimeUtils.toFormattedTime(duration));
+        durationTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(duration));
     }
 
     @Override
@@ -275,7 +275,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     private void updateTrimmingTextTags() {
         int duration = finishTimeMs - startTimeMs;
-        durationTag.setText(TimeUtils.toFormattedTime(duration));
+        durationTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(duration));
     }
 
     @Override

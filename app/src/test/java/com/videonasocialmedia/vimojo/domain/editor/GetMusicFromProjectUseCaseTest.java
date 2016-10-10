@@ -69,6 +69,7 @@ public class GetMusicFromProjectUseCaseTest {
         assertThat(retrievedMusic, is(project_music));
     }
 
+
     @Test
     public void getMusicFromProjectNotifiesWithNullIfNoMusic() {
         Project project = getAProject();

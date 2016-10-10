@@ -28,7 +28,7 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerLi
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverView;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
@@ -242,7 +242,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
 
     private void refreshTimeTag(int currentPosition) {
 
-        timeTag.setText(TimeUtils.toFormattedTime(currentPosition + startTime));
+        timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(currentPosition + startTime));
     }
 
     @Override
@@ -254,8 +254,8 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
         maxDuration = maxSeekBar;
         millisecondsLeft = maxSeekBar - currentVoiceOverPosition;
         this.startTime = startTime;
-        timeStart.setText(TimeUtils.toFormattedTime(startTime));
-        timeFinal.setText(TimeUtils.toFormattedTime(maxSeekBar));
+        timeStart.setText(TimeUtils.toFormattedTimeWithMilliSecond(startTime));
+        timeFinal.setText(TimeUtils.toFormattedTimeWithMilliSecond(maxSeekBar));
         refreshTimeTag(currentVoiceOverPosition);
     }
 
@@ -294,7 +294,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     public void navigateToSoundVolumeActivity(String voiceOverRecordedPath) {
 
         Intent intent = new Intent(this, SoundVolumeActivity.class);
-        intent.putExtra(ExportIntentConstants.VOICE_OVER_RECORDED_PATH, voiceOverRecordedPath);
+        intent.putExtra(IntentConstants.VOICE_OVER_RECORDED_PATH, voiceOverRecordedPath);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

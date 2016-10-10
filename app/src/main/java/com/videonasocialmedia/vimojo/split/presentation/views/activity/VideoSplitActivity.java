@@ -77,7 +77,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView, Vid
 
         splitSeekBar.setProgress(0);
         splitSeekBar.setOnSeekBarChangeListener(this);
-        timeTag.setText(TimeUtils.toFormattedTime(0));
+        timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(0));
 
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
@@ -206,7 +206,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView, Vid
 
     private void refreshTimeTag(int currentPosition) {
 
-        timeTag.setText(TimeUtils.toFormattedTime(currentPosition + startTime));
+        timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(currentPosition + startTime));
     }
 
     @Override

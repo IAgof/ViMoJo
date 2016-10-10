@@ -101,7 +101,8 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
         clickSupport.setOnItemClickListener(new ItemSelectionSupport.OnItemClickListener() {
             @Override
             public void onItemClick(RecyclerView parent, View view, int position, long id) {
-                if (selectionSupport.getChoiceMode() == MultiItemSelectionSupport.ChoiceMode.MULTIPLE)
+                if (selectionMode == SELECTION_MODE_MULTIPLE) {
+                    selectionSupport.setChoiceMode(MultiItemSelectionSupport.ChoiceMode.MULTIPLE);
                     if (selectionSupport.isItemChecked(position)) {
                         selectionSupport.setItemChecked(position, true);
                         onSelectionModeListener.onItemUnchecked();
@@ -109,19 +110,11 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
                         selectionSupport.setItemChecked(position, false);
                         onSelectionModeListener.onItemChecked();
                     }
-            }
-        });
-        clickSupport.setOnItemLongClickListener(new ItemSelectionSupport.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(RecyclerView parent, View view, int position, long id) {
-                if (selectionMode == SELECTION_MODE_MULTIPLE)
-                    selectionSupport.setChoiceMode(MultiItemSelectionSupport.ChoiceMode.MULTIPLE);
-                else
+                } else {
                     selectionSupport.setChoiceMode(MultiItemSelectionSupport.ChoiceMode.SINGLE);
-
-                selectionSupport.setItemChecked(position, true);
-                onSelectionModeListener.onItemChecked();
-                return true;
+                    selectionSupport.setItemChecked(position, true);
+                    onSelectionModeListener.onItemChecked();
+                }
             }
         });
         selectionSupport = MultiItemSelectionSupport.addTo(recyclerView);

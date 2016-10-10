@@ -241,6 +241,11 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
     }
 
     @Override
+    public void setVolumen(float volume) {
+
+    }
+
+    @Override
     public void bindVideoList(List<Video> videoList) {
         this.initPreviewLists(videoList);
         this.initPreview(currentTimePositionInList);

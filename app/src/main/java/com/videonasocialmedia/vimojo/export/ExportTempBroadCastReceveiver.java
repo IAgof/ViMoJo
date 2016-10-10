@@ -7,10 +7,9 @@ import android.view.View;
 
 import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.export.domain.RelaunchExportTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
 
@@ -45,8 +44,8 @@ public class ExportTempBroadCastReceveiver extends BroadcastReceiver {
 
             Context appContext = VimojoApplication.getAppContext();
             Intent trimServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-            trimServiceIntent.putExtra(ExportIntentConstants.VIDEO_ID, videoId);
-            trimServiceIntent.putExtra(ExportIntentConstants.RELAUNCH_EXPORT_TEMP, true);
+            trimServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoId);
+            trimServiceIntent.putExtra(IntentConstants.RELAUNCH_EXPORT_TEMP, true);
             appContext.startService(trimServiceIntent);
         } else {
             // TODO:(alvaro.martinez) 28/09/16 Define user experience

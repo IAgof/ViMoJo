@@ -21,7 +21,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetriev
 import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
-import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -100,10 +100,10 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     public void trimVideo(Video video, int startTimeMs, int finishTimeMs) {
         Context appContext = VimojoApplication.getAppContext();
         Intent trimServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-        trimServiceIntent.putExtra(ExportIntentConstants.VIDEO_ID, video.getIdentifier());
-        trimServiceIntent.putExtra(ExportIntentConstants.IS_VIDEO_TRIMMED, true);
-        trimServiceIntent.putExtra(ExportIntentConstants.START_TIME_MS, startTimeMs);
-        trimServiceIntent.putExtra(ExportIntentConstants.FINISH_TIME_MS, finishTimeMs);
+        trimServiceIntent.putExtra(IntentConstants.VIDEO_ID, video.getIdentifier());
+        trimServiceIntent.putExtra(IntentConstants.IS_VIDEO_TRIMMED, true);
+        trimServiceIntent.putExtra(IntentConstants.START_TIME_MS, startTimeMs);
+        trimServiceIntent.putExtra(IntentConstants.FINISH_TIME_MS, finishTimeMs);
         appContext.startService(trimServiceIntent);
     }
 }
