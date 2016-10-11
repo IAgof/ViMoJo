@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -292,18 +293,20 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
 
     @Override
     public void navigateToSoundVolumeActivity(String voiceOverRecordedPath) {
-
         Intent intent = new Intent(this, SoundVolumeActivity.class);
         intent.putExtra(IntentConstants.VOICE_OVER_RECORDED_PATH, voiceOverRecordedPath);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
+    @Override
+    public void showError(String errorMessage) {
+        Snackbar.make(videonaPlayer, errorMessage, Snackbar.LENGTH_INDEFINITE).show();
+    }
 
 
     @Override
     public void newClipPlayed(int currentClipIndex) {
-
     }
 
 
