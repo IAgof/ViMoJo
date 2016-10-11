@@ -603,7 +603,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         recordPresenter.changeCamera();
     }
 
-    @OnClick(R.id.edit_button)
+    @OnClick({R.id.edit_button,R.id.button_navigate_edit})
     public void navigateToEdit() {
         if (!recording) {
             //TODO(alvaro 130616) Save flash state
