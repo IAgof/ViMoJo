@@ -325,10 +325,16 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
             buttonRecordIsInStop =true;
             changeVisibilityAndResouceButton(buttonRecordIsInStop);
 
-            timer.cancel();
+            cancelTimer();
             return true;
         }
         return false;
+    }
+
+    private void cancelTimer() {
+        if (timer != null) {
+            timer.cancel();
+        }
     }
 
 
