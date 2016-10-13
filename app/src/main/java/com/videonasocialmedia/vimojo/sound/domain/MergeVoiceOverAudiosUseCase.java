@@ -25,16 +25,12 @@ public class MergeVoiceOverAudiosUseCase {
     private static final String TAG = "MergeVoiceOverAudiosUC";
     OnMergeVoiceOverAudiosListener listener;
 
-    public MergeVoiceOverAudiosUseCase(OnMergeVoiceOverAudiosListener listener){
-
+    public MergeVoiceOverAudiosUseCase(OnMergeVoiceOverAudiosListener listener) {
         this.listener = listener;
     }
 
     public void mergeAudio() {
-
-        ArrayList<String> audioPaths = createAudioPathList();
-
-        Movie result = appendFiles(audioPaths);
+        Movie result = appendFiles(createAudioPathList());
         if (result != null) {
             saveFinalVideo(result);
         }
@@ -51,10 +47,7 @@ public class MergeVoiceOverAudiosUseCase {
     }
 
     private Movie appendFiles(ArrayList<String> videoTranscoded) {
-        Movie result;
-         result = appendVideos(videoTranscoded, true);
-
-        return result;
+        return appendVideos(videoTranscoded, true);
     }
 
     private void saveFinalVideo(Movie result) {

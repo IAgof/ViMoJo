@@ -138,7 +138,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
         startRecording();
     }
 
-    private void startRecording(){
+    private void startRecording() {
         audioRecorder.startRecording();
         firstTimeRecording = false;
         voiceOverView.playVideo();
@@ -153,7 +153,6 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
 
     public void onEventMainThread(MuxerFinishedEvent e) {
         renameAudioRecorded(numAudiosRecorded++);
-
     }
 
     private void renameAudioRecorded(int numAudiosRecorded) {
