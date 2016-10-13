@@ -54,8 +54,8 @@ android {
         applicationId "com.videonasocialmedia.vimojo"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 3 // 24/08/2016
-        versionName "0.4"
+        versionCode 7 // 20161004
+        versionName "0.4.5" // 20161004
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -78,7 +78,6 @@ android {
         exclude 'LICENSE.txt'
     }
     dexOptions {
-        incremental true
         javaMaxHeapSize "2048M"
     }
     lintOptions {
@@ -133,7 +132,7 @@ dependencies {
     compile 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
 
-    compile(name:'videona-sdk-v0.0.5',ext:'aar')
+    compile(name:'videona-sdk-v0.0.7',ext:'aar')
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"

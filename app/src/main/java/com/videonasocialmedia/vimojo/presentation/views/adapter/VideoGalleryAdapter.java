@@ -69,7 +69,7 @@ public class VideoGalleryAdapter extends RecyclerView.Adapter<VideoGalleryAdapte
             holder.overlay.setActivated(selectionSupport.isItemChecked(position));
             holder.overlayIcon.setActivated(selectionSupport.isItemChecked(position));
         }
-        String duration = TimeUtils.toFormattedTime(selectedVideo.getDuration());
+        String duration = TimeUtils.toFormattedTimeHoursMinutesSecond(selectedVideo.getDuration());
         holder.duration.setText(duration);
     }
 

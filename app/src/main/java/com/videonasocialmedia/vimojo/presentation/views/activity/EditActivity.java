@@ -34,6 +34,8 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
@@ -62,6 +64,7 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 public class EditActivity extends VimojoActivity implements EditorView,
         VideonaPlayerListener, VideoTimeLineRecyclerViewClickListener {
 
+    private static final String CURRENT_TIME_POSITION = "current_time_position";
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;
     private final int NUM_COLUMNS_GRID_TIMELINE_VERTICAL = 4;
     @Bind(R.id.button_edit_duplicate)
@@ -82,6 +85,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
     FloatingActionsMenu fabEditRoom;
     private List<Video> videoList;
     private int currentVideoIndex = 0;
+    private int currentProjectTimePosition = 0;
     private EditPresenter editPresenter;
     private VideoTimeLineAdapter timeLineAdapter;
     private AlertDialog progressDialog;
@@ -121,13 +125,14 @@ public class EditActivity extends VimojoActivity implements EditorView,
         ab.setDisplayHomeAsUpEnabled(true);
 
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-        editPresenter = new EditPresenter(this, videonaPlayer, navigator.getCallback(), userEventTracker);
+        editPresenter = new EditPresenter(this, navigator.getCallback(), userEventTracker);
 
         videonaPlayer.setListener(this);
 
         createProgressDialog();
         if (savedInstanceState != null) {
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
+            currentProjectTimePosition = savedInstanceState.getInt(CURRENT_TIME_POSITION, 0);
         }
     }
 
@@ -270,9 +275,10 @@ public class EditActivity extends VimojoActivity implements EditorView,
     }
 
     public void navigateTo(Class cls, int currentVideoIndex) {
-        Intent intent = new Intent(this, cls);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
         startActivity(intent);
+        finish();
     }
 
     @OnClick(R.id.button_edit_trim)
@@ -290,9 +296,10 @@ public class EditActivity extends VimojoActivity implements EditorView,
     }
 
     public void navigateTo(Class cls, String videoToSharePath) {
-        Intent intent = new Intent(this, cls);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoToSharePath);
         startActivity(intent);
+        finish();
     }
 
     ////// RECYCLER VIDEO TIME LINE
@@ -304,7 +311,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
     public void setSelectedClip(int position) {
         currentVideoIndex = position;
         videonaPlayer.seekToClip(position);
-//        timeLineAdapter.updateSelection(position);
+        timeLineAdapter.updateSelection(position);
     }
 
     @Override
@@ -351,15 +358,24 @@ public class EditActivity extends VimojoActivity implements EditorView,
     }
 
     @Override
+    public void onClipReordered(int newPosition) {
+        currentVideoIndex = newPosition;
+        videonaPlayer.updatePreviewTimeLists();
+        videonaPlayer.seekToClip(currentVideoIndex);
+    }
+
+    @Override
     public void goToShare(String videoToSharePath) {
-        Intent intent = new Intent(this, ShareActivity.class);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), ShareActivity.class);
         intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoToSharePath);
         startActivity(intent);
+        finish();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
+        outState.putInt(CURRENT_TIME_POSITION, videonaPlayer.getCurrentPosition());
         super.onSaveInstanceState(outState);
     }
 
@@ -394,7 +410,13 @@ public class EditActivity extends VimojoActivity implements EditorView,
         videoListRecyclerView.scrollToPosition(currentVideoIndex);
         timeLineAdapter.notifyDataSetChanged();
         videonaPlayer.bindVideoList(videoList);
-        videonaPlayer.seekToClip(currentVideoIndex);
+        videonaPlayer.seekTo(currentProjectTimePosition);
+    }
+
+    @Override
+    public void setMusic(Music music) {
+        videonaPlayer.setMusic(music);
+        videonaPlayer.setVolumen(1f);
     }
 
     @Override
@@ -439,9 +461,9 @@ public class EditActivity extends VimojoActivity implements EditorView,
 
     @Override
     public void onBackPressed() {
-        finish();
-        Intent record = new Intent(this, RecordActivity.class);
+        Intent record = new Intent(VimojoApplication.getAppContext(), RecordActivity.class);
         startActivity(record);
+        finish();
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {

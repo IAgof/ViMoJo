@@ -16,10 +16,12 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditNavigatorView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.MusicDetailActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.MusicListActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditNavigatorPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
@@ -77,7 +79,8 @@ public class ToolbarNavigator extends LinearLayout implements EditNavigatorView 
             @Override
             public void onClick(View v) {
                 if (navigateToMusicButton.isEnabled()) {
-                   // navigatorPresenter.checkMusicAndNavigate();
+                   //navigatorPresenter.checkMusicAndNavigate();
+                    navigateTo(SoundActivity.class);
                 }
             }
         });
@@ -155,7 +158,7 @@ public class ToolbarNavigator extends LinearLayout implements EditNavigatorView 
             navigateTo(MusicListActivity.class);
         } else {
             Intent i = new Intent(context, MusicDetailActivity.class);
-            i.putExtra(MusicDetailActivity.KEY_MUSIC_ID, music.getMusicResourceId());
+            i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, music.getMediaPath());
             context.startActivity(i);
         }
     }

@@ -1,0 +1,10 @@
+v0.4.5
+- Fixed video timeline clips reordering not updating selected clip and video preview seekbar times
+
+v0.4.4
+- Minor fixes in text autowrap and activity state changes for Text view in video editing
+
+v0.4.3
+- Improved Text view in video editing. Bug fixes and cleaning
+- Change drawable in activity_music_detail
+- Adjusted the width and height of the Canvas with the text in video preview

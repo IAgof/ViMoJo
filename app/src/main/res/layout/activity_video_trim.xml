@@ -5,7 +5,8 @@
     xmlns:rsb="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:baselineAligned="false">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -41,11 +42,11 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             rsb:textAboveThumbsColor="@android:color/holo_green_light"
-
             app:background_color="@null"
             app:bar_color="@color/colorPrimaryLight"
             app:bar_height="48dp"
             app:selected_bar_color="@color/colorDivider"
+            app:showLabels="false"
             />
 
         <!--<TextView-->

@@ -68,6 +68,11 @@
     <string name="mastersFolderTitle">Originales</string>
     <string name="editedFolderTitle">Editados</string>
 
+    <!--SoundVolumeActivity-->
+    <string name="exitSoundVolumeActivity" >¿Desea descartar los cambios y volver a grabar de nuevo?</string>
+    <string name="acceptExitSoundVolumeActivity">Sí</string>
+    <string name="cancelExitSoundVolumeActvity">No</string>
+
     <!-- Trim fragment -->
     <string name="confirmTrim">Hecho</string>
 

@@ -31,6 +31,7 @@
         android:name=".VimojoApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+
         android:theme="@style/VideonaTheme">
 
         <meta-data
@@ -92,6 +93,8 @@
             android:name="com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
+            android:noHistory="true"
+            android:launchMode="singleTop"
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
@@ -105,7 +108,8 @@
             android:name=".presentation.views.activity.RecordActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
+            android:noHistory="true"
             android:screenOrientation="sensorLandscape">
             <intent-filter>
                 <action android:name="android.media.action.VIDEO_CAPTURE"/>
@@ -257,6 +261,7 @@
         android:name=".presentation.views.activity.ShareActivity"
         android:label="@string/app_name"
         android:launchMode="singleTop"
+        android:noHistory="true"
         android:parentActivityName=".presentation.views.activity.EditActivity"
         />
 
@@ -289,22 +294,41 @@
             android:parentActivityName=".presentation.views.activity.EditActivity"/>
 
         <activity
-        android:name=".presentation.views.activity.VideoDuplicateActivity"
-        android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:parentActivityName=".presentation.views.activity.EditActivity"/>
+            android:name=".presentation.views.activity.VideoDuplicateActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:parentActivityName=".presentation.views.activity.EditActivity"/>
 
         <activity
-        android:name=".presentation.views.activity.MusicListActivity"
-        android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:parentActivityName=".presentation.views.activity.EditActivity"/>
+            android:name=".sound.presentation.views.activity.SoundActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:parentActivityName=".presentation.views.activity.EditActivity"/>
 
         <activity
-        android:name=".presentation.views.activity.MusicDetailActivity"
+            android:name=".sound.presentation.views.activity.MusicListActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:parentActivityName=".sound.presentation.views.activity.SoundActivity"/>
+
+        <activity
+        android:name=".sound.presentation.views.activity.MusicDetailActivity"
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:parentActivityName=".presentation.views.activity.MusicListActivity"/>
+        android:parentActivityName=".sound.presentation.views.activity.MusicListActivity"/>
+
+        <activity
+            android:name=".sound.presentation.views.activity.VoiceOverActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:parentActivityName=".sound.presentation.views.activity.SoundActivity"/>
+
+        <activity
+            android:name=".sound.presentation.views.activity.SoundVolumeActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:parentActivityName=".sound.presentation.views.activity.VoiceOverActivity"/>
+
 
         <service
             android:name=".presentation.views.services.ExportProjectService"

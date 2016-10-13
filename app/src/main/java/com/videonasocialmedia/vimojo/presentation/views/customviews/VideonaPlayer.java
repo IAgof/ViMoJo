@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -32,6 +33,9 @@ import butterknife.OnTouch;
 
 /**
  * Created by jliarte on 13/05/16.
+ */
+/**
+ * @deprecated
  */
 public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, SeekBar.OnSeekBarChangeListener {
 
@@ -234,6 +238,11 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
     @Override
     public void setMusic(Music music) {
         this.music = music;
+    }
+
+    @Override
+    public void setVolumen(float volume) {
+
     }
 
     @Override
@@ -494,7 +503,7 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
 
     private void initMusicPlayer() {
         if (musicPlayer == null && videoHasMusic()) {
-            musicPlayer = MediaPlayer.create(context, music.getMusicResourceId());
+            musicPlayer = MediaPlayer.create(context, Uri.parse(music.getMediaPath()));
             musicPlayer.setVolume(0.5f, 0.5f);
         }
     }
@@ -618,7 +627,7 @@ public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, 
     }
 
     @Override
-    public void setSeekBarEnabled(boolean seekBarEnabled) {
+    public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
         if (seekBarEnabled) {
             seekBar.setVisibility(VISIBLE);
         } else {

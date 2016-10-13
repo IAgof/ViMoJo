@@ -32,6 +32,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:baselineAligned="false"
         android:orientation="horizontal"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -48,16 +49,8 @@
                 android:layout_margin="8dp"
                 />
 
-            <LinearLayout
-                android:id="@+id/linear_layout_edit_options"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:orientation="horizontal">
+            <include layout="@layout/edit_activity_options_buttons"/>
 
-                <include layout="@layout/edit_activity_options_buttons"/>
-            </LinearLayout>
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
