@@ -8,6 +8,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 
 import org.hamcrest.CoreMatchers;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -23,6 +24,11 @@ import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectTest {
+    @After
+    public void tearDown() {
+        Project.getInstance(null, null, null).clear();
+    }
+
     @Test
     public void clearShoudCreateANewNullProject() throws Exception {
         Project videonaProject = getAProject();
@@ -60,7 +66,7 @@ public class ProjectTest {
     @Test
     public void getMusicReturnsMusicWhenMusicHasOneSet() throws IllegalItemOnTrack {
         Project videonaProject = getAProject();
-        Music music = new Music(1, "Music title", 2, 3, "Music Author");
+        Music music = new Music(1, "Music title", 2, 3, "Music Author","");
 
         videonaProject.getAudioTracks().get(0).insertItem(music);
 

@@ -65,6 +65,8 @@ public class Project {
     private int duration;
     private Music music;
 
+    private boolean isMusicOnProject = false;
+
     /**
      * Constructor of minimum number of parameters. This is the Default constructor.
      *
@@ -173,7 +175,14 @@ public class Project {
     }
 
     public void clear() {
-        INSTANCE = new Project(null, null, null);
+//        INSTANCE = new Project(null, null, null);
+        if (INSTANCE != null) {
+            Profile projectProfile = INSTANCE.getProfile();
+            if (projectProfile != null) {
+                projectProfile.clear();
+            }
+            INSTANCE = null;
+        }
     }
 
     public int numberOfClips() {
@@ -190,5 +199,13 @@ public class Project {
             result = (Music) getAudioTracks().get(0).getItems().get(0);
         } catch (Exception e) { e.printStackTrace(); }
         return result;
+    }
+
+    public boolean isMusicOnProject() {
+        return isMusicOnProject;
+    }
+
+    public void setMusicOnProject(boolean musicOnProject) {
+        isMusicOnProject = musicOnProject;
     }
 }

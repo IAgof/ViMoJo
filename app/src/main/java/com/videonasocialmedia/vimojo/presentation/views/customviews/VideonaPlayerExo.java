@@ -17,9 +17,10 @@ import android.view.Surface;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-
+import android.widget.TextView;
 import com.google.android.exoplayer.CodecCounters;
 import com.google.android.exoplayer.DummyTrackRenderer;
 import com.google.android.exoplayer.ExoPlaybackException;
@@ -46,6 +47,8 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
+import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +86,14 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     @Bind(R.id.button_editor_play_pause)
     ImageButton playButton;
     @Bind(R.id.image_text_preview)
-    ImageView imagenTextPreview;
+    ImageView imageTextPreview;
+    @Bind(R.id.video_view_time_current)
+    TextView textTimeCurrentSeekbar;
+    @Bind(R.id.video_view_time_project)
+    TextView textTimeProjectSeekbar;
+    @Bind(R.id.video_view_seekbar_layout)
+    LinearLayout seekBarLayout;
+
 
     private final View videonaPlayerView;
     private VideonaPlayerListener videonaPlayerListener;
@@ -117,6 +127,8 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
             }
         }
     };
+    private float volumeMusic=0.5f;
+    private final float DEFAULT_VOLUME = 0.5f;
 
     public VideonaPlayerExo(Context context) {
         super(context);
@@ -167,10 +179,21 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     private void initMusicPlayer() {
         if (musicPlayer == null && videoHasMusic()) {
-            musicPlayer = MediaPlayer.create(getContext(), music.getMusicResourceId());
-            musicPlayer.setVolume(0.5f, 0.5f);
+            musicPlayer = MediaPlayer.create(getContext(), Uri.parse(music.getMediaPath()));
+            musicPlayer.setVolume(volumeMusic, volumeMusic);
         }
+
     }
+
+   public void changeVolume(float volume){
+
+       player.sendMessage(rendererBuilder.getAudioRenderer(), MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,1f-volume);
+
+      if( musicPlayer!=null){
+          musicPlayer.setVolume(volume,volume);
+      }
+       volumeMusic=volume;
+   }
 
     private void updateSeekBarProgress() {
         if (player != null && isPlaying()) {
@@ -272,15 +295,10 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         rendererBuildingState = RENDERER_BUILDING_STATE_BUILDING;
         maybeReportPlayerState();
         rendererBuilder.buildRenderers(this, Uri.fromFile(new File(clipToPlay.getMediaPath())));
-        if(clipToPlay.isTextToVideoAdded()) {
-            setImagenText(clipToPlay.getTextToVideo(), clipToPlay.getTextPositionToVideo());
-        } else {
-            clearImagenText();
-        }
     }
 
-    public void clearImagenText() {
-        imagenTextPreview.setImageDrawable(null);
+    public void clearImageText() {
+        imageTextPreview.setImageDrawable(null);
     }
 
     private boolean playerHasVideos() {
@@ -315,6 +333,11 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     private void setSeekBarTotalVideoDuration() {
         seekBar.setMax(totalVideoDuration);
+        updateTextProjectDuration(totalVideoDuration);
+    }
+
+    private void updateTextProjectDuration(int totalProjectDuration) {
+        textTimeProjectSeekbar.setText(TimeUtils.toFormattedTimeHoursMinutesSecond(totalProjectDuration));
     }
 
     @Override
@@ -347,8 +370,8 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     @Override
     public void pausePreview() {
-        pauseVideo();
         pauseMusic();
+        pauseVideo();
         seekBarUpdaterHandler.removeCallbacksAndMessages(null);
         showPlayButton();
     }
@@ -401,6 +424,13 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     @Override
     public void setMusic(Music music) {
         this.music = music;
+        initMusicPlayer();
+        musicPlayer.seekTo(currentTimePositionInList);
+    }
+
+    @Override
+    public void setVolumen(float volume) {
+        changeVolume(volume);
     }
 
     @Override
@@ -408,17 +438,20 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         return currentTimePositionInList;
     }
 
+
     @Override
     public void setSeekBarProgress(int progress) {
         seekBar.setProgress(progress);
+        textTimeCurrentSeekbar.setText(TimeUtils.toFormattedTimeHoursMinutesSecond(progress));
     }
 
+
     @Override
-    public void setSeekBarEnabled(boolean seekBarEnabled) {
+    public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
         if (seekBarEnabled) {
-            seekBar.setVisibility(VISIBLE);
+            seekBarLayout.setVisibility(VISIBLE);
         } else {
-            seekBar.setVisibility(GONE);
+            seekBarLayout.setVisibility(GONE);
         }
     }
 
@@ -428,19 +461,17 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         showPlayButton();
         initPreview(0);
         setSeekBarProgress(0);
-        clearImagenText();
+        updateTextProjectDuration(0);
+        clearImageText();
     }
 
     private void setBlackBackgroundColor() {
         videoPreview.setBackgroundColor(Color.BLACK);
     }
 
-    public void setImagenText(String text, String textPosition){
-        imagenTextPreview.setMaxHeight(videoPreview.getHeight());
-        imagenTextPreview.setMaxWidth(videoPreview.getWidth());
-        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition);
-        imagenTextPreview.setImageDrawable(textDrawable);
-
+    public void setImageText(String text, String textPosition){
+        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition, Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+        imageTextPreview.setImageDrawable(textDrawable);
     }
 
     /** End of VideonaPlayerView methods **/
@@ -468,12 +499,13 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     /** Seekbar listener methods **/
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
         if (fromUser) {
             if (isPlaying()) pausePreview();
             if (playerHasVideos()) {
                 hidePlayButton();
                 seekTo(progress);
+                notifyNewClipPlayed();
             } else {
                 setSeekBarProgress(0);
             }
@@ -481,14 +513,18 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     }
 
     private boolean isPlaying() {
-        return player.getPlayWhenReady();
+        if (player == null) {
+            return false;
+        } else {
+            return player.getPlayWhenReady();
+        }
     }
 
     private void showPlayButton() {
         playButton.setVisibility(View.VISIBLE);
     }
 
-    private void hidePlayButton() {
+    public void hidePlayButton() {
         playButton.setVisibility(View.INVISIBLE);
     }
 
@@ -499,6 +535,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        showPlayButton();
 
     }
     /** end of Seekbar listener methods **/
@@ -512,6 +549,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         } else {
             pausePreview();
             seekToClip(0);
+            //textTimeCurrentSeekbar.setText(TimeUtils.formatMs(seekBar.getProgress()));
         }
         notifyNewClipPlayed();
     }
@@ -528,7 +566,8 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     /** exo player listener **/
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-//        Log.d(TAG, "Playwhenready: "+playWhenReady+" state: "+playbackState);
+        Log.d(TAG, "Playwhenready: "+playWhenReady+" state: "+playbackState);
+        clearImageText();
         switch(playbackState) {
             case ExoPlayer.STATE_BUFFERING:
                 break;
@@ -540,6 +579,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
             case ExoPlayer.STATE_PREPARING:
                 break;
             case ExoPlayer.STATE_READY:
+                updateClipTextPreview();
                 if (playWhenReady) {
                     startMusicTrackPlayback();
 //                    player.seekTo(getClipPositionFromTimeLineTime());
@@ -550,13 +590,21 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         }
     }
 
+    public void updateClipTextPreview() {
+        if(getCurrentClip().isTextToVideoAdded()) {
+            setImageText(getCurrentClip().getTextToVideo(), getCurrentClip().getTextPositionToVideo());
+        } else {
+            clearImageText();
+        }
+    }
+
+    private Video getCurrentClip() {
+        return videoList.get(currentClipIndex);
+    }
+
     private void startMusicTrackPlayback() {
         if (videoHasMusic()) {
-            muteVideo(true);
             playMusicSyncWithVideo();
-        } else {
-//            releaseMusicPlayer();
-            muteVideo(false);
         }
     }
 
@@ -569,14 +617,18 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         }
     }
 
-    private void muteVideo(boolean shouldMute) {
-        // TODO(jliarte): 1/09/16 test mute
+    public void muteVideo(boolean shouldMute) {
+
+       /* // TODO(jliarte): 1/09/16 test mute
         if (player != null)
             if (shouldMute) {
-                player.setSelectedTrack(TYPE_AUDIO, ExoPlayer.TRACK_DISABLED);
+                volumeMusic = 0f;
+                player.sendMessage(rendererBuilder.getAudioRenderer(), MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,volumeMusic);
             } else {
-                player.setSelectedTrack(TYPE_AUDIO, ExoPlayer.TRACK_DEFAULT);
+                volumeMusic = DEFAULT_VOLUME;
+                player.sendMessage(rendererBuilder.getAudioRenderer(), MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,DEFAULT_VOLUME);
             }
+            */
     }
 
     private boolean videoHasMusic() {
@@ -592,7 +644,8 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     public void onPlayerError(ExoPlaybackException error) {
 
     }
-    /** end of exo player listener **/
+
+
 
     public Handler getMainHandler() {
         return mainHandler;
@@ -615,6 +668,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
         pushSurface(false);
         player.prepare(renderers);
         player.seekTo(getClipPositionFromTimeLineTime());
+        changeVolume(volumeMusic);
         rendererBuildingState = RENDERER_BUILDING_STATE_BUILT;
     }
 
@@ -701,12 +755,18 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
     /** End of MediaCodecAudioTrackRenderer.EventListener **/
 
-    private class RendererBuilder {
+    public class RendererBuilder {
         private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
         private static final int BUFFER_SEGMENT_COUNT = 256;
 
         private final Context context;
         private final String userAgent;
+        private MediaCodecAudioTrackRenderer audioRenderer;
+
+        public MediaCodecAudioTrackRenderer getAudioRenderer() {
+            return audioRenderer;
+        }
+
 
         public RendererBuilder(Context context, String userAgent) {
             this.context = context;
@@ -727,7 +787,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
             MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(context,
                     sampleSource, MediaCodecSelector.DEFAULT, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000,
                     mainHandler, player, 50);
-            MediaCodecAudioTrackRenderer audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource,
+            audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource,
                     MediaCodecSelector.DEFAULT, null, true, mainHandler, player,
                     AudioCapabilities.getCapabilities(context), AudioManager.STREAM_MUSIC);
             // (jliarte): 1/09/16 maybe it's easier with the traditional method using audio manager,

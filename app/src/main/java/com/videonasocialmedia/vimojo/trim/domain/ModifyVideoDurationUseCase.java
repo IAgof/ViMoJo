@@ -8,13 +8,11 @@ import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
 import com.videonasocialmedia.transcoder.overlay.Image;
-import com.videonasocialmedia.transcoder.overlay.Overlay;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.IOException;
-import java.util.concurrent.Future;
 
 /**
  * Created by jca on 27/5/15.
@@ -37,22 +35,24 @@ public class ModifyVideoDurationUseCase {
                         format, listener, videoToEdit.getTextToVideo(), videoToEdit.getTextPositionToVideo(),
                         startTimeMs, finishTimeMs);
             } else {
-                transcodAndTrimVideo(videoToEdit.getMediaPath(),videoToEdit.getTempPath(), format,
+                transcodeAndTrimVideo(videoToEdit.getMediaPath(),videoToEdit.getTempPath(), format,
                         listener, startTimeMs, finishTimeMs);
             }
         } catch (IOException e) {
-            // TODO(javi.cabanas): 2/8/16 mangage io expception on external library and send onTranscodeFailed if neccessary
+            // TODO(javi.cabanas): 2/8/16 manage io exception on external library and send onTranscodeFailed if neccessary
+            listener.onTranscodeFailed(e);
         }
     }
 
-    private void transcodAndTrimVideo(String mediaPath, String tempPath, VideonaFormat format,
-                                      MediaTranscoderListener listener, int startTimeMs, int finishTimeMs) {
+    private void transcodeAndTrimVideo(String mediaPath, String tempPath, VideonaFormat format,
+                                       MediaTranscoderListener listener, int startTimeMs, int finishTimeMs) {
 
         try {
             MediaTranscoder.getInstance().transcodeAndTrimVideo(mediaPath, tempPath,
                     format, listener, startTimeMs, finishTimeMs);
         } catch (IOException e) {
             e.printStackTrace();
+            listener.onTranscodeFailed(e);
         }
     }
 
@@ -69,7 +69,7 @@ public class ModifyVideoDurationUseCase {
 
     @NonNull
     public Image getImageFromTextAndPosition(String text, String textPosition) {
-        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition);
+        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition, Constants.DEFAULT_VIMOJO_WIDTH,Constants.DEFAULT_VIMOJO_HEIGHT);
 
         return new Image(textDrawable, Constants.DEFAULT_VIMOJO_WIDTH,Constants.DEFAULT_VIMOJO_HEIGHT);
     }

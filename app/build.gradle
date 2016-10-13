@@ -9,6 +9,36 @@ buildscript {
 }
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'checkstyle'
+
+checkstyle {
+    toolVersion = '7.1.1'
+}
+
+task checkstyle(type: Checkstyle) {
+    // Cleaning the old log because of the creation of the new ones (not sure if totaly needed)
+    delete fileTree(dir: "${project.rootDir}/app/build/reports/checkstyle")
+    configFile file("${project.rootDir}/checkstyle.xml")
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    reports {
+        xml.enabled = true
+        xml {
+            destination "${project.rootDir}/app/build/reports/checkstyle/checkstyle-result.xml"
+        }
+    }
+
+    classpath = files()
+}
+
+task listFlavors {
+    android.productFlavors.all {
+        flavor ->
+            println(flavor.name)
+    }
+}
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -24,8 +54,8 @@ android {
         applicationId "com.videonasocialmedia.vimojo"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 3 // 24/08/2016
-        versionName "0.4"
+        versionCode 7 // 20161004
+        versionName "0.4.5" // 20161004
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -38,6 +68,7 @@ android {
             manifestPlaceholders = [ appName: "Vimojo", fabricApiKey: " 1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
         }
         debug {
+            ext.betaDistributionGroupAliases="videona-dev-team"
             buildConfigField "String", "MIXPANEL_TOKEN", "\"c6617213110cd2513dfc0ad97dbaee66\""
             manifestPlaceholders = [ appName: "Vimojo", fabricApiKey: "eba78720f87307ca48dfa4200dd90914ff6653f2"]
         }
@@ -46,7 +77,6 @@ android {
         exclude 'LICENSE.txt'
     }
     dexOptions {
-        incremental true
         javaMaxHeapSize "2048M"
     }
     lintOptions {
@@ -101,7 +131,7 @@ dependencies {
     compile 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
 
-    compile(name:'videona-sdk-v0.0.5',ext:'aar')
+    compile(name:'videona-sdk-v0.0.7',ext:'aar')
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"

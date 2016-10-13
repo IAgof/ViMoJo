@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GalleryPagerPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoGalleryPresenter;
@@ -161,7 +162,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     private void shareVideo(Video selectedVideo) {
         String videoPath = selectedVideo.getMediaPath();
-        Intent intent = new Intent(this, ShareActivity.class);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), ShareActivity.class);
         intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoPath);
         startActivity(intent);
     }
@@ -237,7 +238,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     public void navigate() {
         if (!sharing) {
             Intent intent;
-            intent = new Intent(this, EditActivity.class);
+            intent = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
             startActivity(intent);
         }
     }

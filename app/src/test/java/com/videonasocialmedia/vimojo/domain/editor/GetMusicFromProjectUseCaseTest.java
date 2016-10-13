@@ -58,7 +58,7 @@ public class GetMusicFromProjectUseCaseTest {
     @Test
     public void getMusicFromProjectReturnsProjectMusic() {
         Project videonaProject = getAProject();
-        Music project_music = new Music(1, "resourceName", 2, 3, "music author");
+        Music project_music = new Music(1, "resourceName", 2, 3, "music author","2");
         ArrayList<AudioTrack> audioTracks = getAudioTracks(project_music);
         videonaProject.setAudioTracks(audioTracks);
 
@@ -68,6 +68,7 @@ public class GetMusicFromProjectUseCaseTest {
         Music retrievedMusic = retrievedMusicCaptor.getValue();
         assertThat(retrievedMusic, is(project_music));
     }
+
 
     @Test
     public void getMusicFromProjectNotifiesWithNullIfNoMusic() {

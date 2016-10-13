@@ -41,11 +41,13 @@ public interface VideonaPlayerView {
 
     void setMusic(Music music);
 
+    void setVolumen(float volume);
+
     int getCurrentPosition();
 
     void setSeekBarProgress(int progress);
 
-    void setSeekBarEnabled(boolean seekBarEnabled);
+    void setSeekBarLayoutEnabled(boolean seekBarEnabled);
 
     void resetPreview();
 }

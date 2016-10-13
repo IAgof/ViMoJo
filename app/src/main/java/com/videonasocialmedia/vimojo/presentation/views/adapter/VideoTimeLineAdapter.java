@@ -18,6 +18,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.ItemTouchHelperViewHolder;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.MovableItemsAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
+import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,7 +60,7 @@ public class VideoTimeLineAdapter extends RecyclerView.Adapter<VideoTimeLineAdap
 
     @Override
     public void finishMovement(int newPosition) {
-        videoTimeLineListener.onClipClicked(newPosition);
+        videoTimeLineListener.onClipReordered(newPosition);
         updateSelection(newPosition);
     }
 
@@ -82,8 +83,6 @@ public class VideoTimeLineAdapter extends RecyclerView.Adapter<VideoTimeLineAdap
     }
 
     public void updateSelection(int positionSelected) {
-        if (positionSelected == selectedVideoPosition)
-            return;
         notifyItemChanged(selectedVideoPosition);
         selectedVideoPosition = positionSelected;
         notifyItemChanged(selectedVideoPosition);
@@ -113,6 +112,8 @@ public class VideoTimeLineAdapter extends RecyclerView.Adapter<VideoTimeLineAdap
         drawVideoThumbnail(holder.thumb, current);
         holder.thumb.setSelected(position == selectedVideoPosition);
         holder.thumbOrder.setText(String.valueOf(position + 1));
+        String duration = TimeUtils.toFormattedTimeHoursMinutesSecond(current.getDuration());
+        holder.textDurationClip.setText(duration);
         if (position == selectedVideoPosition) {
             holder.showDeleteIcon();
         } else {
@@ -160,6 +161,8 @@ public class VideoTimeLineAdapter extends RecyclerView.Adapter<VideoTimeLineAdap
         TextView thumbOrder;
         @Bind(R.id.image_remove_video)
         ImageView removeVideo;
+        @Bind(R.id.text_duration_clip)
+        TextView textDurationClip;
 
         public VideoViewHolder(View itemView) {
             super(itemView);
@@ -182,7 +185,7 @@ public class VideoTimeLineAdapter extends RecyclerView.Adapter<VideoTimeLineAdap
             removeVideo.setVisibility(View.GONE);
         }
 
-        @OnClick(R.id.image_remove_video)
+        @OnClick({R.id.image_remove_video, R.id.text_duration_clip})
         public void onClickRemoveVideoTimeline() {
             videoTimeLineListener.onClipRemoveClicked(getAdapterPosition());
         }

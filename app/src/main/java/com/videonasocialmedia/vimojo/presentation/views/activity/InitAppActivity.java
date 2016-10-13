@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.karumi.dexter.Dexter;
@@ -34,6 +35,7 @@ import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsLi
 import com.mixpanel.android.mpmetrics.InAppNotification;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnInitAppEventListener;
@@ -42,6 +44,7 @@ import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.AppStart;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -80,6 +83,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     TextView versionName;
     @Bind(R.id.init_root_view)
     ViewGroup initRootView;
+    @Bind(R.id.splash_screen)
+    ImageView splashScreen;
     private long MINIMUN_WAIT_TIME = 900;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -105,6 +110,9 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         setVersionCode();
         createPermissionListeners();
         Dexter.continuePendingRequestsIfPossible(compositePermissionsListener);
+
+        splashScreen.setImageBitmap(Utils.decodeSampledBitmapFromResource(getResources(),
+                R.drawable.splash_screen, 1280, 720));
 
     }
 
@@ -588,7 +596,12 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     @Override
     public void navigate(Class cls) {
-        startActivity(new Intent(getApplicationContext(), cls));
+
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+
     }
 
     private void exitSplashScreen() {

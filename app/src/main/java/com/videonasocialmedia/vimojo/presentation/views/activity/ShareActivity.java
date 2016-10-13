@@ -22,22 +22,24 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
-import android.widget.VideoView;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.SocialNetworkAdapter;
+import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
+import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -48,37 +50,24 @@ import butterknife.OnTouch;
 /**
  * Created by root on 31/05/16.
  */
-public class ShareActivity extends VimojoActivity implements ShareVideoView, VideoPlayerView,
-        SocialNetworkAdapter.OnSocialNetworkClickedListener, SeekBar.OnSeekBarChangeListener {
+public class ShareActivity extends VimojoActivity implements ShareVideoView, VideonaPlayerListener,
+        SocialNetworkAdapter.OnSocialNetworkClickedListener{
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
-    @Bind(R.id.video_share_preview)
-    VideoView videoPreview;
+    @Bind(R.id.videona_player)
+    VideonaPlayerExo videonaPlayer;
     @Bind(R.id.main_social_network_list)
     RecyclerView mainSocialNetworkList;
-    @Bind(R.id.button_share_play_pause)
-    ImageButton playPauseButton;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.fab_share_room)
     FloatingActionButton fab;
-    @Bind(R.id.seekbar_share_preview)
-    SeekBar seekBar;
-
 
     private String videoPath;
     private ShareVideoPresenter presenter;
     private SocialNetworkAdapter mainSocialNetworkAdapter;
-    private int videoPosition;
-    private Handler updateSeekBarTaskHandler = new Handler();
-    private boolean draggingSeekBar;
-    private Runnable updateSeekBarTask = new Runnable() {
-        @Override
-        public void run() {
-            updateSeekbar();
-        }
-    };
+    private int currentPosition;
 
     private SharedPreferences sharedPreferences;
     protected UserEventTracker userEventTracker;
@@ -99,64 +88,30 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
                 Context.MODE_PRIVATE);
         presenter = new ShareVideoPresenter(this, userEventTracker, sharedPreferences);
+
         presenter.onCreate();
-
-        if (videoPosition == 0)
-            videoPosition = 100;
-        boolean isPlaying = false;
-        if (savedInstanceState != null) {
-            videoPosition = savedInstanceState.getInt("videoPosition", 100);
-            isPlaying = savedInstanceState.getBoolean("videoPlaying", false);
-        }
-
-        initVideoPreview(videoPosition, isPlaying);
+        videoPath = getIntent().getStringExtra(Constants.VIDEO_TO_SHARE_PATH);
+        videonaPlayer.setListener(this);
         initNetworksList();
+
+        restoreState(savedInstanceState);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        pauseVideo();
-        videoPosition = videoPreview.getCurrentPosition();
+
+        videonaPlayer.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        videonaPlayer.onShown(this);
         presenter.onResume();
+        showPreview();
     }
 
-    private void initVideoPreview(final int position, final boolean playing) {
-        videoPath = getIntent().getStringExtra(Constants.VIDEO_TO_SHARE_PATH);
-        if (videoPath != null) {
-            videoPreview.setVideoPath(videoPath);
-            Log.d("TAG", "MESSAGE");
-        }
-        videoPreview.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mediaPlayer) {
-                mediaPlayer.start();
-                try {
-                    seekTo(position);
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    Log.d("Share", "error while preparing preview");
-                }
-                initSeekBar(videoPreview.getCurrentPosition(), videoPreview.getDuration());
-                mediaPlayer.pause();
-                if (playing)
-                    playVideo();
-            }
-        });
-
-        videoPreview.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                playPauseButton.setVisibility(View.VISIBLE);
-                seekBar.setProgress(0);
-            }
-        });
-    }
 
     private void initNetworksList() {
         mainSocialNetworkAdapter = new SocialNetworkAdapter(this);
@@ -167,44 +122,41 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         mainSocialNetworkList.setAdapter(mainSocialNetworkAdapter);
     }
 
-    ///// GO TO ANOTHER ACTIVITY
-
-    private void initSeekBar(int progress, int max) {
-        seekBar.setMax(max);
-        seekBar.setProgress(progress);
-        seekBar.setOnSeekBarChangeListener(this);
-        updateSeekbar();
-    }
-
-    @OnClick(R.id.button_share_play_pause)
     @Override
-    public void playVideo() {
-        videoPreview.start();
-        playPauseButton.setVisibility(View.GONE);
-    }
-
-    private void updateSeekbar() {
-        if (!draggingSeekBar)
-            seekBar.setProgress(videoPreview.getCurrentPosition());
-        updateSeekBarTaskHandler.postDelayed(updateSeekBarTask, 20);
+    public void playPreview() {
+        videonaPlayer.playPreview();
     }
 
     @Override
-    public void pauseVideo() {
-        videoPreview.pause();
-        playPauseButton.setVisibility(View.VISIBLE);
+    public void pausePreview() {
+        videonaPlayer.pausePreview();
+    }
+
+
+    public void showPreview() {
+
+        List<Video> shareVideoList = new ArrayList<Video>();
+        Video videoShare = new Video(videoPath);
+        shareVideoList.add(videoShare);
+
+        videonaPlayer.initPreviewLists(shareVideoList);
+        videonaPlayer.initPreview(currentPosition);
     }
 
     @Override
-    public void seekTo(int millisecond) {
-        videoPreview.seekTo(millisecond);
+    public void showError(String message) {
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt("videoPosition", videoPreview.getCurrentPosition() - 200);
-        outState.putBoolean("videoPlaying", videoPreview.isPlaying());
+        outState.putInt("currentPosition", videonaPlayer.getCurrentPosition());
         super.onSaveInstanceState(outState);
+    }
+
+    private void restoreState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            currentPosition = savedInstanceState.getInt("currentPosition", 0);
+        }
     }
 
     @Override
@@ -257,21 +209,6 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
     }
 
 
-    @OnTouch(R.id.video_share_preview)
-    public boolean togglePlayPause(MotionEvent event) {
-        boolean result = false;
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (videoPreview.isPlaying()) {
-                pauseVideo();
-                result = true;
-            } else {
-                playVideo();
-                result = false;
-            }
-        }
-        return result;
-    }
-
     private void updateNumTotalVideosShared() {
         presenter.updateNumTotalVideosShared();
     }
@@ -279,7 +216,8 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
     @Override
     public void showShareNetworksAvailable(List<SocialNetwork> networks) {
         // TODO move this to presenter in merging alpha and stable.
-        SocialNetwork saveToGallery = new SocialNetwork("SaveToGallery",getString(R.string.save_to_gallery), "", "", this.getResources().getDrawable(R.drawable.activity_share_save_to_gallery), "");
+        SocialNetwork saveToGallery = new SocialNetwork("SaveToGallery",getString(R.string.save_to_gallery), "", "",
+                this.getResources().getDrawable(R.drawable.activity_share_save_to_gallery), "");
         networks.add(saveToGallery);
         mainSocialNetworkAdapter.setSocialNetworkList(networks);
     }
@@ -296,22 +234,6 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
 
     @Override
     public void hideExtraNetworks() {
-
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (fromUser)
-            seekTo(progress);
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
 
     }
 
@@ -336,6 +258,11 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         Intent intent = new Intent(this, FtpUploaderService.class);
         intent.putExtra("VIDEO_FOLDER_PATH", videoPath);
         startService(intent);
+
+    }
+
+    @Override
+    public void newClipPlayed(int currentClipIndex) {
 
     }
 }

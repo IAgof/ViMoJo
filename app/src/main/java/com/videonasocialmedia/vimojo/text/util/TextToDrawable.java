@@ -19,10 +19,10 @@ import com.videonasocialmedia.vimojo.utils.Constants;
  */
 public class TextToDrawable {
 
-    private final static float SIZE_FONT= 70f;
+    private final static float SIZE_FONT= 90f;
     private final static int NUM_MAX_LINES_TO_DRAW =2;
 
-    public static Drawable createDrawableWithTextAndPosition(String text, String positionText) {
+    public static Drawable createDrawableWithTextAndPosition(String text, String positionText, int width, int height) {
 
         Drawable drawable;
         TextPaint textPaint = null;
@@ -44,7 +44,7 @@ public class TextToDrawable {
                 textPaint= createPaint(Paint.Align.LEFT, typeFont);
                 break;
         }
-        Bitmap bmp = createCanvas(text, Constants.DEFAULT_VIMOJO_WIDTH,Constants.DEFAULT_VIMOJO_HEIGHT, textPaint, position);
+        Bitmap bmp = createCanvas(text, width, height, textPaint, position);
 
         drawable = new BitmapDrawable(appContext.getResources(),bmp);
 
