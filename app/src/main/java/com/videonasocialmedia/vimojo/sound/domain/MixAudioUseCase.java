@@ -23,8 +23,7 @@ public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinished
     private OnMixAudioListener listener;
     private float volume = 0.5f;
 
-    public MixAudioUseCase(OnMixAudioListener listener){
-
+    public MixAudioUseCase(OnMixAudioListener listener) {
         addMusicToProjectUseCase = new AddMusicToProjectUseCase();
         this.listener = listener;
 
@@ -33,49 +32,41 @@ public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinished
             f.delete();
     }
 
-    public void mixAudio(String inputFileOne, String inputFileTwo, float volume){
-
+    public void mixAudio(String inputFileOne, String inputFileTwo, float volume) {
         this.volume = volume;
-
         try {
             Future<Void> mFuture = MediaTranscoder.getInstance().mixAudioTwoFiles(inputFileOne, inputFileTwo,
                     1-volume, Constants.PATH_APP_TEMP_AUDIO, outputFile, this);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
     public void onAudioMixerSuccess(String outputFileMixed) {
-
         addMusicToProjectUseCase.addMusicToTrack(new Music(outputFileMixed, volume), 0, this);
     }
 
     @Override
     public void onAudioMixerProgress(String progress) {
-
     }
 
     @Override
     public void onAudioMixerError(String error) {
-        listener.onMixAudioSuccess();
+        listener.onMixAudioError();
     }
 
     @Override
     public void onAudioMixerCanceled() {
-
     }
 
     @Override
     public void onAddMediaItemToTrackError() {
-
     }
 
     @Override
     public void onAddMediaItemToTrackSuccess(Media media) {
         Utils.cleanDirectory(new File(Constants.PATH_APP_TEMP_AUDIO));
         listener.onMixAudioSuccess();
-
     }
 }

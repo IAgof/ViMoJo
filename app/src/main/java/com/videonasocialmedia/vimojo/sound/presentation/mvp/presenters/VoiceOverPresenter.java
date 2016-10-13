@@ -88,7 +88,6 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
             ArrayList<Video> v = new ArrayList<>();
             onVideosRetrieved(v);
         }
-
     }
 
     @Override
@@ -101,7 +100,6 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     public void onNoVideosRetrieved() {
         voiceOverView.resetPreview();
     }
-
 
     public void addVoiceOver() {
         mergeAudio();
@@ -117,12 +115,9 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     public void trackVoiceOverVideo() {
-
     }
 
-
     public void requestRecord() {
-
         if (!audioRecorder.isRecording()) {
             if (!firstTimeRecording) {
                 try {
@@ -143,7 +138,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
         startRecording();
     }
 
-    private void startRecording(){
+    private void startRecording() {
         audioRecorder.startRecording();
         firstTimeRecording = false;
         voiceOverView.playVideo();
@@ -154,12 +149,10 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
             audioRecorder.stopRecording();
             voiceOverView.pauseVideo();
         }
-
     }
 
     public void onEventMainThread(MuxerFinishedEvent e) {
         renameAudioRecorded(numAudiosRecorded++);
-
     }
 
     private void renameAudioRecorded(int numAudiosRecorded) {
@@ -171,14 +164,11 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
 
     @Override
     public void onMergeVoiceOverAudioSuccess(String voiceOverRecordedPath) {
-
         voiceOverView.navigateToSoundVolumeActivity(voiceOverRecordedPath);
-
-
     }
 
     @Override
     public void onMergeVoiceOverAudioError(String message) {
-
+        voiceOverView.showError("Cannot apply voice over in your video project");
     }
 }
