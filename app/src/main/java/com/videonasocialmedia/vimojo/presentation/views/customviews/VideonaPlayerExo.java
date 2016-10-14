@@ -450,6 +450,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
       currentTimePositionInList = seekTimeInMsec
               - videoList.get(currentClipIndex()).getStartTime()
               + (int) clipTimesRanges.get(currentClipIndex()).getLower();
+      setSeekBarProgress(currentTimePositionInList);
       player.seekTo(seekTimeInMsec);
     }
   }
@@ -639,7 +640,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
           // (jliarte): 14/10/16 as playNextClip() was called from both here and
           // updateSeekbarProgress thread, sometimes it's called twice in a clip end, causing
           // a double currentClipIndex++ and thus skipping a clip
-//          playNextClip();
+          //          playNextClip();
         }
         break;
       case ExoPlayer.STATE_IDLE:
