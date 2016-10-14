@@ -88,7 +88,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         presenter = new TrimPreviewPresenter(this, userEventTracker);
         trimmingRangeSeekBar.setOnRangeSeekBarChangeListener(this);
         trimmingRangeSeekBar.setNotifyWhileDragging(true);
-        videonaPlayer.setSeekBarLayoutEnabled(false);
         videonaPlayer.setListener(this);
 
         Intent intent = getIntent();

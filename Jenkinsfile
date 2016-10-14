@@ -52,7 +52,7 @@ node {
 stage 'Stage Upload To Fabric'
 node {
   if (env.BRANCH_NAME == 'develop') {
-    sh "./gradlew crashlyticsUploadDistributionDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} -"
+    sh "./gradlew crashlyticsUploadDistributionDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER}"
   }
 }
 

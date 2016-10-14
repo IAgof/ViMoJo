@@ -84,7 +84,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sound_volume);
         ButterKnife.bind(this);
@@ -139,7 +138,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -159,7 +157,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-
         switch (item.getItemId()) {
             case R.id.action_settings_edit_options:
                 navigateTo(SettingsActivity.class);
@@ -172,7 +169,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
                 return true;
             default:
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -187,7 +183,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
     @Override
     public void onBackPressed() {
-
         navigateTo(EditActivity.class, videoIndexOnTrack);
         finish();
     }
@@ -208,27 +203,22 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     }
 
     private void goToMixAudio(String videoTemPathMixAudio) {
-
-        float volumen = (float) (seekBarVolume.getProgress() * 0.01);
-
-        presenter.setVolume(soundVoiceOverPath, videoTemPathMixAudio ,volumen);
+        float volume = (float) (seekBarVolume.getProgress() * 0.01);
+        presenter.setVolume(soundVoiceOverPath, videoTemPathMixAudio, volume);
     }
 
     @OnClick(R.id.button_volume_sound_accept)
-    public void onClickVolumeSoundAccept(){
-
-        // if music has been selected before, delete
-        presenter.checkMusicOnProject();
+    public void onClickVolumeSoundAccept() {
+        // if music has been selected before, delete it
+        presenter.removeMusicFromProject();
 
         Intent intent = new Intent(this, ExportProjectService.class);
-        Snackbar.make(videonaPlayer,"Starting mixing audio", Snackbar.LENGTH_INDEFINITE).show();
+        Snackbar.make(videonaPlayer, "Mixing audio for your video project", Snackbar.LENGTH_INDEFINITE).show();
         this.startService(intent);
     }
 
     @OnClick(R.id.button_volume_sound_cancel)
-    public void onClickVolumeSoundCancel(){
-
-
+    public void onClickVolumeSoundCancel() {
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -246,24 +236,21 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
         builder.setMessage(R.string.exitSoundVolumeActivity).setPositiveButton(R.string.acceptExitSoundVolumeActivity, dialogClickListener)
                 .setNegativeButton(R.string.cancelExitSoundVolumeActvity, dialogClickListener).show();
-
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         textSeekBarVolume.setText(progress+" % ");
-        videonaPlayer.changeVolume(progress *0.01f);
+        videonaPlayer.setVolume(progress *0.01f);
         currentSoundVolumePosition = progress;
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-
     }
 
     @Override
@@ -271,7 +258,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         videonaPlayer.bindVideoList(movieList);
         videonaPlayer.seekTo(currentProjectPosition);
         videonaPlayer.setMusic(new Music(soundVoiceOverPath));
-        videonaPlayer.changeVolume(currentSoundVolumePosition*0.01f);
+        videonaPlayer.setVolume(currentSoundVolumePosition*0.01f);
     }
 
 
@@ -283,14 +270,10 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
     @Override
     public void goToEditActivity() {
-
-        // Add volume to project
-
         navigateTo(EditActivity.class);
     }
 
     @Override
     public void newClipPlayed(int currentClipIndex) {
-
     }
 }

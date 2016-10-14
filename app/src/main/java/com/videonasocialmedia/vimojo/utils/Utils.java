@@ -252,7 +252,6 @@ public class Utils {
 
 
     public static String getDeviceInfo(){
-
         StringBuilder deviceInfo = new StringBuilder();
 
         deviceInfo.append(" ---------------------------------------------");
@@ -306,15 +305,10 @@ public class Utils {
 
     }
 
-
     public static void onActivityCreateSetTheme(Activity activity) {
-
         switch (sTheme) {
-
             default:
-
             case THEME_VIDEONA:
-
                 // Note, if theme == theme default do nothing, es quicker.
                 //activity.setTheme(R.style.VideonaTheme);
                 break;
@@ -324,7 +318,6 @@ public class Utils {
                 //activity.setTheme(R.style.VideonaTheme);
                 break;
         }
-
     }
 
     public static double getFileDuration(String filePath) throws IOException {
@@ -347,7 +340,6 @@ public class Utils {
 
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
                                                          int reqWidth, int reqHeight) {
-
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -369,7 +361,6 @@ public class Utils {
         int inSampleSize = 1;
 
         if (height > reqHeight || width > reqWidth) {
-
             final int halfHeight = height / 2;
             final int halfWidth = width / 2;
 
@@ -380,7 +371,6 @@ public class Utils {
                 inSampleSize *= 2;
             }
         }
-
         return inSampleSize;
     }
 }
