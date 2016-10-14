@@ -513,7 +513,11 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     }
 
     private boolean isPlaying() {
-        return player.getPlayWhenReady();
+        if (player == null) {
+            return false;
+        } else {
+            return player.getPlayWhenReady();
+        }
     }
 
     private void showPlayButton() {
