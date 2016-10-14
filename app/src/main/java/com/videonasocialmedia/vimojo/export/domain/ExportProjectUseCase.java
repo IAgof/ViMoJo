@@ -13,6 +13,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 
 public class ExportProjectUseCase implements OnExportEndedListener {
@@ -31,7 +32,11 @@ public class ExportProjectUseCase implements OnExportEndedListener {
 
     public void export() {
         waitForOutputFilesFinished();
-        exporter.export();
+        try {
+            exporter.export();
+        } catch (NoSuchElementException exception) {
+            onExportError(String.valueOf(exception));
+        }
     }
 
     @Override
