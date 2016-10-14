@@ -1,7 +1,4 @@
-v0.4.6
-- New activity to select music from local. Add music to project.
-- Show video time tags in every player and timeline EditActivity.
-- Update Share activity to use VideonaPlayerExo.
-- Bug fixed: Mix audio with big files, video timeline clips and update times, text to video, seekbar video preview.
-- Fixing bugs that crashed the app improving editor stability
-- Changed long click by click normal to select video in gallery
+v0.4.7
+- Fixing bug crashing editor when last video has been played
+- Other buf fixes improving editor stability
+- Getting video preview seekbar back to trim view
