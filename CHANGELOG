@@ -1,3 +1,8 @@
+v0.4.7
+- Fixing bug crashing editor when last video has been played
+- Other buf fixes improving editor stability
+- Getting video preview seekbar back to trim view
+
 v0.4.6
 - New activity to select music from local. Add music to project.
 - Show video time tags in every player and timeline EditActivity.

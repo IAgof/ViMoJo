@@ -261,7 +261,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
         videonaPlayer.seekToClip(0);
         videonaPlayer.seekTo(currentVoiceOverPosition);
         videonaPlayer.hidePlayButton();
-        videonaPlayer.changeVolume(1f);
+        videonaPlayer.setVolume(1f);
         // Disable ontouch view playerExo. Now you can't play/pause video.
         enableDisableView(videonaPlayer,false);
     }
@@ -275,7 +275,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     public void playVideo() {
         videonaPlayer.playPreview();
         videonaPlayer.hidePlayButton();
-        videonaPlayer.changeVolume(1f);
+        videonaPlayer.setVolume(1f);
     }
 
     @Override

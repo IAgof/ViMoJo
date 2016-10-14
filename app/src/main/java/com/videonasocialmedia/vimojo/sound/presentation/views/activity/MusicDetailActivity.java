@@ -225,7 +225,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     public void setMusic(Music music, boolean scene) {
         musicSelectedOptions(scene);
         videonaPlayer.setMusic(music);
-        videonaPlayer.changeVolume(1f);
+        videonaPlayer.setVolume(1f);
         updateCoverInfo(music);
         this.music = music;
     }
