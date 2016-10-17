@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditedVideoDestinationPreferencePresenter;
@@ -8,12 +9,14 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditedVideoDest
  * Created by ruth on 24/08/16.
  */
 public class EditedVideoDestinationPreferenceActivity extends EditTextPreferenceActivity {
+    String keyEditedVideoDestination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        presenter = new EditedVideoDestinationPreferencePresenter(this, sharedPreferences);
+        Intent intent=getIntent();
+        keyEditedVideoDestination=intent.getStringExtra("keyEditedVideoDestinationFTP");
+        presenter = new EditedVideoDestinationPreferencePresenter(this, sharedPreferences, keyEditedVideoDestination);
 
         toolbarTitle.setText(R.string.edited_video_destination);
     }

@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.videonasocialmedia.vimojo.R;
@@ -10,12 +11,14 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.UsernameFTPPref
  */
 public class UserNameFTPPreferenceActivity extends EditTextPreferenceActivity {
 
-
+String keyUsernameFTP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new UsernameFTPPreferencePresenter(this, sharedPreferences);
+        Intent intent = getIntent();
+        keyUsernameFTP=intent.getStringExtra("keyUsernameFTP");
+        presenter = new UsernameFTPPreferencePresenter(this, sharedPreferences, keyUsernameFTP);
         toolbarTitle.setText(R.string.username_FTP);
     }
 

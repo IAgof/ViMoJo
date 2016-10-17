@@ -33,8 +33,8 @@ public class FtpPresenter implements ProgressListener {
                         Context.MODE_PRIVATE);
 
         String host = sharedPreferences.getString(ConfigPreferences.HOST, null);
-        String user = sharedPreferences.getString(ConfigPreferences.USERNAMEFTP, null);
-        String password = sharedPreferences.getString(ConfigPreferences.PASSWORDFTP, null);
+        String user = sharedPreferences.getString(ConfigPreferences.USERNAME_FTP, null);
+        String password = sharedPreferences.getString(ConfigPreferences.PASSWORD_FTP, null);
         String editedVideoDestination = sharedPreferences.getString(ConfigPreferences.EDITED_VIDEO_DESTINATION, null);
         if ((host == null) || (user == null) || (password == null)) {
             view.showErrorMessage(R.string.credentialFTPNull);

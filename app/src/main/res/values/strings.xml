@@ -136,7 +136,8 @@
     <string name="save">Save</string>
 
     <!--FTP Settings -->
-    <string name="title_FTP_Section">FTP Data</string>
+    <string name="title_FTP1_Section">FTP Data 1</string>
+    <string name="title_FTP2_Section">FTP Data 2</string>
     <string name="host_FTP">Host</string>
     <string name="removeHost">Remove host</string>
     <string name="enterHost">Enter your host</string>

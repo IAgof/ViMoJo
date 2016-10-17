@@ -10,22 +10,24 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
  * Created by ruth on 23/08/16.
  */
 public class HostPreferencePresenter extends EditTextPreferencePresenter {
+    private String keyHost;
 
     public HostPreferencePresenter(EditTextPreferenceView editTextPreferenceView,
-                                   SharedPreferences sharedPreferences) {
+                                   SharedPreferences sharedPreferences, String keyHost) {
         super(editTextPreferenceView, sharedPreferences);
+        this.keyHost=keyHost;
     }
 
     @Override
     public void setPreference(String text) {
-        editor.putString(ConfigPreferences.HOST, text);
+        editor.putString(keyHost, text);
         editor.commit();
         editTextPreferenceView.goBack();
     }
 
     @Override
     public String getPreviousText() {
-        return sharedPreferences.getString(ConfigPreferences.HOST, null);
+        return sharedPreferences.getString(keyHost, null);
     }
 
     @Override
@@ -35,7 +37,7 @@ public class HostPreferencePresenter extends EditTextPreferencePresenter {
 
     @Override
     public void removeData() {
-        editor.putString(ConfigPreferences.HOST, null);
+        editor.putString(keyHost, null);
         editor.commit();
         editTextPreferenceView.removeEditText();
         editTextPreferenceView.hideInfoText();
