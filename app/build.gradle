@@ -69,6 +69,7 @@ android {
         }
         debug {
             ext.betaDistributionGroupAliases="videona-dev-team"
+            ext.betaDistributionReleaseNotesFilePath="${project.rootDir}/RELEASE"
             buildConfigField "String", "MIXPANEL_TOKEN", "\"c6617213110cd2513dfc0ad97dbaee66\""
             manifestPlaceholders = [ appName: "Vimojo", fabricApiKey: "eba78720f87307ca48dfa4200dd90914ff6653f2"]
         }
