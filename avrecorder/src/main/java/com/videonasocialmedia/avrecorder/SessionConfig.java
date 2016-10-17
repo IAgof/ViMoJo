@@ -22,14 +22,14 @@ public class SessionConfig {
      * @param destinationFolderPath the folder where the video should be recorded;
      */
     public SessionConfig(String destinationFolderPath) {
-        mVideoConfig = new VideoEncoderConfig(1280, 720, 5 * 1000 * 1000);
+        mVideoConfig = new VideoEncoderConfig(1280, 720, 10 * 1000 * 1000);
         mAudioConfig = new AudioEncoderConfig(1, 48000, 192 * 1000);
         File outputFile = createOutputFile(destinationFolderPath);
         mMuxer = AndroidMuxer.create(outputFile.getAbsolutePath(), Muxer.FORMAT.MPEG4);
     }
 
     public SessionConfig(String destinationFolderPath, int numTracks) {
-        mVideoConfig = new VideoEncoderConfig(1280, 720, 5 * 1000 * 1000);
+        mVideoConfig = new VideoEncoderConfig(1280, 720, 10 * 1000 * 1000);
         mAudioConfig = new AudioEncoderConfig(1, 48000, 192 * 1000);
         File outputFile = createOutputFile(destinationFolderPath);
         mMuxer = AndroidMuxer.create(outputFile.getAbsolutePath(), Muxer.FORMAT.MPEG4, numTracks);
