@@ -158,16 +158,17 @@
     <!-- Camera Settings -->
     <string name="title_camera_section">Camera</string>
     <string name="resolution">Resolution</string>
-    <string name="low_resolution_name">Good (720p)</string>
-    <string name="low_value">Good</string>
-    <string name="good_resolution_name">Very good (1080p)</string>
-    <string name="good_value">Very good</string>
-    <string name="high_resolution_name">Excellent (4K)</string>
-    <string name="high_value">Excellent</string>
+    <string name="low_resolution_value">720p</string>
+    <string name="good_resolution_value">1080p</string>
+    <string name="high_resolution_value">4K</string>
     <string name="quality">Quality</string>
-    <string name="low_quality_name">Good (2 Mbps)</string>
-    <string name="good_quality_name">Very good (5 Mbps)</string>
-    <string name="high_quality_name">Excellent (10 Mbps)</string>
+    <string name="low_quality_value">5 Mbps</string>
+    <string name="good_quality_value">8 Mbps</string>
+    <string name="high_quality_value">10 Mbps</string>
+    <string name="frame_rate">Frame rate</string>
+    <string name="low_frame_rate_value">24</string>
+    <string name="good_frame_rate_value">25</string>
+    <string name="high_frame_rate_value">30</string>
     <string name="cancelSettingsCamera">Cancel</string>
 
 

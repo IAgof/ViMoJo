@@ -9,32 +9,29 @@ package com.videonasocialmedia.vimojo.presentation.views.customviews;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.ListPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.CameraQualityAdapter;
-import com.videonasocialmedia.vimojo.presentation.views.listener.OnCameraQualitySelectedListener;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
-public class ChooseCameraQualityListPreferences extends ListPreference implements OnCameraQualitySelectedListener {
+public class ChooseCameraQualityListPreferences extends ListPreference {
 
-    CameraQualityAdapter cameraQualityAdapter = null;
-    Context mContext;
-    CharSequence[] entries;
-    CharSequence[] entryValues;
-    ListView listView;
-    TextView textTitle;
+    private Context mContext;
+    private CharSequence[] entries;
+    private CharSequence[] entryValues;
+    private SharedPreferences sharedPreferences;
 
     public ChooseCameraQualityListPreferences(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
+        sharedPreferences =  mContext.getSharedPreferences(
+                ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+
     }
 
     @Override
@@ -50,24 +47,51 @@ public class ChooseCameraQualityListPreferences extends ListPreference implement
 
         }
 
-        cameraQualityAdapter = new CameraQualityAdapter(mContext, entries, entryValues, this);
+        String prefsQuality = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY, "");
 
-        LayoutInflater inflater = LayoutInflater.from(mContext);//getActivity().getLayoutInflater();
-        View v = inflater.inflate(R.layout.dialog_choose_camera_options, null);
+        builder.setTitle(R.string.quality);
 
-        listView = (ListView) v.findViewById(R.id.listViewCameraResolution);
-        listView.setAdapter(cameraQualityAdapter);
+        //list of items
+        final String[] items = mContext.getResources().getStringArray(R.array.camera_quality_values);
+        int positionItemSelected = 0;
+
+        for (String quality : items){
+            if ( quality.compareTo(prefsQuality) == 0){
+                break;
+            }
+            positionItemSelected++;
+        }
+
+        builder.setSingleChoiceItems(items, positionItemSelected,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setValue(items[which]);
+                        getDialog().dismiss();
+                    }
+                });
+
+        String positiveText = mContext.getString(android.R.string.ok);
+        builder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // positive button logic
+                        getDialog().dismiss();
+                    }
+                });
 
 
-        textTitle = (TextView) v.findViewById(R.id.titleDialogCamera);
-        textTitle.setText(R.string.quality);
+        String negativeText = mContext.getString(android.R.string.cancel);
+        builder.setNegativeButton(negativeText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // negative button logic
+                        getDialog().cancel();
+                    }
+                });
 
-        builder.setView(v);
-
-        builder.setPositiveButton(null, null);
-        builder.setNegativeButton(null, null);
-        builder.setTitle(null);
-        setNegativeButton(v);
     }
 
     // NOTE:
@@ -93,24 +117,6 @@ public class ChooseCameraQualityListPreferences extends ListPreference implement
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
-
-        Log.d("ChooseCameraResolutionListPreferences", "onDialogClosed ");
-
     }
 
-    private void setNegativeButton(View v) {
-        View cancelButton = v.findViewById(R.id.activity_settings_cancel_resolution_dialog);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                getDialog().cancel();
-            }
-        });
-    }
-
-    @Override
-    public void onClickCameraQualityListener(String value) {
-
-        setValue(value);
-        getDialog().dismiss();
-    }
 }

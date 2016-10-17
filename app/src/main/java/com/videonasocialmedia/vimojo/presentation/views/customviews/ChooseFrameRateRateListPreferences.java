@@ -15,17 +15,18 @@ import android.os.Build;
 import android.preference.ListPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
-class ChooseCameraResolutionListPreferences extends ListPreference {
+class ChooseFrameRateRateListPreferences extends ListPreference {
 
     private Context mContext;
     private CharSequence[] entries;
     private CharSequence[] entryValues;
     private SharedPreferences sharedPreferences;
 
-    public ChooseCameraResolutionListPreferences(Context context, AttributeSet attrs)
+    public ChooseFrameRateRateListPreferences(Context context, AttributeSet attrs)
     {
         super(context, attrs);
         mContext = context;
@@ -62,29 +63,27 @@ class ChooseCameraResolutionListPreferences extends ListPreference {
     */
 
     @Override
-    protected void onPrepareDialogBuilder(final AlertDialog.Builder builder)
-    {
+    protected void onPrepareDialogBuilder(final AlertDialog.Builder builder) {
 
         entries = getEntries();
         entryValues = getEntryValues();
 
-        if (entries == null || entryValues == null || entries.length != entryValues.length )
-        {
+        String prefsFrameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE, "");
+
+        if (entries == null || entryValues == null || entries.length != entryValues.length) {
             throw new IllegalStateException(
                     "ListPreference requires an entries array and an entryValues array which are both the same length");
 
         }
 
-        String prefsResolution = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION, "");
-
-        builder.setTitle(R.string.resolution);
+        builder.setTitle(R.string.frame_rate);
 
         //list of items
-        final String[] items = mContext.getResources().getStringArray(R.array.camera_resolution_values);
+        final String[] items = mContext.getResources().getStringArray(R.array.camera_frame_rate_values);
         int positionItemSelected = 0;
 
-        for (String resolution : items){
-            if ( resolution.compareTo(prefsResolution) == 0){
+        for (String frameRate : items){
+            if ( frameRate.compareTo(prefsFrameRate) == 0){
                 break;
             }
             positionItemSelected++;
@@ -127,7 +126,5 @@ class ChooseCameraResolutionListPreferences extends ListPreference {
         super.onDialogClosed(positiveResult);
 
     }
-
-
 
 }

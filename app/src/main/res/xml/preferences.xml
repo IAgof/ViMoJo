@@ -78,20 +78,31 @@
         android:title="@string/title_camera_section">
 
         <com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseCameraResolutionListPreferences
+            android:theme="@style/VideonaAlertDialog"
             android:dialogTitle="@string/resolution"
-            android:entries="@array/camera_resolution_names"
+            android:entries="@array/camera_resolution_values"
             android:entryValues="@array/camera_resolution_values"
             android:key="list_preferences_resolution"
-            android:summary="@string/low_value"
+            android:summary="@string/good_resolution_value"
             android:title="@string/resolution"/>
 
         <com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseCameraQualityListPreferences
+            android:theme="@style/VideonaAlertDialog"
             android:dialogTitle="@string/quality"
-            android:entries="@array/camera_quality_names"
+            android:entries="@array/camera_quality_values"
             android:entryValues="@array/camera_quality_values"
             android:key="list_preferences_quality"
-            android:summary="@string/good_quality_name"
+            android:summary="@string/good_quality_value"
             android:title="@string/quality"/>
+
+        <com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseFrameRateRateListPreferences
+            android:theme="@style/VideonaAlertDialog"
+            android:dialogTitle="@string/frame_rate"
+            android:entries="@array/camera_frame_rate_values"
+            android:entryValues="@array/camera_frame_rate_values"
+            android:key="list_preferences_frame_rate"
+            android:summary="@string/good_frame_rate_value"
+            android:title="@string/frame_rate"/>
 
     </PreferenceCategory>
 

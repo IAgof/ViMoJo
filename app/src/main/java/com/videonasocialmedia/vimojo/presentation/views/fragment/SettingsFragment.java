@@ -40,6 +40,7 @@ public class SettingsFragment extends PreferenceFragment implements
     protected final int REQUEST_CODE_EXIT_APP = 1;
     protected ListPreference resolutionPref;
     protected ListPreference qualityPref;
+    protected ListPreference frameRatePref;
     protected PreferencesPresenter preferencesPresenter;
     protected Context context;
     protected SharedPreferences sharedPreferences;
@@ -52,8 +53,8 @@ public class SettingsFragment extends PreferenceFragment implements
         super.onCreate(savedInstanceState);
         context = getActivity().getApplicationContext();
         initPreferences();
-        preferencesPresenter = new PreferencesPresenter(this, resolutionPref, qualityPref, context,
-                sharedPreferences);
+        preferencesPresenter = new PreferencesPresenter(this, resolutionPref, qualityPref, frameRatePref,
+                context, sharedPreferences);
         mixpanel = MixpanelAPI.getInstance(this.getActivity(), BuildConfig.MIXPANEL_TOKEN);
     }
 
@@ -67,6 +68,7 @@ public class SettingsFragment extends PreferenceFragment implements
         editor = sharedPreferences.edit();
         resolutionPref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION);
         qualityPref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY);
+        frameRatePref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE);
 
         setupExitPreference();
         setupBetaPreference();
@@ -249,6 +251,8 @@ public class SettingsFragment extends PreferenceFragment implements
             property = AnalyticsConstants.RESOLUTION;
         else if(key.equals(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY))
             property = AnalyticsConstants.QUALITY;
+        else if(key.equals(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE))
+            property = AnalyticsConstants.FRAME_RATE;
         mixpanel.getPeople().set(property, value.toLowerCase());
     }
 

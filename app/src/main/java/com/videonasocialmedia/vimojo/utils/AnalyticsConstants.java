@@ -27,6 +27,7 @@ public class AnalyticsConstants {
     public static final String APP_USE_COUNT = "appUseCount";
     public final static String RESOLUTION = "resolution";
     public final static String QUALITY = "quality";
+    public final static String FRAME_RATE = "frame_rate";
     public final static String TOTAL_VIDEOS_RECORDED = "totalVideosRecorded";
     public final static String LAST_VIDEO_RECORDED = "lastVideoRecorded";
     public static final String TOTAL_VIDEOS_SHARED = "totalVideosShared";
