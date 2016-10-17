@@ -140,8 +140,12 @@ public class RecordPresenter {
             int lastItemIndex = mediaInProject.size() - 1;
             final Video lastItem = (Video) mediaInProject.get(lastItemIndex);
             this.recordedVideosNumber = mediaInProject.size();
-
+            recordView.showVideosRecordedNumber(recordedVideosNumber);
+            recordView.showRecordedVideoThumb(lastItem.getMediaPath());
+            recordView.enableShareButton();
         } else {
+            recordView.hideVideosRecordedNumber();
+            recordView.disableShareButton();
         }
     }
 
@@ -158,7 +162,6 @@ public class RecordPresenter {
             trackUserInteracted(AnalyticsConstants.RECORD, AnalyticsConstants.STOP);
             recorder.stopRecording();
         }
-        //TODO show a gif to indicate the process is running til the video is added to the project
     }
 
     /**
@@ -216,7 +219,10 @@ public class RecordPresenter {
         recordView.showStopButton();
         recordView.startChronometer();
         recordView.showChronometer();
-        recordView.hideMenuOptions();
+        recordView.disableShareButton();
+        recordView.hideSettingsOptions();
+        recordView.hideVideosRecordedNumber();
+        recordView.hideRecordedVideoThumb();
         firstTimeRecording = false;
     }
 
@@ -237,7 +243,6 @@ public class RecordPresenter {
     }
 
     public void onEventMainThread(MuxerFinishedEvent e) {
-        recordView.stopChronometer();
         String finalPath = moveVideoToMastersFolder();
         if (externalIntent) {
             recordView.finishActivityForResult(finalPath);
@@ -323,9 +328,13 @@ public class RecordPresenter {
     public void onEvent(AddMediaItemToTrackSuccessEvent e) {
         String path = e.videoAdded.getMediaPath();
         recordView.showRecordButton();
-        recordView.showMenuOptions();
+        recordView.showSettingsOptions();
+        recordView.stopChronometer();
         recordView.hideChronometer();
         recordView.reStartScreenRotation();
+        recordView.showRecordedVideoThumb(path);
+        recordView.enableShareButton();
+        recordView.showVideosRecordedNumber(++recordedVideosNumber);
     }
 
     public int getProjectDuration() {
