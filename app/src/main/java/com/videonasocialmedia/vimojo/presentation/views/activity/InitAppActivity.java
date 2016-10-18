@@ -319,6 +319,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         checkAvailableCameras();
         checkFlashMode();
         checkCameraVideoSize();
+        checkCameraFrameRate();
     }
 
     private void trackUserProfile() {
@@ -368,6 +369,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         camera = getCameraInstance(sharedPreferences.getInt(ConfigPreferences.CAMERA_ID,
                 ConfigPreferences.BACK_CAMERA));
         editor.putBoolean(ConfigPreferences.BACK_CAMERA_SUPPORTED, true).commit();
+
         numSupportedCameras = Camera.getNumberOfCameras();
         if (numSupportedCameras > 1) {
             editor.putBoolean(ConfigPreferences.FRONT_CAMERA_SUPPORTED, true).commit();
@@ -493,6 +495,35 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
                 editor.putBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, false).commit();
                 editor.putBoolean(ConfigPreferences.BACK_CAMERA_SUPPORTED, false).commit();
             }
+        }
+        releaseCamera();
+    }
+
+    private void checkCameraFrameRate(){
+        List<Integer> supportedFrameRates;
+        if (camera != null) {
+            releaseCamera();
+        }
+        camera = getCameraInstance(ConfigPreferences.BACK_CAMERA);
+        supportedFrameRates = camera.getParameters().getSupportedPreviewFrameRates();
+        if (supportedFrameRates != null) {
+            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_SUPPORTED, true).commit();
+            for (int  frameRate : supportedFrameRates) {
+                if(frameRate == 24){
+                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, true).commit();
+                }
+                if(frameRate == 25){
+                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, true).commit();
+                }
+                if(frameRate == 30){
+                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, true).commit();
+                }
+            }
+        } else {
+            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false).commit();
+            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false).commit();
+            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, false).commit();
+            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_SUPPORTED, false).commit();
         }
         releaseCamera();
     }

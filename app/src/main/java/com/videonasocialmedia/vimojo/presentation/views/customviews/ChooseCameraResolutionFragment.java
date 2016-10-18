@@ -18,6 +18,8 @@ import android.util.AttributeSet;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
+import java.util.ArrayList;
+
 class ChooseCameraResolutionListPreferences extends ListPreference {
 
     private Context mContext;
@@ -75,19 +77,35 @@ class ChooseCameraResolutionListPreferences extends ListPreference {
 
         }
 
-        String prefsResolution = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION, "");
+        String prefsResolution = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
+                mContext.getResources().getString(R.string.low_resolution_value));
 
         builder.setTitle(R.string.resolution);
 
         //list of items
-        final String[] items = mContext.getResources().getStringArray(R.array.camera_resolution_values);
-        int positionItemSelected = 0;
 
-        for (String resolution : items){
-            if ( resolution.compareTo(prefsResolution) == 0){
-                break;
+        int positionItemSelected = 0;
+        int numItemSupported = 0;
+
+        ArrayList<String> itemsSupported = new ArrayList<String>(mContext.getResources().getStringArray(R.array.camera_resolution_values).length);
+
+        if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false)){
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.low_resolution_value));
+        }
+        if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, false)){
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.good_resolution_value));
+        }
+        if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, false)){
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.high_resolution_value));
+        }
+
+        final String[] items = new String[numItemSupported];
+
+        for (int i=0; i<numItemSupported; i++){
+            items[i] = itemsSupported.get(i);
+            if ( itemsSupported.get(i).compareTo(prefsResolution) == 0){
+                positionItemSelected = i;
             }
-            positionItemSelected++;
         }
 
         builder.setSingleChoiceItems(items, positionItemSelected,
@@ -127,7 +145,4 @@ class ChooseCameraResolutionListPreferences extends ListPreference {
         super.onDialogClosed(positiveResult);
 
     }
-
-
-
 }

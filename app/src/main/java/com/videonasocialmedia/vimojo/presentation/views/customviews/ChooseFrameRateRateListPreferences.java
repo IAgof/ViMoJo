@@ -19,6 +19,8 @@ import android.util.AttributeSet;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
+import java.util.ArrayList;
+
 class ChooseFrameRateRateListPreferences extends ListPreference {
 
     private Context mContext;
@@ -68,7 +70,19 @@ class ChooseFrameRateRateListPreferences extends ListPreference {
         entries = getEntries();
         entryValues = getEntryValues();
 
-        String prefsFrameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE, "");
+        String prefsFrameRate;
+
+        if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false)){
+            prefsFrameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE,
+                    mContext.getResources().getString(R.string.good_frame_rate_value));
+        } else {
+            if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false)) {
+                prefsFrameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE,
+                        mContext.getResources().getString(R.string.low_frame_rate_value));
+            } else {
+                prefsFrameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE, "");
+            }
+        }
 
         if (entries == null || entryValues == null || entries.length != entryValues.length) {
             throw new IllegalStateException(
@@ -78,15 +92,28 @@ class ChooseFrameRateRateListPreferences extends ListPreference {
 
         builder.setTitle(R.string.frame_rate);
 
-        //list of items
-        final String[] items = mContext.getResources().getStringArray(R.array.camera_frame_rate_values);
         int positionItemSelected = 0;
+        int numItemSupported = 0;
 
-        for (String frameRate : items){
-            if ( frameRate.compareTo(prefsFrameRate) == 0){
-                break;
+        ArrayList<String> itemsSupported = new ArrayList<String>(mContext.getResources().getStringArray(R.array.camera_frame_rate_values).length);
+
+        if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false)){
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.low_frame_rate_value));
+        }
+        if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false)){
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.good_frame_rate_value));
+        }
+        if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, false)){
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.high_frame_rate_value));
+        }
+
+        final String[] items = new String[numItemSupported];
+
+        for (int i=0; i<numItemSupported; i++){
+            items[i] = itemsSupported.get(i);
+            if ( itemsSupported.get(i).compareTo(prefsFrameRate) == 0){
+                positionItemSelected = i;
             }
-            positionItemSelected++;
         }
 
         builder.setSingleChoiceItems(items, positionItemSelected,

@@ -47,7 +47,8 @@ public class ChooseCameraQualityListPreferences extends ListPreference {
 
         }
 
-        String prefsQuality = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY, "");
+        String prefsQuality = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY,
+                mContext.getResources().getString(R.string.high_quality_value));
 
         builder.setTitle(R.string.quality);
 

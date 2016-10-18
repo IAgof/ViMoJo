@@ -236,7 +236,7 @@ public class SettingsFragment extends PreferenceFragment implements
     public void setPreference(ListPreference preference, String name) {
         preference.setValue(name);
         preference.setSummary(name);
-        trackQualityAndResolutionUserTraits(preference.getKey(), name);
+        trackQualityAndResolutionAndFrameRateUserTraits(preference.getKey(), name);
     }
 
     @Override
@@ -245,7 +245,7 @@ public class SettingsFragment extends PreferenceFragment implements
         preference.setSummary(value);
     }
 
-    private void trackQualityAndResolutionUserTraits(String key, String value) {
+    private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
         String property = null;
         if(key.equals(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION))
             property = AnalyticsConstants.RESOLUTION;
@@ -260,7 +260,7 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                           String key) {
         Preference connectionPref = findPreference(key);
-        trackQualityAndResolutionUserTraits(key, sharedPreferences.getString(key, ""));
+        trackQualityAndResolutionAndFrameRateUserTraits(key, sharedPreferences.getString(key, ""));
         connectionPref.setSummary(sharedPreferences.getString(key, ""));
     }
 
