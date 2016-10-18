@@ -18,10 +18,7 @@
                 android:action="android.intent.action.VIEW"
                 android:data="@string/videonaTwitter"/>
         </Preference>
-        <Preference
-            android:key="beta"
-            android:title="@string/betaPreferenceText">
-        </Preference>
+
     </PreferenceCategory>
 
     <PreferenceCategory

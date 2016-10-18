@@ -71,7 +71,6 @@ public class SettingsFragment extends PreferenceFragment implements
         frameRatePref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE);
 
         setupExitPreference();
-        setupBetaPreference();
         setupDownloadKamaradaPreference();
         setupShareVideona();
     }
@@ -188,7 +187,7 @@ public class SettingsFragment extends PreferenceFragment implements
         listView.addFooterView(footer, null, false);
 
         TextView footerText = (TextView)v.findViewById(R.id.footerText);
-        String text = getString(R.string.videona) + " v" + BuildConfig.VERSION_NAME + "\n" +
+        String text = getString(R.string.vimojo) + " v" + BuildConfig.VERSION_NAME + "\n" +
                 getString(R.string.madeIn);
         footerText.setText(text);
 
