@@ -61,8 +61,8 @@ public class VideoDuplicateTest {
 
         Video copyVideo = new Video(fakeVideo);
 
-        assertThat("copy save text added", copyVideo.getTextToVideo(), CoreMatchers.is(fakeVideo.getTextToVideo()));
-        assertThat("copy save position selected", copyVideo.getTextPositionToVideo(), CoreMatchers.is(fakeVideo.getTextPositionToVideo()));
+        assertThat("copy save text added", copyVideo.getClipText(), CoreMatchers.is(fakeVideo.getClipText()));
+        assertThat("copy save position selected", copyVideo.getClipTextPosition(), CoreMatchers.is(fakeVideo.getClipTextPosition()));
         assertThat("copy save is video text added", copyVideo.isTextToVideoAdded(), CoreMatchers.is(fakeVideo.isTextToVideoAdded()));
         assertThat("copy save is temp path finished", copyVideo.outputVideoIsFinished(), CoreMatchers.is(fakeVideo.outputVideoIsFinished()));
         assertThat("copy save is tempPath, video edited", copyVideo.isEdited(), CoreMatchers.is(fakeVideo.isEdited()));
@@ -89,8 +89,8 @@ public class VideoDuplicateTest {
         Video video = new Video("somePath");
         // simulate operation, add text to video
         video.setTempPath();
-        video.setTextToVideo("blablabla");
-        video.setTextPositionToVideo("CENTER");
+        video.setClipText("blablabla");
+        video.setClipTextPosition("CENTER");
         video.setTextToVideoAdded(true);
         video.setTempPathFinished(true);
 

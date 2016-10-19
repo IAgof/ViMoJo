@@ -7,6 +7,7 @@ import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
 import com.videonasocialmedia.transcoder.overlay.Image;
+import com.videonasocialmedia.vimojo.export.utils.TranscoderHelper;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -18,19 +19,22 @@ import java.io.IOException;
  */
 public class ModifyVideoTextAndPositionUseCase {
 
+    private TextToDrawable drawableGenerator = new TextToDrawable();
+    private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
+    protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator, mediaTranscoder);
+
     public void addTextToVideo(Video videoToEdit, VideonaFormat format, String text, String textPosition,
-                                MediaTranscoderListener listener) {
+                               MediaTranscoderListener listener) {
         try {
 
-            videoToEdit.setTextToVideo(text);
-            videoToEdit.setTextPositionToVideo(textPosition);
+            videoToEdit.setClipText(text);
+            videoToEdit.setClipTextPosition(textPosition);
             videoToEdit.setTempPathFinished(false);
             videoToEdit.setTempPath();
             videoToEdit.setTextToVideoAdded(true);
 
             if(videoToEdit.isTrimmedVideo()) {
-                transcodeTrimAndOverlayImageToVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
-                        format, listener, text, textPosition, videoToEdit.getStartTime(), videoToEdit.getStopTime());
+                transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(videoToEdit, format, listener);
             } else {
                 transcodeTrimAndOverlayImageToVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
                         format, listener, text, textPosition);
@@ -47,23 +51,14 @@ public class ModifyVideoTextAndPositionUseCase {
 
         Image imageText = getImageFromTextAndPosition(text, textPosition);
 
-        MediaTranscoder.getInstance().transcodeAndOverlayImageToVideo(mediaPath,
+        mediaTranscoder.transcodeAndOverlayImageToVideo(mediaPath,
                 tempPath,format, listener, imageText);
-    }
-
-    private void transcodeTrimAndOverlayImageToVideo(String mediaPath, String tempPath, VideonaFormat format,
-                                                     MediaTranscoderListener listener, String text,
-                                                     String textPosition, int startTime, int stopTime) throws IOException {
-
-        Image imageText = getImageFromTextAndPosition(text, textPosition);
-
-        MediaTranscoder.getInstance().transcodeTrimAndOverlayImageToVideo(mediaPath,
-                tempPath,format, listener, imageText, startTime, stopTime);
     }
 
     @NonNull
     public Image getImageFromTextAndPosition(String text, String textPosition) {
-        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition, Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+        Drawable textDrawable = drawableGenerator.createDrawableWithTextAndPosition(text, textPosition,
+                Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
 
         return new Image(textDrawable, Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }

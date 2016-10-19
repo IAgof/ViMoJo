@@ -81,6 +81,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
   private static final int RENDERER_BUILDING_STATE_IDLE = 1;
   private static final int RENDERER_BUILDING_STATE_BUILDING = 2;
   private static final int RENDERER_BUILDING_STATE_BUILT = 3;
+  private final TextToDrawable drawableGenerator = new TextToDrawable();
 
   @Bind(R.id.video_editor_preview)
   AspectRatioVideoView videoPreview;
@@ -522,7 +523,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
    * @param textPosition the text position
    */
   public void setImageText(String text, String textPosition) {
-    Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(
+    Drawable textDrawable = drawableGenerator.createDrawableWithTextAndPosition(
             text, textPosition, Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     imageTextPreview.setImageDrawable(textDrawable);
   }
@@ -664,7 +665,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
    */
   public void updateClipTextPreview() {
     if (getCurrentClip().isTextToVideoAdded()) {
-      setImageText(getCurrentClip().getTextToVideo(), getCurrentClip().getTextPositionToVideo());
+      setImageText(getCurrentClip().getClipText(), getCurrentClip().getClipTextPosition());
     } else {
       clearImageText();
     }
