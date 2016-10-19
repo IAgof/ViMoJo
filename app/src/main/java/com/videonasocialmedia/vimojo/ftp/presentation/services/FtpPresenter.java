@@ -24,18 +24,33 @@ public class FtpPresenter implements ProgressListener {
 
     }
 
-    public void startUpload(String videoPath) {
-        //String host = BuildConfig.FTP_HOST;// TODO(javi.cabanas): 29/6/16 fetch host from settings
+    public void startUpload(String videoPath, String ftpSelected) {
         //String host= "82.223.76.148
+
+        String host=null;
+        String user=null;
+        String password=null;
+        String editedVideoDestination= null;
+
         Context appContext = VimojoApplication.getAppContext();
         sharedPreferences =
                 appContext.getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
                         Context.MODE_PRIVATE);
+        switch (ftpSelected){
+            case ConfigPreferences.FTP1:
+                host = sharedPreferences.getString(ConfigPreferences.HOST, null);
+                user = sharedPreferences.getString(ConfigPreferences.USERNAME_FTP, null);
+                password = sharedPreferences.getString(ConfigPreferences.PASSWORD_FTP, null);
+                editedVideoDestination = sharedPreferences.getString(ConfigPreferences.EDITED_VIDEO_DESTINATION, null);
+                break;
+            case ConfigPreferences.FTP2:
+                host = sharedPreferences.getString(ConfigPreferences.HOST_FTP2, null);
+                user = sharedPreferences.getString(ConfigPreferences.USERNAME_FTP2, null);
+                password = sharedPreferences.getString(ConfigPreferences.PASSWORD_FTP2, null);
+                editedVideoDestination = sharedPreferences.getString(ConfigPreferences.EDITED_VIDEO_DESTINATION_FTP2, null);
+                break;
+        }
 
-        String host = sharedPreferences.getString(ConfigPreferences.HOST, null);
-        String user = sharedPreferences.getString(ConfigPreferences.USERNAME_FTP, null);
-        String password = sharedPreferences.getString(ConfigPreferences.PASSWORD_FTP, null);
-        String editedVideoDestination = sharedPreferences.getString(ConfigPreferences.EDITED_VIDEO_DESTINATION, null);
         if ((host == null) || (user == null) || (password == null)) {
             view.showErrorMessage(R.string.credentialFTPNull);
             return;

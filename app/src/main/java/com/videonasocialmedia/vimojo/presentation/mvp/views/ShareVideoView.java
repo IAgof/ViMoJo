@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 
 import java.util.List;
@@ -16,7 +15,7 @@ public interface ShareVideoView {
 
     void showError(String message);
 
-    void showShareNetworksAvailable(List<SocialNetwork> networks);
+    void showOptionsShareList(List<OptionsToShareList> optionsShareList);
 
     void hideShareNetworks();
 

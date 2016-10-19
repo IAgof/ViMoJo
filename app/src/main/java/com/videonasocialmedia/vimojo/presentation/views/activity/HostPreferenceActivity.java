@@ -23,5 +23,5 @@ public class HostPreferenceActivity extends EditTextPreferenceActivity  {
     public void showInfoText() {
         infoText.setText(R.string.removeHost);
     }
-    
+
 }

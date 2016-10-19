@@ -14,12 +14,14 @@ public class ConfigPreferences {
     public final static String FIRST_TIME = "first_time";
     public final static String SETTINGS_SHARED_PREFERENCES_FILE_NAME = "SETTINGS_SHARED_PREFERENCES_CAMERA";
     public final static String NAME = "name";
-    public final static String HOST = "host";
     public final static String USERNAME = "username";
+    public final static String FTP1 ="ftp1";
+    public final static String HOST = "host";
     public final static String USERNAME_FTP = "usernameFTP";
     public final static String PASSWORD_FTP = "passwordFTP";
     public final static String EDITED_VIDEO_DESTINATION = "EditedVideoDestinationFTP";
     public final static String UNEDITED_VIDEO_DESTINATION = "UneditedVideoDestinationFTP";
+    public final static String FTP2 ="ftp2";
     public static final String HOST_FTP2 = "host_FTP2";
     public static final String USERNAME_FTP2= "username_FTP2";
     public final static String PASSWORD_FTP2 = "password_FTP2";
