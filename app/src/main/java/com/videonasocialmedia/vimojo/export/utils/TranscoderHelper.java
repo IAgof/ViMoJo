@@ -35,6 +35,22 @@ public class TranscoderHelper {
             videoToEdit.getStopTime());
   }
 
+  public void generateOutputVideoWithOverlayImage(Video video, VideonaFormat format,
+                                                  MediaTranscoderListener listener)
+          throws IOException  {
+    Image imageText = getImageFromTextAndPosition(video.getClipText(), video.getClipTextPosition());
+
+    mediaTranscoder.transcodeAndOverlayImageToVideo(video.getMediaPath(), video.getTempPath(),
+            format, listener, imageText);
+  }
+
+  public void generateOutputVideoWithTrimming(Video video, VideonaFormat format,
+                                              MediaTranscoderListener listener)
+          throws IOException {
+    mediaTranscoder.transcodeAndTrimVideo(video.getMediaPath(), video.getTempPath(), format,
+            listener, video.getStartTime(), video.getStopTime());
+  }
+
   @NonNull
   public Image getImageFromTextAndPosition(String text, String textPosition) {
     Drawable textDrawable = drawableGenerator.createDrawableWithTextAndPosition(text, textPosition,

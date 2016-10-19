@@ -70,7 +70,8 @@ public class RelaunchExportTempBackgroundUseCaseTest {
 
     injectedRelaunchExportTempBackgroundUseCase.relaunchExport(video, listener, videonaFormat);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(video, videonaFormat, listener);
+    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(video,
+            videonaFormat, listener);
   }
 
   @Test
@@ -80,7 +81,7 @@ public class RelaunchExportTempBackgroundUseCaseTest {
     video.setClipText("text");
     video.setClipText(VideoEditTextActivity.TextPosition.BOTTOM.name());
     video.setTextToVideoAdded(true);
-    assert video.isTextToVideoAdded();
+    assert video.hasText();
     video.setStopTime(10);
     MediaTranscoderListener listener = getMediaTranscoderListener();
     VideonaFormat videonaFormat = new VideonaFormat();

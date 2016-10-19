@@ -63,7 +63,7 @@ public class VideoDuplicateTest {
 
         assertThat("copy save text added", copyVideo.getClipText(), CoreMatchers.is(fakeVideo.getClipText()));
         assertThat("copy save position selected", copyVideo.getClipTextPosition(), CoreMatchers.is(fakeVideo.getClipTextPosition()));
-        assertThat("copy save is video text added", copyVideo.isTextToVideoAdded(), CoreMatchers.is(fakeVideo.isTextToVideoAdded()));
+        assertThat("copy save is video text added", copyVideo.hasText(), CoreMatchers.is(fakeVideo.hasText()));
         assertThat("copy save is temp path finished", copyVideo.outputVideoIsFinished(), CoreMatchers.is(fakeVideo.outputVideoIsFinished()));
         assertThat("copy save is tempPath, video edited", copyVideo.isEdited(), CoreMatchers.is(fakeVideo.isEdited()));
     }

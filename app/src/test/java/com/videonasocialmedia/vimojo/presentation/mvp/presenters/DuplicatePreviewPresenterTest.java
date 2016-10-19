@@ -67,7 +67,7 @@ public class DuplicatePreviewPresenterTest {
     }
 
     @Test
-    @Config(shadows = {MediaMetadataRetrieverShadow.class})
+    @Config(manifest="../app/AndroidManifest.xml", shadows = {MediaMetadataRetrieverShadow.class})
     public void duplicateVideoCallsTracking() {
         DuplicatePreviewPresenter presenter = new DuplicatePreviewPresenter(mockedDuplicateView, mockedUserEventTracker);
         Project videonaProject = getAProject();

@@ -86,7 +86,7 @@ public class Video extends Media {
                 video.getDuration(), null, null);
         fileDuration = video.getFileDuration();
         stopTime = video.getStopTime();
-        isTextToVideoAdded = video.isTextToVideoAdded();
+        isTextToVideoAdded = video.hasText();
         clipText = video.getClipText();
         clipTextPosition = video.getClipTextPosition();
         if(video.isEdited()) {
@@ -161,7 +161,7 @@ public class Video extends Media {
         this.clipTextPosition = clipTextPosition;
     }
 
-    public boolean isTextToVideoAdded() {
+    public boolean hasText() {
         return isTextToVideoAdded;
     }
 

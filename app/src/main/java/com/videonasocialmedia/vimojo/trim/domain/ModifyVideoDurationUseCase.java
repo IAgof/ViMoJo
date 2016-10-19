@@ -17,6 +17,7 @@ public class ModifyVideoDurationUseCase {
 
   private TextToDrawable drawableGenerator = new TextToDrawable();
   private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
+  protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator, mediaTranscoder);
 
   /**
    * Main method for video trimming use case.
@@ -35,29 +36,12 @@ public class ModifyVideoDurationUseCase {
       videoToEdit.setTempPath();
       videoToEdit.setTrimmedVideo(true);
 
-      if (videoToEdit.isTextToVideoAdded()) {
-//        transcodeTrimAndOverlayImageToVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
-//                format, listener, videoToEdit.getClipText(), videoToEdit.getClipTextPosition(),
-//                startTimeMs, finishTimeMs);
-        TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator, mediaTranscoder);
-        transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(videoToEdit, format, listener);
+      if (videoToEdit.hasText()) {
+        transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(videoToEdit, format,
+                listener);
       } else {
-        transcodeAndTrimVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(), format,
-                listener, startTimeMs, finishTimeMs);
+        transcoderHelper.generateOutputVideoWithTrimming(videoToEdit, format, listener);
       }
-    } catch (IOException exception) {
-      // TODO(javi.cabanas): 2/8/16 manage io exception on external library and send
-      //                     onTranscodeFailed if necessary
-      listener.onTranscodeFailed(exception);
-    }
-  }
-
-  private void transcodeAndTrimVideo(String mediaPath, String tempPath, VideonaFormat format,
-                                     MediaTranscoderListener listener, int startTimeMs,
-                                     int finishTimeMs) {
-    try {
-      mediaTranscoder.transcodeAndTrimVideo(mediaPath, tempPath,
-              format, listener, startTimeMs, finishTimeMs);
     } catch (IOException exception) {
       exception.printStackTrace();
       listener.onTranscodeFailed(exception);

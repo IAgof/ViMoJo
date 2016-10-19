@@ -664,7 +664,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
    * Renders text if has been set for current clip.
    */
   public void updateClipTextPreview() {
-    if (getCurrentClip().isTextToVideoAdded()) {
+    if (getCurrentClip().hasText()) {
       setImageText(getCurrentClip().getClipText(), getCurrentClip().getClipTextPosition());
     } else {
       clearImageText();

@@ -6,6 +6,7 @@ import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
 import com.videonasocialmedia.transcoder.overlay.Image;
+import com.videonasocialmedia.vimojo.export.utils.TranscoderHelper;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
@@ -34,7 +35,10 @@ import static org.mockito.Matchers.eq;
 public class ModifyVideoDurationUseCaseTest {
   @Mock TextToDrawable mockedDrawableGenerator;
   @Mock MediaTranscoder mockedMediaTranscoder;
+  @Mock TranscoderHelper mockedTranscoderHelper;
   @InjectMocks ModifyVideoDurationUseCase injectedUseCase;
+  private final VideonaFormat videonaFormat = new VideonaFormat();
+  private final MediaTranscoderListener mediaTranscoderListener = getMediaTranscoderListener();
 
   @Before
   public void injectDoubles() throws Exception {
@@ -44,34 +48,65 @@ public class ModifyVideoDurationUseCaseTest {
   @Test
   public void testTrimVideoCallsTranscodeTrimAndOverlayImageToVideoIfVideoHasText()
           throws Exception {
-    Video video = new Video("media/path");
-    video.setClipText("text");
-    video.setClipTextPosition(VideoEditTextActivity.TextPosition.CENTER.name());
-    // TODO(jliarte): 18/10/16 fix these methods
-    video.setTextToVideoAdded(true);
-    assert video.isTextToVideoAdded();
-    VideonaFormat videonaFormat = new VideonaFormat();
-    MediaTranscoderListener listener = getMediaTranscoderListener();
+    Video video = getVideoWithText();
+    assert video.hasText();
+    injectedUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
+            mockedMediaTranscoder);
 
-    injectedUseCase.trimVideo(video, videonaFormat, 0, 10, listener);
+    injectedUseCase.trimVideo(video, videonaFormat, 0, 10, mediaTranscoderListener);
 
     Mockito.verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
-            eq(video.getMediaPath()), eq(video.getTempPath()), eq(videonaFormat), eq(listener),
+            eq(video.getMediaPath()), eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener),
             Matchers.any(Image.class), eq(0), eq(10));
+  }
+
+  @Test
+  public void testTrimVideoCallsGenerateOutputVideoWithOverlayImageAndTrimmingIfVideoHasText()
+          throws IOException {
+    Video video = getVideoWithText();
+    assert video.hasText();
+
+    injectedUseCase.trimVideo(video, videonaFormat, 0, 10, mediaTranscoderListener);
+
+    Mockito.verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(video,
+            videonaFormat, mediaTranscoderListener);
   }
 
   @Test
   public void testTrimVideoCallsTranscodeAndTrimVideoIfVideoHasntText()
           throws IOException {
     Video video = new Video("media/path");
-    assert ! video.isTextToVideoAdded();
-    VideonaFormat videonaFormat = new VideonaFormat();
-    MediaTranscoderListener listener = getMediaTranscoderListener();
+    assert ! video.hasText();
+    injectedUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
+            mockedMediaTranscoder);
 
-    injectedUseCase.trimVideo(video, videonaFormat, 0, 10, listener);
+    injectedUseCase.trimVideo(video, videonaFormat, 0, 10, mediaTranscoderListener);
 
     Mockito.verify(mockedMediaTranscoder).transcodeAndTrimVideo(eq(video.getMediaPath()),
-            eq(video.getTempPath()), eq(videonaFormat), eq(listener), eq(0), eq(10));
+            eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener), eq(0), eq(10));
+  }
+
+  @Test
+  public void testTrimVideoCallsGenerateOutputVideoWithTrimmingIfVideoHasntText()
+          throws IOException {
+    Video video = new Video("media/path");
+    // TODO(jliarte): 19/10/16 should check if video is trimmed?
+    assert ! video.hasText();
+
+    injectedUseCase.trimVideo(video, videonaFormat, 0, 10, mediaTranscoderListener);
+
+    Mockito.verify(mockedTranscoderHelper).generateOutputVideoWithTrimming(video, videonaFormat,
+            mediaTranscoderListener);
+  }
+
+  @NonNull
+  private Video getVideoWithText() {
+    Video video = new Video("media/path");
+    video.setClipText("text");
+    video.setClipTextPosition(VideoEditTextActivity.TextPosition.CENTER.name());
+    // TODO(jliarte): 18/10/16 fix these methods
+    video.setTextToVideoAdded(true);
+    return video;
   }
 
   @NonNull

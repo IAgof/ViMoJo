@@ -19,7 +19,6 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 import org.robolectric.RobolectricTestRunner;
 
 import java.io.IOException;
@@ -33,6 +32,8 @@ import static org.mockito.Matchers.eq;
 public class ModifyVideoTextAndPositionUseCaseTest {
   @Mock TextToDrawable mockedDrawableGenerator;
   @Mock MediaTranscoder mockedMediaTranscoder;
+//  @Spy TranscoderHelper transcoderHelperSpy = new TranscoderHelper(mockedDrawableGenerator,
+//          mockedMediaTranscoder);
   @InjectMocks ModifyVideoTextAndPositionUseCase injectedUseCase;
   private final MediaTranscoderListener mediaTranscoderListener = getMediaTranscoderListener();
   private final VideonaFormat videonaFormat = new VideonaFormat();
@@ -78,28 +79,49 @@ public class ModifyVideoTextAndPositionUseCaseTest {
   @Test
   public void testAddTextToVideoCallsTranscodeAndOverlayImageToVideoIfVideoIsNotTrimmed()
           throws IOException {
+    Video video = getVideoUntrimmedWithText();
+    assert video.hasText();
+    assert ! video.isTrimmedVideo();
+    injectedUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
+            mockedMediaTranscoder);
+
+    injectedUseCase.addTextToVideo(video, videonaFormat, video.getClipText(),
+            video.getClipTextPosition(), mediaTranscoderListener);
+
+    Mockito.verify(mockedMediaTranscoder).transcodeAndOverlayImageToVideo(eq(video.getMediaPath()),
+            eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener),
+            Matchers.any(Image.class));
+  }
+
+  @Test
+  public void testAddTextToVideoCallsGenerateOutputVideoWithOverlayImageIfVideoIsNotTrimmed()
+          throws IOException {
+    Video video = getVideoUntrimmedWithText();
+    assert video.hasText();
+    assert ! video.isTrimmedVideo();
+    TranscoderHelper spy = Mockito.spy(new TranscoderHelper(mockedDrawableGenerator,
+            mockedMediaTranscoder));
+    injectedUseCase.transcoderHelper = spy;
+
+    injectedUseCase.addTextToVideo(video, videonaFormat, video.getClipText(),
+            video.getClipTextPosition(), mediaTranscoderListener);
+
+    Mockito.verify(spy).generateOutputVideoWithOverlayImage(video, videonaFormat,
+            mediaTranscoderListener);
+  }
+
+  @NonNull
+  private Video getVideoUntrimmedWithText() {
     Video video = new Video("media/path");
     video.setClipText("text");
     video.setClipTextPosition(VideoEditTextActivity.TextPosition.CENTER.name());
     video.setTextToVideoAdded(true);
-    assert video.isTextToVideoAdded();
-    assert ! video.isTrimmedVideo();
-    MediaTranscoderListener listener = getMediaTranscoderListener();
-    VideonaFormat videonaFormat = new VideonaFormat();
-
-    injectedUseCase.addTextToVideo(video, videonaFormat, video.getClipText(),
-            video.getClipTextPosition(), listener);
-
-    Mockito.verify(mockedMediaTranscoder).transcodeAndOverlayImageToVideo(eq(video.getMediaPath()),
-            eq(video.getTempPath()), eq(videonaFormat), eq(listener), Matchers.any(Image.class));
+    return video;
   }
 
   @NonNull
   private Video getVideoTrimmedWithText() {
-    Video video = new Video("media/path");
-    video.setClipText("text");
-    video.setClipTextPosition(VideoEditTextActivity.TextPosition.CENTER.name());
-    video.setTextToVideoAdded(true);
+    Video video = getVideoUntrimmedWithText();
     video.setStartTime(0);
     video.setStopTime(10);
     video.setTrimmedVideo(true);
