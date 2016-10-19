@@ -11,6 +11,7 @@
  */
 package com.videonasocialmedia.vimojo.model.entities.editor;
 
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 
@@ -29,13 +30,6 @@ public class Profile {
     }
 
     /**
-     * possible profileTypes
-     */
-    public static enum ProfileType {
-        free, pro
-    }
-
-    /**
      * Resolution of the Video objects in a project
      */
     private VideoResolution.Resolution resolution;
@@ -50,15 +44,12 @@ public class Profile {
     private VideoQuality videoQuality;
 
     /**
-     * Maximum length of the project in millseconds;
-     * if the value is negative the project duration has no limitation
+     * Video frame rate
      */
-    private long maxDuration;
+    private VideoFrameRate.FrameRate frameRate;
 
-    /**
-     * type of profile
-     */
-    private ProfileType profileType;
+    private VideoFrameRate videoFrameRate;
+
 
     /**
      * Constructor of minimum number of parameters. In this case coincides with parametrized
@@ -68,32 +59,29 @@ public class Profile {
      * There can be only a single instance of a profile, and therefore this constructor can only be
      * accessed through the factory.
      *
-     * @param resolution  - Maximum resolution allowed for the profile.
-     * @param maxDuration - Maximum video duration allowed for the profile.
-     * @param type        - Profile type.
+     * @param resolution
+     * @param quality
+     * @param frameRate
      */
-    private Profile(VideoResolution.Resolution resolution, VideoQuality.Quality quality, long maxDuration, ProfileType type) {
+    private Profile(VideoResolution.Resolution resolution, VideoQuality.Quality quality,
+                    VideoFrameRate.FrameRate frameRate) {
         this.resolution = resolution;
         this.videoResolution = new VideoResolution(resolution);
-        this.maxDuration = maxDuration;
-        this.profileType = type;
         this.quality = quality;
         this.videoQuality = new VideoQuality(quality);
+        this.frameRate = frameRate;
+        this.videoFrameRate = new VideoFrameRate(frameRate);
     }
 
     /**
      * Profile factory.
      *
-     * @param profileType
      * @return - profile instance.
      */
-    public static Profile getInstance(ProfileType profileType) {
+    public static Profile getInstance(VideoResolution.Resolution resolution, VideoQuality.Quality quality,
+                                      VideoFrameRate.FrameRate frameRate) {
         if (INSTANCE == null) {
-            if (profileType == ProfileType.free) {
-                INSTANCE = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.VERY_GOOD, 1000, profileType);
-            } else {
-                INSTANCE = new Profile(VideoResolution.Resolution.HD1080, VideoQuality.Quality.EXCELLENT, -1, profileType);
-            }
+            INSTANCE = new Profile(resolution, quality, frameRate);
         }
         return INSTANCE;
     }
@@ -104,7 +92,6 @@ public class Profile {
     }
 
     public void setResolution(VideoResolution.Resolution resolution) {
-        if (profileType == ProfileType.pro)
             this.resolution = resolution;
     }
 
@@ -127,16 +114,15 @@ public class Profile {
         return videoQuality;
     }
 
-    public long getMaxDuration() {
-        return maxDuration;
+    public VideoFrameRate.FrameRate getFrameRate(){
+        return frameRate;
     }
 
-    public void setMaxDuration(long maxDuration) {
-        if (profileType == ProfileType.pro)
-            this.maxDuration = maxDuration;
+    public void setFrameRate(VideoFrameRate.FrameRate frameRate){
+        this.frameRate = frameRate;
     }
 
-    public ProfileType getProfileType() {
-        return profileType;
+    public VideoFrameRate getVideoFrameRate(){
+        return videoFrameRate;
     }
 }

@@ -74,13 +74,13 @@ class ChooseFrameRateRateListPreferences extends ListPreference {
 
         if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false)){
             prefsFrameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE,
-                    mContext.getResources().getString(R.string.good_frame_rate_value));
+                    mContext.getResources().getString(R.string.good_frame_rate_name));
         } else {
             if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false)) {
                 prefsFrameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE,
-                        mContext.getResources().getString(R.string.low_frame_rate_value));
+                        mContext.getResources().getString(R.string.low_frame_rate_name));
             } else {
-                prefsFrameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE, "");
+                prefsFrameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE, "0");
             }
         }
 
@@ -95,16 +95,16 @@ class ChooseFrameRateRateListPreferences extends ListPreference {
         int positionItemSelected = 0;
         int numItemSupported = 0;
 
-        ArrayList<String> itemsSupported = new ArrayList<String>(mContext.getResources().getStringArray(R.array.camera_frame_rate_values).length);
+        ArrayList<String> itemsSupported = new ArrayList<String>(mContext.getResources().getStringArray(R.array.camera_frame_rate_names).length);
 
         if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false)){
-            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.low_frame_rate_value));
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.low_frame_rate_name));
         }
         if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false)){
-            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.good_frame_rate_value));
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.good_frame_rate_name));
         }
         if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, false)){
-            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.high_frame_rate_value));
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.high_frame_rate_name));
         }
 
         final String[] items = new String[numItemSupported];
@@ -121,6 +121,7 @@ class ChooseFrameRateRateListPreferences extends ListPreference {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         setValue(items[which]);
+
                         getDialog().dismiss();
                     }
                 });

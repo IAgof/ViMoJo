@@ -178,7 +178,7 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
         prepareEncoder(mEglSaver.getSavedEGLContext(),
                 mSessionConfig.getVideoWidth(),
                 mSessionConfig.getVideoHeight(),
-                mSessionConfig.getVideoBitrate(),
+                mSessionConfig.getVideoBitRate(),
                 mSessionConfig.getMuxer());
         mReadyForFrames = true;
         mState = STATE.INITIALIZED;
@@ -818,7 +818,7 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
                 prepareEncoder(mEglSaver.getSavedEGLContext(),
                         mSessionConfig.getVideoWidth(),
                         mSessionConfig.getVideoHeight(),
-                        mSessionConfig.getVideoBitrate(),
+                        mSessionConfig.getVideoBitRate(),
                         mSessionConfig.getMuxer());
                 mTextureId = textureId;
                 mSurfaceTexture = new SurfaceTexture(mTextureId);
@@ -941,8 +941,7 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
             parms.setPreviewFpsRange(maxFpsRange[0], maxFpsRange[1]);
         }*/
 
-        // TODO:(alvaro.martinez) 11/10/16 Get best frame rate from session config, selected by user
-        int frameRate = getBestFrameRate(parms.getSupportedPreviewFrameRates());
+        int frameRate = mSessionConfig.getVideoFrameRate();
 
         if(frameRate != 0)
             parms.setPreviewFrameRate(frameRate);
@@ -964,20 +963,6 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
 
     }
 
-    private int getBestFrameRate(List<Integer> supportedFrameRates) {
-        for (int frameRate : supportedFrameRates) {
-            if (frameRate == 25) {
-               return 25;
-            }
-        }
-        for (int frameRate : supportedFrameRates) {
-            if (frameRate == 24) {
-                return 24;
-            }
-        }
-
-        return 0;
-    }
 
     /**
      * Communicate camera-ready state to our display view.

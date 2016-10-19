@@ -87,32 +87,32 @@ class ChooseCameraResolutionListPreferences extends ListPreference {
         int positionItemSelected = 0;
         int numItemSupported = 0;
 
-        ArrayList<String> itemsSupported = new ArrayList<String>(mContext.getResources().getStringArray(R.array.camera_resolution_values).length);
+        ArrayList<String> itemsSupported = new ArrayList<String>(mContext.getResources().getStringArray(R.array.camera_resolution_names).length);
 
         if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false)){
-            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.low_resolution_value));
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.low_resolution_name));
         }
         if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, false)){
-            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.good_resolution_value));
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.good_resolution_name));
         }
         if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, false)){
-            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.high_resolution_value));
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.high_resolution_name));
         }
 
-        final String[] items = new String[numItemSupported];
+        final String[] itemsName = new String[numItemSupported];
 
         for (int i=0; i<numItemSupported; i++){
-            items[i] = itemsSupported.get(i);
+            itemsName[i] = itemsSupported.get(i);
             if ( itemsSupported.get(i).compareTo(prefsResolution) == 0){
                 positionItemSelected = i;
             }
         }
 
-        builder.setSingleChoiceItems(items, positionItemSelected,
+        builder.setSingleChoiceItems(itemsName, positionItemSelected,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        setValue(items[which]);
+                        setValue(itemsName[which]);
                         getDialog().dismiss();
                     }
                 });

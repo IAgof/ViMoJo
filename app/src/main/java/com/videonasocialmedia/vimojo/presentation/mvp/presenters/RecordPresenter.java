@@ -21,17 +21,20 @@ import android.util.Log;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.avrecorder.AudioVideoRecorder;
 import com.videonasocialmedia.avrecorder.SessionConfig;
+import com.videonasocialmedia.avrecorder.VideoEncoderConfig;
 import com.videonasocialmedia.avrecorder.event.CameraEncoderResetEvent;
 import com.videonasocialmedia.avrecorder.event.CameraOpenedEvent;
 import com.videonasocialmedia.avrecorder.event.MuxerFinishedEvent;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessEvent;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.effects.Effect;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -61,25 +64,21 @@ public class RecordPresenter {
     private static final String LOG_TAG = "RecordPresenter";
     private boolean firstTimeRecording;
     private RecordView recordView;
+    private VideoEncoderConfig videoEncoderConfig;
     private SessionConfig config;
     private AddVideoToProjectUseCase addVideoToProjectUseCase;
     private AudioVideoRecorder recorder;
     private int recordedVideosNumber;
     private MixpanelAPI mixpanel;
-    private Effect selectedShaderEffect;
-    private Effect selectedOverlayEffect;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor preferencesEditor;
     private String resolution;
     private Context context;
     private GLCameraView cameraPreview;
+    protected Project currentProject;
 
     private boolean externalIntent;
 
-    /**
-     * Get media list from project use case
-     */
-    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
 
     public RecordPresenter(Context context, RecordView recordView,
                            GLCameraView cameraPreview, SharedPreferences sharedPreferences, boolean externalIntent) {
@@ -88,13 +87,27 @@ public class RecordPresenter {
         this.cameraPreview = cameraPreview;
         this.sharedPreferences = sharedPreferences;
         this.externalIntent = externalIntent;
-
         preferencesEditor = sharedPreferences.edit();
         addVideoToProjectUseCase = new AddVideoToProjectUseCase();
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         recordedVideosNumber = 0;
         mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_TOKEN);
-        //initRecorder(cameraPreview);
+        this.currentProject = loadCurrentProject();
+        videoEncoderConfig = getVideoEncoderConfigFromProfileProject();
+    }
+
+    public Project loadCurrentProject() {
+        // TODO(jliarte): this should make use of a repository or use case to load the Project
+        return Project.getInstance(null, null, null);
+    }
+
+    private VideoEncoderConfig getVideoEncoderConfigFromProfileProject() {
+
+        int width = currentProject.getProfile().getVideoResolution().getWidth();
+        int height = currentProject.getProfile().getVideoResolution().getHeight();
+        int bitRate = currentProject.getProfile().getVideoQuality().getVideoBitRate();
+        int frameRate = currentProject.getProfile().getVideoFrameRate().getVideoFrameRate();
+
+        return new VideoEncoderConfig(width, height, bitRate, frameRate);
     }
 
     public String getResolution() {
@@ -111,7 +124,7 @@ public class RecordPresenter {
     }
 
     private void initRecorder(GLCameraView cameraPreview) {
-        config = new SessionConfig(Constants.PATH_APP_TEMP);
+        config = new SessionConfig(Constants.PATH_APP_TEMP, videoEncoderConfig);
         try {
             recorder = new AudioVideoRecorder(config);
             recorder.setPreviewDisplay(cameraPreview);
@@ -207,7 +220,7 @@ public class RecordPresenter {
     }
 
     private void resetRecorder() throws IOException {
-        config = new SessionConfig(Constants.PATH_APP_TEMP);
+        config = new SessionConfig(Constants.PATH_APP_TEMP, videoEncoderConfig);
         recorder.reset(config);
     }
 
@@ -315,7 +328,7 @@ public class RecordPresenter {
             userProfileProperties.put(AnalyticsConstants.RESOLUTION, sharedPreferences.getString(
                     AnalyticsConstants.RESOLUTION, resolution));
             userProfileProperties.put(AnalyticsConstants.QUALITY,
-                    sharedPreferences.getInt(AnalyticsConstants.QUALITY, config.getVideoBitrate()));
+                    sharedPreferences.getInt(AnalyticsConstants.QUALITY, config.getVideoBitRate()));
             mixpanel.getPeople().set(userProfileProperties);
         } catch (JSONException e) {
             e.printStackTrace();

@@ -108,33 +108,35 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         String key = ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION; //"list_preference_resolution";
 
         if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false)) {
-            resolutionNames.add(context.getResources().getString(R.string.low_resolution_value));
+            resolutionNames.add(context.getResources().getString(R.string.low_resolution_name));
             resolutionValues.add(context.getResources().getString(R.string.low_resolution_value));
-            defaultResolution = context.getResources().getString(R.string.low_resolution_value);
+            if (defaultResolution == null) {
+                defaultResolution = context.getResources().getString(R.string.low_resolution_name);
+            }
         }
         if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, false)) {
-            resolutionNames.add(context.getResources().getString(R.string.good_resolution_value));
+            resolutionNames.add(context.getResources().getString(R.string.good_resolution_name));
             resolutionValues.add(context.getResources().getString(R.string.good_resolution_value));
             if (defaultResolution == null) {
-                defaultResolution = context.getResources().getString(R.string.good_resolution_value);
+                defaultResolution = context.getResources().getString(R.string.good_resolution_name);
             }
         }
         if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, false)) {
-            resolutionNames.add(context.getResources().getString(R.string.high_resolution_value));
+            resolutionNames.add(context.getResources().getString(R.string.high_resolution_name));
             resolutionValues.add(context.getResources().getString(R.string.high_resolution_value));
             if (defaultResolution == null) {
-                defaultResolution = context.getResources().getString(R.string.high_resolution_value);
+                defaultResolution = context.getResources().getString(R.string.high_resolution_name);
             }
         }
         if (resolutionNames.size() > 0 && defaultResolution != null) {
             preferencesView.setAvailablePreferences(resolutionPref, resolutionNames, resolutionValues);
-            if (updateDefaultPreference(key, resolutionValues)) {
+            if (updateDefaultPreference(key, resolutionNames)) {
                 preferencesView.setDefaultPreference(resolutionPref, defaultResolution, key);
             } else {
                 preferencesView.setPreference(resolutionPref, sharedPreferences.getString(key, ""));
             }
         } else {
-            resolutionNames.add(context.getResources().getString(R.string.low_resolution_value));
+            resolutionNames.add(context.getResources().getString(R.string.low_resolution_name));
             resolutionValues.add(context.getResources().getString(R.string.low_resolution_value));
             preferencesView.setAvailablePreferences(resolutionPref, resolutionNames, resolutionValues);
         }
@@ -149,33 +151,33 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         String defaultQuality = null;
         String key = ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY; //"list_preference_quality";
 
-        qualityNames.add(context.getResources().getString(R.string.high_quality_value));
+        qualityNames.add(context.getResources().getString(R.string.high_quality_name));
         qualityValues.add(context.getResources().getString(R.string.high_quality_value));
         if (defaultQuality == null) {
-            defaultQuality = context.getResources().getString(R.string.high_quality_value);
+            defaultQuality = context.getResources().getString(R.string.high_quality_name);
         }
 
-        qualityNames.add(context.getResources().getString(R.string.low_quality_value));
+        qualityNames.add(context.getResources().getString(R.string.low_quality_name));
         qualityValues.add(context.getResources().getString(R.string.low_quality_value));
         if (defaultQuality == null) {
-            defaultQuality = context.getResources().getString(R.string.low_quality_value);
+            defaultQuality = context.getResources().getString(R.string.low_quality_name);
         }
 
-        qualityNames.add(context.getResources().getString(R.string.good_quality_value));
+        qualityNames.add(context.getResources().getString(R.string.good_quality_name));
         qualityValues.add(context.getResources().getString(R.string.good_quality_value));
         if (defaultQuality == null) {
-            defaultQuality = context.getResources().getString(R.string.good_quality_value);
+            defaultQuality = context.getResources().getString(R.string.good_quality_name);
         }
 
         if (qualityNames.size() > 0 && defaultQuality != null) {
             preferencesView.setAvailablePreferences(qualityPref, qualityNames, qualityValues);
-            if (updateDefaultPreference(key, qualityValues)) {
+            if (updateDefaultPreference(key, qualityNames)) {
                 preferencesView.setDefaultPreference(qualityPref, defaultQuality, key);
             } else {
                 preferencesView.setPreference(qualityPref, sharedPreferences.getString(key, ""));
             }
         } else {
-            qualityNames.add(context.getResources().getString(R.string.high_quality_value));
+            qualityNames.add(context.getResources().getString(R.string.high_quality_name));
             preferencesView.setAvailablePreferences(qualityPref, qualityNames, qualityValues);
         }
     }
@@ -187,38 +189,38 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         String key = ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE; //"list_preference_quality";
 
         if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false)) {
-            frameRateNames.add(context.getResources().getString(R.string.good_frame_rate_value));
+            frameRateNames.add(context.getResources().getString(R.string.good_frame_rate_name));
             frameRateValues.add(context.getResources().getString(R.string.good_frame_rate_value));
             if (defaultFrameRate == null) {
-                defaultFrameRate = context.getResources().getString(R.string.good_frame_rate_value);
+                defaultFrameRate = context.getResources().getString(R.string.good_frame_rate_name);
             }
         }
 
         if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false)) {
-            frameRateNames.add(context.getResources().getString(R.string.low_frame_rate_value));
+            frameRateNames.add(context.getResources().getString(R.string.low_frame_rate_name));
             frameRateValues.add(context.getResources().getString(R.string.low_frame_rate_value));
             if (defaultFrameRate == null) {
-                defaultFrameRate = context.getResources().getString(R.string.low_frame_rate_value);
+                defaultFrameRate = context.getResources().getString(R.string.low_frame_rate_name);
             }
         }
 
         if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, false)) {
-            frameRateNames.add(context.getResources().getString(R.string.high_frame_rate_value));
+            frameRateNames.add(context.getResources().getString(R.string.high_frame_rate_name));
             frameRateValues.add(context.getResources().getString(R.string.high_frame_rate_value));
             if (defaultFrameRate == null) {
-                defaultFrameRate = context.getResources().getString(R.string.high_frame_rate_value);
+                defaultFrameRate = context.getResources().getString(R.string.high_frame_rate_name);
             }
         }
 
         if (frameRateNames.size() > 0 && defaultFrameRate != null) {
             preferencesView.setAvailablePreferences(frameRatePref, frameRateNames, frameRateValues);
-            if (updateDefaultPreference(key, frameRateValues)) {
+            if (updateDefaultPreference(key, frameRateNames)) {
                 preferencesView.setDefaultPreference(frameRatePref, defaultFrameRate, key);
             } else {
                 preferencesView.setPreference(frameRatePref, sharedPreferences.getString(key, ""));
             }
         } else {
-            frameRateNames.add(context.getResources().getString(R.string.good_frame_rate_value));
+            frameRateNames.add(context.getResources().getString(R.string.good_frame_rate_name));
             preferencesView.setAvailablePreferences(frameRatePref, frameRateNames, frameRateValues);
         }
     }

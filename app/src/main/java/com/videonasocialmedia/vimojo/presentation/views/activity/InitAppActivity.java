@@ -38,6 +38,9 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnInitAppEventListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
@@ -557,14 +560,12 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     @Override
     public void onCheckPathsAppSuccess() {
-        startLoadingProject(this);
+        startLoadingProject();
         moveVideonaVideosToDcim();
     }
 
-    private void startLoadingProject(OnInitAppEventListener listener) {
-        //TODO Define project title (by date, by project count, ...)
-        //TODO Define path project. By default, path app. Path .temp, private data
-        Project.getInstance(Constants.PROJECT_TITLE, sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH, ""), checkProfile());
+    private void startLoadingProject() {
+        Project.getInstance(Constants.PROJECT_TITLE, sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH, ""), getProfile());
     }
 
     private void moveVideonaVideosToDcim() {
@@ -605,9 +606,76 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         return sourceDirectory;
     }
 
-    //TODO Check user profile, by default 720p free
-    private Profile checkProfile() {
-        return Profile.getInstance(Profile.ProfileType.free);
+    private Profile getProfile() {
+        VideoResolution.Resolution resolution = getResolutionFromPreferencesSetting();
+        VideoQuality.Quality quality = getQualityFromPreferenceSettings();
+        VideoFrameRate.FrameRate frameRate = getFrameRateFromPreferenceSettings();
+        return Profile.getInstance(resolution, quality, frameRate);
+    }
+
+
+    private VideoResolution.Resolution getResolutionFromPreferencesSetting() {
+
+        String resolution = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
+                getString(R.string.low_resolution_name));
+
+        if(resolution.compareTo(getString(R.string.low_resolution_name)) == 0){
+            return VideoResolution.Resolution.HD720;
+        }
+
+        if(resolution.compareTo(getString(R.string.good_resolution_name)) == 0){
+            return VideoResolution.Resolution.HD1080;
+        }
+
+        if(resolution.compareTo(getString(R.string.high_resolution_name)) == 0){
+            return VideoResolution.Resolution.HD4K;
+        }
+
+        // default
+        return VideoResolution.Resolution.HD720;
+    }
+
+    private VideoQuality.Quality getQualityFromPreferenceSettings() {
+
+        String quality = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY,
+                getString(R.string.low_quality_name));
+
+        if(quality.compareTo(getString(R.string.low_quality_name)) == 0){
+            return VideoQuality.Quality.LOW;
+        }
+
+        if(quality.compareTo(getString(R.string.good_quality_name)) == 0){
+            return VideoQuality.Quality.GOOD;
+        }
+
+        if(quality.compareTo(getString(R.string.high_quality_name)) == 0){
+            return VideoQuality.Quality.HIGH;
+        }
+
+        // default
+        return VideoQuality.Quality.HIGH;
+
+    }
+
+    private VideoFrameRate.FrameRate getFrameRateFromPreferenceSettings() {
+        String frameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE,
+                "0");
+
+        if(frameRate.compareTo(getString(R.string.low_frame_rate_name)) == 0){
+            return VideoFrameRate.FrameRate.FPS24;
+        }
+
+        if(frameRate.compareTo(getString(R.string.good_frame_rate_name)) == 0){
+            return VideoFrameRate.FrameRate.FPS25;
+        }
+
+        if(frameRate.compareTo(getString(R.string.high_frame_rate_name)) == 0){
+            return VideoFrameRate.FrameRate.FPS30;
+        }
+
+        // default
+        return VideoFrameRate.FrameRate.NOT_SUPPORTED;
+
     }
 
     @Override
