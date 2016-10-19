@@ -17,7 +17,8 @@ import java.io.IOException;
 public class RelaunchExportTempBackgroundUseCase {
   protected TextToDrawable drawableGenerator = new TextToDrawable();
   protected MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
-  protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator, mediaTranscoder);
+  protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator,
+          mediaTranscoder);
 
   /**
    * Launch clip transcoding to generate intermediate video file for final export process.
@@ -29,7 +30,12 @@ public class RelaunchExportTempBackgroundUseCase {
                              VideonaFormat videonaFormat) {
     videoToEdit.increaseNumTriesToExportVideo();
     try {
-      transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(videoToEdit, videonaFormat, listener);
+      if (videoToEdit.hasText()) {
+        transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(videoToEdit, videonaFormat,
+                listener);
+      } else {
+        transcoderHelper.generateOutputVideoWithTrimming(videoToEdit, videonaFormat, listener);
+      }
     } catch (IOException exception) {
       exception.printStackTrace();
       listener.onTranscodeFailed(exception);

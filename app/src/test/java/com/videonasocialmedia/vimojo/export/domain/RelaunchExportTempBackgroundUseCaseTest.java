@@ -44,6 +44,8 @@ public class RelaunchExportTempBackgroundUseCaseTest {
   @Mock TranscoderHelper mockedTranscoderHelper;
 
   @InjectMocks RelaunchExportTempBackgroundUseCase injectedRelaunchExportTempBackgroundUseCase;
+  private final MediaTranscoderListener mediaTranscoderListener = getMediaTranscoderListener();
+  private final VideonaFormat videonaFormat = new VideonaFormat();
 
   @Before
   public void injectDoubles() throws Exception {
@@ -54,46 +56,77 @@ public class RelaunchExportTempBackgroundUseCaseTest {
   public void testBugRelaunchExportThrowsNPE_WhenVideoHasntText() throws Exception {
     Video video = new Video("media/path");
     assertThat(video.getClipText(), is(nullValue()));
-    MediaTranscoderListener listener = getMediaTranscoderListener();
 
-    new RelaunchExportTempBackgroundUseCase().relaunchExport(video, listener, new VideonaFormat());
-  }
-
-  @Test
-  public void testRelaunchExportCalls_transcoderHelper_transcodeVideo()
-          throws Exception {
-    Video video = new Video("media/path");
-    video.setClipText("lala");
-    video.setClipTextPosition(VideoEditTextActivity.TextPosition.CENTER.name());
-    MediaTranscoderListener listener = getMediaTranscoderListener();
-    VideonaFormat videonaFormat = new VideonaFormat();
-
-    injectedRelaunchExportTempBackgroundUseCase.relaunchExport(video, listener, videonaFormat);
-
-    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(video,
-            videonaFormat, listener);
+    new RelaunchExportTempBackgroundUseCase().relaunchExport(video, mediaTranscoderListener,
+            videonaFormat);
   }
 
   @Test
   public void testRelaunchExportCallsTranscodeTrimAndOverlayImageToVideoIfVideoHasText()
           throws IOException {
-    Video video = new Video("media/path");
-    video.setClipText("text");
-    video.setClipText(VideoEditTextActivity.TextPosition.BOTTOM.name());
-    video.setTextToVideoAdded(true);
+    Video video = getVideoWithText();
     assert video.hasText();
     video.setStopTime(10);
-    MediaTranscoderListener listener = getMediaTranscoderListener();
-    VideonaFormat videonaFormat = new VideonaFormat();
     // TODO(jliarte): 19/10/16 replace injected mocked transcoderhelper with a real one.
     injectedRelaunchExportTempBackgroundUseCase.transcoderHelper =
             new TranscoderHelper(mockedDrawableGenerator, mockedMediaTranscoder);
 
-    injectedRelaunchExportTempBackgroundUseCase.relaunchExport(video, listener, videonaFormat);
+    injectedRelaunchExportTempBackgroundUseCase.relaunchExport(video, mediaTranscoderListener,
+            videonaFormat);
 
     verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(eq(video.getMediaPath()),
-            eq(video.getTempPath()), eq(videonaFormat), eq(listener), Matchers.any(Image.class),
+            eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener),
+            Matchers.any(Image.class), eq(video.getStartTime()), eq(video.getStopTime()));
+  }
+
+  @Test
+  public void testRelaunchExportCallsgenerateOutputVideoWithOverlayImageAndTrimmingIfVideoHasText()
+          throws Exception {
+    Video video = getVideoWithText();
+    assert video.hasText();
+
+    injectedRelaunchExportTempBackgroundUseCase.relaunchExport(video, mediaTranscoderListener,
+            videonaFormat);
+
+    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(video,
+            videonaFormat, mediaTranscoderListener);
+  }
+
+  @Test
+  public void testRelaunchExportCallsTranscodeAndTrimVideoIfVideoHasntText() throws IOException {
+    Video video = new Video("media/path");
+    assert ! video.hasText();
+    injectedRelaunchExportTempBackgroundUseCase.transcoderHelper =
+            new TranscoderHelper(mockedDrawableGenerator, mockedMediaTranscoder);
+
+    injectedRelaunchExportTempBackgroundUseCase.relaunchExport(video, mediaTranscoderListener,
+            videonaFormat);
+
+    verify(mockedMediaTranscoder).transcodeAndTrimVideo(eq(video.getMediaPath()),
+            eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener),
             eq(video.getStartTime()), eq(video.getStopTime()));
+  }
+
+  @Test
+  public void testRelaunchExportCallsGenerateOutputVideoWithTrimmingIfVideoHasntText()
+          throws IOException {
+    Video video = new Video("media/path");
+    assert ! video.hasText();
+
+    injectedRelaunchExportTempBackgroundUseCase.relaunchExport(video, mediaTranscoderListener,
+            videonaFormat);
+
+    verify(mockedTranscoderHelper).generateOutputVideoWithTrimming(video, videonaFormat,
+            mediaTranscoderListener);
+  }
+
+  @NonNull
+  private Video getVideoWithText() {
+    Video video = new Video("media/path");
+    video.setClipText("text");
+    video.setClipTextPosition(VideoEditTextActivity.TextPosition.CENTER.name());
+    video.setTextToVideoAdded(true);
+    return video;
   }
 
   @NonNull
