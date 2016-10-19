@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.support.v7.widget.OrientationHelper;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
@@ -31,13 +32,16 @@ import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.RecordPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
+import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -76,6 +80,12 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     GLCameraView cameraView;
     @Bind(R.id.button_change_camera)
     ImageButton rotateCameraButton;
+    @Bind(R.id.button_navigate_settings)
+    ImageButton buttonSettings;
+    @Bind(R.id.button_navigate_edit)
+    CircleImageView buttonThumbClipRecorded;
+    @Bind(R.id.text_view_num_videos)
+    TextView numVideosRecorded;
     @Bind(R.id.imageRecPoint)
     ImageView recordingIndicator;
     @Bind(R.id.chronometer_record)
@@ -153,9 +163,14 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
         configChronometer();
         initOrientationHelper();
-
         createProgressDialog();
+        configShowThumbAndNumberClips();
+    }
 
+    private void configShowThumbAndNumberClips() {
+        buttonThumbClipRecorded.setBorderWidth(5);
+        buttonThumbClipRecorded.setBorderColor(Color.WHITE);
+        numVideosRecorded.setVisibility(View.GONE);
     }
 
     private void keepScreenOn() {
@@ -309,8 +324,6 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         recButton.setAlpha(1f);
         recButtonScreenClean.setImageResource(R.drawable.activity_record_icon_rec_normal);
         recording = false;
-        unLockNavigator();
-
     }
 
     @Override
@@ -319,28 +332,29 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         recButton.setAlpha(1f);
         recButtonScreenClean.setImageResource(R.drawable.activity_record_icon_stop_normal);
         recording = true;
-        lockNavigator();
     }
 
     @Override
-    public void showMenuOptions() {
-
+    public void showSettingsOptions() {
+        buttonSettings.setAlpha(1.0f);
+        buttonSettings.setActivated(true);
     }
 
     @Override
-    public void hideMenuOptions() {
-
+    public void hideSettingsOptions() {
+        buttonSettings.setAlpha(0.25f);
+        buttonSettings.setActivated(false);
     }
 
 
     @Override
     public void showChronometer() {
-        chronometer.setVisibility(View.VISIBLE);
+        chronometerAndRecPointView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideChronometer() {
-        chronometer.setVisibility(View.INVISIBLE);
+        chronometerAndRecPointView.setVisibility(View.INVISIBLE);
     }
 
 
@@ -398,16 +412,6 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         } catch (OrientationHelper.NoOrientationSupportException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void lockNavigator() {
-
-    }
-
-    @Override
-    public void unLockNavigator() {
-
     }
 
     @Override
@@ -512,9 +516,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void hidePrincipalViews() {
-        clearButton.setImageResource(R.drawable.activity_record_icon_shrink);
+        clearButton.setImageResource(R.drawable.activity_record_icon_expand);
         clearButton.setActivated(true);
-
         recButtonScreenClean.setVisibility(View.VISIBLE);
         hud.setVisibility(View.INVISIBLE);
         controlsView.setVisibility(View.INVISIBLE);
@@ -522,18 +525,49 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         zommBarView.setVisibility(View.INVISIBLE);
         settingsBarSubmenu.setVisibility(View.INVISIBLE);
         settingsBar.setVisibility(View.INVISIBLE);
-        chronometerAndRecPointView.setBackgroundColor(Color.TRANSPARENT);
     }
 
     @Override
     public void showPrincipalViews() {
-        clearButton.setImageResource(R.drawable.activity_record_icon_clear);
+        clearButton.setImageResource(R.drawable.activity_record_icon_shrink);
         clearButton.setActivated(false);
-
         hud.setVisibility(View.VISIBLE);
         controlsView.setVisibility(View.VISIBLE);
         recButtonScreenClean.setVisibility(View.GONE);
-        chronometerAndRecPointView.setBackgroundColor(getResources().getColor(R.color.colorGreyTransparent));
+    }
+
+    @Override
+    public void showRecordedVideoThumb(String path) {
+        buttonThumbClipRecorded.setVisibility(View.VISIBLE);
+        Glide.with(this).load(path).into(buttonThumbClipRecorded);
+    }
+
+    @Override
+    public void hideRecordedVideoThumb() {
+        buttonThumbClipRecorded.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showVideosRecordedNumber(int numberOfVideos) {
+        numVideosRecorded.setVisibility(View.VISIBLE);
+        numVideosRecorded.setText(String.valueOf(numberOfVideos));
+    }
+
+    @Override
+    public void hideVideosRecordedNumber() {
+        numVideosRecorded.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void enableShareButton() {
+        shareButton.setAlpha(1f);
+        shareButton.setClickable(true);
+    }
+
+    @Override
+    public void disableShareButton() {
+        shareButton.setAlpha(0.25f);
+        shareButton.setClickable(false);
     }
 
     private void trackVideoExported() {
@@ -603,7 +637,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         recordPresenter.changeCamera();
     }
 
-    @OnClick(R.id.edit_button)
+    @OnClick (R.id.button_navigate_edit)
     public void navigateToEdit() {
         if (!recording) {
             //TODO(alvaro 130616) Save flash state
@@ -614,8 +648,17 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         }
     }
 
+    @OnClick(R.id.button_navigate_settings)
+    public void navigateToSettings() {
+        if (!recording) {
+            Intent intent = new Intent(VimojoApplication.getAppContext(), SettingsActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
     @OnClick(R.id.button_share)
-    public void exportAndShare() {
+    public void exportAndShare () {
         if (!recording) {
             recordPresenter.setFlashOff();
             Intent intent = new Intent(this, ExportProjectService.class);
@@ -625,15 +668,16 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         }
     }
 
-    @OnClick (R.id.clear_button)
-    public void clearAndShrinkScreen(){
+    @OnClick(R.id.clear_button)
+    public void clearAndShrinkScreen() {
 
-        if(clearButton.isActivated()==true){
+        if (clearButton.isActivated() == true) {
             showPrincipalViews();
-        }else {
+        } else {
             hidePrincipalViews();
         }
     }
+
 
     private class OrientationHelper extends OrientationEventListener {
 

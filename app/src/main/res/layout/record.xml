@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    android:id="@+id/coordinatorLayout"
+<android.support.design.widget.CoordinatorLayout android:id="@+id/coordinatorLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false">
+    android:fitsSystemWindows="false"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <com.videonasocialmedia.avrecorder.view.GLCameraView
         android:id="@+id/cameraPreview"
@@ -19,12 +19,38 @@
             android:id="@+id/clear_button"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/activity_record_icon_clear"
+            android:src="@drawable/activity_record_icon_expand"
             android:background="@null"
             android:scaleType="fitCenter"
             android:layout_marginBottom="16dp"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="16dp" />
+
+        <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
+            android:id="@+id/button_navigate_edit"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/activity_record_navigator_edit_selector"
+            android:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/text_view_num_videos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="18dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:scaleType="fitCenter"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white"
+            android:textSize="27sp"
+            tools:text="0"
+            android:layout_alignEnd="@+id/button_navigate_edit" />
 
         <LinearLayout
             android:id="@+id/picometer"
@@ -49,9 +75,10 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
             android:layout_marginTop="8dp"
-            android:layout_marginRight="16dp">
+            android:layout_marginLeft="16dp"
+            android:id="@+id/linearLayout">
 
             <LinearLayout
                 android:id="@+id/hud"
@@ -112,39 +139,8 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/control_chronometer_and_rec_point"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@color/colorGreyTransparent">
-
-                <ImageView
-                        android:id="@+id/imageRecPoint"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:layout_gravity="center_vertical"
-                        android:alpha="0.5"
-                        android:paddingLeft="4dp"
-                        android:src="@anim/activity_record_drawable_rec_progress"
-                        android:visibility="invisible"
-                        />
-
-                    <Chronometer
-                        android:id="@+id/chronometer_record"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:layout_gravity="center_vertical"
-                        android:alpha="0.5"
-                        android:gravity="center_vertical"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="16dp"
-                        android:text="00:00"
-                        android:textColor="@android:color/white"
-                        android:textSize="18sp"
-                        android:visibility="visible" />
-            </LinearLayout>
-
         </LinearLayout>
+
 
         <!-- Zoom -->
 
@@ -294,6 +290,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="8"
+                        android:alpha="0.25"
                         android:background="@null"
                         android:paddingBottom="28dp"
                         android:paddingLeft="28dp"
@@ -303,7 +300,7 @@
                         android:src="@drawable/activity_record_icon_controls"/>
 
                     <ImageButton
-                        android:id="@+id/edit_button"
+                        android:id="@+id/button_navigate_settings"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="8"
@@ -490,6 +487,40 @@
              android:scaleType="fitCenter"
              android:src="@drawable/activity_record_icon_rec"
              android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/control_chronometer_and_rec_point"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorGreyTransparent"
+            android:layout_marginTop="12dp"
+            android:layout_centerHorizontal="true">
+
+            <ImageView
+                android:id="@+id/imageRecPoint"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_vertical"
+                android:alpha="0.5"
+                android:paddingLeft="4dp"
+                android:src="@anim/activity_record_drawable_rec_progress"
+                android:visibility="invisible"
+                />
+
+            <Chronometer
+                android:id="@+id/chronometer_record"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_vertical"
+                android:alpha="0.5"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dp"
+                android:paddingRight="16dp"
+                android:text="00:00"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:visibility="visible" />
+        </LinearLayout>
 
 
     </RelativeLayout>

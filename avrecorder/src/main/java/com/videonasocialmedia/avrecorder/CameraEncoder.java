@@ -928,19 +928,27 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
 
         parms.setRecordingHint(true);
 
+       /* For set framerate, use deprecated getSupportedPreviewFrameRates instead of getSupportedPreviewFpsRange
+
         List<int[]> fpsRanges = parms.getSupportedPreviewFpsRange();
         int[] maxFpsRange = null;
         // Get the maximum supported fps not to exceed 30
         for (int x = fpsRanges.size() - 1; x >= 0; x--) {
             maxFpsRange = fpsRanges.get(x);
-            if (maxFpsRange[1] / 1000.0 <= 30) break;
+            if (maxFpsRange[1] / 1000.0 <= 25) break;
         }
         if (maxFpsRange != null) {
             parms.setPreviewFpsRange(maxFpsRange[0], maxFpsRange[1]);
-        }
+        }*/
+
+        // TODO:(alvaro.martinez) 11/10/16 Get best frame rate from session config, selected by user
+        int frameRate = getBestFrameRate(parms.getSupportedPreviewFrameRates());
+
+        if(frameRate != 0)
+            parms.setPreviewFrameRate(frameRate);
 
         choosePreviewSize(parms, desiredWidth, desiredHeight);
-        // leave the frame rate set to default
+
         mCamera.setParameters(parms);
 
         int[] fpsRange = new int[2];
@@ -954,6 +962,21 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
         }
         if (VERBOSE) Log.i(TAG, "Camera preview set: " + previewFacts);
 
+    }
+
+    private int getBestFrameRate(List<Integer> supportedFrameRates) {
+        for (int frameRate : supportedFrameRates) {
+            if (frameRate == 25) {
+               return 25;
+            }
+        }
+        for (int frameRate : supportedFrameRates) {
+            if (frameRate == 24) {
+                return 24;
+            }
+        }
+
+        return 0;
     }
 
     /**

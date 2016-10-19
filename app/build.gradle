@@ -54,8 +54,8 @@ android {
         applicationId "com.videonasocialmedia.vimojo"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 9 // 20161014
-        versionName "0.4.7" // 20161014
+        versionCode 10 // 20161019
+        versionName "0.4.8" // 20161019
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -69,6 +69,7 @@ android {
         }
         debug {
             ext.betaDistributionGroupAliases="videona-dev-team"
+            ext.betaDistributionReleaseNotesFilePath="${project.rootDir}/RELEASE"
             buildConfigField "String", "MIXPANEL_TOKEN", "\"c6617213110cd2513dfc0ad97dbaee66\""
             manifestPlaceholders = [ appName: "Vimojo", fabricApiKey: "eba78720f87307ca48dfa4200dd90914ff6653f2"]
         }
