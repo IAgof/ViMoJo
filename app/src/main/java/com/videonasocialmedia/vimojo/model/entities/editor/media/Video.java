@@ -35,8 +35,8 @@ public class Video extends Media {
      */
     private int fileDuration;
     private String tempPath;
-    private String textToVideo;
-    private String textPositionToVideo;
+    private String clipText;
+    private String clipTextPosition;
     private boolean isTempPathFinished = false;
     private boolean isTextToVideoAdded = false;
     private boolean isTrimmedVideo = false;
@@ -86,9 +86,9 @@ public class Video extends Media {
                 video.getDuration(), null, null);
         fileDuration = video.getFileDuration();
         stopTime = video.getStopTime();
-        isTextToVideoAdded = video.isTextToVideoAdded();
-        textToVideo= video.getTextToVideo();
-        textPositionToVideo = video.getTextPositionToVideo();
+        isTextToVideoAdded = video.hasText();
+        clipText = video.getClipText();
+        clipTextPosition = video.getClipTextPosition();
         if(video.isEdited()) {
             tempPath = video.getTempPath();
         }
@@ -145,24 +145,23 @@ public class Video extends Media {
         this.duration = duration;
     }
 
-
-    public String getTextToVideo() {
-        return textToVideo;
+    public String getClipText() {
+        return clipText;
     }
 
-    public void setTextToVideo(String textToVideo) {
-        this.textToVideo = textToVideo;
+    public void setClipText(String clipText) {
+        this.clipText = clipText;
     }
 
-    public String getTextPositionToVideo() {
-        return textPositionToVideo;
+    public String getClipTextPosition() {
+        return clipTextPosition;
     }
 
-    public void setTextPositionToVideo(String textPositionToVideo) {
-        this.textPositionToVideo = textPositionToVideo;
+    public void setClipTextPosition(String clipTextPosition) {
+        this.clipTextPosition = clipTextPosition;
     }
 
-    public boolean isTextToVideoAdded() {
+    public boolean hasText() {
         return isTextToVideoAdded;
     }
 
