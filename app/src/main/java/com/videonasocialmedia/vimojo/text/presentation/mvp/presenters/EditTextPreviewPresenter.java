@@ -26,6 +26,7 @@ import java.util.List;
 public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
     private final String LOG_TAG = getClass().getSimpleName();
+    private final TextToDrawable drawableGenerator = new TextToDrawable();
 
     private Video videoToEdit;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
@@ -67,7 +68,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
     public void createDrawableWithText(String text, String position, int width, int height) {
 
-        Drawable drawable = TextToDrawable.createDrawableWithTextAndPosition(text, position, width, height);
+        Drawable drawable = drawableGenerator.createDrawableWithTextAndPosition(text, position, width, height);
         editTextView.showText(drawable);
     }
 

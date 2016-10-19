@@ -22,11 +22,11 @@ public class TextToDrawable {
     private final static float SIZE_FONT= 90f;
     private final static int NUM_MAX_LINES_TO_DRAW =2;
 
-    public static Drawable createDrawableWithTextAndPosition(String text, String positionText, int width, int height) {
+    public Drawable createDrawableWithTextAndPosition(String text, String positionText, int width, int height) {
 
         Drawable drawable;
         TextPaint textPaint = null;
-        Context appContext = VimojoApplication.getAppContext();
+        Context appContext =  VimojoApplication.getAppContext();
         Typeface typeFont;
         VideoEditTextActivity.TextPosition position = getTypePositionFromString(positionText);
         switch (position){
