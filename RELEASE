@@ -1,4 +1,6 @@
-v0.4.7
-- Fixing bug crashing editor when last video has been played
-- Other buf fixes improving editor stability
-- Getting video preview seekbar back to trim view
+v0.4.8
+- Set default camera recording settings to 720p, 10Mbps, 25fps
+- Showing recorded clip thumbnails in record screen with the number of recorded videos to access editor
+- Starting app with clean record interface instead of advanced one
+- Record screen UI/UX minor fixes and improvements
+- Fixes on intermediate video files generation improving export project stability
