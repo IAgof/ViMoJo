@@ -21,6 +21,8 @@ import com.google.android.gms.analytics.Tracker;
 import com.karumi.dexter.Dexter;
 import com.squareup.leakcanary.LeakCanary;
 import io.fabric.sdk.android.Fabric;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 public class VimojoApplication extends Application {
 
@@ -65,6 +67,15 @@ public class VimojoApplication extends Application {
         if (BuildConfig.DEBUG) {
             LeakCanary.install(this);
         }
+    }
+
+    private void setupDataBase() {
+
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
+                .name("vimojoDB")
+                .schemaVersion(1)
+                .build();
+        Realm.setDefaultConfiguration(realmConfiguration);
     }
 
     protected void attachBaseContext(Context base) {
