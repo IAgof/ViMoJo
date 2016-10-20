@@ -4,6 +4,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalIte
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.MediaTrack;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 
@@ -81,19 +82,22 @@ public class ProjectTest {
     }
 
     @Test
-    public void getVideoParamsFromProjectProfileFree(){
+    public void getVideoParamsFromProjectProfile(){
 
         Project videonaProject = getAProject();
         VideoResolution resolution = videonaProject.getProfile().getVideoResolution();
         VideoQuality quality = videonaProject.getProfile().getVideoQuality();
+        VideoFrameRate frameRate = videonaProject.getProfile().getVideoFrameRate();
 
-        assertThat("videoBitRate", 5000*1000, CoreMatchers.is(quality.getVideoBitRate()));
+        assertThat("videoBitRate", 10*1000*1000, CoreMatchers.is(quality.getVideoBitRate()));
         assertThat("videoWidth", 1280, CoreMatchers.is(resolution.getWidth()));
         assertThat("videoHeight", 720, CoreMatchers.is(resolution.getHeight()));
+        assertThat("frameRate", 25, CoreMatchers.is(frameRate.getFrameRate()));
 
     }
 
     public Project getAProject() {
-        return Project.getInstance("project title", "root path", Profile.getInstance(Profile.ProfileType.free));
+        return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
     }
 }

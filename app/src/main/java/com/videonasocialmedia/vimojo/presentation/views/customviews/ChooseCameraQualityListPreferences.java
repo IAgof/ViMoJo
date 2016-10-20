@@ -17,7 +17,13 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoQualityToProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
 public class ChooseCameraQualityListPreferences extends ListPreference {
 
@@ -25,13 +31,21 @@ public class ChooseCameraQualityListPreferences extends ListPreference {
     private CharSequence[] entries;
     private CharSequence[] entryValues;
     private SharedPreferences sharedPreferences;
+    private Project currentProject;
+    private UpdateVideoQualityToProjectUseCase updateVideoQualityToProjectUseCase;
 
     public ChooseCameraQualityListPreferences(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         sharedPreferences =  mContext.getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        currentProject = loadCurrentProject();
+        updateVideoQualityToProjectUseCase = new UpdateVideoQualityToProjectUseCase();
+    }
 
+    public Project loadCurrentProject() {
+        // TODO(jliarte): this should make use of a repository or use case to load the Project
+        return Project.getInstance(null, null, null);
     }
 
     @Override
@@ -68,6 +82,7 @@ public class ChooseCameraQualityListPreferences extends ListPreference {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         setValue(items[which]);
+                        updateProfileProject(items[which]);
                         getDialog().dismiss();
                     }
                 });
@@ -113,6 +128,14 @@ public class ChooseCameraQualityListPreferences extends ListPreference {
                 notifyChanged();
             }
         }
+    }
+
+
+    private void updateProfileProject(String item) {
+
+        VideoQuality.Quality quality = Utils.getQualityFromItemName(mContext,item);
+        updateVideoQualityToProjectUseCase.updateQuality(quality, currentProject);
+
     }
 
     @Override

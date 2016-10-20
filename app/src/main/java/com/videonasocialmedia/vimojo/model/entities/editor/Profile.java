@@ -11,6 +11,7 @@
  */
 package com.videonasocialmedia.vimojo.model.entities.editor;
 
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
@@ -32,23 +33,21 @@ public class Profile {
     /**
      * Resolution of the Video objects in a project
      */
-    private VideoResolution.Resolution resolution;
-
     private VideoResolution videoResolution;
+    private VideoResolution.Resolution resolution;
 
     /**
      * Video bit rate
      */
-    private VideoQuality.Quality quality;
 
     private VideoQuality videoQuality;
+    private VideoQuality.Quality quality;
 
     /**
      * Video frame rate
      */
-    private VideoFrameRate.FrameRate frameRate;
-
     private VideoFrameRate videoFrameRate;
+    private VideoFrameRate.FrameRate frameRate;
 
 
     /**
@@ -65,6 +64,7 @@ public class Profile {
      */
     private Profile(VideoResolution.Resolution resolution, VideoQuality.Quality quality,
                     VideoFrameRate.FrameRate frameRate) {
+
         this.resolution = resolution;
         this.videoResolution = new VideoResolution(resolution);
         this.quality = quality;
@@ -86,32 +86,36 @@ public class Profile {
         return INSTANCE;
     }
 
-    //getter and setter enum resolution.
-    public VideoResolution.Resolution getResolution() {
-        return resolution;
-    }
-
-    public void setResolution(VideoResolution.Resolution resolution) {
-            this.resolution = resolution;
-    }
-
     //getter resolution, width, height values.
     public VideoResolution getVideoResolution(){
         return videoResolution;
     }
 
-    //getter and setter enum quality
-    public VideoQuality.Quality getQuality() {
-        return quality;
+    public VideoResolution.Resolution getResolution(){
+        return resolution;
     }
 
-    public void setQuality(VideoQuality.Quality quality) {
-        this.quality = quality;
+    public void setResolution(VideoResolution.Resolution resolution){
+        this.resolution = resolution;
+        videoResolution = new VideoResolution(resolution);
     }
 
     // getter videoBitRate;
     public VideoQuality getVideoQuality() {
         return videoQuality;
+    }
+
+    public VideoQuality.Quality getQuality(){
+        return quality;
+    }
+
+    public void setQuality(VideoQuality.Quality quality){
+        this.quality = quality;
+        videoQuality = new VideoQuality(quality);
+    }
+
+    public VideoFrameRate getVideoFrameRate(){
+        return videoFrameRate;
     }
 
     public VideoFrameRate.FrameRate getFrameRate(){
@@ -120,9 +124,6 @@ public class Profile {
 
     public void setFrameRate(VideoFrameRate.FrameRate frameRate){
         this.frameRate = frameRate;
-    }
-
-    public VideoFrameRate getVideoFrameRate(){
-        return videoFrameRate;
+        videoFrameRate = new VideoFrameRate(frameRate);
     }
 }

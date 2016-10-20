@@ -96,7 +96,7 @@ public class ShareVideoPresenter {
     }
 
     public String getResolution(){
-        VideoResolution videoResolution = new VideoResolution(currentProject.getProfile().getResolution());
+        VideoResolution videoResolution = currentProject.getProfile().getVideoResolution();
         return videoResolution.getWidth() + "x" + videoResolution.getHeight();
     }
 

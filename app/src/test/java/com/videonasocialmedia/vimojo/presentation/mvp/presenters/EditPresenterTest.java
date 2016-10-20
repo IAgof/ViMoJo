@@ -8,6 +8,9 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
@@ -69,7 +72,7 @@ public class EditPresenterTest {
 
     @Test
     public void trackClipsReorderedIsCalledOnMediaReordered() {
-        Project videonaProject = Project.getInstance("title", "/path", Profile.getInstance(Profile.ProfileType.free));
+        Project videonaProject = Project.getInstance("title", "/path", Profile.getInstance(null, null, null));
 
         editPresenter.onMediaReordered(null, 2);
 
@@ -83,6 +86,7 @@ public class EditPresenterTest {
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", Profile.getInstance(Profile.ProfileType.free));
+        return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
     }
 }

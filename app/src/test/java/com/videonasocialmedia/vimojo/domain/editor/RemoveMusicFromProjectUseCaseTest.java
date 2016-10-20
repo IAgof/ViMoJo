@@ -3,6 +3,9 @@ package com.videonasocialmedia.vimojo.domain.editor;
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
@@ -39,7 +42,8 @@ public class RemoveMusicFromProjectUseCaseTest {
     }
 
     private Project getAProjectWithMusicAdded() {
-        Profile profile = Profile.getInstance(Profile.ProfileType.free);
+        Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+                VideoFrameRate.FrameRate.FPS25);
         String rootPath = "projectRootPath";
         String title = "project title";
         Project project = Project.getInstance(title, rootPath, profile);

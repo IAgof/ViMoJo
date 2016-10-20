@@ -5,6 +5,7 @@ import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatUseCase;
 import com.videonasocialmedia.vimojo.export.domain.OnGetVideonaFormatListener;
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 
@@ -59,7 +60,7 @@ public class GetVideonaFormatUseCaseTest implements OnGetVideonaFormatListener{
         getVideonaFormatUseCase.project = videonaProject;
         getVideonaFormatUseCase.getVideonaFormatFromProject(this);
 
-        assertThat("videoBitRate", 5000*1000, is(videonaFormat.getVideoBitrate()));
+        assertThat("videoBitRate", 10*1000*1000, is(videonaFormat.getVideoBitrate()));
         assertThat("videoWidth", 1280, is(videonaFormat.getVideoWidth()));
         assertThat("videoHeight", 720, is(videonaFormat.getVideoHeight()));
 
@@ -68,7 +69,8 @@ public class GetVideonaFormatUseCaseTest implements OnGetVideonaFormatListener{
     private Project getAProject() {
         String title = "project title";
         String rootPath = "project/root/path";
-        Profile profile = Profile.getInstance(Profile.ProfileType.free);
+        Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+                VideoFrameRate.FrameRate.FPS25);
         return Project.getInstance(title, rootPath, profile);
     }
 

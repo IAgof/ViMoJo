@@ -13,6 +13,9 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.AudioTrack;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 
@@ -90,7 +93,8 @@ public class AddMusicToProjectUseCaseTest {
 //    }
 
     private Project getAProject() {
-        Profile profile = Profile.getInstance(Profile.ProfileType.free);
+        Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         String rootPath = "projectRootPath";
         String title = "project title";
         return Project.getInstance(title, rootPath, profile);

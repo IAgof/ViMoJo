@@ -607,10 +607,12 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     }
 
     private Profile getProfile() {
-        VideoResolution.Resolution resolution = getResolutionFromPreferencesSetting();
-        VideoQuality.Quality quality = getQualityFromPreferenceSettings();
-        VideoFrameRate.FrameRate frameRate = getFrameRateFromPreferenceSettings();
-        return Profile.getInstance(resolution, quality, frameRate);
+
+            VideoResolution.Resolution resolution = getResolutionFromPreferencesSetting();
+            VideoQuality.Quality quality = getQualityFromPreferenceSettings();
+            VideoFrameRate.FrameRate frameRate = getFrameRateFromPreferenceSettings();
+
+        return Profile.getInstance(resolution, quality,frameRate);
     }
 
 

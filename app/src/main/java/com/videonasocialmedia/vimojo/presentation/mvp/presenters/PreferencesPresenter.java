@@ -139,7 +139,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         if(!isPreferenceAvailable){
             resolutionPref.setTitle(R.string.resolution);
             resolutionPref.setSummary(R.string.preference_not_available);
-            resolutionPref.setIcon(R.drawable.gatito_rules_pressed);
             return;
         }
 
@@ -190,7 +189,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         if(!isPreferenceAvailable){
             qualityPref.setTitle(R.string.quality);
             qualityPref.setSummary(R.string.preference_not_available);
-            qualityPref.setIcon(R.drawable.gatito_rules_pressed);
             return;
         }
 
@@ -234,7 +232,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         if(!isPreferenceAvailable){
             frameRatePref.setTitle(R.string.frame_rate);
             frameRatePref.setSummary(R.string.preference_not_available);
-            frameRatePref.setIcon(R.drawable.gatito_rules_pressed);
             return;
         }
 
