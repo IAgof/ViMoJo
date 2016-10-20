@@ -24,8 +24,8 @@ public class FtpNetworkSource {
     }
 
     private void populateFtpList() {
-        FtpList.add(new FtpNetwork(ConfigPreferences.FTP1, "FTP 1", R.drawable.ftp));
-        FtpList.add(new FtpNetwork(ConfigPreferences.FTP2, "FTP 2", R.drawable.ftp));
+        FtpList.add(new FtpNetwork(ConfigPreferences.FTP1, "FTP", R.drawable.activity_share_icon_ftp_green));
+        FtpList.add(new FtpNetwork(ConfigPreferences.FTP2, "Breaking news", R.drawable.activity_share_icon_ftp_red));
     }
 
 }

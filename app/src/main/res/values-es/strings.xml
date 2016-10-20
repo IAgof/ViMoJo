@@ -133,8 +133,8 @@
     <string name="save">Guardar</string>
 
     <!--FTP Settings -->
-    <string name="title_FTP1_Section">Datos FTP 1</string>
-    <string name="title_FTP2_Section">Datos FTP 2</string>
+    <string name="title_FTP1_Section">FTP</string>
+    <string name="title_FTP2_Section">Breaking news</string>
     <string name="host_FTP">Host</string>
     <string name="removeHost">Borrar host</string>
     <string name="enterHost">Introduce host</string>
