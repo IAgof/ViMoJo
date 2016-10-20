@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -9,12 +10,15 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -36,6 +40,7 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +69,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
     private ShareVideoPresenter presenter;
     private OptionsToShareAdapter optionsShareAdapter;
     private int currentPosition;
+    private AlertDialog alertDialog;
 
     private SharedPreferences sharedPreferences;
     protected UserEventTracker userEventTracker;
@@ -242,11 +248,55 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
 
     @Override
     public void onFtpClicked(FtpNetwork ftp) {
+        createDialogToInsertNameProject(ftp);
+    }
+
+    private void createDialogToInsertNameProject(final FtpNetwork ftpSelected) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
+        final EditText editText = (EditText) dialogView.findViewById(R.id.text_dialog);
+        editText.requestFocus();
+        editText.setHint(R.string.text_hint_dialog_shareActivity);
+
+        final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        String videoFtpName= editText.getText().toString();
+                        renameFile(videoFtpName);
+                        shareVideoWithFTP(ftpSelected);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+
+        alertDialog = builder.setCancelable(false)
+                .setTitle(R.string.title_dialog_sharedActivity)
+                .setView(dialogView)
+                .setPositiveButton(R.string.positiveButton, dialogClickListener)
+                .setNegativeButton(R.string.negativeButton, dialogClickListener).show();
+    }
+
+    public void renameFile(String videoFtpName){
+        File file = new File(videoPath);
+        String fileName = videoFtpName + ".mp4";
+        File destinationFile = new File(Constants.PATH_APP, fileName);
+        file.renameTo(destinationFile);
+        videoPath=destinationFile.getPath();
+    }
+
+    public void shareVideoWithFTP(FtpNetwork ftp){
         Intent intent = new Intent(this, FtpUploaderService.class);
         intent.putExtra("VIDEO_FOLDER_PATH", videoPath);
         intent.putExtra(IntentConstants.FTP_SELECTED, ftp.getIdFTP());
         startService(intent);
     }
+
 
     public void showMessage(final int stringToast) {
         Snackbar snackbar = Snackbar.make(coordinatorLayout, stringToast, Snackbar.LENGTH_LONG);

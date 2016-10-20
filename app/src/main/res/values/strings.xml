@@ -1666,7 +1666,8 @@ and Conditions.\n\n
     <string name="uploadComplete">Upload complete</string>
     <string name="uploading">Uploading</string>
     <string name="trimError">The video couldn\'t be trimmed</string>
-
+    <string name="title_dialog_sharedActivity">Add name to the project</string>
+    <string name="text_hint_dialog_shareActivity">Project name</string>
 
 
 </resources>
