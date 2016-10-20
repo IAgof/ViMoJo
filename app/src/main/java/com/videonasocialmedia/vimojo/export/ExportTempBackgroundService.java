@@ -80,7 +80,7 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
                         video.deleteTempVideo();
                         if(video.isTrimmedVideo())
                             video.setTrimmedVideo(false);
-                        if(video.isTextToVideoAdded())
+                        if(video.hasText())
                             video.setTextToVideoAdded(false);
                         sendResultBroadcast(videoId, false);
                     }
@@ -90,7 +90,7 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
                         video.deleteTempVideo();
                         if(video.isTrimmedVideo())
                             video.setTrimmedVideo(false);
-                        if(video.isTextToVideoAdded())
+                        if(video.hasText())
                             video.setTextToVideoAdded(false);
                         sendResultBroadcast(videoId, false);
                     }

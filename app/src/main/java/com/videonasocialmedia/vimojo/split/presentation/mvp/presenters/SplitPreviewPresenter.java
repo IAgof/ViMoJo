@@ -76,8 +76,8 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     public void onVideosRetrieved(List<Video> videoList) {
         splitView.showPreview(videoList);
         Video video = videoList.get(0);
-        if(video.isTextToVideoAdded())
-            splitView.showText(video.getTextToVideo(), video.getTextPositionToVideo());
+        if(video.hasText())
+            splitView.showText(video.getClipText(), video.getClipTextPosition());
         splitView.initSplitView(video.getStartTime(), video.getStopTime() - video.getStartTime());
     }
 
