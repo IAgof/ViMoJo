@@ -52,6 +52,7 @@ public class VimojoApplication extends Application {
 //        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         Dexter.initialize(this);
         setupLeakCanary();
+        setupDataBase();
     }
 
     private void setupGoogleAnalytics() {
