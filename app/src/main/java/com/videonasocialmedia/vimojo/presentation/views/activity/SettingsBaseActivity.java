@@ -54,6 +54,9 @@ public class SettingsBaseActivity extends VimojoActivity implements VideonaDialo
             case R.id.action_vote:
                 goToVote();
                 return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.

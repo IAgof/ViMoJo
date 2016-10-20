@@ -27,14 +27,11 @@ import com.videonasocialmedia.avrecorder.event.CameraOpenedEvent;
 import com.videonasocialmedia.avrecorder.event.MuxerFinishedEvent;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessEvent;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.effects.Effect;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -105,7 +102,7 @@ public class RecordPresenter {
         int width = currentProject.getProfile().getVideoResolution().getWidth();
         int height = currentProject.getProfile().getVideoResolution().getHeight();
         int bitRate = currentProject.getProfile().getVideoQuality().getVideoBitRate();
-        int frameRate = currentProject.getProfile().getVideoFrameRate().getVideoFrameRate();
+        int frameRate = currentProject.getProfile().getVideoFrameRate().getFrameRate();
 
         return new VideoEncoderConfig(width, height, bitRate, frameRate);
     }
@@ -125,6 +122,7 @@ public class RecordPresenter {
 
     private void initRecorder(GLCameraView cameraPreview) {
         config = new SessionConfig(Constants.PATH_APP_TEMP, videoEncoderConfig);
+
         try {
             recorder = new AudioVideoRecorder(config);
             recorder.setPreviewDisplay(cameraPreview);

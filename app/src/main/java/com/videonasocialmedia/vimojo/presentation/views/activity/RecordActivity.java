@@ -644,7 +644,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
             recordPresenter.setFlashOff();
             Intent intent = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
             startActivity(intent);
-            finish();
+            //finish();
         }
     }
 
@@ -653,7 +653,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         if (!recording) {
             Intent intent = new Intent(VimojoApplication.getAppContext(), SettingsActivity.class);
             startActivity(intent);
-            finish();
+            //finish();
         }
     }
 

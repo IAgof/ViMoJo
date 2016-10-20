@@ -56,11 +56,11 @@ public class ChooseCameraQualityListPreferences extends ListPreference {
         final String[] items = mContext.getResources().getStringArray(R.array.camera_quality_names);
         int positionItemSelected = 0;
 
-        for (String quality : items){
-            if ( quality.compareTo(prefsQuality) == 0){
+        for (int i=0; i<items.length; i++){
+            if (items[i].compareTo(prefsQuality) == 0){
+                positionItemSelected = i;
                 break;
             }
-            positionItemSelected++;
         }
 
         builder.setSingleChoiceItems(items, positionItemSelected,

@@ -25,7 +25,7 @@ public class VideoFrameRate {
         }
     }
 
-    public int getVideoFrameRate() {
+    public int getFrameRate() {
         return videoFrameRate;
     }
 

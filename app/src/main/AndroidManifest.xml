@@ -109,7 +109,6 @@
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:noHistory="true"
             android:screenOrientation="sensorLandscape">
             <intent-filter>
                 <action android:name="android.media.action.VIDEO_CAPTURE"/>
@@ -120,7 +119,7 @@
         <activity
             android:name=".presentation.views.activity.SettingsActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.RecordActivity"/>
+            />
 
         <activity
             android:name="com.videonasocialmedia.vimojo.presentation.views.activity.NamePreferenceActivity"

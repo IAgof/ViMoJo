@@ -619,16 +619,22 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         String resolution = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
                 getString(R.string.low_resolution_name));
 
-        if(resolution.compareTo(getString(R.string.low_resolution_name)) == 0){
-            return VideoResolution.Resolution.HD720;
+        if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false)) {
+            if (resolution.compareTo(getString(R.string.low_resolution_name)) == 0) {
+                return VideoResolution.Resolution.HD720;
+            }
         }
 
-        if(resolution.compareTo(getString(R.string.good_resolution_name)) == 0){
-            return VideoResolution.Resolution.HD1080;
+        if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, false)) {
+            if (resolution.compareTo(getString(R.string.good_resolution_name)) == 0) {
+                return VideoResolution.Resolution.HD1080;
+            }
         }
 
-        if(resolution.compareTo(getString(R.string.high_resolution_name)) == 0){
-            return VideoResolution.Resolution.HD4K;
+        if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, false)) {
+            if (resolution.compareTo(getString(R.string.high_resolution_name)) == 0) {
+                return VideoResolution.Resolution.HD4K;
+            }
         }
 
         // default
@@ -638,7 +644,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private VideoQuality.Quality getQualityFromPreferenceSettings() {
 
         String quality = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY,
-                getString(R.string.low_quality_name));
+                getString(R.string.high_quality_name));
 
         if(quality.compareTo(getString(R.string.low_quality_name)) == 0){
             return VideoQuality.Quality.LOW;
@@ -661,16 +667,22 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         String frameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE,
                 "0");
 
-        if(frameRate.compareTo(getString(R.string.low_frame_rate_name)) == 0){
-            return VideoFrameRate.FrameRate.FPS24;
+        if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false)) {
+            if (frameRate.compareTo(getString(R.string.low_frame_rate_name)) == 0) {
+                return VideoFrameRate.FrameRate.FPS24;
+            }
         }
 
-        if(frameRate.compareTo(getString(R.string.good_frame_rate_name)) == 0){
-            return VideoFrameRate.FrameRate.FPS25;
+        if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false)) {
+            if (frameRate.compareTo(getString(R.string.good_frame_rate_name)) == 0) {
+                return VideoFrameRate.FrameRate.FPS25;
+            }
         }
 
-        if(frameRate.compareTo(getString(R.string.high_frame_rate_name)) == 0){
-            return VideoFrameRate.FrameRate.FPS30;
+        if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, false)) {
+            if (frameRate.compareTo(getString(R.string.high_frame_rate_name)) == 0) {
+                return VideoFrameRate.FrameRate.FPS30;
+            }
         }
 
         // default
@@ -697,7 +709,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     public void navigate(Class cls) {
 
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
 

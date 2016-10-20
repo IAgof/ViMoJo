@@ -1,12 +1,15 @@
 package com.videonasocialmedia.vimojo.presentation.views.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,9 +41,13 @@ public class SettingsFragment extends PreferenceFragment implements
         VideonaDialogListener {
 
     protected final int REQUEST_CODE_EXIT_APP = 1;
+    protected PreferenceCategory cameraSettingsPref;
     protected ListPreference resolutionPref;
     protected ListPreference qualityPref;
     protected ListPreference frameRatePref;
+    protected Preference resolutionPrefNotAvailable;
+    protected Preference qualityPrefNotAvailable;
+    protected Preference frameRatePrefNotAvailable;
     protected PreferencesPresenter preferencesPresenter;
     protected Context context;
     protected SharedPreferences sharedPreferences;
@@ -53,8 +60,8 @@ public class SettingsFragment extends PreferenceFragment implements
         super.onCreate(savedInstanceState);
         context = getActivity().getApplicationContext();
         initPreferences();
-        preferencesPresenter = new PreferencesPresenter(this, resolutionPref, qualityPref, frameRatePref,
-                context, sharedPreferences);
+        preferencesPresenter = new PreferencesPresenter(this,cameraSettingsPref, resolutionPref,
+                qualityPref, frameRatePref, context, sharedPreferences);
         mixpanel = MixpanelAPI.getInstance(this.getActivity(), BuildConfig.MIXPANEL_TOKEN);
     }
 
@@ -66,13 +73,20 @@ public class SettingsFragment extends PreferenceFragment implements
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
                 Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        resolutionPref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION);
-        qualityPref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY);
-        frameRatePref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE);
 
+        setupCameraSettings();
         setupExitPreference();
         setupDownloadKamaradaPreference();
         setupShareVideona();
+    }
+
+    private void setupCameraSettings() {
+
+        cameraSettingsPref = (PreferenceCategory) findPreference(getString(R.string.title_camera_section));
+
+        resolutionPref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION);
+        qualityPref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY);
+        frameRatePref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE);
     }
 
     private void setupExitPreference() {
@@ -242,6 +256,14 @@ public class SettingsFragment extends PreferenceFragment implements
     public void setSummary(String key, String value) {
         Preference preference = findPreference(key);
         preference.setSummary(value);
+    }
+
+    @Override
+    public void setCameraSettingsAvailable(boolean isAvailable) {
+        if(isAvailable){
+            resolutionPrefNotAvailable = findPreference(context.getString(R.string.resolution));
+            resolutionPrefNotAvailable.setShouldDisableView(true);
+        }
     }
 
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {

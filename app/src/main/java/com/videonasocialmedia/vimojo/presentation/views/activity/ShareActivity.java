@@ -255,6 +255,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
 
     @OnClick({R.id.ftp_container, R.id.ftp_icon})
     public void requestFtpUpload() {
+
         Intent intent = new Intent(this, FtpUploaderService.class);
         intent.putExtra("VIDEO_FOLDER_PATH", videoPath);
         startService(intent);

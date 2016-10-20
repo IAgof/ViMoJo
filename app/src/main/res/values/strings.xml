@@ -179,7 +179,7 @@
     <string name="good_frame_rate_name">25 fps</string>
     <string name="high_frame_rate_name">30 fps</string>
     <string name="cancelSettingsCamera">Cancel</string>
-
+    <string name="preference_not_available">Preference not available</string>
 
     <!-- More info Settings -->
     <string name="aboutUsTitle">About us</string>
@@ -1676,7 +1676,6 @@ and Conditions.\n\n
     <string name="uploadComplete">Upload complete</string>
     <string name="uploading">Uploading</string>
     <string name="trimError">The video couldn\'t be trimmed</string>
-
 
 
 </resources>
