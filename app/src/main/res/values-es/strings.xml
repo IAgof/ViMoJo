@@ -133,7 +133,8 @@
     <string name="save">Guardar</string>
 
     <!--FTP Settings -->
-    <string name="title_FTP_Section">Datos FTP</string>
+    <string name="title_FTP1_Section">FTP</string>
+    <string name="title_FTP2_Section">Breaking news</string>
     <string name="host_FTP">Host</string>
     <string name="removeHost">Borrar host</string>
     <string name="enterHost">Introduce host</string>
@@ -567,7 +568,10 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="dialog_edit_remove_accept">Si</string>
     <string name="dialog_edit_remove_cancel">No</string>
     <string name="trimError">El video no ha podido ser recortado</string>
-
+    <string name="title_dialog_sharedActivity">Añadir nombre al proyecto</string>
+    <string name="text_hint_dialog_shareActivity">Nombre del proyecto</string>
+    <string name="positiveButtonDialogShareActivity">Compartir</string>
+    <string name="negativeButtonDialogShareActivity">Cancelar</string>
 
 
 </resources>

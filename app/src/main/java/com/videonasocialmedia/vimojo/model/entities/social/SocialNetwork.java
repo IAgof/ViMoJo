@@ -2,10 +2,12 @@ package com.videonasocialmedia.vimojo.model.entities.social;
 
 import android.graphics.drawable.Drawable;
 
+import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
+
 /**
  * Created by jca on 9/12/15.
  */
-public class SocialNetwork {
+public class SocialNetwork implements OptionsToShareList {
 
     private final String idSocialNetwork;
     private final String name;
@@ -42,5 +44,10 @@ public class SocialNetwork {
 
     public String getIdSocialNetwork() {
         return idSocialNetwork;
+    }
+
+    @Override
+    public int getListShareType() {
+        return OptionsToShareList.typeSocialNetwork;
     }
 }

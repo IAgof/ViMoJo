@@ -9,22 +9,24 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
  * Created by ruth on 24/08/16.
  */
 public class UsernameFTPPreferencePresenter extends EditTextPreferencePresenter {
+    private String keyUsernameFTP;
 
     public UsernameFTPPreferencePresenter(EditTextPreferenceView editTextPreferenceView,
-                                          SharedPreferences sharedPreferences) {
+                                          SharedPreferences sharedPreferences, String keyUsernameFTP) {
         super(editTextPreferenceView, sharedPreferences);
+        this.keyUsernameFTP=keyUsernameFTP;
     }
 
     @Override
     public void setPreference(String text) {
-        editor.putString(ConfigPreferences.USERNAMEFTP, text);
+        editor.putString(keyUsernameFTP, text);
         editor.commit();
         editTextPreferenceView.goBack();
     }
 
     @Override
     public String getPreviousText() {
-        return sharedPreferences.getString(ConfigPreferences.USERNAMEFTP, null);
+        return sharedPreferences.getString(keyUsernameFTP, null);
     }
 
     @Override
@@ -34,7 +36,7 @@ public class UsernameFTPPreferencePresenter extends EditTextPreferencePresenter 
 
     @Override
     public void removeData() {
-        editor.putString(ConfigPreferences.USERNAMEFTP, null);
+        editor.putString(keyUsernameFTP, null);
         editor.commit();
         editTextPreferenceView.removeEditText();
         editTextPreferenceView.hideInfoText();

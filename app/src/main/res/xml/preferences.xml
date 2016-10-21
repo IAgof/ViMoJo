@@ -41,35 +41,84 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/title_FTP_Section">
+        android:title="@string/title_FTP1_Section">
         <Preference
             android:key="host"
             android:title="@string/host_FTP">
-            <intent android:action=".presentation.views.activity.HostPreferenceActivity"/>
+            <intent
+                android:action=".presentation.views.activity.HostPreferenceActivity">
+                <extra android:name="keyHost" android:value="host"/>
+            </intent>
         </Preference>
         <Preference
             android:key="usernameFTP"
             android:title="@string/username_FTP">
-            <intent android:action=".presentation.views.activity.UserNameFTPPreferenceActivity"/>
+            <intent android:action=".presentation.views.activity.UserNameFTPPreferenceActivity">
+                <extra android:name="keyUsernameFTP" android:value="usernameFTP"/>
+            </intent>
         </Preference>
         <Preference
             android:key="passwordFTP"
             android:title="@string/password_FTP">
-            <intent android:action=".presentation.views.activity.PasswordFTPPreferenceActivity"/>
+            <intent android:action=".presentation.views.activity.PasswordFTPPreferenceActivity">
+                <extra android:name="keyPasswordFTP" android:value="passwordFTP"/>
+            </intent>
         </Preference>
         <Preference
             android:key="EditedVideoDestinationFTP"
             android:title="@string/edited_video_destination">
-            <intent android:action=".presentation.views.activity.EditedVideoDestinationPreferenceActivity"/>
+            <intent android:action=".presentation.views.activity.EditedVideoDestinationPreferenceActivity">
+                <extra android:name="keyEditedVideoDestinationFTP" android:value="EditedVideoDestinationFTP"/>
+            </intent>
         </Preference>
         <Preference
             android:key="UneditedVideoDestinationFTP"
             android:title="@string/unedited_video_destination">
-            <intent android:action=".presentation.views.activity.UneditedVideoDestinationPreferenceActivity"/>
+            <intent android:action=".presentation.views.activity.UneditedVideoDestinationPreferenceActivity">
+                <extra android:name="keyUneditedVideoDestinationFTP" android:value="UneditedVideoDestinationFTP"/>
+            </intent>
         </Preference>
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/title_FTP2_Section">
+        <Preference
+            android:key="host_FTP2"
+            android:title="@string/host_FTP">
+            <intent android:action=".presentation.views.activity.HostPreferenceActivity">
+                 <extra android:name="keyHost" android:value="host_FTP2"/>
+            </intent>
+        </Preference>
+        <Preference
+            android:key="username_FTP2"
+            android:title="@string/username_FTP">
+            <intent android:action=".presentation.views.activity.UserNameFTPPreferenceActivity">
+                <extra android:name="keyUsernameFTP" android:value="username_FTP2"/>
+            </intent>
 
+        </Preference>
+        <Preference
+            android:key="password_FTP2"
+            android:title="@string/password_FTP">
+            <intent android:action=".presentation.views.activity.PasswordFTPPreferenceActivity">
+                <extra android:name="keyPasswordFTP" android:value="password_FTP2"/>
+            </intent>
+        </Preference>
+        <Preference
+            android:key="Edited_Video_Destination_FTP2"
+            android:title="@string/edited_video_destination">
+            <intent android:action=".presentation.views.activity.EditedVideoDestinationPreferenceActivity">
+                <extra android:name="keyEditedVideoDestinationFTP" android:value="Edited_Video_Destination_FTP2"/>
+            </intent>
+        </Preference>
+        <Preference
+            android:key="Unedited_Video_Destination_FTP2"
+            android:title="@string/unedited_video_destination">
+            <intent android:action=".presentation.views.activity.UneditedVideoDestinationPreferenceActivity">
+                <extra android:name="keyUneditedVideoDestinationFTP" android:value="Unedited_Video_Destination_FTP2"/>
+            </intent>
+        </Preference>
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:title="@string/title_camera_section"

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,11 +52,12 @@ public class FtpUploaderService extends Service implements FtpUploaderView {
 
         Bundle extras = intent.getExtras();
         final String videoPath = extras.getString("VIDEO_FOLDER_PATH", "no_path");
+        String ftpSelected=extras.getString(IntentConstants.FTP_SELECTED, "no_ftp");
         builder = prepareNotificationBuilder(videoPath);
 
         Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
 
-        ftpPresenter.startUpload(videoPath);
+        ftpPresenter.startUpload(videoPath, ftpSelected);
 
         return START_NOT_STICKY;
     }

@@ -77,8 +77,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      */
     public void checkAvailablePreferences() {
         checkUserAccountData();
-        checkUserFTPData();
-        checkCameraSettingsEnabled();
+        checkUserFTP1Data();
+        checkUserFTP2Data();
         checkAvailableResolution();
         checkAvailableQuality();
         checkAvailableFrameRate();
@@ -96,19 +96,24 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         }
     }
 
-    private void checkUserFTPData() {
+    private void checkUserFTP1Data() {
         checkUserFTPPreference(ConfigPreferences.HOST);
-        checkUserFTPPreference(ConfigPreferences.USERNAMEFTP);
+        checkUserFTPPreference(ConfigPreferences.USERNAME_FTP);
         checkUserFTPPreference(ConfigPreferences.EDITED_VIDEO_DESTINATION);
         checkUserFTPPreference(ConfigPreferences.UNEDITED_VIDEO_DESTINATION);
     }
 
-    private void checkUserFTPPreference(String key) {
+    private void checkUserFTP2Data() {
+        checkUserFTPPreference(ConfigPreferences.HOST_FTP2);
+        checkUserFTPPreference(ConfigPreferences.USERNAME_FTP2);
+        checkUserFTPPreference(ConfigPreferences.EDITED_VIDEO_DESTINATION_FTP2);
+        checkUserFTPPreference(ConfigPreferences.UNEDITED_VIDEO_DESTINATION_FTP2);
+    }
 
+    private void checkUserFTPPreference(String key) {
         String data = sharedPreferences.getString(key, null);
         if (data != null && !data.isEmpty())
             preferencesView.setSummary(key, data);
-
     }
 
     /**
