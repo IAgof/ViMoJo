@@ -54,15 +54,19 @@ import butterknife.OnClick;
  */
 public class ShareActivity extends VimojoActivity implements ShareVideoView, VideonaPlayerListener,
         OnOptionsToShareListClickListener {
-
+    @Nullable
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
+    @Nullable
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
+    @Nullable
     @Bind(R.id.options_to_share_list)
     RecyclerView optionsToShareList;
+    @Nullable
     @Bind(R.id.toolbar)
     Toolbar toolbar;
+    @Nullable
     @Bind(R.id.fab_share_room)
     FloatingActionButton fab;
     @Nullable
