@@ -40,6 +40,8 @@ public class Constants {
 
     final public static String PATH_APP_TEMP = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP;
 
+    final public static String VIDEO_TEMP_RECORD = "VID_temp.mp4";
+
     final public static String PATH_APP_TEMP_AUDIO = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP_AUDIO;
    // final public static String VIDEO_MUSIC_TEMP_FILE = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP + File.separator + "tempAV.mp4";
 

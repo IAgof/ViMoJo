@@ -123,7 +123,7 @@ public class RecordPresenter {
     }
 
     private void initRecorder(GLCameraView cameraPreview) {
-        checkTempFileRecordVideo();
+        checkLastTempFileRecordVideo();
         config = new SessionConfig(Constants.PATH_APP_TEMP, getVideoEncoderConfigFromProfileProject());
         try {
             recorder = new AudioVideoRecorder(config);
@@ -134,18 +134,26 @@ public class RecordPresenter {
         }
     }
 
-    private void checkTempFileRecordVideo() {
+    // Save file if user go to home without stop video
+    // Move to master last video recorded temp.
+    // Video temp has to be bigger than 1MB to consider is video file
+    // TODO:(alvaro.martinez) 21/10/16 Check how to save video if user go to home 
+    private void checkLastTempFileRecordVideo() {
 
-        String tempFileName = "VID_temp.mp4";
-        File rootDir = new File(Constants.PATH_APP_TEMP);
-        rootDir.mkdir();
-        File vTemp = new File(rootDir, tempFileName);
+        String tempFileName = Constants.PATH_APP_TEMP + File.separator + Constants.VIDEO_TEMP_RECORD;
+        File vTemp = new File(tempFileName);
+
         if(vTemp.exists() && vTemp.length() > 1024*1024) {
+
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             String fileName = "VID_" + timeStamp + ".mp4";
-            File destinationFile = new File(Constants.PATH_APP_MASTERS, fileName);
-            vTemp.renameTo(destinationFile);
-            Utils.addFileToVideoGallery(destinationFile.toString());
+            String destinationFile = Constants.PATH_APP_MASTERS + File.separator + fileName;
+            try {
+                Utils.moveFile(tempFileName, destinationFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Utils.addFileToVideoGallery(destinationFile);
         }
     }
 
@@ -282,12 +290,18 @@ public class RecordPresenter {
     }
 
     private String moveVideoToMastersFolder() {
-        File originalFile = new File(config.getOutputPath());
+
+        String originalFile = config.getOutputPath();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String fileName = "VID_" + timeStamp + ".mp4";
-        File destinationFile = new File(Constants.PATH_APP_MASTERS, fileName);
-        originalFile.renameTo(destinationFile);
-        Utils.addFileToVideoGallery(destinationFile.toString());
+        String destinationFile = Constants.PATH_APP_MASTERS + File.separator + fileName;
+        try {
+            Utils.moveFile(originalFile, destinationFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Utils.addFileToVideoGallery(destinationFile);
+
         int numTotalVideosRecorded = sharedPreferences
                 .getInt(ConfigPreferences.TOTAL_VIDEOS_RECORDED, 0);
         preferencesEditor.putInt(ConfigPreferences.TOTAL_VIDEOS_RECORDED,
@@ -296,12 +310,12 @@ public class RecordPresenter {
         trackTotalVideosRecordedSuperProperty();
         double clipDuration = 0.0;
         try {
-            clipDuration = Utils.getFileDuration(destinationFile.getAbsolutePath());
+            clipDuration = Utils.getFileDuration(destinationFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
         trackVideoRecorded(clipDuration);
-        return destinationFile.getAbsolutePath();
+        return destinationFile;
     }
 
     private void trackTotalVideosRecordedSuperProperty() {

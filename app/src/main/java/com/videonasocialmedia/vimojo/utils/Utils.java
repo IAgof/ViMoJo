@@ -129,6 +129,15 @@ public class Utils {
         }
     }
 
+    public static void moveFile(String originalPath, String finalPath) throws IOException {
+
+        File originalFile = new File(originalPath);
+        File destinationFile = new File(finalPath);
+
+        originalFile.renameTo(destinationFile);
+
+    }
+
     public static Uri obtainUriToShare(Context context, String videoPath) {
         Uri uri;
         if (videoPath != null) {
