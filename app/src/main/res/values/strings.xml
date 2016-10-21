@@ -1668,6 +1668,8 @@ and Conditions.\n\n
     <string name="trimError">The video couldn\'t be trimmed</string>
     <string name="title_dialog_sharedActivity">Add name to the project</string>
     <string name="text_hint_dialog_shareActivity">Project name</string>
+    <string name="positiveButtonDialogShareActivity">Share</string>
+    <string name="negativeButtonDialogShareActivity">Cancel</string>
 
 
 </resources>

@@ -578,6 +578,8 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="trimError">El video no ha podido ser recortado</string>
     <string name="title_dialog_sharedActivity">Añadir nombre al proyecto</string>
     <string name="text_hint_dialog_shareActivity">Nombre del proyecto</string>
+    <string name="positiveButtonDialogShareActivity">Compartir</string>
+    <string name="negativeButtonDialogShareActivity">Cancelar</string>
 
 
 </resources>

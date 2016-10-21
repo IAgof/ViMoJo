@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -64,6 +65,9 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
     Toolbar toolbar;
     @Bind(R.id.fab_share_room)
     FloatingActionButton fab;
+    @Nullable
+    @Bind(R.id.text_dialog)
+    EditText editText;
 
     private String videoPath;
     private ShareVideoPresenter presenter;
@@ -195,7 +199,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         }
         startActivity(intent);
     }
-
+    @Nullable
     @OnClick(R.id.fab_share_room)
     public void showMoreNetworks() {
         updateNumTotalVideosShared();
@@ -255,7 +259,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
-        final EditText editText = (EditText) dialogView.findViewById(R.id.text_dialog);
+        ButterKnife.bind(this, dialogView);
         editText.requestFocus();
         editText.setHint(R.string.text_hint_dialog_shareActivity);
 
@@ -278,8 +282,8 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         alertDialog = builder.setCancelable(false)
                 .setTitle(R.string.title_dialog_sharedActivity)
                 .setView(dialogView)
-                .setPositiveButton(R.string.positiveButton, dialogClickListener)
-                .setNegativeButton(R.string.negativeButton, dialogClickListener).show();
+                .setPositiveButton(R.string.positiveButtonDialogShareActivity, dialogClickListener)
+                .setNegativeButton(R.string.negativeButtonDialogShareActivity, dialogClickListener).show();
     }
 
     public void renameFile(String videoFtpName){
