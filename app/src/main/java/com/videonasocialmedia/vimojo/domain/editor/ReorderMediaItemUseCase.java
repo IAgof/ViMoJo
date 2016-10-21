@@ -16,8 +16,10 @@ public class ReorderMediaItemUseCase {
         Project project= Project.getInstance(null,null,null);
         MediaTrack videoTrack= project.getMediaTrack();
         try {
+
             videoTrack.moveItemTo(toPositon,media);
             listener.onMediaReordered(media, toPositon);
+            new ReorderProjectVideoListUseCase().reorderVideoList();
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             illegalItemOnTrack.printStackTrace();
             listener.onErrorReorderingMedia();
