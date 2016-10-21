@@ -33,6 +33,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.OptionsToShareAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
+import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -261,7 +262,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
 
     private void createDialogToInsertNameProject(final FtpNetwork ftpSelected) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
         ButterKnife.bind(this, dialogView);
         editText.requestFocus();

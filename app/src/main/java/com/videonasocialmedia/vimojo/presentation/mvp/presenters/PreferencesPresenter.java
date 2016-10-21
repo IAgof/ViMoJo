@@ -79,6 +79,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         checkUserAccountData();
         checkUserFTP1Data();
         checkUserFTP2Data();
+        checkCameraSettingsEnabled();
         checkAvailableResolution();
         checkAvailableQuality();
         checkAvailableFrameRate();
