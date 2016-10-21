@@ -54,4 +54,13 @@ public class MusicSource {
 
     }
 
+    public Music getAudioByTitle(String title){
+        for (Music music:localMusic
+             ) {
+            if(music.getTitle() == title){
+                return music;
+            }
+        }
+        return null;
+    }
 }
