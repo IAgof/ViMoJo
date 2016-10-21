@@ -712,7 +712,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         startActivity(intent);
-        finish();
+       // finish();
 
     }
 

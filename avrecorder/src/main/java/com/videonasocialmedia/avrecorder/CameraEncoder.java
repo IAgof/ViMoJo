@@ -213,9 +213,6 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
         mIncomingSizeUpdated = true;
     }
 
-    public SessionConfig getConfig() {
-        return mSessionConfig;
-    }
 
     /**
      * Request the device camera not currently selected
@@ -1286,6 +1283,10 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
 
     public void setEventBus(EventBus eventBus) {
         mEventBus = eventBus;
+    }
+
+    public SessionConfig getConfig() {
+        return mSessionConfig;
     }
 
     private enum STATE {

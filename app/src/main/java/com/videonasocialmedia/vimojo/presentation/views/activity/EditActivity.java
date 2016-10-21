@@ -229,6 +229,9 @@ public class EditActivity extends VimojoActivity implements EditorView,
             case R.id.action_settings_edit_tutorial:
                 //navigateTo(TutorialActivity.class);
                 return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             default:
 
         }
@@ -236,7 +239,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
     }
 
     public void navigateTo(Class cls) {
-        Intent intent = new Intent(getApplicationContext(), cls);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         if (cls == GalleryActivity.class) {
             intent.putExtra("SHARE", false);
         }
@@ -461,8 +464,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
 
     @Override
     public void onBackPressed() {
-        Intent record = new Intent(VimojoApplication.getAppContext(), RecordActivity.class);
-        startActivity(record);
+        navigateTo(RecordActivity.class);
         finish();
     }
 

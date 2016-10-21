@@ -61,7 +61,6 @@ public class RecordPresenter {
     private static final String LOG_TAG = "RecordPresenter";
     private boolean firstTimeRecording;
     private RecordView recordView;
-    private VideoEncoderConfig videoEncoderConfig;
     private SessionConfig config;
     private AddVideoToProjectUseCase addVideoToProjectUseCase;
     private AudioVideoRecorder recorder;
@@ -79,6 +78,8 @@ public class RecordPresenter {
 
     public RecordPresenter(Context context, RecordView recordView,
                            GLCameraView cameraPreview, SharedPreferences sharedPreferences, boolean externalIntent) {
+
+        this.currentProject = loadCurrentProject();
         this.recordView = recordView;
         this.context = context;
         this.cameraPreview = cameraPreview;
@@ -88,8 +89,6 @@ public class RecordPresenter {
         addVideoToProjectUseCase = new AddVideoToProjectUseCase();
         recordedVideosNumber = 0;
         mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_TOKEN);
-        this.currentProject = loadCurrentProject();
-        videoEncoderConfig = getVideoEncoderConfigFromProfileProject();
     }
 
     public Project loadCurrentProject() {
@@ -113,16 +112,19 @@ public class RecordPresenter {
 
     public void onStart() {
         if (recorder == null || recorder.isReleased()) {
-//            cameraPreview.releaseCamera();
-            initRecorder(cameraPreview);
+
+            if(currentProject.getProfile() != null) {
+
+                initRecorder(cameraPreview);
+            }
         }
         hideInitialsButtons();
         recordView.hidePrincipalViews();
     }
 
     private void initRecorder(GLCameraView cameraPreview) {
-        config = new SessionConfig(Constants.PATH_APP_TEMP, videoEncoderConfig);
-
+        checkTempFileRecordVideo();
+        config = new SessionConfig(Constants.PATH_APP_TEMP, getVideoEncoderConfigFromProfileProject());
         try {
             recorder = new AudioVideoRecorder(config);
             recorder.setPreviewDisplay(cameraPreview);
@@ -132,13 +134,29 @@ public class RecordPresenter {
         }
     }
 
+    private void checkTempFileRecordVideo() {
+
+        String tempFileName = "VID_temp.mp4";
+        File rootDir = new File(Constants.PATH_APP_TEMP);
+        rootDir.mkdir();
+        File vTemp = new File(rootDir, tempFileName);
+        if(vTemp.exists() && vTemp.length() > 1024*1024) {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String fileName = "VID_" + timeStamp + ".mp4";
+            File destinationFile = new File(Constants.PATH_APP_MASTERS, fileName);
+            vTemp.renameTo(destinationFile);
+            Utils.addFileToVideoGallery(destinationFile.toString());
+        }
+    }
+
     private void hideInitialsButtons() {
         recordView.hideChronometer();
     }
 
     public void onResume() {
         EventBus.getDefault().register(this);
-        recorder.onHostActivityResumed();
+        if(recorder != null)
+            recorder.onHostActivityResumed();
         if (!externalIntent)
             showThumbAndNumber();
         Log.d(LOG_TAG, "resume presenter");
@@ -162,7 +180,6 @@ public class RecordPresenter {
 
     public void onPause() {
         EventBus.getDefault().unregister(this);
-        stopRecord();
         recorder.onHostActivityPaused();
         Log.d(LOG_TAG, "onPause presenter");
         recordView.hideProgressDialog();
@@ -207,7 +224,9 @@ public class RecordPresenter {
         if (!recorder.isRecording()) {
             if (!firstTimeRecording) {
                 try {
-                    resetRecorder();
+                    if(currentProject!= null) {
+                        resetRecorder();
+                    }
                 } catch (IOException ioe) {
                     //recordView.showError();
                 }
@@ -218,7 +237,7 @@ public class RecordPresenter {
     }
 
     private void resetRecorder() throws IOException {
-        config = new SessionConfig(Constants.PATH_APP_TEMP, videoEncoderConfig);
+        config = new SessionConfig(Constants.PATH_APP_TEMP, getVideoEncoderConfigFromProfileProject());
         recorder.reset(config);
     }
 

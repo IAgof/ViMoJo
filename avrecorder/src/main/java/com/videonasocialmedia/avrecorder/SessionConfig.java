@@ -83,6 +83,10 @@ public class SessionConfig {
         return new File(rootDir, fileName);
     }
 
+    public VideoEncoderConfig getVideoConfig(){
+        return mVideoConfig;
+    }
+
     public Muxer getMuxer() {
         return mMuxer;
     }

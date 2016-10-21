@@ -25,9 +25,9 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaDialogListener;
 

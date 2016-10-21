@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
@@ -58,7 +59,7 @@ public class SettingsFragment extends PreferenceFragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = getActivity().getApplicationContext();
+        context = VimojoApplication.getAppContext();
         initPreferences();
         preferencesPresenter = new PreferencesPresenter(this,cameraSettingsPref, resolutionPref,
                 qualityPref, frameRatePref, context, sharedPreferences);
