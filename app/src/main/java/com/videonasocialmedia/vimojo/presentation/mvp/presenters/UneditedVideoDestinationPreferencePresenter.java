@@ -9,15 +9,17 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
  * Created by ruth on 24/08/16.
  */
 public class UneditedVideoDestinationPreferencePresenter extends EditTextPreferencePresenter {
+    private String keyUneditedVideoDestination;
 
     public UneditedVideoDestinationPreferencePresenter(EditTextPreferenceView editTextPreferenceView,
-                                                     SharedPreferences sharedPreferences) {
+                                                     SharedPreferences sharedPreferences, String keyUneditedVideoDestination) {
         super(editTextPreferenceView, sharedPreferences);
+        this.keyUneditedVideoDestination=keyUneditedVideoDestination;
     }
 
     @Override
     public void setPreference(String text) {
-        editor.putString(ConfigPreferences.UNEDITED_VIDEO_DESTINATION, text);
+        editor.putString(keyUneditedVideoDestination, text);
         editor.commit();
         editTextPreferenceView.goBack();
     }
@@ -25,7 +27,7 @@ public class UneditedVideoDestinationPreferencePresenter extends EditTextPrefere
 
     @Override
     public String getPreviousText() {
-        return sharedPreferences.getString(ConfigPreferences.UNEDITED_VIDEO_DESTINATION, null);
+        return sharedPreferences.getString(keyUneditedVideoDestination, null);
     }
 
     @Override
@@ -35,7 +37,7 @@ public class UneditedVideoDestinationPreferencePresenter extends EditTextPrefere
 
     @Override
     public void removeData() {
-        editor.putString(ConfigPreferences.UNEDITED_VIDEO_DESTINATION, null);
+        editor.putString(keyUneditedVideoDestination, null);
         editor.commit();
         editTextPreferenceView.removeEditText();
         editTextPreferenceView.hideInfoText();

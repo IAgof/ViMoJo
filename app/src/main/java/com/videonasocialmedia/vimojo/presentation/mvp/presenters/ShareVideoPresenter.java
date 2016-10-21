@@ -9,15 +9,17 @@ import android.net.Uri;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.social.ObtainNetworksToShareUseCase;
+import com.videonasocialmedia.vimojo.domain.social.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,10 +28,14 @@ import java.util.List;
 public class ShareVideoPresenter {
 
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
+    private GetFtpListUseCase getFtpListUseCase;
     private ShareVideoView shareVideoView;
     protected Project currentProject;
     protected UserEventTracker userEventTracker;
     private SharedPreferences sharedPreferences;
+    private List<FtpNetwork> ftpList;
+    private List<SocialNetwork> socialNetworkList;
+    private List optionToShareList;
     private SharedPreferences.Editor preferencesEditor;
 
     public ShareVideoPresenter(ShareVideoView shareVideoView, UserEventTracker userEventTracker,
@@ -38,7 +44,6 @@ public class ShareVideoPresenter {
         this.userEventTracker = userEventTracker;
         this.sharedPreferences = sharedPreferences;
         currentProject = loadCurrentProject();
-
     }
 
     private Project loadCurrentProject() {
@@ -47,16 +52,28 @@ public class ShareVideoPresenter {
 
     public void onCreate() {
         obtainNetworksToShareUseCase = new ObtainNetworksToShareUseCase();
+        getFtpListUseCase = new GetFtpListUseCase();
     }
 
     public void onResume() {
         obtainNetworksToShare();
+        obtainListFtp();
+        obtainListOptionsToShare(ftpList, socialNetworkList);
+        shareVideoView.showOptionsShareList(optionToShareList);
+    }
+
+    private void obtainListFtp() {
+        ftpList = getFtpListUseCase.getFtpList();
     }
 
     public void obtainNetworksToShare() {
-        List networks = obtainNetworksToShareUseCase.obtainMainNetworks();
+       socialNetworkList = obtainNetworksToShareUseCase.obtainMainNetworks();
+    }
 
-        shareVideoView.showShareNetworksAvailable(networks);
+    private void obtainListOptionsToShare(List<FtpNetwork> ftpList, List<SocialNetwork> socialNetworkList) {
+        optionToShareList = new ArrayList();
+        optionToShareList.addAll(ftpList);
+        optionToShareList.addAll(socialNetworkList);
     }
 
     public void shareVideo(String videoPath, SocialNetwork appToShareWith, Context ctx) {
