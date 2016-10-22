@@ -1,8 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.Video;
-
-import android.media.MediaMetadataRetriever;
-
-import java.util.concurrent.atomic.AtomicInteger;
+package com.videonasocialmedia.vimojo.repository.video;
 
 import io.realm.RealmObject;
 

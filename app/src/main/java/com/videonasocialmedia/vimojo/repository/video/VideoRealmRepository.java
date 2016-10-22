@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.Video;
+package com.videonasocialmedia.vimojo.repository.video;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.repository.Mapper;
@@ -10,7 +10,6 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmModel;
-import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 /**

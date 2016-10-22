@@ -185,7 +185,7 @@ public class Video extends Media {
         numTriesToExportVideo++;
     }
 
-    public boolean isTextToVideoAdded() {∂
+    public boolean isTextToVideoAdded() {
         return isTextToVideoAdded;
     }
 }

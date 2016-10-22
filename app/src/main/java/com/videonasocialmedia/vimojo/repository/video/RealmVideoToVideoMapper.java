@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.Video;
+package com.videonasocialmedia.vimojo.repository.video;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.repository.Mapper;

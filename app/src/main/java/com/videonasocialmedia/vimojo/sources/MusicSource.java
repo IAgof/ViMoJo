@@ -45,15 +45,18 @@ public class MusicSource {
         for (Music musicItem: localMusic) {
             if (musicItem.getMusicTitle().equals(musicTitle)) {
                 return musicItem;
-    }
-
-    public Music getAudioByTitle(String title){
-        for (Music music:localMusic
-             ) {
-            if(music.getTitle() == title){
-                return music;
             }
         }
         return null;
     }
+
+//    public Music getAudioByTitle(String title){
+//        for (Music music:localMusic
+//             ) {
+//            if(music.getTitle() == title){
+//                return music;
+//            }
+//        }
+//        return null;
+//    }
 }
