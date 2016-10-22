@@ -10,7 +10,6 @@ import io.realm.RealmResults;
  */
 
 public interface VideoRepository extends Repository<Video>{
-    RealmResults<VideoRealm> getVideos();
+    RealmResults<RealmVideo> getVideos();
     void removeAllVideos();
-
 }

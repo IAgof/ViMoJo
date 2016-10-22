@@ -7,9 +7,9 @@ import com.videonasocialmedia.vimojo.repository.Mapper;
  * Created by Alejandro on 21/10/16.
  */
 
-public class RealmVideoToVideoMapper implements Mapper<VideoRealm,Video> {
+public class RealmVideoToVideoMapper implements Mapper<RealmVideo,Video> {
     @Override
-    public Video map(VideoRealm videoRealm) {
+    public Video map(RealmVideo realmVideo) {
         return null;
     }
 }

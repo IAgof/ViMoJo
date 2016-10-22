@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -18,7 +17,6 @@ import io.realm.internal.log.RealmLog;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -29,8 +27,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Realm.class, RealmLog.class, RealmQuery.class})
 public class RealmProjectRepositoryTest {
-  private Realm mockRealm;
-//  @Mock Realm mockedRealm;
+  private Realm mockedRealm;
 
   @Before
   public void injectDoubles() {
@@ -46,26 +43,24 @@ public class RealmProjectRepositoryTest {
 
     when(Realm.getDefaultInstance()).thenReturn(mockRealm);
 
-    this.mockRealm = mockRealm;
+    this.mockedRealm = mockRealm;
   }
 
   @Test
   public void shouldBeAbleToGetDefaultInstance() {
-    assertThat(Realm.getDefaultInstance(), is(mockRealm));
+    assertThat(Realm.getDefaultInstance(), is(mockedRealm));
   }
 
 
   @Test
   public void testGetCurrentProjectReturnsLastSavedProject() {
     ProjectRealmRepository repo = new ProjectRealmRepository();
-//    Project defaultEmptyProject = Project.getInstance(null, null, null);
     RealmQuery<RealmProject> mockedRealmQuery = PowerMockito.mock(RealmQuery.class);
-    when(mockRealm.where(RealmProject.class)).thenReturn(mockedRealmQuery);
+    when(mockedRealm.where(RealmProject.class)).thenReturn(mockedRealmQuery);
 
     Project project = repo.getCurrentProject();
 
     verify(mockedRealmQuery).findFirst();
-//    assertThat(project, is(defaultEmptyProject));
   }
 
   @Test

@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.repository.video;
 
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
@@ -16,79 +17,78 @@ import io.realm.RealmResults;
  * Created by Alejandro on 21/10/16.
  */
 
-public class VideoRealmRepository implements  VideoRepository {
-    private Mapper<VideoRealm,Video> toVideoMapper;
-    private final RealmConfiguration realmConfiguration;
+public class VideoRealmRepository implements VideoRepository {
+  protected Mapper<RealmVideo, Video> toVideoMapper;
+  protected Mapper<Video, RealmVideo> toRealmVideoMapper;
 
-    public VideoRealmRepository(RealmConfiguration realmConfiguration) {
-        this.realmConfiguration = realmConfiguration;
+  public VideoRealmRepository() {
+    this.toVideoMapper = new RealmVideoToVideoMapper();
+    this.toRealmVideoMapper = new VideoToRealmVideoMapper();
+  }
 
-        this.toVideoMapper = new RealmVideoToVideoMapper();
+  @Override
+  public RealmResults<RealmVideo> getVideos() {
+    ArrayList<Video> videoList = new ArrayList<Video>();
 
-    }
+    final Realm realm = Realm.getDefaultInstance();
+    RealmResults<RealmVideo> realmResults = realm.where(RealmVideo.class).findAll();
 
-    @Override
-    public RealmResults<VideoRealm> getVideos() {
-        ArrayList<Video> videoList = new ArrayList<Video>();
+    return realmResults;
+  }
 
-        final Realm realm = Realm.getInstance(realmConfiguration);
-        RealmResults<VideoRealm> realmResults = realm.where(VideoRealm.class).findAll();
+  @Override
+  public void add(final Video item) {
+    final Realm realm = Realm.getDefaultInstance();
 
-        return realmResults;
-    }
+    realm.executeTransaction(new Realm.Transaction() {
+      @Override
+      public void execute(Realm realm) {
+        RealmVideo realmVideo = toRealmVideoMapper.map(item);
+        realm.copyToRealm(realmVideo);
+//        realmVideo.VIDEO_FOLDER_PATH = item.getMediaPath();
+//        realmVideo.fileDuration = item.getFileDuration();
+//        realmVideo.tempPath = item.getTempPath();
+//        realmVideo.clipText = item.getClipText();
+//        realmVideo.clipTextPosition = item.getClipTextPosition();
+//        realmVideo.isTextToVideoAdded = item.isTextToVideoAdded();
+//        realmVideo.isTrimmedVideo = item.isTrimmedVideo();
+//        realmVideo.stopTime = item.getStopTime();
+//        realmVideo.startTime = item.getStartTime();
+      }
+    });
 
-    @Override
-    public void add(final Video item) {
-        final Realm realm = Realm.getInstance(realmConfiguration);
+    realm.close();
+  }
 
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                final VideoRealm videoRealm = realm.createObject(VideoRealm.class);
-                videoRealm.VIDEO_FOLDER_PATH = item.getMediaPath();
-                videoRealm.fileDuration = item.getFileDuration();
-                videoRealm.tempPath = item.getTempPath();
-                videoRealm.clipText = item.getClipText();
-                videoRealm.clipTextPosition = item.getClipTextPosition();
-                videoRealm.isTextToVideoAdded = item.isTextToVideoAdded();
-                videoRealm.isTrimmedVideo = item.isTrimmedVideo();
-                videoRealm.stopTime = item.getStopTime();
-                videoRealm.startTime = item.getStartTime();
-            }
-        });
+  @Override
+  public void removeAllVideos() {
+    final Realm realm = Realm.getDefaultInstance();
 
-        realm.close();
-    }
+    realm.delete(RealmVideo.class);
+  }
 
-    @Override
-    public void removeAllVideos() {
-        final Realm realm = Realm.getInstance(realmConfiguration);
+  @Override
+  public void add(Iterable<Video> items) {
 
-        realm.delete((Class<? extends RealmModel>) VideoRealm.class);
-    }
+  }
 
-    @Override
-    public void add(Iterable<Video> items) {
+  @Override
+  public void update(Video item) {
 
-    }
+  }
 
-    @Override
-    public void update(Video item) {
+  @Override
+  public void remove(Video item) {
 
-    }
+  }
 
-    @Override
-    public void remove(Video item) {
+  @Override
+  public void remove(Specification specification) {
 
-    }
+  }
 
-    @Override
-    public void remove(Specification specification) {
-
-    }
-
-    @Override
-    public List<Video> query(Specification specification) {
-        return null;
-    }
+  @Override
+  public List<Video> query(Specification specification) {
+    return null;
+  }
 }
