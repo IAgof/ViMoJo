@@ -50,14 +50,6 @@ public class RealmVideoTest {
   }
 
   @Test
-  public void testRealmVideoHasRealmProjectField() {
-    RealmProject realmProject = new RealmProject();
-    RealmVideo realmVideo = new RealmVideo();
-
-    realmVideo.project = realmProject;
-  }
-
-  @Test
   public void testRealmVideoHasIdentifierPrimaryKey() {
     RealmVideo realmVideo = new RealmVideo();
     realmVideo.identifier = 1;

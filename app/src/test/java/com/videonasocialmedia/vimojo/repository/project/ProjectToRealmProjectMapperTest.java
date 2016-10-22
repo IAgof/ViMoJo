@@ -1,13 +1,14 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+import android.support.annotation.NonNull;
+
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,9 +50,7 @@ public class ProjectToRealmProjectMapperTest {
 
   @Test
   public void testMapSetsRealmProjectMusicTitle() throws IllegalItemOnTrack {
-    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.EXCELLENT,
-            -1, Profile.ProfileType.pro);
-    Project project = new Project("Project title", "root/path", profile);
+    Project project = getAProject();
     Music music = new Music("music/path");
     music.setMusicTitle("Music title");
     project.getAudioTracks().get(0).insertItemAt(0, music);
@@ -60,5 +59,24 @@ public class ProjectToRealmProjectMapperTest {
     RealmProject realmProject = mapper.map(project);
 
     assertThat(realmProject.musicTitle, is(music.getMusicTitle()));
+  }
+
+  @Test
+  public void testMapSetsRealmProjectVideos() throws IllegalItemOnTrack {
+    Project project = getAProject();
+    Video video = new Video("media/path");
+    project.getMediaTrack().insertItem(video);
+    ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
+
+    RealmProject realmProject = mapper.map(project);
+
+    assertThat(realmProject.videos.size(), is(1));
+  }
+
+  @NonNull
+  private Project getAProject() {
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.EXCELLENT,
+            -1, Profile.ProfileType.pro);
+    return new Project("Project title", "root/path", profile);
   }
 }

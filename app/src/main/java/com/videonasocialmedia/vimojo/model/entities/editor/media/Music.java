@@ -96,7 +96,7 @@ public class Music extends Audio {
         return durationMusic;}
 
     @Override
-    public void setIdentifier() {
+    public void createIdentifier() {
         identifier=musicResourceId;
     }
 }

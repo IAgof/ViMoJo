@@ -132,9 +132,13 @@ public class Video extends Media {
         }
     }
 
-    public void setIdentifier() {
+    public void createIdentifier() {
         if (identifier < 1)
             this.identifier = count.addAndGet(1);
+    }
+
+    public void setIdentifier(int identifier) {
+        this.identifier = identifier;
     }
 
     public boolean isEdited() {

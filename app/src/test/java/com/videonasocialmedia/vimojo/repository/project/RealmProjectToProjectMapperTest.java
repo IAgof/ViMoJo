@@ -1,10 +1,14 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+import android.support.annotation.NonNull;
+
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 import com.videonasocialmedia.vimojo.sources.MusicSource;
 
 import org.junit.Before;
@@ -37,9 +41,7 @@ public class RealmProjectToProjectMapperTest {
 
   @Test
   public void testMapReturnsProjectInstance() {
-    RealmProject realmProject = new RealmProject();
-    realmProject.quality = VideoQuality.Quality.EXCELLENT.name();
-    realmProject.resolution = VideoResolution.Resolution.HD720.name();
+    RealmProject realmProject = getARealmProject();
     RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
 
     Project project = mapper.map(realmProject);
@@ -64,9 +66,7 @@ public class RealmProjectToProjectMapperTest {
 
   @Test
   public void testMapReturnsProjectWithProfile() {
-    RealmProject realmProject = new RealmProject();
-    realmProject.quality = VideoQuality.Quality.EXCELLENT.name();
-    realmProject.resolution = VideoResolution.Resolution.HD720.name();
+    RealmProject realmProject = getARealmProject();
     RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
 
     Project project = mapper.map(realmProject);
@@ -111,9 +111,7 @@ public class RealmProjectToProjectMapperTest {
 
   @Test
   public void testMapSetsMusicOnProject() {
-    RealmProject realmProject = new RealmProject();
-    realmProject.quality = VideoQuality.Quality.EXCELLENT.name();
-    realmProject.resolution = VideoResolution.Resolution.HD720.name();
+    RealmProject realmProject = getARealmProject();
     realmProject.musicTitle = "Sorrow and sadness";
     RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
     Music music = new Music("music/path");
@@ -125,5 +123,27 @@ public class RealmProjectToProjectMapperTest {
     assertThat(project.hasMusic(), is(true));
     assertThat(project.getMusic().getMusicTitle(), is("Sorrow and sadness"));
     assertThat(project.getMusic(), is(music));
+  }
+
+  @Test
+  public void testMapSetsProjectVideos() {
+    RealmProject realmProject = getARealmProject();
+    RealmVideo realmVideo = new RealmVideo();
+    realmVideo.mediaPath = "media/path";
+    realmProject.videos.add(realmVideo);
+
+    Project project = mockedMapper.map(realmProject);
+
+    assertThat(project.getMediaTrack().getItems().size(), is(1));
+    Video video = (Video) project.getMediaTrack().getItems().get(0);
+    assertThat(video.getMediaPath(), is("media/path"));
+  }
+
+  @NonNull
+  private RealmProject getARealmProject() {
+    RealmProject realmProject = new RealmProject();
+    realmProject.quality = VideoQuality.Quality.EXCELLENT.name();
+    realmProject.resolution = VideoResolution.Resolution.HD720.name();
+    return realmProject;
   }
 }

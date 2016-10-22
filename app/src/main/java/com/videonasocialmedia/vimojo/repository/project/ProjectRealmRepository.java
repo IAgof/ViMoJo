@@ -3,6 +3,8 @@ package com.videonasocialmedia.vimojo.repository.project;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
+import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +18,7 @@ import io.realm.Realm;
 public class ProjectRealmRepository implements ProjectRepository {
   protected Mapper<Project, RealmProject> toRealmProjectMapper;
   protected Mapper<RealmProject, Project> toProjectMapper;
+  protected VideoRepository videoRepository = new VideoRealmRepository();
 
   public ProjectRealmRepository() {
     this.toProjectMapper = new RealmProjectToProjectMapper();
@@ -46,8 +49,6 @@ public class ProjectRealmRepository implements ProjectRepository {
     realm.executeTransaction(new Realm.Transaction() {
       @Override
       public void execute(Realm realm) {
-//        RealmProject realmProject = realm.createObject(RealmProject.class);
-//        realmProject.title = item.getTitle();
         realm.copyToRealmOrUpdate(toRealmProjectMapper.map(item));
       }
     });
@@ -72,6 +73,11 @@ public class ProjectRealmRepository implements ProjectRepository {
   public Project getCurrentProject() {
     Realm realm = Realm.getDefaultInstance();
     RealmProject currentRealmProject = realm.where(RealmProject.class).findFirst();
+    if (currentRealmProject == null) {
+      return null;
+      // TODO(jliarte): 22/10/16 the return line throws
+      // java.lang.IllegalArgumentException: Null objects cannot be copied from Realm
+    }
     return toProjectMapper.map(realm.copyFromRealm(currentRealmProject));
   }
 }

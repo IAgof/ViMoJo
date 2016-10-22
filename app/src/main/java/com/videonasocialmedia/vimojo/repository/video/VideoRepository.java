@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.repository.video;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.repository.Repository;
+import com.videonasocialmedia.vimojo.repository.project.RealmProject;
 
 import io.realm.RealmResults;
 
@@ -10,6 +11,7 @@ import io.realm.RealmResults;
  */
 
 public interface VideoRepository extends Repository<Video>{
+    void update(Video item, RealmProject realmProject);
     RealmResults<RealmVideo> getVideos();
     void removeAllVideos();
 }

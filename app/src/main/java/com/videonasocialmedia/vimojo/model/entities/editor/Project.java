@@ -204,7 +204,9 @@ public class Project {
         Music result = null;
         try {
             result = (Music) getAudioTracks().get(0).getItems().get(0);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception exception) {
+            // exception retrieving music
+        }
         return result;
     }
 

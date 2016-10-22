@@ -4,13 +4,12 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
+import com.videonasocialmedia.vimojo.repository.project.RealmProject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.RealmModel;
 import io.realm.RealmResults;
 
 /**
@@ -74,7 +73,18 @@ public class VideoRealmRepository implements VideoRepository {
 
   @Override
   public void update(Video item) {
+    update(item, null);
+  }
 
+  @Override
+  public void update(final Video item, final RealmProject project) {
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransaction(new Realm.Transaction() {
+      @Override
+      public void execute(Realm realm) {
+        realm.copyToRealmOrUpdate(toRealmVideoMapper.map(item));
+      }
+    });
   }
 
   @Override

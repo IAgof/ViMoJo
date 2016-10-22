@@ -23,7 +23,6 @@ public class RealmVideo extends RealmObject {
     public boolean isTrimmedVideo = false;
     public int startTime;
     public int stopTime;
-    public RealmProject project;
 
     public RealmVideo() {
     }

@@ -19,6 +19,8 @@ import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalIte
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import java.util.List;
 
@@ -27,7 +29,9 @@ import de.greenrobot.event.EventBus;
 /**
  * This class is used to add a new videos to the project.
  */
+// TODO(jliarte): 22/10/16 refactor this class to have a unique insert point. Get rid of event bus
 public class AddVideoToProjectUseCase {
+    protected ProjectRepository projectRepository = new ProjectRealmRepository();
 
     /**
      * Constructor.
@@ -45,25 +49,18 @@ public class AddVideoToProjectUseCase {
 
     public void addVideoToTrack(Video video) {
         try {
-            MediaTrack mediaTrack = Project.getInstance(null, null, null).getMediaTrack();
+            Project currentProject = Project.getInstance(null, null, null);
+            MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(video);
+            projectRepository.update(currentProject);
+            // TODO(jliarte): 22/10/16 should get rid of EventBus calls?
             EventBus.getDefault().post(new AddMediaItemToTrackSuccessEvent(video));
-            EventBus.getDefault().post(new UpdateProjectDurationEvent(Project.getInstance(null, null, null).getDuration()));
-            EventBus.getDefault().post(new NumVideosChangedEvent(Project.getInstance(null, null, null).getMediaTrack().getNumVideosInProject()));
+            EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
+            EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumVideosInProject()));
             EventBus.getDefault().post(new VideoAddedToTrackEvent());
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             //TODO manejar error
         }
-    }
-
-    /**
-     * @param videoPath
-     * @param listener
-     * @deprecated use the one parameter version instead
-     */
-    public void addVideoToTrack(String videoPath, OnAddMediaFinishedListener listener) {
-        Video videoToAdd = new Video(videoPath);
-        addVideoToTrack(videoToAdd, listener);
     }
 
     /**
@@ -73,11 +70,14 @@ public class AddVideoToProjectUseCase {
      */
     public void addVideoToTrack(Video video, OnAddMediaFinishedListener listener) {
         try {
-            MediaTrack mediaTrack = Project.getInstance(null, null, null).getMediaTrack();
+            Project currentProject = Project.getInstance(null, null, null);
+            MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(video);
+            projectRepository.update(currentProject);
             listener.onAddMediaItemToTrackSuccess(video);
-            EventBus.getDefault().post(new UpdateProjectDurationEvent(Project.getInstance(null, null, null).getDuration()));
-            EventBus.getDefault().post(new NumVideosChangedEvent(Project.getInstance(null, null, null).getMediaTrack().getNumVideosInProject()));
+            // TODO(jliarte): 22/10/16 should get rid of EventBus calls?
+            EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
+            EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumVideosInProject()));
             EventBus.getDefault().post(new VideoAddedToTrackEvent());
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             listener.onAddMediaItemToTrackError();
@@ -86,22 +86,27 @@ public class AddVideoToProjectUseCase {
 
     public void addVideoToProjectAtPosition(Video video, int position) {
         try {
-            MediaTrack mediaTrack = Project.getInstance(null, null, null).getMediaTrack();
+            Project currentProject = Project.getInstance(null, null, null);
+            MediaTrack mediaTrack = currentProject.getMediaTrack();
+            projectRepository.update(currentProject);
             mediaTrack.insertItemAt(position, video);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
-
+            // TODO(jliarte): 22/10/16 error management?
         }
     }
 
     public void addVideoListToTrack(List<Video> videoList, OnAddMediaFinishedListener listener) {
         try {
-            MediaTrack mediaTrack = Project.getInstance(null, null, null).getMediaTrack();
+            Project currentProject = Project.getInstance(null, null, null);
+            MediaTrack mediaTrack = currentProject.getMediaTrack();
             for (Video video : videoList) {
                 mediaTrack.insertItem(video);
             }
+            projectRepository.update(currentProject);
             listener.onAddMediaItemToTrackSuccess(null);
-            EventBus.getDefault().post(new UpdateProjectDurationEvent(Project.getInstance(null, null, null).getDuration()));
-            EventBus.getDefault().post(new NumVideosChangedEvent(Project.getInstance(null, null, null).getMediaTrack().getNumVideosInProject()));
+            // TODO(jliarte): 22/10/16 should get rid of EventBus calls?
+            EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
+            EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumVideosInProject()));
             EventBus.getDefault().post(new VideoAddedToTrackEvent());
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             listener.onAddMediaItemToTrackError();

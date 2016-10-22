@@ -10,6 +10,14 @@ import com.videonasocialmedia.vimojo.repository.Mapper;
 public class RealmVideoToVideoMapper implements Mapper<RealmVideo,Video> {
     @Override
     public Video map(RealmVideo realmVideo) {
-        return null;
+        Video video = new Video(realmVideo.mediaPath);
+        video.setIdentifier(realmVideo.identifier);
+        video.setClipText(realmVideo.clipText);
+        video.setClipTextPosition(realmVideo.clipTextPosition);
+        video.setTextToVideoAdded(realmVideo.isTextToVideoAdded);
+        video.setTrimmedVideo(realmVideo.isTrimmedVideo);
+        video.setStartTime(realmVideo.startTime);
+        video.setStopTime(realmVideo.stopTime);
+        return video;
     }
 }

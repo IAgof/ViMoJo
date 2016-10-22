@@ -9,6 +9,8 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.repository.Mapper;
+import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
+import com.videonasocialmedia.vimojo.repository.video.RealmVideoToVideoMapper;
 import com.videonasocialmedia.vimojo.sources.MusicSource;
 
 /**
@@ -18,6 +20,7 @@ import com.videonasocialmedia.vimojo.sources.MusicSource;
 public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project> {
 
   private MusicSource musicSource = new MusicSource();
+  private RealmVideoToVideoMapper toVideoMapper = new RealmVideoToVideoMapper();
 
   @Override
   public Project map(RealmProject realmProject) {
@@ -26,6 +29,7 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
       Project project = new Project(realmProject.title, null, profile);
       project.setProjectPath(realmProject.projectPath);
       setProjectMusic(project, realmProject);
+      setProjectVideos(project, realmProject);
       return project;
     } catch (Exception exception) {
       return null;
@@ -45,6 +49,18 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
       Music music = musicSource.getMusicByTitle(realmProject.musicTitle);
       try {
         project.getAudioTracks().get(0).insertItemAt(0, music);
+      } catch (IllegalItemOnTrack illegalItemOnTrack) {
+        illegalItemOnTrack.printStackTrace();
+      }
+    }
+  }
+
+  private void setProjectVideos(Project project, RealmProject realmProject) {
+    // TODO(jliarte): 22/10/16 sort videos by order in project
+//    realmProject.videos.sort("")
+    for (RealmVideo realmVideo : realmProject.videos) {
+      try {
+        project.getMediaTrack().insertItem(toVideoMapper.map(realmVideo));
       } catch (IllegalItemOnTrack illegalItemOnTrack) {
         illegalItemOnTrack.printStackTrace();
       }
