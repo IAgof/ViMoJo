@@ -12,17 +12,16 @@ import java.util.LinkedList;
  */
 
 public class ReorderProjectVideoListUseCase {
-    public void reorderVideoList(){
-        Project project= Project.getInstance(null,null,null);
-        Track track=project.getMediaTrack();
+  public void reorderVideoList() {
+    Project project = Project.getInstance(null, null, null);
+    Track track = project.getMediaTrack();
 
-        LinkedList<Media> videoList = track.getItems();
+    LinkedList<Media> videoList = track.getItems();
 
-        int position = 1;
-        for (Media media:videoList
-             ) {
-            media.setPosition(position);
-            position += 1;
-        }
+    int position = 1;
+    for (Media media : videoList) {
+      media.setPosition(position);
+      position++;
     }
+  }
 }

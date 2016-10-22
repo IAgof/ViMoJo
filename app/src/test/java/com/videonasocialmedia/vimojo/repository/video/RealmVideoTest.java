@@ -56,4 +56,12 @@ public class RealmVideoTest {
 
     assertThat(realmVideo.identifier, is(1));
   }
+
+  @Test
+  public void testRealmVideoHasPosition() {
+    RealmVideo realmVideo = new RealmVideo();
+    realmVideo.position = 0;
+
+    assertThat(realmVideo.position, is(0));
+  }
 }

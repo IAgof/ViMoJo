@@ -12,6 +12,7 @@ import io.realm.annotations.PrimaryKey;
 public class RealmVideo extends RealmObject {
     @PrimaryKey
     public int identifier;
+    public int position;
     public String mediaPath;
     // TODO(jliarte): 22/10/16 what to do with those values, as they are private, and maybe we
     //                don't need to store that information
@@ -27,9 +28,10 @@ public class RealmVideo extends RealmObject {
     public RealmVideo() {
     }
 
-    public RealmVideo(int identifier, String mediaPath, String clipText, String clipTextPosition,
+    public RealmVideo(int identifier, int position, String mediaPath, String clipText, String clipTextPosition,
                       boolean textToVideoAdded, boolean trimmedVideo, int startTime, int stopTime) {
         this.identifier = identifier;
+        this.position = position;
         this.mediaPath = mediaPath;
         this.clipText = clipText;
         this.clipTextPosition = clipTextPosition;
