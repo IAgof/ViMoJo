@@ -70,6 +70,7 @@
     <string name="galleryActivityTitle">Gallery</string>
     <string name="mastersFolderTitle">Raw</string>
     <string name="editedFolderTitle">Edited</string>
+    <string name="error_video_format">Video format different to video project </string>
 
     <!--SoundVolumeActivity-->
     <string name="exitSoundVolumeActivity" >Are you sure do you want to discard the changes and return to record again?</string>

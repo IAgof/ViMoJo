@@ -1,11 +1,13 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -27,6 +29,7 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.OnSelectionMode
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaDialogListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -241,6 +244,31 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
             intent = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void showDialogVideosNotAddedFromGallery(ArrayList<Integer> listVideoId) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
+        dialog.setTitle(R.string.error_video_format);
+
+        String message = "Videos ";
+        String videos = "";
+        for(int videoId: listVideoId){
+            message = message.concat(String.valueOf(videoId));
+            message = message.concat(" ");
+        }
+
+        dialog.setMessage(message.concat(videos));
+
+        dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                navigate();
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     @Override
