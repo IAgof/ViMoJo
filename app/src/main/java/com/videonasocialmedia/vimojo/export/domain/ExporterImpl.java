@@ -119,7 +119,7 @@ public class ExporterImpl implements Exporter {
 
     private Movie appendFiles(ArrayList<String> videoTranscoded) {
         Movie result;
-        if (project.isMusicOnProject()) {
+        if (project.hasMusic()) {
             Movie merge = appendVideos(videoTranscoded, false);
 
             Music music = (Music) project.getAudioTracks().get(0).getItems().getFirst();

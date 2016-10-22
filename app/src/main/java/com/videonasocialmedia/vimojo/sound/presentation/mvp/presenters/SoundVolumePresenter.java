@@ -11,7 +11,6 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeVie
 import com.videonasocialmedia.vimojo.utils.AndroidUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -79,7 +78,7 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
     }
 
     public void removeMusicFromProject() {
-        if (currentProject.isMusicOnProject()) {
+        if (currentProject.hasMusic()) {
             currentProject.setMusicOnProject(false);
         }
     }

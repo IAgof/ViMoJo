@@ -18,26 +18,28 @@ import static org.hamcrest.Matchers.is;
  * Created by jliarte on 20/10/16.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ProjectRealmTest {
+public class RealmProjectTest {
   @Test
   public void testProjectExtendsRealmObject() {
-    ProjectRealm realmProject = new ProjectRealm();
+    RealmProject realmProject = new RealmProject();
 
     assertThat(realmProject, IsInstanceOf.instanceOf(RealmObject.class));
   }
 
   @Test
   public void testProjectFields() {
-    ProjectRealm realmProject = new ProjectRealm();
+    RealmProject realmProject = new RealmProject();
     realmProject.title = "Project title";
-    realmProject.rootPath = "root/path";
+    realmProject.projectPath = "root/path";
     realmProject.resolution = VideoResolution.Resolution.HD720.name();
     realmProject.quality = VideoQuality.Quality.GOOD.name();
+    realmProject.musicTitle = "My cool music";
 
     assertThat(realmProject.title, is("Project title"));
-    assertThat(realmProject.rootPath, is("root/path"));
+    assertThat(realmProject.projectPath, is("root/path"));
     assertThat(realmProject.resolution, is(VideoResolution.Resolution.HD720.name()));
     assertThat(realmProject.quality, is(VideoQuality.Quality.GOOD.name()));
+    assertThat(realmProject.musicTitle, is("My cool music"));
   }
 
 }

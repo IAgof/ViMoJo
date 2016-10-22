@@ -65,14 +65,12 @@ public class Profile {
      * constructor and therefore is the default constructor. It has all possible atributes for the
      * profile object.
      * <p/>
-     * There can be only a single instance of a profile, and therefore this constructor can only be
-     * accessed through the factory.
      *
      * @param resolution  - Maximum resolution allowed for the profile.
      * @param maxDuration - Maximum video duration allowed for the profile.
      * @param type        - Profile type.
      */
-    private Profile(VideoResolution.Resolution resolution, VideoQuality.Quality quality, long maxDuration, ProfileType type) {
+    public Profile(VideoResolution.Resolution resolution, VideoQuality.Quality quality, long maxDuration, ProfileType type) {
         this.resolution = resolution;
         this.videoResolution = new VideoResolution(resolution);
         this.maxDuration = maxDuration;
@@ -84,9 +82,12 @@ public class Profile {
     /**
      * Profile factory.
      *
+     * (jliarte): since 21/10/16 Profile stops being a singleton :P
+     *
      * @param profileType
      * @return - profile instance.
      */
+    @Deprecated
     public static Profile getInstance(ProfileType profileType) {
         if (INSTANCE == null) {
             if (profileType == ProfileType.free) {

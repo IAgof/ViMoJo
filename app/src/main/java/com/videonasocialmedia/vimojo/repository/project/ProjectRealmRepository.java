@@ -4,28 +4,51 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
 
+import java.util.Collections;
 import java.util.List;
+
+import io.realm.Realm;
 
 /**
  * Created by jliarte on 20/10/16.
  */
 
 public class ProjectRealmRepository implements ProjectRepository {
-  private Mapper<Project, ProjectRealm> toProjectMapper;
+  protected Mapper<Project, RealmProject> toRealmProjectMapper;
+  protected Mapper<RealmProject, Project> toProjectMapper;
 
-  @Override
-  public void add(Project item) {
-
+  public ProjectRealmRepository() {
+    this.toProjectMapper = new RealmProjectToProjectMapper();
+    this.toRealmProjectMapper = new ProjectToRealmProjectMapper();
   }
 
   @Override
-  public void add(Iterable<Project> items) {
-
+  public void add(final Project item) {
+    add(Collections.singletonList(item));
   }
 
   @Override
-  public void update(Project item) {
+  public void add(final Iterable<Project> items) {
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransaction(new Realm.Transaction() {
+      @Override
+      public void execute(Realm realm) {
+        for (Project item: items) {
+          realm.copyToRealm(toRealmProjectMapper.map(item));
+        }
+      }
+    });
+  }
 
+  @Override
+  public void update(final Project item) {
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransaction(new Realm.Transaction() {
+      @Override
+      public void execute(Realm realm) {
+        realm.copyToRealmOrUpdate(toRealmProjectMapper.map(item));
+      }
+    });
   }
 
   @Override
@@ -45,6 +68,8 @@ public class ProjectRealmRepository implements ProjectRepository {
 
   @Override
   public Project getCurrentProject() {
-    return Project.getInstance(null, null, null);
+    Realm realm = Realm.getDefaultInstance();
+    RealmProject currentRealmProject = realm.where(RealmProject.class).findFirst();
+    return toProjectMapper.map(currentRealmProject);
   }
 }

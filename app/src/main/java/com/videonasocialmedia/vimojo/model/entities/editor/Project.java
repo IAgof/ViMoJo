@@ -74,7 +74,7 @@ public class Project {
      * @param rootPath - Path to root folder for the current project.
      * @param profile  - Define some characteristics and limitations of the current project.
      */
-    private Project(String title, String rootPath, Profile profile) {
+    public Project(String title, String rootPath, Profile profile) {
         this.title = title;
         this.projectPath = rootPath + "/projects/" + title; //todo probablemente necesitemos un slugify de ese title.
         this.checkPathSetup(rootPath);
@@ -112,8 +112,11 @@ public class Project {
     /**
      * Project factory.
      *
+     * (jliarte): since 21/10/16 Project stops being a singleton :P
+     *
      * @return - Singleton instance of the current project.
      */
+    @Deprecated
     public static Project getInstance(String title, String rootPath, Profile profile) {
         if (INSTANCE == null) {
             INSTANCE = new Project(title, rootPath, profile);
@@ -201,8 +204,9 @@ public class Project {
         return result;
     }
 
-    public boolean isMusicOnProject() {
-        return isMusicOnProject;
+    public boolean hasMusic() {
+//        return isMusicOnProject;
+        return (getMusic() != null);
     }
 
     public void setMusicOnProject(boolean musicOnProject) {
