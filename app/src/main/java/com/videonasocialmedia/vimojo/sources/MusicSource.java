@@ -1,9 +1,6 @@
 package com.videonasocialmedia.vimojo.sources;
 
-//import android.content.Context;
-
 import com.videonasocialmedia.vimojo.R;
-//import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
@@ -15,7 +12,6 @@ import java.util.List;
  *
  */
 public class MusicSource {
-//    Context context = VimojoApplication.getAppContext();
 
     protected List<Music> localMusic = new ArrayList();
 
