@@ -65,6 +65,8 @@ public class Project {
     private int duration;
     private Music music;
 
+    private String musicTitleIdentifier;
+
     private boolean isMusicOnProject = false;
 
     /**
@@ -211,5 +213,13 @@ public class Project {
 
     public void setMusicOnProject(boolean musicOnProject) {
         isMusicOnProject = musicOnProject;
+    }
+
+    public String getMusicTitleIdentifier() {
+        return musicTitleIdentifier;
+    }
+
+    public void setMusicTitleIdentifier(String musicTitleIdentifier) {
+        this.musicTitleIdentifier = musicTitleIdentifier;
     }
 }

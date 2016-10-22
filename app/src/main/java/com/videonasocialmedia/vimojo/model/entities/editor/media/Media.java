@@ -85,6 +85,8 @@ public abstract class Media extends EditorElement {
      */
     protected License license;
 
+    protected int position;
+
     /**
      * Constructor of minimum number of parameters. Default constructor.
      *
@@ -261,5 +263,13 @@ public abstract class Media extends EditorElement {
         if (this.ending != null && this.ending.getBeforeMediaItem() != this) {
             this.opening.setBeforeMediaItem(this);
         }
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }
