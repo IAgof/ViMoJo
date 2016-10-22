@@ -26,7 +26,8 @@ public class InitAppPresenter {
       Project.INSTANCE = projectRepository.getCurrentProject();
     }
     //TODO Define project title (by date, by project count, ...)
-    Project.getInstance(Constants.PROJECT_TITLE, rootPath, getDefaultFreeProfile());
+    Project currentProject = Project.getInstance(Constants.PROJECT_TITLE, rootPath, getDefaultFreeProfile());
+    projectRepository.update(currentProject);
   }
 
   //TODO Check user profile, by default 720p free

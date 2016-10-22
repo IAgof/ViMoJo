@@ -75,6 +75,19 @@ public class InitAppPresenterTest {
     assertThat(Project.getInstance(null, null, null), is(currentProject));
   }
 
+  @Test
+  public void startLoadingProjectSaveOrUpdateProjectInstance() {
+    assert Project.INSTANCE == null;
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.EXCELLENT,
+            -1, Profile.ProfileType.pro);
+    Project currentProject = new Project("current project", "current/path", profile);
+    doReturn(currentProject).when(mockedProjectRepo).getCurrentProject();
+
+    injectedPresenter.startLoadingProject("root/path");
+
+    verify(mockedProjectRepo).update(currentProject);
+  }
+
   @NonNull
   private InitAppView getInitAppView() {
     return new InitAppView() {

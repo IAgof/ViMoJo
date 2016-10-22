@@ -46,6 +46,8 @@ public class ProjectRealmRepository implements ProjectRepository {
     realm.executeTransaction(new Realm.Transaction() {
       @Override
       public void execute(Realm realm) {
+//        RealmProject realmProject = realm.createObject(RealmProject.class);
+//        realmProject.title = item.getTitle();
         realm.copyToRealmOrUpdate(toRealmProjectMapper.map(item));
       }
     });
@@ -70,6 +72,6 @@ public class ProjectRealmRepository implements ProjectRepository {
   public Project getCurrentProject() {
     Realm realm = Realm.getDefaultInstance();
     RealmProject currentRealmProject = realm.where(RealmProject.class).findFirst();
-    return toProjectMapper.map(currentRealmProject);
+    return toProjectMapper.map(realm.copyFromRealm(currentRealmProject));
   }
 }
