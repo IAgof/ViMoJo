@@ -580,6 +580,9 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="text_hint_dialog_shareActivity">Nombre del proyecto</string>
     <string name="positiveButtonDialogShareActivity">Compartir</string>
     <string name="negativeButtonDialogShareActivity">Cancelar</string>
+    <string name="dialog_message_clean_project">¿Quiere empezar un nuevo proyecto?</string>
+    <string name="dialog_accept_clean_project">Sí</string>
+    <string name="dialog_cancel_clean_project">No</string>
 
 
 </resources>
