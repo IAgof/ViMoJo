@@ -266,7 +266,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
 
     private void createDialogToInsertNameProject(final FtpNetwork ftpSelected) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
         editTextDialog=(EditText)dialogView.findViewById(R.id.text_dialog);
         editTextDialog.requestFocus();
