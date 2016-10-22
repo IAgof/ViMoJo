@@ -82,7 +82,6 @@ public class ProjectTest {
 
     @Test
     public void getVideoParamsFromProjectProfileFree(){
-
         Project videonaProject = getAProject();
         VideoResolution resolution = videonaProject.getProfile().getVideoResolution();
         VideoQuality quality = videonaProject.getProfile().getVideoQuality();
@@ -90,10 +89,9 @@ public class ProjectTest {
         assertThat("videoBitRate", 5000*1000, CoreMatchers.is(quality.getVideoBitRate()));
         assertThat("videoWidth", 1280, CoreMatchers.is(resolution.getWidth()));
         assertThat("videoHeight", 720, CoreMatchers.is(resolution.getHeight()));
-
     }
 
     public Project getAProject() {
-        return Project.getInstance("project title", "root path", Profile.getInstance(Profile.ProfileType.free));
+        return new Project("project title", "root path", Profile.getInstance(Profile.ProfileType.free));
     }
 }

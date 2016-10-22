@@ -36,8 +36,9 @@ import com.mixpanel.android.mpmetrics.InAppNotification;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.VimojoApplication;
-import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+//import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
+//import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnInitAppEventListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
@@ -94,6 +95,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private String androidId = null;
     private String initState;
     private CompositeMultiplePermissionsListener compositePermissionsListener;
+    private InitAppPresenter presenter = new InitAppPresenter(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -526,15 +528,16 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     @Override
     public void onCheckPathsAppSuccess() {
-        startLoadingProject(this);
+        //TODO Define path project. By default, path app. Path .temp, private data
+        presenter.startLoadingProject(sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH, ""));
         moveVideonaVideosToDcim();
     }
 
-    private void startLoadingProject(OnInitAppEventListener listener) {
-        //TODO Define project title (by date, by project count, ...)
-        //TODO Define path project. By default, path app. Path .temp, private data
-        Project.getInstance(Constants.PROJECT_TITLE, sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH, ""), checkProfile());
-    }
+//    private void startLoadingProject(OnInitAppEventListener listener) {
+//        //TODO Define project title (by date, by project count, ...)
+//        //TODO Define path project. By default, path app. Path .temp, private data
+//        Project.getInstance(Constants.PROJECT_TITLE, sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH, ""), getDefaultFreeProfile());
+//    }
 
     private void moveVideonaVideosToDcim() {
         String moviesPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + File.separator;
@@ -572,11 +575,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
             }
         }
         return sourceDirectory;
-    }
-
-    //TODO Check user profile, by default 720p free
-    private Profile checkProfile() {
-        return Profile.getInstance(Profile.ProfileType.free);
     }
 
     @Override

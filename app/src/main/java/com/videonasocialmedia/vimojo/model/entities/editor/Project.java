@@ -36,7 +36,9 @@ public class Project {
     /**
      * There could be just one project open at a time. So this converts Project in a Singleton.
      */
-    private static Project INSTANCE;
+    // TODO(jliarte): 22/10/16 Would use project instance to store current project by now
+    @Deprecated
+    public static Project INSTANCE;
     /**
      * Project name. Also it will be the name of the exported video
      */
