@@ -18,6 +18,8 @@ import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalOrp
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import java.util.ArrayList;
 
@@ -27,10 +29,10 @@ import de.greenrobot.event.EventBus;
  * This class is used to removed videos from the project.
  */
 public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectUseCase {
-
+    ProjectRepository projectRepository = new ProjectRealmRepository();
 
     /**
-     * Constructor.
+     * Default empty Constructor.
      */
     public RemoveVideoFromProjectUseCase() {
     }
@@ -38,17 +40,18 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectUseC
     @Override
     public void removeMediaItemsFromProject(ArrayList<Media> list, OnRemoveMediaFinishedListener listener) {
         boolean correct = false;
-        MediaTrack mediaTrack = Project.getInstance(null, null, null).getMediaTrack();
+        Project currentProject = Project.getInstance(null, null, null);
+        MediaTrack mediaTrack = currentProject.getMediaTrack();
         for (Media media : list) {
             correct = removeVideoItemFromTrack(media, mediaTrack);
             if (!correct) break;
         }
         if (correct) {
+            projectRepository.update(currentProject);
             listener.onRemoveMediaItemFromTrackSuccess();
         } else {
             listener.onRemoveMediaItemFromTrackError();
         }
-
     }
 
     /**
@@ -61,6 +64,7 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectUseC
         boolean result;
         try {
             mediaTrack.deleteItem(video);
+            // TODO(jliarte): 23/10/16 get rid of EventBus?
             EventBus.getDefault().post(new UpdateProjectDurationEvent(Project.getInstance(null, null, null).getDuration()));
             EventBus.getDefault().post(new NumVideosChangedEvent(Project.getInstance(null, null, null).getMediaTrack().getNumVideosInProject()));
             result = true;
