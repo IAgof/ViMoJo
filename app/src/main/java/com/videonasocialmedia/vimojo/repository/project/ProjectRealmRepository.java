@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by jliarte on 20/10/16.
@@ -55,8 +56,16 @@ public class ProjectRealmRepository implements ProjectRepository {
   }
 
   @Override
-  public void remove(Project item) {
-
+  public void remove(final Project item) {
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransaction(new Realm.Transaction() {
+      @Override
+      public void execute(Realm realm) {
+        RealmResults<RealmProject> result = realm.where(RealmProject.class).
+                equalTo("title", item.getTitle()).findAll();
+        result.deleteAllFromRealm();
+      }
+    });
   }
 
   @Override

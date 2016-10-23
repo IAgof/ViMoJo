@@ -15,6 +15,9 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
 
   @Override
   public RealmProject map(Project project) {
+    if (project.getProfile() == null) {
+      return null;
+    }
     RealmProject realmProject = new RealmProject(project.getTitle(), project.getProjectPath(),
             project.getProfile().getQuality().name(), project.getProfile().getResolution().name());
     if (project.hasMusic()) {

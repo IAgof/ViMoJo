@@ -30,7 +30,6 @@ import java.util.ArrayList;
  * one
  */
 public class Project {
-
     private final String TAG = getClass().getCanonicalName();
     public static String VIDEONA_PATH = "";
     /**

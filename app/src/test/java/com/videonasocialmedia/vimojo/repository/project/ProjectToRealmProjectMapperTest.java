@@ -16,6 +16,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -84,6 +85,18 @@ public class ProjectToRealmProjectMapperTest {
     RealmProject realmProject = mapper.map(project);
 
     assertThat(realmProject.videos.size(), is(1));
+  }
+
+  // TODO(jliarte): 23/10/16 what to do in this case? exception in realm
+  //                   java.lang.IllegalArgumentException: Null objects cannot be copied into Realm.
+  @Test
+  public void testMapReturnsNullRealmProjectIfNullProjectProfile() {
+    Project project = new Project("title", "root/path", null);
+    ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
+
+    RealmProject realmProject = mapper.map(project);
+
+    assertThat(realmProject, nullValue());
   }
 
   @NonNull

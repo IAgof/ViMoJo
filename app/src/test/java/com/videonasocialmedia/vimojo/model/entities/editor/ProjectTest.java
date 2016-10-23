@@ -6,11 +6,14 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.MediaTrack;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -24,9 +27,19 @@ import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectTest {
+    @Mock ProjectRepository mockedProjectRepository;
+    @InjectMocks Project injectedProject;
+
     @After
     public void tearDown() {
         Project.getInstance(null, null, null).clear();
+    }
+
+    @Test
+    public void getInstanceCallsProjectRepositoryGetCurrentProjectIfInstanceIsNull() {
+        assert Project.INSTANCE == null;
+
+        Project.getInstance(null, null, null);
     }
 
     @Test

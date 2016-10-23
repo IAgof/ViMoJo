@@ -73,11 +73,6 @@ import butterknife.ButterKnife;
  */
 
 public class InitAppActivity extends VimojoActivity implements InitAppView, OnInitAppEventListener {
-
-
-    /**
-     * LOG_TAG
-     */
     private final String LOG_TAG = this.getClass().getSimpleName();
     protected Handler handler = new Handler();
     @Bind(R.id.videona_version)

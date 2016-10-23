@@ -9,6 +9,7 @@ import android.net.Uri;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.ClearProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.social.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.domain.social.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -31,6 +32,7 @@ public class ShareVideoPresenter {
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetFtpListUseCase getFtpListUseCase;
     private ClearProjectUseCase clearProjectUseCase;
+    protected CreateDefaultProjectUseCase createDefaultProjectUseCase;
     private ShareVideoView shareVideoView;
     protected Project currentProject;
     protected UserEventTracker userEventTracker;
@@ -55,7 +57,8 @@ public class ShareVideoPresenter {
     public void onCreate() {
         obtainNetworksToShareUseCase = new ObtainNetworksToShareUseCase();
         getFtpListUseCase = new GetFtpListUseCase();
-        clearProjectUseCase= new ClearProjectUseCase();
+        clearProjectUseCase = new ClearProjectUseCase();
+        createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
     }
 
     public void onResume() {
@@ -126,7 +129,19 @@ public class ShareVideoPresenter {
         userEventTracker.trackVideoShared(socialNetwork, currentProject, getNumTotalVideosShared());
         userEventTracker.trackVideoSharedUserTraits();
     }
-    public void resetProject() {
+    public void resetProject(String rootPath) {
+        clearProjectDataFromSharedPreferences();
         clearProjectUseCase.clearProject(currentProject);
+        createDefaultProjectUseCase.loadOrCreateProject(rootPath);
+    }
+
+    // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer?
+    private void clearProjectDataFromSharedPreferences() {
+        sharedPreferences = VimojoApplication.getAppContext().getSharedPreferences(
+                ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
+                Context.MODE_PRIVATE);
+        preferencesEditor = sharedPreferences.edit();
+        preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION, 0);
+        preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS, 0);
     }
 }

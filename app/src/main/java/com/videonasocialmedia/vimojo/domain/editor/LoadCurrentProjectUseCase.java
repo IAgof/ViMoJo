@@ -1,17 +1,19 @@
-package com.videonasocialmedia.vimojo.domain;
+package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 /**
- * Use case for discarding current project and creating a new one
+ * Created by jliarte on 23/10/16.
  */
-public class ClearProjectUseCase {
+public class LoadCurrentProjectUseCase {
   protected ProjectRepository projectRepository = new ProjectRealmRepository();
 
-  public void clearProject(Project project) {
-    projectRepository.remove(project);
-    project.clear();
+  public Project loadCurrentProject() {
+    if (Project.INSTANCE == null) {
+      Project.INSTANCE = projectRepository.getCurrentProject();
+    }
+    return Project.INSTANCE;
   }
 }

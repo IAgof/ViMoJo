@@ -331,7 +331,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        presenter.resetProject();
+                        presenter.resetProject(sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH, ""));
                         navigator.navigateTo(EditActivity.class);
                         break;
 
