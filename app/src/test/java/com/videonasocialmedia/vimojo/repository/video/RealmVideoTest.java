@@ -29,7 +29,8 @@ public class RealmVideoTest {
     RealmVideo realmVideo = new RealmVideo();
 //    realmVideo.VIDEO_FOLDER_PATH = "video/forder";
 //    realmVideo.fileDuration = 10;
-//    realmVideo.tempPath = "tmp/path";
+    realmVideo.tempPath = "tmp/path";
+    realmVideo.isTempPathFinished = true;
     realmVideo.clipText = "text";
     realmVideo.clipTextPosition = VideoEditTextActivity.TextPosition.CENTER.name();
     realmVideo.isTextToVideoAdded = false;
@@ -39,7 +40,8 @@ public class RealmVideoTest {
 
 //    assertThat(realmVideo.VIDEO_FOLDER_PATH, is("video/forder"));
 //    assertThat(realmVideo.fileDuration, is(10));
-//    assertThat(realmVideo.tempPath, is("tmp/path"));
+    assertThat(realmVideo.tempPath, is("tmp/path"));
+    assertThat(realmVideo.isTempPathFinished, is(true));
     assertThat(realmVideo.clipText, is("text"));
     assertThat(realmVideo.clipTextPosition, is(VideoEditTextActivity.TextPosition.CENTER.name()));
     assertThat(realmVideo.isTextToVideoAdded, is(false));

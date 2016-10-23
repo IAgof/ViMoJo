@@ -13,6 +13,8 @@ import com.videonasocialmedia.vimojo.export.domain.OnGetVideonaFormatListener;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchExportTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
@@ -28,6 +30,7 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
 
     GetVideonaFormatUseCase getVideonaFormatUseCase;
     private VideonaFormat videoFormat;
+    private final VideoRepository videoRepository = new VideoRealmRepository();
 
     public ExportTempBackgroundService(){
        // getVideonaFormatUseCase = new GetVideonaFormatUseCase();
@@ -68,6 +71,7 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
                     @Override
                     public void onTranscodeCompleted() {
                         video.setTempPathFinished(true);
+                        videoRepository.update(video);
                         sendResultBroadcast(videoId, true);
                     }
 
@@ -78,16 +82,19 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
                             video.setTrimmedVideo(false);
                         if(video.hasText())
                             video.setTextToVideoAdded(false);
+                        videoRepository.update(video);
                         sendResultBroadcast(videoId, false);
                     }
 
                     @Override
                     public void onTranscodeFailed(Exception e) {
+                        // TODO(jliarte): 24/10/16 if transcoding fails, do we remove the effect??
                         video.deleteTempVideo();
                         if(video.isTrimmedVideo())
                             video.setTrimmedVideo(false);
                         if(video.hasText())
                             video.setTextToVideoAdded(false);
+                        videoRepository.update(video);
                         sendResultBroadcast(videoId, false);
                     }
 

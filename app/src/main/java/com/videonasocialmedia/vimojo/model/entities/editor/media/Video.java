@@ -35,7 +35,8 @@ public class Video extends Media {
      * The total duration of the file media resource
      */
     private int fileDuration;
-    private String tempPath;
+    // TODO(jliarte): 24/10/16 review this public field
+    public String tempPath;
     private String clipText;
     private String clipTextPosition;
     private boolean isTempPathFinished = false;
@@ -143,6 +144,7 @@ public class Video extends Media {
         this.identifier = identifier;
     }
 
+    // TODO(jliarte): 24/10/16 review this design as it gives problem with persistence
     public boolean isEdited() {
         return tempPath!=null;
     }
