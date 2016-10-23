@@ -15,22 +15,20 @@ import java.io.IOException;
  * Created by alvaro on 23/10/16.
  */
 
-public class SetAudioFadeInFadeOutToFileUseCase implements OnAudioEffectListener, OnExportEndedListener {
+public class GetAudioFadeInFadeOutFromVideoUseCase implements OnAudioEffectListener{
 
     private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
     protected TranscoderHelper transcoderHelper = new TranscoderHelper(mediaTranscoder);
-
-    private ExportSwapAudioToVideoUseCase exportSwapAudioToVideoUseCase;
-
     private Video videoToFadeInFadeOut;
+    OnGetAudioFadeInFadeOutFromVideoListener listener;
 
     String tempFileAudio = Constants.FOLDER_VIDEONA_TEMP_AUDIO + File.separator + "AudioFadeInOut" + ".m4a";
 
-    public SetAudioFadeInFadeOutToFileUseCase(){
-
+    public GetAudioFadeInFadeOutFromVideoUseCase(OnGetAudioFadeInFadeOutFromVideoListener listener){
+        this.listener = listener;
     }
 
-    public void setAudioFadeInFadeOutToFile(Video videoToEdit, int timeFadeInMs, int timeFadeOutMs)
+    public void getAudioFadeInFadeOutFromVideo(Video videoToEdit, int timeFadeInMs, int timeFadeOutMs)
             throws IOException {
 
         videoToFadeInFadeOut = videoToEdit;
@@ -41,9 +39,7 @@ public class SetAudioFadeInFadeOutToFileUseCase implements OnAudioEffectListener
 
     @Override
     public void onAudioEffectSuccess(String outputFile) {
-        exportSwapAudioToVideoUseCase = new ExportSwapAudioToVideoUseCase(videoToFadeInFadeOut.getMediaPath(),
-                outputFile, videoToFadeInFadeOut.getTempPath(), this);
-        exportSwapAudioToVideoUseCase.export();
+
     }
 
     @Override
@@ -61,13 +57,4 @@ public class SetAudioFadeInFadeOutToFileUseCase implements OnAudioEffectListener
 
     }
 
-    @Override
-    public void onExportError(String error) {
-
-    }
-
-    @Override
-    public void onExportSuccess(Video video) {
-
-    }
 }

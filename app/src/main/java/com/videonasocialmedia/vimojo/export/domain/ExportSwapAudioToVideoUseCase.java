@@ -23,36 +23,29 @@ import java.util.List;
 public class ExportSwapAudioToVideoUseCase implements Exporter{
 
     private final OnExportEndedListener onExportEndedListener;
-    private String videoFilePath;
-    private String newAudioFilePath;
-    private String outputFilePath;
 
-    public ExportSwapAudioToVideoUseCase(String videoFilePath, String newAudioFilePath, String outputFilePath,
-                                         OnExportEndedListener onExportEndedListener){
-        this.videoFilePath = videoFilePath;
-        this.newAudioFilePath = newAudioFilePath;
-        this.outputFilePath = outputFilePath;
+    public ExportSwapAudioToVideoUseCase(OnExportEndedListener onExportEndedListener){
         this.onExportEndedListener = onExportEndedListener;
     }
 
     @Override
-    public void export() {
+    public void export(String videoFilePath, String newAudioFilePath, String outputFilePath) {
 
 
         Movie result = null;
         try {
-            result = getFinalMovie();
+            result = getFinalMovie(videoFilePath, newAudioFilePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (result != null) {
-            saveFinalVideo(result);
+            saveFinalVideo(result, outputFilePath);
             //tils.cleanDirectory(new File(videoExportedTempPath));
         }
     }
 
 
-    private Movie getFinalMovie() throws IOException {
+    private Movie getFinalMovie(String videoFilePath, String newAudioFilePath) throws IOException {
             Movie result;
             Movie movie = MovieCreator.build(videoFilePath);
 
@@ -110,7 +103,7 @@ public class ExportSwapAudioToVideoUseCase implements Exporter{
         return movie;
     }
 
-    private void saveFinalVideo(Movie result) {
+    private void saveFinalVideo(Movie result, String outputFilePath) {
         try {
             long start = System.currentTimeMillis();
             com.videonasocialmedia.muxer.utils.Utils.createFile(result, outputFilePath);
