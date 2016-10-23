@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 
 import io.realm.RealmList;
@@ -16,6 +17,7 @@ public class RealmProject extends RealmObject {
   public String quality;
   public String resolution;
   public String musicTitle;
+  public float musicVolume = Music.DEFAULT_MUSIC_VOLUME;
   public RealmList<RealmVideo> videos;
 
   public RealmProject() {

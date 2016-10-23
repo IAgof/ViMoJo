@@ -47,6 +47,7 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
   private void setProjectMusic(Project project, RealmProject realmProject) {
     if (realmProject.musicTitle != null) {
       Music music = musicSource.getMusicByTitle(realmProject.musicTitle);
+      music.setVolume(realmProject.musicVolume);
       try {
         project.getAudioTracks().get(0).insertItemAt(0, music);
       } catch (IllegalItemOnTrack illegalItemOnTrack) {

@@ -34,12 +34,14 @@ public class RealmProjectTest {
     realmProject.resolution = VideoResolution.Resolution.HD720.name();
     realmProject.quality = VideoQuality.Quality.GOOD.name();
     realmProject.musicTitle = "My cool music";
+    realmProject.musicVolume = 0.5f;
 
     assertThat(realmProject.title, is("Project title"));
     assertThat(realmProject.projectPath, is("root/path"));
     assertThat(realmProject.resolution, is(VideoResolution.Resolution.HD720.name()));
     assertThat(realmProject.quality, is(VideoQuality.Quality.GOOD.name()));
     assertThat(realmProject.musicTitle, is("My cool music"));
+    assertThat(realmProject.musicVolume, is(0.5f));
   }
 
 }

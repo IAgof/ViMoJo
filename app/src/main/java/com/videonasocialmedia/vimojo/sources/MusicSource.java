@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.sources;
 
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
@@ -41,6 +42,12 @@ public class MusicSource {
     }
 
     public Music getMusicByTitle(String musicTitle) {
+        // TODO(jliarte): 23/10/16 workarround for voice over persistence
+        if (musicTitle.equals(Constants.MUSIC_AUDIO_MIXED_TITLE)) {
+            Music music = new Music(Constants.OUTPUT_FILE_MIXED_AUDIO);
+            music.setMusicTitle(musicTitle);
+            return music;
+        }
         populateLocalMusic();
         addPathToMusic(localMusic);
         for (Music musicItem: localMusic) {

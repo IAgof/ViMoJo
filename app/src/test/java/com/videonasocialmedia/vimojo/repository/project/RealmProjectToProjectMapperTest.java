@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 import com.videonasocialmedia.vimojo.sources.MusicSource;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -123,6 +124,20 @@ public class RealmProjectToProjectMapperTest {
     assertThat(project.hasMusic(), is(true));
     assertThat(project.getMusic().getMusicTitle(), is("Sorrow and sadness"));
     assertThat(project.getMusic(), is(music));
+  }
+
+  @Test
+  public void testMapSetsMusicVolume() {
+    RealmProject realmProject = getARealmProject();
+    realmProject.musicTitle = Constants.MUSIC_AUDIO_MIXED_TITLE;
+    realmProject.musicVolume = 0.8f;
+    Music music = new Music("music/path");
+    doReturn(music).when(mockedMusicSource).getMusicByTitle(realmProject.musicTitle);
+
+    Project project = mockedMapper.map(realmProject);
+
+    assertThat(project.hasMusic(), is(true));
+    assertThat(project.getMusic().getVolume(), is(0.8f));
   }
 
   @Test

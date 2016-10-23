@@ -9,6 +9,7 @@ package com.videonasocialmedia.vimojo.model.entities.editor.media;
 
 public class Music extends Audio {
 
+    public static final float DEFAULT_MUSIC_VOLUME = 0.5f;
     //TODO en el futuro no será un recurso sino que se obtendrá
     private int musicResourceId;
     private int colorResourceId;
@@ -18,7 +19,7 @@ public class Music extends Audio {
     private String durationMusic;
     private int iconResourceId;
 
-    private float volume = 0.5f;
+    private float volume = DEFAULT_MUSIC_VOLUME;
 
     public Music(int iconResourceId, String musicTitle, int musicResourceId, int colorResourceId,
                  String author, String durationMusic) {
@@ -98,5 +99,9 @@ public class Music extends Audio {
     @Override
     public void createIdentifier() {
         identifier=musicResourceId;
+    }
+
+    public void setVolume(float volume) {
+        this.volume = volume;
     }
 }

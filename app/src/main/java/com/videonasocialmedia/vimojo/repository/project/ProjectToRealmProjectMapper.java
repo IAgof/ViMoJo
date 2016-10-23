@@ -19,6 +19,7 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
             project.getProfile().getQuality().name(), project.getProfile().getResolution().name());
     if (project.hasMusic()) {
       realmProject.musicTitle = project.getMusic().getMusicTitle();
+      realmProject.musicVolume = project.getMusic().getVolume();
     }
     for (Media video : project.getMediaTrack().getItems()) {
       realmProject.videos.add(toRealmVideoMapper.map((Video) video));

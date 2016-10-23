@@ -54,6 +54,8 @@ public class Constants {
     final public static String CURRENT_VIDEO_INDEX = "current_video_index";
     final public static String VIDEO_TO_SHARE_PATH = "video_to_share_path";
     final public static String MUSIC_SELECTED_TITLE = "music_selected";
+    final public static String MUSIC_AUDIO_MIXED_TITLE = "audio_mixed_music";
+    final public static String OUTPUT_FILE_MIXED_AUDIO = PATH_APP_TEMP + File.separator + "AudioMixed" + ".m4a";
 
 
     public static final String NOTIFICATION_EXPORT_SERVICES_RECEIVER = "com.videonasocialmedia.vimojo";
