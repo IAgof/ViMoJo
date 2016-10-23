@@ -39,17 +39,14 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-
         return null;
     }
 
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
-
         new Thread(new Runnable() {
             @Override
             public void run() {
-
                 final int videoId = intent.getIntExtra(IntentConstants.VIDEO_ID, -51456);
 
                 final boolean isVideoRelaunch = intent.getBooleanExtra(IntentConstants.RELAUNCH_EXPORT_TEMP, false);
@@ -61,7 +58,6 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
                 final boolean isAddedText = intent.getBooleanExtra(IntentConstants.IS_TEXT_ADDED, false);
                 final String text = intent.getStringExtra(IntentConstants.TEXT_TO_ADD);
                 final String textPosition = intent.getStringExtra(IntentConstants.TEXT_POSITION);
-
 
                 final Video video = getVideo(videoId);
                 MediaTranscoderListener useCaseListener = new MediaTranscoderListener() {
@@ -121,26 +117,20 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
     }
 
     private void relaunchExportVideo(Video video, MediaTranscoderListener useCaseListener, VideonaFormat videoFormat) {
-
         RelaunchExportTempBackgroundUseCase useCase = new RelaunchExportTempBackgroundUseCase();
         useCase.relaunchExport(video, useCaseListener, videoFormat);
-
     }
 
     private void addTextToVideo(Video video, MediaTranscoderListener useCaseListener,
                                 VideonaFormat videoFormat, String text, String textPosition) {
-
         ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase = new ModifyVideoTextAndPositionUseCase();
         modifyVideoTextAndPositionUseCase.addTextToVideo(video, videoFormat, text, textPosition, useCaseListener);
-
     }
 
     private void trimVideo(Video video, MediaTranscoderListener useCaseListener, VideonaFormat videoFormat,
                            int startTimeMs, int finishTimeMs) {
-
         ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
         modifyVideoDurationUseCase.trimVideo(video, videoFormat, startTimeMs, finishTimeMs, useCaseListener);
-
     }
 
     private void sendResultBroadcast(int videoId, boolean success) {

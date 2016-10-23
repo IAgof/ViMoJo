@@ -88,8 +88,8 @@ public class AddVideoToProjectUseCase {
         try {
             Project currentProject = Project.getInstance(null, null, null);
             MediaTrack mediaTrack = currentProject.getMediaTrack();
-            projectRepository.update(currentProject);
             mediaTrack.insertItemAt(position, video);
+            projectRepository.update(currentProject);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             // TODO(jliarte): 22/10/16 error management?
         }
