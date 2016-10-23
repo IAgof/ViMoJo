@@ -22,7 +22,7 @@ public class MusicSource {
         return localMusic;
     }
 
-    private void addPathToMusic(List<Music> localMusic) {
+    protected void addPathToMusic(List<Music> localMusic) {
         for(Music music: localMusic){
             File musicFile = Utils.getMusicFileByName(music.getMusicTitle(),music.getMusicResourceId());
             music.setMediaPath(musicFile.getAbsolutePath());
@@ -42,6 +42,7 @@ public class MusicSource {
 
     public Music getMusicByTitle(String musicTitle) {
         populateLocalMusic();
+        addPathToMusic(localMusic);
         for (Music musicItem: localMusic) {
             if (musicItem.getMusicTitle().equals(musicTitle)) {
                 return musicItem;
