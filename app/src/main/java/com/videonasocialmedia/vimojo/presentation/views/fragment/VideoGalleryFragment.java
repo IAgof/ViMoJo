@@ -94,6 +94,10 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
         return v;
     }
 
+    public  boolean isItemChecked(int position){
+        return selectionSupport.isItemChecked(position);
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

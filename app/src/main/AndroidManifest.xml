@@ -267,7 +267,8 @@
 
         <activity
         android:name=".presentation.views.activity.GalleryActivity"
-        android:label="@string/app_name"/>
+        android:label="@string/app_name"
+        android:screenOrientation="sensorLandscape"/>
 
         <activity
         android:name=".presentation.views.activity.EditActivity"
