@@ -3,7 +3,6 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              android:background="@color/colorBlack"
               android:animateLayoutChanges="true">
 
     <RelativeLayout
@@ -21,16 +20,6 @@
             android:background="@android:color/transparent"
             android:scaleType="fitXY"
             android:src="@drawable/edit_activity_button_cancel_selector"/>
-
-        <TextView
-            android:id="@+id/gallery_title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/galleryActivityTitle"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/textColorGalleryTitle"/>
 
         <LinearLayout
             android:id="@+id/selection_mode"
