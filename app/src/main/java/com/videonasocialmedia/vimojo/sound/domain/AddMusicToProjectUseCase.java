@@ -24,6 +24,7 @@ public class AddMusicToProjectUseCase {
 
 
     private AudioTrack obtainAudioTrack(int trackIndex) {
+
         return Project.getInstance(null, null, null).getAudioTracks().get(trackIndex);
     }
 

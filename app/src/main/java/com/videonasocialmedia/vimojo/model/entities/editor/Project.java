@@ -80,7 +80,7 @@ public class Project {
         this.checkPathSetup(rootPath);
         this.mediaTrack = new MediaTrack();
         this.audioTracks = new ArrayList<>();
-        audioTracks.add(new AudioTrack());
+        audioTracks.add(0,new AudioTrack());
         this.profile = profile;
         this.duration = 0;
 
@@ -195,9 +195,10 @@ public class Project {
          * @see com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase
          */
         Music result = null;
-        try {
-            result = (Music) getAudioTracks().get(0).getItems().get(0);
-        } catch (Exception e) { e.printStackTrace(); }
+            try {
+                result = (Music) getAudioTracks().get(0).getItems().get(0);
+            } catch (Exception e) { e.printStackTrace(); }
+
         return result;
     }
 
