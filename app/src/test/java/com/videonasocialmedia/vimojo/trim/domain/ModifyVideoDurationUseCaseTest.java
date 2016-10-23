@@ -8,34 +8,36 @@ import com.videonasocialmedia.transcoder.format.VideonaFormat;
 import com.videonasocialmedia.transcoder.overlay.Image;
 import com.videonasocialmedia.vimojo.export.utils.TranscoderHelper;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
 import java.io.IOException;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by jliarte on 18/10/16.
  */
-//@RunWith(PowerMockRunner.class)
-//@PowerMockRunnerDelegate(RobolectricTestRunner.class)
-//@PrepareForTest({ModifyVideoDurationUseCase.class})
 @RunWith(RobolectricTestRunner.class)
 public class ModifyVideoDurationUseCaseTest {
   @Mock TextToDrawable mockedDrawableGenerator;
   @Mock MediaTranscoder mockedMediaTranscoder;
   @Mock TranscoderHelper mockedTranscoderHelper;
+  @Mock VideoRepository mockedVideoRepository;
   @InjectMocks ModifyVideoDurationUseCase injectedUseCase;
   private final VideonaFormat videonaFormat = new VideonaFormat();
   private final MediaTranscoderListener mediaTranscoderListener = getMediaTranscoderListener();
@@ -55,7 +57,7 @@ public class ModifyVideoDurationUseCaseTest {
 
     injectedUseCase.trimVideo(video, videonaFormat, 0, 10, mediaTranscoderListener);
 
-    Mockito.verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
+    verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
             eq(video.getMediaPath()), eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener),
             Matchers.any(Image.class), eq(0), eq(10));
   }
@@ -68,7 +70,7 @@ public class ModifyVideoDurationUseCaseTest {
 
     injectedUseCase.trimVideo(video, videonaFormat, 0, 10, mediaTranscoderListener);
 
-    Mockito.verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(video,
+    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(video,
             videonaFormat, mediaTranscoderListener);
   }
 
@@ -82,7 +84,7 @@ public class ModifyVideoDurationUseCaseTest {
 
     injectedUseCase.trimVideo(video, videonaFormat, 0, 10, mediaTranscoderListener);
 
-    Mockito.verify(mockedMediaTranscoder).transcodeAndTrimVideo(eq(video.getMediaPath()),
+    verify(mockedMediaTranscoder).transcodeAndTrimVideo(eq(video.getMediaPath()),
             eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener), eq(0), eq(10));
   }
 
@@ -95,8 +97,20 @@ public class ModifyVideoDurationUseCaseTest {
 
     injectedUseCase.trimVideo(video, videonaFormat, 0, 10, mediaTranscoderListener);
 
-    Mockito.verify(mockedTranscoderHelper).generateOutputVideoWithTrimming(video, videonaFormat,
+    verify(mockedTranscoderHelper).generateOutputVideoWithTrimming(video, videonaFormat,
             mediaTranscoderListener);
+  }
+
+  @Test
+  public void trimVideoCallsVideoRepositoryUpdate() {
+    Video video = new Video("media/path");
+
+    injectedUseCase.trimVideo(video, videonaFormat, 2, 10, mediaTranscoderListener);
+
+    verify(mockedVideoRepository).update(video);
+    assertThat(video.getStartTime(), is(2));
+    assertThat(video.getStopTime(), is(10));
+    assertThat(video.isTrimmedVideo(), is(true));
   }
 
   @NonNull
