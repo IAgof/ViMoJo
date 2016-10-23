@@ -38,4 +38,10 @@ public class IntentConstants {
      */
     public static final String MUSIC_DETAIL_SELECTED= "music_detail_selected";
 
+    /**
+     * Ftp Selected
+     *
+     */
+    public static final String FTP_SELECTED= "ftp_selected";
+
 }

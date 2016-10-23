@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.UneditedVideoDestinationPreferencePresenter;
@@ -9,12 +10,14 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.UneditedVideoDe
  */
 public class UneditedVideoDestinationPreferenceActivity extends EditTextPreferenceActivity {
 
+    String keyUneditedVideoDestination;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        presenter = new UneditedVideoDestinationPreferencePresenter(this, sharedPreferences);
-
+        Intent intent=getIntent();
+        keyUneditedVideoDestination=intent.getStringExtra("keyUneditedVideoDestinationFTP");
+        presenter = new UneditedVideoDestinationPreferencePresenter(this, sharedPreferences, keyUneditedVideoDestination);
         toolbarTitle.setText(R.string.unedited_video_destination);
     }
 

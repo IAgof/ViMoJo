@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import com.videonasocialmedia.vimojo.R;
@@ -10,12 +11,15 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.PasswordFTPPref
  */
 public class PasswordFTPPreferenceActivity extends EditTextPreferenceActivity {
 
+    String keyPasswordFTP;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new PasswordFTPPreferencePresenter(this, sharedPreferences);
+        Intent intent=getIntent();
+        keyPasswordFTP=intent.getStringExtra("keyPasswordFTP");
+        presenter = new PasswordFTPPreferencePresenter(this, sharedPreferences, keyPasswordFTP);
         editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         toolbarTitle.setText(R.string.password_FTP);
     }

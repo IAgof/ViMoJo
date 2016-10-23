@@ -136,7 +136,8 @@
     <string name="save">Save</string>
 
     <!--FTP Settings -->
-    <string name="title_FTP_Section">FTP Data</string>
+    <string name="title_FTP1_Section">FTP</string>
+    <string name="title_FTP2_Section">Breaking news </string>
     <string name="host_FTP">Host</string>
     <string name="removeHost">Remove host</string>
     <string name="enterHost">Enter your host</string>
@@ -1665,7 +1666,10 @@ and Conditions.\n\n
     <string name="uploadComplete">Upload complete</string>
     <string name="uploading">Uploading</string>
     <string name="trimError">The video couldn\'t be trimmed</string>
-
+    <string name="title_dialog_sharedActivity">Add name to the project</string>
+    <string name="text_hint_dialog_shareActivity">Project name</string>
+    <string name="positiveButtonDialogShareActivity">Share</string>
+    <string name="negativeButtonDialogShareActivity">Cancel</string>
 
 
 </resources>
