@@ -5,10 +5,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.googlecode.mp4parser.authoring.Movie;
 import com.videonasocialmedia.muxer.Appender;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;

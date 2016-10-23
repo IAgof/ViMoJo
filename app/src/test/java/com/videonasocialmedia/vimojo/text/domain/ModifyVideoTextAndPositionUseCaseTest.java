@@ -8,6 +8,7 @@ import com.videonasocialmedia.transcoder.format.VideonaFormat;
 import com.videonasocialmedia.transcoder.overlay.Image;
 import com.videonasocialmedia.vimojo.export.utils.TranscoderHelper;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
 
@@ -23,7 +24,10 @@ import org.robolectric.RobolectricTestRunner;
 
 import java.io.IOException;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by jliarte on 19/10/16.
@@ -32,8 +36,8 @@ import static org.mockito.Matchers.eq;
 public class ModifyVideoTextAndPositionUseCaseTest {
   @Mock TextToDrawable mockedDrawableGenerator;
   @Mock MediaTranscoder mockedMediaTranscoder;
-//  @Spy TranscoderHelper transcoderHelperSpy = new TranscoderHelper(mockedDrawableGenerator,
-//          mockedMediaTranscoder);
+  @Mock VideoRepository mockedVideoRepository;
+  @Mock TranscoderHelper mockedTranscoderHelper;
   @InjectMocks ModifyVideoTextAndPositionUseCase injectedUseCase;
   private final MediaTranscoderListener mediaTranscoderListener = getMediaTranscoderListener();
   private final VideonaFormat videonaFormat = new VideonaFormat();
@@ -47,7 +51,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
   public void testAddTextToVideoCallsTranscodeTrimAndOverlayImageToVideoIfVideoIsTrimmed()
           throws IOException {
     Video video = getVideoTrimmedWithText();
-    // TODO(jliarte): 19/10/16 should not use a boolead here
+    // TODO(jliarte): 19/10/16 should not use a boolean here
     assert video.isTrimmedVideo();
     injectedUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
             mockedMediaTranscoder);
@@ -55,7 +59,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     injectedUseCase.addTextToVideo(video, videonaFormat, video.getClipText(),
             video.getClipTextPosition(), mediaTranscoderListener);
 
-    Mockito.verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
+    verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
             eq(video.getMediaPath()), eq(video.getTempPath()), eq(videonaFormat),
             eq(mediaTranscoderListener), Matchers.any(Image.class), eq(0), eq(10));
   }
@@ -72,7 +76,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     injectedUseCase.addTextToVideo(video, videonaFormat, video.getClipText(),
             video.getClipTextPosition(), mediaTranscoderListener);
 
-    Mockito.verify(spy).generateOutputVideoWithOverlayImageAndTrimming(video,
+    verify(spy).generateOutputVideoWithOverlayImageAndTrimming(video,
             videonaFormat, mediaTranscoderListener);
   }
 
@@ -88,7 +92,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     injectedUseCase.addTextToVideo(video, videonaFormat, video.getClipText(),
             video.getClipTextPosition(), mediaTranscoderListener);
 
-    Mockito.verify(mockedMediaTranscoder).transcodeAndOverlayImageToVideo(eq(video.getMediaPath()),
+    verify(mockedMediaTranscoder).transcodeAndOverlayImageToVideo(eq(video.getMediaPath()),
             eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener),
             Matchers.any(Image.class));
   }
@@ -106,8 +110,20 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     injectedUseCase.addTextToVideo(video, videonaFormat, video.getClipText(),
             video.getClipTextPosition(), mediaTranscoderListener);
 
-    Mockito.verify(spy).generateOutputVideoWithOverlayImage(video, videonaFormat,
+    verify(spy).generateOutputVideoWithOverlayImage(video, videonaFormat,
             mediaTranscoderListener);
+  }
+
+  @Test
+  public void addTextToVideoCallsVideoRepositoryUpdate() {
+    Video video = new Video("media/path");
+    String textPosition = VideoEditTextActivity.TextPosition.BOTTOM.name();
+
+    injectedUseCase.addTextToVideo(video, videonaFormat, "text", textPosition, mediaTranscoderListener);
+
+    verify(mockedVideoRepository).update(video);
+    assertThat(video.getClipText(), is("text"));
+    assertThat(video.getClipTextPosition(), is(textPosition));
   }
 
   @NonNull

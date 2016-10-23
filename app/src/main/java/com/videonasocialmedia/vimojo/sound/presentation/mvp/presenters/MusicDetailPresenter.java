@@ -57,7 +57,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     }
 
     public void removeMusic(Music music) {
-        currentProject.setMusicOnProject(false);
+        // (jliarte): 23/10/16 moving this to use case
+//        currentProject.setMusicOnProject(false);
         removeMusicFromProjectUseCase.removeMusicFromProject(music, 0);
         userEventTracker.trackMusicSet(currentProject);
     }
@@ -104,7 +105,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     @Override
     public void onAddMediaItemToTrackSuccess(Media media) {
-        currentProject.setMusicOnProject(true);
+        // (jliarte): 23/10/16 moving this to use case
+//        currentProject.setMusicOnProject(true);
         userEventTracker.trackMusicSet(currentProject);
         musicDetailView.goToEdit(media.getTitle());
     }

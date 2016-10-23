@@ -48,7 +48,12 @@ public class Audio extends Media {
     }
 
     @Override
-    public void setIdentifier() {
+    public void setIdentifier(int identifier) {
+        this.identifier = identifier;
+    }
+
+    @Override
+    public void createIdentifier() {
 
     }
 }

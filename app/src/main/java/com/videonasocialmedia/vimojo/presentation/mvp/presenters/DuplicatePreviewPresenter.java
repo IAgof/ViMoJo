@@ -31,23 +31,22 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
 
     private Video videoToEdit;
 
-    /**
-     * Get media list from project use case
-     */
-    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-
-    private AddVideoToProjectUseCase addVideoToProjectUseCase;
+    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
+            new GetMediaListFromProjectUseCase();
+    protected AddVideoToProjectUseCase addVideoToProjectUseCase;
 
     private DuplicateView duplicateView;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
 
+    /**
+     * Get media list from project use case
+     */
     public DuplicatePreviewPresenter(DuplicateView duplicateView, UserEventTracker userEventTracker) {
         this.duplicateView = duplicateView;
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        addVideoToProjectUseCase = new AddVideoToProjectUseCase();
         this.currentProject = loadCurrentProject();
         this.userEventTracker = userEventTracker;
+        this.addVideoToProjectUseCase = new AddVideoToProjectUseCase();
     }
 
     private Project loadCurrentProject() {
