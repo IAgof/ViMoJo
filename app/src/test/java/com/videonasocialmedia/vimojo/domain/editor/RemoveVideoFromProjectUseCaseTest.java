@@ -8,6 +8,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.verify;
 @PrepareForTest(EventBus.class)
 public class RemoveVideoFromProjectUseCaseTest {
   @Mock ProjectRepository mockedProjectRepository;
+  @Mock VideoRepository mockedVideoRepository;
   @InjectMocks RemoveVideoFromProjectUseCase injectedUseCase;
   @Mock MediaTrack mockedMediaTrack;
   private EventBus mockedEventBus;
@@ -62,6 +64,20 @@ public class RemoveVideoFromProjectUseCaseTest {
     injectedUseCase.removeMediaItemsFromProject(videos, listener);
 
     verify(mockedProjectRepository).update(currentProject);
+  }
+
+  @Test
+  public void testRemoveMediaItemsFromProjectCallsRemoveRealmVideos() {
+    Project currentProject = Project.getInstance(null, null, null);
+    currentProject.setMediaTrack(mockedMediaTrack);
+    Video video = new Video("media/path");
+    ArrayList<Media> videos = new ArrayList<Media>();
+    videos.add(video);
+    OnRemoveMediaFinishedListener listener = getOnRemoveMediaFinishedListener();
+
+    injectedUseCase.removeMediaItemsFromProject(videos, listener);
+
+    verify(mockedVideoRepository).remove(video);
   }
 
   @NonNull

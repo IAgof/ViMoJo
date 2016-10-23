@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.repository.video;
 
-import com.videonasocialmedia.vimojo.repository.project.RealmProject;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 
 import org.hamcrest.CoreMatchers;
@@ -52,9 +51,9 @@ public class RealmVideoTest {
   @Test
   public void testRealmVideoHasIdentifierPrimaryKey() {
     RealmVideo realmVideo = new RealmVideo();
-    realmVideo.identifier = 1;
+    realmVideo.uuid = "randomUUID";
 
-    assertThat(realmVideo.identifier, is(1));
+    assertThat(realmVideo.uuid, is("randomUUID"));
   }
 
   @Test

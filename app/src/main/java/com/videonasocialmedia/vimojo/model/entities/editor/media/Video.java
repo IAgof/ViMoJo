@@ -16,6 +16,7 @@ import android.media.MediaMetadataRetriever;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.File;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -47,6 +48,7 @@ public class Video extends Media {
     private int duration;
 
     private int numTriesToExportVideo = 0;
+    private String uuid = UUID.randomUUID().toString();
 
 
     /**
@@ -191,5 +193,13 @@ public class Video extends Media {
 
     public boolean isTextToVideoAdded() {
         return isTextToVideoAdded;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

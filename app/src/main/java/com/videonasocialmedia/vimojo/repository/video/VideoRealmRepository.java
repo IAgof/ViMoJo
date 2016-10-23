@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 /**
@@ -38,24 +39,13 @@ public class VideoRealmRepository implements VideoRepository {
   @Override
   public void add(final Video item) {
     final Realm realm = Realm.getDefaultInstance();
-
     realm.executeTransaction(new Realm.Transaction() {
       @Override
       public void execute(Realm realm) {
         RealmVideo realmVideo = toRealmVideoMapper.map(item);
         realm.copyToRealm(realmVideo);
-//        realmVideo.VIDEO_FOLDER_PATH = item.getMediaPath();
-//        realmVideo.fileDuration = item.getFileDuration();
-//        realmVideo.tempPath = item.getTempPath();
-//        realmVideo.clipText = item.getClipText();
-//        realmVideo.clipTextPosition = item.getClipTextPosition();
-//        realmVideo.isTextToVideoAdded = item.isTextToVideoAdded();
-//        realmVideo.isTrimmedVideo = item.isTrimmedVideo();
-//        realmVideo.stopTime = item.getStopTime();
-//        realmVideo.startTime = item.getStartTime();
       }
     });
-
     realm.close();
   }
 
@@ -88,8 +78,16 @@ public class VideoRealmRepository implements VideoRepository {
   }
 
   @Override
-  public void remove(Video item) {
-
+  public void remove(final Video item) {
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransaction(new Realm.Transaction() {
+      @Override
+      public void execute(Realm realm) {
+        RealmResults<RealmVideo> result = realm.where(RealmVideo.class).
+                equalTo("uuid", item.getUuid()).findAll();
+        result.deleteAllFromRealm();
+      }
+    });
   }
 
   @Override

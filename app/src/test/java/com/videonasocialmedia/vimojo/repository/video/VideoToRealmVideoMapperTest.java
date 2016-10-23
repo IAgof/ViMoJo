@@ -43,7 +43,7 @@ public class VideoToRealmVideoMapperTest {
     RealmVideo realmVideo = mapper.map(video);
 
     assertThat(realmVideo.mediaPath, is("media/path"));
-    assertThat(realmVideo.identifier, is(video.getIdentifier()));
+    assertThat(realmVideo.uuid, is(video.getUuid()));
 //    assertThat(realmVideo.fileDuration, is(90));
 //    assertThat(realmVideo.tempPath, is("tmp/path"));
     assertThat(realmVideo.clipText, is("text"));

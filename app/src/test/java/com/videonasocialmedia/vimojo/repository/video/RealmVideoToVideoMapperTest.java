@@ -28,13 +28,13 @@ public class RealmVideoToVideoMapperTest {
 
   @Test
   public void testMapReturnsVideoWithFieldsMapped() {
-    RealmVideo realmVideo = new RealmVideo(1, 0, "media/path", "text",
+    RealmVideo realmVideo = new RealmVideo("randomUUID", 0, "media/path", "text",
             VideoEditTextActivity.TextPosition.CENTER.name(), true, true, 2, 10);
     RealmVideoToVideoMapper mapper = new RealmVideoToVideoMapper();
 
     Video video = mapper.map(realmVideo);
 
-    assertThat(video.getIdentifier(), is(1));
+    assertThat(video.getUuid(), is("randomUUID"));
     assertThat(video.getPosition(), is(0));
     assertThat(video.getMediaPath(), is("media/path"));
     assertThat(video.getClipText(), is("text"));
