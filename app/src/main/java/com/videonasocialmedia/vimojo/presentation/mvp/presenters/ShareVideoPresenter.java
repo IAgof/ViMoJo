@@ -8,6 +8,7 @@ import android.net.Uri;
 
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.domain.ClearProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.social.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.domain.social.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -29,6 +30,7 @@ public class ShareVideoPresenter {
 
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetFtpListUseCase getFtpListUseCase;
+    private ClearProjectUseCase clearProjectUseCase;
     private ShareVideoView shareVideoView;
     protected Project currentProject;
     protected UserEventTracker userEventTracker;
@@ -53,6 +55,7 @@ public class ShareVideoPresenter {
     public void onCreate() {
         obtainNetworksToShareUseCase = new ObtainNetworksToShareUseCase();
         getFtpListUseCase = new GetFtpListUseCase();
+        clearProjectUseCase= new ClearProjectUseCase();
     }
 
     public void onResume() {
@@ -122,5 +125,8 @@ public class ShareVideoPresenter {
         userEventTracker.trackVideoSharedSuperProperties();
         userEventTracker.trackVideoShared(socialNetwork, currentProject, getNumTotalVideosShared());
         userEventTracker.trackVideoSharedUserTraits();
+    }
+    public void resetProject() {
+        clearProjectUseCase.clearProject(currentProject);
     }
 }
