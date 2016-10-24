@@ -16,8 +16,13 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalOrphanTransitionOnTrack;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import java.util.ArrayList;
 
@@ -27,28 +32,30 @@ import de.greenrobot.event.EventBus;
  * This class is used to removed videos from the project.
  */
 public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectUseCase {
-
-
+    protected ProjectRepository projectRepository = new ProjectRealmRepository();
+    protected VideoRepository videoRepository = new VideoRealmRepository();
     /**
-     * Constructor.
+     * Default empty Constructor.
      */
     public RemoveVideoFromProjectUseCase() {
     }
 
     @Override
-    public void removeMediaItemsFromProject(ArrayList<Media> list, OnRemoveMediaFinishedListener listener) {
+    public void removeMediaItemsFromProject(ArrayList<Media> mediaList, OnRemoveMediaFinishedListener listener) {
         boolean correct = false;
-        MediaTrack mediaTrack = Project.getInstance(null, null, null).getMediaTrack();
-        for (Media media : list) {
+        Project currentProject = Project.getInstance(null, null, null);
+        MediaTrack mediaTrack = currentProject.getMediaTrack();
+        for (Media media : mediaList) {
             correct = removeVideoItemFromTrack(media, mediaTrack);
             if (!correct) break;
+            videoRepository.remove((Video) media);
         }
         if (correct) {
+            projectRepository.update(currentProject);
             listener.onRemoveMediaItemFromTrackSuccess();
         } else {
             listener.onRemoveMediaItemFromTrackError();
         }
-
     }
 
     /**
@@ -61,6 +68,7 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectUseC
         boolean result;
         try {
             mediaTrack.deleteItem(video);
+            // TODO(jliarte): 23/10/16 get rid of EventBus?
             EventBus.getDefault().post(new UpdateProjectDurationEvent(Project.getInstance(null, null, null).getDuration()));
             EventBus.getDefault().post(new NumVideosChangedEvent(Project.getInstance(null, null, null).getMediaTrack().getNumVideosInProject()));
             result = true;

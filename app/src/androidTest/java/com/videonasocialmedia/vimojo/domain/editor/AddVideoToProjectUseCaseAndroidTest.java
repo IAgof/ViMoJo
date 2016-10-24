@@ -29,12 +29,12 @@ import static org.mockito.Mockito.verify;
 /**
  * This class tests the add video to project use case.
  */
-public class AddVideoToProjectUseCaseTest extends AndroidTestCase {
+public class AddVideoToProjectUseCaseAndroidTest extends AndroidTestCase {
 
     AddVideoToProjectUseCase useCase;
     OnAddMediaFinishedListener listener;
 
-    public AddVideoToProjectUseCaseTest() {
+    public AddVideoToProjectUseCaseAndroidTest() {
         useCase = new AddVideoToProjectUseCase();
         listener = mock(OnAddMediaFinishedListener.class);
     }

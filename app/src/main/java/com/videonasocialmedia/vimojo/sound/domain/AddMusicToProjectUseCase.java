@@ -16,15 +16,19 @@ import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalIte
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.AudioTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 /**
  * This class is used to add a new videos to the project.
  */
 public class AddMusicToProjectUseCase {
 
+    private Project currentProject = Project.getInstance(null, null, null);
+    protected ProjectRepository projectRepository = new ProjectRealmRepository();
 
     private AudioTrack obtainAudioTrack(int trackIndex) {
-        return Project.getInstance(null, null, null).getAudioTracks().get(trackIndex);
+        return currentProject.getAudioTracks().get(trackIndex);
     }
 
     public void addMusicToTrack(Music music, int trackIndex, OnAddMediaFinishedListener listener) {
@@ -32,10 +36,11 @@ public class AddMusicToProjectUseCase {
         try {
             audioTrack = obtainAudioTrack(trackIndex);
             audioTrack.insertItemAt(0,music);
+            currentProject.setMusicOnProject(true);
+            projectRepository.update(currentProject);
             listener.onAddMediaItemToTrackSuccess(music);
-
         } catch (IndexOutOfBoundsException | IllegalItemOnTrack exception) {
-            exception.printStackTrace();
+//            exception.printStackTrace();
             listener.onAddMediaItemToTrackError();
         }
     }
