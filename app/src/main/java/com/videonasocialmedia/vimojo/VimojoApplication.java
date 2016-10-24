@@ -20,6 +20,8 @@ import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.karumi.dexter.Dexter;
 import com.squareup.leakcanary.LeakCanary;
+import com.videonasocialmedia.vimojo.model.VimojoMigration;
+
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -74,6 +76,7 @@ public class VimojoApplication extends Application {
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
                 .name("vimojoDB")
                 .schemaVersion(2) // 20161024
+                .migration(new VimojoMigration())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);
     }

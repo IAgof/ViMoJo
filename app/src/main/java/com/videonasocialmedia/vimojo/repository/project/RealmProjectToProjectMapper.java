@@ -42,7 +42,7 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
 //    if (realmProject.)
     VideoResolution.Resolution resolution = VideoResolution.Resolution.valueOf(realmProject.resolution);
     VideoQuality.Quality quality = VideoQuality.Quality.valueOf(realmProject.quality);
-    VideoFrameRate.FrameRate frameRate = VideoFrameRate.FrameRate.valueOf(realmProject.framerate);
+    VideoFrameRate.FrameRate frameRate = VideoFrameRate.FrameRate.valueOf(realmProject.frameRate);
 
     return new Profile(resolution, quality, frameRate);
   }
