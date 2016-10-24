@@ -10,17 +10,26 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.PreferenceCategory;
+
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideosUseCase;
 import com.videonasocialmedia.vimojo.domain.social.ObtainNetworksToShareUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is used to show the setting menu.
@@ -30,9 +39,13 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private Context context;
     private SharedPreferences sharedPreferences;
     private PreferencesView preferencesView;
+    private PreferenceCategory cameraSettingsPref;
     private ListPreference resolutionPref;
     private ListPreference qualityPref;
+    private ListPreference frameRatePref;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
+    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+    private boolean isPreferenceAvailable = false;
 
     /**
      * Constructor
@@ -43,15 +56,20 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      * @param context
      * @param sharedPreferences
      */
-    public PreferencesPresenter(PreferencesView preferencesView, ListPreference resolutionPref,
-                                ListPreference qualityPref, Context context,
+    public PreferencesPresenter(PreferencesView preferencesView, PreferenceCategory cameraSettingsPref,
+                                ListPreference resolutionPref, ListPreference qualityPref,
+                                ListPreference frameRatePref, Context context,
                                 SharedPreferences sharedPreferences) {
+
+        this.cameraSettingsPref = cameraSettingsPref;
         this.preferencesView = preferencesView;
         this.resolutionPref = resolutionPref;
         this.qualityPref = qualityPref;
+        this.frameRatePref = frameRatePref;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
         obtainNetworksToShareUseCase = new ObtainNetworksToShareUseCase();
+        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
     }
 
     /**
@@ -61,8 +79,22 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         checkUserAccountData();
         checkUserFTP1Data();
         checkUserFTP2Data();
+        checkCameraSettingsEnabled();
         checkAvailableResolution();
         checkAvailableQuality();
+        checkAvailableFrameRate();
+    }
+
+    private void checkCameraSettingsEnabled() {
+
+        List<Media> media = getMediaListFromProjectUseCase.getMediaListFromProject();
+        if(media.size()>0) {
+            cameraSettingsPref.setEnabled(false);
+            isPreferenceAvailable = false;
+        } else {
+            cameraSettingsPref.setEnabled(true);
+            isPreferenceAvailable = true;
+        }
     }
 
     private void checkUserFTP1Data() {
@@ -109,38 +141,44 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         ArrayList<String> resolutionValues =  new ArrayList<>();
         String defaultResolution = null;
         String key = ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION; //"list_preference_resolution";
-        boolean isPaidApp = true;
-        // TODO check with flavors the app version (free/paid)
 
-        if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false) && isPaidApp) {
-            resolutionNames.add(context.getResources().getString(R.string.low_resolution_name));
-            resolutionValues.add(context.getResources().getString(R.string.low_value));
-            defaultResolution = context.getResources().getString(R.string.low_value);
+        if(!isPreferenceAvailable){
+            resolutionPref.setTitle(R.string.resolution);
+            resolutionPref.setSummary(R.string.preference_not_available);
+            return;
         }
-        if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, false) && isPaidApp) {
-            resolutionNames.add(context.getResources().getString(R.string.good_resolution_name));
-            resolutionValues.add(context.getResources().getString(R.string.good_value));
+
+        if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false)) {
+            resolutionNames.add(context.getResources().getString(R.string.low_resolution_name));
+            resolutionValues.add(context.getResources().getString(R.string.low_resolution_value));
             if (defaultResolution == null) {
-                defaultResolution = context.getResources().getString(R.string.good_value);
+                defaultResolution = context.getResources().getString(R.string.low_resolution_name);
             }
         }
-        if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, false) && isPaidApp) {
-            resolutionNames.add(context.getResources().getString(R.string.high_resolution_name));
-            resolutionValues.add(context.getResources().getString(R.string.high_value));
+        if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, false)) {
+            resolutionNames.add(context.getResources().getString(R.string.good_resolution_name));
+            resolutionValues.add(context.getResources().getString(R.string.good_resolution_value));
             if (defaultResolution == null) {
-                defaultResolution = context.getResources().getString(R.string.high_value);
+                defaultResolution = context.getResources().getString(R.string.good_resolution_name);
+            }
+        }
+        if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, false)) {
+            resolutionNames.add(context.getResources().getString(R.string.high_resolution_name));
+            resolutionValues.add(context.getResources().getString(R.string.high_resolution_value));
+            if (defaultResolution == null) {
+                defaultResolution = context.getResources().getString(R.string.high_resolution_name);
             }
         }
         if (resolutionNames.size() > 0 && defaultResolution != null) {
             preferencesView.setAvailablePreferences(resolutionPref, resolutionNames, resolutionValues);
-            if (updateDefaultPreference(key, resolutionValues)) {
+            if (updateDefaultPreference(key, resolutionNames)) {
                 preferencesView.setDefaultPreference(resolutionPref, defaultResolution, key);
             } else {
                 preferencesView.setPreference(resolutionPref, sharedPreferences.getString(key, ""));
             }
         } else {
             resolutionNames.add(context.getResources().getString(R.string.low_resolution_name));
-            resolutionValues.add(context.getResources().getString(R.string.low_value));
+            resolutionValues.add(context.getResources().getString(R.string.low_resolution_value));
             preferencesView.setAvailablePreferences(resolutionPref, resolutionNames, resolutionValues);
         }
     }
@@ -153,39 +191,90 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         ArrayList<String> qualityValues = new ArrayList<>();
         String defaultQuality = null;
         String key = ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY; //"list_preference_quality";
-        boolean isPaidApp = true;
-        // TODO check with flavors the app version (free/paid)
 
-        if (isPaidApp) {
-            qualityNames.add(context.getResources().getString(R.string.low_quality_name));
-            qualityValues.add(context.getResources().getString(R.string.low_value));
-            if (defaultQuality == null) {
-                defaultQuality = context.getResources().getString(R.string.low_value);
-            }
+        if(!isPreferenceAvailable){
+            qualityPref.setTitle(R.string.quality);
+            qualityPref.setSummary(R.string.preference_not_available);
+            return;
         }
-        if (isPaidApp) {
-            qualityNames.add(context.getResources().getString(R.string.good_quality_name));
-            qualityValues.add(context.getResources().getString(R.string.good_value));
-            defaultQuality = context.getResources().getString(R.string.good_value);
+
+        qualityNames.add(context.getResources().getString(R.string.high_quality_name));
+        qualityValues.add(context.getResources().getString(R.string.high_quality_value));
+        if (defaultQuality == null) {
+            defaultQuality = context.getResources().getString(R.string.high_quality_name);
         }
-        if (isPaidApp) {
-            qualityNames.add(context.getResources().getString(R.string.high_quality_name));
-            qualityValues.add(context.getResources().getString(R.string.high_value));
-            if (defaultQuality == null) {
-                defaultQuality = context.getResources().getString(R.string.high_value);
-            }
+
+        qualityNames.add(context.getResources().getString(R.string.low_quality_name));
+        qualityValues.add(context.getResources().getString(R.string.low_quality_value));
+        if (defaultQuality == null) {
+            defaultQuality = context.getResources().getString(R.string.low_quality_name);
         }
+
+        qualityNames.add(context.getResources().getString(R.string.good_quality_name));
+        qualityValues.add(context.getResources().getString(R.string.good_quality_value));
+        if (defaultQuality == null) {
+            defaultQuality = context.getResources().getString(R.string.good_quality_name);
+        }
+
         if (qualityNames.size() > 0 && defaultQuality != null) {
             preferencesView.setAvailablePreferences(qualityPref, qualityNames, qualityValues);
-            if (updateDefaultPreference(key, qualityValues)) {
+            if (updateDefaultPreference(key, qualityNames)) {
                 preferencesView.setDefaultPreference(qualityPref, defaultQuality, key);
             } else {
                 preferencesView.setPreference(qualityPref, sharedPreferences.getString(key, ""));
             }
         } else {
-            qualityNames.add(context.getResources().getString(R.string.good_quality_name));
-            qualityValues.add(context.getResources().getString(R.string.good_value));
+            qualityNames.add(context.getResources().getString(R.string.high_quality_name));
             preferencesView.setAvailablePreferences(qualityPref, qualityNames, qualityValues);
+        }
+    }
+
+    private void checkAvailableFrameRate(){
+        ArrayList<String> frameRateNames = new ArrayList<>();
+        ArrayList<String> frameRateValues = new ArrayList<>();
+        String defaultFrameRate = null;
+        String key = ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE; //"list_preference_quality";
+
+        if(!isPreferenceAvailable){
+            frameRatePref.setTitle(R.string.frame_rate);
+            frameRatePref.setSummary(R.string.preference_not_available);
+            return;
+        }
+
+        if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false)) {
+            frameRateNames.add(context.getResources().getString(R.string.good_frame_rate_name));
+            frameRateValues.add(context.getResources().getString(R.string.good_frame_rate_value));
+            if (defaultFrameRate == null) {
+                defaultFrameRate = context.getResources().getString(R.string.good_frame_rate_name);
+            }
+        }
+
+        if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false)) {
+            frameRateNames.add(context.getResources().getString(R.string.low_frame_rate_name));
+            frameRateValues.add(context.getResources().getString(R.string.low_frame_rate_value));
+            if (defaultFrameRate == null) {
+                defaultFrameRate = context.getResources().getString(R.string.low_frame_rate_name);
+            }
+        }
+
+        if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, false)) {
+            frameRateNames.add(context.getResources().getString(R.string.high_frame_rate_name));
+            frameRateValues.add(context.getResources().getString(R.string.high_frame_rate_value));
+            if (defaultFrameRate == null) {
+                defaultFrameRate = context.getResources().getString(R.string.high_frame_rate_name);
+            }
+        }
+
+        if (frameRateNames.size() > 0 && defaultFrameRate != null) {
+            preferencesView.setAvailablePreferences(frameRatePref, frameRateNames, frameRateValues);
+            if (updateDefaultPreference(key, frameRateNames)) {
+                preferencesView.setDefaultPreference(frameRatePref, defaultFrameRate, key);
+            } else {
+                preferencesView.setPreference(frameRatePref, sharedPreferences.getString(key, ""));
+            }
+        } else {
+            frameRateNames.add(context.getResources().getString(R.string.good_frame_rate_name));
+            preferencesView.setAvailablePreferences(frameRatePref, frameRateNames, frameRateValues);
         }
     }
 

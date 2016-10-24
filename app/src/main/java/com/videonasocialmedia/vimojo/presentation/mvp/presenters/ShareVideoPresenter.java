@@ -12,11 +12,14 @@ import com.videonasocialmedia.vimojo.domain.ClearProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.social.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.domain.social.GetFtpListUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
+import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
@@ -29,6 +32,7 @@ import java.util.List;
  */
 public class ShareVideoPresenter {
 
+    private final Context context;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetFtpListUseCase getFtpListUseCase;
     private ClearProjectUseCase clearProjectUseCase;
@@ -41,13 +45,15 @@ public class ShareVideoPresenter {
     private List<SocialNetwork> socialNetworkList;
     private List optionToShareList;
     private SharedPreferences.Editor preferencesEditor;
+    private ProfileRepository profileRepository;
 
     public ShareVideoPresenter(ShareVideoView shareVideoView, UserEventTracker userEventTracker,
-                               SharedPreferences sharedPreferences) {
+                               SharedPreferences sharedPreferences, Context context) {
         this.shareVideoView = shareVideoView;
         this.userEventTracker = userEventTracker;
         this.sharedPreferences = sharedPreferences;
         currentProject = loadCurrentProject();
+        this.context = context;
     }
 
     private Project loadCurrentProject() {
@@ -119,7 +125,7 @@ public class ShareVideoPresenter {
     }
 
     public String getResolution(){
-        VideoResolution videoResolution = new VideoResolution(currentProject.getProfile().getResolution());
+        VideoResolution videoResolution = currentProject.getProfile().getVideoResolution();
         return videoResolution.getWidth() + "x" + videoResolution.getHeight();
     }
 
@@ -132,7 +138,8 @@ public class ShareVideoPresenter {
     public void resetProject(String rootPath) {
         clearProjectDataFromSharedPreferences();
         clearProjectUseCase.clearProject(currentProject);
-        createDefaultProjectUseCase.loadOrCreateProject(rootPath);
+        profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, context);
+        createDefaultProjectUseCase.loadOrCreateProject(rootPath, profileRepository.getCurrentProfile());
     }
 
     // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer?

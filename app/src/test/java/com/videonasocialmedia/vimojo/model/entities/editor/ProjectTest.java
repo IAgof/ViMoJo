@@ -4,16 +4,14 @@ import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalIte
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.MediaTrack;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,11 +25,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectTest {
-    @Mock ProjectRepository mockedProjectRepository;
-    @InjectMocks Project injectedProject;
-
-    @After
-    public void tearDown() {
+    @Before
+    public void setup() {
         Project.getInstance(null, null, null).clear();
     }
 
@@ -43,7 +38,7 @@ public class ProjectTest {
     }
 
     @Test
-    public void clearShoudCreateANewNullProject() throws Exception {
+    public void clearShouldCreateANewNullProject() throws Exception {
         Project videonaProject = getAProject();
 
         videonaProject.clear();
@@ -94,17 +89,20 @@ public class ProjectTest {
     }
 
     @Test
-    public void getVideoParamsFromProjectProfileFree(){
+    public void getVideoParamsFromProjectProfile(){
         Project videonaProject = getAProject();
         VideoResolution resolution = videonaProject.getProfile().getVideoResolution();
         VideoQuality quality = videonaProject.getProfile().getVideoQuality();
+        VideoFrameRate frameRate = videonaProject.getProfile().getVideoFrameRate();
 
-        assertThat("videoBitRate", 5000*1000, CoreMatchers.is(quality.getVideoBitRate()));
+        assertThat("videoBitRate", 10*1000*1000, CoreMatchers.is(quality.getVideoBitRate()));
         assertThat("videoWidth", 1280, CoreMatchers.is(resolution.getWidth()));
         assertThat("videoHeight", 720, CoreMatchers.is(resolution.getHeight()));
+        assertThat("frameRate", 25, CoreMatchers.is(frameRate.getFrameRate()));
     }
 
     public Project getAProject() {
-        return new Project("project title", "root path", Profile.getInstance(Profile.ProfileType.free));
+        return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
     }
 }
