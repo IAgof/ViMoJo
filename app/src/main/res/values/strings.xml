@@ -70,6 +70,7 @@
     <string name="galleryActivityTitle">Gallery</string>
     <string name="mastersFolderTitle">Raw</string>
     <string name="editedFolderTitle">Edited</string>
+    <string name="error_video_format">Video format different to video project </string>
 
     <!--SoundVolumeActivity-->
     <string name="exitSoundVolumeActivity" >Are you sure do you want to discard the changes and return to record again?</string>
@@ -159,18 +160,28 @@
     <!-- Camera Settings -->
     <string name="title_camera_section">Camera</string>
     <string name="resolution">Resolution</string>
-    <string name="low_resolution_name">Good (720p)</string>
-    <string name="low_value">Good</string>
-    <string name="good_resolution_name">Very good (1080p)</string>
-    <string name="good_value">Very good</string>
-    <string name="high_resolution_name">Excellent (4K)</string>
-    <string name="high_value">Excellent</string>
+    <string name="low_resolution_value">720</string>
+    <string name="good_resolution_value">1080</string>
+    <string name="high_resolution_value">2160</string>
+    <string name="low_resolution_name">720p</string>
+    <string name="good_resolution_name">1080p</string>
+    <string name="high_resolution_name">4K</string>
     <string name="quality">Quality</string>
-    <string name="low_quality_name">Good (2 Mbps)</string>
-    <string name="good_quality_name">Very good (5 Mbps)</string>
-    <string name="high_quality_name">Excellent (10 Mbps)</string>
+    <string name="low_quality_value">5000000</string>
+    <string name="good_quality_value">8000000</string>
+    <string name="high_quality_value">10000000</string>
+    <string name="low_quality_name">5 Mbps</string>
+    <string name="good_quality_name">8 Mbps</string>
+    <string name="high_quality_name">10 Mbps</string>
+    <string name="frame_rate">Frame rate</string>
+    <string name="low_frame_rate_value">24</string>
+    <string name="good_frame_rate_value">25</string>
+    <string name="high_frame_rate_value">30</string>
+    <string name="low_frame_rate_name">24 fps</string>
+    <string name="good_frame_rate_name">25 fps</string>
+    <string name="high_frame_rate_name">30 fps</string>
     <string name="cancelSettingsCamera">Cancel</string>
-
+    <string name="preference_not_available">Preference not available</string>
 
     <!-- More info Settings -->
     <string name="aboutUsTitle">About us</string>
@@ -215,6 +226,7 @@
     <string name="videonaWeb">http://www.videona.com\n</string>
     <string name="versionTitle"><u>Version</u></string>
     <string name="videona">Videona</string>
+    <string name="vimojo">ViMoJo</string>
     <string name="versionContent">beta </string>
     <string name="madeIn">Made in Madrid</string>
     <string name="licenseTitle"><u>Free software licenses</u></string>
@@ -1673,6 +1685,5 @@ and Conditions.\n\n
     <string name="dialog_message_clean_project">Do you want to start a new project?</string>
     <string name="dialog_accept_clean_project">Yes</string>
     <string name="dialog_cancel_clean_project">No</string>
-
 
 </resources>

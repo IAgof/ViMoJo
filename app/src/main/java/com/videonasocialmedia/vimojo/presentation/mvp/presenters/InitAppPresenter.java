@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 
 /**
@@ -15,7 +16,7 @@ public class InitAppPresenter {
     this.view = view;
   }
 
-  public void startLoadingProject(String rootPath) {
-    createDefaultProjectUseCase.loadOrCreateProject(rootPath);
+  public void startLoadingProject(String rootPath, Profile profile) {
+    createDefaultProjectUseCase.loadOrCreateProject(rootPath, profile);
   }
 }

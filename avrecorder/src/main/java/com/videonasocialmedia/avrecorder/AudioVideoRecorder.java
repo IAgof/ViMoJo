@@ -191,13 +191,12 @@ public class AudioVideoRecorder {
 
     public void onHostActivityPaused() {
         mCamEncoder.onHostActivityPaused();
-        //mMicEncoder.onHostActivityPaused();
         mMicEncoder.release();
+
     }
 
     public void onHostActivityResumed() {
         mCamEncoder.onHostActivityResumed();
-        //mMicEncoder.onHostActivityResumed();
     }
 
     public int getActiveCameraIndex() {
@@ -215,4 +214,5 @@ public class AudioVideoRecorder {
     public void rotateCamera(int rotation) {
         mCamEncoder.updateRotationDisplay(rotation);
     }
+
 }

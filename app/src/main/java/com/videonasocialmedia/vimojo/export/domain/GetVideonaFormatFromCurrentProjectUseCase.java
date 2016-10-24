@@ -8,16 +8,15 @@ import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution
 /**
  * Created by alvaro on 2/09/16.
  */
-public class GetVideonaFormatUseCase {
+public class GetVideonaFormatFromCurrentProjectUseCase {
 
     public Project project;
 
-    public GetVideonaFormatUseCase() {
+    public GetVideonaFormatFromCurrentProjectUseCase() {
         this.project = Project.getInstance(null, null, null);
     }
 
-    public void getVideonaFormatFromProject(OnGetVideonaFormatListener listener){
-
+    public VideonaFormat getVideonaFormatFromCurrentProject(){
         VideonaFormat videonaFormat;
 
         VideoResolution resolution = project.getProfile().getVideoResolution();
@@ -30,6 +29,6 @@ public class GetVideonaFormatUseCase {
             videonaFormat = new VideonaFormat();
         }
 
-        listener.onVideonaFormat(videonaFormat);
+        return videonaFormat;
     }
 }

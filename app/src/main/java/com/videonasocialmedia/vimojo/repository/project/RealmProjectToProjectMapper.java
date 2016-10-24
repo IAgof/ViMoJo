@@ -6,6 +6,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.repository.Mapper;
@@ -41,7 +42,9 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
 //    if (realmProject.)
     VideoResolution.Resolution resolution = VideoResolution.Resolution.valueOf(realmProject.resolution);
     VideoQuality.Quality quality = VideoQuality.Quality.valueOf(realmProject.quality);
-    return new Profile(resolution, quality, -1, Profile.ProfileType.pro);
+    VideoFrameRate.FrameRate frameRate = VideoFrameRate.FrameRate.valueOf(realmProject.frameRate);
+
+    return new Profile(resolution, quality, frameRate);
   }
 
   private void setProjectMusic(Project project, RealmProject realmProject) {
