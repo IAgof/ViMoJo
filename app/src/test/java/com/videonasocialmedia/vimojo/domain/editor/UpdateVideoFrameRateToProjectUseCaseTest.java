@@ -5,12 +5,19 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by alvaro on 20/10/16.
@@ -18,34 +25,45 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class UpdateVideoFrameRateToProjectUseCaseTest {
 
-    @After
-    public void tearDown() throws Exception {
-        // FIXME: tests are not independent as Project keeps state between tests
-        Project singletonProject = Project.getInstance(null, null, null);
-        singletonProject.clear();
-    }
+  @Mock ProjectRepository mockedProjectRepository;
+  @InjectMocks UpdateVideoFrameRateToProjectUseCase injectedUseCase;
+  private Project currentProject;
 
-    @Test
-    public void profileUpdateFrameRate(){
+  @Before
+  public void setUp() throws Exception {
+    // FIXME: tests are not independent as Project keeps state between tests
+    Project singletonProject = Project.getInstance(null, null, null);
+    singletonProject.clear();
+    currentProject = getAProject();
+    MockitoAnnotations.initMocks(this);
+  }
 
-        Project project = getAProject();
-        Profile profile = project.getProfile();
-        VideoFrameRate videoFrameRate = profile.getVideoFrameRate();
+  @Test
+  public void updateFrameRateCallsProjectRepositoryUpdate() {
+    injectedUseCase.updateFrameRate(VideoFrameRate.FrameRate.FPS30);
 
-        assertThat("frameRate", 25, CoreMatchers.is(videoFrameRate.getFrameRate()));
+    verify(mockedProjectRepository).update(currentProject);
+  }
 
-        new UpdateVideoFrameRateToProjectUseCase().updateFrameRate(VideoFrameRate.FrameRate.FPS30, project);
+  @Test
+  public void updateFrameRateSetsProjectProfileFrameRate() {
 
-        VideoFrameRate updatedVideoFrameRate = profile.getVideoFrameRate();
-        assertThat("updatedFrameRate", 30, CoreMatchers.is(updatedVideoFrameRate.getFrameRate()));
+    assertThat("frameRate", 25, is(currentProject.getProfile().getVideoFrameRate().getFrameRate()));
 
-    }
+    injectedUseCase.updateFrameRate(VideoFrameRate.FrameRate.FPS30);
 
-    private Project getAProject() {
-        String title = "project title";
-        String rootPath = "project/root/path";
-        Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
-                VideoFrameRate.FrameRate.FPS25);
-        return Project.getInstance(title, rootPath, profile);
-    }
+    verify(mockedProjectRepository).update(currentProject);
+
+    VideoFrameRate updatedVideoFrameRate = currentProject.getProfile().getVideoFrameRate();
+    assertThat("updatedFrameRate", 30, CoreMatchers.is(updatedVideoFrameRate.getFrameRate()));
+
+  }
+
+  private Project getAProject() {
+    String title = "project title";
+    String rootPath = "project/root/path";
+    Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+        VideoFrameRate.FrameRate.FPS25);
+    return Project.getInstance(title, rootPath, profile);
+  }
 }

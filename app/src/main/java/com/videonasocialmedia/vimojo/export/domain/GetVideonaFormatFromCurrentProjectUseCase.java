@@ -16,8 +16,7 @@ public class GetVideonaFormatFromCurrentProjectUseCase {
         this.project = Project.getInstance(null, null, null);
     }
 
-    public void getVideonaFormatFromProject(OnGetVideonaFormatListener listener){
-
+    public VideonaFormat getVideonaFormatFromCurrentProject(){
         VideonaFormat videonaFormat;
 
         VideoResolution resolution = project.getProfile().getVideoResolution();
@@ -30,6 +29,6 @@ public class GetVideonaFormatFromCurrentProjectUseCase {
             videonaFormat = new VideonaFormat();
         }
 
-        listener.onVideonaFormat(videonaFormat);
+        return videonaFormat;
     }
 }

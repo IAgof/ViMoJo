@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -46,8 +47,8 @@ public class LoadCurrentProjectUseCaseTest {
 
   @Test
   public void loadCurrentProjectInjectsProjectRepositoryCurrentProjectIntoProjectInstanceIfNull() {
-    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.EXCELLENT,
-            -1, Profile.ProfileType.pro);
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+            VideoFrameRate.FrameRate.FPS25);
     Project currentProject = new Project("title", "root/path", profile);
     assert Project.INSTANCE == null;
     doReturn(currentProject).when(mockedProjectRepository).getCurrentProject();

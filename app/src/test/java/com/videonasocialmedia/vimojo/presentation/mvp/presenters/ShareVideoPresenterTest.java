@@ -7,6 +7,7 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -42,6 +43,8 @@ public class ShareVideoPresenterTest {
     private UserEventTracker mockedUserEventTracker;
     @Mock
     private SharedPreferences mockSharedPrefs;
+    @Mock
+    private Context mockContext;
 
 
     @Before
@@ -59,7 +62,7 @@ public class ShareVideoPresenterTest {
 
         Project videonaProject = getAProject();
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
-                mockedUserEventTracker, mockSharedPrefs);
+                mockedUserEventTracker, mockSharedPrefs, mockContext);
 
         assertThat(shareVideoPresenter.currentProject, is(videonaProject));
     }
@@ -69,7 +72,7 @@ public class ShareVideoPresenterTest {
 
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
-                userEventTracker, mockSharedPrefs);
+                userEventTracker, mockSharedPrefs, mockContext);
 
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
@@ -78,7 +81,7 @@ public class ShareVideoPresenterTest {
     public void shareVideoPresenterCallsTracking(){
 
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
-                mockedUserEventTracker, mockSharedPrefs);
+                mockedUserEventTracker, mockSharedPrefs, mockContext);
         Project videonaProject = getAProject();
         String socialNetwokId = "SocialNetwork";
         int totalVideosShared = 0;

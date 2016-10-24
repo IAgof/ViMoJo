@@ -62,8 +62,8 @@ public class Profile {
      * @param quality
      * @param frameRate
      */
-    private Profile(VideoResolution.Resolution resolution, VideoQuality.Quality quality,
-                    VideoFrameRate.FrameRate frameRate) {
+    public Profile(VideoResolution.Resolution resolution, VideoQuality.Quality quality,
+                   VideoFrameRate.FrameRate frameRate) {
 
         this.resolution = resolution;
         this.videoResolution = new VideoResolution(resolution);
@@ -77,12 +77,9 @@ public class Profile {
      * Profile factory.
      *
      * (jliarte): since 21/10/16 Profile stops being a singleton :P
-     *
-     * @param profileType
      * @return - profile instance.
      */
     @Deprecated
-    public static Profile getInstance(ProfileType profileType) {
     public static Profile getInstance(VideoResolution.Resolution resolution, VideoQuality.Quality quality,
                                       VideoFrameRate.FrameRate frameRate) {
         if (INSTANCE == null) {

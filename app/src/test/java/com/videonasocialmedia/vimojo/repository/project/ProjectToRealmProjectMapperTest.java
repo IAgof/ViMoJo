@@ -7,6 +7,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 
@@ -26,7 +27,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class ProjectToRealmProjectMapperTest {
   @Test
   public void testMapReturnsRealmProjectInstance() {
-    Project project = new Project(null, null, Profile.getInstance(Profile.ProfileType.free));
+    Project project = new Project(null, null, Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+            VideoFrameRate.FrameRate.FPS25));
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
     RealmProject realmProject = mapper.map(project);
@@ -36,8 +38,8 @@ public class ProjectToRealmProjectMapperTest {
 
   @Test
   public void testMapSetsRealmProjectFieldsFromProject() {
-    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.EXCELLENT,
-            -1, Profile.ProfileType.pro);
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+            VideoFrameRate.FrameRate.FPS25);
     Project project = new Project("Project title", "root/path", profile);
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
@@ -101,8 +103,8 @@ public class ProjectToRealmProjectMapperTest {
 
   @NonNull
   private Project getAProject() {
-    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.EXCELLENT,
-            -1, Profile.ProfileType.pro);
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+            VideoFrameRate.FrameRate.FPS25);
     return new Project("Project title", "root/path", profile);
   }
 }

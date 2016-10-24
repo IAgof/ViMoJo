@@ -103,7 +103,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         this.userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
         sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
                 Context.MODE_PRIVATE);
-        presenter = new ShareVideoPresenter(this, userEventTracker, sharedPreferences);
+        presenter = new ShareVideoPresenter(this, userEventTracker, sharedPreferences, this);
 
         presenter.onCreate();
         videoPath = getIntent().getStringExtra(Constants.VIDEO_TO_SHARE_PATH);

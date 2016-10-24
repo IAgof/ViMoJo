@@ -16,6 +16,7 @@ public class RealmProject extends RealmObject {
   public String projectPath;
   public String quality;
   public String resolution;
+  public String framerate;
   public String musicTitle;
   public float musicVolume = Music.DEFAULT_MUSIC_VOLUME;
   public RealmList<RealmVideo> videos;
@@ -24,11 +25,12 @@ public class RealmProject extends RealmObject {
     this.videos = new RealmList<RealmVideo>();
   }
 
-  public RealmProject(String title, String projectPath, String quality, String resolution) {
+  public RealmProject(String title, String projectPath, String quality, String resolution, String framerate) {
     this.title = title;
     this.projectPath = projectPath;
     this.quality = quality;
     this.resolution = resolution;
+    this.framerate = framerate;
     this.videos = new RealmList<RealmVideo>();
   }
 }

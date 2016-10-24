@@ -16,9 +16,7 @@ import android.preference.ListPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoFrameRateToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Utils;
@@ -31,7 +29,6 @@ class ChooseCameraResolutionListPreferences extends ListPreference {
     private CharSequence[] entries;
     private CharSequence[] entryValues;
     private SharedPreferences sharedPreferences;
-    private Project currentProject;
     private UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase;
 
     public ChooseCameraResolutionListPreferences(Context context, AttributeSet attrs)
@@ -40,14 +37,7 @@ class ChooseCameraResolutionListPreferences extends ListPreference {
         mContext = context;
         sharedPreferences =  mContext.getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
-
-        currentProject = loadCurrentProject();
         updateVideoResolutionToProjectUseCase = new UpdateVideoResolutionToProjectUseCase();
-    }
-
-    public Project loadCurrentProject() {
-        // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
     }
 
     // NOTE:
@@ -158,7 +148,7 @@ class ChooseCameraResolutionListPreferences extends ListPreference {
     private void updateProfileProject(String item) {
 
         VideoResolution.Resolution resolution = Utils.getResolutionFromItemName(mContext,item);
-        updateVideoResolutionToProjectUseCase.updateResolution(resolution, currentProject);
+        updateVideoResolutionToProjectUseCase.updateResolution(resolution);
 
     }
 

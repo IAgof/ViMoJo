@@ -5,12 +5,17 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
-import org.hamcrest.CoreMatchers;
-import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by alvaro on 20/10/16.
@@ -18,34 +23,42 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class UpdateVideoQualityToProjectUseCaseTest {
 
-    @After
-    public void tearDown() throws Exception {
-        // FIXME: tests are not independent as Project keeps state between tests
-        Project singletonProject = Project.getInstance(null, null, null);
-        singletonProject.clear();
-    }
+  @Mock ProjectRepository mockedProjectRepository;
+  @InjectMocks UpdateVideoQualityToProjectUseCase injectedUseCase;
+  private Project currentProject;
 
-    @Test
-    public void profileUpdateQuality(){
+  @Before
+  public void setUp() throws Exception {
+    // FIXME: tests are not independent as Project keeps state between tests
+    Project singletonProject = Project.getInstance(null, null, null);
+    singletonProject.clear();
+    currentProject = getAProject();
+    MockitoAnnotations.initMocks(this);
+  }
 
-        Project project = getAProject();
-        Profile profile = project.getProfile();
-        VideoQuality videoQuality = profile.getVideoQuality();
+  @Test
+  public void updateQualityCallsProjectRepositoryUpdate() {
+    injectedUseCase.updateQuality(VideoQuality.Quality.LOW);
 
-        assertThat("bitRate", 10*1000*1000, CoreMatchers.is(videoQuality.getVideoBitRate()));
+    verify(mockedProjectRepository).update(currentProject);
+  }
 
-        new UpdateVideoQualityToProjectUseCase().updateQuality(VideoQuality.Quality.LOW, project);
+  @Test
+  public void updateQualitySetProjectProfileQuality(){
 
-        VideoQuality updatedVideoQuality = profile.getVideoQuality();
+    VideoQuality videoQuality = currentProject.getProfile().getVideoQuality();
+    assertThat("bitRate", 10 * 1000 * 1000, is(videoQuality.getVideoBitRate()));
 
-        assertThat("updated bitRate", 5*1000*1000, CoreMatchers.is(updatedVideoQuality.getVideoBitRate()));
-    }
+    injectedUseCase.updateQuality(VideoQuality.Quality.LOW);
 
-    private Project getAProject() {
-        String title = "project title";
-        String rootPath = "project/root/path";
-        Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
-                VideoFrameRate.FrameRate.FPS25);
-        return Project.getInstance(title, rootPath, profile);
-    }
+    VideoQuality updatedVideoQuality = currentProject.getProfile().getVideoQuality();
+    assertThat("updated bitRate", 5 * 1000 * 1000, is(updatedVideoQuality.getVideoBitRate()));
+
+  }
+
+  private Project getAProject() {
+    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+  }
+
 }

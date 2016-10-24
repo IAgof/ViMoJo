@@ -5,53 +5,66 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.verify;
+
 
 /**
  * Created by alvaro on 20/10/16.
  */
 
+
 public class UpdateVideoResolutionToProjectUseCaseTest {
 
-    @After
-    public void tearDown() throws Exception {
-        // FIXME: tests are not independent as Project keeps state between tests
-        Project singletonProject = Project.getInstance(null, null, null);
-        singletonProject.clear();
-    }
+  @Mock ProjectRepository mockedProjectRepository;
+  @InjectMocks UpdateVideoResolutionToProjectUseCase injectedUseCase;
+  private Project currentProject;
 
-    @Test
-    public void profileUpdateResolution(){
+  @Before
+  public void setUp() throws Exception {
+    // FIXME: tests are not independent as Project keeps state between tests
+    Project singletonProject = Project.getInstance(null, null, null);
+    singletonProject.clear();
+    currentProject = getAProject();
+    MockitoAnnotations.initMocks(this);
+  }
 
-        Project project = getAProject();
-        Profile profile = project.getProfile();
-        VideoResolution videoResolution = profile.getVideoResolution();
+  @Test
+  public void updateResolutionCallsProjectRepositoryUpdate() {
+    injectedUseCase.updateResolution(VideoResolution.Resolution.HD1080);
 
-        assertThat("height", 720, CoreMatchers.is(videoResolution.getHeight()));
-        assertThat("width", 1280, CoreMatchers.is(videoResolution.getWidth()));
+    verify(mockedProjectRepository).update(currentProject);
+  }
 
-        float format = 16/9;
-        assertThat("format 16/9", format, CoreMatchers.is((float) (videoResolution.getWidth()/videoResolution.getHeight())));
+  @Test
+  public void updateResolutionSetsProjectProfileResolution() {
 
-        new UpdateVideoResolutionToProjectUseCase().updateResolution(VideoResolution.Resolution.HD1080, project);
+    assertThat("height", 720, is(currentProject.getProfile().getVideoResolution().getHeight()));
+    assertThat("width", 1280, is(currentProject.getProfile().getVideoResolution().getWidth()));
 
-        VideoResolution updatedVideoResolution = profile.getVideoResolution();
+    injectedUseCase.updateResolution(VideoResolution.Resolution.HD1080);
 
-        assertThat("height", 1080, CoreMatchers.is(updatedVideoResolution.getHeight()));
-        assertThat("width", 1920, CoreMatchers.is(updatedVideoResolution.getWidth()));
+    VideoResolution updatedVideoResolution = currentProject.getProfile().getVideoResolution();
 
-    }
+    assertThat("height", 1080, is(updatedVideoResolution.getHeight()));
+    assertThat("width", 1920, is(updatedVideoResolution.getWidth()));
 
-    private Project getAProject() {
-        String title = "project title";
-        String rootPath = "project/root/path";
-        Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
-                VideoFrameRate.FrameRate.FPS25);
-        return Project.getInstance(title, rootPath, profile);
-    }
+  }
+
+  public Project getAProject() {
+    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+  }
 }

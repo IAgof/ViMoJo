@@ -6,6 +6,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
@@ -55,8 +56,9 @@ public class RealmProjectToProjectMapperTest {
     RealmProject realmProject = new RealmProject();
     String title = realmProject.title = "Project title";
     realmProject.projectPath = "project/path";
-    realmProject.quality = VideoQuality.Quality.EXCELLENT.name();
+    realmProject.quality = VideoQuality.Quality.HIGH.name();
     realmProject.resolution = VideoResolution.Resolution.HD720.name();
+    realmProject.framerate = VideoFrameRate.FrameRate.FPS25.name();
     RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
 
     Project project = mapper.map(realmProject);
@@ -73,14 +75,15 @@ public class RealmProjectToProjectMapperTest {
     Project project = mapper.map(realmProject);
     Profile profile = project.getProfile();
 
-    assertThat(profile.getQuality(), is(VideoQuality.Quality.EXCELLENT));
+    assertThat(profile.getQuality(), is(VideoQuality.Quality.HIGH));
     assertThat(profile.getResolution(), is(VideoResolution.Resolution.HD720));
+    assertThat(profile.getFrameRate(), is(VideoFrameRate.FrameRate.FPS25));
   }
 
   @Test
-  public void testMapReturnsNullIfEmptyResolution() {
+  public void testMapReturnsNullIfEmptyQuality() {
     RealmProject realmProject = new RealmProject();
-    realmProject.quality = VideoQuality.Quality.EXCELLENT.name();
+    realmProject.quality = VideoQuality.Quality.HIGH.name();
     RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
 
     Project project = mapper.map(realmProject);
@@ -89,9 +92,20 @@ public class RealmProjectToProjectMapperTest {
   }
 
   @Test
-  public void testMapReturnsNullIfEmptyQuality() {
+  public void testMapReturnsNullIfEmptyResolution() {
     RealmProject realmProject = new RealmProject();
     realmProject.resolution = VideoResolution.Resolution.HD720.name();
+    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
+
+    Project project = mapper.map(realmProject);
+
+    assertThat(project, is(nullValue()));
+  }
+
+  @Test
+  public void testMapReturnsNullIfEmptyFrameRate() {
+    RealmProject realmProject = new RealmProject();
+    realmProject.framerate = VideoFrameRate.FrameRate.FPS25.name();
     RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
 
     Project project = mapper.map(realmProject);
@@ -103,6 +117,28 @@ public class RealmProjectToProjectMapperTest {
   public void testMapReturnsNullIfInvalidQuality() {
     RealmProject realmProject = new RealmProject();
     realmProject.quality = "esto no vale";
+    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
+
+    Project project = mapper.map(realmProject);
+
+    assertThat(project, is(nullValue()));
+  }
+
+  @Test
+  public void testMapReturnsNullIfInvalidResolution() {
+    RealmProject realmProject = new RealmProject();
+    realmProject.resolution = "esto no vale";
+    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
+
+    Project project = mapper.map(realmProject);
+
+    assertThat(project, is(nullValue()));
+  }
+
+  @Test
+  public void testMapReturnsNullIfInvalidFrameRate() {
+    RealmProject realmProject = new RealmProject();
+    realmProject.framerate = "esto no vale";
     RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
 
     Project project = mapper.map(realmProject);
@@ -157,8 +193,9 @@ public class RealmProjectToProjectMapperTest {
   @NonNull
   private RealmProject getARealmProject() {
     RealmProject realmProject = new RealmProject();
-    realmProject.quality = VideoQuality.Quality.EXCELLENT.name();
+    realmProject.quality = VideoQuality.Quality.HIGH.name();
     realmProject.resolution = VideoResolution.Resolution.HD720.name();
+    realmProject.framerate = VideoFrameRate.FrameRate.FPS25.name();
     return realmProject;
   }
 }

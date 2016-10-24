@@ -8,8 +8,7 @@ import android.support.annotation.Nullable;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatUseCase;
-import com.videonasocialmedia.vimojo.export.domain.OnGetVideonaFormatListener;
+import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchExportTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
@@ -24,19 +23,17 @@ import java.util.List;
 /**
  * Created by alvaro on 5/09/16.
  */
-public class ExportTempBackgroundService extends Service implements OnGetVideonaFormatListener {
+public class ExportTempBackgroundService extends Service {
 
     public static final String ACTION = "com.videonasocialmedia.vimojo.android.service.receiver";
 
-    GetVideonaFormatUseCase getVideonaFormatUseCase;
+    GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private VideonaFormat videoFormat;
     private final VideoRepository videoRepository = new VideoRealmRepository();
 
-    public ExportTempBackgroundService(){
-       // getVideonaFormatUseCase = new GetVideonaFormatUseCase();
-       // getVideonaFormatUseCase.getVideonaFormatFromProject(this);
-        // TODO:(alvaro.martinez) 12/09/16 Get format from project, future functionality, use case created
-        videoFormat = new VideonaFormat();
+    public ExportTempBackgroundService() {
+        getVideonaFormatFromCurrentProjectUseCase = new GetVideonaFormatFromCurrentProjectUseCase();
+        videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
     }
 
     @Nullable
@@ -160,13 +157,4 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
         return null;
     }
 
-    @Override
-    public void onVideonaFormat(VideonaFormat videonaFormat) {
-        this.videoFormat = videonaFormat;
-    }
-
-    @Override
-    public void onVideonaErrorFormat() {
-        // Error
-    }
 }

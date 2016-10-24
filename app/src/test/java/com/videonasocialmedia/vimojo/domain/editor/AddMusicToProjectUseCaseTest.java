@@ -141,11 +141,5 @@ public class AddMusicToProjectUseCaseTest {
         verify(mockedProjectRepository).update(currentProject);
     }
 
-    private Project getAProject() {
-        Profile profile = Profile.getInstance(Profile.ProfileType.free);
-        String rootPath = "projectRootPath";
-        String title = "project title";
-        return Project.getInstance(title, rootPath, profile);
-    }
 
 }

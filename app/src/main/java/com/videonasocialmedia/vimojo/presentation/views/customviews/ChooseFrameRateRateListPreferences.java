@@ -40,13 +40,7 @@ class ChooseFrameRateRateListPreferences extends ListPreference {
         mContext = context;
         sharedPreferences =  mContext.getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
-        currentProject = loadCurrentProject();
         updateVideoFrameRateToProjectUseCase = new UpdateVideoFrameRateToProjectUseCase();
-    }
-
-    public Project loadCurrentProject() {
-        // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
     }
 
     // NOTE:
@@ -164,7 +158,7 @@ class ChooseFrameRateRateListPreferences extends ListPreference {
     private void updateProfileProject(String item) {
 
         VideoFrameRate.FrameRate frameRate = Utils.getFrameRateFromItemName(mContext, item);
-        updateVideoFrameRateToProjectUseCase.updateFrameRate(frameRate, currentProject);
+        updateVideoFrameRateToProjectUseCase.updateFrameRate(frameRate);
 
     }
 

@@ -1,9 +1,9 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 /**
  * Created by alvaro on 20/10/16.
@@ -11,12 +11,11 @@ import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution
 
 public class UpdateVideoResolutionToProjectUseCase {
 
-    public UpdateVideoResolutionToProjectUseCase(){
+    private Project currentProject = Project.getInstance(null, null, null);
+    protected ProjectRepository projectRepository = new ProjectRealmRepository();
 
-    }
-
-    public void updateResolution(VideoResolution.Resolution resolution, Project currentProject){
-        Profile profile = currentProject.getProfile();
-        profile.setResolution(resolution);
+    public void updateResolution(VideoResolution.Resolution resolution) {
+        currentProject.getProfile().setResolution(resolution);
+        projectRepository.update(currentProject);
     }
 }
