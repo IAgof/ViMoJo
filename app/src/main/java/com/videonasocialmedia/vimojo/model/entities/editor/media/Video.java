@@ -16,6 +16,7 @@ import android.media.MediaMetadataRetriever;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.File;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -34,7 +35,8 @@ public class Video extends Media {
      * The total duration of the file media resource
      */
     private int fileDuration;
-    private String tempPath;
+    // TODO(jliarte): 24/10/16 review this public field
+    public String tempPath;
     private String clipText;
     private String clipTextPosition;
     private boolean isTempPathFinished = false;
@@ -47,6 +49,7 @@ public class Video extends Media {
     private int duration;
 
     private int numTriesToExportVideo = 0;
+    private String uuid = UUID.randomUUID().toString();
 
 
     /**
@@ -132,11 +135,16 @@ public class Video extends Media {
         }
     }
 
-    public void setIdentifier() {
+    public void createIdentifier() {
         if (identifier < 1)
             this.identifier = count.addAndGet(1);
     }
 
+    public void setIdentifier(int identifier) {
+        this.identifier = identifier;
+    }
+
+    // TODO(jliarte): 24/10/16 review this design as it gives problem with persistence
     public boolean isEdited() {
         return tempPath!=null;
     }
@@ -185,4 +193,15 @@ public class Video extends Media {
         numTriesToExportVideo++;
     }
 
+    public boolean isTextToVideoAdded() {
+        return isTextToVideoAdded;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 }

@@ -60,13 +60,13 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void addMusicCallsTrackMusicSet() {
+    public void onAddMediaItemToTrackSuccessCallsTrackMusicSet() {
         MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(musicDetailView, mockedUserEventTracker);
         Project videonaProject = getAProject();
         Music music = new Music(1, "Music title", 2, 3, "Music Author", "3");
         musicDetailPresenter.onMusicRetrieved(music);
 
-        musicDetailPresenter.addMusic(music);
+        musicDetailPresenter.onAddMediaItemToTrackSuccess(music);
 
         Mockito.verify(mockedUserEventTracker).trackMusicSet(videonaProject);
     }

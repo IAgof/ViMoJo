@@ -1,3 +1,9 @@
+v0.4.9
+- Added current project persistence. Project remains saved each time app opens.
+- A new project can be created when coming back from the share screen to editor
+- Added setup for a new FTP account for breaking news direct publishing
+- A filename is asked for when uploading files to FTP
+
 v0.4.8
 - Set default camera recording settings to 720p, 10Mbps, 25fps
 - Showing recorded clip thumbnails in record screen with the number of recorded videos to access editor

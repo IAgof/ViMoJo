@@ -11,58 +11,35 @@
 package com.videonasocialmedia.vimojo.sound.domain;
 
 
-import android.util.Log;
-
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalOrphanTransitionOnTrack;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.AudioTrack;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
-
-import java.util.List;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 /**
  * This class is used to removed videos from the project.
  */
 public class RemoveMusicFromProjectUseCase {
-
-    /**
-     * @param music      the music object to be removed
-     * @param trackIndex the index of the track where de music is placed
-     * @param listener   the listener waiting for the music being removed
-     * @deprecated the method is deprecated because of the recent use of event buses
-     */
-    @Deprecated
-    public void removeMusicFromProject(Music music, int trackIndex, OnRemoveMediaFinishedListener listener) {
-        AudioTrack audioTrack = Project.getInstance(null, null, null)
-                .getAudioTracks().get(trackIndex);
-        for (int musicIndex = 0; musicIndex < audioTrack.getItems().size(); musicIndex++) {
-            Media audio = audioTrack.getItems().get(musicIndex);
-            if (audio.equals(music)) {
-                try {
-                    audioTrack.deleteItemAt(musicIndex);
-                    listener.onRemoveMediaItemFromTrackSuccess();
-                } catch (IllegalItemOnTrack | IllegalOrphanTransitionOnTrack exception) {
-                    //TODO treat exception properly
-                }
-            }
-        }
-    }
+    private final Project currentProject = Project.getInstance(null, null, null);
+    protected ProjectRepository projectRepository = new ProjectRealmRepository();
 
     /**
      * @param music      the music object to be removed
      * @param trackIndex the index of the track where de music is placed
      */
     public void removeMusicFromProject(Music music, int trackIndex) {
-        AudioTrack audioTrack = Project.getInstance(null, null, null)
-                .getAudioTracks().get(trackIndex);
+        AudioTrack audioTrack = currentProject.getAudioTracks().get(trackIndex);
         for (int musicIndex = 0; musicIndex < audioTrack.getItems().size(); musicIndex++) {
             Media audio = audioTrack.getItems().get(musicIndex);
             if (audio.equals(music)) {
                 try {
                     audioTrack.deleteItem(audio);
+                    currentProject.setMusicOnProject(false);
+                    projectRepository.update(currentProject);
                 } catch (IllegalItemOnTrack | IllegalOrphanTransitionOnTrack exception) {
                     //TODO treat exception properly
                 }
@@ -70,29 +47,4 @@ public class RemoveMusicFromProjectUseCase {
         }
     }
 
-    /**
-     * @param trackIndex the index of the track where de music is removed
-     * @param listener   the listener waiting for the music list being removed
-     * @deprecated the method is deprecated because of the recent use of event buses
-     */
-    public void removeAllMusic(int trackIndex, OnRemoveMediaFinishedListener listener) {
-        try {
-            List<AudioTrack> audioTracks = Project.getInstance(null, null, null).getAudioTracks();
-            audioTracks.remove(trackIndex);
-            audioTracks.add(new AudioTrack());
-            listener.onRemoveMediaItemFromTrackSuccess();
-        } catch (Exception exception) {
-            Log.e("REMOVE MUSIC", "removeAllMusic", exception);
-        }
-    }
-
-    public void removeAllMusic(int trackIndex) {
-        try {
-            List<AudioTrack> audioTracks = Project.getInstance(null, null, null).getAudioTracks();
-            audioTracks.remove(trackIndex);
-            audioTracks.add(new AudioTrack());
-        } catch (Exception exception) {
-            Log.e("REMOVE MUSIC", "removeAllMusic", exception);
-        }
-    }
 }

@@ -6,17 +6,22 @@ import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalOrp
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnReorderMediaListener;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 /**
  * Created by jca on 7/7/15.
  */
 public class ReorderMediaItemUseCase {
+    protected ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public void moveMediaItem(Media media, int toPositon, OnReorderMediaListener listener){
-        Project project= Project.getInstance(null,null,null);
-        MediaTrack videoTrack= project.getMediaTrack();
+        Project project = Project.getInstance(null,null,null);
+        MediaTrack videoTrack = project.getMediaTrack();
         try {
             videoTrack.moveItemTo(toPositon,media);
+            new ReorderProjectVideoListUseCase().reorderVideoList();
+            projectRepository.update(project);
             listener.onMediaReordered(media, toPositon);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             illegalItemOnTrack.printStackTrace();
