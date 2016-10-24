@@ -252,10 +252,14 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         dialog.setTitle(R.string.error_video_format);
 
         String message = "Videos ";
-        String videos = "";
+        String videos = ".";
+        int numColons = 0;
         for(int videoId: listVideoId){
             message = message.concat(String.valueOf(videoId));
-            message = message.concat(" ");
+            if(numColons<listVideoId.size()-1){
+                message = message.concat(", ");
+                numColons++;
+            }
         }
 
         dialog.setMessage(message.concat(videos));

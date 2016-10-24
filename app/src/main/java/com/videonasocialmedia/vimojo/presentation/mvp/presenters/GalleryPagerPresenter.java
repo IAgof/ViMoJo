@@ -99,7 +99,6 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
                 if(width.compareTo(String.valueOf(videoResolution.getWidth())) != 0){
                     listErrorVideoIds.add(index + 1);
                     videoList.remove(video);
-                    break;
                 }
 
             } catch (Exception e) {
