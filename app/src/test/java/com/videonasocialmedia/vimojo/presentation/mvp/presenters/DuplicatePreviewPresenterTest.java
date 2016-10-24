@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.media.MediaMetadataRetriever;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
@@ -18,6 +19,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -34,10 +36,13 @@ import static org.hamcrest.CoreMatchers.*;
 @RunWith(RobolectricTestRunner.class)
 //@RunWith(MockitoJUnitRunner.class)
 public class DuplicatePreviewPresenterTest {
-
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private DuplicateView mockedDuplicateView;
     @Mock private UserEventTracker mockedUserEventTracker;
+    @Mock private AddVideoToProjectUseCase
+            mockedAddVideoToProjectUseCase;
+
+    @InjectMocks DuplicatePreviewPresenter injectedPresenter;
 
     // TODO(jliarte): 13/06/16 Decouple Video entity from android
     @Mock(name="retriever") MediaMetadataRetriever mockedMediaMetadataRetriever;
@@ -72,16 +77,17 @@ public class DuplicatePreviewPresenterTest {
     @Test
     @Config(manifest="../app/AndroidManifest.xml", shadows = {MediaMetadataRetrieverShadow.class})
     public void duplicateVideoCallsTracking() {
-        DuplicatePreviewPresenter presenter = new DuplicatePreviewPresenter(mockedDuplicateView, mockedUserEventTracker);
+//        DuplicatePreviewPresenter presenter = new DuplicatePreviewPresenter(mockedDuplicateView, mockedUserEventTracker);
         Project videonaProject = getAProject();
         Video video = new Video("/media/path", 0, 10);
         int numCopies = 3;
 
         /**
-         * Exception accesing in getFileDuration as MediaMetadataRetriever.extractMetadata returns null
-         * using a custom shadow instead
+         * Exception accesing in getFileDuration as MediaMetadataRetriever.extractMetadata returns
+         * null using a custom shadow instead
          */
-        presenter.duplicateVideo(video, 0, numCopies);
+        injectedPresenter.addVideoToProjectUseCase = mockedAddVideoToProjectUseCase;
+        injectedPresenter.duplicateVideo(video, 0, numCopies);
 
         Mockito.verify(mockedUserEventTracker).trackClipDuplicated(numCopies, videonaProject);
     }

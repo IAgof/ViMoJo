@@ -67,7 +67,7 @@ public class EditPresenterTest {
     @Test
     public void loadProjectCallsGetMusicFromProjectUseCaseIfProjectHasMusic() {
         Project videonaProject = getAProject();
-        // TODO:(alvaro.martinez) 10/10/16 Check and improve isMusicOnProject, setter not needed.
+        // TODO:(alvaro.martinez) 10/10/16 Check and improve hasMusic, setter not needed.
     }
 
     @Test

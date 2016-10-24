@@ -19,7 +19,8 @@ import java.util.concurrent.Future;
 public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinishedListener {
 
     private final AddMusicToProjectUseCase addMusicToProjectUseCase;
-    String outputFile = Constants.PATH_APP_TEMP + File.separator + "AudioMixed" + ".m4a";
+//    String outputFile = Constants.PATH_APP_TEMP + File.separator + "AudioMixed" + ".m4a";
+    String outputFile = Constants.OUTPUT_FILE_MIXED_AUDIO;
     private OnMixAudioListener listener;
     private float volume = 0.5f;
 
@@ -44,7 +45,9 @@ public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinished
 
     @Override
     public void onAudioMixerSuccess(String outputFileMixed) {
-        addMusicToProjectUseCase.addMusicToTrack(new Music(outputFileMixed, volume), 0, this);
+        Music music = new Music(outputFileMixed, volume);
+        music.setMusicTitle(Constants.MUSIC_AUDIO_MIXED_TITLE);
+        addMusicToProjectUseCase.addMusicToTrack(music, 0, this);
     }
 
     @Override
