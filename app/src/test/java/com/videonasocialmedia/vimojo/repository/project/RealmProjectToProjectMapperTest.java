@@ -58,7 +58,7 @@ public class RealmProjectToProjectMapperTest {
     realmProject.projectPath = "project/path";
     realmProject.quality = VideoQuality.Quality.HIGH.name();
     realmProject.resolution = VideoResolution.Resolution.HD720.name();
-    realmProject.framerate = VideoFrameRate.FrameRate.FPS25.name();
+    realmProject.frameRate = VideoFrameRate.FrameRate.FPS25.name();
     RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
 
     Project project = mapper.map(realmProject);
@@ -105,7 +105,7 @@ public class RealmProjectToProjectMapperTest {
   @Test
   public void testMapReturnsNullIfEmptyFrameRate() {
     RealmProject realmProject = new RealmProject();
-    realmProject.framerate = VideoFrameRate.FrameRate.FPS25.name();
+    realmProject.frameRate = VideoFrameRate.FrameRate.FPS25.name();
     RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
 
     Project project = mapper.map(realmProject);
@@ -138,7 +138,7 @@ public class RealmProjectToProjectMapperTest {
   @Test
   public void testMapReturnsNullIfInvalidFrameRate() {
     RealmProject realmProject = new RealmProject();
-    realmProject.framerate = "esto no vale";
+    realmProject.frameRate = "esto no vale";
     RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
 
     Project project = mapper.map(realmProject);
@@ -195,7 +195,7 @@ public class RealmProjectToProjectMapperTest {
     RealmProject realmProject = new RealmProject();
     realmProject.quality = VideoQuality.Quality.HIGH.name();
     realmProject.resolution = VideoResolution.Resolution.HD720.name();
-    realmProject.framerate = VideoFrameRate.FrameRate.FPS25.name();
+    realmProject.frameRate = VideoFrameRate.FrameRate.FPS25.name();
     return realmProject;
   }
 }
