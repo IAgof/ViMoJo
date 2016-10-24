@@ -15,29 +15,32 @@ import android.os.Build;
 import android.preference.ListPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoFrameRateToProjectUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.util.ArrayList;
 
-class ChooseCameraResolutionListPreferences extends ListPreference {
+class ChooseFrameRateRateListPreferences extends ListPreference {
 
     private Context mContext;
     private CharSequence[] entries;
     private CharSequence[] entryValues;
     private SharedPreferences sharedPreferences;
-    private UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase;
+    private Project currentProject;
+    private UpdateVideoFrameRateToProjectUseCase updateVideoFrameRateToProjectUseCase;
 
-    public ChooseCameraResolutionListPreferences(Context context, AttributeSet attrs)
+    public ChooseFrameRateRateListPreferences(Context context, AttributeSet attrs)
     {
         super(context, attrs);
         mContext = context;
         sharedPreferences =  mContext.getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
-        updateVideoResolutionToProjectUseCase = new UpdateVideoResolutionToProjectUseCase();
+        updateVideoFrameRateToProjectUseCase = new UpdateVideoFrameRateToProjectUseCase();
     }
 
     // NOTE:
@@ -68,56 +71,63 @@ class ChooseCameraResolutionListPreferences extends ListPreference {
     */
 
     @Override
-    protected void onPrepareDialogBuilder(final AlertDialog.Builder builder)
-    {
+    protected void onPrepareDialogBuilder(final AlertDialog.Builder builder) {
 
         entries = getEntries();
         entryValues = getEntryValues();
 
-        if (entries == null || entryValues == null || entries.length != entryValues.length )
-        {
+        String prefsFrameRate;
+
+        if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false)){
+            prefsFrameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE,
+                    mContext.getResources().getString(R.string.good_frame_rate_name));
+        } else {
+            if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false)) {
+                prefsFrameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE,
+                        mContext.getResources().getString(R.string.low_frame_rate_name));
+            } else {
+                prefsFrameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE, "0");
+            }
+        }
+
+        if (entries == null || entryValues == null || entries.length != entryValues.length) {
             throw new IllegalStateException(
                     "ListPreference requires an entries array and an entryValues array which are both the same length");
 
         }
 
-        String prefsResolution = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
-                mContext.getResources().getString(R.string.low_resolution_value));
-
-        builder.setTitle(R.string.resolution);
-
-        //list of items
+        builder.setTitle(R.string.frame_rate);
 
         int positionItemSelected = 0;
         int numItemSupported = 0;
 
-        ArrayList<String> itemsSupported = new ArrayList<String>(mContext.getResources().getStringArray(R.array.camera_resolution_names).length);
+        ArrayList<String> itemsSupported = new ArrayList<String>(mContext.getResources().getStringArray(R.array.camera_frame_rate_names).length);
 
-        if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false)){
-            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.low_resolution_name));
+        if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false)){
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.low_frame_rate_name));
         }
-        if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, false)){
-            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.good_resolution_name));
+        if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false)){
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.good_frame_rate_name));
         }
-        if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, false)){
-            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.high_resolution_name));
+        if(sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, false)){
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.high_frame_rate_name));
         }
 
-        final String[] itemsName = new String[numItemSupported];
+        final String[] items = new String[numItemSupported];
 
         for (int i=0; i<numItemSupported; i++){
-            itemsName[i] = itemsSupported.get(i);
-            if ( itemsSupported.get(i).compareTo(prefsResolution) == 0){
+            items[i] = itemsSupported.get(i);
+            if ( itemsSupported.get(i).compareTo(prefsFrameRate) == 0){
                 positionItemSelected = i;
             }
         }
 
-        builder.setSingleChoiceItems(itemsName, positionItemSelected,
+        builder.setSingleChoiceItems(items, positionItemSelected,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        setValue(itemsName[which]);
-                        updateProfileProject(itemsName[which]);
+                        setValue(items[which]);
+                        updateProfileProject(items[which]);
                         getDialog().dismiss();
                     }
                 });
@@ -147,8 +157,8 @@ class ChooseCameraResolutionListPreferences extends ListPreference {
 
     private void updateProfileProject(String item) {
 
-        VideoResolution.Resolution resolution = Utils.getResolutionFromItemName(mContext,item);
-        updateVideoResolutionToProjectUseCase.updateResolution(resolution);
+        VideoFrameRate.FrameRate frameRate = Utils.getFrameRateFromItemName(mContext, item);
+        updateVideoFrameRateToProjectUseCase.updateFrameRate(frameRate);
 
     }
 
@@ -157,4 +167,5 @@ class ChooseCameraResolutionListPreferences extends ListPreference {
         super.onDialogClosed(positiveResult);
 
     }
+
 }

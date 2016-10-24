@@ -13,15 +13,15 @@ public class VideoQuality {
 
     public VideoQuality(Quality quality) {
         switch (quality) {
-            case GOOD:
-                this.videoBitRate = 2000000;
-                break;
-            case EXCELLENT:
-                this.videoBitRate = 10000000;
-                break;
-            case VERY_GOOD:
-            default:
+            case LOW:
                 this.videoBitRate = 5000000;
+                break;
+            case GOOD:
+                this.videoBitRate = 8000000;
+                break;
+            case HIGH:
+            default:
+                this.videoBitRate = 10000000;
         }
     }
 
@@ -30,6 +30,6 @@ public class VideoQuality {
     }
 
     public enum Quality {
-        GOOD, VERY_GOOD, EXCELLENT
+        LOW, HIGH, GOOD
     }
 }

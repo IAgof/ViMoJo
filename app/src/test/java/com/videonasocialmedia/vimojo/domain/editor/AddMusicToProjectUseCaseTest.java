@@ -14,6 +14,9 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.AudioTrack;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
@@ -97,6 +100,14 @@ public class AddMusicToProjectUseCaseTest {
 //        assert(project_audio_track.getItems().size() == 0);
 //    }
 
+    private Project getAProject() {
+        Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+        String rootPath = "projectRootPath";
+        String title = "project title";
+        return Project.getInstance(title, rootPath, profile);
+    }
+
 //    @Test public void testAddMusicToTrackSendsErrorEventToBusOnSuccess() throws Exception {
 //        Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
 //        Music musicToAdd = new Music(42, "musicNameId", 3, 2);
@@ -130,11 +141,5 @@ public class AddMusicToProjectUseCaseTest {
         verify(mockedProjectRepository).update(currentProject);
     }
 
-    private Project getAProject() {
-        Profile profile = Profile.getInstance(Profile.ProfileType.free);
-        String rootPath = "projectRootPath";
-        String title = "project title";
-        return Project.getInstance(title, rootPath, profile);
-    }
 
 }

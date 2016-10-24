@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.domain;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -60,8 +61,9 @@ public class CreateDefaultProjectUseCaseTest {
   @Test
   public void loadOrCreateProjectCallsGetCurrentProjectIfInstanceIsNull() {
     assert Project.INSTANCE == null;
-
-    injectedUseCase.loadOrCreateProject("root/path");
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+        VideoFrameRate.FrameRate.FPS25);
+    injectedUseCase.loadOrCreateProject("root/path", profile);
 
     verify(mockedProjectRepository).getCurrentProject();
   }
@@ -70,7 +72,7 @@ public class CreateDefaultProjectUseCaseTest {
   public void startLoadingProjectDoesNotCallGetCurrentProjectIfNonNullInstance() {
     Project project = Project.INSTANCE = new Project(null, null, null);
 
-    injectedUseCase.loadOrCreateProject("root/path");
+    injectedUseCase.loadOrCreateProject("root/path", project.getProfile());
 
     verify(mockedProjectRepository, never()).getCurrentProject();
     assertThat(Project.getInstance(null, null, null), is(project));
@@ -79,12 +81,12 @@ public class CreateDefaultProjectUseCaseTest {
   @Test
   public void startLoadingProjectSetsProjectInstanceToCurrentProjectRetrieved() {
     assert Project.INSTANCE == null;
-    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.EXCELLENT,
-            -1, Profile.ProfileType.pro);
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+            VideoFrameRate.FrameRate.FPS25);
     Project currentProject = new Project("current project", "current/path", profile);
     doReturn(currentProject).when(mockedProjectRepository).getCurrentProject();
 
-    injectedUseCase.loadOrCreateProject("root/path");
+    injectedUseCase.loadOrCreateProject("root/path", profile);
 
     assertThat(Project.getInstance(null, null, null), is(currentProject));
   }
@@ -92,12 +94,12 @@ public class CreateDefaultProjectUseCaseTest {
   @Test
   public void startLoadingProjectSaveOrUpdateProjectInstance() {
     assert Project.INSTANCE == null;
-    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.EXCELLENT,
-            -1, Profile.ProfileType.pro);
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+            VideoFrameRate.FrameRate.FPS25);
     Project currentProject = new Project("current project", "current/path", profile);
     doReturn(currentProject).when(mockedProjectRepository).getCurrentProject();
 
-    injectedUseCase.loadOrCreateProject("root/path");
+    injectedUseCase.loadOrCreateProject("root/path", profile);
 
     verify(mockedProjectRepository).update(currentProject);
   }
