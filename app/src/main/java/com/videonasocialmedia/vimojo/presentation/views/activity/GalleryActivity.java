@@ -59,7 +59,6 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     LinearLayout selectionMode;
     private int countVideosSelected = 0;
     private VideonaDialog dialog;
-    List<Video> videosFromFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,20 +87,6 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         pagerTabStrip.setDrawFullUnderline(true);
         pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorBlack));
         pagerTabStrip.setTextColor(getResources().getColor(R.color.colorBlack));
-        restoreState(savedInstanceState);
-    }
-
-    private void restoreState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-   /*         countVideosSelected=savedInstanceState.getInt("KEY");
-
-            VideoGalleryFragment selectedFragment= adapterViewPager.getItem(0);
-            videosFromFragment = selectedFragment.getSelectedVideoList();
-            for (int i=0; i<videosFromFragment.size();i++) {
-                 ischeched=savedInstanceState.getBoolean("CHECKED");
-            }*/
-        }
-
     }
 
     @Override
@@ -120,7 +105,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         for (int i = 0; i < adapterViewPager.getCount(); i++) {
             VideoGalleryFragment selectedFragment = adapterViewPager.getItem(i);
             Log.d("GALLERY ACTIVITY", selectedFragment.toString());
-            videosFromFragment = selectedFragment.getSelectedVideoList();
+            List<Video> videosFromFragment = selectedFragment.getSelectedVideoList();
             result.addAll(videosFromFragment);
         }
         return result;
@@ -131,14 +116,6 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         super.onSaveInstanceState(outState);
         getFragmentManager().putFragment(outState, MASTERS_FRAGMENT_TAG, adapterViewPager.getItem(0));
         getFragmentManager().putFragment(outState, EDITED_FRAGMENT_TAG, adapterViewPager.getItem(1));
-
-       /* outState.putInt("KEY",countVideosSelected);
-
-        VideoGalleryFragment selectedFragment = adapterViewPager.getItem(0);
-        for (int i=0; i<videosFromFragment.size();i++){
-            outState.putBoolean("CHECKED", selectedFragment.isItemChecked(i));
-        }*/
-
     }
 
     @Override
