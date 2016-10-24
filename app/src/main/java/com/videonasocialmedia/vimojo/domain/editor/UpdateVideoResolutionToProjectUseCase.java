@@ -11,10 +11,11 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 public class UpdateVideoResolutionToProjectUseCase {
 
-    private Project currentProject = Project.getInstance(null, null, null);
+    private Project currentProject;
     protected ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public void updateResolution(VideoResolution.Resolution resolution) {
+        currentProject = Project.getInstance(null, null, null);
         currentProject.getProfile().setResolution(resolution);
         projectRepository.update(currentProject);
     }

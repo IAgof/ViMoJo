@@ -11,10 +11,11 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 public class UpdateVideoFrameRateToProjectUseCase {
 
-    private Project currentProject = Project.getInstance(null, null, null);
+    private Project currentProject;
     protected ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public void updateFrameRate(VideoFrameRate.FrameRate frameRate) {
+        currentProject = Project.getInstance(null, null, null);
         currentProject.getProfile().setFrameRate(frameRate);
         projectRepository.update(currentProject);
     }
