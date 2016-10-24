@@ -111,6 +111,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,6 +135,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
             currentProjectTimePosition = savedInstanceState.getInt(CURRENT_TIME_POSITION, 0);
         }
+
     }
 
     @Override
@@ -453,6 +455,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
     public void resetPreview() {
         videonaPlayer.resetPreview();
     }
+
 
     @Override
     public void newClipPlayed(int currentClipIndex) {
