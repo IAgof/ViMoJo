@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution
 
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -25,6 +26,11 @@ import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectTest {
+    @Before
+    public void setupProjectInstance() {
+        Project.getInstance(null, null, null).clear();
+    }
+
     @After
     public void tearDown() {
         Project.getInstance(null, null, null).clear();
@@ -83,7 +89,6 @@ public class ProjectTest {
 
     @Test
     public void getVideoParamsFromProjectProfile(){
-
         Project videonaProject = getAProject();
         VideoResolution resolution = videonaProject.getProfile().getVideoResolution();
         VideoQuality quality = videonaProject.getProfile().getVideoQuality();
@@ -93,7 +98,6 @@ public class ProjectTest {
         assertThat("videoWidth", 1280, CoreMatchers.is(resolution.getWidth()));
         assertThat("videoHeight", 720, CoreMatchers.is(resolution.getHeight()));
         assertThat("frameRate", 25, CoreMatchers.is(frameRate.getFrameRate()));
-
     }
 
     public Project getAProject() {
