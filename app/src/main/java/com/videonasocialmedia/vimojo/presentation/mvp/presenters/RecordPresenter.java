@@ -179,10 +179,8 @@ public class RecordPresenter {
             this.recordedVideosNumber = mediaInProject.size();
             recordView.showVideosRecordedNumber(recordedVideosNumber);
             recordView.showRecordedVideoThumb(lastItem.getMediaPath());
-            recordView.enableShareButton();
         } else {
             recordView.hideVideosRecordedNumber();
-            recordView.disableShareButton();
         }
     }
 
@@ -257,7 +255,6 @@ public class RecordPresenter {
         recordView.showStopButton();
         recordView.startChronometer();
         recordView.showChronometer();
-        recordView.disableShareButton();
         recordView.hideSettingsOptions();
         recordView.hideVideosRecordedNumber();
         recordView.hideRecordedVideoThumb();
@@ -377,7 +374,6 @@ public class RecordPresenter {
         recordView.hideChronometer();
         recordView.reStartScreenRotation();
         recordView.showRecordedVideoThumb(path);
-        recordView.enableShareButton();
         recordView.showVideosRecordedNumber(++recordedVideosNumber);
     }
 

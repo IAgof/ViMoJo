@@ -71,8 +71,4 @@ public interface RecordView {
     void showVideosRecordedNumber(int numberOfVideos);
 
     void hideVideosRecordedNumber();
-
-    void enableShareButton();
-
-    void disableShareButton();
 }
