@@ -11,21 +11,31 @@ package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.AudioTrack;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
 
 
 @RunWith(PowerMockRunner.class)
@@ -33,8 +43,9 @@ import static org.junit.Assert.assertEquals;
 @PrepareForTest({AddMusicToProjectUseCase.class})
 public class AddMusicToProjectUseCaseTest {
 
-    @Mock
-    OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
+    @Mock OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
+    @Mock ProjectRepository mockedProjectRepository;
+    @InjectMocks AddMusicToProjectUseCase injectedUseCase;
 
     @Before
     public void setUp() throws Exception {
@@ -53,11 +64,11 @@ public class AddMusicToProjectUseCaseTest {
         Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
         Music musicToAdd = new Music(42, "musicNameId", 3, 2, "author","2");
 
-        new AddMusicToProjectUseCase().addMusicToTrack(musicToAdd, 0, mockedOnAddMediaFinishedListener);
+        injectedUseCase.addMusicToTrack(musicToAdd, 0, mockedOnAddMediaFinishedListener);
         AudioTrack projectAudioTrack = videonaProject.getAudioTracks().get(0);
 
-        assert ( projectAudioTrack.getItems().size() == 1 );
-        assert ( projectAudioTrack.getItems().get(0).equals(musicToAdd) );
+        assertThat(projectAudioTrack.getItems().size(), is(1));
+        assertThat(projectAudioTrack.getItems().get(0), is((Media)musicToAdd));
     }
 
 //    @Test public void testAddMusicToTrackSendsMusicAddedToProjectEventToBusOnSuccess() throws Exception {
@@ -90,7 +101,8 @@ public class AddMusicToProjectUseCaseTest {
 //    }
 
     private Project getAProject() {
-        Profile profile = Profile.getInstance(Profile.ProfileType.free);
+        Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         String rootPath = "projectRootPath";
         String title = "project title";
         return Project.getInstance(title, rootPath, profile);
@@ -116,6 +128,18 @@ public class AddMusicToProjectUseCaseTest {
         new AddMusicToProjectUseCase().addMusicToTrack(musicToAdd, 1, mockedOnAddMediaFinishedListener);
         AudioTrack projectAudioTrack = videonaProject.getAudioTracks().get(0);
 
-        assertEquals(projectAudioTrack.getItems().size(), 0);
+        assertThat(projectAudioTrack.getItems().size(), is(0));
     }
+
+    @Test
+    public void testAddMusicToTrackCallsProjectRepositoryUpdate() {
+        Project currentProject = getAProject();
+        Music musicToAdd = new Music("music/path");
+
+        injectedUseCase.addMusicToTrack(musicToAdd, 0, mockedOnAddMediaFinishedListener);
+
+        verify(mockedProjectRepository).update(currentProject);
+    }
+
+
 }

@@ -5,6 +5,8 @@ import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.export.utils.TranscoderHelper;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
 
 import java.io.IOException;
@@ -17,6 +19,7 @@ public class ModifyVideoTextAndPositionUseCase {
     private TextToDrawable drawableGenerator = new TextToDrawable();
     private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
     protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator, mediaTranscoder);
+    protected VideoRepository videoRepository = new VideoRealmRepository();
 
     public void addTextToVideo(Video videoToEdit, VideonaFormat format, String text, String textPosition,
                                MediaTranscoderListener listener) {
@@ -33,6 +36,7 @@ public class ModifyVideoTextAndPositionUseCase {
             } else {
                 transcoderHelper.generateOutputVideoWithOverlayImage(videoToEdit, format, listener);
             }
+            videoRepository.update(videoToEdit);
         } catch (IOException e) {
             // TODO(javi.cabanas): 2/8/16 mangage io expception on external library and send onTranscodeFailed if neccessary
             listener.onTranscodeFailed(e);

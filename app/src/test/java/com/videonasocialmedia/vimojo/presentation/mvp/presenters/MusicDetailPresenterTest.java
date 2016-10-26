@@ -5,6 +5,9 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
@@ -60,13 +63,13 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void addMusicCallsTrackMusicSet() {
+    public void onAddMediaItemToTrackSuccessCallsTrackMusicSet() {
         MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(musicDetailView, mockedUserEventTracker);
         Project videonaProject = getAProject();
         Music music = new Music(1, "Music title", 2, 3, "Music Author", "3");
         musicDetailPresenter.onMusicRetrieved(music);
 
-        musicDetailPresenter.addMusic(music);
+        musicDetailPresenter.onAddMediaItemToTrackSuccess(music);
 
         Mockito.verify(mockedUserEventTracker).trackMusicSet(videonaProject);
     }
@@ -82,6 +85,7 @@ public class MusicDetailPresenterTest {
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", Profile.getInstance(Profile.ProfileType.free));
+        return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
     }
 }

@@ -8,11 +8,12 @@ import android.support.annotation.Nullable;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatUseCase;
-import com.videonasocialmedia.vimojo.export.domain.OnGetVideonaFormatListener;
+import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchExportTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
@@ -22,34 +23,30 @@ import java.util.List;
 /**
  * Created by alvaro on 5/09/16.
  */
-public class ExportTempBackgroundService extends Service implements OnGetVideonaFormatListener {
+public class ExportTempBackgroundService extends Service {
 
     public static final String ACTION = "com.videonasocialmedia.vimojo.android.service.receiver";
 
-    GetVideonaFormatUseCase getVideonaFormatUseCase;
+    GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private VideonaFormat videoFormat;
+    private final VideoRepository videoRepository = new VideoRealmRepository();
 
-    public ExportTempBackgroundService(){
-       // getVideonaFormatUseCase = new GetVideonaFormatUseCase();
-       // getVideonaFormatUseCase.getVideonaFormatFromProject(this);
-        // TODO:(alvaro.martinez) 12/09/16 Get format from project, future functionality, use case created
-        videoFormat = new VideonaFormat();
+    public ExportTempBackgroundService() {
+        getVideonaFormatFromCurrentProjectUseCase = new GetVideonaFormatFromCurrentProjectUseCase();
+        videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-
         return null;
     }
 
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
-
         new Thread(new Runnable() {
             @Override
             public void run() {
-
                 final int videoId = intent.getIntExtra(IntentConstants.VIDEO_ID, -51456);
 
                 final boolean isVideoRelaunch = intent.getBooleanExtra(IntentConstants.RELAUNCH_EXPORT_TEMP, false);
@@ -62,7 +59,6 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
                 final String text = intent.getStringExtra(IntentConstants.TEXT_TO_ADD);
                 final String textPosition = intent.getStringExtra(IntentConstants.TEXT_POSITION);
 
-
                 final Video video = getVideo(videoId);
                 MediaTranscoderListener useCaseListener = new MediaTranscoderListener() {
                     @Override
@@ -72,6 +68,7 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
                     @Override
                     public void onTranscodeCompleted() {
                         video.setTempPathFinished(true);
+                        videoRepository.update(video);
                         sendResultBroadcast(videoId, true);
                     }
 
@@ -82,16 +79,19 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
                             video.setTrimmedVideo(false);
                         if(video.hasText())
                             video.setTextToVideoAdded(false);
+                        videoRepository.update(video);
                         sendResultBroadcast(videoId, false);
                     }
 
                     @Override
                     public void onTranscodeFailed(Exception e) {
+                        // TODO(jliarte): 24/10/16 if transcoding fails, do we remove the effect??
                         video.deleteTempVideo();
                         if(video.isTrimmedVideo())
                             video.setTrimmedVideo(false);
                         if(video.hasText())
                             video.setTextToVideoAdded(false);
+                        videoRepository.update(video);
                         sendResultBroadcast(videoId, false);
                     }
 
@@ -121,26 +121,20 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
     }
 
     private void relaunchExportVideo(Video video, MediaTranscoderListener useCaseListener, VideonaFormat videoFormat) {
-
         RelaunchExportTempBackgroundUseCase useCase = new RelaunchExportTempBackgroundUseCase();
         useCase.relaunchExport(video, useCaseListener, videoFormat);
-
     }
 
     private void addTextToVideo(Video video, MediaTranscoderListener useCaseListener,
                                 VideonaFormat videoFormat, String text, String textPosition) {
-
         ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase = new ModifyVideoTextAndPositionUseCase();
         modifyVideoTextAndPositionUseCase.addTextToVideo(video, videoFormat, text, textPosition, useCaseListener);
-
     }
 
     private void trimVideo(Video video, MediaTranscoderListener useCaseListener, VideonaFormat videoFormat,
                            int startTimeMs, int finishTimeMs) {
-
         ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
         modifyVideoDurationUseCase.trimVideo(video, videoFormat, startTimeMs, finishTimeMs, useCaseListener);
-
     }
 
     private void sendResultBroadcast(int videoId, boolean success) {
@@ -163,13 +157,4 @@ public class ExportTempBackgroundService extends Service implements OnGetVideona
         return null;
     }
 
-    @Override
-    public void onVideonaFormat(VideonaFormat videonaFormat) {
-        this.videoFormat = videonaFormat;
-    }
-
-    @Override
-    public void onVideonaErrorFormat() {
-        // Error
-    }
 }

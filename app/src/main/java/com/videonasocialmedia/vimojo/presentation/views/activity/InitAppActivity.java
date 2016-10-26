@@ -36,10 +36,17 @@ import com.mixpanel.android.mpmetrics.InAppNotification;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.VimojoApplication;
+//import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
+//import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnInitAppEventListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
+import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.AppStart;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -72,11 +79,6 @@ import butterknife.ButterKnife;
  */
 
 public class InitAppActivity extends VimojoActivity implements InitAppView, OnInitAppEventListener {
-
-
-    /**
-     * LOG_TAG
-     */
     private final String LOG_TAG = this.getClass().getSimpleName();
     protected Handler handler = new Handler();
     @Bind(R.id.videona_version)
@@ -94,6 +96,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private String androidId = null;
     private String initState;
     private CompositeMultiplePermissionsListener compositePermissionsListener;
+    private InitAppPresenter presenter = new InitAppPresenter(this);
+    private ProfileRepository profileRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -319,6 +323,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         checkAvailableCameras();
         checkFlashMode();
         checkCameraVideoSize();
+        checkCameraFrameRate();
     }
 
     private void trackUserProfile() {
@@ -368,6 +373,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         camera = getCameraInstance(sharedPreferences.getInt(ConfigPreferences.CAMERA_ID,
                 ConfigPreferences.BACK_CAMERA));
         editor.putBoolean(ConfigPreferences.BACK_CAMERA_SUPPORTED, true).commit();
+
         numSupportedCameras = Camera.getNumberOfCameras();
         if (numSupportedCameras > 1) {
             editor.putBoolean(ConfigPreferences.FRONT_CAMERA_SUPPORTED, true).commit();
@@ -497,6 +503,35 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         releaseCamera();
     }
 
+    private void checkCameraFrameRate(){
+        List<Integer> supportedFrameRates;
+        if (camera != null) {
+            releaseCamera();
+        }
+        camera = getCameraInstance(ConfigPreferences.BACK_CAMERA);
+        supportedFrameRates = camera.getParameters().getSupportedPreviewFrameRates();
+        if (supportedFrameRates != null) {
+            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_SUPPORTED, true).commit();
+            for (int  frameRate : supportedFrameRates) {
+                if(frameRate == 24){
+                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, true).commit();
+                }
+                if(frameRate == 25){
+                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, true).commit();
+                }
+                if(frameRate == 30){
+                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, true).commit();
+                }
+            }
+        } else {
+            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false).commit();
+            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false).commit();
+            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, false).commit();
+            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_SUPPORTED, false).commit();
+        }
+        releaseCamera();
+    }
+
     /**
      * Gets an instance of the camera object
      *
@@ -526,15 +561,17 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     @Override
     public void onCheckPathsAppSuccess() {
-        startLoadingProject(this);
+        //TODO Define path project. By default, path app. Path .temp, private data
+        profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, this);
+        presenter.startLoadingProject(sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH, ""), profileRepository.getCurrentProfile());
         moveVideonaVideosToDcim();
     }
 
-    private void startLoadingProject(OnInitAppEventListener listener) {
-        //TODO Define project title (by date, by project count, ...)
-        //TODO Define path project. By default, path app. Path .temp, private data
-        Project.getInstance(Constants.PROJECT_TITLE, sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH, ""), checkProfile());
-    }
+//    private void startLoadingProject(OnInitAppEventListener listener) {
+//        //TODO Define project title (by date, by project count, ...)
+//        //TODO Define path project. By default, path app. Path .temp, private data
+//        Project.getInstance(Constants.PROJECT_TITLE, sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH, ""), getDefaultFreeProfile());
+//    }
 
     private void moveVideonaVideosToDcim() {
         String moviesPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + File.separator;
@@ -574,11 +611,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         return sourceDirectory;
     }
 
-    //TODO Check user profile, by default 720p free
-    private Profile checkProfile() {
-        return Profile.getInstance(Profile.ProfileType.free);
-    }
-
     @Override
     public void onCheckPathsAppError() {
 
@@ -598,9 +630,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     public void navigate(Class cls) {
 
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        finish();
+       // finish();
 
     }
 

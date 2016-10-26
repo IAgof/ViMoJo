@@ -9,34 +9,35 @@ package com.videonasocialmedia.vimojo.presentation.views.customviews;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.ListPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.TextView;
-
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.CameraResolutionAdapter;
-import com.videonasocialmedia.vimojo.presentation.views.listener.OnCameraResolutionSelectedListener;
+import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
-class ChooseCameraResolutionListPreferences extends ListPreference implements OnCameraResolutionSelectedListener {
+import java.util.ArrayList;
 
-    CameraResolutionAdapter cameraResolutionAdapter = null;
-    Context mContext;
-    CharSequence[] entries;
-    CharSequence[] entryValues;
-    ListView listView;
-    TextView textTitle;
+class ChooseCameraResolutionListPreferences extends ListPreference {
+
+    private Context mContext;
+    private CharSequence[] entries;
+    private CharSequence[] entryValues;
+    private SharedPreferences sharedPreferences;
+    private UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase;
 
     public ChooseCameraResolutionListPreferences(Context context, AttributeSet attrs)
     {
         super(context, attrs);
         mContext = context;
-
+        sharedPreferences =  mContext.getSharedPreferences(
+                ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        updateVideoResolutionToProjectUseCase = new UpdateVideoResolutionToProjectUseCase();
     }
 
     // NOTE:
@@ -80,24 +81,74 @@ class ChooseCameraResolutionListPreferences extends ListPreference implements On
 
         }
 
-        cameraResolutionAdapter = new CameraResolutionAdapter(mContext, entries, entryValues, this);
+        String prefsResolution = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
+                mContext.getResources().getString(R.string.low_resolution_value));
 
-        LayoutInflater inflater = LayoutInflater.from(mContext);//getActivity().getLayoutInflater();
-        View v = inflater.inflate(R.layout.dialog_choose_camera_options, null);
+        builder.setTitle(R.string.resolution);
 
-        listView = (ListView) v.findViewById(R.id.listViewCameraResolution);
-        listView.setAdapter(cameraResolutionAdapter);
+        //list of items
 
-        textTitle = (TextView) v.findViewById(R.id.titleDialogCamera);
-        textTitle.setText(R.string.resolution);
+        int positionItemSelected = 0;
+        int numItemSupported = 0;
+
+        ArrayList<String> itemsSupported = new ArrayList<String>(mContext.getResources().getStringArray(R.array.camera_resolution_names).length);
+
+        if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false)){
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.low_resolution_name));
+        }
+        if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, false)){
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.good_resolution_name));
+        }
+        if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, false)){
+            itemsSupported.add(numItemSupported++,mContext.getResources().getString(R.string.high_resolution_name));
+        }
+
+        final String[] itemsName = new String[numItemSupported];
+
+        for (int i=0; i<numItemSupported; i++){
+            itemsName[i] = itemsSupported.get(i);
+            if ( itemsSupported.get(i).compareTo(prefsResolution) == 0){
+                positionItemSelected = i;
+            }
+        }
+
+        builder.setSingleChoiceItems(itemsName, positionItemSelected,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setValue(itemsName[which]);
+                        updateProfileProject(itemsName[which]);
+                        getDialog().dismiss();
+                    }
+                });
+
+        String positiveText = mContext.getString(android.R.string.ok);
+        builder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // positive button logic
+                        getDialog().dismiss();
+                    }
+                });
 
 
-        builder.setView(v);
+        String negativeText = mContext.getString(android.R.string.cancel);
+        builder.setNegativeButton(negativeText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // negative button logic
+                        getDialog().cancel();
+                    }
+                });
 
-        builder.setPositiveButton(null, null);
-        builder.setNegativeButton(null, null);
-        builder.setTitle(null);
-        setNegativeButton(v);
+    }
+
+    private void updateProfileProject(String item) {
+
+        VideoResolution.Resolution resolution = Utils.getResolutionFromItemName(mContext,item);
+        updateVideoResolutionToProjectUseCase.updateResolution(resolution);
 
     }
 
@@ -105,24 +156,5 @@ class ChooseCameraResolutionListPreferences extends ListPreference implements On
     protected void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
 
-        Log.d("ChooseCameraResolutionListPreferences", "onDialogClosed ");
-
     }
-
-    private void setNegativeButton(View v) {
-        View cancelButton = v.findViewById(R.id.activity_settings_cancel_resolution_dialog);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                getDialog().cancel();
-            }
-        });
-    }
-
-    @Override
-    public void onClickCameraResolutionListener(String value) {
-
-        setValue(value);
-        getDialog().dismiss();
-    }
-
 }

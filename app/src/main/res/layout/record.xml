@@ -106,7 +106,8 @@
                     android:layout_gravity="center"
                     android:visibility="visible"
                     android:src="@drawable/activity_record_icon_memory"
-                    android:layout_marginLeft="16dp" />
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp" />
 
                 <ImageView
                     android:id="@+id/activity_record_icon_resolution"
@@ -116,7 +117,8 @@
                     android:layout_gravity="center"
                     android:visibility="visible"
                     android:src="@drawable/activity_record_icon_resolution_1080"
-                    android:layout_marginLeft="16dp" />
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"/>
 
                 <ImageView
                     android:id="@+id/activity_record_icon_geolocation"
@@ -124,18 +126,20 @@
                     android:layout_height="24dp"
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:src="@drawable/activity_record_icon_geolocation_pressed"
-                    android:layout_marginLeft="16dp" />
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp" />
 
                 <ImageView
                     android:id="@+id/activity_record_icon_microphone_"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:src="@drawable/activity_record_icon_microphone_pressed"
-                    android:layout_marginLeft="16dp" />
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp" />
 
             </LinearLayout>
 

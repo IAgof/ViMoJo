@@ -67,6 +67,7 @@
     <string name="galleryActivityTitle">Galería</string>
     <string name="mastersFolderTitle">Originales</string>
     <string name="editedFolderTitle">Editados</string>
+    <string name="error_video_format">Error, formato de vídeo diferente al del proyecto </string>
 
     <!--SoundVolumeActivity-->
     <string name="exitSoundVolumeActivity" >¿Desea descartar los cambios y volver a grabar de nuevo?</string>
@@ -155,17 +156,9 @@
     <!-- Camera Settings -->
     <string name="title_camera_section">Cámara</string>
     <string name="resolution">Resolución</string>
-    <string name="low_resolution_name">Buena (720p)</string>
-    <string name="low_value">Buena</string>
-    <string name="good_resolution_name">Muy buena (1080p)</string>
-    <string name="good_value">Muy buena</string>
-    <string name="high_resolution_name">Excelente (4K)</string>
-    <string name="high_value">Excelente</string>
     <string name="quality">Calidad</string>
-    <string name="low_quality_name">Buena (2 Mbps)</string>
-    <string name="good_quality_name">Muy buena (5 Mbps)</string>
-    <string name="high_quality_name">Excelente (10 Mbps)</string>
     <string name="cancelSettingsCamera">Cancelar</string>
+    <string name="preference_not_available">Ajuste no disponible</string>
 
     <!-- More info Settings -->
     <string name="aboutUsTitle">Sobre nosotros</string>
@@ -580,6 +573,9 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="text_hint_dialog_shareActivity">Nombre del proyecto</string>
     <string name="positiveButtonDialogShareActivity">Compartir</string>
     <string name="negativeButtonDialogShareActivity">Cancelar</string>
+    <string name="dialog_message_clean_project">¿Quiere empezar un nuevo proyecto?</string>
+    <string name="dialog_accept_clean_project">Sí</string>
+    <string name="dialog_cancel_clean_project">No</string>
 
 
 </resources>

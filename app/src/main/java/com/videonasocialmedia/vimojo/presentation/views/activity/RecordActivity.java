@@ -233,11 +233,14 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void onPause() {
-        unregisterReceiver(receiver);
-        recordPresenter.onPause();
-        orientationHelper.stopMonitoringOrientation();
         Log.d(LOG_TAG, "onPause");
+        if(recording)
+            recordPresenter.stopRecord();
+        unregisterReceiver(receiver);
+        orientationHelper.stopMonitoringOrientation();
+        recordPresenter.onPause();
         super.onPause();
+        finish();
     }
 
     @Override
@@ -644,7 +647,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
             recordPresenter.setFlashOff();
             Intent intent = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
             startActivity(intent);
-            finish();
+            //finish();
         }
     }
 
@@ -653,7 +656,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         if (!recording) {
             Intent intent = new Intent(VimojoApplication.getAppContext(), SettingsActivity.class);
             startActivity(intent);
-            finish();
+            //finish();
         }
     }
 

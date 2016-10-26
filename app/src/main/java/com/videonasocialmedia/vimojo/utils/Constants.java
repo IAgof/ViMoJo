@@ -40,6 +40,8 @@ public class Constants {
 
     final public static String PATH_APP_TEMP = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP;
 
+    final public static String VIDEO_TEMP_RECORD = "VID_temp.mp4";
+
     final public static String PATH_APP_TEMP_AUDIO = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP_AUDIO;
    // final public static String VIDEO_MUSIC_TEMP_FILE = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP + File.separator + "tempAV.mp4";
 
@@ -54,10 +56,14 @@ public class Constants {
     final public static String CURRENT_VIDEO_INDEX = "current_video_index";
     final public static String VIDEO_TO_SHARE_PATH = "video_to_share_path";
     final public static String MUSIC_SELECTED_TITLE = "music_selected";
+    final public static String MUSIC_AUDIO_MIXED_TITLE = "audio_mixed_music";
+    final public static String OUTPUT_FILE_MIXED_AUDIO = PATH_APP_TEMP + File.separator + "AudioMixed" + ".m4a";
 
 
     public static final String NOTIFICATION_EXPORT_SERVICES_RECEIVER = "com.videonasocialmedia.vimojo";
 
     public static final int DEFAULT_VIMOJO_WIDTH = 1280;
     public static final int DEFAULT_VIMOJO_HEIGHT = 720;
+    public static final int DEFAULT_VIMOJO_BITRATE = 10*1000*1000;
+    public static final int DEFAULT_VIMOJO_FRAME_RATE = 25;
 }

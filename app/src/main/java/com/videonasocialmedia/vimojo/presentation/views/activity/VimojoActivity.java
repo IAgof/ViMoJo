@@ -34,6 +34,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.export.ExportTempBroadCastReceveiver;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
@@ -50,32 +51,33 @@ import java.util.List;
  * @since 04/05/2015
  */
 public abstract class VimojoActivity extends AppCompatActivity {
-
     protected static final String ANDROID_PUSH_SENDER_ID = "783686583047";
     protected MixpanelAPI mixpanel;
     protected Tracker tracker;
     protected boolean criticalPermissionDenied = false;
     protected MultiplePermissionsListener dialogMultiplePermissionsListener;
     private ExportTempBroadCastReceveiver exportTempBroadCastReceveiver;
+    protected LoadCurrentProjectUseCase loadCurrentProjectUseCase = new LoadCurrentProjectUseCase();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadCurrentProjectUseCase.loadCurrentProject();
         if (getIntent().getBooleanExtra("EXIT", false)) {
             finish();
         }
         mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN);
-        mixpanel.getPeople().identify(mixpanel.getPeople().getDistinctId());
-        mixpanel.getPeople().initPushHandling(ANDROID_PUSH_SENDER_ID);
+        if (mixpanel != null) {
+            mixpanel.getPeople().identify(mixpanel.getPeople().getDistinctId());
+            mixpanel.getPeople().initPushHandling(ANDROID_PUSH_SENDER_ID);
+        }
         configPermissions();
         VimojoApplication app = (VimojoApplication) getApplication();
         tracker = app.getTracker();
 
-
 //        View root = ( (ViewGroup) findViewById(android.R.id.content) ).getChildAt(0);
         View root = findViewById(android.R.id.content);
         exportTempBroadCastReceveiver = new ExportTempBroadCastReceveiver(root);
-
     }
 
     private void configPermissions() {

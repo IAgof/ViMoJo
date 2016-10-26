@@ -16,6 +16,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -33,7 +34,11 @@ import android.os.StatFs;
 import android.provider.MediaStore;
 
 import com.coremedia.iso.IsoFile;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -122,6 +127,15 @@ public class Utils {
                     outChannel.close();
             }
         }
+    }
+
+    public static void moveFile(String originalPath, String finalPath) throws IOException {
+
+        File originalFile = new File(originalPath);
+        File destinationFile = new File(finalPath);
+
+        originalFile.renameTo(destinationFile);
+
     }
 
     public static Uri obtainUriToShare(Context context, String videoPath) {
@@ -373,4 +387,64 @@ public class Utils {
         }
         return inSampleSize;
     }
+
+    public static VideoFrameRate.FrameRate getFrameRateFromItemName(Context context,
+                                                                    String frameRate) {
+
+        if (frameRate.compareTo(context.getString(R.string.low_frame_rate_name)) == 0) {
+            return VideoFrameRate.FrameRate.FPS24;
+        }
+
+        if (frameRate.compareTo(context.getString(R.string.good_frame_rate_name)) == 0) {
+                return VideoFrameRate.FrameRate.FPS25;
+        }
+
+        if (frameRate.compareTo(context.getString(R.string.high_frame_rate_name)) == 0) {
+                return VideoFrameRate.FrameRate.FPS30;
+        }
+
+        // default
+        return VideoFrameRate.FrameRate.NOT_SUPPORTED;
+
+    }
+
+    public static VideoResolution.Resolution getResolutionFromItemName(Context context,
+                                                                      String resolution) {
+        if (resolution.compareTo(context.getString(R.string.low_resolution_name)) == 0) {
+                return VideoResolution.Resolution.HD720;
+            }
+
+        if (resolution.compareTo(context.getString(R.string.good_resolution_name)) == 0) {
+            return VideoResolution.Resolution.HD1080;
+        }
+
+        if (resolution.compareTo(context.getString(R.string.high_resolution_name)) == 0) {
+            return VideoResolution.Resolution.HD4K;
+        }
+
+        // default
+        return VideoResolution.Resolution.HD720;
+    }
+
+    public static VideoQuality.Quality getQualityFromItemName(Context context,
+                                                                       String quality) {
+
+        if (quality.compareTo(context.getString(R.string.low_quality_name)) == 0) {
+            return VideoQuality.Quality.LOW;
+        }
+
+        if (quality.compareTo(context.getString(R.string.good_quality_name)) == 0) {
+            return VideoQuality.Quality.GOOD;
+        }
+
+        if (quality.compareTo(context.getString(R.string.high_quality_name)) == 0) {
+            return VideoQuality.Quality.HIGH;
+        }
+
+        // default
+        return VideoQuality.Quality.HIGH;
+
+    }
+
+
 }

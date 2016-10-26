@@ -30,13 +30,14 @@ import java.util.ArrayList;
  * one
  */
 public class Project {
-
     private final String TAG = getClass().getCanonicalName();
     public static String VIDEONA_PATH = "";
     /**
      * There could be just one project open at a time. So this converts Project in a Singleton.
      */
-    private static Project INSTANCE;
+    // TODO(jliarte): 22/10/16 Would use project instance to store current project by now
+    @Deprecated
+    public static Project INSTANCE;
     /**
      * Project name. Also it will be the name of the exported video
      */
@@ -65,6 +66,8 @@ public class Project {
     private int duration;
     private Music music;
 
+    private String musicTitleIdentifier;
+
     private boolean isMusicOnProject = false;
 
     /**
@@ -74,13 +77,13 @@ public class Project {
      * @param rootPath - Path to root folder for the current project.
      * @param profile  - Define some characteristics and limitations of the current project.
      */
-    private Project(String title, String rootPath, Profile profile) {
+    public Project(String title, String rootPath, Profile profile) {
         this.title = title;
         this.projectPath = rootPath + "/projects/" + title; //todo probablemente necesitemos un slugify de ese title.
         this.checkPathSetup(rootPath);
         this.mediaTrack = new MediaTrack();
         this.audioTracks = new ArrayList<>();
-        audioTracks.add(0,new AudioTrack());
+        audioTracks.add(new AudioTrack());
         this.profile = profile;
         this.duration = 0;
 
@@ -112,8 +115,11 @@ public class Project {
     /**
      * Project factory.
      *
+     * (jliarte): since 21/10/16 Project stops being a singleton :P
+     *
      * @return - Singleton instance of the current project.
      */
+    @Deprecated
     public static Project getInstance(String title, String rootPath, Profile profile) {
         if (INSTANCE == null) {
             INSTANCE = new Project(title, rootPath, profile);
@@ -195,18 +201,28 @@ public class Project {
          * @see com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase
          */
         Music result = null;
-            try {
-                result = (Music) getAudioTracks().get(0).getItems().get(0);
-            } catch (Exception e) { e.printStackTrace(); }
-
+        try {
+            result = (Music) getAudioTracks().get(0).getItems().get(0);
+        } catch (Exception exception) {
+            // exception retrieving music
+        }
         return result;
     }
 
-    public boolean isMusicOnProject() {
-        return isMusicOnProject;
+    public boolean hasMusic() {
+//        return isMusicOnProject;
+        return (getMusic() != null);
     }
 
     public void setMusicOnProject(boolean musicOnProject) {
         isMusicOnProject = musicOnProject;
+    }
+
+    public String getMusicTitleIdentifier() {
+        return musicTitleIdentifier;
+    }
+
+    public void setMusicTitleIdentifier(String musicTitleIdentifier) {
+        this.musicTitleIdentifier = musicTitleIdentifier;
     }
 }
