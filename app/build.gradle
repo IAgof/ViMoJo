@@ -55,8 +55,8 @@ android {
         applicationId "com.videonasocialmedia.vimojo"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 12 // 20161024
-        versionName "0.4.10" // 20161024
+        versionCode 13 // 20161026
+        versionName "0.4.11" // 20161026
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
