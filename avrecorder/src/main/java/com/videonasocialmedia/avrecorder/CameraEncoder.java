@@ -941,7 +941,7 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
         int frameRate = mSessionConfig.getVideoFrameRate();
 
         if(frameRate != 0 && fpsRanges != null)
-            parms.setPreviewFpsRange(25*1000, 25*1000);
+            parms.setPreviewFpsRange(frameRate*1000, frameRate*1000);
             //parms.setPreviewFrameRate(frameRate);
 
         choosePreviewSize(parms, desiredWidth, desiredHeight);
