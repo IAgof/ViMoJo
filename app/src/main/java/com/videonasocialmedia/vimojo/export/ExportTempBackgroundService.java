@@ -18,14 +18,17 @@ import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCa
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
  * Created by alvaro on 5/09/16.
  */
-public class ExportTempBackgroundService extends Service {
+public class ExportTempBackgroundService extends Service implements OnApplyAudioFadeInFadeOutToVideoListener {
 
     public static final String ACTION = "com.videonasocialmedia.vimojo.android.service.receiver";
+    public static final int TIME_FADE_IN_MS = 500;
+    public static final int TIME_FADE_OUT_MS = 500;
 
     GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private VideonaFormat videoFormat;
@@ -67,9 +70,11 @@ public class ExportTempBackgroundService extends Service {
 
                     @Override
                     public void onTranscodeCompleted() {
-                        video.setTempPathFinished(true);
-                        videoRepository.update(video);
-                        sendResultBroadcast(videoId, true);
+                        try {
+                            applyAudioFadeInFadeOut(video, videoId);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     @Override
@@ -120,6 +125,12 @@ public class ExportTempBackgroundService extends Service {
         return START_NOT_STICKY;
     }
 
+    public void applyAudioFadeInFadeOut(Video video, int videoId) throws IOException {
+        ApplyAudioFadeInFadeOutToVideo applyAudioFadeInFadeOutToVideo = new ApplyAudioFadeInFadeOutToVideo(this);
+        applyAudioFadeInFadeOutToVideo.applyAudioFadeToVideo(video, videoId, TIME_FADE_IN_MS, TIME_FADE_OUT_MS);
+
+    }
+
     private void relaunchExportVideo(Video video, MediaTranscoderListener useCaseListener, VideonaFormat videoFormat) {
         RelaunchExportTempBackgroundUseCase useCase = new RelaunchExportTempBackgroundUseCase();
         useCase.relaunchExport(video, useCaseListener, videoFormat);
@@ -157,4 +168,18 @@ public class ExportTempBackgroundService extends Service {
         return null;
     }
 
+    @Override
+    public void OnGetAudioFadeInFadeOutError(String message, Video video, int videoId) {
+        video.deleteTempVideo();
+        videoRepository.update(video);
+        sendResultBroadcast(videoId, false);
+
+    }
+
+    @Override
+    public void OnGetAudioFadeInFadeOutSuccess(Video video, int videoId) {
+        video.setTempPathFinished(true);
+        videoRepository.update(video);
+        sendResultBroadcast(videoId, true);
+    }
 }

@@ -10,6 +10,8 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by alvaro on 23/10/16.
@@ -22,7 +24,8 @@ public class GetAudioFadeInFadeOutFromVideoUseCase implements OnAudioEffectListe
     private Video videoToFadeInFadeOut;
     OnGetAudioFadeInFadeOutFromVideoListener listener;
 
-    String tempFileAudio = Constants.FOLDER_VIDEONA_TEMP_AUDIO + File.separator + "AudioFadeInOut" + ".m4a";
+    String tempFileAudio = Constants.PATH_APP_TEMP_AUDIO + File.separator + "AudioFadeInOut_" +
+    new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".m4a";
 
     public GetAudioFadeInFadeOutFromVideoUseCase(OnGetAudioFadeInFadeOutFromVideoListener listener){
         this.listener = listener;
@@ -34,12 +37,12 @@ public class GetAudioFadeInFadeOutFromVideoUseCase implements OnAudioEffectListe
         videoToFadeInFadeOut = videoToEdit;
         videoToFadeInFadeOut.setTempPath();
         transcoderHelper.generateFileWithAudioFadeInFadeOut(videoToEdit.getMediaPath(), timeFadeInMs,
-                timeFadeOutMs, Constants.FOLDER_VIDEONA_TEMP_AUDIO, tempFileAudio, this);
+                timeFadeOutMs, Constants.PATH_APP_TEMP_AUDIO, tempFileAudio, this);
     }
 
     @Override
     public void onAudioEffectSuccess(String outputFile) {
-
+        listener.onGetAudioFadeInFadeOutFromVideoSuccess(outputFile);
     }
 
     @Override
@@ -49,11 +52,12 @@ public class GetAudioFadeInFadeOutFromVideoUseCase implements OnAudioEffectListe
 
     @Override
     public void onAudioEffectError(String error) {
-
+        listener.onGetAudioFadeInFadeOutFromVideoError(error);
     }
 
     @Override
     public void onAudioEffectCanceled() {
+        listener.onGetAudioFadeInFadeOutFromVideoError("canceled");
 
     }
 

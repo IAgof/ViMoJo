@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.export;
 
 import com.videonasocialmedia.vimojo.export.domain.ExportSwapAudioToVideoUseCase;
 import com.videonasocialmedia.vimojo.export.domain.OnExportEndedListener;
+import com.videonasocialmedia.vimojo.export.domain.OnExportEndedSwapAudioListener;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
@@ -14,25 +15,28 @@ import java.io.IOException;
  * Created by alvaro on 23/10/16.
  */
 
-public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedListener,
+public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedSwapAudioListener,
     OnGetAudioFadeInFadeOutFromVideoListener {
 
-  GetAudioFadeInFadeOutFromVideoUseCase getAudioFadeInFadeOutFromVideoUseCase;
-  ExportSwapAudioToVideoUseCase exportSwapAudioToVideoUseCase;
-  Video videoToEdit;
-  OnApplyAudioFadeInFadeOutToVideoListener listener;
-  private final VideoRepository videoRepository = new VideoRealmRepository();
+  private GetAudioFadeInFadeOutFromVideoUseCase getAudioFadeInFadeOutFromVideoUseCase;
+  private ExportSwapAudioToVideoUseCase exportSwapAudioToVideoUseCase;
+  private Video videoToEdit;
+  private int videoId;
+  private OnApplyAudioFadeInFadeOutToVideoListener listener;
 
-  public ApplyAudioFadeInFadeOutToVideo() {
+  public ApplyAudioFadeInFadeOutToVideo(OnApplyAudioFadeInFadeOutToVideoListener listener) {
 
     getAudioFadeInFadeOutFromVideoUseCase = new GetAudioFadeInFadeOutFromVideoUseCase(this);
     exportSwapAudioToVideoUseCase = new ExportSwapAudioToVideoUseCase(this);
-
+    this.listener = listener;
   }
 
-  public void applyAudioFadeToVideo(Video videoToEdit, int timeFadeInMs, int timeFadeOutMs)
+  public void applyAudioFadeToVideo(Video videoToEdit, int videoId, int timeFadeInMs,
+                                    int timeFadeOutMs)
       throws IOException {
 
+    this.videoToEdit = videoToEdit;
+    this.videoId = videoId;
     getAudioFadeInFadeOutFromVideoUseCase.getAudioFadeInFadeOutFromVideo(videoToEdit,
         timeFadeInMs, timeFadeOutMs);
   }
@@ -40,14 +44,12 @@ public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedListener,
 
   @Override
   public void onExportError(String error) {
-
+    listener.OnGetAudioFadeInFadeOutError(error,videoToEdit,videoId);
   }
 
   @Override
-  public void onExportSuccess(Video video) {
-    // update video export finished
-
-    videoRepository.update(video);
+  public void onExportSuccess() {
+    listener.OnGetAudioFadeInFadeOutSuccess(videoToEdit, videoId);
   }
 
   @Override
@@ -59,6 +61,7 @@ public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedListener,
 
   @Override
   public void onGetAudioFadeInFadeOutFromVideoError(String message) {
+    listener.OnGetAudioFadeInFadeOutError(message, videoToEdit, videoId);
 
   }
 }

@@ -20,12 +20,12 @@ import java.util.List;
  * Created by alvaro on 23/10/16.
  */
 
-public class ExportSwapAudioToVideoUseCase implements Exporter{
+public class ExportSwapAudioToVideoUseCase implements ExporterVideoSwapAudio{
 
-    private final OnExportEndedListener onExportEndedListener;
+    private final OnExportEndedSwapAudioListener onExportEndedSwapAudioListener;
 
-    public ExportSwapAudioToVideoUseCase(OnExportEndedListener onExportEndedListener){
-        this.onExportEndedListener = onExportEndedListener;
+    public ExportSwapAudioToVideoUseCase(OnExportEndedSwapAudioListener onExportEndedSwapAudioListener){
+        this.onExportEndedSwapAudioListener = onExportEndedSwapAudioListener;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ExportSwapAudioToVideoUseCase implements Exporter{
 
             File musicFile = new File(newAudioFilePath);
             if (musicFile == null) {
-                onExportEndedListener.onExportError("Music not found");
+                onExportEndedSwapAudioListener.onExportError("Music not found");
             }
             ArrayList<String> audio = new ArrayList<>();
             audio.add(musicFile.getPath());
@@ -79,7 +79,7 @@ public class ExportSwapAudioToVideoUseCase implements Exporter{
             try {
                 audioList.add(trimmer.trim(audio, 0, movieDuration));
             } catch (IOException | NullPointerException e) {
-                onExportEndedListener.onExportError(String.valueOf(e));
+                onExportEndedSwapAudioListener.onExportError(String.valueOf(e));
             }
         }
 
@@ -95,7 +95,7 @@ public class ExportSwapAudioToVideoUseCase implements Exporter{
             try {
                 movie.addTrack(new AppendTrack(audioTracks.toArray(new Track[audioTracks.size()])));
             } catch (IOException | NullPointerException e) {
-                onExportEndedListener.onExportError(String.valueOf(e));
+                onExportEndedSwapAudioListener.onExportError(String.valueOf(e));
                 // TODO se debe continuar sin música o lo paro??
             }
         }
@@ -109,9 +109,9 @@ public class ExportSwapAudioToVideoUseCase implements Exporter{
             com.videonasocialmedia.muxer.utils.Utils.createFile(result, outputFilePath);
             long spent = System.currentTimeMillis() - start;
             Log.d("WRITING VIDEO FILE", "time spent in millis: " + spent);
-            onExportEndedListener.onExportSuccess(new Video(outputFilePath));
+            onExportEndedSwapAudioListener.onExportSuccess();
         } catch (IOException | NullPointerException e) {
-            onExportEndedListener.onExportError(String.valueOf(e));
+            onExportEndedSwapAudioListener.onExportError(String.valueOf(e));
         }
     }
 
