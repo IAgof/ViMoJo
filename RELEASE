@@ -1,4 +1,2 @@
-v0.4.10
-- Video parameters now configurable from settings (bit rate, frame rate and resolution)
-- Video settings are checked when adding clips to edit view. Only videos compatible with current video settings are now added.
-- UI Updates in Share and gallery views
+v0.4.11
+- Fixed bug with FPS selection for some phone models like Samsung Galaxy S7
