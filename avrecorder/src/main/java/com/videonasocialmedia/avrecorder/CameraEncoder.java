@@ -925,10 +925,10 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
 
         parms.setRecordingHint(true);
 
-       /* For set framerate, use deprecated getSupportedPreviewFrameRates instead of getSupportedPreviewFpsRange
+       // For set framerate, use deprecated getSupportedPreviewFrameRates instead of getSupportedPreviewFpsRange
 
         List<int[]> fpsRanges = parms.getSupportedPreviewFpsRange();
-        int[] maxFpsRange = null;
+       /* int[] maxFpsRange = null;
         // Get the maximum supported fps not to exceed 30
         for (int x = fpsRanges.size() - 1; x >= 0; x--) {
             maxFpsRange = fpsRanges.get(x);
@@ -940,8 +940,9 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
 
         int frameRate = mSessionConfig.getVideoFrameRate();
 
-        if(frameRate != 0)
-            parms.setPreviewFrameRate(frameRate);
+        if(frameRate != 0 && fpsRanges != null)
+            parms.setPreviewFpsRange(25*1000, 25*1000);
+            //parms.setPreviewFrameRate(frameRate);
 
         choosePreviewSize(parms, desiredWidth, desiredHeight);
 
