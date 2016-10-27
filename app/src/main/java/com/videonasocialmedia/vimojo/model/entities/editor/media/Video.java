@@ -115,8 +115,9 @@ public class Video extends Media {
     }
 
     public void setTempPath() {
-        tempPath = Constants.PATH_APP_TEMP + File.separator + "temp_" + identifier
-                + "_" + System.currentTimeMillis() + ".mp4";
+        tempPath = Constants.PATH_APP_TEMP_INTERMEDIATE_FILES + File.separator +
+                Constants.INTERMEDIATE_FILE_PREFIX + identifier + "_"
+                + System.currentTimeMillis() + ".mp4";
     }
 
     public boolean outputVideoIsFinished() {

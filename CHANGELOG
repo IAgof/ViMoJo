@@ -1,3 +1,6 @@
+v0.4.12
+- Deleting intermediate video tmp files when clearing current project
+
 v0.4.11
 - Fixed bug with FPS selection for some phone models like Samsung Galaxy S7
 
