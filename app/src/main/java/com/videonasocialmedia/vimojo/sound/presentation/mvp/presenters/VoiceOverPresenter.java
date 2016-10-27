@@ -12,8 +12,8 @@ import com.videonasocialmedia.vimojo.sound.domain.MergeVoiceOverAudiosUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.OnMergeVoiceOverAudiosListener;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverView;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.FileUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,7 +107,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     public void cleanDirectory() {
-       Utils.cleanDirectory(new File(Constants.PATH_APP_TEMP_AUDIO));
+       FileUtils.cleanDirectory(new File(Constants.PATH_APP_TEMP_AUDIO));
     }
 
     private void mergeAudio() {

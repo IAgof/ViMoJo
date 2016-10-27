@@ -6,7 +6,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.Utils;
+import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +69,7 @@ public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinished
 
     @Override
     public void onAddMediaItemToTrackSuccess(Media media) {
-        Utils.cleanDirectory(new File(Constants.PATH_APP_TEMP_AUDIO));
+        FileUtils.cleanDirectory(new File(Constants.PATH_APP_TEMP_AUDIO));
         listener.onMixAudioSuccess();
     }
 }
