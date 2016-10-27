@@ -1,11 +1,8 @@
 package com.videonasocialmedia.vimojo.export;
 
 import com.videonasocialmedia.vimojo.export.domain.ExportSwapAudioToVideoUseCase;
-import com.videonasocialmedia.vimojo.export.domain.OnExportEndedListener;
 import com.videonasocialmedia.vimojo.export.domain.OnExportEndedSwapAudioListener;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.sound.domain.GetAudioFadeInFadeOutFromVideoUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.OnGetAudioFadeInFadeOutFromVideoListener;
 
@@ -23,6 +20,7 @@ public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedSwapAudioLis
   private Video videoToEdit;
   private int videoId;
   private OnApplyAudioFadeInFadeOutToVideoListener listener;
+  private String tempPreviousPath;
 
   public ApplyAudioFadeInFadeOutToVideo(OnApplyAudioFadeInFadeOutToVideoListener listener) {
 
@@ -37,7 +35,8 @@ public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedSwapAudioLis
 
     this.videoToEdit = videoToEdit;
     this.videoId = videoId;
-    getAudioFadeInFadeOutFromVideoUseCase.getAudioFadeInFadeOutFromVideo(videoToEdit,
+    tempPreviousPath = videoToEdit.getTempPath();
+    getAudioFadeInFadeOutFromVideoUseCase.getAudioFadeInFadeOutFromVideo(videoToEdit.getTempPath(),
         timeFadeInMs, timeFadeOutMs);
   }
 
@@ -55,7 +54,7 @@ public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedSwapAudioLis
   @Override
   public void onGetAudioFadeInFadeOutFromVideoSuccess(String audioFile) {
     videoToEdit.setTempPath();
-    exportSwapAudioToVideoUseCase.export(videoToEdit.getMediaPath(), audioFile,
+    exportSwapAudioToVideoUseCase.export(tempPreviousPath, audioFile,
         videoToEdit.getTempPath());
   }
 

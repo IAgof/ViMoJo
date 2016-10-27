@@ -27,12 +27,13 @@ import java.util.List;
 public class ExportTempBackgroundService extends Service implements OnApplyAudioFadeInFadeOutToVideoListener {
 
     public static final String ACTION = "com.videonasocialmedia.vimojo.android.service.receiver";
-    public static final int TIME_FADE_IN_MS = 500;
+    public static final int TIME_FADE_IN_MS = 2000;
     public static final int TIME_FADE_OUT_MS = 500;
 
     GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private VideonaFormat videoFormat;
     private final VideoRepository videoRepository = new VideoRealmRepository();
+    private String tempVideoPathPreviewFadeInFadeOut;
 
     public ExportTempBackgroundService() {
         getVideonaFormatFromCurrentProjectUseCase = new GetVideonaFormatFromCurrentProjectUseCase();
@@ -126,8 +127,10 @@ public class ExportTempBackgroundService extends Service implements OnApplyAudio
     }
 
     public void applyAudioFadeInFadeOut(Video video, int videoId) throws IOException {
+        tempVideoPathPreviewFadeInFadeOut = video.getTempPath();
         ApplyAudioFadeInFadeOutToVideo applyAudioFadeInFadeOutToVideo = new ApplyAudioFadeInFadeOutToVideo(this);
         applyAudioFadeInFadeOutToVideo.applyAudioFadeToVideo(video, videoId, TIME_FADE_IN_MS, TIME_FADE_OUT_MS);
+
 
     }
 
@@ -171,8 +174,9 @@ public class ExportTempBackgroundService extends Service implements OnApplyAudio
     @Override
     public void OnGetAudioFadeInFadeOutError(String message, Video video, int videoId) {
         video.deleteTempVideo();
+        video.setTempPathToPreviousEdition(tempVideoPathPreviewFadeInFadeOut);
         videoRepository.update(video);
-        sendResultBroadcast(videoId, false);
+        sendResultBroadcast(videoId, true);
 
     }
 

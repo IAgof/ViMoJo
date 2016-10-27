@@ -17,48 +17,45 @@ import java.util.Date;
  * Created by alvaro on 23/10/16.
  */
 
-public class GetAudioFadeInFadeOutFromVideoUseCase implements OnAudioEffectListener{
+public class GetAudioFadeInFadeOutFromVideoUseCase implements OnAudioEffectListener {
 
-    private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
-    protected TranscoderHelper transcoderHelper = new TranscoderHelper(mediaTranscoder);
-    private Video videoToFadeInFadeOut;
-    OnGetAudioFadeInFadeOutFromVideoListener listener;
+  private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
+  protected TranscoderHelper transcoderHelper = new TranscoderHelper(mediaTranscoder);
+  private OnGetAudioFadeInFadeOutFromVideoListener listener;
 
-    String tempFileAudio = Constants.PATH_APP_TEMP_AUDIO + File.separator + "AudioFadeInOut_" +
-    new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".m4a";
+  String tempFileAudio = Constants.PATH_APP_TEMP_AUDIO + File.separator + "AudioFadeInOut_" +
+      new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".m4a";
 
-    public GetAudioFadeInFadeOutFromVideoUseCase(OnGetAudioFadeInFadeOutFromVideoListener listener){
-        this.listener = listener;
-    }
+  public GetAudioFadeInFadeOutFromVideoUseCase(OnGetAudioFadeInFadeOutFromVideoListener listener) {
+    this.listener = listener;
+  }
 
-    public void getAudioFadeInFadeOutFromVideo(Video videoToEdit, int timeFadeInMs, int timeFadeOutMs)
-            throws IOException {
+  public void getAudioFadeInFadeOutFromVideo(String videoToEditPath, int timeFadeInMs, int timeFadeOutMs)
+      throws IOException {
 
-        videoToFadeInFadeOut = videoToEdit;
-        videoToFadeInFadeOut.setTempPath();
-        transcoderHelper.generateFileWithAudioFadeInFadeOut(videoToEdit.getMediaPath(), timeFadeInMs,
-                timeFadeOutMs, Constants.PATH_APP_TEMP_AUDIO, tempFileAudio, this);
-    }
+    transcoderHelper.generateFileWithAudioFadeInFadeOut(videoToEditPath, timeFadeInMs,
+        timeFadeOutMs, Constants.PATH_APP_TEMP_AUDIO, tempFileAudio, this);
+  }
 
-    @Override
-    public void onAudioEffectSuccess(String outputFile) {
-        listener.onGetAudioFadeInFadeOutFromVideoSuccess(outputFile);
-    }
+  @Override
+  public void onAudioEffectSuccess(String outputFile) {
+    listener.onGetAudioFadeInFadeOutFromVideoSuccess(outputFile);
+  }
 
-    @Override
-    public void onAudioEffectProgress(String progress) {
+  @Override
+  public void onAudioEffectProgress(String progress) {
 
-    }
+  }
 
-    @Override
-    public void onAudioEffectError(String error) {
-        listener.onGetAudioFadeInFadeOutFromVideoError(error);
-    }
+  @Override
+  public void onAudioEffectError(String error) {
+    listener.onGetAudioFadeInFadeOutFromVideoError(error);
+  }
 
-    @Override
-    public void onAudioEffectCanceled() {
-        listener.onGetAudioFadeInFadeOutFromVideoError("canceled");
+  @Override
+  public void onAudioEffectCanceled() {
+    listener.onGetAudioFadeInFadeOutFromVideoError("canceled");
 
-    }
+  }
 
 }

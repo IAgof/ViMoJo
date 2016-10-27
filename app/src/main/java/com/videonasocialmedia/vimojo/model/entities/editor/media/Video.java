@@ -119,6 +119,10 @@ public class Video extends Media {
                 + "_" + System.currentTimeMillis() + ".mp4";
     }
 
+    public void setTempPathToPreviousEdition(String tempPath){
+        this.tempPath = tempPath;
+    }
+
     public boolean outputVideoIsFinished() {
         return isTempPathFinished;
     }
