@@ -228,9 +228,6 @@ public class EditActivity extends VimojoActivity implements EditorView,
             case R.id.action_settings_edit_gallery:
                 navigateTo(GalleryActivity.class);
                 return true;
-            case R.id.action_settings_edit_tutorial:
-                //navigateTo(TutorialActivity.class);
-                return true;
             case android.R.id.home:
                 onBackPressed();
                 return true;
