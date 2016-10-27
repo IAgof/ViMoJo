@@ -39,10 +39,6 @@ import com.videonasocialmedia.vimojo.VimojoApplication;
 //import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 //import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
-import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnInitAppEventListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
@@ -282,6 +278,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private void initPaths() throws IOException {
         checkAndInitPath(Constants.PATH_APP);
         checkAndInitPath(Constants.PATH_APP_TEMP);
+        checkAndInitPath(Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
         checkAndInitPath(Constants.PATH_APP_TEMP_AUDIO);
         checkAndInitPath(Constants.PATH_APP_MASTERS);
 
@@ -576,9 +573,9 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     private void moveVideonaVideosToDcim() {
         String moviesPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + File.separator;
-        String pathVideonaOld = moviesPath + Constants.FOLDER_VIDEONA;
-        String pathVideonaMasterOld = moviesPath + Constants.FOLDER_VIDEONA_MASTERS;
-        String pathVideonaTempOld = pathVideonaOld + File.separator + Constants.FOLDER_VIDEONA_TEMP;
+        String pathVideonaOld = moviesPath + Constants.FOLDER_NAME_VIMOJO;
+        String pathVideonaMasterOld = moviesPath + Constants.FOLDER_NAME_VIMOJO_MASTERS;
+        String pathVideonaTempOld = pathVideonaOld + File.separator + Constants.FOLDER_NAME_VIMOJO_TEMP;
 
         moveFolderContentsToNewFolder(pathVideonaOld, Constants.PATH_APP);
         moveFolderContentsToNewFolder(pathVideonaMasterOld, Constants.PATH_APP_MASTERS);
