@@ -25,25 +25,28 @@ public class Constants {
 
 
     // Folders
-    final public static String FOLDER_VIDEONA_MASTERS = "Vimojo_Masters";
-    final public static String FOLDER_VIDEONA = "Vimojo";
-    final public static String FOLDER_VIDEONA_TEMP = ".temporal";
-    final public static String FOLDER_VIDEONA_TEMP_AUDIO = ".temporalAudio";
+    final public static String FOLDER_NAME_VIMOJO_MASTERS = "Vimojo_Masters";
+    final public static String FOLDER_NAME_VIMOJO = "Vimojo";
+    final public static String FOLDER_NAME_VIMOJO_TEMP = ".temporal";
+    final public static String FOLDER_NAME_VIMOJO_TEMP_AUDIO = ".temporalAudio";
 
     final public static String PATH_APP = Environment.getExternalStoragePublicDirectory(
-            Environment.DIRECTORY_DCIM) + File.separator + FOLDER_VIDEONA;
+            Environment.DIRECTORY_DCIM) + File.separator + FOLDER_NAME_VIMOJO;
 
     final public static String PATH_APP_EDITED = PATH_APP;
 
     final public static String PATH_APP_MASTERS = Environment.getExternalStoragePublicDirectory(
-            Environment.DIRECTORY_DCIM) + File.separator + FOLDER_VIDEONA_MASTERS;
+            Environment.DIRECTORY_DCIM) + File.separator + FOLDER_NAME_VIMOJO_MASTERS;
 
-    final public static String PATH_APP_TEMP = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP;
+    final public static String PATH_APP_TEMP = PATH_APP + File.separator + FOLDER_NAME_VIMOJO_TEMP;
+    final public static String PATH_APP_TEMP_INTERMEDIATE_FILES = PATH_APP_TEMP
+            + File.separator + ".intermediate_files";
+    public static final String INTERMEDIATE_FILE_PREFIX = "temp_";
 
-    final public static String VIDEO_TEMP_RECORD = "VID_temp.mp4";
+    final public static String VIDEO_TEMP_RECORD_FILENAME = "VID_temp.mp4";
 
-    final public static String PATH_APP_TEMP_AUDIO = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP_AUDIO;
-   // final public static String VIDEO_MUSIC_TEMP_FILE = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP + File.separator + "tempAV.mp4";
+    final public static String PATH_APP_TEMP_AUDIO = PATH_APP + File.separator + FOLDER_NAME_VIMOJO_TEMP_AUDIO;
+   // final public static String VIDEO_MUSIC_TEMP_FILE = PATH_APP + File.separator + FOLDER_NAME_VIMOJO_TEMP + File.separator + "tempAV.mp4";
 
     final public static String AUDIO_MUSIC_FILE_EXTENSION = ".m4a";
 
