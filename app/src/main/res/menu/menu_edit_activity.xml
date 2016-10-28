@@ -14,7 +14,6 @@
         app:showAsAction="always">
 
         <menu>
-
             <item
                 android:id="@+id/action_settings_edit_options"
                 android:icon="@drawable/menu_settings"
@@ -25,12 +24,6 @@
                 android:icon="@drawable/menu_gallery"
                 android:title="Gallery"
                 app:showAsAction="never"/>
-            <item
-                android:id="@+id/action_settings_edit_tutorial"
-                android:icon="@drawable/menu_tutorial"
-                android:title="Tutorial"
-                app:showAsAction="never"/>
-
         </menu>
 
     </item>
