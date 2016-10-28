@@ -31,8 +31,7 @@ import java.util.List;
  */
 public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         OnRemoveMediaFinishedListener, OnExportFinishedListener {
-
-    private static final String LOG_TAG = "GalleryPagerPresenter";
+    
     RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
     AddVideoToProjectUseCase addVideoToProjectUseCase;
     GalleryPagerView galleryPagerView;
@@ -95,7 +94,6 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
                 video.setStopTime(durationInt);
 
                 String width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-                Log.d(LOG_TAG, "checkFormatVideoSelected index " + index + " video width" + width);
                 if(width.compareTo(String.valueOf(videoResolution.getWidth())) != 0){
                     listErrorVideoIds.add(index + 1);
                 } else {
@@ -104,7 +102,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
 
             } catch (Exception e) {
                 video.setDuration(0);
-                Log.d(LOG_TAG, "checkFormatVideoSelected Exception " + e);
+                e.printStackTrace();
             }
         }
 
