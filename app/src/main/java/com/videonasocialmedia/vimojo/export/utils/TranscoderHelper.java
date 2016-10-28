@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
+import com.videonasocialmedia.transcoder.audio_mixer.listener.OnAudioEffectListener;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
 import com.videonasocialmedia.transcoder.overlay.Image;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
@@ -21,6 +22,10 @@ public class TranscoderHelper {
   public TranscoderHelper(TextToDrawable drawableGenerator, MediaTranscoder mediaTranscoder) {
     this.drawableGenerator = drawableGenerator;
     this.mediaTranscoder = mediaTranscoder;
+  }
+
+  public TranscoderHelper(MediaTranscoder mediaTranscoder) {
+        this.mediaTranscoder = mediaTranscoder;
   }
 
   public void generateOutputVideoWithOverlayImageAndTrimming(Video videoToEdit,
@@ -57,5 +62,13 @@ public class TranscoderHelper {
             Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
 
     return new Image(textDrawable, Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+  }
+
+  public void generateFileWithAudioFadeInFadeOut(String inputFile, int timeFadeInMs, int timeFadeOutMs,
+                                                 String tempDirectory, String outputFile,
+                                                 OnAudioEffectListener listener) throws IOException {
+
+    mediaTranscoder.audioFadeInFadeOutToFile(inputFile, timeFadeInMs, timeFadeOutMs, tempDirectory,
+            outputFile, listener);
   }
 }

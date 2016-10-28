@@ -279,6 +279,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         checkAndInitPath(Constants.PATH_APP);
         checkAndInitPath(Constants.PATH_APP_TEMP);
         checkAndInitPath(Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
+        checkAndInitPath(Constants.PATH_APP_TEMP_AUDIO);
         checkAndInitPath(Constants.PATH_APP_MASTERS);
 
         File privateDataFolderModel = getDir(Constants.FOLDER_VIDEONA_PRIVATE_MODEL, Context.MODE_PRIVATE);
