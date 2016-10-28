@@ -205,7 +205,9 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
   private void initMusicPlayer() {
     if (musicPlayer == null && videoHasMusic()) {
       musicPlayer = MediaPlayer.create(getContext(), Uri.parse(music.getMediaPath()));
-      musicPlayer.setVolume(volumeMusic, volumeMusic);
+      if (musicPlayer != null) {
+        musicPlayer.setVolume(volumeMusic, volumeMusic);
+      }
     }
 
   }
