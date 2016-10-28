@@ -60,19 +60,19 @@
                 android:id="@+id/hud"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:padding="4dp"
                 android:background="@color/colorGreyTransparent">
 
                 <ImageView
                     android:id="@+id/activity_record_icon_battery"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:scaleType="fitCenter"
                     android:layout_gravity="center"
                     app:srcCompat="@drawable/record_activity_ic_battery_charged"
                     android:visibility="visible"
                     android:layout_marginLeft="8dp"
-
-                    />
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp" />
 
                 <ImageView
                     android:id="@+id/activity_record_icon_memory"
@@ -82,7 +82,8 @@
                     android:layout_gravity="center"
                     android:visibility="visible"
                     app:srcCompat="@drawable/record_activity_ic_memory_card"
-                    android:layout_marginLeft="16dp"/>
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"/>
 
                 <ImageView
                     android:id="@+id/activity_record_icon_resolution"
@@ -92,7 +93,7 @@
                     android:layout_gravity="center"
                     android:visibility="visible"
                     android:src="@drawable/record_activity_ic_resolution_720"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"/>
 
                 <ImageView
@@ -103,7 +104,8 @@
                     android:layout_gravity="center"
                     android:visibility="gone"
                     android:src="@drawable/activity_record_icon_geolocation_pressed"
-                    android:layout_marginLeft="16dp" />
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp" />
 
                 <ImageView
                     android:id="@+id/activity_record_icon_microphone_"
@@ -112,7 +114,8 @@
                     android:layout_gravity="center"
                     android:visibility="gone"
                     android:src="@drawable/activity_record_icon_microphone_pressed"
-                    android:layout_marginLeft="16dp" />
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp" />
 
             </LinearLayout>
 
@@ -157,7 +160,6 @@
                 android:src="@drawable/ic_brightness_5_white_48px"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@color/textColorButton" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -272,7 +274,6 @@
                 android:id="@+id/wd"
                 android:layout_marginLeft="24dp" />
 
-
             <ImageButton
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -297,7 +298,6 @@
             android:visibility="gone"/>
 
         <!-- Picometro -->
-
 
         <LinearLayout
             android:id="@+id/control_chronometer_and_rec_point"
@@ -433,8 +433,8 @@
 
             <ImageButton
                 android:id="@+id/button_record"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:background="@null"
                 android:alpha="0.5"
                 android:scaleType="fitCenter"
@@ -442,7 +442,6 @@
                 android:visibility="visible"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"/>
-
 
         </RelativeLayout>
 
@@ -458,8 +457,6 @@
             android:layout_toStartOf="@+id/relativeLayout"
             android:layout_marginEnd="14dp"/>
 
-
-
-
     </RelativeLayout>
+
 </android.support.design.widget.CoordinatorLayout>

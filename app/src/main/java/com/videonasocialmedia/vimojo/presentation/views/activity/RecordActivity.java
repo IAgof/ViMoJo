@@ -432,7 +432,9 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void showFrontCameraSelected() {
+       //TODO: (28/10/2016) No debería ser setActivate(true)?
         rotateCameraButton.setActivated(false);
+        rotateCameraButton.setSelected(true);
         trackUserInteracted(AnalyticsConstants.CHANGE_CAMERA, AnalyticsConstants.CAMERA_FRONT);
         try {
             orientationHelper.reStartMonitoringOrientation();
@@ -443,7 +445,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void showBackCameraSelected() {
-        rotateCameraButton.setActivated(true);
+        rotateCameraButton.setActivated(false);
+        rotateCameraButton.setSelected(false);
         trackUserInteracted(AnalyticsConstants.CHANGE_CAMERA, AnalyticsConstants.CAMERA_BACK);
         try {
             orientationHelper.reStartMonitoringOrientation();
