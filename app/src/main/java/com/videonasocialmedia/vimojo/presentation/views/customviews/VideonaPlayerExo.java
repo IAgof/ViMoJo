@@ -666,7 +666,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
    * Renders text if has been set for current clip.
    */
   public void updateClipTextPreview() {
-    if (getCurrentClip().hasText()) {
+    if (videoList.size() > 0 && getCurrentClip().hasText()) {
       setImageText(getCurrentClip().getClipText(), getCurrentClip().getClipTextPosition());
     } else {
       clearImageText();
@@ -681,7 +681,10 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
   }
 
   private Video getCurrentClip() {
-    return videoList.get(currentClipIndex());
+    if (videoList.size() > 0) {
+      return videoList.get(currentClipIndex());
+    }
+    return null;
   }
 
   private void startMusicTrackPlayback() {
