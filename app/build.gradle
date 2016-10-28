@@ -134,7 +134,7 @@ dependencies {
     compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
     compile 'io.realm:android-adapters:1.3.0'
 
-    compile(name:'videona-sdk-v0.0.7',ext:'aar')
+    compile(name:'videona-sdk-v0.0.8',ext:'aar')
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"
