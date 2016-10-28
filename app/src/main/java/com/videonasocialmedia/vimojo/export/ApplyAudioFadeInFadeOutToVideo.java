@@ -18,7 +18,6 @@ public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedSwapAudioLis
   private GetAudioFadeInFadeOutFromVideoUseCase getAudioFadeInFadeOutFromVideoUseCase;
   private ExportSwapAudioToVideoUseCase exportSwapAudioToVideoUseCase;
   private Video videoToEdit;
-  private int videoId;
   private OnApplyAudioFadeInFadeOutToVideoListener listener;
   private String tempPreviousPath;
 
@@ -29,12 +28,10 @@ public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedSwapAudioLis
     this.listener = listener;
   }
 
-  public void applyAudioFadeToVideo(Video videoToEdit, int videoId, int timeFadeInMs,
-                                    int timeFadeOutMs)
+  public void applyAudioFadeToVideo(Video videoToEdit, int timeFadeInMs, int timeFadeOutMs)
       throws IOException {
 
     this.videoToEdit = videoToEdit;
-    this.videoId = videoId;
     tempPreviousPath = videoToEdit.getTempPath();
     getAudioFadeInFadeOutFromVideoUseCase.getAudioFadeInFadeOutFromVideo(videoToEdit.getTempPath(),
         timeFadeInMs, timeFadeOutMs);
@@ -43,12 +40,12 @@ public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedSwapAudioLis
 
   @Override
   public void onExportError(String error) {
-    listener.OnGetAudioFadeInFadeOutError(error,videoToEdit,videoId);
+    listener.OnGetAudioFadeInFadeOutError(error,videoToEdit);
   }
 
   @Override
   public void onExportSuccess() {
-    listener.OnGetAudioFadeInFadeOutSuccess(videoToEdit, videoId);
+    listener.OnGetAudioFadeInFadeOutSuccess(videoToEdit);
   }
 
   @Override
@@ -60,7 +57,7 @@ public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedSwapAudioLis
 
   @Override
   public void onGetAudioFadeInFadeOutFromVideoError(String message) {
-    listener.OnGetAudioFadeInFadeOutError(message, videoToEdit, videoId);
+    listener.OnGetAudioFadeInFadeOutError(message, videoToEdit);
 
   }
 }

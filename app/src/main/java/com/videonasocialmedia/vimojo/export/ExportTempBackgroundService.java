@@ -129,7 +129,7 @@ public class ExportTempBackgroundService extends Service implements OnApplyAudio
     public void applyAudioFadeInFadeOut(Video video, int videoId) throws IOException {
         tempVideoPathPreviewFadeInFadeOut = video.getTempPath();
         ApplyAudioFadeInFadeOutToVideo applyAudioFadeInFadeOutToVideo = new ApplyAudioFadeInFadeOutToVideo(this);
-        applyAudioFadeInFadeOutToVideo.applyAudioFadeToVideo(video, videoId, TIME_FADE_IN_MS, TIME_FADE_OUT_MS);
+        applyAudioFadeInFadeOutToVideo.applyAudioFadeToVideo(video,TIME_FADE_IN_MS, TIME_FADE_OUT_MS);
 
 
     }
@@ -172,18 +172,19 @@ public class ExportTempBackgroundService extends Service implements OnApplyAudio
     }
 
     @Override
-    public void OnGetAudioFadeInFadeOutError(String message, Video video, int videoId) {
+    public void OnGetAudioFadeInFadeOutError(String message, Video video) {
         video.deleteTempVideo();
         video.setTempPathToPreviousEdition(tempVideoPathPreviewFadeInFadeOut);
+        video.setTempPathFinished(true);
         videoRepository.update(video);
-        sendResultBroadcast(videoId, true);
+        sendResultBroadcast(video.getIdentifier(), true);
 
     }
 
     @Override
-    public void OnGetAudioFadeInFadeOutSuccess(Video video, int videoId) {
+    public void OnGetAudioFadeInFadeOutSuccess(Video video) {
         video.setTempPathFinished(true);
         videoRepository.update(video);
-        sendResultBroadcast(videoId, true);
+        sendResultBroadcast(video.getIdentifier(), true);
     }
 }

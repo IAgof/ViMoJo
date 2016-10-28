@@ -17,13 +17,11 @@ public class GetMusicFromProjectUseCase {
     public void getMusicFromProject(GetMusicFromProjectCallback listener) {
 
         Music music = null;
-        if (project.getAudioTracks().get(0).getItems().size() > 0)
-            try {
-                music = (Music) project.getAudioTracks().get(0).getItems().get(0);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
+        try {
+            music = (Music) project.getAudioTracks().get(0).getItems().get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
           listener.onMusicRetrieved(music);
     }
 }

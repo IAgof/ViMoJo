@@ -7,7 +7,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
  */
 public interface OnApplyAudioFadeInFadeOutToVideoListener {
 
-  void OnGetAudioFadeInFadeOutError(String message, Video video, int videoId);
+  void OnGetAudioFadeInFadeOutError(String message, Video video);
 
-  void OnGetAudioFadeInFadeOutSuccess(Video video, int videoId);
+  void OnGetAudioFadeInFadeOutSuccess(Video video);
 }
