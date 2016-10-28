@@ -443,7 +443,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void showBackCameraSelected() {
-        rotateCameraButton.setActivated(false);
+        rotateCameraButton.setActivated(true);
         trackUserInteracted(AnalyticsConstants.CHANGE_CAMERA, AnalyticsConstants.CAMERA_BACK);
         try {
             orientationHelper.reStartMonitoringOrientation();
@@ -584,6 +584,9 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     private void tintEditButtons(int button_color) {
         tintButton(flashButton, button_color);
         tintButton(rotateCameraButton,button_color);
+        tintButton(buttonToShowControls,button_color);
+        tintButton(buttonToHideControlsView,button_color);
+        tintButton(buttonSettings,button_color);
     }
 
 
