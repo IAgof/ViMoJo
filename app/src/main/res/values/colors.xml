@@ -45,6 +45,11 @@
     <color name="button_pressed">@color/colorAccent</color>
     <color name="button_selected">@color/colorAccent</color>
 
+    <color name="button_record">#FFFF</color>
+    <color name="button_disabled_record">#E4E4E4</color>
+    <color name="button_pressed_record">#f14b51</color>
+    <color name="button_selected_record">#f14b51</color>
+
     <color name="textColorTitle">@color/textColorPrimary</color>
 
     <color name="rock">#D63525</color>

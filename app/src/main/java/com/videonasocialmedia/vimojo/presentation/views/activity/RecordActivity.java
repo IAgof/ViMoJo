@@ -58,6 +58,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
 
+import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
+
 /**
  * @author Álvaro Martínez Marco
  */
@@ -68,6 +70,10 @@ import butterknife.OnTouch;
 public class RecordActivity extends VimojoActivity implements RecordView {
 
     private final String LOG_TAG = getClass().getSimpleName();
+    private final int RESOLUTION_SELECTED_HD720 = 720;
+    private final int RESOLUTION_SELECTED_HD1080 = 1080;
+    private final int RESOLUTION_SELECTED_HD4K = 2160;
+
 
     @Bind(R.id.button_record)
     ImageButton recButton;
@@ -109,6 +115,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ImageButton buttonToHideControlsView;
     @Bind (R.id.button_to_show_controls)
     ImageButton buttonToShowControls;
+    @Bind(R.id.activity_record_icon_resolution)
+    ImageView resolutionIndicator;
 
 
 
@@ -164,6 +172,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         initOrientationHelper();
         createProgressDialog();
         configShowThumbAndNumberClips();
+        setupActivityButtons();
     }
 
     private void configShowThumbAndNumberClips() {
@@ -310,7 +319,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void showRecordButton() {
-        recButton.setImageResource(R.drawable.activity_record_icon_rec);
+        recButton.setImageResource(R.drawable.record_activity_ic_rec);
         recording = false;
     }
 
@@ -404,6 +413,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     public void showFlashOn(boolean on) {
         trackUserInteracted(AnalyticsConstants.CHANGE_FLASH, String.valueOf(on));
         flashButton.setActivated(on);
+        flashButton.setSelected(on);
     }
 
     @Override
@@ -502,7 +512,9 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void hidePrincipalViews() {
-        clearButton.setImageResource(R.drawable.activity_record_icon_clear);
+        clearButton.setImageResource(R.drawable.record_activity_ic_shrink);
+        clearButton.setAlpha(0.5f);
+        clearButton.setBackground(null);
         clearButton.setActivated(true);
         hud.setVisibility(View.INVISIBLE);
         controlsView.setVisibility(View.INVISIBLE);
@@ -516,7 +528,9 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void showPrincipalViews() {
-        clearButton.setImageResource(R.drawable.activity_record_icon_shrink);
+        clearButton.setImageResource(R.drawable.record_activity_ic_expand);
+        clearButton.setBackground(getResources().getDrawable(R.drawable.circle_background));
+        clearButton.setAlpha(1f);
         clearButton.setActivated(false);
         hud.setVisibility(View.VISIBLE);
         buttonToShowControls.setVisibility(View.VISIBLE);
@@ -543,6 +557,35 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     public void hideVideosRecordedNumber() {
         numVideosRecorded.setVisibility(View.INVISIBLE);
     }
+
+    @Override
+    public void showResolutionSelected(int resolutionSelected) {
+        switch (resolutionSelected){
+            case (RESOLUTION_SELECTED_HD720):
+              resolutionIndicator.setImageResource(R.drawable.record_activity_ic_resolution_720);
+                break;
+            case(RESOLUTION_SELECTED_HD1080):
+                resolutionIndicator.setImageResource(R.drawable.record_activity_ic_resolution_1080);
+                break;
+            case (RESOLUTION_SELECTED_HD4K):
+                resolutionIndicator.setImageResource(R.drawable.record_activity_ic_resolution_4k);
+                break;
+            default:
+                resolutionIndicator.setImageResource(R.drawable.record_activity_ic_resolution_720);
+                break;
+        }
+    }
+
+    public void setupActivityButtons() {
+        tintEditButtons(R.color.button_color_record_activity);
+
+    }
+
+    private void tintEditButtons(int button_color) {
+        tintButton(flashButton, button_color);
+        tintButton(rotateCameraButton,button_color);
+    }
+
 
     private void trackVideoExported() {
         JSONObject videoExportedProperties = new JSONObject();

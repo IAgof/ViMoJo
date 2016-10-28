@@ -71,4 +71,7 @@ public interface RecordView {
     void showVideosRecordedNumber(int numberOfVideos);
 
     void hideVideosRecordedNumber();
+
+    void showResolutionSelected(int height);
+
 }

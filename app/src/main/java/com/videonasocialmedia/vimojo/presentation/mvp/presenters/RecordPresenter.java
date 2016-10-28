@@ -72,6 +72,7 @@ public class RecordPresenter {
     private Context context;
     private GLCameraView cameraPreview;
     protected Project currentProject;
+    private int height;
 
     private boolean externalIntent;
 
@@ -99,7 +100,7 @@ public class RecordPresenter {
     private VideoEncoderConfig getVideoEncoderConfigFromProfileProject() {
 
         int width = currentProject.getProfile().getVideoResolution().getWidth();
-        int height = currentProject.getProfile().getVideoResolution().getHeight();
+        height = currentProject.getProfile().getVideoResolution().getHeight();
         int bitRate = currentProject.getProfile().getVideoQuality().getVideoBitRate();
         int frameRate = currentProject.getProfile().getVideoFrameRate().getFrameRate();
 
@@ -118,6 +119,7 @@ public class RecordPresenter {
                 initRecorder(cameraPreview);
             }
         }
+        recordView.showResolutionSelected(height);
         hideInitialsButtons();
         recordView.hidePrincipalViews();
     }
@@ -424,7 +426,6 @@ public class RecordPresenter {
     public void setFlashOff() {
         boolean on = recorder.setFlashOff();
         recordView.showFlashOn(on);
-
     }
 
     public void toggleFlash() {

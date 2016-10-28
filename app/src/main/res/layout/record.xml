@@ -18,14 +18,15 @@
 
         <ImageButton
             android:id="@+id/clear_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/activity_record_icon_clear"
-            android:background="@null"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/record_activity_ic_expand"
+            android:background="@drawable/circle_background"
             android:scaleType="fitCenter"
             android:layout_marginBottom="16dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="16dp" />
+            android:layout_marginLeft="16dp"
+            />
 
         <LinearLayout
             android:id="@+id/picometer"
@@ -59,19 +60,19 @@
                 android:id="@+id/hud"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:padding="4dp"
                 android:background="@color/colorGreyTransparent">
 
                 <ImageView
                     android:id="@+id/activity_record_icon_battery"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:scaleType="fitCenter"
                     android:layout_gravity="center"
-                    android:src="@drawable/activity_record_icon_battery_charged"
+                    app:srcCompat="@drawable/record_activity_ic_battery_charged"
                     android:visibility="visible"
                     android:layout_marginLeft="8dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp" />
+
+                    />
 
                 <ImageView
                     android:id="@+id/activity_record_icon_memory"
@@ -80,8 +81,8 @@
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
                     android:visibility="visible"
-                    android:src="@drawable/activity_record_icon_memory"
-                    android:layout_marginLeft="16dp" />
+                    app:srcCompat="@drawable/record_activity_ic_memory_card"
+                    android:layout_marginLeft="16dp"/>
 
                 <ImageView
                     android:id="@+id/activity_record_icon_resolution"
@@ -90,7 +91,7 @@
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
                     android:visibility="visible"
-                    android:src="@drawable/activity_record_icon_resolution_1080"
+                    android:src="@drawable/record_activity_ic_resolution_720"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="8dp"/>
 
@@ -175,7 +176,7 @@
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_white_balance_automatic"
+                android:src="@drawable/record_activity_ic_white_balance_auto"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp" />
@@ -186,7 +187,7 @@
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_white_balance_cloudy"
+                android:src="@drawable/record_activity_ic_white_balance_cloudy"
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
@@ -195,7 +196,7 @@
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_white_balance_daylight"
+                android:src="@drawable/record_activity_ic_white_balance_daylight"
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
@@ -204,7 +205,7 @@
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_white_balance_fluorescent"
+                android:src="@drawable/record_activity_ic_white_balance_fluorescent"
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
@@ -213,7 +214,7 @@
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_white_balance_tungsten"
+                android:src="@drawable/record_activity_ic_white_balance_tungsten"
                 android:layout_marginRight="8dp"
                 android:layout_marginLeft="16dp"/>
 
@@ -234,7 +235,7 @@
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitXY"
-                android:src="@drawable/activity_record_icon_zoom"
+                android:src="@drawable/record_activity_ic_zoom"
                 android:id="@+id/zoom"
                 android:layout_marginLeft="16dp"
                 android:layout_gravity="center"
@@ -247,7 +248,7 @@
                 android:background="#00ffffff"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_iso"
+                android:src="@drawable/record_activity_ic_iso"
                 android:id="@+id/iso"
                 android:layout_marginLeft="24dp" />
 
@@ -257,17 +258,7 @@
                 android:background="#00ffffff"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_exposure"
-                android:id="@+id/exposition_compensation"
-                android:layout_marginLeft="24dp" />
-
-            <ImageButton
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitXY"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_mode"
+                android:src="@drawable/record_activity_ic_focus"
                 android:id="@+id/af_selection"
                 android:layout_marginLeft="24dp" />
 
@@ -277,19 +268,10 @@
                 android:background="#00ffffff"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
-                android:src="@drawable/activity_record_white_balance"
+                android:src="@drawable/record_activity_ic_white_balance"
                 android:id="@+id/wd"
                 android:layout_marginLeft="24dp" />
 
-            <ImageButton
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitXY"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_text"
-                android:id="@+id/text"
-                android:layout_marginLeft="24dp" />
 
             <ImageButton
                 android:layout_width="32dp"
@@ -297,7 +279,7 @@
                 android:background="#00ffffff"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
-                android:src="@drawable/activity_record_icon_metering_evaluative"
+                android:src="@drawable/record_activity_ic_metering_evaluative"
                 android:id="@+id/measurement_mode"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="16dp" />
@@ -364,9 +346,9 @@
                 android:id="@+id/button_navigate_edit"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@null"
+                android:background="@drawable/circle_background"
                 android:scaleType="fitCenter"
-                android:src="@drawable/activity_record_gallery_normal"
+                android:src="@drawable/record_activity_ic_galery"
                 android:visibility="visible"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true" />
@@ -398,41 +380,43 @@
 
                 <ImageButton
                     android:id="@+id/button_toggle_flash"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:background="@null"
+                    android:layout_gravity="center"
                     android:scaleType="fitCenter"
-                    android:layout_margin="10dp"
-                    android:src="@drawable/activity_record_icon_flash_normal"/>
+                    android:layout_margin="4dp"
+                    app:srcCompat="@drawable/record_activity_ic_flash_36dp"/>
 
                 <ImageButton
                     android:id="@+id/button_change_camera"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_gravity="center"
-                    android:layout_margin="10dp"
+                    android:layout_margin="4dp"
                     android:background="@null"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/activity_record_icon_change_camera_normal"/>
+                    android:src="@drawable/record_activity_ic_rotate"/>
 
                 <ImageButton
                     android:id="@+id/settings_button"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_margin="10dp"
                     android:alpha="0.25"
                     android:background="@null"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/activity_record_icon_controls_normal"/>
+                    android:src="@drawable/record_activity_ic_controls"/>
 
                 <ImageButton
                     android:id="@+id/button_navigate_settings"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_margin="10dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="4dp"
                     android:background="@null"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/activity_record_icon_settings_normal"
+                    android:src="@drawable/record_activity_ic_settings"
                     android:visibility="visible"/>
             </LinearLayout>
 
@@ -440,22 +424,21 @@
                 android:id="@+id/button_to_show_controls"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:background="@null"
-                android:alpha="0.5"
+                android:background="@drawable/circle_background"
                 android:scaleType="fitCenter"
-                android:src="@drawable/activity_record_icon_hide_menu_normal"
+                android:src="@drawable/record_activity_ic_hide_menu_normal"
                 android:visibility="visible"
                 android:layout_alignBottom="@+id/controls"
                 android:layout_centerHorizontal="true" />
 
             <ImageButton
                 android:id="@+id/button_record"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@null"
                 android:alpha="0.5"
                 android:scaleType="fitCenter"
-                android:src="@drawable/activity_record_icon_rec"
+                android:src="@drawable/record_activity_ic_rec"
                 android:visibility="visible"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"/>
@@ -467,14 +450,15 @@
             android:id="@+id/button_to_hide_controls"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:background="@null"
-            android:alpha="0.5"
+            android:background="@drawable/circle_background"
             android:scaleType="fitCenter"
-            android:src="@drawable/activity_record_icon_show_menu_normal"
+            android:src="@drawable/record_activity_ic_show_menu_normal"
             android:visibility="visible"
             android:layout_alignTop="@+id/settings_bar_submenu"
             android:layout_toStartOf="@+id/relativeLayout"
             android:layout_marginEnd="14dp"/>
+
+
 
 
     </RelativeLayout>
