@@ -1,2 +1,3 @@
-v0.4.12
-- Deleting intermediate video tmp files when clearing current project
+v0.4.13
+- UI improves and fixes. Removed Tutorial link from Edit views toolbar and play icon from gallery video thumbnails
+- Bug fix on gallery multiple selection with video format
