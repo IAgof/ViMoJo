@@ -645,8 +645,11 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         if (!recording) {
             //TODO(alvaro 130616) Save flash state
             recordPresenter.setFlashOff();
-            Intent intent = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
-            startActivity(intent);
+            if (numVideosRecorded.getVisibility()==View.VISIBLE){
+                navigateTo(EditActivity.class);
+            }else {
+                navigateTo(GalleryActivity.class);
+            }
             //finish();
         }
     }
@@ -654,8 +657,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     @OnClick(R.id.button_navigate_settings)
     public void navigateToSettings() {
         if (!recording) {
-            Intent intent = new Intent(VimojoApplication.getAppContext(), SettingsActivity.class);
-            startActivity(intent);
+            navigateTo(SettingsActivity.class);
             //finish();
         }
     }
@@ -664,8 +666,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     public void exportAndShare () {
         if (!recording) {
             recordPresenter.setFlashOff();
-            Intent intent = new Intent(this, ExportProjectService.class);
-            startService(intent);
+            navigateTo(ExportProjectService.class);
             showProgressDialog();
             mixpanel.timeEvent(AnalyticsConstants.VIDEO_EXPORTED);
         }
@@ -679,6 +680,14 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         } else {
             hidePrincipalViews();
         }
+    }
+
+    public void navigateTo(Class cls) {
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
+        if (cls == GalleryActivity.class) {
+            intent.putExtra("SHARE", false);
+        }
+        startActivity(intent);
     }
 
 
