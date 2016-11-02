@@ -156,12 +156,4 @@
         </Preference>
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/accountActions">
-        <Preference
-            android:key="exit"
-            android:title="@string/exit">
-        </Preference>
-    </PreferenceCategory>
-
 </PreferenceScreen>
