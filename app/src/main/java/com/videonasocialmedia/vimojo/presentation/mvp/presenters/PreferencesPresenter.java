@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
+import android.widget.Toast;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
@@ -30,6 +31,7 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * This class is used to show the setting menu.
@@ -43,22 +45,23 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private ListPreference resolutionPref;
     private ListPreference qualityPref;
     private ListPreference frameRatePref;
+    private Preference emailPref;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private boolean isPreferenceAvailable = false;
 
     /**
      * Constructor
-     *
-     * @param preferencesView
+     *  @param preferencesView
      * @param resolutionPref
      * @param qualityPref
+     * @param emailPref
      * @param context
      * @param sharedPreferences
      */
     public PreferencesPresenter(PreferencesView preferencesView, PreferenceCategory cameraSettingsPref,
                                 ListPreference resolutionPref, ListPreference qualityPref,
-                                ListPreference frameRatePref, Context context,
+                                ListPreference frameRatePref, Preference emailPref, Context context,
                                 SharedPreferences sharedPreferences) {
 
         this.cameraSettingsPref = cameraSettingsPref;
@@ -66,6 +69,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.resolutionPref = resolutionPref;
         this.qualityPref = qualityPref;
         this.frameRatePref = frameRatePref;
+        this.emailPref = emailPref;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
         obtainNetworksToShareUseCase = new ObtainNetworksToShareUseCase();
@@ -75,6 +79,22 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     /**
      * Checks the available preferences on the device
      */
+
+    public void checkMailValid(){
+        emailPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if(android.util.Patterns.EMAIL_ADDRESS.matcher((CharSequence) newValue).matches())
+                    return true;
+                else {
+                    Toast.makeText(context, R.string.invalid_email,Toast.LENGTH_LONG).show();
+                       return false;
+                   }
+            }
+        });
+    }
+
     public void checkAvailablePreferences() {
         checkUserAccountData();
         checkUserFTP1Data();

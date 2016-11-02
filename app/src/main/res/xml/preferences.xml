@@ -23,101 +23,100 @@
 
     <PreferenceCategory
         android:title="@string/titleUserSection">
-        <Preference
+        <EditTextPreference
             android:key="name"
-            android:title="@string/name">
-            <intent android:action=".presentation.views.activity.NamePreferenceActivity"/>
-        </Preference>
-        <Preference
+            android:title="@string/name"
+            android:dialogTitle="@string/enterName">
+        </EditTextPreference>
+
+        <EditTextPreference
             android:key="username"
-            android:title="@string/username">
-            <intent android:action=".presentation.views.activity.UsernamePreferenceActivity"/>
-        </Preference>
-        <Preference
+            android:title="@string/username"
+            android:dialogTitle="@string/enterUsername">
+        </EditTextPreference>
+
+        <EditTextPreference
             android:key="email"
-            android:title="@string/emailPreference">
-            <intent android:action=".presentation.views.activity.EmailPreferenceActivity"/>
-        </Preference>
+            android:title="@string/emailPreference"
+            android:inputType="textEmailAddress"
+            android:dialogTitle="@string/enterEmail">
+        </EditTextPreference>
     </PreferenceCategory>
 
     <PreferenceCategory
         android:title="@string/title_FTP1_Section">
-        <Preference
+
+        <EditTextPreference
             android:key="host"
-            android:title="@string/host_FTP">
-            <intent
-                android:action=".presentation.views.activity.HostPreferenceActivity">
-                <extra android:name="keyHost" android:value="host"/>
-            </intent>
-        </Preference>
-        <Preference
+            android:title="@string/host_FTP"
+            android:dialogTitle="@string/enterHost">
+        </EditTextPreference>
+
+        <EditTextPreference
             android:key="usernameFTP"
-            android:title="@string/username_FTP">
-            <intent android:action=".presentation.views.activity.UserNameFTPPreferenceActivity">
-                <extra android:name="keyUsernameFTP" android:value="usernameFTP"/>
-            </intent>
-        </Preference>
-        <Preference
+            android:title="@string/username_FTP"
+            android:dialogTitle="@string/enterUsername_FTP">
+        </EditTextPreference>
+
+        <EditTextPreference
             android:key="passwordFTP"
-            android:title="@string/password_FTP">
-            <intent android:action=".presentation.views.activity.PasswordFTPPreferenceActivity">
-                <extra android:name="keyPasswordFTP" android:value="passwordFTP"/>
-            </intent>
-        </Preference>
-        <Preference
+            android:title="@string/password_FTP"
+            android:selectAllOnFocus="true"
+            android:inputType="textWebPassword"
+            android:singleLine="true"
+            android:dialogTitle="@string/enterPassword_FTP">
+        </EditTextPreference>
+
+        <EditTextPreference
             android:key="EditedVideoDestinationFTP"
-            android:title="@string/edited_video_destination">
-            <intent android:action=".presentation.views.activity.EditedVideoDestinationPreferenceActivity">
-                <extra android:name="keyEditedVideoDestinationFTP" android:value="EditedVideoDestinationFTP"/>
-            </intent>
-        </Preference>
-        <Preference
+            android:title="@string/edited_video_destination"
+            android:dialogTitle="@string/enterEditedVideoDestination_FTP"
+            >
+        </EditTextPreference>
+
+        <EditTextPreference
             android:key="UneditedVideoDestinationFTP"
-            android:title="@string/unedited_video_destination">
-            <intent android:action=".presentation.views.activity.UneditedVideoDestinationPreferenceActivity">
-                <extra android:name="keyUneditedVideoDestinationFTP" android:value="UneditedVideoDestinationFTP"/>
-            </intent>
-        </Preference>
+            android:title="@string/unedited_video_destination"
+            android:dialogTitle="@string/enterUneditedVideoDestination_FTP">
+        </EditTextPreference>
+
     </PreferenceCategory>
 
     <PreferenceCategory
         android:title="@string/title_FTP2_Section">
-        <Preference
-            android:key="host_FTP2"
-            android:title="@string/host_FTP">
-            <intent android:action=".presentation.views.activity.HostPreferenceActivity">
-                 <extra android:name="keyHost" android:value="host_FTP2"/>
-            </intent>
-        </Preference>
-        <Preference
-            android:key="username_FTP2"
-            android:title="@string/username_FTP">
-            <intent android:action=".presentation.views.activity.UserNameFTPPreferenceActivity">
-                <extra android:name="keyUsernameFTP" android:value="username_FTP2"/>
-            </intent>
 
-        </Preference>
-        <Preference
+        <EditTextPreference
+            android:key="host_FTP2"
+            android:title="@string/host_FTP"
+            android:dialogTitle="@string/enterHost">
+        </EditTextPreference>
+
+        <EditTextPreference
+            android:key="username_FTP2"
+            android:title="@string/username_FTP"
+            android:dialogTitle="@string/enterUsername_FTP">
+        </EditTextPreference>
+
+        <EditTextPreference
             android:key="password_FTP2"
-            android:title="@string/password_FTP">
-            <intent android:action=".presentation.views.activity.PasswordFTPPreferenceActivity">
-                <extra android:name="keyPasswordFTP" android:value="password_FTP2"/>
-            </intent>
-        </Preference>
-        <Preference
+            android:title="@string/password_FTP"
+            android:inputType="textWebPassword"
+            android:selectAllOnFocus="true"
+            android:dialogTitle="@string/enterPassword_FTP">
+        </EditTextPreference>
+
+        <EditTextPreference
             android:key="Edited_Video_Destination_FTP2"
-            android:title="@string/edited_video_destination">
-            <intent android:action=".presentation.views.activity.EditedVideoDestinationPreferenceActivity">
-                <extra android:name="keyEditedVideoDestinationFTP" android:value="Edited_Video_Destination_FTP2"/>
-            </intent>
-        </Preference>
-        <Preference
+            android:title="@string/edited_video_destination"
+            android:dialogTitle="@string/enterEditedVideoDestination_FTP">
+        </EditTextPreference>
+
+        <EditTextPreference
             android:key="Unedited_Video_Destination_FTP2"
-            android:title="@string/unedited_video_destination">
-            <intent android:action=".presentation.views.activity.UneditedVideoDestinationPreferenceActivity">
-                <extra android:name="keyUneditedVideoDestinationFTP" android:value="Unedited_Video_Destination_FTP2"/>
-            </intent>
-        </Preference>
+            android:title="@string/unedited_video_destination"
+            android:dialogTitle="@string/enterUneditedVideoDestination_FTP">
+        </EditTextPreference>
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -125,26 +124,6 @@
         android:key="@string/title_camera_section"
         android:enabled="true"
         >
-
-        <!--
-        <Preference
-            android:key="@string/resolution"
-            android:title="@string/resolution"
-            android:summary="@string/preference_not_available"
-        />
-
-        <Preference
-            android:key="@string/quality"
-            android:title="@string/quality"
-            android:summary="@string/preference_not_available"
-        />
-
-        <Preference
-            android:key="@string/frame_rate"
-            android:title="@string/frame_rate"
-            android:summary="@string/preference_not_available"
-        />
-        -->
 
         <com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseCameraResolutionListPreferences
             android:theme="@style/VideonaAlertDialog"

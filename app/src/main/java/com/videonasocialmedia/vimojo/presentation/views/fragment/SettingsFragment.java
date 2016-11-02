@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
@@ -43,6 +44,7 @@ public class SettingsFragment extends PreferenceFragment implements
 
     protected final int REQUEST_CODE_EXIT_APP = 1;
     protected PreferenceCategory cameraSettingsPref;
+    protected Preference emailPref;
     protected ListPreference resolutionPref;
     protected ListPreference qualityPref;
     protected ListPreference frameRatePref;
@@ -62,7 +64,7 @@ public class SettingsFragment extends PreferenceFragment implements
         context = VimojoApplication.getAppContext();
         initPreferences();
         preferencesPresenter = new PreferencesPresenter(this,cameraSettingsPref, resolutionPref,
-                qualityPref, frameRatePref, context, sharedPreferences);
+                qualityPref, frameRatePref, emailPref, context, sharedPreferences);
         mixpanel = MixpanelAPI.getInstance(this.getActivity(), BuildConfig.MIXPANEL_TOKEN);
     }
 
@@ -79,6 +81,11 @@ public class SettingsFragment extends PreferenceFragment implements
         setupExitPreference();
         setupDownloadKamaradaPreference();
         setupShareVideona();
+        setupMailValid();
+    }
+
+    private void setupMailValid() {
+        emailPref=findPreference(ConfigPreferences.EMAIL);
     }
 
     private void setupCameraSettings() {
@@ -192,7 +199,7 @@ public class SettingsFragment extends PreferenceFragment implements
         }
     }
 
-    @Override
+    /*@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.list, null);
@@ -207,12 +214,13 @@ public class SettingsFragment extends PreferenceFragment implements
         footerText.setText(text);
 
         return v;
-    }
+    }*/
 
     @Override
     public void onResume() {
         super.onResume();
         preferencesPresenter.checkAvailablePreferences();
+        preferencesPresenter.checkMailValid();
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferencesPresenter);
     }
@@ -283,7 +291,10 @@ public class SettingsFragment extends PreferenceFragment implements
                                           String key) {
         Preference connectionPref = findPreference(key);
         trackQualityAndResolutionAndFrameRateUserTraits(key, sharedPreferences.getString(key, ""));
-        connectionPref.setSummary(sharedPreferences.getString(key, ""));
+        if(!key.equals(ConfigPreferences.PASSWORD_FTP) && !key.equals(ConfigPreferences.PASSWORD_FTP2)){
+            connectionPref.setSummary(sharedPreferences.getString(key, ""));
+        }
+
     }
 
     @Override
