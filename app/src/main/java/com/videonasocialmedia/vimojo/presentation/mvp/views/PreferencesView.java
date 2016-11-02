@@ -54,4 +54,6 @@ public interface PreferencesView {
 
 
     void setCameraSettingsAvailable(boolean isAvailable);
+
+    void showError();
 }

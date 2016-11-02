@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
+import android.support.design.widget.Snackbar;
 import android.widget.Toast;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -82,14 +83,13 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     public void checkMailValid(){
         emailPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if(android.util.Patterns.EMAIL_ADDRESS.matcher((CharSequence) newValue).matches())
                     return true;
                 else {
-                    Toast.makeText(context, R.string.invalid_email,Toast.LENGTH_LONG).show();
-                       return false;
+                    preferencesView.showError();
+                    return false;
                    }
             }
         });

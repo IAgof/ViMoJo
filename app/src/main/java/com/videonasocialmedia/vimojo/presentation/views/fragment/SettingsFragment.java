@@ -12,6 +12,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -168,6 +169,11 @@ public class SettingsFragment extends PreferenceFragment implements
             resolutionPrefNotAvailable = findPreference(context.getString(R.string.resolution));
             resolutionPrefNotAvailable.setShouldDisableView(true);
         }
+    }
+
+    @Override
+    public void showError() {
+        Snackbar.make(getView(), R.string.invalid_email,Snackbar.LENGTH_LONG).show();
     }
 
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
