@@ -3,8 +3,7 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/white"
-                tools:context=".mainActivity">
+                android:background="@color/colorWhite">
 
     <ImageView
         android:id="@+id/splash_screen"
@@ -21,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:textColor="@color/textColorVersionSplashScreen"
+        android:textColor="@color/colorPrimary"
         tools:text="v1.0.0"
         android:layout_alignBottom="@+id/splash_screen"
         android:layout_alignEnd="@+id/splash_screen"/>

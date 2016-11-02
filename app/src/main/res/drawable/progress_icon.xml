@@ -23,9 +23,9 @@
             android:width="48dip"/>
 
         <gradient
-            android:centerColor="@color/colorSpinnerCenter"
+            android:centerColor="@color/colorPrimary"
             android:centerY="0.50"
-            android:endColor="@color/colorSpinnerEnd"
+            android:endColor="@color/colorPrimaryLight"
             android:startColor="#fff"
             android:type="sweep"
             android:useLevel="false"/>
