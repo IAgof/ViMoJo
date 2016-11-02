@@ -16,7 +16,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.Utils;
+import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import net.ypresto.androidtranscoder.Transcoder;
 
@@ -60,7 +60,7 @@ public class ExporterImpl implements Exporter {
         Movie result = appendFiles(videoTrimmedPaths);
         if (result != null) {
             saveFinalVideo(result);
-            Utils.cleanDirectory(new File(videoExportedTempPath));
+            FileUtils.cleanDirectory(new File(videoExportedTempPath));
         }
     }
 

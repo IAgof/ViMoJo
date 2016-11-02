@@ -164,9 +164,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
             case R.id.action_settings_edit_gallery:
                 navigateTo(GalleryActivity.class);
                 return true;
-            case R.id.action_settings_edit_tutorial:
-                //navigateTo(TutorialActivity.class);
-                return true;
             default:
         }
         return super.onOptionsItemSelected(item);

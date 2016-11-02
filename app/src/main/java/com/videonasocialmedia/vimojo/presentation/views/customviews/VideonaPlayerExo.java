@@ -205,7 +205,9 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
   private void initMusicPlayer() {
     if (musicPlayer == null && videoHasMusic()) {
       musicPlayer = MediaPlayer.create(getContext(), Uri.parse(music.getMediaPath()));
-      musicPlayer.setVolume(volumeMusic, volumeMusic);
+      if (musicPlayer != null) {
+        musicPlayer.setVolume(volumeMusic, volumeMusic);
+      }
     }
 
   }
@@ -664,7 +666,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
    * Renders text if has been set for current clip.
    */
   public void updateClipTextPreview() {
-    if (getCurrentClip().hasText()) {
+    if (videoList.size() > 0 && getCurrentClip().hasText()) {
       setImageText(getCurrentClip().getClipText(), getCurrentClip().getClipTextPosition());
     } else {
       clearImageText();
@@ -679,7 +681,10 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
   }
 
   private Video getCurrentClip() {
-    return videoList.get(currentClipIndex());
+    if (videoList.size() > 0) {
+      return videoList.get(currentClipIndex());
+    }
+    return null;
   }
 
   private void startMusicTrackPlayback() {

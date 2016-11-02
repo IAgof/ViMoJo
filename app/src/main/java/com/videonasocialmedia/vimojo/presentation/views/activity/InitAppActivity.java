@@ -277,6 +277,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private void initPaths() throws IOException {
         checkAndInitPath(Constants.PATH_APP);
         checkAndInitPath(Constants.PATH_APP_TEMP);
+        checkAndInitPath(Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
+        checkAndInitPath(Constants.PATH_APP_TEMP_AUDIO);
         checkAndInitPath(Constants.PATH_APP_MASTERS);
 
         File privateDataFolderModel = getDir(Constants.FOLDER_VIDEONA_PRIVATE_MODEL, Context.MODE_PRIVATE);
@@ -570,9 +572,9 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     private void moveVideonaVideosToDcim() {
         String moviesPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + File.separator;
-        String pathVideonaOld = moviesPath + Constants.FOLDER_VIDEONA;
-        String pathVideonaMasterOld = moviesPath + Constants.FOLDER_VIDEONA_MASTERS;
-        String pathVideonaTempOld = pathVideonaOld + File.separator + Constants.FOLDER_VIDEONA_TEMP;
+        String pathVideonaOld = moviesPath + Constants.FOLDER_NAME_VIMOJO;
+        String pathVideonaMasterOld = moviesPath + Constants.FOLDER_NAME_VIMOJO_MASTERS;
+        String pathVideonaTempOld = pathVideonaOld + File.separator + Constants.FOLDER_NAME_VIMOJO_TEMP;
 
         moveFolderContentsToNewFolder(pathVideonaOld, Constants.PATH_APP);
         moveFolderContentsToNewFolder(pathVideonaMasterOld, Constants.PATH_APP_MASTERS);

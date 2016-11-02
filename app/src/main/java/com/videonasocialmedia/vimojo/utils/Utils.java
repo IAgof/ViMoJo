@@ -186,26 +186,11 @@ public class Utils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
     }
 
-    public static void cleanDirectory(File directory) {
-        if (directory.exists()) {
-            File[] files = directory.listFiles();
-            if (files != null) { //some JVMs return null for empty dirs
-                for (File f : files) {
-                    if (f.isDirectory()) {
-                        cleanDirectory(f);
-                    } else {
-                        f.delete();
-                    }
-                }
-            }
-        }
-    }
-
     public static void removeVideo(String path) {
         File file = new File(path);
         if (file != null) {
             if (file.isDirectory()) {
-                cleanDirectory(file);
+                FileUtils.cleanDirectory(file);
             } else {
                 file.delete();
             }

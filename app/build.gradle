@@ -56,8 +56,8 @@ android {
         applicationId "com.videonasocialmedia.vimojo"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 13 // 20161026
-        versionName "0.4.11" // 20161026
+        versionCode 17 // 20161028
+        versionName "0.4.15" // 20161028
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -140,7 +140,7 @@ dependencies {
     compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
     compile 'io.realm:android-adapters:1.3.0'
 
-    compile(name:'videona-sdk-v0.0.7',ext:'aar')
+    compile(name:'videona-sdk-v0.0.8',ext:'aar')
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"

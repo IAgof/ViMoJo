@@ -11,6 +11,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.media.MediaMetadataRetriever;
+import android.util.Log;
 
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
@@ -30,14 +31,11 @@ import java.util.List;
  */
 public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         OnRemoveMediaFinishedListener, OnExportFinishedListener {
-
+    
     RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
     AddVideoToProjectUseCase addVideoToProjectUseCase;
     GalleryPagerView galleryPagerView;
-    ExportProjectUseCase exportProjectUseCase;
-    private boolean exported = false;
     protected Project currentProject;
-    private List<Video> videoList;
     ArrayList<Integer> listErrorVideoIds = new ArrayList<>();
     private boolean differentVideoFormat;
 
@@ -68,17 +66,18 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
 
     public void loadVideoListToProject(List<Video> videoList) {
 
-        this.videoList = videoList;
+        List<Video> checkedVideoList = checkFormatVideoSelected(videoList);
 
-        checkFormatVideoSelected();
         if(listErrorVideoIds.size() > 0){
             galleryPagerView.showDialogVideosNotAddedFromGallery(listErrorVideoIds);
             differentVideoFormat = true;
         }
-        addVideoToProjectUseCase.addVideoListToTrack(videoList, this);
+        addVideoToProjectUseCase.addVideoListToTrack(checkedVideoList, this);
     }
 
-    public void checkFormatVideoSelected(){
+    public List<Video> checkFormatVideoSelected(List<Video> videoList){
+
+        List<Video> checkedFortmatVideoList = new ArrayList<>();
 
         VideoResolution videoResolution = currentProject.getProfile().getVideoResolution();
 
@@ -86,7 +85,6 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         for (int index = 0; index < videoList.size(); index++) {
             Video video = videoList.get(index);
             try {
-                //Log.d("SHOW TIME TAG", "" + index);
                 retriever.setDataSource(video.getMediaPath());
                 String duration = retriever.extractMetadata(
                         MediaMetadataRetriever.METADATA_KEY_DURATION);
@@ -98,13 +96,17 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
                 String width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
                 if(width.compareTo(String.valueOf(videoResolution.getWidth())) != 0){
                     listErrorVideoIds.add(index + 1);
-                    videoList.remove(video);
+                } else {
+                    checkedFortmatVideoList.add(video);
                 }
 
             } catch (Exception e) {
                 video.setDuration(0);
+                e.printStackTrace();
             }
         }
+
+        return checkedFortmatVideoList;
     }
 
 

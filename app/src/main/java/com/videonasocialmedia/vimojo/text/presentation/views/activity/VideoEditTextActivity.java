@@ -173,9 +173,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
             case R.id.action_settings_edit_gallery:
                 navigateTo(GalleryActivity.class);
                 return true;
-            case R.id.action_settings_edit_tutorial:
-                //navigateTo(TutorialActivity.class);
-                return true;
             default:
         }
         return super.onOptionsItemSelected(item);

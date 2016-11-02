@@ -59,15 +59,6 @@
             android:layout_marginRight="2dp"
             android:layout_alignParentRight="true"
             android:textColor="@color/textColorGalleryVideoDuration"/>
-
-        <ImageButton
-            android:id="@+id/gallery_preview_button"
-            android:layout_centerInParent="true"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginLeft="2dp"
-            android:background="@drawable/activity_gallery_icon_play_normal"
-            android:layout_alignParentLeft="true"/>
     </RelativeLayout>
 
 </RelativeLayout>
