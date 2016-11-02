@@ -35,14 +35,9 @@ import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsLi
 import com.mixpanel.android.mpmetrics.InAppNotification;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VimojoApplication;
-//import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
-//import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
-import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnInitAppEventListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;

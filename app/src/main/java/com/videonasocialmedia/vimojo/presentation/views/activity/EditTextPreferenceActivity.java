@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditTextPreferencePresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditTextPreferenceView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;

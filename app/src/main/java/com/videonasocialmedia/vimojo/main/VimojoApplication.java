@@ -8,7 +8,7 @@
  * Juan Javier Cabanas
  */
 
-package com.videonasocialmedia.vimojo;
+package com.videonasocialmedia.vimojo.main;
 
 import android.app.Application;
 import android.content.Context;
@@ -20,6 +20,10 @@ import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.karumi.dexter.Dexter;
 import com.squareup.leakcanary.LeakCanary;
+import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
+import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
 
 import io.fabric.sdk.android.Fabric;
@@ -28,6 +32,7 @@ import io.realm.RealmConfiguration;
 
 public class VimojoApplication extends Application {
 
+    private SystemComponent systemComponent;
     private static Context context;
 
     Tracker appTracker;
@@ -48,6 +53,10 @@ public class VimojoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        this.systemComponent = DaggerSystemComponent.builder()
+                .applicationModule(new ApplicationModule(this))
+                .dataRepositoriesModule(new DataRepositoriesModule())
+                .build();
         Fabric.with(this, new Crashlytics());
         context = getApplicationContext();
         setupGoogleAnalytics();
@@ -55,6 +64,10 @@ public class VimojoApplication extends Application {
         Dexter.initialize(this);
         setupLeakCanary();
         setupDataBase();
+    }
+
+    public SystemComponent getSystemComponent() {
+        return this.systemComponent;
     }
 
     private void setupGoogleAnalytics() {

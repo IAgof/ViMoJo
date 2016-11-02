@@ -16,7 +16,6 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -35,7 +34,7 @@ import android.provider.MediaStore;
 
 import com.coremedia.iso.IsoFile;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;

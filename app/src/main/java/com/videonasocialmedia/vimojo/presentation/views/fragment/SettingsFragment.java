@@ -1,8 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.views.fragment;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -21,7 +19,7 @@ import android.widget.Toast;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;

@@ -10,9 +10,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 
-import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
-import com.videonasocialmedia.vimojo.utils.Constants;
 
 /**
  * Created by alvaro on 7/09/16.

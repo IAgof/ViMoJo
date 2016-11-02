@@ -5,7 +5,7 @@
  * All rights reserved
  */
 
-package com.videonasocialmedia.vimojo.presentation.views.activity;
+package com.videonasocialmedia.vimojo.main;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -33,16 +33,19 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.export.ExportTempBroadCastReceveiver;
+import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Videona base activity.
@@ -51,29 +54,29 @@ import java.util.List;
  * @since 04/05/2015
  */
 public abstract class VimojoActivity extends AppCompatActivity {
-    protected static final String ANDROID_PUSH_SENDER_ID = "783686583047";
+    private final TrackerDelegate trackerDelegate = new TrackerDelegate();
     protected MixpanelAPI mixpanel;
     protected Tracker tracker;
     protected boolean criticalPermissionDenied = false;
     protected MultiplePermissionsListener dialogMultiplePermissionsListener;
     private ExportTempBroadCastReceveiver exportTempBroadCastReceveiver;
-    protected LoadCurrentProjectUseCase loadCurrentProjectUseCase = new LoadCurrentProjectUseCase();
+    @Inject protected LoadCurrentProjectUseCase loadCurrentProjectUseCase;
+    @Inject ProjectRepository projectRepository;
+
+    public SystemComponent getSystemComponent() {
+        return ((VimojoApplication)getApplication()).getSystemComponent();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSystemComponent().inject(this);
         loadCurrentProjectUseCase.loadCurrentProject();
         if (getIntent().getBooleanExtra("EXIT", false)) {
             finish();
         }
-        mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN);
-        if (mixpanel != null) {
-            mixpanel.getPeople().identify(mixpanel.getPeople().getDistinctId());
-            mixpanel.getPeople().initPushHandling(ANDROID_PUSH_SENDER_ID);
-        }
         configPermissions();
-        VimojoApplication app = (VimojoApplication) getApplication();
-        tracker = app.getTracker();
+        trackerDelegate.onCreate();
 
 //        View root = ( (ViewGroup) findViewById(android.R.id.content) ).getChildAt(0);
         View root = findViewById(android.R.id.content);
@@ -220,6 +223,22 @@ public abstract class VimojoActivity extends AppCompatActivity {
                     })
                     .setIcon(icon)
                     .show();
+        }
+    }
+
+    // TODO(jliarte): 27/10/16 move this delegate out of the class.
+    //                Maybe its necessary to move all mixpanel uses to UserEventTracker class
+    private class TrackerDelegate {
+        protected static final String ANDROID_PUSH_SENDER_ID = "783686583047";
+
+        public void onCreate() {
+            mixpanel = MixpanelAPI.getInstance(VimojoActivity.this, BuildConfig.MIXPANEL_TOKEN);
+            if (mixpanel != null) {
+                mixpanel.getPeople().identify(mixpanel.getPeople().getDistinctId());
+                mixpanel.getPeople().initPushHandling(ANDROID_PUSH_SENDER_ID);
+            }
+            VimojoApplication app = (VimojoApplication) getApplication();
+            tracker = app.getTracker();
         }
     }
 }

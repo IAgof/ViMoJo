@@ -14,11 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoGalleryPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoGalleryView;
-import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.VideoGalleryAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnSelectionModeListener;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnTransitionClickListener;
