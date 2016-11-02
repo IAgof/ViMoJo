@@ -53,10 +53,7 @@ public class VimojoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        this.systemComponent = DaggerSystemComponent.builder()
-                .applicationModule(new ApplicationModule(this))
-                .dataRepositoriesModule(new DataRepositoriesModule())
-                .build();
+        initSystemComponent();
         Fabric.with(this, new Crashlytics());
         context = getApplicationContext();
         setupGoogleAnalytics();
@@ -66,9 +63,21 @@ public class VimojoApplication extends Application {
         setupDataBase();
     }
 
+    void initSystemComponent() {
+        this.systemComponent = DaggerSystemComponent.builder()
+                .applicationModule(new ApplicationModule(this))
+                .dataRepositoriesModule(getDataRepositoriesModule())
+                .build();
+    }
+
     public SystemComponent getSystemComponent() {
         return this.systemComponent;
     }
+
+    public DataRepositoriesModule getDataRepositoriesModule() {
+        return new DataRepositoriesModule();
+    }
+
 
     private void setupGoogleAnalytics() {
         GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
@@ -85,7 +94,7 @@ public class VimojoApplication extends Application {
         }
     }
 
-    private void setupDataBase() {
+    protected void setupDataBase() {
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
                 .name("vimojoDB")
                 .schemaVersion(2) // 20161024
