@@ -10,19 +10,14 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
-import android.support.design.widget.Snackbar;
-import android.widget.Toast;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideosUseCase;
 import com.videonasocialmedia.vimojo.domain.social.ObtainNetworksToShareUseCase;
@@ -32,7 +27,6 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * This class is used to show the setting menu.
@@ -148,8 +142,19 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     private void checkUserAccountPreference(String key) {
         String data = sharedPreferences.getString(key, null);
-        if (data != null && !data.isEmpty())
+        if (data != null && !data.isEmpty()) {
             preferencesView.setSummary(key, data);
+            sendPropertyToMixpanel(key, data);
+        }
+    }
+
+    private void sendPropertyToMixpanel(String key, String data) {
+        if(key.equals(ConfigPreferences.NAME))
+            preferencesView.setUserPropertyToMixpanel("$first_name",data);
+        if(key.equals(ConfigPreferences.USERNAME))
+            preferencesView.setUserPropertyToMixpanel("$username",data);
+        if(key.equals(ConfigPreferences.EMAIL))
+            preferencesView.setUserPropertyToMixpanel("$account_email",data);
     }
 
 

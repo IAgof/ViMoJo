@@ -56,4 +56,6 @@ public interface PreferencesView {
     void setCameraSettingsAvailable(boolean isAvailable);
 
     void showError();
+
+    void setUserPropertyToMixpanel (String property, String value);
 }

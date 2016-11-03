@@ -176,6 +176,14 @@ public class SettingsFragment extends PreferenceFragment implements
         Snackbar.make(getView(), R.string.invalid_email,Snackbar.LENGTH_LONG).show();
     }
 
+    @Override
+    public void setUserPropertyToMixpanel(String property, String value) {
+        mixpanel.getPeople().identify(mixpanel.getDistinctId());
+        mixpanel.getPeople().set(property,value);
+        if(property=="account_email")
+            mixpanel.getPeople().setOnce("$email", value);
+    }
+
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
         String property = null;
         if(key.equals(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION))
