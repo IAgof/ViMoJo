@@ -5,14 +5,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.abc.xxx.SettingsActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
-        android:theme="@style/VideonaToolbar">
+        app:popupTheme="@style/VideonaTheme.PopupOverlay"
+        app:theme="@style/VideonaDrawerIconStyle">
+
 
         <TextView
             android:id="@+id/toolbar_title"
@@ -25,6 +31,7 @@
             android:textSize="20dp"/>
 
     </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
         android:id="@+id/fragment_preferences"
