@@ -6,7 +6,6 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.main.modules.MockedDataRepositoriesModule;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
