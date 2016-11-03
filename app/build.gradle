@@ -86,10 +86,10 @@ android {
         disable 'MissingTranslation'
         abortOnError false
     }
-    afterEvaluate {
-        project.tasks.withType(Test) {
-            systemProperties.put('robolectric.offline', 'true')
-            systemProperties.put('robolectric.dependency.dir', '/home/vagrant/jenkins_home/tools/robolectric_jars')
+    testOptions {
+        unitTests.all {
+            systemProperty 'robolectric.offline', 'true'
+            systemProperty 'robolectric.dependency.dir', "$System.env.ROBOLECTRIC_LIB_PATH"
         }
     }
 }
