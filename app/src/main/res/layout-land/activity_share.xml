@@ -21,7 +21,8 @@
                 android:id="@id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_scrollFlags="scroll|enterAlways">
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:theme="@style/VideonaDrawerIconStyle">
 
                 <com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator
                     android:id="@+id/navigator"

@@ -22,10 +22,12 @@
     <color name="textColorSecondary">@color/colorSecondaryLight</color>
 
     <color name="button">@color/colorSecondary</color>
-    <color name="button_record">@color/colorWhite</color>
-    <color name="button_disabled">#E4E4E4</color>
     <color name="button_pressed">@color/colorPrimary</color>
     <color name="button_selected">@color/colorPrimary</color>
+    <color name="button_disabled">#E4E4E4</color>
+
+    <color name="button_toolbar">@color/colorWhite</color>
+    <color name="button_record">@color/colorWhite</color>
 
     <color name="textColorTitle">@color/textColorPrimary</color>
 
