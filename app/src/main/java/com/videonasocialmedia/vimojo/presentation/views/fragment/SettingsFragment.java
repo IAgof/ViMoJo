@@ -172,8 +172,8 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     @Override
-    public void showError() {
-        Snackbar.make(getView(), R.string.invalid_email,Snackbar.LENGTH_LONG).show();
+    public void showError(int message) {
+        Snackbar.make(getView(), message ,Snackbar.LENGTH_LONG).show();
     }
 
     @Override

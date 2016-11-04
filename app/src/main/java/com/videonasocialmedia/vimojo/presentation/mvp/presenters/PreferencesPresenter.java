@@ -82,7 +82,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                 if(android.util.Patterns.EMAIL_ADDRESS.matcher((CharSequence) newValue).matches())
                     return true;
                 else {
-                    preferencesView.showError();
+                    preferencesView.showError(R.string.invalid_email);
                     return false;
                    }
             }
