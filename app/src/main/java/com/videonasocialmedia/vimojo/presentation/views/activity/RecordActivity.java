@@ -59,6 +59,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
 
+import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
+
 /**
  * @author Álvaro Martínez Marco
  */
@@ -69,19 +71,21 @@ import butterknife.OnTouch;
 public class RecordActivity extends VimojoActivity implements RecordView {
 
     private final String LOG_TAG = getClass().getSimpleName();
+    private final int RESOLUTION_SELECTED_HD720 = 720;
+    private final int RESOLUTION_SELECTED_HD1080 = 1080;
+    private final int RESOLUTION_SELECTED_HD4K = 2160;
+
 
     @Bind(R.id.button_record)
     ImageButton recButton;
-    @Bind(R.id.button_record_screen_clean)
-    ImageButton recButtonScreenClean;
-    @Bind(R.id.button_share)
-    ImageButton shareButton;
     @Bind(R.id.cameraPreview)
     GLCameraView cameraView;
     @Bind(R.id.button_change_camera)
     ImageButton rotateCameraButton;
     @Bind(R.id.button_navigate_settings)
-    ImageButton buttonSettings;
+    ImageButton buttonNavigateSettings;
+    @Bind(R.id.settings_camera_button)
+    ImageButton settingsCameraButton;
     @Bind(R.id.button_navigate_edit_or_gallery)
     CircleImageView buttonThumbClipRecorded;
     @Bind(R.id.text_view_num_videos)
@@ -110,6 +114,12 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     View settingsBar;
     @Bind(R.id.settings_bar_submenu)
     View settingsBarSubmenu;
+    @Bind(R.id.button_to_hide_controls)
+    ImageButton buttonToHideControlsView;
+    @Bind (R.id.button_to_show_controls)
+    ImageButton buttonToShowControls;
+    @Bind(R.id.activity_record_icon_resolution)
+    ImageView resolutionIndicator;
 
 
 
@@ -155,17 +165,19 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         setContentView(R.layout.record);
         keepScreenOn();
         ButterKnife.bind(this);
+        setupActivityButtons();
         checkAction();
         sharedPreferences = getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
                 Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        recordPresenter = new RecordPresenter(this, this, cameraView, sharedPreferences, externalIntent);
+        recordPresenter = new RecordPresenter(VimojoApplication.getAppContext(), this, cameraView, sharedPreferences, externalIntent);
 
         configChronometer();
         initOrientationHelper();
         createProgressDialog();
         configShowThumbAndNumberClips();
+
     }
 
     private void configShowThumbAndNumberClips() {
@@ -310,44 +322,26 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         return true;
     }
 
-    @OnTouch(R.id.button_record_screen_clean)
-    boolean onTouchScreenClean(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (!recording) {
-                recordPresenter.requestRecord();
-            } else {
-                recordPresenter.stopRecord();
-            }
-        }
-        return true;
-    }
-
     @Override
     public void showRecordButton() {
-        recButton.setImageResource(R.drawable.activity_record_icon_rec_normal);
-        recButton.setAlpha(1f);
-        recButtonScreenClean.setImageResource(R.drawable.activity_record_icon_rec_normal);
+        recButton.setImageResource(R.drawable.record_activity_ic_rec);
         recording = false;
     }
 
     @Override
     public void showStopButton() {
-        recButton.setImageResource(R.drawable.activity_record_icon_stop_normal);
-        recButton.setAlpha(1f);
-        recButtonScreenClean.setImageResource(R.drawable.activity_record_icon_stop_normal);
+        recButton.setImageResource(R.drawable.activity_record_icon_stop);
         recording = true;
     }
 
     @Override
     public void showSettingsOptions() {
-        buttonSettings.setAlpha(1.0f);
-        buttonSettings.setActivated(true);
+        buttonNavigateSettings.setEnabled(true);
     }
 
     @Override
     public void hideSettingsOptions() {
-        buttonSettings.setAlpha(0.25f);
-        buttonSettings.setActivated(false);
+        buttonNavigateSettings.setEnabled(false);
     }
 
 
@@ -422,25 +416,24 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     public void showFlashOn(boolean on) {
         trackUserInteracted(AnalyticsConstants.CHANGE_FLASH, String.valueOf(on));
         flashButton.setActivated(on);
+        flashButton.setSelected(on);
     }
 
     @Override
     public void showFlashSupported(boolean supported) {
+        flashButton.setActivated(false);
         if (supported) {
-            flashButton.setImageAlpha(255);
-            flashButton.setActivated(false);
-            flashButton.setActivated(false);
             flashButton.setEnabled(true);
         } else {
-            flashButton.setImageAlpha(65);
-            flashButton.setActivated(false);
             flashButton.setEnabled(false);
         }
     }
 
     @Override
     public void showFrontCameraSelected() {
+       //TODO: (28/10/2016) No debería ser setActivate(true)?
         rotateCameraButton.setActivated(false);
+        rotateCameraButton.setSelected(true);
         trackUserInteracted(AnalyticsConstants.CHANGE_CAMERA, AnalyticsConstants.CAMERA_FRONT);
         try {
             orientationHelper.reStartMonitoringOrientation();
@@ -452,6 +445,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     @Override
     public void showBackCameraSelected() {
         rotateCameraButton.setActivated(false);
+        rotateCameraButton.setSelected(false);
         trackUserInteracted(AnalyticsConstants.CHANGE_CAMERA, AnalyticsConstants.CAMERA_BACK);
         try {
             orientationHelper.reStartMonitoringOrientation();
@@ -520,11 +514,14 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void hidePrincipalViews() {
-        clearButton.setImageResource(R.drawable.activity_record_icon_expand);
+        clearButton.setImageResource(R.drawable.record_activity_ic_shrink);
+        clearButton.setAlpha(0.5f);
+        clearButton.setBackground(null);
         clearButton.setActivated(true);
-        recButtonScreenClean.setVisibility(View.VISIBLE);
         hud.setVisibility(View.INVISIBLE);
         controlsView.setVisibility(View.INVISIBLE);
+        buttonToHideControlsView.setVisibility(View.INVISIBLE);
+        buttonToShowControls.setVisibility(View.INVISIBLE);
         picometer.setVisibility(View.INVISIBLE);
         zommBarView.setVisibility(View.INVISIBLE);
         settingsBarSubmenu.setVisibility(View.INVISIBLE);
@@ -533,11 +530,12 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void showPrincipalViews() {
-        clearButton.setImageResource(R.drawable.activity_record_icon_shrink);
+        clearButton.setImageResource(R.drawable.record_activity_ic_expand);
+        clearButton.setBackground(getResources().getDrawable(R.drawable.circle_background));
+        clearButton.setAlpha(1f);
         clearButton.setActivated(false);
         hud.setVisibility(View.VISIBLE);
-        controlsView.setVisibility(View.VISIBLE);
-        recButtonScreenClean.setVisibility(View.GONE);
+        buttonToShowControls.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -564,16 +562,39 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     }
 
     @Override
-    public void enableShareButton() {
-        shareButton.setAlpha(1f);
-        shareButton.setClickable(true);
+    public void showResolutionSelected(int resolutionSelected) {
+        switch (resolutionSelected){
+            case (RESOLUTION_SELECTED_HD720):
+              resolutionIndicator.setImageResource(R.drawable.record_activity_ic_resolution_720);
+                break;
+            case(RESOLUTION_SELECTED_HD1080):
+                resolutionIndicator.setImageResource(R.drawable.record_activity_ic_resolution_1080);
+                break;
+            case (RESOLUTION_SELECTED_HD4K):
+                resolutionIndicator.setImageResource(R.drawable.record_activity_ic_resolution_4k);
+                break;
+            default:
+                resolutionIndicator.setImageResource(R.drawable.record_activity_ic_resolution_720);
+                break;
+        }
     }
 
-    @Override
-    public void disableShareButton() {
-        shareButton.setAlpha(0.25f);
-        shareButton.setClickable(false);
+    public void setupActivityButtons() {
+        // TODO:(alvaro.martinez) 7/11/16 implement this functionality
+        settingsCameraButton.setEnabled(false);
+        tintRecordButtons(R.color.button_color_record_activity);
+
     }
+
+    private void tintRecordButtons(int button_color) {
+        tintButton(flashButton, button_color);
+        tintButton(rotateCameraButton,button_color);
+        tintButton(buttonToShowControls,button_color);
+        tintButton(buttonToHideControlsView,button_color);
+        tintButton(buttonNavigateSettings,button_color);
+        tintButton(settingsCameraButton, button_color);
+    }
+
 
     private void trackVideoExported() {
         JSONObject videoExportedProperties = new JSONObject();
@@ -664,16 +685,6 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         }
     }
 
-    @OnClick(R.id.button_share)
-    public void exportAndShare () {
-        if (!recording) {
-            recordPresenter.setFlashOff();
-            navigateTo(ExportProjectService.class);
-            showProgressDialog();
-            mixpanel.timeEvent(AnalyticsConstants.VIDEO_EXPORTED);
-        }
-    }
-
     @OnClick(R.id.clear_button)
     public void clearAndShrinkScreen() {
 
@@ -682,6 +693,19 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         } else {
             hidePrincipalViews();
         }
+    }
+    @OnClick(R.id.button_to_show_controls)
+    public void showControls() {
+        buttonToShowControls.setVisibility(View.INVISIBLE);
+        buttonToHideControlsView.setVisibility(View.VISIBLE);
+        controlsView.setVisibility(View.VISIBLE);
+    }
+
+    @OnClick(R.id.button_to_hide_controls)
+    public void hideControls(){
+        buttonToHideControlsView.setVisibility(View.INVISIBLE);
+        buttonToShowControls.setVisibility(View.VISIBLE);
+        controlsView.setVisibility(View.INVISIBLE);
     }
 
     public void navigateTo(Class cls) {
