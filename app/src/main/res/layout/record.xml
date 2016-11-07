@@ -450,12 +450,13 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/circle_background"
-            android:scaleType="fitCenter"
             android:src="@drawable/record_activity_ic_show_menu_normal"
+            android:scaleType="fitCenter"
             android:visibility="visible"
-            android:layout_alignTop="@+id/settings_bar_submenu"
+            android:layout_alignBottom="@+id/relativeLayout"
             android:layout_toStartOf="@+id/relativeLayout"
-            android:layout_marginEnd="14dp"/>
+            android:layout_marginBottom="68dp"
+            android:layout_marginEnd="19dp"/>
 
     </RelativeLayout>
 
