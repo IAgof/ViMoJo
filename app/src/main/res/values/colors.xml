@@ -4,56 +4,32 @@
     <color name="colorTransparent">#00000000</color>
     <color name="colorGreyTransparent">#7F000000</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorWhite">#FFFFFF</color>
 
-    <color name="colorSpinnerCenter">#00b8f3</color>
-    <color name="colorSpinnerEnd">#0091ea</color>
+    <color name="colorPrimary">#F24B51</color>
+    <color name="colorPrimaryDark">#D32C3A</color>
+    <color name="colorPrimaryLight">#F98286</color>
 
+    <color name="colorAccent">#F24B51</color>
 
-    <color name="textColorVersionSplashScreen">#FFFFFF</color>
-    <color name="textColorFiltersRecord">#FFFFFF</color>
-    <color name="textColorGalleryTitle">#FFFFFF</color>
-    <color name="textColorGalleryVideoDuration">#FFFFFF</color>
-    <color name="textColorNumVideos">#FFFFFF</color>
-    <color name="textColorChronometer">#FFFFFF</color>
+    <color name="colorSecondary">#666666</color>
+    <color name="colorSecondaryLight">#999999</color>
 
-    <color name="colorButton">#0091ea</color>
-    <color name="colorButtonAccent">#fe304b</color>
-    <color name="textColorButton">#ffffff</color>
-    <color name="textColorTitleToolbar">#FFFFFF</color>
-    <color name="colorControlNormal">#FFFFFF</color>
-    <color name="colorControlActivated">#808080</color>
-    <color name="editTextBottomLine">#808080</color>
-    <color name="colorFabMenu">#FFFFFF</color>
-
-
-    <color name="colorPrimary">#9E9E9E</color>
-    <color name="colorPrimaryDark">#616161</color>
-    <color name="colorPrimaryLight">#F5F5F5</color>
-
-    <color name="colorSecondary">#808080</color>
-    <color name="colorSecondaryLight">#CCCCCC</color>
-
-    <color name="colorAccent">#cddc39</color>
     <color name="colorDivider">#B6B6B6</color>
 
-    <color name="textColor">#212121</color>
-    <color name="textColorPrimary">#212121</color>
-    <color name="textColorSecondary">#727272</color>
+    <color name="textColor">@color/colorSecondary</color>
+    <color name="textColorPrimary">@color/colorSecondary</color>
+    <color name="textColorSecondary">@color/colorSecondaryLight</color>
 
-    <color name="button">@color/colorPrimary</color>
-    <color name="button_disabled">#E4E4E4</color>
-    <color name="button_pressed">@color/colorAccent</color>
-    <color name="button_selected">@color/colorAccent</color>
+    <color name="button">@color/colorSecondary</color>
+    <color name="button_pressed">@color/colorPrimary</color>
+    <color name="button_selected">@color/colorPrimary</color>
+    <color name="button_disabled">@color/colorSecondary</color>
+
+    <color name="button_toolbar">@color/colorWhite</color>
+    <color name="button_record">@color/colorWhite</color>
 
     <color name="textColorTitle">@color/textColorPrimary</color>
 
-    <color name="rock">#D63525</color>
-    <color name="jazz">#54BCF0</color>
-    <color name="folk">#F7C041</color>
-    <color name="hiphop">#EE7D2E</color>
-    <color name="classic">#7F7BF5</color>
-    <color name="birthday">#56EA80</color>
-    <color name="ambient">#81E4EA</color>
-    <color name="bollywood">#81E4EA</color>
 
 </resources>

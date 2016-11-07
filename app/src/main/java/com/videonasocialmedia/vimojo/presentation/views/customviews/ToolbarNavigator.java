@@ -53,7 +53,7 @@ public class ToolbarNavigator extends LinearLayout implements EditNavigatorView 
         boolean editSelected = a.getBoolean(R.styleable.ToolbarNavigator_edit_selected, false);
         boolean musicSelected = a.getBoolean(R.styleable.ToolbarNavigator_music_selected, false);
         boolean shareSelected = a.getBoolean(R.styleable.ToolbarNavigator_share_selected, false);
-        int tintList = a.getResourceId(R.styleable.ToolbarNavigator_tint_color, R.color.button_color);
+        int tintList = a.getResourceId(R.styleable.ToolbarNavigator_tint_color, R.color.button_color_toolbar);
         a.recycle();
 
         navigateToEditButton = (ImageButton) findViewById(R.id.button_edit_navigator);

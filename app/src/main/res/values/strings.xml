@@ -141,7 +141,7 @@
     <string name="title_FTP2_Section">Breaking news </string>
     <string name="host_FTP">Host</string>
     <string name="removeHost">Remove host</string>
-    <string name="enterHost">Enter your host</string>
+    <string name="enterHost">Enter your address of FTP server host</string>
     <string name="username_FTP">FTP Username</string>
     <string name="enterUsername_FTP">Enter your username</string>
     <string name="removeUsername_FTP">Remove username</string>
@@ -149,10 +149,10 @@
     <string name="enterPassword_FTP">Enter your password</string>
     <string name="removePassword_FTP">Remove password</string>
     <string name="edited_video_destination">Edited Video destination</string>
-    <string name="enterEditedVideoDestination_FTP">Enter your destination</string>
+    <string name="enterEditedVideoDestination_FTP">Enter your destination folder</string>
     <string name="removeEditedVideoDestination_FTP">Remove destination</string>
-    <string name="unedited_video_destination">Unedited Video destination</string>
-    <string name="enterUneditedVideoDestination_FTP">Enter your destination</string>
+    <string name="unedited_video_destination">Unedited Video destination </string>
+    <string name="enterUneditedVideoDestination_FTP">Enter your destination folder</string>
     <string name="removeUneditedVideoDestination_FTP">Remove destination</string>
     <string name="save_FTP">Save</string>
 

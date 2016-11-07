@@ -72,7 +72,6 @@ public interface RecordView {
 
     void hideVideosRecordedNumber();
 
-    void enableShareButton();
+    void showResolutionSelected(int height);
 
-    void disableShareButton();
 }

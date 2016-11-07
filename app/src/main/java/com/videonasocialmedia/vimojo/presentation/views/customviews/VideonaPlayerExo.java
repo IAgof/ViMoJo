@@ -761,8 +761,11 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     rendererBuildingState = RENDERER_BUILDING_STATE_BUILT;
   }
 
-  private int getClipPositionFromTimeLineTime() {
+  protected int getClipPositionFromTimeLineTime() {
     int clipIndex = getClipIndexByProgress(currentTimePositionInList);
+    if (clipIndex >= videoList.size()) {
+      return 0;
+    }
     return currentTimePositionInList
             - (int) clipTimesRanges.get(clipIndex).getLower()
             + videoList.get(clipIndex).getStartTime();

@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
 import com.videonasocialmedia.vimojo.presentation.views.fragment.SettingsFragment;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaDialogListener;
@@ -50,9 +51,6 @@ public class SettingsActivity extends VimojoActivity implements VideonaDialogLis
         switch (item.getItemId()) {
             case R.id.action_help:
                 goToContact();
-                return true;
-            case R.id.action_vote:
-                goToVote();
                 return true;
             case android.R.id.home:
                 onBackPressed();
