@@ -129,7 +129,7 @@
                     android:layout_weight="8">
 
                     <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
-                        android:id="@+id/button_navigate_edit"
+                        android:id="@+id/button_navigate_edit_or_gallery"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_gravity="center_horizontal|center_vertical"

@@ -10,7 +10,7 @@ package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.Intent;
 
-import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;

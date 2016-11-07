@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
 import com.videonasocialmedia.vimojo.presentation.views.fragment.SettingsFragment;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaDialogListener;
