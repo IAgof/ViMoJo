@@ -52,9 +52,6 @@ public class SettingsActivity extends VimojoActivity implements VideonaDialogLis
             case R.id.action_help:
                 goToContact();
                 return true;
-            case R.id.action_vote:
-                goToVote();
-                return true;
             case android.R.id.home:
                 onBackPressed();
                 return true;

@@ -10,9 +10,7 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -20,7 +18,6 @@ import android.preference.PreferenceCategory;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideosUseCase;
 import com.videonasocialmedia.vimojo.domain.social.ObtainNetworksToShareUseCase;
@@ -43,22 +40,23 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private ListPreference resolutionPref;
     private ListPreference qualityPref;
     private ListPreference frameRatePref;
+    private Preference emailPref;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private boolean isPreferenceAvailable = false;
 
     /**
      * Constructor
-     *
-     * @param preferencesView
+     *  @param preferencesView
      * @param resolutionPref
      * @param qualityPref
+     * @param emailPref
      * @param context
      * @param sharedPreferences
      */
     public PreferencesPresenter(PreferencesView preferencesView, PreferenceCategory cameraSettingsPref,
                                 ListPreference resolutionPref, ListPreference qualityPref,
-                                ListPreference frameRatePref, Context context,
+                                ListPreference frameRatePref, Preference emailPref, Context context,
                                 SharedPreferences sharedPreferences) {
 
         this.cameraSettingsPref = cameraSettingsPref;
@@ -66,6 +64,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.resolutionPref = resolutionPref;
         this.qualityPref = qualityPref;
         this.frameRatePref = frameRatePref;
+        this.emailPref = emailPref;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
         obtainNetworksToShareUseCase = new ObtainNetworksToShareUseCase();
@@ -75,6 +74,21 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     /**
      * Checks the available preferences on the device
      */
+
+    public void checkMailValid(){
+        emailPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if(android.util.Patterns.EMAIL_ADDRESS.matcher((CharSequence) newValue).matches())
+                    return true;
+                else {
+                    preferencesView.showError(R.string.invalid_email);
+                    return false;
+                   }
+            }
+        });
+    }
+
     public void checkAvailablePreferences() {
         checkUserAccountData();
         checkUserFTP1Data();
@@ -128,8 +142,19 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     private void checkUserAccountPreference(String key) {
         String data = sharedPreferences.getString(key, null);
-        if (data != null && !data.isEmpty())
+        if (data != null && !data.isEmpty()) {
             preferencesView.setSummary(key, data);
+            sendPropertyToMixpanel(key, data);
+        }
+    }
+
+    private void sendPropertyToMixpanel(String key, String data) {
+        if(key.equals(ConfigPreferences.NAME))
+            preferencesView.setUserPropertyToMixpanel("$first_name",data);
+        if(key.equals(ConfigPreferences.USERNAME))
+            preferencesView.setUserPropertyToMixpanel("$username",data);
+        if(key.equals(ConfigPreferences.EMAIL))
+            preferencesView.setUserPropertyToMixpanel("$account_email",data);
     }
 
 

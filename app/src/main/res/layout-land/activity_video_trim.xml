@@ -17,7 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/VideonaTheme.PopupOverlay"/>
+            app:popupTheme="@style/VideonaTheme.PopupOverlay"
+            app:theme="@style/VideonaDrawerIconStyle"/>
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
@@ -73,10 +74,14 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="12dp"
-                rsb:textAboveThumbsColor="@android:color/holo_green_light"
-                app:showLabels="false"
+                rsb:textAboveThumbsColor="@color/textColorSecondary"
+                rsb:activeColor="@color/colorPrimary"
+                rsb:thumbNormal="@drawable/ic_circular_thumb_seekbar"
+                rsb:thumbPressed="@drawable/ic_circular_thumb_seekbar"
+                rsb:thumbDisabled="@drawable/ic_circular_thumb_seekbar"
                 app:background_color="@null"
-                app:bar_color="@color/colorPrimaryLight"
+                app:bar_color="@color/colorPrimary"
+                app:showLabels="false"
                 app:bar_height="48dp"
                 app:selected_bar_color="@color/colorDivider"
                 />

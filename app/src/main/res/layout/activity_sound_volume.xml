@@ -15,7 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/VideonaTheme.PopupOverlay"/>
+            app:popupTheme="@style/VideonaTheme.PopupOverlay"
+            app:theme="@style/VideonaDrawerIconStyle"/>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -73,7 +74,7 @@
                 android:layout_gravity="center_horizontal"
                 android:progressTint="@color/colorSecondaryLight"
                 android:progressBackgroundTintMode="src_over"
-                android:thumb="@drawable/common_video_seekbar_advance_pressed"
+                android:thumb="@drawable/ic_circular_thumb_seekbar"
                 />
 
 

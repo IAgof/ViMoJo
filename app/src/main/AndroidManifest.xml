@@ -104,7 +104,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.views.activity.RecordActivity"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTop"
@@ -116,95 +116,11 @@
         </activity>
 
         <activity
-            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.NamePreferenceActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.SettingsActivity"
-            android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name=".presentation.views.activity.NamePreferenceActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.UsernamePreferenceActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.SettingsActivity"
-            android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name=".presentation.views.activity.UsernamePreferenceActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.HostPreferenceActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.SettingsActivity"
-            android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name=".presentation.views.activity.HostPreferenceActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.UserNameFTPPreferenceActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.SettingsActivity"
-            android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name=".presentation.views.activity.UserNameFTPPreferenceActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.PasswordFTPPreferenceActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.SettingsActivity"
-            android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name=".presentation.views.activity.PasswordFTPPreferenceActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.EditedVideoDestinationPreferenceActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.SettingsActivity"
-            android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name=".presentation.views.activity.EditedVideoDestinationPreferenceActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.UneditedVideoDestinationPreferenceActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.SettingsActivity"
-            android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name=".presentation.views.activity.UneditedVideoDestinationPreferenceActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.EmailPreferenceActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.SettingsActivity"
-            android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name=".presentation.views.activity.EmailPreferenceActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-
-        <activity
             android:name="com.videonasocialmedia.vimojo.presentation.views.activity.AboutActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.SettingsActivity">
+            android:parentActivityName="com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity">
             <intent-filter>
-                <action android:name=".presentation.views.activity.AboutActivity"/>
+                <action android:name="com.videonasocialmedia.vimojo.presentation.views.activity.AboutActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
@@ -212,9 +128,9 @@
         <activity
             android:name="com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.SettingsActivity">
+            android:parentActivityName="com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity">
             <intent-filter>
-                <action android:name=".presentation.views.activity.PrivacyPolicyActivity"/>
+                <action android:name="com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
@@ -222,9 +138,9 @@
         <activity
             android:name="com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.SettingsActivity">
+            android:parentActivityName="com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity">
             <intent-filter>
-                <action android:name=".presentation.views.activity.TermsOfServiceActivity"/>
+                <action android:name="com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
@@ -232,9 +148,9 @@
         <activity
             android:name="com.videonasocialmedia.vimojo.presentation.views.activity.LicensesActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.SettingsActivity">
+            android:parentActivityName="com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity">
             <intent-filter>
-                <action android:name=".presentation.views.activity.LicensesActivity"/>
+                <action android:name="com.videonasocialmedia.vimojo.presentation.views.activity.LicensesActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
@@ -242,104 +158,104 @@
         <activity
             android:name="com.videonasocialmedia.vimojo.presentation.views.activity.LegalNoticeActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".presentation.views.activity.SettingsActivity">
+            android:parentActivityName="com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity">
             <intent-filter>
-                <action android:name=".presentation.views.activity.LegalNoticeActivity"/>
+                <action android:name="com.videonasocialmedia.vimojo.presentation.views.activity.LegalNoticeActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
 
 
         <activity
-        android:name=".presentation.views.activity.ShareActivity"
+        android:name="com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity"
         android:label="@string/app_name"
         android:launchMode="singleTop"
         android:noHistory="true"
-        android:parentActivityName=".presentation.views.activity.EditActivity"
+        android:parentActivityName="com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity"
         />
 
         <activity
-        android:name=".presentation.views.activity.GalleryActivity"
+        android:name="com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity"
         android:label="@string/app_name"
         android:screenOrientation="sensorPortrait"/>
 
         <activity
-        android:name=".presentation.views.activity.EditActivity"
+        android:name="com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity"
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:parentActivityName=".presentation.views.activity.RecordActivity"/>
+        android:parentActivityName="com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity"/>
 
         <activity
-            android:name=".presentation.views.activity.SettingsActivity"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName=".presentation.views.activity.InitAppActivity"/>
+            android:parentActivityName="com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity"/>
 
         <activity
-        android:name=".trim.presentation.views.activity.VideoTrimActivity"
+        android:name="com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity"
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:parentActivityName=".presentation.views.activity.EditActivity"/>
+        android:parentActivityName="com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity"/>
 
         <activity
-        android:name=".split.presentation.views.activity.VideoSplitActivity"
+        android:name="com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity"
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:parentActivityName=".presentation.views.activity.EditActivity"/>
+        android:parentActivityName="com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity"/>
 
         <activity
-            android:name=".text.presentation.views.activity.VideoEditTextActivity"
+            android:name="com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName=".presentation.views.activity.EditActivity"/>
+            android:parentActivityName="com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity"/>
 
         <activity
-            android:name=".presentation.views.activity.VideoDuplicateActivity"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName=".presentation.views.activity.EditActivity"/>
+            android:parentActivityName="com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity"/>
 
         <activity
-            android:name=".sound.presentation.views.activity.SoundActivity"
+            android:name="com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName=".presentation.views.activity.EditActivity"/>
+            android:parentActivityName="com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity"/>
 
         <activity
-            android:name=".sound.presentation.views.activity.MusicListActivity"
+            android:name="com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName=".sound.presentation.views.activity.SoundActivity"/>
+            android:parentActivityName="com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity"/>
 
         <activity
-        android:name=".sound.presentation.views.activity.MusicDetailActivity"
+        android:name="com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity"
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:parentActivityName=".sound.presentation.views.activity.MusicListActivity"/>
+        android:parentActivityName="com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity"/>
 
         <activity
-            android:name=".sound.presentation.views.activity.VoiceOverActivity"
+            android:name="com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName=".sound.presentation.views.activity.SoundActivity"/>
+            android:parentActivityName="com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity"/>
 
         <activity
-            android:name=".sound.presentation.views.activity.SoundVolumeActivity"
+            android:name="com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundVolumeActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName=".sound.presentation.views.activity.VoiceOverActivity"/>
+            android:parentActivityName="com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverActivity"/>
 
 
         <service
-            android:name=".presentation.views.services.ExportProjectService"
+            android:name="com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService"
             android:exported="false"
             />
 
-        <service android:name=".export.ExportTempBackgroundService"
+        <service android:name="com.videonasocialmedia.vimojo.export.ExportTempBackgroundService"
             android:exported="false"/>
 
         <service
-            android:name=".ftp.presentation.services.FtpUploaderService"
+            android:name="com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService"
             android:exported="false"
             />
 

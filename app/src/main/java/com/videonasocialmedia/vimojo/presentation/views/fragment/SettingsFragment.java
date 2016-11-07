@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,11 +38,11 @@ import java.util.ArrayList;
  * Created by Veronica Lago Fominaya on 26/11/2015.
  */
 public class SettingsFragment extends PreferenceFragment implements
-        SharedPreferences.OnSharedPreferenceChangeListener, PreferencesView,
-        VideonaDialogListener {
+        SharedPreferences.OnSharedPreferenceChangeListener, PreferencesView {
 
     protected final int REQUEST_CODE_EXIT_APP = 1;
     protected PreferenceCategory cameraSettingsPref;
+    protected Preference emailPref;
     protected ListPreference resolutionPref;
     protected ListPreference qualityPref;
     protected ListPreference frameRatePref;
@@ -60,7 +62,7 @@ public class SettingsFragment extends PreferenceFragment implements
         context = VimojoApplication.getAppContext();
         initPreferences();
         preferencesPresenter = new PreferencesPresenter(this,cameraSettingsPref, resolutionPref,
-                qualityPref, frameRatePref, context, sharedPreferences);
+                qualityPref, frameRatePref, emailPref, context, sharedPreferences);
         mixpanel = MixpanelAPI.getInstance(this.getActivity(), BuildConfig.MIXPANEL_TOKEN);
     }
 
@@ -74,9 +76,11 @@ public class SettingsFragment extends PreferenceFragment implements
         editor = sharedPreferences.edit();
 
         setupCameraSettings();
-        setupExitPreference();
-        setupDownloadKamaradaPreference();
-        setupShareVideona();
+        setupMailValid();
+    }
+
+    private void setupMailValid() {
+        emailPref=findPreference(ConfigPreferences.EMAIL);
     }
 
     private void setupCameraSettings() {
@@ -88,107 +92,6 @@ public class SettingsFragment extends PreferenceFragment implements
         frameRatePref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE);
     }
 
-    private void setupExitPreference() {
-        Preference exitPref = findPreference("exit");
-
-        exitPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                dialog = new VideonaDialog.Builder()
-                        .withTitle(getString(R.string.exit_app_title))
-                        .withImage(R.drawable.common_icon_bobina)
-                        .withMessage(getString(R.string.exit_app_message))
-                        .withPositiveButton(getString(R.string.acceptExit))
-                        .withNegativeButton(getString(R.string.cancelExit))
-                        .withCode(REQUEST_CODE_EXIT_APP)
-                        .withListener(SettingsFragment.this)
-                        .create();
-                dialog.show(getFragmentManager(), "exitAppDialog");
-                return true;
-            }
-        });
-    }
-
-    private void setupBetaPreference() {
-        Preference joinBetaPref = findPreference("beta");
-        joinBetaPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                new BetaDialogFragment().show(getFragmentManager(), "BetaDialogFragment");
-                return true;
-            }
-        });
-    }
-
-    private void setupDownloadKamaradaPreference() {
-        Preference exitPref = findPreference("downloadKamarada");
-        exitPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                trackLinkClicked(getResources().getString(R.string.kamaradaGooglePlayLink),
-                        AnalyticsConstants.DESTINATION_KAMARADA_PLAY);
-                goToKamaradaStore();
-                return true;
-            }
-        });
-    }
-
-    private void setupShareVideona() {
-        Preference exitPref = findPreference("shareVideona");
-        exitPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                trackAppShared("Videona", "WhatsApp");
-                shareVideonaWithWhatsapp();
-                return true;
-            }
-        });
-    }
-
-    private void trackLinkClicked(String uri, String destination) {
-        JSONObject linkClickedProperties = new JSONObject();
-        try {
-            linkClickedProperties.put(AnalyticsConstants.LINK, uri);
-            linkClickedProperties.put(AnalyticsConstants.SOURCE_APP,
-                    AnalyticsConstants.SOURCE_APP_VIDEONA);
-            linkClickedProperties.put(AnalyticsConstants.DESTINATION, destination);
-            mixpanel.track(AnalyticsConstants.LINK_CLICK, linkClickedProperties);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void goToKamaradaStore() {
-        String url = getString(R.string.kamaradaGooglePlayLink);
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(url));
-        startActivity(i);
-    }
-
-    private void trackAppShared(String appName, String socialNetwork) {
-        JSONObject appSharedProperties = new JSONObject();
-        try {
-            appSharedProperties.put(AnalyticsConstants.APP_SHARED_NAME, appName);
-            appSharedProperties.put(AnalyticsConstants.SOCIAL_NETWORK, socialNetwork);
-            mixpanel.track(AnalyticsConstants.APP_SHARED, appSharedProperties);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void shareVideonaWithWhatsapp() {
-        if(preferencesPresenter.checkIfWhatsappIsInstalled()) {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            intent.setPackage("com.whatsapp");
-            String text = getResources().getString(R.string.shareWith);
-            intent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.whatsAppSharedText));
-            startActivity(Intent.createChooser(intent, text));
-        } else {
-            Toast.makeText(this.getActivity(), R.string.whatsAppNotInstalled, Toast.LENGTH_SHORT)
-                    .show();
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -211,6 +114,7 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onResume() {
         super.onResume();
         preferencesPresenter.checkAvailablePreferences();
+        preferencesPresenter.checkMailValid();
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferencesPresenter);
     }
@@ -265,6 +169,19 @@ public class SettingsFragment extends PreferenceFragment implements
         }
     }
 
+    @Override
+    public void showError(int message) {
+        Snackbar.make(getView(), message ,Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void setUserPropertyToMixpanel(String property, String value) {
+        mixpanel.getPeople().identify(mixpanel.getDistinctId());
+        mixpanel.getPeople().set(property,value);
+        if(property=="account_email")
+            mixpanel.getPeople().setOnce("$email", value);
+    }
+
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
         String property = null;
         if(key.equals(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION))
@@ -281,25 +198,9 @@ public class SettingsFragment extends PreferenceFragment implements
                                           String key) {
         Preference connectionPref = findPreference(key);
         trackQualityAndResolutionAndFrameRateUserTraits(key, sharedPreferences.getString(key, ""));
-        connectionPref.setSummary(sharedPreferences.getString(key, ""));
-    }
-
-    @Override
-    public void onClickPositiveButton(int id) {
-        if(id == REQUEST_CODE_EXIT_APP) {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            getActivity().finish();
-            System.exit(0);
+        if(!key.equals(ConfigPreferences.PASSWORD_FTP) && !key.equals(ConfigPreferences.PASSWORD_FTP2)){
+            connectionPref.setSummary(sharedPreferences.getString(key, ""));
         }
-    }
 
-    @Override
-    public void onClickNegativeButton(int id) {
-        if(id == REQUEST_CODE_EXIT_APP)
-            dialog.dismiss();
     }
-
 }

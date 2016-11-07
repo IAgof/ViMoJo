@@ -36,7 +36,7 @@
             android:paddingBottom="2dp"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:textColor="@color/textColorTitleToolbar"
+            android:textColor="@color/colorWhite"
             android:textSize="24sp"
             tools:text="Guitarra"/>
 
