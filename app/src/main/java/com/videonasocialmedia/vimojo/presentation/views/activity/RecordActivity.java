@@ -169,7 +169,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
                 Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        recordPresenter = new RecordPresenter(this, this, cameraView, sharedPreferences, externalIntent);
+        recordPresenter = new RecordPresenter(VimojoApplication.getAppContext(), this, cameraView, sharedPreferences, externalIntent);
 
         configChronometer();
         initOrientationHelper();

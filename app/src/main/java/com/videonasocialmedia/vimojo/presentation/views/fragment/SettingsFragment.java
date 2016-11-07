@@ -63,7 +63,7 @@ public class SettingsFragment extends PreferenceFragment implements
         initPreferences();
         preferencesPresenter = new PreferencesPresenter(this,cameraSettingsPref, resolutionPref,
                 qualityPref, frameRatePref, emailPref, context, sharedPreferences);
-        mixpanel = MixpanelAPI.getInstance(this.getActivity(), BuildConfig.MIXPANEL_TOKEN);
+        mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_TOKEN);
     }
 
     private void initPreferences() {
