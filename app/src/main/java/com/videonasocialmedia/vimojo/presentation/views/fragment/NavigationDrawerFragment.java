@@ -102,7 +102,7 @@ public class NavigationDrawerFragment extends VideonaFragment implements Videona
         } else {
 
             RecordActivity activity = (RecordActivity) this.getActivity();
-            activity.navigateToEdit();
+            activity.navigateToEditOrGallery();
 
         }
     }

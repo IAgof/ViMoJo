@@ -82,7 +82,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ImageButton rotateCameraButton;
     @Bind(R.id.button_navigate_settings)
     ImageButton buttonSettings;
-    @Bind(R.id.button_navigate_edit)
+    @Bind(R.id.button_navigate_edit_or_gallery)
     CircleImageView buttonThumbClipRecorded;
     @Bind(R.id.text_view_num_videos)
     TextView numVideosRecorded;
@@ -121,6 +121,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     private boolean mUseImmersiveMode = true;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private boolean isProjectHasVideo= false;
 
     /**
      * if for result
@@ -554,6 +555,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     public void showVideosRecordedNumber(int numberOfVideos) {
         numVideosRecorded.setVisibility(View.VISIBLE);
         numVideosRecorded.setText(String.valueOf(numberOfVideos));
+        isProjectHasVideo=true;
     }
 
     @Override
@@ -640,13 +642,16 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         recordPresenter.changeCamera();
     }
 
-    @OnClick (R.id.button_navigate_edit)
-    public void navigateToEdit() {
+    @OnClick (R.id.button_navigate_edit_or_gallery)
+    public void navigateToEditOrGallery() {
         if (!recording) {
             //TODO(alvaro 130616) Save flash state
             recordPresenter.setFlashOff();
-            Intent intent = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
-            startActivity(intent);
+            if (isProjectHasVideo){
+                navigateTo(EditActivity.class);
+            }else {
+                navigateTo(GalleryActivity.class);
+            }
             //finish();
         }
     }
@@ -654,8 +659,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     @OnClick(R.id.button_navigate_settings)
     public void navigateToSettings() {
         if (!recording) {
-            Intent intent = new Intent(VimojoApplication.getAppContext(), SettingsActivity.class);
-            startActivity(intent);
+            navigateTo(SettingsActivity.class);
             //finish();
         }
     }
@@ -664,8 +668,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     public void exportAndShare () {
         if (!recording) {
             recordPresenter.setFlashOff();
-            Intent intent = new Intent(this, ExportProjectService.class);
-            startService(intent);
+            navigateTo(ExportProjectService.class);
             showProgressDialog();
             mixpanel.timeEvent(AnalyticsConstants.VIDEO_EXPORTED);
         }
@@ -679,6 +682,14 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         } else {
             hidePrincipalViews();
         }
+    }
+
+    public void navigateTo(Class cls) {
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
+        if (cls == GalleryActivity.class) {
+            intent.putExtra("SHARE", false);
+        }
+        startActivity(intent);
     }
 
 

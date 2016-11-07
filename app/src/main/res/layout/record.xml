@@ -27,7 +27,7 @@
             android:layout_marginLeft="16dp" />
 
         <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
-            android:id="@+id/button_navigate_edit"
+            android:id="@+id/button_navigate_edit_or_gallery"
             android:layout_width="52dp"
             android:layout_height="52dp"
             android:background="@null"
@@ -50,7 +50,7 @@
             android:textColor="@android:color/white"
             android:textSize="27sp"
             tools:text="0"
-            android:layout_alignEnd="@+id/button_navigate_edit" />
+            android:layout_alignEnd="@+id/button_navigate_edit_or_gallery" />
 
         <LinearLayout
             android:id="@+id/picometer"
