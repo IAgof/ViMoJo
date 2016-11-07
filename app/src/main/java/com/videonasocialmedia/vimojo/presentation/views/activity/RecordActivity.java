@@ -83,7 +83,9 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     @Bind(R.id.button_change_camera)
     ImageButton rotateCameraButton;
     @Bind(R.id.button_navigate_settings)
-    ImageButton buttonSettings;
+    ImageButton buttonNavigateSettings;
+    @Bind(R.id.settings_camera_button)
+    ImageButton settingsCameraButton;
     @Bind(R.id.button_navigate_edit_or_gallery)
     CircleImageView buttonThumbClipRecorded;
     @Bind(R.id.text_view_num_videos)
@@ -334,14 +336,12 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void showSettingsOptions() {
-        buttonSettings.setAlpha(1.0f);
-        buttonSettings.setActivated(true);
+        buttonNavigateSettings.setEnabled(true);
     }
 
     @Override
     public void hideSettingsOptions() {
-        buttonSettings.setAlpha(0.25f);
-        buttonSettings.setActivated(false);
+        buttonNavigateSettings.setEnabled(false);
     }
 
 
@@ -421,14 +421,10 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void showFlashSupported(boolean supported) {
+        flashButton.setActivated(false);
         if (supported) {
-            flashButton.setImageAlpha(255);
-            flashButton.setActivated(false);
-            flashButton.setActivated(false);
             flashButton.setEnabled(true);
         } else {
-            flashButton.setImageAlpha(65);
-            flashButton.setActivated(false);
             flashButton.setEnabled(false);
         }
     }
@@ -584,16 +580,19 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     }
 
     public void setupActivityButtons() {
-        tintEditButtons(R.color.button_color_record_activity);
+        // TODO:(alvaro.martinez) 7/11/16 implement this functionality
+        settingsCameraButton.setEnabled(false);
+        tintRecordButtons(R.color.button_color_record_activity);
 
     }
 
-    private void tintEditButtons(int button_color) {
+    private void tintRecordButtons(int button_color) {
         tintButton(flashButton, button_color);
         tintButton(rotateCameraButton,button_color);
         tintButton(buttonToShowControls,button_color);
         tintButton(buttonToHideControlsView,button_color);
-        tintButton(buttonSettings,button_color);
+        tintButton(buttonNavigateSettings,button_color);
+        tintButton(settingsCameraButton, button_color);
     }
 
 
