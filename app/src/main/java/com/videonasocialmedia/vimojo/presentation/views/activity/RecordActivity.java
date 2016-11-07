@@ -163,6 +163,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         setContentView(R.layout.record);
         keepScreenOn();
         ButterKnife.bind(this);
+        setupActivityButtons();
         checkAction();
         sharedPreferences = getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
@@ -174,7 +175,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         initOrientationHelper();
         createProgressDialog();
         configShowThumbAndNumberClips();
-        setupActivityButtons();
+
     }
 
     private void configShowThumbAndNumberClips() {

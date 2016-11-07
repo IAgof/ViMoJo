@@ -149,7 +149,7 @@
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_color_lens_white_48px"
                 android:layout_gravity="center_horizontal"
-                android:textColor="@color/textColorPrimary" />
+                android:textColor="@color/colorWhite" />
             <SeekBar
                 android:layout_width="24dp"
                 android:layout_height="200dp"
@@ -166,7 +166,7 @@
                 android:background="#00ffffff"
                 android:src="@drawable/ic_brightness_5_white_48px"
                 android:layout_gravity="center_horizontal"
-                android:textColor="@color/textColorButton" />
+                android:textColor="@color/colorWhite" />
         </LinearLayout>
 
         <LinearLayout
@@ -350,7 +350,7 @@
             android:id="@+id/relativeLayout">
 
             <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
-                android:id="@+id/button_navigate_edit"
+                android:id="@+id/button_navigate_edit_or_gallery"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/circle_background"
@@ -372,7 +372,7 @@
                 tools:text="0"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_alignBottom="@+id/button_navigate_edit" />
+                android:layout_alignBottom="@+id/button_navigate_edit_or_gallery" />
 
             <LinearLayout
                 android:id="@+id/controls"
