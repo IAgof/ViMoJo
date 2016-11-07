@@ -142,7 +142,7 @@ public class RecordPresenter {
     // TODO:(alvaro.martinez) 21/10/16 Check how to save video if user go to home 
     private void checkLastTempFileRecordVideo() {
 
-        String tempFileName = Constants.PATH_APP_TEMP + File.separator + Constants.VIDEO_TEMP_RECORD;
+        String tempFileName = Constants.PATH_APP_TEMP + File.separator + Constants.VIDEO_TEMP_RECORD_FILENAME;
         File vTemp = new File(tempFileName);
 
         if(vTemp.exists() && vTemp.length() > 1024*1024) {

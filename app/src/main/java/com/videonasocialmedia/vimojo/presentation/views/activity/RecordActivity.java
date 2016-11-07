@@ -37,7 +37,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.RecordPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
@@ -83,7 +84,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ImageButton rotateCameraButton;
     @Bind(R.id.button_navigate_settings)
     ImageButton buttonSettings;
-    @Bind(R.id.button_navigate_edit)
+    @Bind(R.id.button_navigate_edit_or_gallery)
     CircleImageView buttonThumbClipRecorded;
     @Bind(R.id.text_view_num_videos)
     TextView numVideosRecorded;
@@ -128,6 +129,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     private boolean mUseImmersiveMode = true;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private boolean isProjectHasVideo= false;
 
     /**
      * if for result
@@ -554,6 +556,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     public void showVideosRecordedNumber(int numberOfVideos) {
         numVideosRecorded.setVisibility(View.VISIBLE);
         numVideosRecorded.setText(String.valueOf(numberOfVideos));
+        isProjectHasVideo=true;
     }
 
     @Override
@@ -660,13 +663,16 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         recordPresenter.changeCamera();
     }
 
-    @OnClick (R.id.button_navigate_edit)
-    public void navigateToEdit() {
+    @OnClick (R.id.button_navigate_edit_or_gallery)
+    public void navigateToEditOrGallery() {
         if (!recording) {
             //TODO(alvaro 130616) Save flash state
             recordPresenter.setFlashOff();
-            Intent intent = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
-            startActivity(intent);
+            if (isProjectHasVideo){
+                navigateTo(EditActivity.class);
+            }else {
+                navigateTo(GalleryActivity.class);
+            }
             //finish();
         }
     }
@@ -674,8 +680,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     @OnClick(R.id.button_navigate_settings)
     public void navigateToSettings() {
         if (!recording) {
-            Intent intent = new Intent(VimojoApplication.getAppContext(), SettingsActivity.class);
-            startActivity(intent);
+            navigateTo(SettingsActivity.class);
             //finish();
         }
     }
@@ -701,6 +706,14 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         buttonToHideControlsView.setVisibility(View.INVISIBLE);
         buttonToShowControls.setVisibility(View.VISIBLE);
         controlsView.setVisibility(View.INVISIBLE);
+    }
+
+    public void navigateTo(Class cls) {
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
+        if (cls == GalleryActivity.class) {
+            intent.putExtra("SHARE", false);
+        }
+        startActivity(intent);
     }
 
 

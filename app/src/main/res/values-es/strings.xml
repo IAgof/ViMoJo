@@ -138,18 +138,18 @@
     <string name="title_FTP2_Section">Breaking news</string>
     <string name="host_FTP">Host</string>
     <string name="removeHost">Borrar host</string>
-    <string name="enterHost">Introduce host</string>
+    <string name="enterHost">Introduce tu dirección del servidor FTP</string>
     <string name="username_FTP">Nombre de usuario de FTP </string>
     <string name="enterUsername_FTP">Introduce un nombre de usuario</string>
     <string name="removeUsername_FTP">Borrar nombre de usuario</string>
     <string name="password_FTP">Contraseña de FTP</string>
-    <string name="enterPassword_FTP">Introduce tu contraseña</string>
+    <string name="enterPassword_FTP">Introduce tu contraseña de FTP</string>
     <string name="removePassword_FTP">Borrar contraseña</string>
     <string name="edited_video_destination">Destino de videos editados</string>
-    <string name="enterEditedVideoDestination_FTP">Introduce destino</string>
+    <string name="enterEditedVideoDestination_FTP">Introduce destino de videos editados</string>
     <string name="removeEditedVideoDestination_FTP">Borrar destino</string>
     <string name="unedited_video_destination">Destino de videos no editados</string>
-    <string name="enterUneditedVideoDestination_FTP">Introduce destino</string>
+    <string name="enterUneditedVideoDestination_FTP">Introduce destino de videos no editados</string>
     <string name="removeUneditedVideoDestination_FTP">Borrar destino</string>
     <string name="save_FTP">Save</string>
 

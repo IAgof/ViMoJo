@@ -1,3 +1,19 @@
+v0.4.15
+- bug fixes in player
+
+v0.4.14
+- Added fade-in/out audio transition for every clip in the project
+
+v0.4.13
+- UI improves and fixes. Removed Tutorial link from Edit views toolbar and play icon from gallery video thumbnails
+- Bug fix on gallery multiple selection with video format
+
+v0.4.12
+- Deleting intermediate video tmp files when clearing current project
+
+v0.4.11
+- Fixed bug with FPS selection for some phone models like Samsung Galaxy S7
+
 v0.4.10
 - Video parameters now configurable from settings (bit rate, frame rate and resolution)
 - Video settings are checked when adding clips to edit view. Only videos compatible with current video settings are now added.

@@ -16,7 +16,6 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -35,7 +34,7 @@ import android.provider.MediaStore;
 
 import com.coremedia.iso.IsoFile;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
@@ -187,26 +186,11 @@ public class Utils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
     }
 
-    public static void cleanDirectory(File directory) {
-        if (directory.exists()) {
-            File[] files = directory.listFiles();
-            if (files != null) { //some JVMs return null for empty dirs
-                for (File f : files) {
-                    if (f.isDirectory()) {
-                        cleanDirectory(f);
-                    } else {
-                        f.delete();
-                    }
-                }
-            }
-        }
-    }
-
     public static void removeVideo(String path) {
         File file = new File(path);
         if (file != null) {
             if (file.isDirectory()) {
-                cleanDirectory(file);
+                FileUtils.cleanDirectory(file);
             } else {
                 file.delete();
             }

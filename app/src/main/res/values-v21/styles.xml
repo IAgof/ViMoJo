@@ -34,26 +34,13 @@
         <item name="android:windowContentOverlay">@color/colorTransparent</item>
 
         <item name="android:alertDialogTheme">@style/VideonaAlertDialog</item>
-        <item name="android:toolbarStyle">@style/VideonaToolbar</item>
         <item name="android:preferenceCategoryStyle">@style/VideonaCategoryPreference</item>
-
+        <item name="drawerArrowStyle">@style/VideonaDrawerIconStyle</item>
 
         <item name="android:editTextStyle">@style/VideonaEditText</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorPrimary">@color/colorPrimaryLight</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
 
-
-    </style>
-
-
-    <style name="VideonaToolbar" parent="Theme.AppCompat">
-        <item name="android:maxHeight">@dimen/abc_action_bar_default_height_material</item>
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:textColorPrimary">@color/textColorTitleToolbar</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:paddingEnd">8dp</item>
-        <item name="windowActionBar">false</item>
-        <item name="colorControlNormal">@color/colorControlNormal</item>
     </style>
 
     <style name="VideonaAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
@@ -102,6 +89,10 @@
         <item name="colorControlActivated">@color/colorAccent</item>
         <item name="android:colorAccent">@color/colorPrimaryLight</item>
         <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="VideonaDrawerIconStyle" parent="VideonaTheme">
+        <item name="android:textColorSecondary">@color/colorWhite</item>
     </style>
 
 </resources>

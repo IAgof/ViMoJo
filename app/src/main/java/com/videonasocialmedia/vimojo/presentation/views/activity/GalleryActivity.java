@@ -18,7 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GalleryPagerPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoGalleryPresenter;
@@ -29,7 +30,6 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.OnSelectionMode
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaDialogListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.io.File;
 import java.util.ArrayList;

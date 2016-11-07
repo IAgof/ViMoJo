@@ -22,7 +22,7 @@ public class ExportProjectUseCase implements OnExportEndedListener {
   private Exporter exporter;
   private Project project;
 
-  private static final int MAX_SECONDS_WAITING_FOR_TEMP_FILES = 20;
+  private static final int MAX_SECONDS_WAITING_FOR_TEMP_FILES = 600;
 
   /**
    * Project exporter use case.

@@ -80,7 +80,7 @@
             android:layout_weight="9"
             android:maxHeight="1dp"
             android:progressDrawable="@color/colorAccent"
-            android:thumb="@drawable/activity_edit_common_icon_seekbar_advance"
+            android:thumb="@drawable/ic_circular_thumb_seekbar"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
             android:layout_alignParentStart="true" />

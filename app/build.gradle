@@ -8,6 +8,7 @@ buildscript {
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt' //needed for source code generation
 apply plugin: 'io.fabric'
 apply plugin: 'checkstyle'
 apply plugin: 'realm-android'
@@ -55,8 +56,8 @@ android {
         applicationId "com.videonasocialmedia.vimojo"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 12 // 20161024
-        versionName "0.4.10" // 20161024
+        versionCode 17 // 20161028
+        versionName "0.4.15" // 20161028
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -85,9 +86,20 @@ android {
         disable 'MissingTranslation'
         abortOnError false
     }
+    testOptions {
+        unitTests.all {
+            systemProperty 'robolectric.offline', 'true'
+            systemProperty 'robolectric.dependency.dir', "$System.env.ROBOLECTRIC_LIB_PATH"
+        }
+    }
 }
 
 dependencies {
+    // Dagger setup
+    apt 'com.google.dagger:dagger-compiler:2.7' //needed for source code generation
+    compile 'com.google.dagger:dagger:2.7' //dagger itself
+    provided 'org.glassfish:javax.annotation:10.0-b28' //needed to resolve compilation errors, thanks to tutplus.org for finding the dependency
+
     testCompile 'org.hamcrest:hamcrest-library:1.3'
     testCompile 'org.hamcrest:hamcrest-core:1.3'
     testCompile('junit:junit:4.12') {
@@ -99,7 +111,7 @@ dependencies {
     testCompile 'org.robolectric:robolectric:3.1.2'
     testCompile 'org.powermock:powermock-api-mockito:1.6.4'
     testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.6.4'
-    testCompile 'org.powermock:powermock-module-junit4-rule:1.6.4'
+//    testCompile 'org.powermock:powermock-module-junit4-rule:1.6.4'
     testCompile 'org.powermock:powermock-module-junit4:1.6.4'
     testCompile 'org.json:json:20140107'
 
@@ -134,7 +146,7 @@ dependencies {
     compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
     compile 'io.realm:android-adapters:1.3.0'
 
-    compile(name:'videona-sdk-v0.0.7',ext:'aar')
+    compile(name:'videona-sdk-v0.0.8',ext:'aar')
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"
