@@ -53,7 +53,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -105,14 +107,50 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
         setContentView(R.layout.activity_init_app);
         ButterKnife.bind(this);
-
+        splashScreen.setImageBitmap(Utils.decodeSampledBitmapFromResource(getResources(),
+            R.drawable.splash_screen, 1280, 720));
         setVersionCode();
         createPermissionListeners();
         Dexter.continuePendingRequestsIfPossible(compositePermissionsListener);
 
-        splashScreen.setImageBitmap(Utils.decodeSampledBitmapFromResource(getResources(),
-                R.drawable.splash_screen, 1280, 720));
+    }
 
+    private boolean isBetaAppOutOfDate() {
+
+        Calendar endOfBeta = Calendar.getInstance();
+        Calendar today = Calendar.getInstance();
+
+        // TODO:(alvaro.martinez) 8/11/16 get this date from flavor config
+        String str="2016-11-06";
+        Date dateBeta = null;
+        try {
+            dateBeta = new SimpleDateFormat("yyyy-MM-dd").parse(str);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        endOfBeta.setTime(dateBeta);
+        today.setTime(new Date());
+
+        if(today.after(endOfBeta) ){
+            return true;
+        }
+
+        return false;
+    }
+
+    private void showDialogOutOfDate() {
+        android.support.v7.app.AlertDialog.Builder dialog = new
+            android.support.v7.app.AlertDialog.Builder(this);
+        dialog.setMessage(R.string.app_out_of_date);
+        dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        dialog.show();
     }
 
     private void requestPermissionsAndPerformSetup() {
@@ -710,7 +748,11 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         @Override
         public void onPermissionsChecked(MultiplePermissionsReport report) {
             if (report.areAllPermissionsGranted()) {
-                activity.startSplashThread();
+                if(isBetaAppOutOfDate()) {
+                    showDialogOutOfDate();
+                } else {
+                    activity.startSplashThread();
+                }
             }
         }
 
