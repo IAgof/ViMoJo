@@ -8,7 +8,39 @@ buildscript {
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt' //needed for source code generation
 apply plugin: 'io.fabric'
+apply plugin: 'checkstyle'
+apply plugin: 'realm-android'
+
+checkstyle {
+    toolVersion = '7.1.1'
+}
+
+task checkstyle(type: Checkstyle) {
+    // Cleaning the old log because of the creation of the new ones (not sure if totaly needed)
+    delete fileTree(dir: "${project.rootDir}/app/build/reports/checkstyle")
+    configFile file("${project.rootDir}/checkstyle.xml")
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    reports {
+        xml.enabled = true
+        xml {
+            destination "${project.rootDir}/app/build/reports/checkstyle/checkstyle-result.xml"
+        }
+    }
+
+    classpath = files()
+}
+
+task listFlavors {
+    android.productFlavors.all {
+        flavor ->
+            println(flavor.name)
+    }
+}
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -23,6 +55,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 23
+        versionCode 18 // 20161107
+        versionName "0.4.16" // 20161107
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -84,8 +118,11 @@ android {
             buildConfigField "String", "MIXPANEL_TOKEN", "\"6f46145c03bf5cf5104bb3536059d994\""
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [ appName: "Vimojo", fabricApiKey: "1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
         }
         debug {
+            ext.betaDistributionGroupAliases="videona-dev-team"
+            ext.betaDistributionReleaseNotesFilePath="${project.rootDir}/RELEASE"
             buildConfigField "String", "MIXPANEL_TOKEN", "\"c6617213110cd2513dfc0ad97dbaee66\""
             ext.fabricApiKey = "eba78720f87307ca48dfa4200dd90914ff6653f2"
             ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
@@ -96,16 +133,26 @@ android {
         exclude 'LICENSE.txt'
     }
     dexOptions {
-        incremental true
         javaMaxHeapSize "2048M"
     }
     lintOptions {
         disable 'MissingTranslation'
         abortOnError false
     }
+    testOptions {
+        unitTests.all {
+            systemProperty 'robolectric.offline', 'true'
+            systemProperty 'robolectric.dependency.dir', "$System.env.ROBOLECTRIC_LIB_PATH"
+        }
+    }
 }
 
 dependencies {
+    // Dagger setup
+    apt 'com.google.dagger:dagger-compiler:2.7' //needed for source code generation
+    compile 'com.google.dagger:dagger:2.7' //dagger itself
+    provided 'org.glassfish:javax.annotation:10.0-b28' //needed to resolve compilation errors, thanks to tutplus.org for finding the dependency
+
     testCompile 'org.hamcrest:hamcrest-library:1.3'
     testCompile 'org.hamcrest:hamcrest-core:1.3'
     testCompile('junit:junit:4.12') {
@@ -114,10 +161,10 @@ dependencies {
     testCompile('org.mockito:mockito-core:1.10.19') {
         exclude group: "org.hamcrest"
     }
-    testCompile 'org.robolectric:robolectric:3.0'
+    testCompile 'org.robolectric:robolectric:3.1.2'
     testCompile 'org.powermock:powermock-api-mockito:1.6.4'
     testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.6.4'
-    testCompile 'org.powermock:powermock-module-junit4-rule:1.6.4'
+//    testCompile 'org.powermock:powermock-module-junit4-rule:1.6.4'
     testCompile 'org.powermock:powermock-module-junit4:1.6.4'
     testCompile 'org.json:json:20140107'
 
@@ -125,7 +172,7 @@ dependencies {
     compile project(':androidtranscoder')
     compile project(':muxer')
     compile project(':avrecorder')
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.android.support:cardview-v7:23.1.1'
@@ -150,8 +197,9 @@ dependencies {
     compile group: 'com.jcraft', name: 'jzlib', version: '1.1.1'
     compile 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
+    compile 'io.realm:android-adapters:1.3.0'
 
-    compile(name:'videona-sdk-v0.0.5',ext:'aar')
+    compile(name:'videona-sdk-v0.0.8',ext:'aar')
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"

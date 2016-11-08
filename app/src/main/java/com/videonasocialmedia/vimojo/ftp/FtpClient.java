@@ -12,6 +12,9 @@ import java.io.IOException;
  *
  */
 public class FtpClient implements FtpService {
+
+    public static final int FTP_CONNECT_TIMEOUT = 10000; // connection timeout in ms
+
     public class FTPClientException extends Exception {
         public static final int FTP_ERROR_HOST_UNREACHABLE = 1;
         public static final int FTP_ERROR_UNAUTHORIZED = 2;
@@ -39,7 +42,7 @@ public class FtpClient implements FtpService {
 
         try {
             int reply;
-            client.setConnectTimeout(30);
+            client.setConnectTimeout(FTP_CONNECT_TIMEOUT);
             client.connect(host);
             reply = client.getReplyCode();
             if (reply!=220) {

@@ -3,17 +3,9 @@ package com.videonasocialmedia.vimojo.text.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
 
-import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -23,7 +15,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetriev
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
-import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +26,7 @@ import java.util.List;
 public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
     private final String LOG_TAG = getClass().getSimpleName();
+    private final TextToDrawable drawableGenerator = new TextToDrawable();
 
     private Video videoToEdit;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
@@ -66,9 +59,6 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
         editTextView.showPreview(videoList);
-        Video video = videoList.get(0);
-        if(video.isTextToVideoAdded())
-            editTextView.initTextKeyboard(video.getTextToVideo(),video.getTextPositionToVideo());
     }
 
     @Override
@@ -76,9 +66,9 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
         editTextView.showError("No videos");
     }
 
-    public void createDrawableWithText(String text, String position) {
+    public void createDrawableWithText(String text, String position, int width, int height) {
 
-        Drawable drawable = TextToDrawable.createDrawableWithTextAndPosition(text,position);
+        Drawable drawable = drawableGenerator.createDrawableWithTextAndPosition(text, position, width, height);
         editTextView.showText(drawable);
     }
 
@@ -86,10 +76,10 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
         Context appContext = VimojoApplication.getAppContext();
         Intent textToVideoServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-        textToVideoServiceIntent.putExtra(ExportIntentConstants.VIDEO_ID, videoToEdit.getIdentifier());
-        textToVideoServiceIntent.putExtra(ExportIntentConstants.IS_TEXT_ADDED, true);
-        textToVideoServiceIntent.putExtra(ExportIntentConstants.TEXT_TO_ADD, text);
-        textToVideoServiceIntent.putExtra(ExportIntentConstants.TEXT_POSITION, textPositionSelected.name());
+        textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoToEdit.getIdentifier());
+        textToVideoServiceIntent.putExtra(IntentConstants.IS_TEXT_ADDED, true);
+        textToVideoServiceIntent.putExtra(IntentConstants.TEXT_TO_ADD, text);
+        textToVideoServiceIntent.putExtra(IntentConstants.TEXT_POSITION, textPositionSelected.name());
         appContext.startService(textToVideoServiceIntent);
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
     }

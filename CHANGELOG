@@ -1,0 +1,62 @@
+v0.4.16
+- Update record screen, new design.
+- Update application colors.
+- Fixed some bugs and improved user experience.
+
+v0.4.15
+- bug fixes in player
+
+v0.4.14
+- Added fade-in/out audio transition for every clip in the project
+
+v0.4.13
+- UI improves and fixes. Removed Tutorial link from Edit views toolbar and play icon from gallery video thumbnails
+- Bug fix on gallery multiple selection with video format
+
+v0.4.12
+- Deleting intermediate video tmp files when clearing current project
+
+v0.4.11
+- Fixed bug with FPS selection for some phone models like Samsung Galaxy S7
+
+v0.4.10
+- Video parameters now configurable from settings (bit rate, frame rate and resolution)
+- Video settings are checked when adding clips to edit view. Only videos compatible with current video settings are now added.
+- UI Updates in Share and gallery views
+
+v0.4.9
+- Added current project persistence. Project remains saved each time app opens.
+- A new project can be created when coming back from the share screen to editor
+- Added setup for a new FTP account for breaking news direct publishing
+- A filename is asked for when uploading files to FTP
+
+v0.4.8
+- Set default camera recording settings to 720p, 10Mbps, 25fps
+- Showing recorded clip thumbnails in record screen with the number of recorded videos to access editor
+- Starting app with clean record interface instead of advanced one
+- Record screen UI/UX minor fixes and improvements
+- Fixes on intermediate video files generation improving export project stability
+
+v0.4.7
+- Fixing bug crashing editor when last video has been played
+- Other buf fixes improving editor stability
+- Getting video preview seekbar back to trim view
+
+v0.4.6
+- New activity to select music from local. Add music to project.
+- Show video time tags in every player and timeline EditActivity.
+- Update Share activity to use VideonaPlayerExo.
+- Bug fixed: Mix audio with big files, video timeline clips and update times, text to video, seekbar video preview.
+- Fixing bugs that crashed the app improving editor stability
+- Changed long click by click normal to select video in gallery
+
+v0.4.5
+- Fixed video timeline clips reordering not updating selected clip and video preview seekbar times
+
+v0.4.4
+- Minor fixes in text autowrap and activity state changes for Text view in video editing
+
+v0.4.3
+- Improved Text view in video editing. Bug fixes and cleaning
+- Change drawable in activity_music_detail
+- Adjusted the width and height of the Canvas with the text in video preview

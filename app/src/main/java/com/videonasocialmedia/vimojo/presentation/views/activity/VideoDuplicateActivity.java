@@ -31,6 +31,8 @@ import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePreviewPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
@@ -149,9 +151,6 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
             case R.id.action_settings_edit_gallery:
                 navigateTo(GalleryActivity.class);
                 return true;
-            case R.id.action_settings_edit_tutorial:
-                //navigateTo(TutorialActivity.class);
-                return true;
             default:
 
         }
@@ -159,23 +158,25 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     }
 
     public void navigateTo(Class cls) {
-        Intent intent = new Intent(getApplicationContext(), cls);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         if (cls == GalleryActivity.class) {
             intent.putExtra("SHARE", false);
         }
         startActivity(intent);
+        finish();
     }
 
     private void navigateTo(Class cls, int currentVideoIndex) {
         Intent intent = new Intent(this, cls);
         intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
         startActivity(intent);
+        finish();
     }
 
     @Override
     public void onBackPressed() {
         navigateTo(EditActivity.class, videoIndexOnTrack);
-        finish();
+
     }
 
     @Override

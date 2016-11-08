@@ -17,8 +17,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -31,7 +33,11 @@ import android.os.StatFs;
 import android.provider.MediaStore;
 
 import com.coremedia.iso.IsoFile;
-import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -122,6 +128,15 @@ public class Utils {
         }
     }
 
+    public static void moveFile(String originalPath, String finalPath) throws IOException {
+
+        File originalFile = new File(originalPath);
+        File destinationFile = new File(finalPath);
+
+        originalFile.renameTo(destinationFile);
+
+    }
+
     public static Uri obtainUriToShare(Context context, String videoPath) {
         Uri uri;
         if (videoPath != null) {
@@ -171,26 +186,11 @@ public class Utils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
     }
 
-    public static void cleanDirectory(File directory) {
-        if (directory.exists()) {
-            File[] files = directory.listFiles();
-            if (files != null) { //some JVMs return null for empty dirs
-                for (File f : files) {
-                    if (f.isDirectory()) {
-                        cleanDirectory(f);
-                    } else {
-                        f.delete();
-                    }
-                }
-            }
-        }
-    }
-
     public static void removeVideo(String path) {
         File file = new File(path);
         if (file != null) {
             if (file.isDirectory()) {
-                cleanDirectory(file);
+                FileUtils.cleanDirectory(file);
             } else {
                 file.delete();
             }
@@ -250,7 +250,6 @@ public class Utils {
 
 
     public static String getDeviceInfo(){
-
         StringBuilder deviceInfo = new StringBuilder();
 
         deviceInfo.append(" ---------------------------------------------");
@@ -304,15 +303,10 @@ public class Utils {
 
     }
 
-
     public static void onActivityCreateSetTheme(Activity activity) {
-
         switch (sTheme) {
-
             default:
-
             case THEME_VIDEONA:
-
                 // Note, if theme == theme default do nothing, es quicker.
                 //activity.setTheme(R.style.VideonaTheme);
                 break;
@@ -322,7 +316,6 @@ public class Utils {
                 //activity.setTheme(R.style.VideonaTheme);
                 break;
         }
-
     }
 
     public static double getFileDuration(String filePath) throws IOException {
@@ -342,4 +335,100 @@ public class Utils {
             }
         });
     }
+
+    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+                                                         int reqWidth, int reqHeight) {
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, options);
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
+
+    public static VideoFrameRate.FrameRate getFrameRateFromItemName(Context context,
+                                                                    String frameRate) {
+
+        if (frameRate.compareTo(context.getString(R.string.low_frame_rate_name)) == 0) {
+            return VideoFrameRate.FrameRate.FPS24;
+        }
+
+        if (frameRate.compareTo(context.getString(R.string.good_frame_rate_name)) == 0) {
+                return VideoFrameRate.FrameRate.FPS25;
+        }
+
+        if (frameRate.compareTo(context.getString(R.string.high_frame_rate_name)) == 0) {
+                return VideoFrameRate.FrameRate.FPS30;
+        }
+
+        // default
+        return VideoFrameRate.FrameRate.NOT_SUPPORTED;
+
+    }
+
+    public static VideoResolution.Resolution getResolutionFromItemName(Context context,
+                                                                      String resolution) {
+        if (resolution.compareTo(context.getString(R.string.low_resolution_name)) == 0) {
+                return VideoResolution.Resolution.HD720;
+            }
+
+        if (resolution.compareTo(context.getString(R.string.good_resolution_name)) == 0) {
+            return VideoResolution.Resolution.HD1080;
+        }
+
+        if (resolution.compareTo(context.getString(R.string.high_resolution_name)) == 0) {
+            return VideoResolution.Resolution.HD4K;
+        }
+
+        // default
+        return VideoResolution.Resolution.HD720;
+    }
+
+    public static VideoQuality.Quality getQualityFromItemName(Context context,
+                                                                       String quality) {
+
+        if (quality.compareTo(context.getString(R.string.low_quality_name)) == 0) {
+            return VideoQuality.Quality.LOW;
+        }
+
+        if (quality.compareTo(context.getString(R.string.good_quality_name)) == 0) {
+            return VideoQuality.Quality.GOOD;
+        }
+
+        if (quality.compareTo(context.getString(R.string.high_quality_name)) == 0) {
+            return VideoQuality.Quality.HIGH;
+        }
+
+        // default
+        return VideoQuality.Quality.HIGH;
+
+    }
+
+
 }

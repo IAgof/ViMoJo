@@ -23,12 +23,12 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 
@@ -77,7 +77,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView, Vid
 
         splitSeekBar.setProgress(0);
         splitSeekBar.setOnSeekBarChangeListener(this);
-        timeTag.setText(TimeUtils.toFormattedTime(0));
+        timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(0));
 
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
@@ -143,11 +143,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView, Vid
             case R.id.action_settings_edit_gallery:
                 navigateTo(GalleryActivity.class);
                 return true;
-            case R.id.action_settings_edit_tutorial:
-                //navigateTo(TutorialActivity.class);
-                return true;
             default:
-
         }
 
         return super.onOptionsItemSelected(item);
@@ -159,12 +155,12 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView, Vid
             intent.putExtra("SHARE", false);
         }
         startActivity(intent);
+        finish();
     }
 
     @Override
     public void onBackPressed() {
         navigateTo(EditActivity.class, videoIndexOnTrack);
-        finish();
     }
 
     @Override
@@ -206,7 +202,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView, Vid
 
     private void refreshTimeTag(int currentPosition) {
 
-        timeTag.setText(TimeUtils.toFormattedTime(currentPosition + startTime));
+        timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(currentPosition + startTime));
     }
 
     @Override
@@ -252,7 +248,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView, Vid
 
     @Override
     public void showText(String text, String position) {
-        videonaPlayer.setImagenText(text, position);
+        videonaPlayer.setImageText(text, position);
     }
 
     @Override

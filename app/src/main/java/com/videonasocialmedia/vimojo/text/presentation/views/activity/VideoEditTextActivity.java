@@ -22,16 +22,17 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.presenters.EditTextPreviewPresenter;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
-import com.videonasocialmedia.vimojo.text.presentation.views.customviews.EditTextMaxCharPerLine;
+import com.videonasocialmedia.vimojo.text.presentation.views.customviews.MaxCharPerLineInputFilter;
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -45,8 +46,7 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
  * Created by ruth on 1/09/16.
  */
 public class VideoEditTextActivity extends VimojoActivity implements EditTextView,VideonaPlayerListener{
-
-    private final int MAX_CHARS_PER_LINE = 30;
+    private final int MAX_CHARS_PER_LINE = 20;
     private final int MAX_LINES = 2;
     private final String STATE_BUTTON_TOP = "state_button_top";
     private final String STATE_BUTTON_CENTER = "state_button_center";
@@ -55,7 +55,8 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     private final String CURRENT_TEXT = "current_text";
     private final String TEXT_TO_ADD = "image_of_text";
     boolean hasTypedMoreThanTwoLines =false;
-    private String typedText;
+
+    private boolean stateWasRestored = false;
 
     public enum TextPosition{TOP, CENTER, BOTTOM}
 
@@ -72,18 +73,17 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @Bind(R.id.imageVideoText)
     ImageView image_view_text;
 
-
+    private Video video;
     int videoIndexOnTrack;
     private EditTextPreviewPresenter presenter;
     private int currentPosition = 0;
-    private String text;
+    private String typedText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_text);
         ButterKnife.bind(this);
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -93,19 +93,19 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
         presenter = new EditTextPreviewPresenter(this, userEventTracker);
-        videonaPlayer.setSeekBarEnabled(false);
+        videonaPlayer.setSeekBarLayoutEnabled(false);
         videonaPlayer.setListener(this);
 
         Intent intent = getIntent();
 
         setupActivityButtons();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
+        stateWasRestored=false;
         button_editText_top.setSelected(false);
         button_editText_center.setSelected(true);
         button_ediText_bottom.setSelected(false);
 
         restoreState(savedInstanceState);
-
     }
 
     private void setupActivityButtons() {
@@ -135,8 +135,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         super.onResume();
         videonaPlayer.onShown(this);
         presenter.init(videoIndexOnTrack);
-        image_view_text.setMaxHeight(videonaPlayer.getHeight());
-        image_view_text.setMaxWidth(videonaPlayer.getWidth());
     }
 
     @Override
@@ -151,7 +149,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
             button_ediText_bottom.setSelected(savedInstanceState.getBoolean(STATE_BUTTON_BOTTOM));
             button_editText_center.setSelected(savedInstanceState.getBoolean(STATE_BUTTON_CENTER));
             button_editText_top.setSelected(savedInstanceState.getBoolean(STATE_BUTTON_TOP));
-
+            stateWasRestored=true;
         }
     }
 
@@ -174,9 +172,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
                 return true;
             case R.id.action_settings_edit_gallery:
                 navigateTo(GalleryActivity.class);
-                return true;
-            case R.id.action_settings_edit_tutorial:
-                //navigateTo(TutorialActivity.class);
                 return true;
             default:
         }
@@ -202,14 +197,12 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(VIDEO_POSITION, videonaPlayer.getCurrentPosition());
-        outState.putString(CURRENT_TEXT,typedText);
+        outState.putString(CURRENT_TEXT, getTextFromEditText());
         outState.putBoolean(STATE_BUTTON_TOP, button_editText_top.isSelected());
         outState.putBoolean(STATE_BUTTON_CENTER, button_editText_center.isSelected());
         outState.putBoolean(STATE_BUTTON_BOTTOM, button_ediText_bottom.isSelected());
         super.onSaveInstanceState(outState);
     }
-
-
 
     @OnClick(R.id.button_editText_top)
     public void onClickAddTextTop(){
@@ -218,30 +211,28 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         hideKeyboard(clipText);
     }
 
-    private void createDrawableFromText(String text, TextPosition textPosition) {
-//        text = getTextFromEditText();
-        presenter.createDrawableWithText(text, textPosition.name());
-    }
-
-    @NonNull
-    private String getTextFromEditText() {
-        return clipText.getText().toString();
-    }
-
     @OnClick(R.id.button_editText_center)
-    public void onClickAddTextCenter(){
-
+    public void onClickAddTextCenter() {
         paintPositionEditText(TextPosition.CENTER);
         createDrawableFromText(typedText, TextPosition.CENTER);
         hideKeyboard(clipText);
     }
 
     @OnClick(R.id.button_editText_bottom)
-    public void onClickAddTextBottom(){
-
+    public void onClickAddTextBottom() {
         paintPositionEditText(TextPosition.BOTTOM);
         createDrawableFromText(typedText, TextPosition.BOTTOM);
         hideKeyboard(clipText);
+    }
+
+    private void createDrawableFromText(String text, TextPosition textPosition) {
+        text = getTextFromEditText();
+        presenter.createDrawableWithText(text, textPosition.name(), Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+    }
+
+    @NonNull
+    private String getTextFromEditText() {
+        return clipText.getText().toString();
     }
 
     public void paintPositionEditText(TextPosition position) {
@@ -250,12 +241,12 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
             button_editText_center.setSelected(false);
             button_ediText_bottom.setSelected(true);
         }
-        if(position == TextPosition.CENTER){
+        if(position == TextPosition.CENTER) {
             button_editText_top.setSelected(false);
             button_editText_center.setSelected(true);
             button_ediText_bottom.setSelected(false);
         }
-        if(position == TextPosition.TOP){
+        if(position == TextPosition.TOP) {
             button_editText_top.setSelected(true);
             button_editText_center.setSelected(false);
             button_ediText_bottom.setSelected(false);
@@ -264,7 +255,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @OnClick(R.id.button_editText_accept)
     public void onClickEditTextAccept() {
-        presenter.setTextToVideo(getTextFromEditText(),getTextPositionSelected());
+        presenter.setTextToVideo(getTextFromEditText(), getTextPositionSelected());
         navigateTo(EditActivity.class, videoIndexOnTrack);
         finish();
     }
@@ -291,11 +282,15 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @Override
     public void showPreview(List<Video> movieList) {
-
-        videonaPlayer.initPreviewLists(movieList);
+        video = new Video(movieList.get(0));
+        ArrayList<Video> clipList = new ArrayList<>();
+        video.setTextToVideoAdded(false);
+        clipList.add(video);
+        videonaPlayer.initPreviewLists(clipList);
         videonaPlayer.initPreview(currentPosition);
-        videonaPlayer.clearImagenText();
-        EditTextMaxCharPerLine.applyAutoWrap(clipText,30);
+        if(movieList.get(0).hasText())
+            initTextToVideoAdded(video.getClipText(),video.getClipTextPosition());
+        MaxCharPerLineInputFilter.applyAutoWrap(clipText,MAX_CHARS_PER_LINE);
         onTextChanged();
     }
 
@@ -310,14 +305,16 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     @Override
-    public void initTextKeyboard(String text, String position) {
-        clipText.setText(text);
+    public void initTextToVideoAdded(String text, String position) {
+        if(stateWasRestored) {
+            position = getTextPositionSelected().name();
+            typedText = getTextFromEditText();
+        } else {
+            clipText.setText(text);
+        }
         TextPosition positionText = TextToDrawable.getTypePositionFromString(position);
         paintPositionEditText(positionText);
         createDrawableFromText(typedText, positionText);
-    }
-
-    private void getValueTextPosition(String position) {
     }
 
     @Override
@@ -329,7 +326,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         typedText = getTextFromEditText();
         updateTextinPreview();
 
-        if (null != clipText.getLayout() && clipText.getLayout().getLineCount() > 2) {
+        if (null != clipText.getLayout() && clipText.getLayout().getLineCount() > MAX_LINES) {
             if(!hasTypedMoreThanTwoLines){
                 showError(getString(R.string.error_videoEdit));
                 hideKeyboard(clipText);
@@ -356,7 +353,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     public TextPosition getTextPositionSelected() {
-
         if (button_editText_top.isSelected()) {
             return TextPosition.TOP;
         }

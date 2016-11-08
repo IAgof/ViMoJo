@@ -30,6 +30,6 @@ public class TextPreviewPresenterTest {
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", Profile.getInstance(Profile.ProfileType.free));
+        return Project.getInstance("title", "/path", Profile.getInstance(null, null, null));
     }
 }

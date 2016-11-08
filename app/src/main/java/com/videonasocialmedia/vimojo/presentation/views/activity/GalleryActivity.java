@@ -1,11 +1,13 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -16,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GalleryPagerPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoGalleryPresenter;
@@ -161,7 +165,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     private void shareVideo(Video selectedVideo) {
         String videoPath = selectedVideo.getMediaPath();
-        Intent intent = new Intent(this, ShareActivity.class);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), ShareActivity.class);
         intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoPath);
         startActivity(intent);
     }
@@ -237,9 +241,38 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     public void navigate() {
         if (!sharing) {
             Intent intent;
-            intent = new Intent(this, EditActivity.class);
+            intent = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void showDialogVideosNotAddedFromGallery(ArrayList<Integer> listVideoId) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
+        dialog.setTitle(R.string.error_video_format);
+
+        String message = "Videos ";
+        String videos = ".";
+        int numColons = 0;
+        for(int videoId: listVideoId){
+            message = message.concat(String.valueOf(videoId));
+            if(numColons<listVideoId.size()-1){
+                message = message.concat(", ");
+                numColons++;
+            }
+        }
+
+        dialog.setMessage(message.concat(videos));
+
+        dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                navigate();
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     @Override

@@ -16,6 +16,7 @@ import android.media.MediaMetadataRetriever;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.File;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -34,21 +35,21 @@ public class Video extends Media {
      * The total duration of the file media resource
      */
     private int fileDuration;
-
-    private String tempPath;
-
+    // TODO(jliarte): 24/10/16 review this public field
+    public String tempPath;
+    private String clipText;
+    private String clipTextPosition;
     private boolean isTempPathFinished = false;
-
-    private String textToVideo;
-    private String textPositionToVideo;
     private boolean isTextToVideoAdded = false;
-
     private boolean isTrimmedVideo = false;
 
     // TODO(jliarte): 14/06/16 this entity should not depend on MediaMetadataRetriever as it is part of android
     /* Needed to allow mockito inject it */
     private MediaMetadataRetriever retriever = new MediaMetadataRetriever();
     private int duration;
+
+    private int numTriesToExportVideo = 0;
+    private String uuid = UUID.randomUUID().toString();
 
 
     /**
@@ -86,14 +87,16 @@ public class Video extends Media {
     public Video(Video video) {
         super(-1, null, video.getMediaPath(), video.getStartTime(),
                 video.getDuration(), null, null);
-        fileDuration = getFileDuration(video.getMediaPath());
+        fileDuration = video.getFileDuration();
         stopTime = video.getStopTime();
-        isTextToVideoAdded = video.isTextToVideoAdded;
-        textToVideo= video.getTextToVideo();
-        textPositionToVideo = video.getTextPositionToVideo();
+        isTextToVideoAdded = video.hasText();
+        clipText = video.getClipText();
+        clipTextPosition = video.getClipTextPosition();
         if(video.isEdited()) {
             tempPath = video.getTempPath();
         }
+        isTempPathFinished = video.outputVideoIsFinished();
+        isTrimmedVideo = video.isTrimmedVideo();
     }
 
     public int getFileDuration() {
@@ -112,8 +115,13 @@ public class Video extends Media {
     }
 
     public void setTempPath() {
-        tempPath = Constants.PATH_APP_TEMP + File.separator + "temp_" + identifier
-                + "_" + System.currentTimeMillis() + ".mp4";
+        tempPath = Constants.PATH_APP_TEMP_INTERMEDIATE_FILES + File.separator +
+                Constants.INTERMEDIATE_FILE_PREFIX + identifier + "_"
+                + System.currentTimeMillis() + ".mp4";
+    }
+
+    public void setTempPathToPreviousEdition(String tempPath){
+        this.tempPath = tempPath;
     }
 
     public boolean outputVideoIsFinished() {
@@ -132,11 +140,16 @@ public class Video extends Media {
         }
     }
 
-    public void setIdentifier() {
+    public void createIdentifier() {
         if (identifier < 1)
             this.identifier = count.addAndGet(1);
     }
 
+    public void setIdentifier(int identifier) {
+        this.identifier = identifier;
+    }
+
+    // TODO(jliarte): 24/10/16 review this design as it gives problem with persistence
     public boolean isEdited() {
         return tempPath!=null;
     }
@@ -145,24 +158,23 @@ public class Video extends Media {
         this.duration = duration;
     }
 
-
-    public String getTextToVideo() {
-        return textToVideo;
+    public String getClipText() {
+        return clipText;
     }
 
-    public void setTextToVideo(String textToVideo) {
-        this.textToVideo = textToVideo;
+    public void setClipText(String clipText) {
+        this.clipText = clipText;
     }
 
-    public String getTextPositionToVideo() {
-        return textPositionToVideo;
+    public String getClipTextPosition() {
+        return clipTextPosition;
     }
 
-    public void setTextPositionToVideo(String textPositionToVideo) {
-        this.textPositionToVideo = textPositionToVideo;
+    public void setClipTextPosition(String clipTextPosition) {
+        this.clipTextPosition = clipTextPosition;
     }
 
-    public boolean isTextToVideoAdded() {
+    public boolean hasText() {
         return isTextToVideoAdded;
     }
 
@@ -176,5 +188,25 @@ public class Video extends Media {
 
     public void setTrimmedVideo(boolean trimmedVideo) {
         isTrimmedVideo = trimmedVideo;
+    }
+
+    public int getNumTriesToExportVideo() {
+        return numTriesToExportVideo;
+    }
+
+    public void increaseNumTriesToExportVideo(){
+        numTriesToExportVideo++;
+    }
+
+    public boolean isTextToVideoAdded() {
+        return isTextToVideoAdded;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

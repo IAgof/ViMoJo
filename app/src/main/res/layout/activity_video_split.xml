@@ -3,6 +3,7 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:baselineAligned="false"
               android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
@@ -14,7 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/VideonaTheme.PopupOverlay"/>
+            app:popupTheme="@style/VideonaTheme.PopupOverlay"
+            app:theme="@style/VideonaDrawerIconStyle"/>
 
     </android.support.design.widget.AppBarLayout>
 

@@ -12,7 +12,6 @@ package com.videonasocialmedia.vimojo.trim.presentation.views.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,13 +22,14 @@ import android.widget.TextView;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -88,7 +88,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         presenter = new TrimPreviewPresenter(this, userEventTracker);
         trimmingRangeSeekBar.setOnRangeSeekBarChangeListener(this);
         trimmingRangeSeekBar.setNotifyWhileDragging(true);
-        videonaPlayer.setSeekBarEnabled(false);
         videonaPlayer.setListener(this);
 
         Intent intent = getIntent();
@@ -154,16 +153,13 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             case R.id.action_settings_edit_gallery:
                 navigateTo(GalleryActivity.class);
                 return true;
-            case R.id.action_settings_edit_tutorial:
-                //navigateTo(TutorialActivity.class);
-                return true;
             default:
         }
         return super.onOptionsItemSelected(item);
     }
 
     public void navigateTo(Class cls) {
-        startActivity(new Intent(getApplicationContext(), cls));
+        startActivity(new Intent(VimojoApplication.getAppContext(), cls));
     }
 
     @Override
@@ -173,9 +169,10 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     }
 
     private void navigateTo(Class cls, int currentVideoIndex) {
-        Intent intent = new Intent(this, cls);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
         startActivity(intent);
+        finish();
     }
 
     @Override
@@ -190,7 +187,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     public void onClickTrimAccept() {
         presenter.setTrim(startTimeMs, finishTimeMs);
         navigateTo(EditActivity.class, videoIndexOnTrack);
-        finish();
+
     }
 
     @OnClick(R.id.button_trim_cancel)
@@ -219,7 +216,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void refreshDurationTag(int duration) {
-        durationTag.setText(TimeUtils.toFormattedTime(duration));
+        durationTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(duration));
     }
 
     @Override
@@ -260,7 +257,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void showText(String text, String position) {
-        videonaPlayer.setImagenText(text,position);
+        videonaPlayer.setImageText(text,position);
     }
 
     private void initCurrentPosition() {
@@ -274,7 +271,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     private void updateTrimmingTextTags() {
         int duration = finishTimeMs - startTimeMs;
-        durationTag.setText(TimeUtils.toFormattedTime(duration));
+        durationTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(duration));
     }
 
     @Override

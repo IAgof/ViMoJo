@@ -7,6 +7,9 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.track.AudioTrack;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -58,7 +61,7 @@ public class GetMusicFromProjectUseCaseTest {
     @Test
     public void getMusicFromProjectReturnsProjectMusic() {
         Project videonaProject = getAProject();
-        Music project_music = new Music(1, "resourceName", 2, 3, "music author");
+        Music project_music = new Music(1, "resourceName", 2, 3, "music author","2");
         ArrayList<AudioTrack> audioTracks = getAudioTracks(project_music);
         videonaProject.setAudioTracks(audioTracks);
 
@@ -68,6 +71,7 @@ public class GetMusicFromProjectUseCaseTest {
         Music retrievedMusic = retrievedMusicCaptor.getValue();
         assertThat(retrievedMusic, is(project_music));
     }
+
 
     @Test
     public void getMusicFromProjectNotifiesWithNullIfNoMusic() {
@@ -95,7 +99,8 @@ public class GetMusicFromProjectUseCaseTest {
     private Project getAProject() {
         String title = "project title";
         String rootPath = "project/root/path";
-        Profile profile = Profile.getInstance(Profile.ProfileType.free);
+        Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         return Project.getInstance(title, rootPath, profile);
     }
 }

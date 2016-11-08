@@ -11,6 +11,8 @@
  */
 package com.videonasocialmedia.vimojo.model.entities.editor;
 
+import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 
@@ -22,37 +24,31 @@ public class Profile {
 
     private static Profile INSTANCE;
 
-    /**
-     * possible profileTypes
-     */
-    public static enum ProfileType {
-        free, pro
+    public void clear() {
+        if (INSTANCE != null) {
+            INSTANCE = null;
+        }
     }
 
     /**
      * Resolution of the Video objects in a project
      */
-    private VideoResolution.Resolution resolution;
-
     private VideoResolution videoResolution;
+    private VideoResolution.Resolution resolution;
 
     /**
      * Video bit rate
      */
-    private VideoQuality.Quality quality;
 
     private VideoQuality videoQuality;
+    private VideoQuality.Quality quality;
 
     /**
-     * Maximum length of the project in millseconds;
-     * if the value is negative the project duration has no limitation
+     * Video frame rate
      */
-    private long maxDuration;
+    private VideoFrameRate videoFrameRate;
+    private VideoFrameRate.FrameRate frameRate;
 
-    /**
-     * type of profile
-     */
-    private ProfileType profileType;
 
     /**
      * Constructor of minimum number of parameters. In this case coincides with parametrized
@@ -62,44 +58,34 @@ public class Profile {
      * There can be only a single instance of a profile, and therefore this constructor can only be
      * accessed through the factory.
      *
-     * @param resolution  - Maximum resolution allowed for the profile.
-     * @param maxDuration - Maximum video duration allowed for the profile.
-     * @param type        - Profile type.
+     * @param resolution
+     * @param quality
+     * @param frameRate
      */
-    private Profile(VideoResolution.Resolution resolution, VideoQuality.Quality quality, long maxDuration, ProfileType type) {
+    public Profile(VideoResolution.Resolution resolution, VideoQuality.Quality quality,
+                   VideoFrameRate.FrameRate frameRate) {
+
         this.resolution = resolution;
         this.videoResolution = new VideoResolution(resolution);
-        this.maxDuration = maxDuration;
-        this.profileType = type;
         this.quality = quality;
         this.videoQuality = new VideoQuality(quality);
+        this.frameRate = frameRate;
+        this.videoFrameRate = new VideoFrameRate(frameRate);
     }
 
     /**
      * Profile factory.
      *
-     * @param profileType
+     * (jliarte): since 21/10/16 Profile stops being a singleton :P
      * @return - profile instance.
      */
-    public static Profile getInstance(ProfileType profileType) {
+    @Deprecated
+    public static Profile getInstance(VideoResolution.Resolution resolution, VideoQuality.Quality quality,
+                                      VideoFrameRate.FrameRate frameRate) {
         if (INSTANCE == null) {
-            if (profileType == ProfileType.free) {
-                INSTANCE = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.VERY_GOOD, 1000, profileType);
-            } else {
-                INSTANCE = new Profile(VideoResolution.Resolution.HD1080, VideoQuality.Quality.EXCELLENT, -1, profileType);
-            }
+            INSTANCE = new Profile(resolution, quality, frameRate);
         }
         return INSTANCE;
-    }
-
-    //getter and setter enum resolution.
-    public VideoResolution.Resolution getResolution() {
-        return resolution;
-    }
-
-    public void setResolution(VideoResolution.Resolution resolution) {
-        if (profileType == ProfileType.pro)
-            this.resolution = resolution;
     }
 
     //getter resolution, width, height values.
@@ -107,13 +93,13 @@ public class Profile {
         return videoResolution;
     }
 
-    //getter and setter enum quality
-    public VideoQuality.Quality getQuality() {
-        return quality;
+    public VideoResolution.Resolution getResolution(){
+        return resolution;
     }
 
-    public void setQuality(VideoQuality.Quality quality) {
-        this.quality = quality;
+    public void setResolution(VideoResolution.Resolution resolution){
+        this.resolution = resolution;
+        videoResolution = new VideoResolution(resolution);
     }
 
     // getter videoBitRate;
@@ -121,16 +107,25 @@ public class Profile {
         return videoQuality;
     }
 
-    public long getMaxDuration() {
-        return maxDuration;
+    public VideoQuality.Quality getQuality(){
+        return quality;
     }
 
-    public void setMaxDuration(long maxDuration) {
-        if (profileType == ProfileType.pro)
-            this.maxDuration = maxDuration;
+    public void setQuality(VideoQuality.Quality quality){
+        this.quality = quality;
+        videoQuality = new VideoQuality(quality);
     }
 
-    public ProfileType getProfileType() {
-        return profileType;
+    public VideoFrameRate getVideoFrameRate(){
+        return videoFrameRate;
+    }
+
+    public VideoFrameRate.FrameRate getFrameRate(){
+        return frameRate;
+    }
+
+    public void setFrameRate(VideoFrameRate.FrameRate frameRate){
+        this.frameRate = frameRate;
+        videoFrameRate = new VideoFrameRate(frameRate);
     }
 }

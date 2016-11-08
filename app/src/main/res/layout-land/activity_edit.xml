@@ -14,7 +14,8 @@
         <android.support.v7.widget.Toolbar
             android:id="@id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="?attr/actionBarSize"
+            app:theme="@style/VideonaDrawerIconStyle">
 
             <com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator
                 android:id="@+id/navigator"
@@ -32,6 +33,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:baselineAligned="false"
         android:orientation="horizontal"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -48,16 +50,8 @@
                 android:layout_margin="8dp"
                 />
 
-            <LinearLayout
-                android:id="@+id/linear_layout_edit_options"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:orientation="horizontal">
+            <include layout="@layout/edit_activity_options_buttons"/>
 
-                <include layout="@layout/edit_activity_options_buttons"/>
-            </LinearLayout>
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
@@ -90,8 +84,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center_horizontal"
             android:src="@drawable/common_navigate_record"
-            app:fab_colorNormal="@color/colorFabMenu"
-            app:fab_colorPressed="@color/colorFabMenu"
+            app:fab_colorNormal="@color/colorWhite"
+            app:fab_colorPressed="@color/colorWhite"
             app:fab_size="normal"/>
 
         <com.getbase.floatingactionbutton.FloatingActionButton
@@ -99,8 +93,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/common_navigate_gallery"
-            app:fab_colorNormal="@color/colorFabMenu"
-            app:fab_colorPressed="@color/colorFabMenu"
+            app:fab_colorNormal="@color/colorWhite"
+            app:fab_colorPressed="@color/colorWhite"
             app:fab_size="normal"/>
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>

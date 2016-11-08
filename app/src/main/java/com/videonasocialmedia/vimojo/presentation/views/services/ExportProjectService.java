@@ -30,7 +30,6 @@ public class ExportProjectService extends IntentService implements OnExportFinis
         super("ExportProjectService");
     }
 
-
     @Override
     protected void onHandleIntent(Intent intent) {
         exportUseCase = new ExportProjectUseCase(this);

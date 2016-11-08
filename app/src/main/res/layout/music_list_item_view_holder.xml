@@ -18,7 +18,7 @@
             android:id="@+id/music_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:src="@drawable/imagebutton_music_background_folk"/>
+            tools:src="@drawable/gatito_rules_pressed"/>
 
         <TextView
 
@@ -36,7 +36,7 @@
             android:paddingBottom="2dp"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:textColor="@color/textColorTitleToolbar"
+            android:textColor="@color/colorWhite"
             android:textSize="24sp"
             tools:text="Guitarra"/>
 

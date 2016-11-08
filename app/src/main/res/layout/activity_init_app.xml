@@ -3,19 +3,16 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/black"
-                tools:context=".mainActivity">
+                android:background="@color/colorWhite">
 
     <ImageView
         android:id="@+id/splash_screen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:src="@drawable/splash_screen"/>
+        tools:src="@drawable/splash_screen"/>
 
     <TextView
         android:id="@+id/videona_version"
@@ -23,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:textColor="@color/textColorVersionSplashScreen"
+        android:textColor="@color/colorPrimary"
         tools:text="v1.0.0"
         android:layout_alignBottom="@+id/splash_screen"
         android:layout_alignEnd="@+id/splash_screen"/>

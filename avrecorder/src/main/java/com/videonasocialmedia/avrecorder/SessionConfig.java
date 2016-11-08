@@ -11,12 +11,10 @@ import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
  */
 public class SessionConfig {
 
-    private final VideoEncoderConfig mVideoConfig;
-    private final AudioEncoderConfig mAudioConfig;
+    private VideoEncoderConfig mVideoConfig;
+    private AudioEncoderConfig mAudioConfig;
     private File mOutputDirectory;
     private Muxer mMuxer;
-    private boolean mIsAdaptiveBitrate;
-    private boolean mAttachLocation;
 
     /**
      * Creates a new session configuration to record
@@ -24,10 +22,25 @@ public class SessionConfig {
      * @param destinationFolderPath the folder where the video should be recorded;
      */
     public SessionConfig(String destinationFolderPath) {
-        mVideoConfig = new VideoEncoderConfig(1280, 720, 5 * 1000 * 1000);
+        mVideoConfig = new VideoEncoderConfig(1280, 720, 10 * 1000 * 1000, 25);
         mAudioConfig = new AudioEncoderConfig(1, 48000, 192 * 1000);
         File outputFile = createOutputFile(destinationFolderPath);
         mMuxer = AndroidMuxer.create(outputFile.getAbsolutePath(), Muxer.FORMAT.MPEG4);
+    }
+
+    public SessionConfig(String destinationFolderPath, VideoEncoderConfig videoEncoderConfig){
+        mVideoConfig = new VideoEncoderConfig(videoEncoderConfig.getWidth(), videoEncoderConfig.getHeight(),
+                videoEncoderConfig.getBitRate(), videoEncoderConfig.getFrameRate());
+        mAudioConfig = new AudioEncoderConfig(1, 48000, 192 * 1000);
+        File outputFile = createOutputFile(destinationFolderPath);
+        mMuxer = AndroidMuxer.create(outputFile.getAbsolutePath(), Muxer.FORMAT.MPEG4);
+    }
+
+    public SessionConfig(String destinationFolderPath, int numTracks) {
+        mVideoConfig = new VideoEncoderConfig(1280, 720, 10 * 1000 * 1000, 25);
+        mAudioConfig = new AudioEncoderConfig(1, 48000, 192 * 1000);
+        File outputFile = createOutputFile(destinationFolderPath);
+        mMuxer = AndroidMuxer.create(outputFile.getAbsolutePath(), Muxer.FORMAT.MPEG4, numTracks);
     }
 
     /**
@@ -36,17 +49,19 @@ public class SessionConfig {
      * @param width the width of the video in pixels
      * @param height the height of the video in pixels
      * @param videoBitrate
+     * @param frameRate
      * @param audioChannels 1 or 2 channels
      * @param audioFrequency usually 48000 Hz o 441000 Hz
      * @param audioBitrate
      */
-    public SessionConfig(String destinationFolderPath, int width, int height, int videoBitrate,
+    public SessionConfig(String destinationFolderPath, int width, int height, int videoBitrate, int frameRate,
                          int audioChannels, int audioFrequency, int audioBitrate){
-        mVideoConfig = new VideoEncoderConfig(width, height, videoBitrate);
+        mVideoConfig = new VideoEncoderConfig(width, height, videoBitrate, frameRate);
         mAudioConfig = new AudioEncoderConfig(audioChannels, audioFrequency, audioBitrate);
         File outputFile = createOutputFile(destinationFolderPath);
         mMuxer = AndroidMuxer.create(outputFile.getAbsolutePath(), Muxer.FORMAT.MPEG4);
     }
+
 
     public SessionConfig(Muxer muxer, VideoEncoderConfig videoConfig, AudioEncoderConfig audioConfig) {
         mVideoConfig = checkNotNull(videoConfig);
@@ -66,6 +81,10 @@ public class SessionConfig {
             vTemp.delete(); // Delete old temp files.
         }
         return new File(rootDir, fileName);
+    }
+
+    public VideoEncoderConfig getVideoConfig(){
+        return mVideoConfig;
     }
 
     public Muxer getMuxer() {
@@ -96,8 +115,12 @@ public class SessionConfig {
         return mVideoConfig.getHeight();
     }
 
-    public int getVideoBitrate() {
+    public int getVideoBitRate() {
         return mVideoConfig.getBitRate();
+    }
+
+    public int getVideoFrameRate() {
+        return mVideoConfig.getFrameRate();
     }
 
     public int getNumAudioChannels() {
@@ -110,23 +133,6 @@ public class SessionConfig {
 
     public int getAudioSamplerate() {
         return mAudioConfig.getSampleRate();
-    }
-
-    public boolean isAdaptiveBitrate() {
-        return mIsAdaptiveBitrate;
-    }
-
-    public void setUseAdaptiveBitrate(boolean useAdaptiveBit) {
-        mIsAdaptiveBitrate = useAdaptiveBit;
-    }
-
-
-    public boolean shouldAttachLocation() {
-        return mAttachLocation;
-    }
-
-    public void setAttachLocation(boolean mAttachLocation) {
-        this.mAttachLocation = mAttachLocation;
     }
 
 }

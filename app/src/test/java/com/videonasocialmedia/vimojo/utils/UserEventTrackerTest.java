@@ -5,6 +5,8 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 
 import org.json.JSONException;
@@ -162,7 +164,7 @@ public class UserEventTrackerTest {
     public void trackMusicSetCallsTrackWithEventNameAndProperties() throws IllegalItemOnTrack, JSONException {
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker.getInstance(mockedMixpanelAPI));
         Project videonaProject = getAProject();
-        Music music = new Music(1, "Music title", 2, 3, "Music Author");
+        Music music = new Music(1, "Music title", 2, 3, "Music Author","");
         videonaProject.getAudioTracks().get(0).insertItem(music);
 
         userEventTracker.trackMusicSet(videonaProject);
@@ -188,12 +190,12 @@ public class UserEventTrackerTest {
 
     @Test
     public void trackVideoSharedPropertiesCallsTrackWithEventNameAndProperties() throws JSONException {
-
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker.getInstance(mockedMixpanelAPI));
         Project videonaProject = getAProject();
 
         String socialNetworkId = "SocialNetwork";
-        VideoResolution videoResolution = new VideoResolution(videonaProject.getProfile().getResolution());
+        Profile profile = videonaProject.getProfile();
+        VideoResolution videoResolution = new VideoResolution(profile.getResolution());
 
         int totalVideoShared = 2;
         userEventTracker.trackVideoShared(socialNetworkId, videonaProject,totalVideoShared);
@@ -214,6 +216,7 @@ public class UserEventTrackerTest {
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", Profile.getInstance(Profile.ProfileType.free));
+        return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
     }
 }

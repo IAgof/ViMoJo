@@ -10,23 +10,22 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 
-import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
-import com.videonasocialmedia.vimojo.utils.Constants;
 
 /**
  * Created by alvaro on 7/09/16.
  */
 public class TextToDrawable {
 
-    private final static float SIZE_FONT= 70f;
+    private final static float SIZE_FONT= 90f;
     private final static int NUM_MAX_LINES_TO_DRAW =2;
 
-    public static Drawable createDrawableWithTextAndPosition(String text, String positionText) {
+    public Drawable createDrawableWithTextAndPosition(String text, String positionText, int width, int height) {
 
         Drawable drawable;
         TextPaint textPaint = null;
-        Context appContext = VimojoApplication.getAppContext();
+        Context appContext =  VimojoApplication.getAppContext();
         Typeface typeFont;
         VideoEditTextActivity.TextPosition position = getTypePositionFromString(positionText);
         switch (position){
@@ -44,7 +43,7 @@ public class TextToDrawable {
                 textPaint= createPaint(Paint.Align.LEFT, typeFont);
                 break;
         }
-        Bitmap bmp = createCanvas(text, Constants.DEFAULT_VIMOJO_WIDTH,Constants.DEFAULT_VIMOJO_HEIGHT, textPaint, position);
+        Bitmap bmp = createCanvas(text, width, height, textPaint, position);
 
         drawable = new BitmapDrawable(appContext.getResources(),bmp);
 

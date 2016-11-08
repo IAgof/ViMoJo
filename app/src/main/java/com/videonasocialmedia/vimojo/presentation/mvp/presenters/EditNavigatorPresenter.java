@@ -33,6 +33,7 @@ public class EditNavigatorPresenter {
             public void onMusicRetrieved(Music music) {
                 navigatorView.goToMusic(music);
             }
+
         });
     }
 

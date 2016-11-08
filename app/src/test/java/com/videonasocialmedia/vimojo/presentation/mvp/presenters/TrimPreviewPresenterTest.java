@@ -3,6 +3,9 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -77,6 +80,7 @@ public class TrimPreviewPresenterTest {
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", Profile.getInstance(Profile.ProfileType.free));
+        return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
     }
 }

@@ -14,12 +14,19 @@ public class ConfigPreferences {
     public final static String FIRST_TIME = "first_time";
     public final static String SETTINGS_SHARED_PREFERENCES_FILE_NAME = "SETTINGS_SHARED_PREFERENCES_CAMERA";
     public final static String NAME = "name";
-    public final static String HOST = "host";
     public final static String USERNAME = "username";
-    public final static String USERNAMEFTP = "usernameFTP";
-    public final static String PASSWORDFTP = "passwordFTP";
+    public final static String FTP1 ="ftp1";
+    public final static String HOST = "host";
+    public final static String USERNAME_FTP = "usernameFTP";
+    public final static String PASSWORD_FTP = "passwordFTP";
     public final static String EDITED_VIDEO_DESTINATION = "EditedVideoDestinationFTP";
     public final static String UNEDITED_VIDEO_DESTINATION = "UneditedVideoDestinationFTP";
+    public final static String FTP2 ="ftp2";
+    public static final String HOST_FTP2 = "host_FTP2";
+    public static final String USERNAME_FTP2= "username_FTP2";
+    public final static String PASSWORD_FTP2 = "password_FTP2";
+    public static final String EDITED_VIDEO_DESTINATION_FTP2 = "Edited_Video_Destination_FTP2";
+    public static final String UNEDITED_VIDEO_DESTINATION_FTP2 ="Unedited_Video_Destination_FTP2" ;
     public final static String EMAIL = "email";
     public final static int BACK_CAMERA = 0;
     public final static int FRONT_CAMERA = 1;
@@ -37,6 +44,11 @@ public class ConfigPreferences {
     public final static String BACK_CAMERA_2160P_SUPPORTED = "back_camera_2160p_supported"; // 4K
     public final static String KEY_LIST_PREFERENCES_QUALITY = "list_preferences_quality";
     public final static String KEY_LIST_PREFERENCES_RESOLUTION = "list_preferences_resolution";
+    public final static String KEY_LIST_PREFERENCES_FRAME_RATE = "list_preferences_frame_rate";
+    public final static String CAMERA_FRAME_RATE_24FPS_SUPPORTED = "frame_rate_24fps_supported";
+    public final static String CAMERA_FRAME_RATE_25FPS_SUPPORTED = "frame_rate_25fps_supported";
+    public final static String CAMERA_FRAME_RATE_30FPS_SUPPORTED = "frame_rate_30fps_supported";
+    public final static String CAMERA_FRAME_RATE_SUPPORTED = "camera_frame_rate_supported";
     public final static String EMAIL_BETA_DONE = "email_beta_done";
     public final static String EMAIL_BETA_FORTNIGHT = "email_beta_fortnight";
     public final static String VIDEO_DURATION = "video_duration";
@@ -46,5 +58,4 @@ public class ConfigPreferences {
     public final static String TOTAL_VIDEOS_RECORDED = "total_videos_recorded";
     public final static String TOTAL_VIDEOS_SHARED = "total_videos_shared";
     public final static String FILTER_OVERLAY_GIFT = "filter_overlay_gift";
-
 }

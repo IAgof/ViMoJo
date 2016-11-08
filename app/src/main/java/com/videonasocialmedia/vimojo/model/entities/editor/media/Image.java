@@ -99,7 +99,12 @@ public class Image extends Media {
     }
 
     @Override
-    public void setIdentifier() {
+    public void setIdentifier(int identifier) {
+        this.identifier = identifier;
+    }
+
+    @Override
+    public void createIdentifier() {
         if (identifier < 1)
             this.identifier = count.addAndGet(1);
     }

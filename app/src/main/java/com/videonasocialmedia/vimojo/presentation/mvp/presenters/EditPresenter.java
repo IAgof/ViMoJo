@@ -15,7 +15,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
@@ -26,7 +26,6 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -53,16 +52,14 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
      * Editor View
      */
     private EditorView editorView;
-    private VideonaPlayerView videonaPlayerView;
     private List<Video> videoList;
     protected UserEventTracker userEventTracker;
-    private Project currentProject;
+    protected Project currentProject;
 
-    public EditPresenter(EditorView editorView, VideonaPlayerView videonaPlayerView,
+    public EditPresenter(EditorView editorView,
                          ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack,
                          UserEventTracker userEventTracker) {
         this.editorView = editorView;
-        this.videonaPlayerView = videonaPlayerView;
         this.projectModifiedCallBack = projectModifiedCallBack;
 
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
@@ -101,6 +98,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     @Override
     public void onAddMediaItemToTrackSuccess(Media media) {
+
     }
 
     @Override
@@ -147,7 +145,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     public void onMediaReordered(Media media, int newPosition) {
         //If everything was right the UI is already updated since the user did the reordering
         userEventTracker.trackClipsReordered(currentProject);
-        videonaPlayerView.pausePreview();
         // (jliarte): 24/08/16 probando fix del reorder. Si actualizamos el proyecto al
         //          reordenar, como se reordena en cada cambio de celda, no sólo al final,
         //          generamos overhead innecesario en la actividad y además de esto, se para el
@@ -167,11 +164,13 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     public void loadProject() {
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
-        getMusicFromProjectUseCase.getMusicFromProject(this);
+        if(currentProject.hasMusic())
+            getMusicFromProjectUseCase.getMusicFromProject(this);
     }
 
     @Override
     public void onMusicRetrieved(Music music) {
-        videonaPlayerView.setMusic(music);
+        editorView.setMusic(music);
     }
+
 }

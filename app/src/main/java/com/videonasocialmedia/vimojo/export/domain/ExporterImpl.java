@@ -16,7 +16,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.Utils;
+import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import net.ypresto.androidtranscoder.Transcoder;
 
@@ -60,7 +60,7 @@ public class ExporterImpl implements Exporter {
         Movie result = appendFiles(videoTrimmedPaths);
         if (result != null) {
             saveFinalVideo(result);
-            Utils.cleanDirectory(new File(videoExportedTempPath));
+            FileUtils.cleanDirectory(new File(videoExportedTempPath));
         }
     }
 
@@ -119,12 +119,13 @@ public class ExporterImpl implements Exporter {
 
     private Movie appendFiles(ArrayList<String> videoTranscoded) {
         Movie result;
-        if (isMusicOnProject()) {
+        if (project.hasMusic()) {
             Movie merge = appendVideos(videoTranscoded, false);
 
             Music music = (Music) project.getAudioTracks().get(0).getItems().getFirst();
             // TODO(alvaro) 060616 check if music is downloaded in a repository, not here.
-            File musicFile = Utils.getMusicFileByName(music.getMusicTitle(), music.getMusicResourceId());
+            //File musicFile = Utils.getMusicFileByName(music.getMusicTitle(), music.getMusicResourceId());
+            File musicFile = new File(music.getMediaPath());
             if (musicFile == null) {
                 onExportEndedListener.onExportError("Music not found");
             }
@@ -149,10 +150,6 @@ public class ExporterImpl implements Exporter {
         } catch (IOException | NullPointerException e) {
             onExportEndedListener.onExportError(String.valueOf(e));
         }
-    }
-
-    private boolean isMusicOnProject() {
-        return project.getAudioTracks().size() > 0 && project.getAudioTracks().get(0).getItems().size() > 0;
     }
 
     private Movie appendVideos(ArrayList<String> videoTranscodedPaths, boolean addOriginalAudio) {

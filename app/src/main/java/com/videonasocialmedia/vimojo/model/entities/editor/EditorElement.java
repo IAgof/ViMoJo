@@ -88,7 +88,9 @@ public abstract class EditorElement {
         this.selectedIconPath = selectedIconPath;
     }
 
-    public abstract void setIdentifier();
+    public abstract void setIdentifier(int identifier);
+
+    public abstract void createIdentifier();
 
     public int getIdentifier() {
         return identifier;

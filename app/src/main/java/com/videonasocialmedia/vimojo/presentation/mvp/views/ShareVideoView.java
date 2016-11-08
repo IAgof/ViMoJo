@@ -9,7 +9,13 @@ import java.util.List;
  */
 public interface ShareVideoView {
 
-    void showShareNetworksAvailable(List<SocialNetwork> networks);
+    void playPreview();
+
+    void pausePreview();
+
+    void showError(String message);
+
+    void showOptionsShareList(List<OptionsToShareList> optionsShareList);
 
     void hideShareNetworks();
 
