@@ -55,8 +55,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 18 // 20161107
-        versionName "0.4.16" // 20161107
+        //versionCode 18 // 20161107
+        //versionName "0.4.16" // 20161107
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -65,8 +65,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo"
-            versionCode 3 // 24/08/2016
-            versionName "0.4"
+            versionCode 18 // 20161107
+            versionName "0.4.16" // 20161107
             resValue "string", "app_name", "Vimojo"
             ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
             ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
