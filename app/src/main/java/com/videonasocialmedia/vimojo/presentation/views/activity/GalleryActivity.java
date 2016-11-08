@@ -88,8 +88,8 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
         PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_header);
         pagerTabStrip.setDrawFullUnderline(true);
-        pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorBlack));
-        pagerTabStrip.setTextColor(getResources().getColor(R.color.colorBlack));
+        pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorWhite));
+        pagerTabStrip.setTextColor(getResources().getColor(R.color.colorWhite));
     }
 
     @Override
