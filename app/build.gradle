@@ -90,6 +90,15 @@ android {
             ext.fabricApiSecret = "356b560c9fa95c84d8635ad0ab7049a664ebe2917dd954a5b97ebd95faee4fa8"
             manifestPlaceholders = [appName: "Shoulderpod", fabricApiKey: "cee2254b437b99953c8a2a690fb3bf98cf36c343"]
         }
+        veinteminutos {
+            applicationId "com.videonasocialmedia.vimojo.veinteminutos"
+            versionCode 1
+            versionName "0.1" // 20160919
+            resValue "string", "app_name", "20min"
+            ext.fabricApiKey = "cf33bf18eadd90ff4f7f671588c2017052150cbf"
+            ext.fabricApiSecret = "93b01a6ab712ca7229c35b072324a5e5e89a3c075e107932b0db61864e2ea880"
+            manifestPlaceholders = [appName: "20min", fabricApiKey: "cf33bf18eadd90ff4f7f671588c2017052150cbf"]
+        }
     }
 
     File fabricProperties = new File("${project.projectDir.absolutePath}/fabric.properties")
