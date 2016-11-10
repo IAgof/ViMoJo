@@ -133,26 +133,27 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:key="moreInformation"
         android:title="@string/moreInformation">
         <Preference
+            android:key="aboutUs"
             android:title="@string/aboutUsTitle">
-            <intent android:action="com.videonasocialmedia.vimojo.presentation.views.activity.AboutActivity"/>
         </Preference>
         <Preference
+            android:key="privacyPolicy"
             android:title="@string/privacyPolicy">
-            <intent android:action="com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity"/>
         </Preference>
         <Preference
+            android:key="termOfService"
             android:title="@string/termsOfService">
-            <intent android:action="com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity"/>
         </Preference>
         <Preference
+            android:key="licenses"
             android:title="@string/licenses">
-            <intent android:action="com.videonasocialmedia.vimojo.presentation.views.activity.LicensesActivity"/>
         </Preference>
         <Preference
+            android:key="legalNotice"
             android:title="@string/legacyAdviceTitle">
-            <intent android:action="com.videonasocialmedia.vimojo.presentation.views.activity.LegalNoticeActivity"/>
         </Preference>
     </PreferenceCategory>
 
