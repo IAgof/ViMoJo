@@ -121,7 +121,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         Calendar today = Calendar.getInstance();
 
         // TODO:(alvaro.martinez) 8/11/16 get this date from flavor config
-        String str="2016-11-06";
+        String str= getResources().getString(R.string.app_out_of_date);
         Date dateBeta = null;
         try {
             dateBeta = new SimpleDateFormat("yyyy-MM-dd").parse(str);
@@ -142,7 +142,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private void showDialogOutOfDate() {
         android.support.v7.app.AlertDialog.Builder dialog = new
             android.support.v7.app.AlertDialog.Builder(this);
-        dialog.setMessage(R.string.app_out_of_date);
+        dialog.setMessage(R.string.app_out_of_date_message);
         dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
