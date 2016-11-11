@@ -47,11 +47,11 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:background="@null"
-                android:maxHeight="50dp"
+                android:maxHeight="2dp"
                 android:progressDrawable="@color/colorAccent"
                 android:layout_below="@id/text_info_split"
                 android:splitTrack="false"
-                android:thumb="@drawable/activity_edit_clip_divide_indicator_seekbar"
+                android:thumb="@drawable/ic_circular_thumb_seekbar"
                 />
 
 
