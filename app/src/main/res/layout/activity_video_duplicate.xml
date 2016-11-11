@@ -75,7 +75,7 @@
             android:layout_centerHorizontal="true"
             android:background="@null"
             android:padding="5dp"
-            android:src="@drawable/activity_edit_clip_duplicate_increment"/>
+            app:srcCompat="@drawable/button_edit_increment_clip_normal"/>
 
         <ImageButton
             android:id="@+id/button_duplicate_decrement_video"
@@ -86,7 +86,7 @@
             android:layout_toLeftOf="@+id/button_duplicate_increment_video"
             android:background="@null"
             android:padding="5dp"
-            android:src="@drawable/activity_edit_clip_duplicate_decrement"
+            app:srcCompat="@drawable/button_edit_decrement_clips_normal"
             />
 
         <TextView

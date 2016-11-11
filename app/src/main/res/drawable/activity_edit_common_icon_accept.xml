@@ -1,7 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/common_icon_edit_accept_pressed" android:state_pressed="true"/>
-    <!-- pressed state -->
-    <item android:drawable="@drawable/common_icon_edit_accept_normal"/>
-    <!-- default state -->
-</selector>
+<vector
+    android:height="36dp"
+    android:viewportHeight="37.414"
+    android:viewportWidth="37.414"
+    android:width="36dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <path
+        android:fillColor="@color/button"
+        android:pathData="M1.41,17.82l-1.41,1.56l12,12.15l1.41,0l24,-24.15l-1.41,-1.49l-23.29,23.26z"/>
+</vector>

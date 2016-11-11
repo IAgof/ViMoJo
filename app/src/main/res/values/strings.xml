@@ -71,6 +71,8 @@
     <string name="mastersFolderTitle">Raw</string>
     <string name="editedFolderTitle">Edited</string>
     <string name="error_video_format">Video format different to video project </string>
+    <string name="dialog_accept_delete_clip">Yes</string>
+    <string name="dialog_cancel_delete_clip">No</string>
 
     <!--SoundVolumeActivity-->
     <string name="exitSoundVolumeActivity" >Are you sure do you want to discard the changes and return to record again?</string>
@@ -1685,5 +1687,6 @@ and Conditions.\n\n
     <string name="dialog_message_clean_project">Do you want to start a new project?</string>
     <string name="dialog_accept_clean_project">Yes</string>
     <string name="dialog_cancel_clean_project">No</string>
+
 
 </resources>
