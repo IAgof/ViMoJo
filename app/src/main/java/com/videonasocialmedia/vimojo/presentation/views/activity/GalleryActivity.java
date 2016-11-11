@@ -49,7 +49,6 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     private final String EDITED_FRAGMENT_TAG="EDITED";
     private final int REQUEST_CODE_REMOVE_VIDEOS_FROM_GALLERY = 1;
     MyPagerAdapter adapterViewPager;
-    boolean sharing = false;
     int selectedPage = 0;
     GalleryPagerPresenter galleryPagerPresenter;
     @Bind(R.id.button_ok_gallery)
@@ -74,10 +73,6 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         ButterKnife.bind(this);
 
         Log.d("GALLERY ACTIVITY", "Creating Activity");
-        sharing = this.getIntent().getBooleanExtra("SHARE", true);
-
-        if (sharing)
-            okButton.setImageResource(R.drawable.share_activity_button_share_selector);
 
         ViewPager vpPager = (ViewPager) findViewById(R.id.vpPager);
         adapterViewPager = new MyPagerAdapter(getFragmentManager(), savedInstanceState);
@@ -88,8 +83,8 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
         PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_header);
         pagerTabStrip.setDrawFullUnderline(true);
-        pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorBlack));
-        pagerTabStrip.setTextColor(getResources().getColor(R.color.colorBlack));
+        pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorWhite));
+        pagerTabStrip.setTextColor(getResources().getColor(R.color.colorWhite));
     }
 
     @Override
@@ -145,16 +140,9 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     @OnClick(R.id.button_ok_gallery)
     public void onClick() {
         List<Video> videoList;
-        if (sharing) {
-            videoList = getSelectedVideosFromCurrentFragment();
-            if (videoList.size() > 0)
-                shareVideo(videoList.get(0));
-        } else {
             videoList = getSelectedVideos();
             if (videoList.size() > 0)
                 galleryPagerPresenter.loadVideoListToProject(videoList);
-
-        }
     }
 
     private List<Video> getSelectedVideosFromCurrentFragment() {
@@ -230,20 +218,16 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     private void updateCounter() {
         if (selectionMode.getVisibility() != View.VISIBLE)
             selectionMode.setVisibility(View.VISIBLE);
-        if (!sharing) {
             videoCounter.setText(Integer.toString(countVideosSelected));
             if (countVideosSelected == 0)
                 selectionMode.setVisibility(View.GONE);
-        }
     }
 
     @Override
     public void navigate() {
-        if (!sharing) {
             Intent intent;
             intent = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
             startActivity(intent);
-        }
     }
 
     @Override
@@ -282,22 +266,14 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Override
     public void onItemChecked() {
-        if(sharing) {
-            countVideosSelected = 1;
-            videoCounter.setVisibility(View.GONE);
-            galleryImageViewClips.setVisibility(View.GONE);
-        } else {
-            countVideosSelected++;
-        }
+        countVideosSelected++;
         updateCounter();
     }
 
     @Override
     public void onItemUnchecked() {
-        if(!sharing) {
             countVideosSelected--;
             updateCounter();
-        }
     }
 
     @Override
@@ -326,8 +302,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         }
 
         private void createFragments(){
-            int selectionMode = sharing ? VideoGalleryFragment.SELECTION_MODE_SINGLE
-                    :VideoGalleryFragment.SELECTION_MODE_MULTIPLE;
+            int selectionMode = VideoGalleryFragment.SELECTION_MODE_MULTIPLE;
 
             mastersFragment = VideoGalleryFragment.newInstance
                     (VideoGalleryPresenter.MASTERS_FOLDER, selectionMode);

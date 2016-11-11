@@ -710,9 +710,6 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     public void navigateTo(Class cls) {
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
-        if (cls == GalleryActivity.class) {
-            intent.putExtra("SHARE", false);
-        }
         startActivity(intent);
     }
 
