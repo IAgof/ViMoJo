@@ -53,15 +53,66 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
-        applicationId "com.videonasocialmedia.vimojo"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 18 // 20161107
-        versionName "0.4.16" // 20161107
+        //versionCode 18 // 20161107
+        //versionName "0.4.16" // 20161107
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
+
+    productFlavors {
+        vimojo {
+            applicationId "com.videonasocialmedia.vimojo"
+            versionCode 18 // 20161107
+            versionName "0.4.16" // 20161107
+            resValue "string", "app_name", "Vimojo"
+            ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
+            ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
+            manifestPlaceholders = [appName: "Vimojo", fabricApiKey: "1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
+        }
+        hispanopost {
+            applicationId "com.videonasocialmedia.vimojo.hispanopost"
+            versionCode 1
+            versionName "0.0"
+            resValue "string", "app_name", "HispanoPost"
+            ext.fabricApiKey = "3fc92dd8023e505ebab31a962e1eb284f37696bb"
+            ext.fabricApiSecret = "f88950e831f1f8c6d7402b96e4e93c1c2f71f1e021dc68b183b8b3d2456b9b67"
+            manifestPlaceholders = [appName: "HispanoPost", fabricApiKey: "3fc92dd8023e505ebab31a962e1eb284f37696bb"]
+        }
+        shoulderpod {
+            applicationId "com.videonasocialmedia.vimojo.shoulderpod"
+            versionCode 1
+            versionName "0.1" // 20160919
+            resValue "string", "app_name", "Shoulderpod"
+            ext.fabricApiKey = "cee2254b437b99953c8a2a690fb3bf98cf36c343"
+            ext.fabricApiSecret = "356b560c9fa95c84d8635ad0ab7049a664ebe2917dd954a5b97ebd95faee4fa8"
+            manifestPlaceholders = [appName: "Shoulderpod", fabricApiKey: "cee2254b437b99953c8a2a690fb3bf98cf36c343"]
+        }
+    }
+
+    File fabricProperties = new File("${project.projectDir.absolutePath}/fabric.properties")
+    applicationVariants.all { variant ->
+        variant.productFlavors.each { flavor ->
+            def variantSuffix = variant.name.capitalize()
+            def generatePropertiesTask = task("fabricGenerateProperties${variantSuffix}") << {
+                Properties properties = new Properties()
+                properties.put("apiKey", flavor.fabricApiKey)
+                properties.put("apiSecret", flavor.fabricApiSecret)
+                properties.store(new FileWriter(fabricProperties), "")
+                println "Generating fabric.properties for api key: ${flavor.fabricApiKey}"
+            }
+
+            def generateResourcesTask = project.tasks.getByName("fabricGenerateResources${variantSuffix}")
+            generateResourcesTask.dependsOn generatePropertiesTask
+            generateResourcesTask.doLast {
+                println "Removing fabric.properties"
+                fabricProperties.delete()
+            }
+        }
+    }
+
     buildTypes {
         release {
             buildConfigField "String", "MIXPANEL_TOKEN", "\"6f46145c03bf5cf5104bb3536059d994\""
@@ -73,7 +124,9 @@ android {
             ext.betaDistributionGroupAliases="videona-dev-team"
             ext.betaDistributionReleaseNotesFilePath="${project.rootDir}/RELEASE"
             buildConfigField "String", "MIXPANEL_TOKEN", "\"c6617213110cd2513dfc0ad97dbaee66\""
-            manifestPlaceholders = [ appName: "Vimojo", fabricApiKey: "eba78720f87307ca48dfa4200dd90914ff6653f2"]
+            ext.fabricApiKey = "eba78720f87307ca48dfa4200dd90914ff6653f2"
+            ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
+            manifestPlaceholders = [appName: "Vimojo", fabricApiKey: "eba78720f87307ca48dfa4200dd90914ff6653f2"]
         }
     }
     packagingOptions {
@@ -162,7 +215,7 @@ dependencies {
     }
     androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.2@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.3@aar') {
         transitive = true;
     }
 
