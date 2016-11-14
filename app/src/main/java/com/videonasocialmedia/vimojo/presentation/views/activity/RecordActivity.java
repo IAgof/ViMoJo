@@ -370,9 +370,6 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     private void showRecordingIndicator() {
         recordingIndicator.setVisibility(View.VISIBLE);
-        AnimationDrawable frameAnimation = (AnimationDrawable) recordingIndicator.getDrawable();
-        frameAnimation.setCallback(recordingIndicator);
-        frameAnimation.setVisible(true, true);
 
     }
 

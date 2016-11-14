@@ -39,6 +39,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
+
 /**
  * Created by jca on 20/5/15.
  */
@@ -71,6 +73,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ButterKnife.bind(this);
+        setupActivityButtons();
 
         Log.d("GALLERY ACTIVITY", "Creating Activity");
 
@@ -85,6 +88,14 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         pagerTabStrip.setDrawFullUnderline(true);
         pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorWhite));
         pagerTabStrip.setTextColor(getResources().getColor(R.color.colorWhite));
+    }
+
+    private void setupActivityButtons() {
+        tintGalleryButtons(R.color.button_color);
+    }
+
+    private void tintGalleryButtons(int tintList) {
+        tintButton(okButton, tintList);
     }
 
     @Override

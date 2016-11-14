@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Veronica Lago Fominaya on 26/11/2015.
  */
-public class SettingsActivity extends VimojoActivity implements VideonaDialogListener {
+public class SettingsActivity extends VimojoActivity {
 
     protected final int REQUEST_CODE_RATE_APP = 1;
 
@@ -66,18 +66,7 @@ public class SettingsActivity extends VimojoActivity implements VideonaDialogLis
         navigateTo("mailto:info@videona.com");
     }
 
-    private void goToVote() {
-        VideonaDialog dialog = new VideonaDialog.Builder()
-                .withTitle(getString(R.string.rateUsDialogTitle))
-                .withImage(R.drawable.common_icon_videona)
-                .withMessage(getString(R.string.rateUsDialogMessage))
-                .withPositiveButton(getString(R.string.rateUsDialogAffirmative))
-                .withNegativeButton(getString(R.string.rateUsDialogNegative))
-                .withCode(REQUEST_CODE_RATE_APP)
-                .withListener(this)
-                .create();
-        dialog.show(getFragmentManager(), "rateAppDialog");
-    }
+
 
     private void navigateTo(String url) {
         Intent i = new Intent(Intent.ACTION_VIEW);
@@ -85,16 +74,5 @@ public class SettingsActivity extends VimojoActivity implements VideonaDialogLis
         startActivity(i);
     }
 
-    @Override
-    public void onClickPositiveButton(int id) {
-        if(id == REQUEST_CODE_RATE_APP)
-            navigateTo("market://details?id=com.videonasocialmedia.videona");
-    }
 
-    @Override
-    public void onClickNegativeButton(int id) {
-        //TODO cambiar email
-        if(id == REQUEST_CODE_RATE_APP)
-            navigateTo("mailto:info@videona.com");
-    }
 }

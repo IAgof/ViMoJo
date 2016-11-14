@@ -393,7 +393,7 @@
                     android:layout_gravity="center"
                     android:scaleType="fitCenter"
                     android:layout_margin="4dp"
-                    app:srcCompat="@drawable/record_activity_ic_flash_36dp"/>
+                    app:srcCompat="@drawable/record_activity_ic_flash"/>
 
                 <ImageButton
                     android:id="@+id/button_change_camera"

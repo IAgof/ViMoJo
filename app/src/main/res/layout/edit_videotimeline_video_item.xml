@@ -21,7 +21,7 @@
         android:background="@drawable/timeline_video_selector"
         android:padding="3dp"
         android:scaleType="fitXY"
-        android:src="@drawable/common_icon_gallery_no_image"/>
+        android:src="@drawable/fragment_gallery_no_image"/>
 
     <RelativeLayout
         android:id="@+id/relative_video_thumb"
