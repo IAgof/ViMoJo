@@ -17,8 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 
@@ -35,6 +35,7 @@ import butterknife.OnTouch;
  * Created by jliarte on 13/05/16.
  */
 /**
+ * Use new Implementation based in ExoPlayer instead: see {@link VideonaPlayerExo}
  * @deprecated
  */
 public class VideonaPlayer extends RelativeLayout implements VideonaPlayerView, SeekBar.OnSeekBarChangeListener {

@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.export;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 /**
  * Created by alvaro on 25/10/16.

@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.model.entities.editor.media;
+package com.videonasocialmedia.videonamediaframework.model.media;
 
 import android.os.Environment;
 

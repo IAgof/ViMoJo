@@ -9,27 +9,29 @@
  * Álvaro Martínez Marco
  * Danny R. Fonseca Arboleda
  */
-package com.videonasocialmedia.vimojo.model.entities.editor.media;
+package com.videonasocialmedia.videonamediaframework.model.media;
 
 import android.media.MediaMetadata;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.EditorElement;
-import com.videonasocialmedia.vimojo.model.entities.editor.transitions.Transition;
+import com.videonasocialmedia.videonamediaframework.model.media.transitions.Transition;
 import com.videonasocialmedia.vimojo.model.entities.licensing.License;
 import com.videonasocialmedia.vimojo.model.entities.social.User;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 
 import java.util.ArrayList;
 
 /**
- * Abstract representation of any media resource that can be used in the project.
- * TODO habrá que echar un vistazo a esto http://developer.android.com/reference/android/media/package-summary.html
+ * Abstract representation of any media resource that can be used in
+ * the {@link VMComposition}.
+ *
+ * See also http://developer.android.com/reference/android/media/package-summary.html
  *
  * @author Juan Javier Cabanas
  * @author Álvaro Martínez Marco
  * @author Danny R. Fonseca Arboleda
  */
 
-public abstract class Media extends EditorElement {
+public abstract class Media extends MediaElement {
 
     /**
      * Title of the media. Should be the video name in the social network

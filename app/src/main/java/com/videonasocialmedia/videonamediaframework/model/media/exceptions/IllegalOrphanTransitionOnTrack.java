@@ -5,7 +5,7 @@
  * All rights reserved
  */
 
-package com.videonasocialmedia.vimojo.model.entities.editor.exceptions;
+package com.videonasocialmedia.videonamediaframework.model.media.exceptions;
 
 /**
  * TODO doc

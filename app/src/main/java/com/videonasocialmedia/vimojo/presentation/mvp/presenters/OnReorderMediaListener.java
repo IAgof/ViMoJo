@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
 
 /**
  * Created by jca on 7/7/15.

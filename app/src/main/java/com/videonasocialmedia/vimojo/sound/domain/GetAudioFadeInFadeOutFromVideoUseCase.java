@@ -2,10 +2,7 @@ package com.videonasocialmedia.vimojo.sound.domain;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.audio_mixer.listener.OnAudioEffectListener;
-import com.videonasocialmedia.vimojo.export.domain.ExportSwapAudioToVideoUseCase;
-import com.videonasocialmedia.vimojo.export.domain.OnExportEndedListener;
 import com.videonasocialmedia.vimojo.export.utils.TranscoderHelper;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.File;

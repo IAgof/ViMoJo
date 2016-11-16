@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnTransitionClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.listener.RecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;

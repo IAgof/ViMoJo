@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoGalleryView;
 
 import java.util.List;

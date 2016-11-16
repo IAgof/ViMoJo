@@ -9,12 +9,12 @@
  * Álvaro Martínez Marco
  * Danny R. Fonseca Arboleda
  */
-package com.videonasocialmedia.vimojo.model.entities.editor.media;
+package com.videonasocialmedia.videonamediaframework.model.media;
 
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadata;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.transitions.Transition;
+import com.videonasocialmedia.videonamediaframework.model.media.transitions.Transition;
 import com.videonasocialmedia.vimojo.model.entities.licensing.License;
 import com.videonasocialmedia.vimojo.model.entities.social.User;
 
@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * A media image item that represents a file that can be used in project video track.
  *
- * @see com.videonasocialmedia.vimojo.model.entities.editor.media.Media
+ * @see com.videonasocialmedia.videonamediaframework.model.media.Media
  */
 public class Image extends Media {
 
@@ -42,7 +42,7 @@ public class Image extends Media {
      * recent created image objects. However this duration could be changed during the edition
      * process, but the startTime never could be changed.
      *
-     * @see com.videonasocialmedia.vimojo.model.entities.editor.media.Media
+     * @see com.videonasocialmedia.videonamediaframework.model.media.Media
      */
     public Image(String iconPath, String mediaPath, ArrayList<User> authors,
                  License license) {
@@ -68,7 +68,7 @@ public class Image extends Media {
     /**
      * Parametrized constructor. It requires all possible attributes for an effect object.
      *
-     * @see com.videonasocialmedia.vimojo.model.entities.editor.media.Media
+     * @see com.videonasocialmedia.videonamediaframework.model.media.Media
      */
     public Image(int identifier, String iconPath, String selectedIconPath, String title, String
             mediaPath, int duration, Transition opening, Transition ending,

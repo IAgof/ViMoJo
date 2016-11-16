@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.repository.video;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 
 import org.junit.Test;

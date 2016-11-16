@@ -2,7 +2,7 @@ package com.videonasocialmedia.vimojo.export;
 
 import com.videonasocialmedia.vimojo.export.domain.ExportSwapAudioToVideoUseCase;
 import com.videonasocialmedia.vimojo.export.domain.OnExportEndedSwapAudioListener;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.sound.domain.GetAudioFadeInFadeOutFromVideoUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.OnGetAudioFadeInFadeOutFromVideoListener;
 

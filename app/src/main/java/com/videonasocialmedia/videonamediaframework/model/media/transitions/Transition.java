@@ -9,10 +9,10 @@
  * Álvaro Martínez Marco
  * Danny R. Fonseca Arboleda
  */
-package com.videonasocialmedia.vimojo.model.entities.editor.transitions;
+package com.videonasocialmedia.videonamediaframework.model.media.transitions;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.EditorElement;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.MediaElement;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.licensing.License;
 import com.videonasocialmedia.vimojo.model.entities.social.User;
 
@@ -23,7 +23,7 @@ import com.videonasocialmedia.vimojo.model.entities.social.User;
  * effect has take place.
  * In addition transitions cannot be layered, they will be always applied before any other effect.
  */
-public abstract class Transition extends EditorElement {
+public abstract class Transition extends MediaElement {
 
     /**
      * Unique effect identifier

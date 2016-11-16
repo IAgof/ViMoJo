@@ -9,13 +9,13 @@
  * Álvaro Martínez Marco
  * Danny R. Fonseca Arboleda
  */
-package com.videonasocialmedia.vimojo.model.entities.editor.track;
+package com.videonasocialmedia.videonamediaframework.model.media.track;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.effects.Effect;
-import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalOrphanTransitionOnTrack;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
-import com.videonasocialmedia.vimojo.model.entities.editor.transitions.Transition;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.transitions.Transition;
 
 import java.util.HashMap;
 import java.util.LinkedList;

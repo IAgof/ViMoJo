@@ -15,9 +15,9 @@ import com.videonasocialmedia.vimojo.eventbus.events.project.UpdateProjectDurati
 import com.videonasocialmedia.vimojo.eventbus.events.video.NumVideosChangedEvent;
 import com.videonasocialmedia.vimojo.eventbus.events.video.VideoAddedToTrackEvent;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-import com.videonasocialmedia.vimojo.model.entities.editor.track.MediaTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;

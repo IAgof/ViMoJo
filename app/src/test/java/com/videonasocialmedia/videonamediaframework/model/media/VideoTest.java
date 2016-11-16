@@ -1,6 +1,5 @@
-package com.videonasocialmedia.vimojo.model.entities.editor.media;
+package com.videonasocialmedia.videonamediaframework.model.media;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;

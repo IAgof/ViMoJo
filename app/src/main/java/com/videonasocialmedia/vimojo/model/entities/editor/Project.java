@@ -11,13 +11,13 @@
  */
 package com.videonasocialmedia.vimojo.model.entities.editor;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Audio;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Image;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-import com.videonasocialmedia.vimojo.model.entities.editor.track.AudioTrack;
-import com.videonasocialmedia.vimojo.model.entities.editor.track.MediaTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.Audio;
+import com.videonasocialmedia.videonamediaframework.model.media.Image;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,15 +46,11 @@ public class Project {
      * The folder where de temp files of the project are stored
      */
     private String projectPath;
-    /**
-     * Track of Video and Image objects
-     */
-    private MediaTrack mediaTrack;
-    /**
-     * Audio tracks to form the final audio track. One by default, could be maximum defined on
-     * project profile.
-     */
-    private ArrayList<AudioTrack> audioTracks;
+
+
+  private VMComposition vmComposition;
+
+
     /**
      * Project profile. Defines some limitations and characteristic of the project based on user
      * subscription.
@@ -64,7 +60,6 @@ public class Project {
      * Project duration. The duration of the project in milliseconds.
      */
     private int duration;
-    private Music music;
 
     private String musicTitleIdentifier;
 
@@ -81,9 +76,7 @@ public class Project {
         this.title = title;
         this.projectPath = rootPath + "/projects/" + title; //todo probablemente necesitemos un slugify de ese title.
         this.checkPathSetup(rootPath);
-        this.mediaTrack = new MediaTrack();
-        this.audioTracks = new ArrayList<>();
-        audioTracks.add(new AudioTrack());
+        this.vmComposition = new VMComposition();
         this.profile = profile;
         this.duration = 0;
 
@@ -145,19 +138,19 @@ public class Project {
     }
 
     public MediaTrack getMediaTrack() {
-        return mediaTrack;
+        return vmComposition.getMediaTrack();
     }
 
     public void setMediaTrack(MediaTrack mediaTrack) {
-        this.mediaTrack = mediaTrack;
+        this.vmComposition.setMediaTrack(mediaTrack);
     }
 
     public ArrayList<AudioTrack> getAudioTracks() {
-        return audioTracks;
+        return vmComposition.getAudioTracks();
     }
 
     public void setAudioTracks(ArrayList<AudioTrack> audioTracks) {
-        this.audioTracks = audioTracks;
+        this.vmComposition.setAudioTracks(audioTracks);
     }
 
     public Profile getProfile() {
@@ -169,10 +162,7 @@ public class Project {
     }
 
     public int getDuration() {
-        duration = 0;
-        for (Media video : mediaTrack.getItems()) {
-            duration = duration + video.getDuration();
-        }
+        duration = vmComposition.getDuration();
         return duration;
     }
 

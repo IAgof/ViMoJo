@@ -9,7 +9,7 @@
  * Álvaro Martínez Marco
  * Danny R. Fonseca Arboleda
  */
-package com.videonasocialmedia.vimojo.model.entities.editor.media;
+package com.videonasocialmedia.videonamediaframework.model.media;
 
 import android.media.MediaMetadataRetriever;
 
@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * A media video item that represents a file (or part of a file) that can be used in project video
  * track.
  *
- * @see com.videonasocialmedia.vimojo.model.entities.editor.media.Media
+ * @see com.videonasocialmedia.videonamediaframework.model.media.Media
  */
 public class Video extends Media {
 
@@ -62,7 +62,7 @@ public class Video extends Media {
     /**
      * Constructor of minimum number of parameters. Default constructor.
      *
-     * @see com.videonasocialmedia.vimojo.model.entities.editor.media.Media
+     * @see com.videonasocialmedia.videonamediaframework.model.media.Media
      */
     public Video(String mediaPath) {
         super(-1, null, mediaPath, 0, 0, null, null);
