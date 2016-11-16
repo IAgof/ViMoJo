@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.googlecode.mp4parser.authoring.Movie;
-import com.videonasocialmedia.muxer.Appender;
+import com.videonasocialmedia.videonamediaframework.muxer.Appender;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.File;
@@ -50,7 +50,7 @@ public class MergeVoiceOverAudiosUseCase {
     private void saveFinalVideo(Movie result) {
         try {
             String pathAudioEdited = Constants.PATH_APP_TEMP + File.separator + "AUD_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".mp4";
-            com.videonasocialmedia.muxer.utils.Utils.createFile(result, pathAudioEdited);
+            com.videonasocialmedia.videonamediaframework.muxer.utils.Utils.createFile(result, pathAudioEdited);
             listener.onMergeVoiceOverAudioSuccess(pathAudioEdited);
         } catch (IOException | NullPointerException e) {
             listener.onMergeVoiceOverAudioError(String.valueOf(e));

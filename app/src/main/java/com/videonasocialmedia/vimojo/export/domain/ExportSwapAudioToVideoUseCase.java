@@ -100,7 +100,7 @@ public class ExportSwapAudioToVideoUseCase implements ExporterVideoSwapAudio {
   private void saveFinalVideo(Movie result, String outputFilePath) {
     try {
       long start = System.currentTimeMillis();
-      com.videonasocialmedia.muxer.utils.Utils.createFile(result, outputFilePath);
+      com.videonasocialmedia.videonamediaframework.muxer.utils.Utils.createFile(result, outputFilePath);
       long spent = System.currentTimeMillis() - start;
       Log.d("WRITING VIDEO FILE", "time spent in millis: " + spent);
       onExportEndedSwapAudioListener.onExportSuccess();

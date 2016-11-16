@@ -1,4 +1,4 @@
-package com.videonasocialmedia.muxer.utils;
+package com.videonasocialmedia.videonamediaframework.muxer.utils;
 
 import com.coremedia.iso.boxes.Container;
 import com.googlecode.mp4parser.authoring.Movie;

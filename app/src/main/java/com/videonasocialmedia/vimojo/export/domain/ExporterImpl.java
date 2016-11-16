@@ -6,10 +6,10 @@ import android.util.Log;
 import com.googlecode.mp4parser.authoring.Movie;
 import com.googlecode.mp4parser.authoring.Track;
 import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
-import com.videonasocialmedia.muxer.Appender;
-import com.videonasocialmedia.muxer.AudioTrimmer;
-import com.videonasocialmedia.muxer.Trimmer;
-import com.videonasocialmedia.muxer.VideoTrimmer;
+import com.videonasocialmedia.videonamediaframework.muxer.Appender;
+import com.videonasocialmedia.videonamediaframework.muxer.AudioTrimmer;
+import com.videonasocialmedia.videonamediaframework.muxer.Trimmer;
+import com.videonasocialmedia.videonamediaframework.muxer.VideoTrimmer;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -101,7 +101,7 @@ public class ExporterImpl implements Exporter {
                 if (editedFileDuration < originalFileDuration) {
                     trimmer = new VideoTrimmer();
                     movie = trimmer.trim(medias.get(index).getMediaPath(), startTime, endTime);
-                    com.videonasocialmedia.muxer.utils.Utils.createFile(movie, videoTrimmedTempPath);
+                    com.videonasocialmedia.videonamediaframework.muxer.utils.Utils.createFile(movie, videoTrimmedTempPath);
                     videoTrimmedPaths.add(videoTrimmedTempPath);
                 } else {
                     videoTrimmedPaths.add(medias.get(index).getMediaPath());
@@ -143,7 +143,7 @@ public class ExporterImpl implements Exporter {
         try {
             long start = System.currentTimeMillis();
             String pathVideoEdited = Constants.PATH_APP_EDITED + File.separator + "V_EDIT_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".mp4";
-            com.videonasocialmedia.muxer.utils.Utils.createFile(result, pathVideoEdited);
+            com.videonasocialmedia.videonamediaframework.muxer.utils.Utils.createFile(result, pathVideoEdited);
             long spent = System.currentTimeMillis() - start;
             Log.d("WRITING VIDEO FILE", "time spent in millis: " + spent);
             onExportEndedListener.onExportSuccess(new Video(pathVideoEdited));

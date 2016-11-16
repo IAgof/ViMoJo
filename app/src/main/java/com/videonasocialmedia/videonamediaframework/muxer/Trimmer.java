@@ -1,6 +1,6 @@
-package com.videonasocialmedia.muxer;
+package com.videonasocialmedia.videonamediaframework.muxer;
 
-import com.videonasocialmedia.muxer.utils.Utils;
+import com.videonasocialmedia.videonamediaframework.muxer.utils.Utils;
 import com.googlecode.mp4parser.authoring.Movie;
 import com.googlecode.mp4parser.authoring.Track;
 import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
