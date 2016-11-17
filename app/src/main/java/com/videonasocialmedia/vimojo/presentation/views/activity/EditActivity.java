@@ -45,6 +45,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 
+import com.videonasocialmedia.vimojo.presentation.mvp.views.NavigatorDrawerView;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.VideoTimeLineAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.videoTimeLineTouchHelperCallback;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
@@ -68,7 +69,7 @@ import butterknife.OnClick;
 
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
-public class EditActivity extends VimojoActivity implements EditorView,
+public class EditActivity extends VimojoActivity implements EditorView, NavigatorDrawerView,
         VideonaPlayerListener, VideoTimeLineRecyclerViewClickListener {
 
     private static final String CURRENT_TIME_POSITION = "current_time_position";
@@ -144,7 +145,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
         sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
             Context.MODE_PRIVATE);
-        editPresenter = new EditPresenter(this, navigator.getCallback(), sharedPreferences, userEventTracker, VimojoApplication.getAppContext());
+        editPresenter = new EditPresenter(this, this, navigator.getCallback(), sharedPreferences, userEventTracker, VimojoApplication.getAppContext());
 
         videonaPlayer.setListener(this);
 
@@ -508,7 +509,6 @@ public class EditActivity extends VimojoActivity implements EditorView,
     public void showPreferenceUserName(String data) {
         Menu menu = navigationView.getMenu();
         menu.findItem(R.id.menu_navview_username).setTitle(data);
-
     }
 
     @Override
@@ -522,7 +522,6 @@ public class EditActivity extends VimojoActivity implements EditorView,
         initVideoListRecycler();
         showMessage(R.string.add_videos_to_project);
     }
-
 
     @Override
     public void newClipPlayed(int currentClipIndex) {

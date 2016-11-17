@@ -28,6 +28,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.NavigatorDrawerView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
@@ -59,6 +60,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
      * Editor View
      */
     private EditorView editorView;
+    private NavigatorDrawerView navigatorDrawerView;
     private List<Video> videoList;
     private SharedPreferences sharedPreferences;
     protected UserEventTracker userEventTracker;
@@ -66,10 +68,11 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     private SharedPreferences.Editor preferencesEditor;
     private ProfileRepository profileRepository;
 
-    public EditPresenter(EditorView editorView,
+    public EditPresenter(EditorView editorView, NavigatorDrawerView navigatorDrawerView ,
                          ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack, SharedPreferences sharedPreferences,
                          UserEventTracker userEventTracker, Context context) {
         this.editorView = editorView;
+        this.navigatorDrawerView=navigatorDrawerView;
         this.projectModifiedCallBack = projectModifiedCallBack;
         this.sharedPreferences=sharedPreferences;
         this.context=context;
@@ -190,18 +193,18 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     public void getPreferenceUserName() {
         String userNamePreference = sharedPreferences.getString(ConfigPreferences.USERNAME, null);
         if(userNamePreference!=null && !userNamePreference.isEmpty())
-            editorView.showPreferenceUserName(userNamePreference);
+            navigatorDrawerView.showPreferenceUserName(userNamePreference);
         else{
-            editorView.showPreferenceUserName(context.getResources().getString(R.string.username));
+            navigatorDrawerView.showPreferenceUserName(context.getResources().getString(R.string.username));
         }
     }
 
     public void getPreferenceEmail() {
         String emailPreference = sharedPreferences.getString(ConfigPreferences.EMAIL, null);
         if(emailPreference!=null&& !emailPreference.isEmpty())
-            editorView.showPreferenceEmail(emailPreference);
+            navigatorDrawerView.showPreferenceEmail(emailPreference);
         else {
-            editorView.showPreferenceEmail(context.getResources().getString(R.string.emailPreference));
+            navigatorDrawerView.showPreferenceEmail(context.getResources().getString(R.string.emailPreference));
         }
 
     }
@@ -212,7 +215,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         clearProjectUseCase.clearProject(currentProject);
         profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, context);
         createDefaultProjectUseCase.loadOrCreateProject(rootPath, profileRepository.getCurrentProfile());
-        editorView.updateViewResetProject();
+        navigatorDrawerView.updateViewResetProject();
     }
 
     private void clearProjectDataFromSharedPreferences() {
