@@ -151,9 +151,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView, Vid
 
     public void navigateTo(Class cls) {
         Intent intent = new Intent(getApplicationContext(), cls);
-        if (cls == GalleryActivity.class) {
-            intent.putExtra("SHARE", false);
-        }
         startActivity(intent);
         finish();
     }

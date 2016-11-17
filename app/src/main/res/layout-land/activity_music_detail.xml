@@ -4,6 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -77,7 +78,7 @@
                             android:layout_height="64dp"
                             android:scaleType="centerCrop"
                             android:layout_centerVertical="true"
-                            tools:src="@drawable/gatito_rules_pressed"/>
+                            tools:src="@drawable/fragment_gallery_no_image"/>
 
                         <LinearLayout
                             android:id="@+id/layout_description_music"

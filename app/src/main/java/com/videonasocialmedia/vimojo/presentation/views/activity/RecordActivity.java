@@ -370,9 +370,6 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     private void showRecordingIndicator() {
         recordingIndicator.setVisibility(View.VISIBLE);
-        AnimationDrawable frameAnimation = (AnimationDrawable) recordingIndicator.getDrawable();
-        frameAnimation.setCallback(recordingIndicator);
-        frameAnimation.setVisible(true, true);
 
     }
 
@@ -710,9 +707,6 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     public void navigateTo(Class cls) {
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
-        if (cls == GalleryActivity.class) {
-            intent.putExtra("SHARE", false);
-        }
         startActivity(intent);
     }
 

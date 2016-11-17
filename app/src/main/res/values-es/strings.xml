@@ -67,6 +67,8 @@
     <string name="galleryActivityTitle">Galería</string>
     <string name="mastersFolderTitle">Originales</string>
     <string name="editedFolderTitle">Editados</string>
+    <string name="dialog_accept_delete_clip">Sí</string>
+    <string name="dialog_cancel_delete_clip">No</string>
     <string name="error_video_format">Error, formato de vídeo diferente al del proyecto </string>
 
     <!--SoundVolumeActivity-->
@@ -576,6 +578,11 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="dialog_message_clean_project">¿Quiere empezar un nuevo proyecto?</string>
     <string name="dialog_accept_clean_project">Sí</string>
     <string name="dialog_cancel_clean_project">No</string>
+    <string name="other_options">Otras opciones</string>
+
+    <string name="dialog_change_user_name">¿Quiere cambiar su nombre de usuario?</string>
+    <string name="dialog_change_email">¿Quiere cambiar su dirección de email?</string>
+
 
 
 </resources>

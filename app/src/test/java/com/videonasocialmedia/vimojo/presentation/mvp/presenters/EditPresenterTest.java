@@ -1,5 +1,8 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.Preference;
 import android.support.annotation.NonNull;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -12,6 +15,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.NavigatorDrawerView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -37,6 +41,9 @@ public class EditPresenterTest {
     @Mock GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     @InjectMocks private EditPresenter editPresenter;
     @Mock private EditorView mockedEditorView;
+    @Mock private SharedPreferences mockedSharePreference;
+    @Mock private Context mockedContext;
+    @Mock private NavigatorDrawerView mockedNavigatorView;
     @Mock private VideonaPlayerView mockedVideonaPlayerView;
     @Mock private MixpanelAPI mockedMixpanelApi;
     @Mock private UserEventTracker mockedUserEventTracker;
@@ -82,7 +89,8 @@ public class EditPresenterTest {
     // Seems not needed since we already use @InjectMocks annotation
     @NonNull
     public EditPresenter getEditPresenter() {
-        return new EditPresenter(mockedEditorView, mockedProjectModifiedCallback, mockedUserEventTracker);
+        return new EditPresenter(mockedEditorView, mockedNavigatorView,
+            mockedProjectModifiedCallback,mockedSharePreference, mockedUserEventTracker, mockedContext);
     }
 
     public Project getAProject() {

@@ -18,7 +18,6 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/VideonaTheme.PopupOverlay"
             app:theme="@style/VideonaDrawerIconStyle">
 
             <com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator
@@ -29,8 +28,6 @@
                 android:gravity="center"
                 app:edit_selected="true"
                 />
-
-
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
@@ -84,14 +81,17 @@
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/fab_margin"
             app:fab_colorNormal="@color/colorWhite"
             app:fab_colorPressed="@color/colorWhite"
             android:src="@drawable/common_navigate_record"
-            android:id="@+id/fab_go_to_record"/>
+            android:id="@+id/fab_go_to_record"
+            />
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/fab_margin"
             app:fab_colorNormal="@color/colorWhite"
             app:fab_colorPressed="@color/colorWhite"
             android:src="@drawable/common_navigate_gallery"
