@@ -17,6 +17,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -84,6 +86,9 @@ public class EditActivity extends VimojoActivity implements EditorView,
     VideonaPlayerExo videonaPlayer;
     @Bind(R.id.fab_edit_room)
     FloatingActionsMenu fabEditRoom;
+    @Bind(R.id.edit_activity_drawer_layout)
+    DrawerLayout drawerLayout;
+
     private List<Video> videoList;
     private int currentVideoIndex = 0;
     private int currentProjectTimePosition = 0;
@@ -116,7 +121,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit);
+        setContentView(R.layout.activity_edit_with_drawer);
         ButterKnife.bind(this);
         setupActivityButtons();
 
@@ -125,6 +130,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+        ab.setHomeAsUpIndicator(R.drawable.ic_nav_menu);
 
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
         editPresenter = new EditPresenter(this, navigator.getCallback(), userEventTracker);
@@ -212,8 +218,11 @@ public class EditActivity extends VimojoActivity implements EditorView,
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit_activity, menu);
-        return true;
+        if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            getMenuInflater().inflate(R.menu.menu_edit_activity, menu);
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -230,7 +239,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
                 navigateTo(GalleryActivity.class);
                 return true;
             case android.R.id.home:
-                onBackPressed();
+                drawerLayout.openDrawer(GravityCompat.START);
                 return true;
             default:
 

@@ -1686,6 +1686,7 @@ and Conditions.\n\n
     <string name="dialog_message_clean_project">Do you want to start a new project?</string>
     <string name="dialog_accept_clean_project">Yes</string>
     <string name="dialog_cancel_clean_project">No</string>
+    <string name="other_options">Other options</string>
 
 
 </resources>

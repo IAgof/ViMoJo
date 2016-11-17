@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".sound.presentation.views.activity.MusicListActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -16,6 +17,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/VideonaTheme.PopupOverlay"
             app:theme="@style/VideonaDrawerIconStyle">
 
             <com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator

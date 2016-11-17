@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_navview_username"
+            android:icon="@drawable/activity_edit_ic_person"
+            android:title="@string/username"/>
+        <item
+            android:id="@+id/menu_navview_mail"
+            android:icon="@drawable/activity_edit_ic_mail"
+            android:title="@string/emailPreference"/>
+        <item
+            android:id="@+id/menu_navview_gallery"
+            android:icon="@drawable/common_navigate_gallery"
+            android:title="Gallery"/>
+    </group>
+
+    <item
+        android:id="@+id/navigation_subheader"
+        android:title="@string/other_options">
+        <menu>
+            <item
+                android:id="@+id/menu_navview_delete_clip"
+                android:icon="@drawable/activity_edit_clip_delete"
+                android:title="Recycle Bin"/>
+        </menu>
+    </item>
+
+</menu>

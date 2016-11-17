@@ -1,55 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/VideonaTheme.PopupOverlay"
-            app:theme="@style/VideonaDrawerIconStyle"/>
+            android:layout_height="wrap_content">
 
-    </android.support.design.widget.AppBarLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/VideonaTheme.PopupOverlay"
+                app:theme="@style/VideonaDrawerIconStyle"/>
 
-    <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
-        android:id="@+id/videona_player"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        />
+        </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:baselineAligned="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
+            android:id="@+id/videona_player"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            />
+
+        <ProgressBar
+            android:id="@+id/progressBar_voice_over"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="58dp"
-            android:id="@+id/linear_layout_progressbar_voice_over"
-            android:layout_marginTop="12dp">
-
-            <ProgressBar
-                android:id="@+id/progressBar_voice_over"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="24dp"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginBottom="0dp"
-                android:indeterminate="false"
-                android:layout_gravity="center_horizontal" />
-
-        </LinearLayout>
+            android:layout_marginTop="24dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginBottom="0dp"
+            android:indeterminate="false"
+            android:layout_gravity="center_horizontal" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -93,50 +88,55 @@
                 android:text="00:00"
                 android:textSize="14sp"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                android:visibility="visible"
-                />
-
+                android:visibility="visible"/>
         </LinearLayout>
 
+    </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/button_voice_over_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:visibility="invisible"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/activity_edit_common_icon_cancel"/>
-
-        <ImageButton
-            android:id="@+id/button_voice_over_accept"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="4dp"
-            android:layout_marginRight="4dp"
-            android:visibility="invisible"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/activity_edit_common_icon_accept"/>
-
-        <ImageButton
-            android:id="@+id/button_record_voice_over"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical|center_horizontal"
-            android:background="@null"
-            app:srcCompat="@drawable/activity_edit_sound_voice_record_normal"
-            android:visibility="visible"
-            android:layout_above="@+id/button_voice_over_accept"
-            android:layout_centerHorizontal="true" />
-
-    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
 
 
-</LinearLayout>
+            <ImageButton
+                android:id="@+id/button_voice_over_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="4dp"
+                android:visibility="invisible"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/activity_edit_common_icon_cancel"/>
+
+            <ImageButton
+                android:id="@+id/button_voice_over_accept"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="4dp"
+                android:layout_marginRight="4dp"
+                android:visibility="invisible"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/activity_edit_common_icon_accept"/>
+
+            <ImageButton
+                android:id="@+id/button_record_voice_over"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal"
+                android:background="@null"
+                app:srcCompat="@drawable/activity_edit_sound_voice_record_normal"
+                android:visibility="visible"
+                android:layout_above="@+id/button_voice_over_accept"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
+
+    </android.support.design.widget.CoordinatorLayout>
