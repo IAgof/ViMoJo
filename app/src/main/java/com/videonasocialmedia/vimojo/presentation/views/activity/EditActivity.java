@@ -15,7 +15,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -50,9 +52,11 @@ import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlaye
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -88,6 +92,8 @@ public class EditActivity extends VimojoActivity implements EditorView,
     FloatingActionsMenu fabEditRoom;
     @Bind(R.id.edit_activity_drawer_layout)
     DrawerLayout drawerLayout;
+    @Bind(R.id.navigator_view)
+    NavigationView navigationView;
 
     private List<Video> videoList;
     private int currentVideoIndex = 0;
@@ -96,6 +102,8 @@ public class EditActivity extends VimojoActivity implements EditorView,
     private VideoTimeLineAdapter timeLineAdapter;
     private AlertDialog progressDialog;
     private int selectedVideoRemovePosition;
+    private SharedPreferences sharedPreferences;
+    private AlertDialog alertDialog;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -127,13 +135,16 @@ public class EditActivity extends VimojoActivity implements EditorView,
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         ActionBar ab = getSupportActionBar();
+        ab.setDisplayShowTitleEnabled(false);
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setHomeAsUpIndicator(R.drawable.ic_nav_menu);
 
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-        editPresenter = new EditPresenter(this, navigator.getCallback(), userEventTracker);
+        sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
+            Context.MODE_PRIVATE);
+        editPresenter = new EditPresenter(this, navigator.getCallback(), sharedPreferences, userEventTracker, VimojoApplication.getAppContext());
 
         videonaPlayer.setListener(this);
 
@@ -160,6 +171,11 @@ public class EditActivity extends VimojoActivity implements EditorView,
             if (bundle.containsKey(Constants.CURRENT_VIDEO_INDEX)) {
                 this.currentVideoIndex = getIntent().getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
             }
+        }
+        if (navigationView != null) {
+            setupDrawerContent(navigationView);
+            editPresenter.getPreferenceUserName();
+            editPresenter.getPreferenceEmail();
         }
         videonaPlayer.onShown(this);
         editPresenter.loadProject();
@@ -199,6 +215,34 @@ public class EditActivity extends VimojoActivity implements EditorView,
     private void setupActivityButtons() {
         tintEditButtons(R.color.button_color);
     }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+            new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem menuItem) {
+
+                    switch (menuItem.getItemId()) {
+                        case R.id.menu_navview_gallery:
+                            drawerLayout.closeDrawers();
+                            navigateTo(GalleryActivity.class);
+                            return false;
+                        case R.id.menu_navview_delete_clip:
+                            createDialog(R.id.menu_navview_delete_clip);
+                            return false;
+                        case R.id.menu_navview_mail:
+                            createDialog(R.id.menu_navview_mail);
+                            return false;
+                        case R.id.menu_navview_username:
+                            createDialog(R.id.menu_navview_username);
+                        default:
+                            return false;
+                    }
+                }
+            });
+    }
+
+
 
     private void createProgressDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -460,6 +504,25 @@ public class EditActivity extends VimojoActivity implements EditorView,
         videonaPlayer.resetPreview();
     }
 
+    @Override
+    public void showPreferenceUserName(String data) {
+        Menu menu = navigationView.getMenu();
+        menu.findItem(R.id.menu_navview_username).setTitle(data);
+
+    }
+
+    @Override
+    public void showPreferenceEmail(String emailPreference) {
+        Menu menu = navigationView.getMenu();
+        menu.findItem(R.id.menu_navview_mail).setTitle(emailPreference);
+    }
+
+    @Override
+    public void updateViewResetProject() {
+        initVideoListRecycler();
+        showMessage(R.string.add_videos_to_project);
+    }
+
 
     @Override
     public void newClipPlayed(int currentClipIndex) {
@@ -467,7 +530,6 @@ public class EditActivity extends VimojoActivity implements EditorView,
         timeLineAdapter.updateSelection(currentClipIndex);
         videoListRecyclerView.scrollToPosition(currentClipIndex);
     }
-
 
     @Override
     public void onBackPressed() {
@@ -483,5 +545,45 @@ public class EditActivity extends VimojoActivity implements EditorView,
             default:
                 return false;
         }
+    }
+
+    private void createDialog(final int resourceItemMenuId) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
+
+        if(resourceItemMenuId == R.id.menu_navview_delete_clip)
+            builder.setMessage(getResources().getString(R.string.dialog_message_clean_project));
+        if(resourceItemMenuId== R.id.menu_navview_mail)
+            builder.setMessage(getResources().getString(R.string.dialog_change_email));
+        if(resourceItemMenuId== R.id.menu_navview_username)
+            builder.setMessage(getResources().getString(R.string.dialog_change_user_name));
+
+
+        final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        drawerLayout.closeDrawers();
+                        if(resourceItemMenuId == R.id.menu_navview_delete_clip)
+                            editPresenter.resetProject();
+                        if(resourceItemMenuId == R.id.menu_navview_mail)
+                            navigateTo(SettingsActivity.class);
+                        if(resourceItemMenuId == R.id.menu_navview_username)
+                            navigateTo(SettingsActivity.class);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        drawerLayout.closeDrawers();
+                        break;
+                }
+            }
+        };
+
+        alertDialog=builder.setCancelable(true).
+            setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
+            .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
+
+
     }
 }

@@ -15,6 +15,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.ClearProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
@@ -27,6 +29,8 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
+import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -43,29 +47,39 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     /**
      * UseCases
      */
+    private Context context;
     private RemoveVideoFromProjectUseCase remoVideoFromProjectUseCase;
     private ReorderMediaItemUseCase reorderMediaItemUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
+    private ClearProjectUseCase  clearProjectUseCase;
+    private CreateDefaultProjectUseCase createDefaultProjectUseCase;
     /**
      * Editor View
      */
     private EditorView editorView;
     private List<Video> videoList;
+    private SharedPreferences sharedPreferences;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
+    private SharedPreferences.Editor preferencesEditor;
+    private ProfileRepository profileRepository;
 
     public EditPresenter(EditorView editorView,
-                         ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack,
-                         UserEventTracker userEventTracker) {
+                         ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack, SharedPreferences sharedPreferences,
+                         UserEventTracker userEventTracker, Context context) {
         this.editorView = editorView;
         this.projectModifiedCallBack = projectModifiedCallBack;
+        this.sharedPreferences=sharedPreferences;
+        this.context=context;
 
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         remoVideoFromProjectUseCase = new RemoveVideoFromProjectUseCase();
         reorderMediaItemUseCase = new ReorderMediaItemUseCase();
         getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
+        clearProjectUseCase = new ClearProjectUseCase();
+        createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
         this.userEventTracker = userEventTracker;
         this.currentProject = loadCurrentProject();
     }
@@ -173,4 +187,37 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         editorView.setMusic(music);
     }
 
+    public void getPreferenceUserName() {
+        String userNamePreference = sharedPreferences.getString(ConfigPreferences.USERNAME, null);
+        if(userNamePreference!=null && !userNamePreference.isEmpty())
+            editorView.showPreferenceUserName(userNamePreference);
+        else{
+            editorView.showPreferenceUserName(context.getResources().getString(R.string.username));
+        }
+    }
+
+    public void getPreferenceEmail() {
+        String emailPreference = sharedPreferences.getString(ConfigPreferences.EMAIL, null);
+        if(emailPreference!=null&& !emailPreference.isEmpty())
+            editorView.showPreferenceEmail(emailPreference);
+        else {
+            editorView.showPreferenceEmail(context.getResources().getString(R.string.emailPreference));
+        }
+
+    }
+
+    public void resetProject() {
+        String rootPath= sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH,"");
+        clearProjectDataFromSharedPreferences();
+        clearProjectUseCase.clearProject(currentProject);
+        profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, context);
+        createDefaultProjectUseCase.loadOrCreateProject(rootPath, profileRepository.getCurrentProfile());
+        editorView.updateViewResetProject();
+    }
+
+    private void clearProjectDataFromSharedPreferences() {
+        preferencesEditor = sharedPreferences.edit();
+        preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION, 0);
+        preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS, 0);
+    }
 }

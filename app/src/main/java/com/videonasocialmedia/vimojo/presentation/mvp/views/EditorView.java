@@ -40,4 +40,10 @@ public interface EditorView {
     void expandFabMenu();
 
     void resetPreview();
+
+    void showPreferenceUserName(String data);
+
+    void showPreferenceEmail(String emailPreference);
+
+    void updateViewResetProject();
 }
