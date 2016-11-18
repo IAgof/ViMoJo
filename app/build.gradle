@@ -55,8 +55,6 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 23
-        //versionCode 18 // 20161107
-        //versionName "0.4.16" // 20161107
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -67,7 +65,7 @@ android {
             applicationId "com.videonasocialmedia.vimojo"
             versionCode 18 // 20161107
             versionName "0.4.16" // 20161107
-            resValue "string", "app_out_of_date", "2036-01-01"
+            resValue "string", "app_out_of_date", "2017-01-01"
             resValue "string", "app_name", "Vimojo"
             ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
             ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
@@ -131,15 +129,14 @@ android {
             buildConfigField "String", "MIXPANEL_TOKEN", "\"6f46145c03bf5cf5104bb3536059d994\""
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            //manifestPlaceholders = [ appName: "Vimojo", fabricApiKey: "1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
         }
         debug {
-            // applicationIdSuffix ".debug" test this for support debug app and release in same device
+            applicationIdSuffix ".debug"
             ext.betaDistributionGroupAliases="videona-dev-team"
             ext.betaDistributionReleaseNotesFilePath="${project.rootDir}/RELEASE"
             buildConfigField "String", "MIXPANEL_TOKEN", "\"c6617213110cd2513dfc0ad97dbaee66\""
             ext.fabricApiKey = "eba78720f87307ca48dfa4200dd90914ff6653f2"
-            ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
+            ext.fabricApiSecret = "1636d8a8a8c633c8ba87f5a67ca26a5cc354c414b108ef565df202f07f393ae9"
             manifestPlaceholders = [appName: "Vimojo", fabricApiKey: "eba78720f87307ca48dfa4200dd90914ff6653f2"]
         }
     }
