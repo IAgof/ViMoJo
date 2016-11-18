@@ -18,7 +18,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 
 import java.util.ArrayList;

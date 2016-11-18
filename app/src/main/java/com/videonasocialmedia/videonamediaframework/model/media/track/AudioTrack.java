@@ -11,7 +11,7 @@
  */
 package com.videonasocialmedia.videonamediaframework.model.media.track;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.effects.Effect;
+import com.videonasocialmedia.videonamediaframework.model.media.effects.Effect;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Audio;

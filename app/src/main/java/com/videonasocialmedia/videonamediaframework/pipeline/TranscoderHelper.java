@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.export.utils;
+package com.videonasocialmedia.videonamediaframework.pipeline;
 
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -9,6 +9,7 @@ import com.videonasocialmedia.transcoder.audio_mixer.listener.OnAudioEffectListe
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
 import com.videonasocialmedia.transcoder.overlay.Image;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+
 import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
 

@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.model.entities.editor.effects;
+package com.videonasocialmedia.videonamediaframework.model.media.effects;
 
 /**
  * Created by Veronica Lago Fominaya on 25/11/2015.

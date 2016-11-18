@@ -10,7 +10,7 @@
  * Danny R. Fonseca Arboleda
  */
 
-package com.videonasocialmedia.vimojo.model.entities.editor.utils;
+package com.videonasocialmedia.videonamediaframework.model.media.utils;
 
 /**
  * Created by jca on 30/3/15.

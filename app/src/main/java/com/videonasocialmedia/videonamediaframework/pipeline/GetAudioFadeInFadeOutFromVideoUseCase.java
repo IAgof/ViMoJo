@@ -1,8 +1,7 @@
-package com.videonasocialmedia.vimojo.sound.domain;
+package com.videonasocialmedia.videonamediaframework.pipeline;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.audio_mixer.listener.OnAudioEffectListener;
-import com.videonasocialmedia.vimojo.export.utils.TranscoderHelper;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.File;
@@ -55,4 +54,11 @@ public class GetAudioFadeInFadeOutFromVideoUseCase implements OnAudioEffectListe
 
   }
 
+  /**
+   * Created by alvaro on 23/10/16.
+   */
+  public static interface OnGetAudioFadeInFadeOutFromVideoListener {
+      void onGetAudioFadeInFadeOutFromVideoSuccess(String audioFile);
+      void onGetAudioFadeInFadeOutFromVideoError(String message);
+  }
 }

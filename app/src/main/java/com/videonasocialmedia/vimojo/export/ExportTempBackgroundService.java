@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.pipeline.ApplyAudioFadeInFadeOutToVideo;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchExportTempBackgroundUseCase;
@@ -24,7 +25,7 @@ import java.util.List;
 /**
  * Created by alvaro on 5/09/16.
  */
-public class ExportTempBackgroundService extends Service implements OnApplyAudioFadeInFadeOutToVideoListener {
+public class ExportTempBackgroundService extends Service implements ApplyAudioFadeInFadeOutToVideo.OnApplyAudioFadeInFadeOutToVideoListener {
 
     public static final String ACTION = "com.videonasocialmedia.vimojo.android.service.receiver";
     public static final int TIME_FADE_IN_MS = 2000;

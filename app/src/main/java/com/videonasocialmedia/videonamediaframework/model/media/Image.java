@@ -15,11 +15,9 @@ import android.graphics.BitmapFactory;
 import android.media.MediaMetadata;
 
 import com.videonasocialmedia.videonamediaframework.model.media.transitions.Transition;
-import com.videonasocialmedia.vimojo.model.entities.licensing.License;
-import com.videonasocialmedia.vimojo.model.entities.social.User;
+import com.videonasocialmedia.videonamediaframework.model.licensing.License;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -44,9 +42,8 @@ public class Image extends Media {
      *
      * @see com.videonasocialmedia.videonamediaframework.model.media.Media
      */
-    public Image(String iconPath, String mediaPath, ArrayList<User> authors,
-                 License license) {
-        super(-1, iconPath, mediaPath, 0, Image.DEFAULT_IMAGE_DURATION, authors, license);
+    public Image(String iconPath, String mediaPath, License license) {
+        super(-1, iconPath, mediaPath, 0, Image.DEFAULT_IMAGE_DURATION, license);
     }
 
     /**
@@ -55,12 +52,12 @@ public class Image extends Media {
      * @param mediaPath
      */
     public Image(String mediaPath) {
-        super(-1, null, mediaPath, 0, Image.DEFAULT_IMAGE_DURATION, null, null);
+        super(-1, null, mediaPath, 0, Image.DEFAULT_IMAGE_DURATION, null);
         //check if the mediapath is an image.
 
         //get the iconpath
 
-        //resolve lincese by default.
+        //resolve license by default.
         this.setLicense(new License(License.CC40_NAME, License.CC40_TEXT));
 
     }
@@ -72,9 +69,9 @@ public class Image extends Media {
      */
     public Image(int identifier, String iconPath, String selectedIconPath, String title, String
             mediaPath, int duration, Transition opening, Transition ending,
-                 MediaMetadata metadata, ArrayList<User> authors, License license) {
+                 MediaMetadata metadata, License license) {
         super(identifier, iconPath, selectedIconPath, title, mediaPath, 0, duration,
-                opening, ending, metadata, authors, license);
+                opening, ending, metadata, license);
     }
 
     @Override

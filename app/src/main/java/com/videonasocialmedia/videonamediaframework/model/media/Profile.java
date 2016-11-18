@@ -9,18 +9,17 @@
  * Álvaro Martínez Marco
  * Danny R. Fonseca Arboleda
  */
-package com.videonasocialmedia.vimojo.model.entities.editor;
+package com.videonasocialmedia.videonamediaframework.model.media;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 
 /**
- * Project profile. Define some characteristics and limitations of the current video editing project
- * based on User subscription and options.
+ * Composition profile. Define some characteristics and limitations of the current video
+ * composition.
  */
 public class Profile {
-
     private static Profile INSTANCE;
 
     public void clear() {
@@ -30,7 +29,7 @@ public class Profile {
     }
 
     /**
-     * Resolution of the Video objects in a project
+     * Resolution of the Video objects in a composition
      */
     private VideoResolution videoResolution;
     private VideoResolution.Resolution resolution;

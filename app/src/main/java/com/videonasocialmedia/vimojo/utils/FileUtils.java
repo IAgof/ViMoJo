@@ -37,7 +37,7 @@ public class FileUtils {
       File[] files = directory.listFiles();
       if (files != null) { //some JVMs return null for empty dirs
         for (File f : files) {
-          if (!f.isDirectory() && f.getName().startsWith(Constants.INTERMEDIATE_FILE_PREFIX)) {
+          if (!f.isDirectory() && f.getName().startsWith(com.videonasocialmedia.videonamediaframework.model.Constants.INTERMEDIATE_FILE_PREFIX)) {
             f.delete();
           }
         }

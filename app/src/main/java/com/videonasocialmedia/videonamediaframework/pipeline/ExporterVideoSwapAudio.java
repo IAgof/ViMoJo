@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.export.domain;
+package com.videonasocialmedia.videonamediaframework.pipeline;
 
 /**
  * Created by alvaro on 25/10/16.

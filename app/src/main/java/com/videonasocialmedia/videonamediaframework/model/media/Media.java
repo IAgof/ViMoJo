@@ -14,8 +14,7 @@ package com.videonasocialmedia.videonamediaframework.model.media;
 import android.media.MediaMetadata;
 
 import com.videonasocialmedia.videonamediaframework.model.media.transitions.Transition;
-import com.videonasocialmedia.vimojo.model.entities.licensing.License;
-import com.videonasocialmedia.vimojo.model.entities.social.User;
+import com.videonasocialmedia.videonamediaframework.model.licensing.License;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 
 import java.util.ArrayList;
@@ -73,11 +72,6 @@ public abstract class Media extends MediaElement {
     protected MediaMetadata metadata;
 
     /**
-     * List with de authors id;
-     */
-    protected ArrayList<User> authors;
-
-    /**
      * List with de authors names. Used when at least one author is not a videona user.
      */
     protected ArrayList<String> authorsNames;
@@ -98,16 +92,14 @@ public abstract class Media extends MediaElement {
      * @param startTime - Media item initial time in milliseconds within the file referenced
      * @param duration      - Media item duration in milliseconds within the file referenced
      * @param license       - Legal stuff.
-     * @param authors       - List of authors of the media item.
      */
     protected Media(int identifier, String iconPath, String mediaPath, int startTime,
-                   int duration , ArrayList<User> authors, License license) {
+                   int duration , License license) {
         super(identifier, iconPath);
         this.mediaPath = mediaPath;
 //        this.source = new File(this.mediaPath);
         this.startTime = startTime;
         this.stopTime = duration;
-        this.authors = authors;
         this.license = license;
     }
 
@@ -126,12 +118,10 @@ public abstract class Media extends MediaElement {
      * @param ending           - reference to a transition before the media item in the track.
      * @param metadata         - File metadata.
      * @param license          - Legal stuff.
-     * @param authors          - List of authors of the media item.
      */
     protected Media(int identifier, String iconPath, String selectedIconPath, String title,
                     String mediaPath, int startTime, int duration, Transition opening,
-                    Transition ending, MediaMetadata metadata, ArrayList<User> authors,
-                    License license) {
+                    Transition ending, MediaMetadata metadata, License license) {
         super(identifier, iconPath, selectedIconPath);
         this.title = title;
         this.mediaPath = mediaPath;
@@ -141,7 +131,6 @@ public abstract class Media extends MediaElement {
         this.opening = opening;
         this.ending = ending;
         this.metadata = metadata;
-        this.authors = authors;
         this.license = license;
     }
 
@@ -184,7 +173,6 @@ public abstract class Media extends MediaElement {
         return stopTime - startTime;
     }
 
-
     public int getStopTime() {
         return stopTime;
     }
@@ -199,14 +187,6 @@ public abstract class Media extends MediaElement {
 
     public void setMetadata(MediaMetadata metadata) {
         this.metadata = metadata;
-    }
-
-    public ArrayList<User> getAuthors() {
-        return authors;
-    }
-
-    public void setAuthors(ArrayList<User> authors) {
-        this.authors = authors;
     }
 
     public ArrayList<String> getAuthorsNames() {

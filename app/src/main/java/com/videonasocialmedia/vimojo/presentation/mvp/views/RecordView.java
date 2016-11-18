@@ -12,9 +12,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
 
-import com.videonasocialmedia.vimojo.model.entities.editor.effects.Effect;
-
-import java.util.List;
+import com.videonasocialmedia.videonamediaframework.model.media.effects.Effect;
 
 public interface RecordView {
 

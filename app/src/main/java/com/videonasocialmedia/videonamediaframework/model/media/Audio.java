@@ -14,10 +14,7 @@ package com.videonasocialmedia.videonamediaframework.model.media;
 import android.media.MediaMetadata;
 
 import com.videonasocialmedia.videonamediaframework.model.media.transitions.Transition;
-import com.videonasocialmedia.vimojo.model.entities.licensing.License;
-import com.videonasocialmedia.vimojo.model.entities.social.User;
-
-import java.util.ArrayList;
+import com.videonasocialmedia.videonamediaframework.model.licensing.License;
 
 /**
  * An audio media item that represents a file  (or part of a file) that can be used in project audio
@@ -34,8 +31,9 @@ public class Audio extends Media {
      *
      * @see com.videonasocialmedia.videonamediaframework.model.media.Media
      */
-    public Audio(int identifier, String iconPath, String mediaPath, int fileStartTime, int duration, ArrayList<User> authors, License license) {
-        super(identifier, iconPath, mediaPath, fileStartTime, duration, authors, license);
+    public Audio(int identifier, String iconPath, String mediaPath, int fileStartTime, int duration,
+                 License license) {
+        super(identifier, iconPath, mediaPath, fileStartTime, duration, license);
     }
 
     /**
@@ -43,8 +41,11 @@ public class Audio extends Media {
      *
      * @see com.videonasocialmedia.videonamediaframework.model.media.Media
      */
-    public Audio(int identifier, String iconPath, String selectedIconPath, String title, String mediaPath, int fileStartTime, int duration, Transition opening, Transition ending, MediaMetadata metadata, ArrayList<User> authors, License license) {
-        super(identifier, iconPath, selectedIconPath, title, mediaPath, fileStartTime, duration, opening, ending, metadata, authors, license);
+    public Audio(int identifier, String iconPath, String selectedIconPath, String title,
+                 String mediaPath, int fileStartTime, int duration, Transition opening,
+                 Transition ending, MediaMetadata metadata, License license) {
+        super(identifier, iconPath, selectedIconPath, title, mediaPath, fileStartTime, duration,
+                opening, ending, metadata, license);
     }
 
     @Override

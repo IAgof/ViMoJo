@@ -1,11 +1,8 @@
 package com.videonasocialmedia.vimojo.model.sources;
 
-import com.videonasocialmedia.avrecorder.Filters;
-import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.model.entities.editor.effects.Effect;
-import com.videonasocialmedia.vimojo.model.entities.editor.effects.OverlayEffect;
-import com.videonasocialmedia.vimojo.model.entities.editor.effects.ShaderEffect;
-import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
+import com.videonasocialmedia.videonamediaframework.model.media.effects.Effect;
+import com.videonasocialmedia.videonamediaframework.model.media.effects.OverlayEffect;
+import com.videonasocialmedia.videonamediaframework.model.media.effects.ShaderEffect;
 
 import java.util.ArrayList;
 import java.util.List;

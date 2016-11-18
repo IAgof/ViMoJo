@@ -3,7 +3,7 @@ package com.videonasocialmedia.vimojo.text.domain;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
-import com.videonasocialmedia.vimojo.export.utils.TranscoderHelper;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;

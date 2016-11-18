@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 
 /**
  * Created by alvaro on 24/10/16.

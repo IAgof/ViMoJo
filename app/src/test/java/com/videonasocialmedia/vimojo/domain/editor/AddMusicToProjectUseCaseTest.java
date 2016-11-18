@@ -9,14 +9,14 @@
  */
 package com.videonasocialmedia.vimojo.domain.editor;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
@@ -85,7 +85,7 @@ public class AddMusicToProjectUseCaseTest {
 //    FIXME: cannot reach catch as method signature only allows Music type
 //    @Ignore @Test public void testAddMusicToTrackDoesntAddToProjectDefaultTrackIfNotMusic() throws Exception {
 //        class NoAudio extends Media {
-//            public NoAudio(String identifier, String iconPath, String medokiaPath, int startTime, int duration, ArrayList<User> authors, License license) {
+//            public NoAudio(String identifier, String iconPath, String medokiaPath, int startTime, int duration, License license) {
 //                super(identifier, iconPath, mediaPath, startTime, duration, authors, license);
 //            }
 //        }

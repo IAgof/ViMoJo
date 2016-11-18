@@ -9,7 +9,7 @@
  * Álvaro Martínez Marco
  * Danny R. Fonseca Arboleda
  */
-package com.videonasocialmedia.vimojo.model.entities.licensing;
+package com.videonasocialmedia.videonamediaframework.model.licensing;
 
 /**
  * First implementation of licensing for media used in videona. This need to be revised and probably

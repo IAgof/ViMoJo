@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.domain.effects;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.effects.Effect;
+import com.videonasocialmedia.videonamediaframework.model.media.effects.Effect;
 import com.videonasocialmedia.vimojo.model.sources.EffectProvider;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.export.domain;
+package com.videonasocialmedia.videonamediaframework.pipeline;
 
 import android.util.Log;
 
@@ -56,12 +56,12 @@ public class ExportSwapAudioToVideoUseCase implements ExporterVideoSwapAudio {
     ArrayList<String> audio = new ArrayList<>();
     audio.add(musicFile.getPath());
     double movieDuration = getMovieDuration(movie);
-    result = swappAudio(movie, newAudioFilePath, movieDuration);
+    result = swapAudio(movie, newAudioFilePath, movieDuration);
 
     return result;
   }
 
-  private Movie swappAudio(Movie movie, String audioPath, double movieDuration) throws IOException {
+  private Movie swapAudio(Movie movie, String audioPath, double movieDuration) throws IOException {
 
     Movie finalMovie = new Movie();
 
@@ -115,4 +115,11 @@ public class ExportSwapAudioToVideoUseCase implements ExporterVideoSwapAudio {
   }
 
 
+  /**
+   * Created by jca on 27/5/15.
+   */
+  public static interface OnExportEndedSwapAudioListener {
+      void onExportError(String error);
+      void onExportSuccess();
+  }
 }

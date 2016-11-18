@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.model.entities.editor.utils;
+package com.videonasocialmedia.videonamediaframework.model.media.utils;
 
 /**
  * Created by alvaro on 18/10/16.

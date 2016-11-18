@@ -41,7 +41,6 @@ public class Constants {
     final public static String PATH_APP_TEMP = PATH_APP + File.separator + FOLDER_NAME_VIMOJO_TEMP;
     final public static String PATH_APP_TEMP_INTERMEDIATE_FILES = PATH_APP_TEMP
             + File.separator + ".intermediate_files";
-    public static final String INTERMEDIATE_FILE_PREFIX = "temp_";
 
     final public static String VIDEO_TEMP_RECORD_FILENAME = "VID_temp.mp4";
 

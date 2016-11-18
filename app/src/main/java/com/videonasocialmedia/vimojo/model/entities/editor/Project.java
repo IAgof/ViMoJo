@@ -14,6 +14,7 @@ package com.videonasocialmedia.vimojo.model.entities.editor;
 import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.videonamediaframework.model.media.Image;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
@@ -82,7 +83,11 @@ public class Project {
 
     }
 
-    /**
+  public VMComposition getVMComposition() {
+    return vmComposition;
+  }
+
+  /**
      * @param rootPath
      */
     private void checkPathSetup(String rootPath) {
@@ -185,23 +190,14 @@ public class Project {
         return getMediaTrack().getItems().size();
     }
 
+  // TODO(jliarte): 18/11/16 get rid of this method?
     public Music getMusic() {
-        /**
-         * TODO(jliarte): review this method and matching use case
-         * @see com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase
-         */
-        Music result = null;
-        try {
-            result = (Music) getAudioTracks().get(0).getItems().get(0);
-        } catch (Exception exception) {
-            // exception retrieving music
-        }
-        return result;
+        return vmComposition.getMusic();
     }
 
+  // TODO(jliarte): 18/11/16 get rid of this method?
     public boolean hasMusic() {
-//        return isMusicOnProject;
-        return (getMusic() != null);
+      return vmComposition.hasMusic();
     }
 
     public void setMusicOnProject(boolean musicOnProject) {

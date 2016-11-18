@@ -65,7 +65,7 @@ public class Video extends Media {
      * @see com.videonasocialmedia.videonamediaframework.model.media.Media
      */
     public Video(String mediaPath) {
-        super(-1, null, mediaPath, 0, 0, null, null);
+        super(-1, null, mediaPath, 0, 0, null);
         try {
             retriever.setDataSource(mediaPath);
 
@@ -80,13 +80,13 @@ public class Video extends Media {
     }
 
     public Video(String mediaPath, int fileStartTime, int duration) {
-        super(-1, null, mediaPath, fileStartTime, duration, null, null);
+        super(-1, null, mediaPath, fileStartTime, duration, null);
         fileDuration = getFileDuration(mediaPath);
     }
 
     public Video(Video video) {
         super(-1, null, video.getMediaPath(), video.getStartTime(),
-                video.getDuration(), null, null);
+                video.getDuration(), null);
         fileDuration = video.getFileDuration();
         stopTime = video.getStopTime();
         isTextToVideoAdded = video.hasText();
@@ -115,8 +115,10 @@ public class Video extends Media {
     }
 
     public void setTempPath() {
+        // TODO(jliarte): 18/11/16 tmp path should not be a constant depending on Android SDK but
+        //                taken from Project path or VMComposition path and passed to constructor
         tempPath = Constants.PATH_APP_TEMP_INTERMEDIATE_FILES + File.separator +
-                Constants.INTERMEDIATE_FILE_PREFIX + identifier + "_"
+                com.videonasocialmedia.videonamediaframework.model.Constants.INTERMEDIATE_FILE_PREFIX + identifier + "_"
                 + System.currentTimeMillis() + ".mp4";
     }
 

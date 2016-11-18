@@ -1,6 +1,7 @@
 package com.videonasocialmedia.videonamediaframework.model;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 
@@ -59,5 +60,23 @@ public class VMComposition {
     for (Media video : mediaTrack.getItems()) {
       duration = duration + video.getDuration();
     }
+  }
+
+  public Music getMusic() {
+    /**
+     * TODO(jliarte): review this method and matching use case
+     * @see com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase
+     */
+    Music result = null;
+    try {
+      result = (Music) getAudioTracks().get(0).getItems().get(0);
+    } catch (Exception exception) {
+      // exception retrieving music, we'll return null
+    }
+    return result;
+  }
+
+  public boolean hasMusic() {
+    return (getMusic() != null);
   }
 }

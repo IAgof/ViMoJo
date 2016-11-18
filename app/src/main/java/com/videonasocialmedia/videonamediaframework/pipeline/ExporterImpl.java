@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.export.domain;
+package com.videonasocialmedia.videonamediaframework.pipeline;
 
 import android.os.SystemClock;
 import android.util.Log;
@@ -10,11 +10,14 @@ import com.videonasocialmedia.videonamediaframework.muxer.Appender;
 import com.videonasocialmedia.videonamediaframework.muxer.AudioTrimmer;
 import com.videonasocialmedia.videonamediaframework.muxer.Trimmer;
 import com.videonasocialmedia.videonamediaframework.muxer.VideoTrimmer;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.videonamediaframework.muxer.utils.Utils;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
@@ -34,56 +37,64 @@ import java.util.List;
  */
 public class ExporterImpl implements Exporter {
 
+    private static final int MAX_SECONDS_WAITING_FOR_TEMP_FILES = 600;
+    private static final String VIDEO_EXPORTED_TEMP_PATH = Constants.PATH_APP_TEMP
+            + File.separator + "export";
+    private static final String TEMP_TRANSCODE_PATH = Constants.PATH_APP_TEMP
+            + File.separator + "transcode";
     private static final String TAG = "Exporter implementation";
     private OnExportEndedListener onExportEndedListener;
-    private Project project;
+    private final VMComposition vMComposition;
     private Transcoder transcoder;
     private boolean trimCorrect = true;
     private boolean transcodeCorrect = true;
     private ArrayList<String> videoTranscoded;
     private int numFilesToTranscoder = 1;
     private int numFilesTranscoded = 0;
-    private String videoExportedTempPath = Constants.PATH_APP_TEMP + File.separator + "export";
-    private String tempTranscodeDirectory = Constants.PATH_APP_TEMP + File.separator + "transcode";
+    private Profile profile;
 
-    public ExporterImpl(Project project, OnExportEndedListener onExportEndedListener) {
+    public ExporterImpl(VMComposition vmComposition, Profile profile,
+                        OnExportEndedListener onExportEndedListener) {
         this.onExportEndedListener = onExportEndedListener;
-        this.project = project;
+        this.vMComposition = vmComposition;
+        this.profile = profile;
     }
 
     @Override
     public void export() {
+        waitForOutputFilesFinished();
 
-        LinkedList<Media> medias = getMediasFromProject();
+        LinkedList<Media> medias = getMediasFromComposition();
         ArrayList<String> videoTrimmedPaths = createVideoPathList(medias);
 
         Movie result = appendFiles(videoTrimmedPaths);
         if (result != null) {
             saveFinalVideo(result);
-            FileUtils.cleanDirectory(new File(videoExportedTempPath));
+            FileUtils.cleanDirectory(new File(VIDEO_EXPORTED_TEMP_PATH));
         }
     }
 
     private ArrayList<String> createVideoPathList(LinkedList<Media> medias) {
-        ArrayList <String> result= new ArrayList<>();
+        ArrayList <String> result = new ArrayList<>();
         for (Media media:medias) {
             Video video= (Video) media;
             if (video.isEdited()){
                 result.add(video.getTempPath());
-            }else{
+            } else {
                 result.add(video.getMediaPath());
             }
         }
         return result;
     }
 
-    private LinkedList<Media> getMediasFromProject() {
-        LinkedList<Media> medias = project.getMediaTrack().getItems();
+    private LinkedList<Media> getMediasFromComposition() {
+        LinkedList<Media> medias = vMComposition.getMediaTrack().getItems();
         return medias;
     }
 
+    // TODO(jliarte): 17/11/16 check if this code is still relevant
     private ArrayList<String> trimVideos(LinkedList<Media> medias) {
-        final File tempDir = new File(videoExportedTempPath);
+        final File tempDir = new File(VIDEO_EXPORTED_TEMP_PATH);
         if (!tempDir.exists())
             tempDir.mkdirs();
         ArrayList<String> videoTrimmedPaths = new ArrayList<>();
@@ -92,16 +103,17 @@ public class ExporterImpl implements Exporter {
         int index = 0;
         do {
             try {
-                String videoTrimmedTempPath = videoExportedTempPath + File.separator + "video_trimmed_" +
-                        index + ".mp4";
+                String videoTrimmedTempPath = VIDEO_EXPORTED_TEMP_PATH
+                        + File.separator + "video_trimmed_" + index + ".mp4";
                 int startTime = medias.get(index).getStartTime();
                 int endTime = medias.get(index).getStopTime();
-                int editedFileDuration = medias.get(index).getStopTime() - medias.get(index).getStartTime();
+                int editedFileDuration = medias.get(index).getStopTime()
+                        - medias.get(index).getStartTime();
                 int originalFileDuration = ( (Video) medias.get(index) ).getFileDuration();
                 if (editedFileDuration < originalFileDuration) {
                     trimmer = new VideoTrimmer();
                     movie = trimmer.trim(medias.get(index).getMediaPath(), startTime, endTime);
-                    com.videonasocialmedia.videonamediaframework.muxer.utils.Utils.createFile(movie, videoTrimmedTempPath);
+                    Utils.createFile(movie, videoTrimmedTempPath);
                     videoTrimmedPaths.add(videoTrimmedTempPath);
                 } else {
                     videoTrimmedPaths.add(medias.get(index).getMediaPath());
@@ -119,12 +131,14 @@ public class ExporterImpl implements Exporter {
 
     private Movie appendFiles(ArrayList<String> videoTranscoded) {
         Movie result;
-        if (project.hasMusic()) {
+        if (vMComposition.hasMusic()) {
             Movie merge = appendVideos(videoTranscoded, false);
 
-            Music music = (Music) project.getAudioTracks().get(0).getItems().getFirst();
+//            Music music = (Music) project.getAudioTracks().get(0).getItems().getFirst();
+            Music music = vMComposition.getMusic();
             // TODO(alvaro) 060616 check if music is downloaded in a repository, not here.
-            //File musicFile = Utils.getMusicFileByName(music.getMusicTitle(), music.getMusicResourceId());
+//            File musicFile = Utils.getMusicFileByName(music.getMusicTitle(),
+//                    music.getMusicResourceId());
             File musicFile = new File(music.getMediaPath());
             if (musicFile == null) {
                 onExportEndedListener.onExportError("Music not found");
@@ -142,8 +156,9 @@ public class ExporterImpl implements Exporter {
     private void saveFinalVideo(Movie result) {
         try {
             long start = System.currentTimeMillis();
-            String pathVideoEdited = Constants.PATH_APP_EDITED + File.separator + "V_EDIT_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".mp4";
-            com.videonasocialmedia.videonamediaframework.muxer.utils.Utils.createFile(result, pathVideoEdited);
+            String pathVideoEdited = Constants.PATH_APP_EDITED + File.separator + "V_EDIT_"
+                    + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".mp4";
+            Utils.createFile(result, pathVideoEdited);
             long spent = System.currentTimeMillis() - start;
             Log.d("WRITING VIDEO FILE", "time spent in millis: " + spent);
             onExportEndedListener.onExportSuccess(new Video(pathVideoEdited));
@@ -205,6 +220,7 @@ public class ExporterImpl implements Exporter {
         return movie;
     }
 
+    // TODO(jliarte): 17/11/16 check if this code is still relevant
     private void transcode(ArrayList<String> videoPaths) {
         final long startTime = SystemClock.uptimeMillis();
         videoTranscoded = new ArrayList<>();
@@ -254,19 +270,40 @@ public class ExporterImpl implements Exporter {
     }
 
     private Transcoder createTranscoder() {
-        VideoResolution.Resolution resolution = project.getProfile().getResolution();
-        final File tempDir = new File(tempTranscodeDirectory);
+        VideoResolution.Resolution resolution =  profile.getResolution();
+        final File tempDir = new File(TEMP_TRANSCODE_PATH);
         if (!tempDir.exists())
             tempDir.mkdirs();
         switch (resolution) {
             case HD720:
-                return new Transcoder(Transcoder.Resolution.HD720, tempTranscodeDirectory);
+                return new Transcoder(Transcoder.Resolution.HD720, TEMP_TRANSCODE_PATH);
             case HD1080:
-                return new Transcoder(Transcoder.Resolution.HD1080, tempTranscodeDirectory);
+                return new Transcoder(Transcoder.Resolution.HD1080, TEMP_TRANSCODE_PATH);
             case HD4K:
-                return new Transcoder(Transcoder.Resolution.HD4K, tempTranscodeDirectory);
+                return new Transcoder(Transcoder.Resolution.HD4K, TEMP_TRANSCODE_PATH);
             default:
-                return new Transcoder(Transcoder.Resolution.HD720, tempTranscodeDirectory);
+                return new Transcoder(Transcoder.Resolution.HD720, TEMP_TRANSCODE_PATH);
+        }
+    }
+
+    private void waitForOutputFilesFinished() {
+        LinkedList<Media> medias = getMediasFromComposition();
+        int countWaiting = 0;
+        for (Media media : medias) {
+            Video video = (Video) media;
+            if (video.isEdited()) {
+                while (!video.outputVideoIsFinished()) {
+                    try {
+                        if (countWaiting > MAX_SECONDS_WAITING_FOR_TEMP_FILES) {
+                            break;
+                        }
+                        countWaiting++;
+                        Thread.sleep(1000);
+                    } catch (InterruptedException exception) {
+                        exception.printStackTrace();
+                    }
+                }
+            }
         }
     }
 }

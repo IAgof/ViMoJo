@@ -5,7 +5,7 @@
  * All rights reserved
  */
 
-package com.videonasocialmedia.vimojo.model.entities.editor.utils;
+package com.videonasocialmedia.videonamediaframework.model.media.utils;
 
 public class VideoQuality {
 

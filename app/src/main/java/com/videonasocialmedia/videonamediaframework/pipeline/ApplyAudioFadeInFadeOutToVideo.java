@@ -1,10 +1,6 @@
-package com.videonasocialmedia.vimojo.export;
+package com.videonasocialmedia.videonamediaframework.pipeline;
 
-import com.videonasocialmedia.vimojo.export.domain.ExportSwapAudioToVideoUseCase;
-import com.videonasocialmedia.vimojo.export.domain.OnExportEndedSwapAudioListener;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.sound.domain.GetAudioFadeInFadeOutFromVideoUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.OnGetAudioFadeInFadeOutFromVideoListener;
 
 import java.io.IOException;
 
@@ -12,8 +8,8 @@ import java.io.IOException;
  * Created by alvaro on 23/10/16.
  */
 
-public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedSwapAudioListener,
-    OnGetAudioFadeInFadeOutFromVideoListener {
+public class ApplyAudioFadeInFadeOutToVideo implements ExportSwapAudioToVideoUseCase.OnExportEndedSwapAudioListener,
+        GetAudioFadeInFadeOutFromVideoUseCase.OnGetAudioFadeInFadeOutFromVideoListener {
 
   private GetAudioFadeInFadeOutFromVideoUseCase getAudioFadeInFadeOutFromVideoUseCase;
   private ExportSwapAudioToVideoUseCase exportSwapAudioToVideoUseCase;
@@ -22,7 +18,6 @@ public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedSwapAudioLis
   private String tempPreviousPath;
 
   public ApplyAudioFadeInFadeOutToVideo(OnApplyAudioFadeInFadeOutToVideoListener listener) {
-
     getAudioFadeInFadeOutFromVideoUseCase = new GetAudioFadeInFadeOutFromVideoUseCase(this);
     exportSwapAudioToVideoUseCase = new ExportSwapAudioToVideoUseCase(this);
     this.listener = listener;
@@ -30,13 +25,11 @@ public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedSwapAudioLis
 
   public void applyAudioFadeToVideo(Video videoToEdit, int timeFadeInMs, int timeFadeOutMs)
       throws IOException {
-
     this.videoToEdit = videoToEdit;
     tempPreviousPath = videoToEdit.getTempPath();
     getAudioFadeInFadeOutFromVideoUseCase.getAudioFadeInFadeOutFromVideo(videoToEdit.getTempPath(),
         timeFadeInMs, timeFadeOutMs);
   }
-
 
   @Override
   public void onExportError(String error) {
@@ -59,5 +52,15 @@ public class ApplyAudioFadeInFadeOutToVideo implements OnExportEndedSwapAudioLis
   public void onGetAudioFadeInFadeOutFromVideoError(String message) {
     listener.OnGetAudioFadeInFadeOutError(message, videoToEdit);
 
+  }
+
+  /**
+   * Created by alvaro on 25/10/16.
+   */
+  public static interface OnApplyAudioFadeInFadeOutToVideoListener {
+
+    void OnGetAudioFadeInFadeOutError(String message, Video video);
+
+    void OnGetAudioFadeInFadeOutSuccess(Video video);
   }
 }

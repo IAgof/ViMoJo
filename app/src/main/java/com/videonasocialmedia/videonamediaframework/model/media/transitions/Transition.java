@@ -13,8 +13,7 @@ package com.videonasocialmedia.videonamediaframework.model.media.transitions;
 
 import com.videonasocialmedia.videonamediaframework.model.media.MediaElement;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
-import com.videonasocialmedia.vimojo.model.entities.licensing.License;
-import com.videonasocialmedia.vimojo.model.entities.social.User;
+import com.videonasocialmedia.videonamediaframework.model.licensing.License;
 
 /**
  * Transitions are technically effects for video purpose. However in this model transition are handle
@@ -56,11 +55,6 @@ public abstract class Transition extends MediaElement {
     protected String authorName;
 
     /**
-     * Effect author instance if it is a videona user, can be null if it is not.
-     */
-    protected User author;
-
-    /**
      * License os the effect.
      */
     protected License license;
@@ -80,17 +74,15 @@ public abstract class Transition extends MediaElement {
      *                        it must be added a void media (blackout 1 sec) during assembly
      *                        proccess.
      * @param duration        - transition elapsed time.
-     * @param author          - Transition owner's user reference.
      * @param license         - Owner's choice licensing for the transition.
      */
     public Transition(int identifier, String iconPath, String type, Media afterMediaItem,
-                      Media beforeMediaItem, long duration, User author, License license) {
+                      Media beforeMediaItem, long duration, License license) {
         super(identifier, iconPath);
         this.type = type;
         this.afterMediaItem = afterMediaItem;
         this.beforeMediaItem = beforeMediaItem;
         this.duration = duration;
-        this.author = author;
         this.license = license;
     }
 
@@ -108,18 +100,15 @@ public abstract class Transition extends MediaElement {
      *                         it must be added a void media (blackout 1 sec) during assembly
      *                         proccess.
      * @param duration         - transition elapsed time.
-     * @param author           - Transition owner's user reference.
      * @param license          - Owner's choice licensing for the transition.
      */
     public Transition(int identifier, String iconPath, String selectedIconPath, String type,
-                      Media afterMediaItem, Media beforeMediaItem, long duration, User author,
-                      License license) {
+                      Media afterMediaItem, Media beforeMediaItem, long duration, License license) {
         super(identifier, iconPath, selectedIconPath);
         this.type = type;
         this.afterMediaItem = afterMediaItem;
         this.beforeMediaItem = beforeMediaItem;
         this.duration = duration;
-        this.author = author;
         this.license = license;
     }
 
@@ -179,14 +168,6 @@ public abstract class Transition extends MediaElement {
 
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(User author) {
-        this.author = author;
     }
 
     public Media getAfterMediaItem() {

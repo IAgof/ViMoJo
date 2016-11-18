@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.model.entities.editor.effects;
+package com.videonasocialmedia.videonamediaframework.model.media.effects;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

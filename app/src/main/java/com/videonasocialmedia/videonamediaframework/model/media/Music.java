@@ -23,7 +23,7 @@ public class Music extends Audio {
 
     public Music(int iconResourceId, String musicTitle, int musicResourceId, int colorResourceId,
                  String author, String durationMusic) {
-        super(musicResourceId, "", "", musicTitle, "", 0, 0, null, null, null, null, null);
+        super(musicResourceId, "", "", musicTitle, "", 0, 0, null, null, null, null);
 
         this.musicResourceId = musicResourceId;
         this.colorResourceId = colorResourceId;
@@ -35,7 +35,7 @@ public class Music extends Audio {
     }
 
     public Music(int iconResourceId, String musicTitle, int musicResourceId, String musicPath, int colorResourceId, String author, String durationMusic) {
-        super(musicResourceId, "", "", musicTitle, musicPath, 0, 0, null, null, null, null, null);
+        super(musicResourceId, "", "", musicTitle, musicPath, 0, 0, null, null, null, null);
         this.musicResourceId = musicResourceId;
         this.colorResourceId = colorResourceId;
         this.musicTitle = musicTitle;
@@ -45,11 +45,11 @@ public class Music extends Audio {
     }
 
     public Music(String musicPath){
-        super(0,"","", "", musicPath, 0, 0, null, null, null, null, null);
+        super(0,"","", "", musicPath, 0, 0, null, null, null, null);
     }
 
     public Music(String musicPath, float volume){
-        super(0,"","", "", musicPath, 0, 0, null, null, null, null, null);
+        super(0,"","", "", musicPath, 0, 0, null, null, null, null);
         this.volume = volume;
     }
 

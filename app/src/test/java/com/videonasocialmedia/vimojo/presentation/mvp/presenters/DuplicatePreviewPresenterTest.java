@@ -4,13 +4,13 @@ import android.media.MediaMetadataRetriever;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
 import com.videonasocialmedia.vimojo.test.shadows.MediaMetadataRetrieverShadow;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;

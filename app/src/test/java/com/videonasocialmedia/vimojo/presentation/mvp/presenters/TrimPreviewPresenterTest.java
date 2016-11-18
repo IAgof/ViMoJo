@@ -1,11 +1,11 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
