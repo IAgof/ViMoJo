@@ -18,7 +18,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.ItemTouchHelperViewHolder;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.MovableItemsAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
-import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -112,7 +111,7 @@ public class VideoTimeLineAdapter extends RecyclerView.Adapter<VideoTimeLineAdap
         drawVideoThumbnail(holder.thumb, current);
         holder.thumb.setSelected(position == selectedVideoPosition);
         holder.thumbOrder.setText(String.valueOf(position + 1));
-        String duration = TimeUtils.toFormattedTimeHoursMinutesSecond(current.getDuration());
+        String duration = com.videonasocialmedia.videonamediaframework.utils.TimeUtils.toFormattedTimeHoursMinutesSecond(current.getDuration());
         holder.textDurationClip.setText(duration);
         if (position == selectedVideoPosition) {
             holder.showDeleteIcon();

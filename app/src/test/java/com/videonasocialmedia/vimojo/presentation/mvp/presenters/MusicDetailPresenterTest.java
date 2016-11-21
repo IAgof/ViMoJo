@@ -9,7 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -31,7 +31,7 @@ import static org.hamcrest.CoreMatchers.*;
 @RunWith(MockitoJUnitRunner.class)
 public class MusicDetailPresenterTest {
     @Mock private MusicDetailView musicDetailView;
-    @Mock private VideonaPlayerView playerView;
+    @Mock private VideonaPlayer playerView;
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
 

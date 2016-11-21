@@ -30,8 +30,7 @@ import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -46,7 +45,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class VideoTrimActivity extends VimojoActivity implements TrimView,
-        RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayerListener {
+        RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayerExo.VideonaPlayerListener {
 
     public static final float MS_CORRECTION_FACTOR = 1000f;
     public static final float MIN_TRIM_OFFSET = 0.35f;

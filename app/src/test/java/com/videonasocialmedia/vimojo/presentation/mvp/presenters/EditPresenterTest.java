@@ -12,7 +12,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -37,7 +37,7 @@ public class EditPresenterTest {
     @Mock GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     @InjectMocks private EditPresenter editPresenter;
     @Mock private EditorView mockedEditorView;
-    @Mock private VideonaPlayerView mockedVideonaPlayerView;
+    @Mock private VideonaPlayer mockedVideonaPlayer;
     @Mock private MixpanelAPI mockedMixpanelApi;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private ToolbarNavigator.ProjectModifiedCallBack mockedProjectModifiedCallback;

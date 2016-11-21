@@ -6,11 +6,11 @@ import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.format.VideonaFormat;
 import com.videonasocialmedia.transcoder.overlay.Image;
+import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
-import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
+import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -116,7 +116,7 @@ public class ModifyVideoDurationUseCaseTest {
   private Video getVideoWithText() {
     Video video = new Video("media/path");
     video.setClipText("text");
-    video.setClipTextPosition(VideoEditTextActivity.TextPosition.CENTER.name());
+    video.setClipTextPosition(TextEffect.TextPosition.CENTER.name());
     // TODO(jliarte): 18/10/16 fix these methods
     video.setTextToVideoAdded(true);
     return video;

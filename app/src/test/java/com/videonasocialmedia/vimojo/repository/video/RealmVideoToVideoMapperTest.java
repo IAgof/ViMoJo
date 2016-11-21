@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.repository.video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
+import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +29,7 @@ public class RealmVideoToVideoMapperTest {
   @Test
   public void testMapReturnsVideoWithFieldsMapped() {
     RealmVideo realmVideo = new RealmVideo("randomUUID", 0, "media/path", "temp/path", true, "text",
-            VideoEditTextActivity.TextPosition.CENTER.name(), true, true, 2, 10);
+            TextEffect.TextPosition.CENTER.name(), true, true, 2, 10);
     RealmVideoToVideoMapper mapper = new RealmVideoToVideoMapper();
 
     Video video = mapper.map(realmVideo);
@@ -40,7 +40,7 @@ public class RealmVideoToVideoMapperTest {
     assertThat(video.getTempPath(), is("temp/path"));
     assertThat(video.outputVideoIsFinished(), is(true));
     assertThat(video.getClipText(), is("text"));
-    assertThat(video.getClipTextPosition(), is(VideoEditTextActivity.TextPosition.CENTER.name()));
+    assertThat(video.getClipTextPosition(), is(TextEffect.TextPosition.CENTER.name()));
     assertThat(video.isTextToVideoAdded(), is(true));
     assertThat(video.isTrimmedVideo(), is(true));
     assertThat(video.getStartTime(), is(2));

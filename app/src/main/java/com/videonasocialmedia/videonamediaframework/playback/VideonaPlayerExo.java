@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.customviews;
+package com.videonasocialmedia.videonamediaframework.playback;
 
 import com.google.android.exoplayer.CodecCounters;
 import com.google.android.exoplayer.DummyTrackRenderer;
@@ -48,14 +48,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
 
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
-import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
-import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.TimeUtils;
+import com.videonasocialmedia.videonamediaframework.playback.customviews.AspectRatioVideoView;
+// TODO(jliarte): 21/11/16 move layout to SDK lib, thus R should be used from there
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,7 +63,7 @@ import java.util.List;
 /**
  * Created by jliarte on 25/08/16.
  */
-public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerView,
+public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayer,
         SeekBar.OnSeekBarChangeListener, ExoPlayer.Listener, ExtractorSampleSource.EventListener,
         MediaCodecAudioTrackRenderer.EventListener, MediaCodecVideoTrackRenderer.EventListener {
   private static final String TAG = "VideonaPlayerExo";
@@ -81,6 +79,10 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
   private static final int RENDERER_BUILDING_STATE_IDLE = 1;
   private static final int RENDERER_BUILDING_STATE_BUILDING = 2;
   private static final int RENDERER_BUILDING_STATE_BUILT = 3;
+  // TODO(jliarte): 21/11/16 make them class fields and let user initialize them? or maybe get
+  //                them from the composition resolution?
+  public static final int DEFAULT_CANVAS_WIDTH = 1280;
+  public static final int DEFAULT_CANVAS_HEIGHT = 720;
   private final TextToDrawable drawableGenerator = new TextToDrawable();
 
   @Bind(R.id.video_editor_preview)
@@ -97,7 +99,6 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
   TextView textTimeProjectSeekbar;
   @Bind(R.id.video_view_seekbar_layout)
   LinearLayout seekBarLayout;
-
 
   private final View videonaPlayerView;
   private VideonaPlayerListener videonaPlayerListener;
@@ -152,7 +153,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
    * Constructor with attributes.
    *
    * @param context view context
-   * @param attrs view attributes
+   * @param attrs   view attributes
    */
   public VideonaPlayerExo(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -166,8 +167,8 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
   /**
    * Contructor with attributes and style.
    *
-   * @param context view context
-   * @param attrs view attributes
+   * @param context  view context
+   * @param attrs    view attributes
    * @param defStyle view style
    */
   public VideonaPlayerExo(Context context, AttributeSet attrs, int defStyle) {
@@ -254,7 +255,9 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     return seekBar.getProgress() >= (int) clipTimesRanges.get(currentClipIndex()).getUpper();
   }
 
-  /*** VideonaPlayerView methods. ***/
+  /***
+   * VideonaPlayer methods.
+   ***/
 
   @Override
   public void onShown(Context context) {
@@ -379,7 +382,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
   private void updateTextProjectDuration(int totalProjectDuration) {
     textTimeProjectSeekbar.setText(
-            TimeUtils.toFormattedTimeHoursMinutesSecond(totalProjectDuration));
+            com.videonasocialmedia.videonamediaframework.utils.TimeUtils.toFormattedTimeHoursMinutesSecond(totalProjectDuration));
   }
 
   @Override
@@ -492,7 +495,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
   @Override
   public void setSeekBarProgress(int progress) {
     seekBar.setProgress(progress);
-    textTimeCurrentSeekbar.setText(TimeUtils.toFormattedTimeHoursMinutesSecond(progress));
+    textTimeCurrentSeekbar.setText(com.videonasocialmedia.videonamediaframework.utils.TimeUtils.toFormattedTimeHoursMinutesSecond(progress));
   }
 
   @Override
@@ -521,16 +524,18 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
   /**
    * Sets text and text position for video preview.
    *
-   * @param text the text to render
+   * @param text         the text to render
    * @param textPosition the text position
    */
   public void setImageText(String text, String textPosition) {
     Drawable textDrawable = drawableGenerator.createDrawableWithTextAndPosition(
-            text, textPosition, Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+            text, textPosition, DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT);
     imageTextPreview.setImageDrawable(textDrawable);
   }
 
-  /*** End of VideonaPlayerView methods. ***/
+  /***
+   * End of VideonaPlayer methods.
+   ***/
 
   @OnClick(R.id.button_editor_play_pause)
   public void onClickPlayPauseButton() {
@@ -559,7 +564,9 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     return eventProcessed;
   }
 
-  /*** Seekbar listener methods. ***/
+  /***
+   * Seekbar listener methods.
+   ***/
 
   @Override
   public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
@@ -604,7 +611,9 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
   }
 
-  /*** end of Seekbar listener methods. ***/
+  /***
+   * end of Seekbar listener methods.
+   ***/
 
   private void playNextClip() {
     currentClipIndex++;
@@ -629,7 +638,9 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     }
   }
 
-  /*** exo player listener. ***/
+  /***
+   * exo player listener.
+   ***/
 
   @Override
   public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -704,6 +715,7 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
   /**
    * Sets video preview mute status.
+   *
    * @param shouldMute true if preview should mute
    */
   public void muteVideo(boolean shouldMute) {
@@ -785,7 +797,9 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
     }
   }
 
-  /*** Renderer Event Listener. ***/
+  /***
+   * Renderer Event Listener.
+   ***/
 
   @Override
   public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees,
@@ -794,7 +808,9 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
 
   /** end of Renderer Event Listener. **/
 
-  /*** MediaCodecVideoTrackRenderer EventListener. ***/
+  /***
+   * MediaCodecVideoTrackRenderer EventListener.
+   ***/
 
   @Override
   public void onDrawnToSurface(Surface surface) {
@@ -812,7 +828,9 @@ public class VideonaPlayerExo extends RelativeLayout implements VideonaPlayerVie
   }
   /** End of MediaCodecVideoTrackRenderer EventListener. **/
 
-  /*** MediaCodecAudioTrackRenderer.EventListener. ***/
+  /***
+   * MediaCodecAudioTrackRenderer.EventListener.
+   ***/
   @Override
   public void onAudioTrackUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs) {
 

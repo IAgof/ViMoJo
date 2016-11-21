@@ -36,8 +36,7 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePreviewPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -49,7 +48,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class VideoDuplicateActivity extends VimojoActivity implements DuplicateView,
-        VideonaPlayerListener {
+        VideonaPlayerExo.VideonaPlayerListener {
 
     private static final String DUPLICATE_VIDEO_POSITION = "duplicate_video_position";
     @Bind(R.id.image_thumb_duplicate_video_left)

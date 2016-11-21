@@ -8,7 +8,7 @@ import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
+import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 
 import java.io.IOException;
 

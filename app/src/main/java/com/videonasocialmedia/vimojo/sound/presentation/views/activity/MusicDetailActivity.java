@@ -31,8 +31,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 
@@ -48,7 +47,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class MusicDetailActivity extends VimojoActivity implements MusicDetailView, VideonaPlayerListener {
+public class MusicDetailActivity extends VimojoActivity implements MusicDetailView, VideonaPlayerExo.VideonaPlayerListener {
 
     private static final String MUSIC_DETAIL_PROJECT_POSITION = "music_detail_project_position";
 

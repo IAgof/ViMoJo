@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.text.util;
+package com.videonasocialmedia.videonamediaframework.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,8 +10,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 
+import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 
 /**
  * Created by alvaro on 7/09/16.
@@ -27,7 +27,7 @@ public class TextToDrawable {
         TextPaint textPaint = null;
         Context appContext =  VimojoApplication.getAppContext();
         Typeface typeFont;
-        VideoEditTextActivity.TextPosition position = getTypePositionFromString(positionText);
+        TextEffect.TextPosition position = getTypePositionFromString(positionText);
         switch (position){
             case TOP:
                 typeFont= Typeface.createFromAsset(appContext.getAssets(),"fonts/Roboto-Bold.ttf");
@@ -37,7 +37,6 @@ public class TextToDrawable {
                 typeFont= Typeface.createFromAsset(appContext.getAssets(),"fonts/Roboto-Bold.ttf");
                 textPaint =createPaint(Paint.Align.CENTER, typeFont);
                 break;
-
             case BOTTOM:
                 typeFont= Typeface.createFromAsset(appContext.getAssets(),"fonts/Roboto-Light.ttf");
                 textPaint= createPaint(Paint.Align.LEFT, typeFont);
@@ -50,21 +49,21 @@ public class TextToDrawable {
         return drawable;
     }
 
-    public static VideoEditTextActivity.TextPosition getTypePositionFromString(String position) {
-        if(position.compareTo(VideoEditTextActivity.TextPosition.BOTTOM.name()) == 0){
-            return VideoEditTextActivity.TextPosition.BOTTOM;
+    public static TextEffect.TextPosition getTypePositionFromString(String position) {
+        if(position.compareTo(TextEffect.TextPosition.BOTTOM.name()) == 0){
+            return TextEffect.TextPosition.BOTTOM;
         }
-        if(position.compareTo(VideoEditTextActivity.TextPosition.CENTER.name()) == 0){
-            return VideoEditTextActivity.TextPosition.CENTER;
+        if(position.compareTo(TextEffect.TextPosition.CENTER.name()) == 0){
+            return TextEffect.TextPosition.CENTER;
         }
-        if(position.compareTo(VideoEditTextActivity.TextPosition.TOP.name()) == 0){
-            return VideoEditTextActivity.TextPosition.TOP;
+        if(position.compareTo(TextEffect.TextPosition.TOP.name()) == 0){
+            return TextEffect.TextPosition.TOP;
         }
 
-        return VideoEditTextActivity.TextPosition.CENTER;
+        return TextEffect.TextPosition.CENTER;
     }
 
-    private static Bitmap createCanvas(String text, int width, int height, TextPaint textPaint, VideoEditTextActivity.TextPosition position) {
+    private static Bitmap createCanvas(String text, int width, int height, TextPaint textPaint, TextEffect.TextPosition position) {
 
         final Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         bmp.eraseColor(Color.TRANSPARENT);
@@ -104,7 +103,7 @@ public class TextToDrawable {
         return textPaint;
     }
 
-    private static void drawTextLines(String text, TextPaint textPaint, Canvas canvas, int xPos, int yPos, VideoEditTextActivity.TextPosition position) {
+    private static void drawTextLines(String text, TextPaint textPaint, Canvas canvas, int xPos, int yPos, TextEffect.TextPosition position) {
         if (text == null) return;
         int numLineTotal = text.split("\n").length;
 
@@ -118,7 +117,7 @@ public class TextToDrawable {
                 if (numLineTotal<2){
                     drawNumMaxLine(text, textPaint, canvas, xPos, yPos);
 
-                }else {
+                } else {
                     yPos= (int) (yPos-SIZE_FONT);
                     drawNumMaxLine(text, textPaint, canvas, xPos, yPos);
                 }
@@ -129,15 +128,12 @@ public class TextToDrawable {
                 if (numLineTotal<2){
                     drawNumMaxLine(text, textPaint, canvas, xPos, yPos);
 
-                }else {
+                } else {
                     yPos= (int) (yPos-SIZE_FONT);
                     drawNumMaxLine(text, textPaint, canvas, xPos, yPos);
                 }
                 break;
-
         }
-
-
     }
 
     private static void drawNumMaxLine(String text, TextPaint textPaint, Canvas canvas, int xPos, int yPos) {

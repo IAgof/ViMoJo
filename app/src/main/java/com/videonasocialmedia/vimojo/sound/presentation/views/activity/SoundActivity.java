@@ -18,8 +18,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
@@ -36,7 +35,7 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
  * Created by ruth on 4/10/16.
  */
 
-public class SoundActivity extends VimojoActivity implements VideonaPlayerListener, SoundView {
+public class SoundActivity extends VimojoActivity implements VideonaPlayerExo.VideonaPlayerListener, SoundView {
 
     private static final String SOUND_ACTIVITY_PROJECT_POSITION = "sound_activity_project_position";
 

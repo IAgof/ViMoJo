@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.customviews;
+package com.videonasocialmedia.videonamediaframework.playback;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;

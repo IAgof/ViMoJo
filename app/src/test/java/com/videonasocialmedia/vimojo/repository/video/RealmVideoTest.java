@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.repository.video;
 
-import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
+import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
@@ -32,7 +32,7 @@ public class RealmVideoTest {
     realmVideo.tempPath = "tmp/path";
     realmVideo.isTempPathFinished = true;
     realmVideo.clipText = "text";
-    realmVideo.clipTextPosition = VideoEditTextActivity.TextPosition.CENTER.name();
+    realmVideo.clipTextPosition = TextEffect.TextPosition.CENTER.name();
     realmVideo.isTextToVideoAdded = false;
     realmVideo.isTrimmedVideo = false;
     realmVideo.startTime = 1;
@@ -43,7 +43,7 @@ public class RealmVideoTest {
     assertThat(realmVideo.tempPath, is("tmp/path"));
     assertThat(realmVideo.isTempPathFinished, is(true));
     assertThat(realmVideo.clipText, is("text"));
-    assertThat(realmVideo.clipTextPosition, is(VideoEditTextActivity.TextPosition.CENTER.name()));
+    assertThat(realmVideo.clipTextPosition, is(TextEffect.TextPosition.CENTER.name()));
     assertThat(realmVideo.isTextToVideoAdded, is(false));
     assertThat(realmVideo.isTrimmedVideo, is(false));
     assertThat(realmVideo.startTime, is(1));

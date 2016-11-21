@@ -24,8 +24,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverView;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -42,7 +41,7 @@ import butterknife.OnClick;
 /**
  * Created by ruth on 14/09/16.
  */
-public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, VideonaPlayerListener,
+public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, VideonaPlayerExo.VideonaPlayerListener,
         View.OnTouchListener {
 
     private static final String VOICE_OVER_POSITION = "voice_over_position";

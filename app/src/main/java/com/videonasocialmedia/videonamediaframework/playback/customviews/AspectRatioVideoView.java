@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.customviews;
+package com.videonasocialmedia.videonamediaframework.playback.customviews;
 /*
  * Copyright (C) 2015 Videona Socialmedia SL
  * http://www.videona.com

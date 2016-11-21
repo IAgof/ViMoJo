@@ -1,17 +1,16 @@
-package com.videonasocialmedia.vimojo.presentation.mvp.views;
+package com.videonasocialmedia.videonamediaframework.playback;
 
 import android.content.Context;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 
 import java.util.List;
 
 /**
  * Created by jliarte on 13/05/16.
  */
-public interface VideonaPlayerView {
+public interface VideonaPlayer {
 
     void onShown(Context context);
 
@@ -19,7 +18,7 @@ public interface VideonaPlayerView {
 
     void onPause();
 
-    void setListener(VideonaPlayerListener videonaPlayerListener);
+    void setListener(VideonaPlayerExo.VideonaPlayerListener videonaPlayerListener);
 
     void initPreview(int instantTime);
 
@@ -50,4 +49,11 @@ public interface VideonaPlayerView {
     void setSeekBarLayoutEnabled(boolean seekBarEnabled);
 
     void resetPreview();
+
+    /**
+     * Created by jliarte on 13/05/16.
+     */
+    interface VideonaPlayerListener {
+        void newClipPlayed(int currentClipIndex);
+    }
 }

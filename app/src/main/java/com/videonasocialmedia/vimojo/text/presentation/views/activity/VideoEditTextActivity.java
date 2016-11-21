@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -23,12 +24,11 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.presenters.EditTextPreviewPresenter;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.text.presentation.views.customviews.MaxCharPerLineInputFilter;
-import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
+import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -45,7 +45,7 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 /**
  * Created by ruth on 1/09/16.
  */
-public class VideoEditTextActivity extends VimojoActivity implements EditTextView,VideonaPlayerListener{
+public class VideoEditTextActivity extends VimojoActivity implements EditTextView,VideonaPlayerExo.VideonaPlayerListener {
     private final int MAX_CHARS_PER_LINE = 20;
     private final int MAX_LINES = 2;
     private final String STATE_BUTTON_TOP = "state_button_top";
@@ -57,8 +57,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     boolean hasTypedMoreThanTwoLines =false;
 
     private boolean stateWasRestored = false;
-
-    public enum TextPosition{TOP, CENTER, BOTTOM}
 
     @Bind(R.id.text_activityText)
     EditText clipText;
@@ -206,26 +204,26 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @OnClick(R.id.button_editText_top)
     public void onClickAddTextTop(){
-        paintPositionEditText(TextPosition.TOP);
-        createDrawableFromText(typedText, TextPosition.TOP);
+        paintPositionEditText(TextEffect.TextPosition.TOP);
+        createDrawableFromText(typedText, TextEffect.TextPosition.TOP);
         hideKeyboard(clipText);
     }
 
     @OnClick(R.id.button_editText_center)
     public void onClickAddTextCenter() {
-        paintPositionEditText(TextPosition.CENTER);
-        createDrawableFromText(typedText, TextPosition.CENTER);
+        paintPositionEditText(TextEffect.TextPosition.CENTER);
+        createDrawableFromText(typedText, TextEffect.TextPosition.CENTER);
         hideKeyboard(clipText);
     }
 
     @OnClick(R.id.button_editText_bottom)
     public void onClickAddTextBottom() {
-        paintPositionEditText(TextPosition.BOTTOM);
-        createDrawableFromText(typedText, TextPosition.BOTTOM);
+        paintPositionEditText(TextEffect.TextPosition.BOTTOM);
+        createDrawableFromText(typedText, TextEffect.TextPosition.BOTTOM);
         hideKeyboard(clipText);
     }
 
-    private void createDrawableFromText(String text, TextPosition textPosition) {
+    private void createDrawableFromText(String text, TextEffect.TextPosition textPosition) {
         text = getTextFromEditText();
         presenter.createDrawableWithText(text, textPosition.name(), Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
@@ -235,18 +233,18 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         return clipText.getText().toString();
     }
 
-    public void paintPositionEditText(TextPosition position) {
-        if(position == TextPosition.BOTTOM) {
+    public void paintPositionEditText(TextEffect.TextPosition position) {
+        if(position == TextEffect.TextPosition.BOTTOM) {
             button_editText_top.setSelected(false);
             button_editText_center.setSelected(false);
             button_ediText_bottom.setSelected(true);
         }
-        if(position == TextPosition.CENTER) {
+        if(position == TextEffect.TextPosition.CENTER) {
             button_editText_top.setSelected(false);
             button_editText_center.setSelected(true);
             button_ediText_bottom.setSelected(false);
         }
-        if(position == TextPosition.TOP) {
+        if(position == TextEffect.TextPosition.TOP) {
             button_editText_top.setSelected(true);
             button_editText_center.setSelected(false);
             button_ediText_bottom.setSelected(false);
@@ -312,7 +310,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         } else {
             clipText.setText(text);
         }
-        TextPosition positionText = TextToDrawable.getTypePositionFromString(position);
+        TextEffect.TextPosition positionText = TextToDrawable.getTypePositionFromString(position);
         paintPositionEditText(positionText);
         createDrawableFromText(typedText, positionText);
     }
@@ -339,31 +337,31 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     private void updateTextinPreview() {
         if (button_editText_top.isSelected()) {
-            createDrawableFromText(typedText, TextPosition.TOP);
+            createDrawableFromText(typedText, TextEffect.TextPosition.TOP);
             return;
         }
         if (button_editText_center.isSelected()) {
-            createDrawableFromText(typedText, TextPosition.CENTER);
+            createDrawableFromText(typedText, TextEffect.TextPosition.CENTER);
             return;
         }
         if (button_ediText_bottom.isSelected()) {
-            createDrawableFromText(typedText, TextPosition.BOTTOM);
+            createDrawableFromText(typedText, TextEffect.TextPosition.BOTTOM);
             return;
         }
     }
 
-    public TextPosition getTextPositionSelected() {
+    public TextEffect.TextPosition getTextPositionSelected() {
         if (button_editText_top.isSelected()) {
-            return TextPosition.TOP;
+            return TextEffect.TextPosition.TOP;
         }
         if (button_editText_center.isSelected()) {
-            return TextPosition.CENTER;
+            return TextEffect.TextPosition.CENTER;
         }
         if (button_ediText_bottom.isSelected()) {
-            return TextPosition.BOTTOM;
+            return TextEffect.TextPosition.BOTTOM;
         }
         // default
-        return TextPosition.CENTER;
+        return TextEffect.TextPosition.CENTER;
     }
 
     private void hideKeyboard(View v) {

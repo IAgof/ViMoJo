@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
+import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
@@ -13,8 +14,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
-import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
-import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
+import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
         editTextView.showText(drawable);
     }
 
-    public void setTextToVideo(String text, VideoEditTextActivity.TextPosition textPositionSelected) {
+    public void setTextToVideo(String text, TextEffect.TextPosition textPositionSelected) {
 
         Context appContext = VimojoApplication.getAppContext();
         Intent textToVideoServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
