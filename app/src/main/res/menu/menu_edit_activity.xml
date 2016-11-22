@@ -15,14 +15,14 @@
 
         <menu>
             <item
-                android:id="@+id/action_settings_edit_options"
-                android:icon="@drawable/menu_settings"
-                android:title="Settings"
-                app:showAsAction="never"/>
-            <item
                 android:id="@+id/action_settings_edit_gallery"
                 android:icon="@drawable/menu_gallery"
                 android:title="Gallery"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/action_settings_edit_options"
+                android:icon="@drawable/menu_settings"
+                android:title="Settings"
                 app:showAsAction="never"/>
         </menu>
 

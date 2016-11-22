@@ -240,9 +240,6 @@ public class EditActivity extends VimojoActivity implements EditorView,
 
     public void navigateTo(Class cls) {
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
-        if (cls == GalleryActivity.class) {
-            intent.putExtra("SHARE", false);
-        }
         startActivity(intent);
     }
 

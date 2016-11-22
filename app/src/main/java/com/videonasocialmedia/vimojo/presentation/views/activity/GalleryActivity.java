@@ -39,17 +39,18 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
+
 /**
  * Created by jca on 20/5/15.
  */
 public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageChangeListener,
-        GalleryPagerView, OnSelectionModeListener, VideonaDialogListener {
+        GalleryPagerView, OnSelectionModeListener{
 
     private final String MASTERS_FRAGMENT_TAG="MASTERS";
     private final String EDITED_FRAGMENT_TAG="EDITED";
     private final int REQUEST_CODE_REMOVE_VIDEOS_FROM_GALLERY = 1;
     MyPagerAdapter adapterViewPager;
-    boolean sharing = false;
     int selectedPage = 0;
     GalleryPagerPresenter galleryPagerPresenter;
     @Bind(R.id.button_ok_gallery)
@@ -61,7 +62,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     @Bind(R.id.selection_mode)
     LinearLayout selectionMode;
     private int countVideosSelected = 0;
-    private VideonaDialog dialog;
+    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +73,9 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ButterKnife.bind(this);
+        setupActivityButtons();
 
         Log.d("GALLERY ACTIVITY", "Creating Activity");
-        sharing = this.getIntent().getBooleanExtra("SHARE", true);
-
-        if (sharing)
-            okButton.setImageResource(R.drawable.share_activity_button_share_selector);
 
         ViewPager vpPager = (ViewPager) findViewById(R.id.vpPager);
         adapterViewPager = new MyPagerAdapter(getFragmentManager(), savedInstanceState);
@@ -88,8 +86,16 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
         PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_header);
         pagerTabStrip.setDrawFullUnderline(true);
-        pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorBlack));
-        pagerTabStrip.setTextColor(getResources().getColor(R.color.colorBlack));
+        pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorWhite));
+        pagerTabStrip.setTextColor(getResources().getColor(R.color.colorWhite));
+    }
+
+    private void setupActivityButtons() {
+        tintGalleryButtons(R.color.button_color);
+    }
+
+    private void tintGalleryButtons(int tintList) {
+        tintButton(okButton, tintList);
     }
 
     @Override
@@ -145,16 +151,9 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     @OnClick(R.id.button_ok_gallery)
     public void onClick() {
         List<Video> videoList;
-        if (sharing) {
-            videoList = getSelectedVideosFromCurrentFragment();
-            if (videoList.size() > 0)
-                shareVideo(videoList.get(0));
-        } else {
             videoList = getSelectedVideos();
             if (videoList.size() > 0)
                 galleryPagerPresenter.loadVideoListToProject(videoList);
-
-        }
     }
 
     private List<Video> getSelectedVideosFromCurrentFragment() {
@@ -190,60 +189,56 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
                         String.valueOf(numVideosSelected) + " " +
                         getResources().getString(R.string.confirmDeleteTitle2);
             }
-            dialog = new VideonaDialog.Builder()
-                    .withTitle(title)
-                    .withImage(R.drawable.common_icon_bobina)
-                    .withMessage(getString(R.string.confirmDeleteMessage))
-                    .withPositiveButton(getString(R.string.positiveButton))
-                    .withNegativeButton(getString(R.string.negativeButton))
-                    .withCode(REQUEST_CODE_REMOVE_VIDEOS_FROM_GALLERY)
-                    .withListener(this)
-                    .create();
-            dialog.show(getFragmentManager(), "removeVideosFromGalleryDialog");
-        }
-    }
 
-    @Override
-    public void onClickPositiveButton(int id) {
-        if(id == REQUEST_CODE_REMOVE_VIDEOS_FROM_GALLERY) {
-            final List<Video> videoList = getSelectedVideos();
-            for (Video video : videoList) {
-                File file = new File(video.getMediaPath());
-                file.delete();
-            }
-            for (int i = 0; i < adapterViewPager.getCount(); i++) {
-                VideoGalleryFragment selectedFragment = adapterViewPager.getItem(i);
-                selectedFragment.updateView();
-            }
-            countVideosSelected = 0;
-            updateCounter();
-            dialog.dismiss();
-        }
-    }
+            AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
 
-    @Override
-    public void onClickNegativeButton(int id) {
-        if(id == REQUEST_CODE_REMOVE_VIDEOS_FROM_GALLERY)
-            dialog.dismiss();
+            final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case DialogInterface.BUTTON_POSITIVE:
+                            final List<Video> videoList = getSelectedVideos();
+                            for (Video video : videoList) {
+                                File file = new File(video.getMediaPath());
+                                file.delete();
+                            }
+                            for (int i = 0; i < adapterViewPager.getCount(); i++) {
+                                VideoGalleryFragment selectedFragment = adapterViewPager.getItem(i);
+                                selectedFragment.updateView();
+                            }
+                            countVideosSelected = 0;
+                            updateCounter();
+                            dialog.dismiss();
+                            break;
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            break;
+                    }
+                }
+            };
+
+            dialog = builder.setCancelable(false)
+                .setTitle(title)
+                .setMessage(getString(R.string.confirmDeleteMessage))
+                .setPositiveButton(R.string.dialog_accept_delete_clip, dialogClickListener)
+                .setNegativeButton(R.string.dialog_cancel_delete_clip, dialogClickListener).show();
+
+
+        }
     }
 
     private void updateCounter() {
         if (selectionMode.getVisibility() != View.VISIBLE)
             selectionMode.setVisibility(View.VISIBLE);
-        if (!sharing) {
             videoCounter.setText(Integer.toString(countVideosSelected));
             if (countVideosSelected == 0)
                 selectionMode.setVisibility(View.GONE);
-        }
     }
 
     @Override
     public void navigate() {
-        if (!sharing) {
             Intent intent;
             intent = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
             startActivity(intent);
-        }
     }
 
     @Override
@@ -282,22 +277,14 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Override
     public void onItemChecked() {
-        if(sharing) {
-            countVideosSelected = 1;
-            videoCounter.setVisibility(View.GONE);
-            galleryImageViewClips.setVisibility(View.GONE);
-        } else {
-            countVideosSelected++;
-        }
+        countVideosSelected++;
         updateCounter();
     }
 
     @Override
     public void onItemUnchecked() {
-        if(!sharing) {
             countVideosSelected--;
             updateCounter();
-        }
     }
 
     @Override
@@ -326,8 +313,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         }
 
         private void createFragments(){
-            int selectionMode = sharing ? VideoGalleryFragment.SELECTION_MODE_SINGLE
-                    :VideoGalleryFragment.SELECTION_MODE_MULTIPLE;
+            int selectionMode = VideoGalleryFragment.SELECTION_MODE_MULTIPLE;
 
             mastersFragment = VideoGalleryFragment.newInstance
                     (VideoGalleryPresenter.MASTERS_FOLDER, selectionMode);

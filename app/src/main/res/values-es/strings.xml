@@ -67,6 +67,8 @@
     <string name="galleryActivityTitle">Galería</string>
     <string name="mastersFolderTitle">Originales</string>
     <string name="editedFolderTitle">Editados</string>
+    <string name="dialog_accept_delete_clip">Sí</string>
+    <string name="dialog_cancel_delete_clip">No</string>
     <string name="error_video_format">Error, formato de vídeo diferente al del proyecto </string>
 
     <!--SoundVolumeActivity-->

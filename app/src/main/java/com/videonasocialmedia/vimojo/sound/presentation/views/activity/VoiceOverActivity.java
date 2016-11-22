@@ -49,7 +49,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     private static final String VOICE_OVER_PROJECT_POSITION = "voice_over_project_position";
     private static final String TAG = "VoiceOverActivity";
     private static final String STATE_BUTTON_RECORD = "state_button_record";
-    public static final int IMAGE_REC_WIDTH = 256;
 
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
@@ -168,9 +167,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
 
     public void navigateTo(Class cls) {
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
-        if (cls == GalleryActivity.class) {
-            intent.putExtra("SHARE", false);
-        }
         startActivity(intent);
         finish();
     }
@@ -304,8 +300,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
             // start recording.
             if(millisecondsLeft > 0){
                 presenter.requestRecord();
-                buttonRecordVoiceOver.setImageBitmap(Utils.decodeSampledBitmapFromResource(getResources(),
-                        R.drawable.activity_edit_sound_voice_record_pressed, IMAGE_REC_WIDTH, IMAGE_REC_WIDTH));
+                buttonRecordVoiceOver.setImageResource(R.drawable.activity_edit_sound_voice_record_pressed);
                 timerStart(millisecondsLeft);
             }
             return true;
@@ -351,14 +346,13 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     }
 
     private void changeVisibilityAndResouceButton(boolean buttonRecordIsInStop) {
+        buttonRecordVoiceOver.setImageResource(
+            R.drawable.activity_edit_sound_voice_record_normal);
         if (buttonRecordIsInStop == true) {
-            buttonRecordVoiceOver.setImageBitmap(Utils.decodeSampledBitmapFromResource(getResources(),
-                    R.drawable.activity_edit_sound_voice_record_add, IMAGE_REC_WIDTH, IMAGE_REC_WIDTH));
             buttonVoiceOverAccept.setVisibility(View.VISIBLE);
             buttonVoiceOverCancel.setVisibility(View.VISIBLE);
         } else {
-            buttonRecordVoiceOver.setImageBitmap(Utils.decodeSampledBitmapFromResource(getResources(),
-                    R.drawable.activity_edit_sound_voice_record_normal, IMAGE_REC_WIDTH, IMAGE_REC_WIDTH));
+
             buttonVoiceOverAccept.setVisibility(View.INVISIBLE);
             buttonVoiceOverCancel.setVisibility(View.INVISIBLE);
         }

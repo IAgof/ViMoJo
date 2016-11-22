@@ -1,7 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/common_icon_edit_cancel_pressed" android:state_pressed="true"/>
-    <!-- pressed state -->
-    <item android:drawable="@drawable/common_icon_edit_cancel_normal"/>
-    <!-- default state -->
-</selector>
+<vector
+    android:height="36dp"
+    android:viewportHeight="31.112"
+    android:viewportWidth="31.112"
+    android:width="36dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <path
+        android:fillColor="@color/button"
+        android:pathData="M31.112,1.414l-1.414,-1.414l-14.142,14.142l-14.142,-14.142l-1.414,1.414l14.142,14.142l-14.142,14.142l1.414,1.414l14.142,-14.142l14.142,14.142l1.414,-1.414l-14.142,-14.142z"/>
+</vector>

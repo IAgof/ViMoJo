@@ -20,6 +20,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="#00000000"
-        android:src="@drawable/common_icon_edit_cancel_normal"
+        android:src="@drawable/activity_edit_common_icon_cancel"
         />
 </RelativeLayout>
