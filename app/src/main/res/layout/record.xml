@@ -298,7 +298,7 @@
 
         <ImageView
             android:id="@+id/rotateDeviceHint"
-            android:layout_width="150dp"
+            android:layout_width="240dp"
             android:layout_height="150dp"
             android:layout_centerInParent="true"
             android:src="@drawable/common_icon_rotate_device"
