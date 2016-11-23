@@ -6,7 +6,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
-import com.videonasocialmedia.transcoder.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.ApplyAudioFadeInFadeOutToVideo;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
@@ -35,6 +35,8 @@ public class ExportTempBackgroundService extends Service implements ApplyAudioFa
     private VideonaFormat videoFormat;
     private final VideoRepository videoRepository = new VideoRealmRepository();
     private String tempVideoPathPreviewFadeInFadeOut;
+    // TODO:(alvaro.martinez) 22/11/16 use project tmp directory
+    private String intermediatesTempDirectory;
 
     public ExportTempBackgroundService() {
         getVideonaFormatFromCurrentProjectUseCase = new GetVideonaFormatFromCurrentProjectUseCase();
@@ -63,6 +65,7 @@ public class ExportTempBackgroundService extends Service implements ApplyAudioFa
                 final boolean isAddedText = intent.getBooleanExtra(IntentConstants.IS_TEXT_ADDED, false);
                 final String text = intent.getStringExtra(IntentConstants.TEXT_TO_ADD);
                 final String textPosition = intent.getStringExtra(IntentConstants.TEXT_POSITION);
+                intermediatesTempDirectory = intent.getStringExtra(IntentConstants.VIDEO_TEMP_DIRECTORY);
 
                 final Video video = getVideo(videoId);
                 MediaTranscoderListener useCaseListener = new MediaTranscoderListener() {
@@ -129,8 +132,9 @@ public class ExportTempBackgroundService extends Service implements ApplyAudioFa
 
     public void applyAudioFadeInFadeOut(Video video, int videoId) throws IOException {
         tempVideoPathPreviewFadeInFadeOut = video.getTempPath();
-        ApplyAudioFadeInFadeOutToVideo applyAudioFadeInFadeOutToVideo = new ApplyAudioFadeInFadeOutToVideo(this);
-        applyAudioFadeInFadeOutToVideo.applyAudioFadeToVideo(video,TIME_FADE_IN_MS, TIME_FADE_OUT_MS);
+        ApplyAudioFadeInFadeOutToVideo applyAudioFadeInFadeOutToVideo =
+            new ApplyAudioFadeInFadeOutToVideo(this, intermediatesTempDirectory);
+        applyAudioFadeInFadeOutToVideo.applyAudioFadeToVideo(video, TIME_FADE_IN_MS, TIME_FADE_OUT_MS);
 
 
     }

@@ -7,6 +7,7 @@
 
 package com.videonasocialmedia.vimojo.export.domain;
 
+import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.pipeline.Exporter;
 import com.videonasocialmedia.videonamediaframework.pipeline.ExporterImpl;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -30,7 +31,8 @@ public class ExportProjectUseCase implements Exporter.OnExportEndedListener {
   public ExportProjectUseCase(OnExportFinishedListener onExportFinishedListener) {
     this.onExportFinishedListener = onExportFinishedListener;
     project = Project.getInstance(null, null, null);
-    exporter = new ExporterImpl(project.getVMComposition(), project.getProfile(), this);
+    exporter = new ExporterImpl(com.videonasocialmedia.vimojo.utils.Constants.PATH_APP, project.getVMComposition(),
+        project.getProfile(), this);
   }
 
   /**

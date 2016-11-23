@@ -2,12 +2,14 @@ package com.videonasocialmedia.vimojo.export.domain;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
-import com.videonasocialmedia.transcoder.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 
 import java.io.IOException;
+
+import javax.inject.Inject;
 
 
 /**
@@ -15,7 +17,9 @@ import java.io.IOException;
  */
 
 public class RelaunchExportTempBackgroundUseCase {
-  protected TextToDrawable drawableGenerator = new TextToDrawable();
+  //protected TextToDrawable drawableGenerator = new TextToDrawable();
+  @Inject
+  protected TextToDrawable drawableGenerator;
   protected MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator,
           mediaTranscoder);

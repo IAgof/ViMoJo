@@ -9,6 +9,7 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
@@ -46,6 +47,8 @@ public class ExportTempBroadCastReceveiver extends BroadcastReceiver {
             Intent trimServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
             trimServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoId);
             trimServiceIntent.putExtra(IntentConstants.RELAUNCH_EXPORT_TEMP, true);
+            // TODO:(alvaro.martinez) 22/11/16 use project tmp path
+            trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY, Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
             appContext.startService(trimServiceIntent);
         } else {
             // TODO:(alvaro.martinez) 28/09/16 Define user experience
