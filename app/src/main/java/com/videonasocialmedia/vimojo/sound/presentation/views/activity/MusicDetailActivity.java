@@ -159,7 +159,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit_activity, menu);
+        getMenuInflater().inflate(R.menu.menu_editor_activity, menu);
         return true;
     }
 

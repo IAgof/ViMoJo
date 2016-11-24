@@ -16,7 +16,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -34,6 +36,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.EditorActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
@@ -62,7 +65,7 @@ import butterknife.OnClick;
 
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
-public class EditActivity extends VimojoActivity implements EditorView,
+public class EditActivity extends EditorActivity implements EditorView,
         VideonaPlayerListener, VideoTimeLineRecyclerViewClickListener {
 
     private static final String CURRENT_TIME_POSITION = "current_time_position";
@@ -78,12 +81,16 @@ public class EditActivity extends VimojoActivity implements EditorView,
     ImageButton editSplitButton;
     @Bind(R.id.recyclerview_editor_timeline)
     RecyclerView videoListRecyclerView;
-    @Bind(R.id.navigator)
-    ToolbarNavigator navigator;
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
     @Bind(R.id.fab_edit_room)
     FloatingActionsMenu fabEditRoom;
+    @Bind(R.id.edit_activity_drawer_layout)
+    DrawerLayout drawerLayout;
+    @Bind(R.id.navigator_view)
+    NavigationView navigationView;
+    @Bind(R.id.navigator)
+    ToolbarNavigator navigator;
     private List<Video> videoList;
     private int currentVideoIndex = 0;
     private int currentProjectTimePosition = 0;
@@ -116,21 +123,11 @@ public class EditActivity extends VimojoActivity implements EditorView,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit);
+        setContentView(R.layout.editor_activity);
         ButterKnife.bind(this);
-        setupActivityButtons();
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
         editPresenter = new EditPresenter(this, navigator.getCallback(), userEventTracker);
-
         videonaPlayer.setListener(this);
-
         createProgressDialog();
         if (savedInstanceState != null) {
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
@@ -172,6 +169,13 @@ public class EditActivity extends VimojoActivity implements EditorView,
         super.onStop();
     }
 
+    @Override
+    public void updateViewResetProject() {
+        initVideoListRecycler();
+        super.updateViewResetProject();
+
+    }
+
     private void initVideoListRecycler() {
         int orientation = LinearLayoutManager.VERTICAL;
         int num_grid_columns = NUM_COLUMNS_GRID_TIMELINE_VERTICAL;
@@ -190,52 +194,12 @@ public class EditActivity extends VimojoActivity implements EditorView,
         touchHelper.attachToRecyclerView(videoListRecyclerView);
     }
 
-    private void setupActivityButtons() {
-        tintEditButtons(R.color.button_color);
-    }
-
     private void createProgressDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_export_progress, null);
         progressDialog = builder.setCancelable(false)
                 .setView(dialogView)
                 .create();
-    }
-
-    private void tintEditButtons(int tintList) {
-        tintButton(editDuplicateButton, tintList);
-        tintButton(editSplitButton, tintList);
-        tintButton(editTrimButton, tintList);
-        tintButton(editTextButton,tintList);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit_activity, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        switch (item.getItemId()) {
-            case R.id.action_settings_edit_options:
-                navigateTo(SettingsActivity.class);
-                return true;
-            case R.id.action_settings_edit_gallery:
-                navigateTo(GalleryActivity.class);
-                return true;
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            default:
-
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     public void navigateTo(Class cls) {

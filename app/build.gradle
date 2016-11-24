@@ -198,6 +198,7 @@ dependencies {
     compile 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
     compile 'io.realm:android-adapters:1.3.0'
+    compile 'com.roughike:bottom-bar:2.0.2'
 
     compile(name:'videona-sdk-v0.0.8',ext:'aar')
 

@@ -160,7 +160,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_edit_activity, menu);
+        getMenuInflater().inflate(R.menu.menu_editor_activity, menu);
         return true;
     }
 

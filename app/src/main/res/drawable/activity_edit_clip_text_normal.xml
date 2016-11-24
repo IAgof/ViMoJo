@@ -2,8 +2,11 @@
     android:height="36dp"
     android:viewportHeight="464.9"
     android:viewportWidth="464.9"
-    android:width="36dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    android:width="36dp"
+    android:tintMode="multiply"
+    android:tint="@color/button_color"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <path
-        android:fillColor="@color/button"
+        android:fillColor="#FFFFFF"
         android:pathData="M345.3,322.4H118.4L66.8,453H48L221.3,16h21L416,453h-18.8L345.3,322.4zM124.8,306.2h214.1L241.7,60.1l-8.9,-24.6h-1.9l-8.6,24.6L124.8,306.2z"/>
 </vector>

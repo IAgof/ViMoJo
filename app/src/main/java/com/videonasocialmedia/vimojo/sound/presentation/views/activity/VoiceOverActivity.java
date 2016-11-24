@@ -31,7 +31,6 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverView;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
-import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.util.List;
 
@@ -142,7 +141,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit_activity, menu);
+        getMenuInflater().inflate(R.menu.menu_editor_activity, menu);
         return true;
     }
 

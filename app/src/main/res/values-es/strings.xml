@@ -579,5 +579,10 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="dialog_accept_clean_project">Sí</string>
     <string name="dialog_cancel_clean_project">No</string>
 
+    <string name="other_options">Otras opciones</string>
+    <string name="dialog_change_user_name">¿Quiere cambiar su nombre de usuario?</string>
+    <string name="dialog_change_email">¿Quiere cambiar su dirección de email?</string>
+    <string name="clear_project">Limpiar proyecto</string>
+
 
 </resources>
