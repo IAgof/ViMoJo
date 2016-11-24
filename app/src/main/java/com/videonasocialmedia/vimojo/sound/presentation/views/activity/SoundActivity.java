@@ -12,7 +12,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+
+import com.roughike.bottombar.BottomBar;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.EditorActivity;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
@@ -36,7 +39,7 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
  * Created by ruth on 4/10/16.
  */
 
-public class SoundActivity extends VimojoActivity implements VideonaPlayerListener, SoundView {
+public class SoundActivity extends EditorActivity implements VideonaPlayerListener, SoundView {
 
     private static final String SOUND_ACTIVITY_PROJECT_POSITION = "sound_activity_project_position";
 
@@ -48,6 +51,8 @@ public class SoundActivity extends VimojoActivity implements VideonaPlayerListen
     ImageButton buttonMusic;
     @Bind (R.id.layout_options_sound_activity)
     LinearLayout layoutButtonSoundActivity;
+    @Bind(R.id.bottomBar)
+    BottomBar bottomBar;
 
     private BroadcastReceiver exportReceiver;
     private SoundPresenter presenter;
@@ -56,14 +61,14 @@ public class SoundActivity extends VimojoActivity implements VideonaPlayerListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sound);
+        setContentView(R.layout.editor_activity);
         ButterKnife.bind(this);
-        setupToolbar();
         setupActivityButtons();
         createExportReceiver();
         restoreState(savedInstanceState);
         presenter=new SoundPresenter(this);
         videonaPlayer.setListener(this);
+        setupBottomNavigator(bottomBar);
     }
 
     private void restoreState(Bundle savedInstanceState) {
@@ -80,14 +85,6 @@ public class SoundActivity extends VimojoActivity implements VideonaPlayerListen
         tintButton(buttonMicrophone, tintList);
         tintButton(buttonMusic, tintList);
 
-    }
-
-    private void setupToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
     }
 
     private void createExportReceiver() {
@@ -135,37 +132,6 @@ public class SoundActivity extends VimojoActivity implements VideonaPlayerListen
         videonaPlayer.onShown(this);
         presenter.getMediaListFromProject();
         registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_editor_activity, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        switch (item.getItemId()) {
-            case R.id.action_settings_edit_options:
-                navigateTo(SettingsActivity.class);
-                return true;
-            case R.id.action_settings_edit_gallery:
-                navigateTo(GalleryActivity.class);
-                return true;
-            default:
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void navigateTo(Class cls) {
-        Intent intent = new Intent(getApplicationContext(), cls);
-        startActivity(intent);
     }
 
     @Override

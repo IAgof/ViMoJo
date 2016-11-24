@@ -11,4 +11,10 @@ public interface NavigatorDrawerView {
   void showPreferenceEmail(String emailPreference);
 
   void updateViewResetProject();
+
+  void showError(int causeTextResource);
+
+  void showMessage(int stringToast);
+
+  void expandFabMenu();
 }

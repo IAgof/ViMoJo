@@ -34,6 +34,7 @@ import android.widget.ImageButton;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.roughike.bottombar.BottomBar;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.EditorActivity;
@@ -84,13 +85,12 @@ public class EditActivity extends EditorActivity implements EditorView,
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
     @Bind(R.id.fab_edit_room)
-    FloatingActionsMenu fabEditRoom;
-    @Bind(R.id.edit_activity_drawer_layout)
-    DrawerLayout drawerLayout;
-    @Bind(R.id.navigator_view)
-    NavigationView navigationView;
+    FloatingActionsMenu fab;
     @Bind(R.id.navigator)
     ToolbarNavigator navigator;
+    @Bind(R.id.bottomBar)
+    BottomBar bottomBar;
+
     private List<Video> videoList;
     private int currentVideoIndex = 0;
     private int currentProjectTimePosition = 0;
@@ -133,6 +133,7 @@ public class EditActivity extends EditorActivity implements EditorView,
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
             currentProjectTimePosition = savedInstanceState.getInt(CURRENT_TIME_POSITION, 0);
         }
+        setupBottomNavigator(bottomBar);
 
     }
 
@@ -207,17 +208,7 @@ public class EditActivity extends EditorActivity implements EditorView,
         startActivity(intent);
     }
 
-    @OnClick(R.id.fab_go_to_record)
-    public void onClickFabRecord() {
-        fabEditRoom.collapse();
-        navigateTo(RecordActivity.class);
-    }
 
-    @OnClick(R.id.fab_go_to_gallery)
-    public void onClickFabGallery() {
-        fabEditRoom.collapse();
-        navigateTo(GalleryActivity.class);
-    }
 
     @OnClick(R.id.button_edit_fullscreen)
     public void onClickEditFullscreen() {
@@ -356,13 +347,13 @@ public class EditActivity extends EditorActivity implements EditorView,
 
     @Override
     public void showError(final int stringToast) {
-        Snackbar snackbar = Snackbar.make(fabEditRoom, stringToast, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(fab, stringToast, Snackbar.LENGTH_LONG);
         snackbar.show();
     }
 
     @Override
     public void showMessage(final int stringToast) {
-        Snackbar snackbar = Snackbar.make(fabEditRoom, stringToast, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(fab, stringToast, Snackbar.LENGTH_LONG);
         snackbar.show();
     }
 
@@ -407,7 +398,7 @@ public class EditActivity extends EditorActivity implements EditorView,
 
     @Override
     public void expandFabMenu() {
-        fabEditRoom.expand();
+        fab.expand();
     }
 
     @Override

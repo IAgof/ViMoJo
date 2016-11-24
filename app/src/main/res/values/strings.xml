@@ -1691,6 +1691,7 @@ and Conditions.\n\n
     <string name="dialog_change_user_name">Do you want to change your username?</string>
     <string name="dialog_change_email">Do you want to change your email?</string>
     <string name="clear_project">Clean project</string>
+    <string name="export">Starting export</string>
 
 
 </resources>
