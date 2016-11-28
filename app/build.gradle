@@ -199,6 +199,7 @@ dependencies {
 
     compile(name:'videona-sdk-v0.1.0',ext:'aar')
     compile 'com.googlecode.mp4parser:isoparser:1.0.5.4'
+    compile 'org.jcodec:jcodec:0.1.9'
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"

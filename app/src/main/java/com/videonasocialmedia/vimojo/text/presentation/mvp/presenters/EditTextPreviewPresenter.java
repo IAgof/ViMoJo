@@ -29,8 +29,6 @@ import javax.inject.Inject;
 public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
     private final String LOG_TAG = getClass().getSimpleName();
-//    private final TextToDrawable drawableGenerator = new TextToDrawable();
-//    @Inject
     TextToDrawable drawableGenerator;
 
     private Video videoToEdit;

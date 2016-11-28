@@ -13,15 +13,11 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
-
 /**
  * Created by alvaro on 1/09/16.
  */
 public class ModifyVideoTextAndPositionUseCase {
 
-    //private TextToDrawable drawableGenerator = new TextToDrawable();
-    //@Inject
     // TODO:(alvaro.martinez) 23/11/16 Use Dagger for this injection
     protected TextToDrawable drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
     private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();

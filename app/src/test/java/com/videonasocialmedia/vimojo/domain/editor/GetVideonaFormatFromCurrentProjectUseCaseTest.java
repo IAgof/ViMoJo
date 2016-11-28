@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
-import com.videonasocialmedia.transcoder.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;

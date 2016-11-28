@@ -6,6 +6,7 @@ import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
@@ -20,9 +21,7 @@ import javax.inject.Inject;
  */
 public class ModifyVideoDurationUseCase {
 
-//  private TextToDrawable drawableGenerator = new TextToDrawable();
-  @Inject
-  protected TextToDrawable drawableGenerator;
+  private TextToDrawable drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
   private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator, mediaTranscoder);
   protected VideoRepository videoRepository = new VideoRealmRepository();
