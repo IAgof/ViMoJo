@@ -3,9 +3,7 @@ package com.videonasocialmedia.vimojo.presentation.views.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
@@ -16,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -24,13 +21,14 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.PreferencesView;
+import com.videonasocialmedia.vimojo.presentation.views.activity.AboutActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.LegalNoticeActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.LicensesActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity;
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaDialogListener;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -77,6 +75,11 @@ public class SettingsFragment extends PreferenceFragment implements
 
         setupCameraSettings();
         setupMailValid();
+        setupAboutUs();
+        setupPrivacyPolicy();
+        setupTermOfService();
+        setupLicense();
+        setupLegalNotice();
     }
 
     private void setupMailValid() {
@@ -203,4 +206,66 @@ public class SettingsFragment extends PreferenceFragment implements
         }
 
     }
+
+    private void setupLegalNotice() {
+        Preference legalNoticePref=findPreference(ConfigPreferences.LEGAL_NOTICE);
+        legalNoticePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                navigateTo(LegalNoticeActivity.class);
+                return true;
+            }
+        });
+    }
+
+    private void setupLicense() {
+        Preference licensePref=findPreference(ConfigPreferences.LICENSES);
+        licensePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                navigateTo(LicensesActivity.class);
+                return true;
+            }
+        });
+    }
+
+    private void setupTermOfService() {
+        Preference termOfServicePref=findPreference(ConfigPreferences.TERM_OF_SERVICE);
+        termOfServicePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                navigateTo(TermsOfServiceActivity.class);
+                return true;
+            }
+        });
+    }
+
+    private void setupPrivacyPolicy() {
+        Preference privacyPolicyPref=findPreference(ConfigPreferences.PRIVACY_POLICY);
+        privacyPolicyPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                navigateTo(PrivacyPolicyActivity.class);
+                return true;
+            }
+        });
+    }
+
+    private void setupAboutUs() {
+        Preference aboutUsPref=findPreference(ConfigPreferences.ABOUT_US);
+        aboutUsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                navigateTo(AboutActivity.class);
+                return true;
+            }
+        });
+    }
+
+    private void navigateTo(Class activity) {
+        Intent intent = new Intent(VimojoApplication.getAppContext(), activity);
+        startActivity(intent);
+    }
+
+
 }
