@@ -10,16 +10,16 @@
 
 
     <path
-        android:fillColor="#FFFFFFFF"
+        android:fillColor="@color/colorWhite"
         android:pathData="M2,3.41l19.29,19.29l1.41,-1.41l-19.29,-19.29l8.59,0l0,-2l-11,0l-1,1l0,11l2,0z"/>
     <path
-        android:fillColor="#FFFFFFFF"
+        android:fillColor="@color/colorWhite"
         android:pathData="M12,64l0,-2l-8.59,0l19.29,-19.29l-1.41,-1.41l-19.29,19.29l0,-8.59l-2,0l0,11l1,1z"/>
     <path
-        android:fillColor="#FFFFFFFF"
+        android:fillColor="@color/colorWhite"
         android:pathData="M62,60.59l-19.29,-19.29l-1.41,1.41l19.29,19.29l-8.59,0l0,2l11,0l1,-1l0,-11l-2,0z"/>
     <path
-        android:fillColor="#FFFFFFFF"
+        android:fillColor="@color/colorWhite"
         android:pathData="M52,0l0,2l8.59,0l-19.29,19.29l1.41,1.41l19.29,-19.29l0,8.59l2,0l0,-11l-1,-1z"/>
     </group>
 

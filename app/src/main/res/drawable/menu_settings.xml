@@ -1,7 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/menu_settings_pressed" android:state_pressed="true"/>
-    <!-- pressed state -->
-    <item android:drawable="@drawable/menu_settings_normal"/>
-    <!-- default state -->
-</selector>
+<vector
+    android:height="24dp"
+    android:viewportHeight="64.0"
+    android:viewportWidth="64.0"
+    android:width="24dp"
+    android:tintMode="multiply"
+    android:tint="@color/button_color"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <path
+        android:fillColor="@color/colorWhite"
+        android:pathData="M53.14,20.27L59.41,14L50,4.59l-6.27,6.27L39,9.28V0H25v9.28l-4.73,1.58L14,4.59L4.59,14l6.27,6.27L9.28,25H0v14h9.28l1.58,4.73L4.59,50L14,59.41l6.27,-6.27L25,54.72V64h14v-9.28l4.73,-1.58l6.27,6.27L59.41,50l-6.27,-6.27L54.72,39H64V25h-9.28L53.14,20.27zM62,37h-8.72l-2.42,7.27L56.59,50L50,56.59l-5.73,-5.73L37,53.28V62H27v-8.72l-7.27,-2.42L14,56.59L7.41,50l5.73,-5.73L10.72,37H2V27h8.72l2.42,-7.27L7.41,14L14,7.41l5.73,5.73L27,10.72V2h10v8.72l7.27,2.42L50,7.41L56.59,14l-5.73,5.73L53.28,27H62V37z"/>
+    <path
+        android:fillColor="@color/colorWhite"
+        android:pathData="M32,25c-3.86,0 -7,3.14 -7,7s3.14,7 7,7s7,-3.14 7,-7S35.86,25 32,25zM32,37c-2.76,0 -5,-2.24 -5,-5s2.24,-5 5,-5s5,2.24 5,5S34.76,37 32,37z"/>
+</vector>

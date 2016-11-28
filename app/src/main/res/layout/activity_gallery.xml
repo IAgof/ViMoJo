@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               android:animateLayoutChanges="true">
 
@@ -32,8 +33,8 @@
             android:visibility="gone">
 
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="27dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:src="@drawable/activity_edit_clip_normal"
                 android:id="@+id/gallery_image_view_clips"
                 android:layout_marginRight="4dp"
@@ -48,14 +49,14 @@
                 android:layout_gravity="center"
                 android:layout_marginRight="20dp"
                 android:text="0"
-                android:textSize="27sp"
+                android:textSize="24sp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black"/>
 
             <ImageButton
                 android:id="@+id/button_trash"
-                android:layout_width="30dp"
-                android:layout_height="27dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_gravity="center"
                 android:layout_marginRight="20dp"
                 android:background="@android:color/transparent"
@@ -66,15 +67,15 @@
 
             <ImageButton
                 android:id="@+id/button_ok_gallery"
-                android:layout_width="30dp"
-                android:layout_height="27dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_gravity="center"
                 android:layout_marginRight="20dp"
                 android:background="@android:color/transparent"
                 android:scaleType="fitXY"
                 android:visibility="visible"
-                android:src="@drawable/edit_activity_button_ok_selector"/>
+                app:srcCompat="@drawable/activity_edit_common_icon_accept"/>
 
         </LinearLayout>
 

@@ -18,7 +18,7 @@
             android:id="@+id/music_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:src="@drawable/gatito_rules_pressed"/>
+            tools:src="@drawable/fragment_gallery_no_image"/>
 
         <TextView
 
