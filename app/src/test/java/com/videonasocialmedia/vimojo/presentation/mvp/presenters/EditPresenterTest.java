@@ -11,7 +11,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
 import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -36,7 +36,7 @@ public class EditPresenterTest {
     @Mock GetMusicFromProjectUseCase getMusicFromProjectUseCase;
     @Mock GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     @InjectMocks private EditPresenter editPresenter;
-    @Mock private EditorView mockedEditorView;
+    @Mock private EditActivityView mockedEditActivityView;
     @Mock private VideonaPlayerView mockedVideonaPlayerView;
     @Mock private MixpanelAPI mockedMixpanelApi;
     @Mock private UserEventTracker mockedUserEventTracker;
@@ -82,7 +82,7 @@ public class EditPresenterTest {
     // Seems not needed since we already use @InjectMocks annotation
     @NonNull
     public EditPresenter getEditPresenter() {
-        return new EditPresenter(mockedEditorView, mockedProjectModifiedCallback, mockedUserEventTracker);
+        return new EditPresenter(mockedEditActivityView, mockedProjectModifiedCallback, mockedUserEventTracker);
     }
 
     public Project getAProject() {

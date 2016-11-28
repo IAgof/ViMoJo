@@ -8,16 +8,12 @@ import com.videonasocialmedia.vimojo.domain.ClearProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.NavigatorDrawerView;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-
-import javax.inject.Inject;
 
 /**
  * Created by ruth on 23/11/16.
@@ -25,22 +21,19 @@ import javax.inject.Inject;
 
 public class EditorPresenter {
 
-  private  NavigatorDrawerView navigatorDrawerView;
+  private EditorActivityView editorActivityView;
   private SharedPreferences sharedPreferences;
   private ProfileRepository profileRepository;
   protected UserEventTracker userEventTracker;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   protected Project currentProject;
   private SharedPreferences.Editor preferencesEditor;
-
-  private ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack;
   private Context context;
 
-  public EditorPresenter(NavigatorDrawerView navigatorDrawerView, ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack,
+  public EditorPresenter(EditorActivityView editorActivityView,
                          SharedPreferences sharedPreferences, Context context) {
 
-    this.navigatorDrawerView=navigatorDrawerView;
-    this.projectModifiedCallBack = projectModifiedCallBack;
+    this.editorActivityView = editorActivityView;
     this.sharedPreferences=sharedPreferences;
     this.context=context;
     createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
@@ -56,18 +49,18 @@ public class EditorPresenter {
   public void getPreferenceUserName() {
     String userNamePreference = sharedPreferences.getString(ConfigPreferences.USERNAME, null);
     if(userNamePreference!=null && !userNamePreference.isEmpty())
-      navigatorDrawerView.showPreferenceUserName(userNamePreference);
+      editorActivityView.showPreferenceUserName(userNamePreference);
     else{
-      navigatorDrawerView.showPreferenceUserName(context.getResources().getString(R.string.username));
+      editorActivityView.showPreferenceUserName(context.getResources().getString(R.string.username));
     }
   }
 
   public void getPreferenceEmail() {
     String emailPreference = sharedPreferences.getString(ConfigPreferences.EMAIL, null);
     if(emailPreference!=null && !emailPreference.isEmpty())
-      navigatorDrawerView.showPreferenceEmail(emailPreference);
+      editorActivityView.showPreferenceEmail(emailPreference);
     else {
-      navigatorDrawerView.showPreferenceEmail(context.getResources().getString(R.string.emailPreference));
+      editorActivityView.showPreferenceEmail(context.getResources().getString(R.string.emailPreference));
     }
 
   }
@@ -80,7 +73,7 @@ public class EditorPresenter {
       new ClearProjectUseCase().clearProject(currentProject);
       profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, context);
       createDefaultProjectUseCase.loadOrCreateProject(rootPath, profileRepository.getCurrentProfile());
-      navigatorDrawerView.updateViewResetProject();
+      editorActivityView.updateViewResetProject();
   }
 
   private void clearProjectDataFromSharedPreferences() {

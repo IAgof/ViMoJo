@@ -4,7 +4,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.views;
  * Created by ruth on 23/11/16.
  */
 
-public interface NavigatorDrawerView {
+public interface EditorActivityView {
 
   void showPreferenceUserName(String data);
 

@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/linear_layout_activity_sound"
+
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relative_layout_activity_sound"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:layout_height="wrap_content"
     android:baselineAligned="false"
-    android:visibility="gone"
+    android:orientation="vertical"
+    android:visibility="visible"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
 
     <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
         android:id="@+id/videona_player"
@@ -16,37 +18,13 @@
         android:layout_height="wrap_content"/>
 
 
-    <LinearLayout
+    <com.roughike.bottombar.BottomBar
+        android:id="@+id/bottomBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:id="@+id/layout_options_sound_activity">
+        android:layout_height="56dp"
+        app:bb_tabXmlResource="@xml/bottombar_tabs"
+        android:layout_alignParentBottom="true"
+        />
 
-        <ImageButton
-            android:id="@+id/button_music"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleType="fitCenter"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:srcCompat="@drawable/activity_edit_sound_music_normal"
-            />
-
-        <ImageButton
-            android:id="@+id/button_microphone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleType="fitCenter"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:srcCompat="@drawable/activity_edit_sound_voice_normal"
-            />
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
 

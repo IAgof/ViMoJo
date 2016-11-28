@@ -32,19 +32,14 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/activity_edit"/>
-    <include layout="@layout/activity_sound"/>
 
-    <com.roughike.bottombar.BottomBar
-        android:id="@+id/bottomBar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/colorPrimary"
-        app:bb_inActiveTabColor="@color/colorWhite"
-        app:bb_activeTabColor="@color/colorWhite"
-        android:layout_gravity="bottom"
-        app:bb_behavior="shifting|shy"
-        app:bb_tabXmlResource="@xml/bottombar_tabs" />
+        android:layout_height="match_parent"
+        android:id="@+id/container_layout"
+        android:layout_marginTop="@dimen/defaultbarHeight"
+        android:orientation="vertical">
+    </LinearLayout>
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/fab_edit_room"
@@ -66,7 +61,7 @@
             app:fab_colorNormal="@color/colorWhite"
             app:fab_colorPressed="@color/colorWhite"
             android:src="@drawable/common_navigate_record"
-            android:id="@+id/fab_go_to_record"
+            android:id="@+id/fab_top"
             />
 
         <com.getbase.floatingactionbutton.FloatingActionButton
@@ -76,7 +71,7 @@
             app:fab_colorNormal="@color/colorWhite"
             app:fab_colorPressed="@color/colorWhite"
             android:src="@drawable/common_navigate_gallery"
-            android:id="@+id/fab_go_to_gallery"/>
+            android:id="@+id/fab_bottom"/>
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

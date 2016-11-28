@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * @author Juan Javier Cabanas Abascal
  */
-public interface EditorView {
+public interface EditActivityView {
 
     void goToShare(String videoToSharePath);
 

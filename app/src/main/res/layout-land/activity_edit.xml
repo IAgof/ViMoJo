@@ -1,39 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:baselineAligned="false"
-    android:orientation="horizontal"
-    android:id="@+id/linear_layout_activity_edit"
-    android:visibility="visible"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    android:id="@+id/relative_layout_activity_edit">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="4"
-        android:orientation="vertical">
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:visibility="visible"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
-            android:id="@+id/videona_player"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:orientation="vertical">
+
+            <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
+                android:id="@+id/videona_player"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                />
+
+            <include layout="@layout/edit_activity_options_buttons"/>
+
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview_editor_timeline"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="@dimen/bb_height"
+            android:layout_weight="3"
+            android:scrollbars="vertical"
             />
-
-        <include layout="@layout/edit_activity_options_buttons"/>
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview_editor_timeline"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="3"
-        android:scrollbars="vertical"
+    <com.roughike.bottombar.BottomBar
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:bb_tabXmlResource="@xml/bottombar_tabs"
+        android:layout_alignParentBottom="true"
         />
-</LinearLayout>
+
+</RelativeLayout>

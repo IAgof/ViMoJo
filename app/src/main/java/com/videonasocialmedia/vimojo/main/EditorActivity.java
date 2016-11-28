@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -16,36 +15,27 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.NavigatorDrawerView;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
-import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  *
  */
 
-public abstract class EditorActivity extends VimojoActivity implements NavigatorDrawerView {
+public abstract class EditorActivity extends VimojoActivity implements EditorActivityView {
 
   private SharedPreferences sharedPreferences;
   private EditorPresenter editorPresenter;
@@ -57,12 +47,6 @@ public abstract class EditorActivity extends VimojoActivity implements Navigator
   NavigationView navigationView;
   @Bind(R.id.navigator)
   ToolbarNavigator navigator;
-  @Bind(R.id.bottomBar)
-  BottomBar bottomBar;
-  @Bind(R.id.linear_layout_activity_edit)
-  LinearLayout linearLayoutActivityEdit;
-  @Bind(R.id.linear_layout_activity_sound)
-  LinearLayout linearLayoutActivitySound;
   @Bind(R.id.fab_edit_room)
   FloatingActionsMenu fab;
 
@@ -71,12 +55,9 @@ public abstract class EditorActivity extends VimojoActivity implements Navigator
     super.onCreate(savedInstanceState);
     setContentView(R.layout.editor_activity);
     ButterKnife.bind(this);
-    UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this,
-        BuildConfig.MIXPANEL_TOKEN));
     sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
         Context.MODE_PRIVATE);
-    editorPresenter = new EditorPresenter(this, navigator.getCallback(), sharedPreferences, VimojoApplication.getAppContext());
-    setupBottomNavigator(bottomBar);
+    editorPresenter = new EditorPresenter(this, sharedPreferences, VimojoApplication.getAppContext());
   }
 
 
@@ -137,31 +118,6 @@ public abstract class EditorActivity extends VimojoActivity implements Navigator
 
     }
     return super.onOptionsItemSelected(item);
-  }
-
-  protected void setupBottomNavigator(BottomBar bottomBar) {
-    bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-      @Override
-      public void onTabSelected(@IdRes int tabId) {
-        if (tabId == R.id.tab_editactivity) {
-          doVisibleLayout(linearLayoutActivityEdit);
-
-          Intent intent = new Intent(EditorActivity.this, EditActivity.class);
-          EditorActivity.this.startService(intent);
-        }
-        if (tabId == R.id.tab_sound) {
-          doVisibleLayout(linearLayoutActivitySound);
-          //si pongo navigateTo(SoundActivity.class)...no puede con el cambio
-          Intent intent = new Intent(EditorActivity.this, SoundActivity.class);
-          EditorActivity.this.startService(intent);
-        }
-        if (tabId == R.id.tab_share) {
-          showMessage(R.string.export);
-          Intent intent = new Intent(EditorActivity.this, ExportProjectService.class);
-          EditorActivity.this.startService(intent);
-        }
-      }
-    });
   }
 
   private void setupDrawerContent(NavigationView navigationView) {
@@ -252,18 +208,6 @@ public abstract class EditorActivity extends VimojoActivity implements Navigator
     navigateTo(EditActivity.class);
   }
 
-  @OnClick(R.id.fab_go_to_record)
-  public void onClickFabRecord() {
-    fab.collapse();
-    navigateTo(RecordActivity.class);
-  }
-
-  @OnClick(R.id.fab_go_to_gallery)
-  public void onClickFabGallery() {
-    fab.collapse();
-    navigateTo(GalleryActivity.class);
-  }
-
   @Override
   public void expandFabMenu() {
     fab.expand();
@@ -279,19 +223,6 @@ public abstract class EditorActivity extends VimojoActivity implements Navigator
   public void showMessage(final int stringToast) {
     Snackbar snackbar = Snackbar.make(fab, stringToast, Snackbar.LENGTH_LONG);
     snackbar.show();
-  }
-
-  private void doVisibleLayout(LinearLayout layout) {
-    if(layout==linearLayoutActivityEdit){
-      linearLayoutActivitySound.setVisibility(View.GONE);
-      linearLayoutActivityEdit.setVisibility(View.VISIBLE);
-
-    }
-    if(layout==linearLayoutActivitySound){
-      linearLayoutActivityEdit.setVisibility(View.GONE);
-      linearLayoutActivitySound.setVisibility(View.VISIBLE);;
-
-    }
   }
 
 }

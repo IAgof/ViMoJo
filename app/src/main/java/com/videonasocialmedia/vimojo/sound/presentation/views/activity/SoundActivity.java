@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -12,11 +14,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.EditorActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
@@ -43,48 +50,62 @@ public class SoundActivity extends EditorActivity implements VideonaPlayerListen
 
     private static final String SOUND_ACTIVITY_PROJECT_POSITION = "sound_activity_project_position";
 
-    @Bind(R.id.videona_player)
-    VideonaPlayerExo videonaPlayer;
-    @Bind(R.id.button_microphone)
-    ImageButton buttonMicrophone;
-    @Bind(R.id.button_music)
-    ImageButton buttonMusic;
-    @Bind (R.id.layout_options_sound_activity)
-    LinearLayout layoutButtonSoundActivity;
-    @Bind(R.id.bottomBar)
-    BottomBar bottomBar;
+  @Nullable @Bind(R.id.videona_player)
+  VideonaPlayerExo videonaPlayer;
+  @Nullable @Bind( R.id.bottomBar)
+  BottomBar bottomBar;
+  @Bind(R.id.fab_bottom)
+  FloatingActionButton fabBottom;
+  @Bind(R.id.fab_top)
+  FloatingActionButton fabTop;
+  @Nullable @Bind(R.id.relative_layout_activity_sound)
+  RelativeLayout relativeLayoutActivitySound;
+  private BroadcastReceiver exportReceiver;
+  private SoundPresenter presenter;
+  private int currentProjectPosition = 0;
 
-    private BroadcastReceiver exportReceiver;
-    private SoundPresenter presenter;
-    private int currentProjectPosition = 0;
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+      LinearLayout contentFrameLayout = (LinearLayout) findViewById(R.id.container_layout);
+      getLayoutInflater().inflate(R.layout.activity_sound, contentFrameLayout);
+      ButterKnife.bind(this);
+      createExportReceiver();
+      restoreState(savedInstanceState);
+      presenter=new SoundPresenter(this);
+      videonaPlayer.setListener(this);
+      bottomBar.selectTabWithId(R.id.tab_sound);
+      setupBottomBar(bottomBar);
+      setupFab();
+  }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.editor_activity);
-        ButterKnife.bind(this);
-        setupActivityButtons();
-        createExportReceiver();
-        restoreState(savedInstanceState);
-        presenter=new SoundPresenter(this);
-        videonaPlayer.setListener(this);
-        setupBottomNavigator(bottomBar);
-    }
+  private void setupBottomBar(BottomBar bottomBar) {
+    bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+      @Override
+      public void onTabSelected(@IdRes int tabId) {
+        switch (tabId){
+          case(R.id.tab_editactivity):
+            navigateTo(EditActivity.class);
+            break;
+          case (R.id.tab_share):
+            Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
+            Snackbar.make(relativeLayoutActivitySound, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
+            VimojoApplication.getAppContext().startService(intent);
+            break;
+        }
+      }
+    });
+  }
 
-    private void restoreState(Bundle savedInstanceState) {
+  private void setupFab(){
+    fabBottom.setImageResource(R.drawable.activity_edit_sound_music_normal);
+    fabTop.setImageResource(R.drawable.activity_edit_sound_voice_normal);
+  }
+
+  private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             currentProjectPosition = savedInstanceState.getInt(SOUND_ACTIVITY_PROJECT_POSITION, 0);
         }
-    }
-
-    private void setupActivityButtons() {
-        tintEditButtons(R.color.button_color);
-    }
-
-    private void tintEditButtons(int tintList) {
-        tintButton(buttonMicrophone, tintList);
-        tintButton(buttonMusic, tintList);
-
     }
 
     private void createExportReceiver() {
@@ -99,7 +120,8 @@ public class SoundActivity extends EditorActivity implements VideonaPlayerListen
                     if (resultCode == RESULT_OK) {
                         goToShare(videoToSharePath);
                     } else {
-                        Snackbar.make(layoutButtonSoundActivity, R.string.shareError, Snackbar.LENGTH_LONG).show();
+                      Snackbar.make(relativeLayoutActivitySound, R.string.shareError, Snackbar.LENGTH_LONG).show();
+                      bottomBar.selectTabWithId(R.id.tab_sound);
                     }
                 }
             }
@@ -107,58 +129,58 @@ public class SoundActivity extends EditorActivity implements VideonaPlayerListen
 
     }
 
-    public void goToShare(String videoToSharePath) {
-        Intent intent = new Intent(this, ShareActivity.class);
-        intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoToSharePath);
-        startActivity(intent);
-    }
+  public void goToShare(String videoToSharePath) {
+      Intent intent = new Intent(this, ShareActivity.class);
+      intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoToSharePath);
+      startActivity(intent);
+  }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(SOUND_ACTIVITY_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
-        super.onSaveInstanceState(outState);
-    }
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+      outState.putInt(SOUND_ACTIVITY_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
+      super.onSaveInstanceState(outState);
+  }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        videonaPlayer.onPause();
-        unregisterReceiver(exportReceiver);
-    }
+  @Override
+  protected void onPause() {
+      super.onPause();
+      videonaPlayer.onPause();
+      unregisterReceiver(exportReceiver);
+  }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        videonaPlayer.onShown(this);
-        presenter.getMediaListFromProject();
-        registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
-    }
+  @Override
+  protected void onResume() {
+      super.onResume();
+      videonaPlayer.onShown(this);
+      presenter.getMediaListFromProject();
+      registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
+  }
 
-    @Override
-    public void bindVideoList(List<Video> movieList) {
+  @Override
+  public void bindVideoList(List<Video> movieList) {
 
-        videonaPlayer.bindVideoList(movieList);
-        videonaPlayer.seekTo(currentProjectPosition);
-    }
+      videonaPlayer.bindVideoList(movieList);
+      videonaPlayer.seekTo(currentProjectPosition);
+  }
 
-    @Override
-    public void resetPreview() {
-        videonaPlayer.resetPreview();
-    }
+  @Override
+  public void resetPreview() {
+      videonaPlayer.resetPreview();
+  }
 
-    @OnClick(R.id.button_music)
-    public void goToMusicListActivity(){
-        navigateTo(MusicListActivity.class);
-    }
+  @OnClick(R.id.fab_bottom)
+  public void onClickFabBottom(){
+    navigateTo(MusicListActivity.class);
+  }
 
-    @OnClick(R.id.button_microphone)
-    public void goToVoiceOverActivity(){
-        navigateTo(VoiceOverActivity.class);
-    }
+  @OnClick(R.id.fab_top)
+  public void onClickFabTop(){
+    navigateTo(VoiceOverActivity.class);
+  }
 
-    @Override
-    public void newClipPlayed(int currentClipIndex) {
+  @Nullable @Override
+  public void newClipPlayed(int currentClipIndex) {
 
-    }
+  }
 
 }

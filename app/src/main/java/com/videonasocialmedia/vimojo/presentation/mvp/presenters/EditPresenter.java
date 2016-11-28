@@ -25,7 +25,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 
-import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -51,15 +51,15 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     /**
      * Editor View
      */
-    private EditorView editorView;
+    private EditActivityView editActivityView;
     private List<Video> videoList;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
 
-    public EditPresenter(EditorView editorView,
+    public EditPresenter(EditActivityView editActivityView,
                          ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack,
                          UserEventTracker userEventTracker) {
-        this.editorView = editorView;
+        this.editActivityView = editActivityView;
         this.projectModifiedCallBack = projectModifiedCallBack;
 
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
@@ -93,7 +93,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     @Override
     public void onAddMediaItemToTrackError() {
         //TODO modify error message
-        editorView.showError(R.string.addMediaItemToTrackError);
+        editActivityView.showError(R.string.addMediaItemToTrackError);
     }
 
     @Override
@@ -104,12 +104,12 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     @Override
     public void onRemoveMediaItemFromTrackError() {
         //TODO modify error message
-        editorView.showError(R.string.addMediaItemToTrackError);
+        editActivityView.showError(R.string.addMediaItemToTrackError);
     }
 
     @Override
     public void onRemoveMediaItemFromTrackSuccess() {
-        editorView.updateProject();
+        editActivityView.updateProject();
         projectModifiedCallBack.onProjectModified();
 
     }
@@ -118,19 +118,19 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     public void onVideosRetrieved(List<Video> videoList) {
         this.videoList = videoList;
         List<Video> videoCopy = new ArrayList<>(videoList);
-        editorView.enableEditActions();
+        editActivityView.enableEditActions();
         //videonaPlayerView.bindVideoList(videoList);
-        editorView.bindVideoList(videoCopy);
+        editActivityView.bindVideoList(videoCopy);
         projectModifiedCallBack.onProjectModified();
     }
 
     @Override
     public void onNoVideosRetrieved() {
-        editorView.disableEditActions();
-        editorView.hideProgressDialog();
-        editorView.showMessage(R.string.add_videos_to_project);
-        editorView.expandFabMenu();
-        editorView.resetPreview();
+        editActivityView.disableEditActions();
+        editActivityView.hideProgressDialog();
+        editActivityView.showMessage(R.string.add_videos_to_project);
+        editActivityView.expandFabMenu();
+        editActivityView.resetPreview();
         projectModifiedCallBack.onProjectModified();
     }
 
@@ -149,7 +149,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         //          reordenar, como se reordena en cada cambio de celda, no sólo al final,
         //          generamos overhead innecesario en la actividad y además de esto, se para el
         //          preview y se corta el movimiento que estemos haciendo de reordenado
-//        editorView.updateProject();
+//        editActivityView.updateProject();
     }
 
     @Override
@@ -170,7 +170,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     @Override
     public void onMusicRetrieved(Music music) {
-        editorView.setMusic(music);
+        editActivityView.setMusic(music);
     }
 
 }
