@@ -47,6 +47,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
+
 public class VideoDuplicateActivity extends VimojoActivity implements DuplicateView,
         VideonaPlayerExo.VideonaPlayerListener {
 
@@ -59,6 +61,12 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     TextView textNumDuplicates;
     @Bind(R.id.button_duplicate_decrement_video)
     ImageButton decrementVideoButton;
+    @Bind(R.id.button_duplicate_increment_video)
+    ImageButton incrementVideoButton;
+    @Bind(R.id.button_duplicate_cancel)
+    ImageButton duplicateCancelButton;
+    @Bind(R.id.button_duplicate_accept)
+    ImageButton duplicateAcceptButton;
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
     int videoIndexOnTrack;
@@ -75,7 +83,7 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
         setContentView(R.layout.activity_video_duplicate);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         ButterKnife.bind(this);
-
+        setupActivityButtons();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -92,6 +100,17 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
         restoreState(savedInstanceState);
 
         textNumDuplicates.setText("x" + numDuplicateVideos);
+    }
+
+    private void setupActivityButtons() {
+        tintVideoDuplicateButtons(R.color.button_color);
+    }
+
+    private void tintVideoDuplicateButtons(int tintList) {
+        tintButton(decrementVideoButton,tintList);
+        tintButton(incrementVideoButton,tintList);
+        tintButton(duplicateAcceptButton,tintList);
+        tintButton(duplicateCancelButton,tintList);
     }
 
     @Override
@@ -158,9 +177,6 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
 
     public void navigateTo(Class cls) {
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
-        if (cls == GalleryActivity.class) {
-            intent.putExtra("SHARE", false);
-        }
         startActivity(intent);
         finish();
     }

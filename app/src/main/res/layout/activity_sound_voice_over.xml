@@ -131,7 +131,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical|center_horizontal"
             android:background="@null"
-            android:src="@drawable/activity_edit_sound_voice_record_normal"
+            app:srcCompat="@drawable/activity_edit_sound_voice_record_normal"
             android:visibility="visible"
             android:layout_above="@+id/button_voice_over_accept"
             android:layout_centerHorizontal="true" />

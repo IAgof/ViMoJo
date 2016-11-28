@@ -43,7 +43,6 @@ public class ToolbarNavigator extends LinearLayout implements EditNavigatorView 
         super(context);
         initComponents(context, null, 0);
     }
-
     private void initComponents(Context context, AttributeSet attrs, int defStyleAttr) {
 
         this.context = context;

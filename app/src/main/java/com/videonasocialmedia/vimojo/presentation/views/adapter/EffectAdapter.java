@@ -73,7 +73,7 @@ public class EffectAdapter
         Effect selectedEffect = effects.get(position);
         Glide.with(context)
                 .load(selectedEffect.getIconId())
-                .error(R.drawable.gatito_rules)
+                .error(R.drawable.fragment_gallery_no_image)
                 .into(holder.effectImage);
         holder.effectName.setText(selectedEffect.getName());
         if (position == selectedPosition) {

@@ -84,14 +84,17 @@
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/fab_margin"
             app:fab_colorNormal="@color/colorWhite"
             app:fab_colorPressed="@color/colorWhite"
             android:src="@drawable/common_navigate_record"
-            android:id="@+id/fab_go_to_record"/>
+            android:id="@+id/fab_go_to_record"
+            />
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/fab_margin"
             app:fab_colorNormal="@color/colorWhite"
             app:fab_colorPressed="@color/colorWhite"
             android:src="@drawable/common_navigate_gallery"

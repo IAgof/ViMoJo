@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginEnd="5dp"
-            tools:src="@drawable/gatito_rules_pressed"/>
+            tools:src="@drawable/fragment_gallery_no_image"/>
 
         <TextView
             android:id="@+id/messageToast"

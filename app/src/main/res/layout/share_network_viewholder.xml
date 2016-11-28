@@ -18,7 +18,7 @@
         android:layout_marginEnd="8dp"
         tools:layout_height="27dp"
         tools:layout_width="27dp"
-        tools:src="@drawable/gatito_rules_pressed"/>
+        tools:src="@drawable/fragment_gallery_no_image"/>
 
     <TextView
         android:id="@+id/name"

@@ -47,7 +47,7 @@ public class SoundListAdapter extends  RecyclerView.Adapter<SoundListAdapter.Sou
 
         Glide.with(context)
         .load(music.getIconResourceId())
-        .error(R.drawable.gatito_rules);
+        .error(R.drawable.fragment_gallery_no_image);
         holder.soundImage.setImageResource(music.getIconResourceId());
         holder.soundTitle.setText(music.getMusicTitle());
         holder.soundAuthor.setText(music.getAuthor());

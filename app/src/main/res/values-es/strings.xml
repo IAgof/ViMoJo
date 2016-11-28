@@ -10,6 +10,8 @@
     <string name="permissions_denied_go_to_settings_button">Ir a ajustes</string>
     <string name="CloseBecauseOfPermissionsTitle">Permisos no aceptados</string>
 
+    <string name="app_out_of_date_message">Se ha expirado el tiempo de prueba de app</string>
+
     <!-- Record Activity -->
     <string name="chronometerDefault">00:00</string>
     <string name="toast_exit">Pulsa otra vez para salir</string>
@@ -67,6 +69,8 @@
     <string name="galleryActivityTitle">Galería</string>
     <string name="mastersFolderTitle">Originales</string>
     <string name="editedFolderTitle">Editados</string>
+    <string name="dialog_accept_delete_clip">Sí</string>
+    <string name="dialog_cancel_delete_clip">No</string>
     <string name="error_video_format">Error, formato de vídeo diferente al del proyecto </string>
 
     <!--SoundVolumeActivity-->

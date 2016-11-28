@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <color name="colorTransparent">#00000000</color>
+    <color name="colorGreyTransparent">#7F000000</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorWhite">#FFFFFF</color>
+
+    <color name="colorPrimary">#284792</color>
+    <color name="colorPrimaryDark">#1f366e </color>
+    <color name="colorPrimaryLight"> #335bbd </color>
+
+    <color name="colorAccent">#284792</color>
+
+    <color name="colorSecondary">#666666</color>
+    <color name="colorSecondaryLight">#999999</color>
+
+    <color name="colorDivider">#B6B6B6</color>
+
+    <color name="textColor">@color/colorSecondary</color>
+    <color name="textColorPrimary">@color/colorSecondary</color>
+    <color name="textColorSecondary">@color/colorSecondaryLight</color>
+
+    <color name="button">@color/colorSecondary</color>
+    <color name="button_pressed">@color/colorPrimary</color>
+    <color name="button_selected">@color/colorPrimary</color>
+    <color name="button_disabled">@color/colorSecondary</color>
+
+    <color name="button_toolbar">@color/colorWhite</color>
+    <color name="button_record">@color/colorWhite</color>
+
+    <color name="textColorTitle">@color/textColorPrimary</color>
+
+
+</resources>

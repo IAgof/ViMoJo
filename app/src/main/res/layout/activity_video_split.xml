@@ -41,11 +41,11 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:background="@null"
-            android:maxHeight="50dp"
+            android:maxHeight="1dp"
             android:paddingBottom="0dp"
             android:progressDrawable="@color/colorAccent"
             android:splitTrack="false"
-            android:thumb="@drawable/activity_edit_clip_divide_indicator_seekbar"
+            android:thumb="@drawable/ic_circular_thumb_seekbar"
 
             />
 

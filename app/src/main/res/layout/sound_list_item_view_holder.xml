@@ -20,7 +20,7 @@
             android:layout_height="56dp"
             android:layout_centerVertical="true"
             android:layout_margin="8dp"
-            tools:src="@drawable/gatito_rules_pressed"/>
+            tools:src="@drawable/fragment_gallery_no_image"/>
 
         <TextView
             android:id="@+id/music_duration"

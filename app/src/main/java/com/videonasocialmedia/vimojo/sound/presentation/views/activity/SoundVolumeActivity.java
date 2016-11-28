@@ -170,9 +170,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
     public void navigateTo(Class cls) {
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
-        if (cls == GalleryActivity.class) {
-            intent.putExtra("SHARE", false);
-        }
         startActivity(intent);
         finish();
     }

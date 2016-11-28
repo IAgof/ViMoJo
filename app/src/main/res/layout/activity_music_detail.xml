@@ -65,7 +65,7 @@
                     android:layout_centerVertical="true"
                     android:scaleType="centerCrop"
                     android:paddingBottom="?attr/actionBarSize"
-                    tools:src="@drawable/gatito_rules_pressed"
+                    tools:src="@drawable/fragment_gallery_no_image"
                     />
 
                 <LinearLayout

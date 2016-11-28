@@ -63,7 +63,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/activity_edit_sound_music_normal"
+                app:srcCompat="@drawable/activity_edit_sound_music_normal"
                 />
 
             <ImageButton
@@ -74,7 +74,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/activity_edit_sound_voice_normal"
+                app:srcCompat="@drawable/activity_edit_sound_voice_normal"
                 />
 
         </LinearLayout>

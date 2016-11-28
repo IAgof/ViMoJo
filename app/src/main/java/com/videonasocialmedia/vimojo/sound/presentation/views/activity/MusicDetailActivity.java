@@ -230,7 +230,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         musicAuthor.setText(music.getAuthor());
         musicTitle.setText(music.getTitle());
         musicDuration.setText(music.getDurationMusic());
-        Glide.with(VimojoApplication.getAppContext()).load(music.getIconResourceId()).error(R.drawable.gatito_rules_pressed);
+        Glide.with(VimojoApplication.getAppContext()).load(music.getIconResourceId()).error(R.drawable.fragment_gallery_no_image);
         musicImage.setImageResource(music.getIconResourceId());
         //
     }
