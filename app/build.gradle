@@ -74,7 +74,7 @@ android {
         hispanopost {
             applicationId "com.videonasocialmedia.vimojo.hispanopost"
             versionCode 1
-            versionName "0.0"
+            versionName "0.4.16" // 20161107
             resValue "string", "app_out_of_date", "2016-12-01"
             resValue "string", "app_name", "HispanoPost"
             ext.fabricApiKey = "3fc92dd8023e505ebab31a962e1eb284f37696bb"
@@ -84,7 +84,7 @@ android {
         shoulderpod {
             applicationId "com.videonasocialmedia.vimojo.shoulderpod"
             versionCode 1
-            versionName "0.1" // 20160919
+            versionName "0.4.16" // 20161107
             resValue "string", "app_out_of_date", "2016-12-01"
             resValue "string", "app_name", "Shoulderpod"
             ext.fabricApiKey = "cee2254b437b99953c8a2a690fb3bf98cf36c343"
@@ -94,12 +94,12 @@ android {
         veinteminutos {
             applicationId "com.videonasocialmedia.vimojo.veinteminutos"
             versionCode 1
-            versionName "0.1" // 20160919
-            resValue "string", "app_out_of_date", "2016-12-01"
-            resValue "string", "app_name", "20min"
+            versionName "0.4.16.f20minutos.1" // 20161128
+            resValue "string", "app_out_of_date", "2016-12-13"
+            resValue "string", "app_name", "Video 20M"
             ext.fabricApiKey = "cf33bf18eadd90ff4f7f671588c2017052150cbf"
             ext.fabricApiSecret = "93b01a6ab712ca7229c35b072324a5e5e89a3c075e107932b0db61864e2ea880"
-            manifestPlaceholders = [appName: "20min", fabricApiKey: "cf33bf18eadd90ff4f7f671588c2017052150cbf"]
+            manifestPlaceholders = [appName: "Video 20M", fabricApiKey: "cf33bf18eadd90ff4f7f671588c2017052150cbf"]
         }
     }
 
