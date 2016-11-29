@@ -115,6 +115,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     public void trackVoiceOverVideo() {
+        // TODO(jliarte): 29/11/16 user event tracker implementation
     }
 
     public void requestRecord() {
