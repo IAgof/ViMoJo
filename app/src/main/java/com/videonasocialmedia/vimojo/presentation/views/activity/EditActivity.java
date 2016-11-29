@@ -27,14 +27,10 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.EditorActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -54,7 +50,6 @@ import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSpli
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -67,6 +62,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     private static final String CURRENT_TIME_POSITION = "current_time_position";
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;
     private final int NUM_COLUMNS_GRID_TIMELINE_VERTICAL = 4;
+
    @Nullable @Bind(R.id.button_edit_duplicate)
     ImageButton editDuplicateButton;
    @Nullable @Bind(R.id.button_edit_trim)
@@ -117,41 +113,40 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LinearLayout contentFrameLayout = (LinearLayout) findViewById(R.id.container_layout);
-        getLayoutInflater().inflate(R.layout.activity_edit, contentFrameLayout);
+        inflateLinearLayout(R.id.container_layout,R.layout.activity_edit);
+        inflateLinearLayout(R.id.container_navigator,R.layout.edit_activity_layout_button_navigator);
         ButterKnife.bind(this);
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-        editPresenter = new EditPresenter(this, navigator.getCallback(), userEventTracker);
+        editPresenter = new EditPresenter(this, userEventTracker);
         videonaPlayer.setListener(this);
         createProgressDialog();
         if (savedInstanceState != null) {
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
             currentProjectTimePosition = savedInstanceState.getInt(CURRENT_TIME_POSITION, 0);
-        }
-      setupBottomBar(bottomBar);
-    }
-
-      private void setupBottomBar(BottomBar bottomBar) {
-        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-          @Override
-          public void onTabSelected(@IdRes int tabId) {
-            switch (tabId){
-              case(R.id.tab_sound):
-                navigateTo(SoundActivity.class);
-                break;
-              case (R.id.tab_share):
-                Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
-                Snackbar.make(relativeLayoutActivityEdit, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
-                VimojoApplication.getAppContext().startService(intent);
-                break;
-            }
           }
-        });
+        bottomBar.selectTabWithId(R.id.tab_editactivity);
+        setupBottomBar(bottomBar);
       }
+
+    private void setupBottomBar(BottomBar bottomBar) {
+      bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+        @Override
+        public void onTabSelected(@IdRes int tabId) {
+          switch (tabId){
+            case(R.id.tab_sound):
+              navigateTo(SoundActivity.class);
+              break;
+            case (R.id.tab_share):
+              Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
+              Snackbar.make(relativeLayoutActivityEdit, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
+              VimojoApplication.getAppContext().startService(intent);
+              break;
+          }
+        }
+      });
+    }
 
     @Override
     protected void onStart() {
@@ -190,7 +185,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     public void updateViewResetProject() {
         initVideoListRecycler();
         super.updateViewResetProject();
-
     }
 
     private void initVideoListRecycler() {
@@ -202,10 +196,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, num_grid_columns,
                 orientation, false);
         videoListRecyclerView.setLayoutManager(layoutManager);
-
         timeLineAdapter = new VideoTimeLineAdapter(this);
         videoListRecyclerView.setAdapter(timeLineAdapter);
-
         videoTimeLineTouchHelperCallback callback = new videoTimeLineTouchHelperCallback(timeLineAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(videoListRecyclerView);
@@ -223,8 +215,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         startActivity(intent);
     }
-
-
 
    @Nullable @OnClick(R.id.button_edit_fullscreen)
     public void onClickEditFullscreen() {
@@ -363,13 +353,13 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void showError(final int stringToast) {
-        Snackbar snackbar = Snackbar.make(fab, stringToast, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(relativeLayoutActivityEdit, stringToast, Snackbar.LENGTH_LONG);
         snackbar.show();
     }
 
     @Override
     public void showMessage(final int stringToast) {
-        Snackbar snackbar = Snackbar.make(fab, stringToast, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(relativeLayoutActivityEdit, stringToast, Snackbar.LENGTH_LONG);
         snackbar.show();
     }
 
@@ -410,9 +400,27 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         editDuplicateButton.setEnabled(false);
         editTextButton.setEnabled(false);
         videonaPlayer.releaseView();
-    }
+  }
 
-    @Override
+  @Override
+  public void enableBottomBar() {
+    bottomBar.getTabWithId(R.id.tab_sound).setEnabled(true);
+    bottomBar.getTabWithId(R.id.tab_share).setEnabled(true);
+  }
+
+  @Override
+  public void disableBottomBar() {
+    bottomBar.getTabWithId(R.id.tab_sound).setEnabled(false);
+    bottomBar.getTabWithId(R.id.tab_share).setEnabled(false);
+  }
+
+  @Override
+  public void changeAlphaBottomBar(float alpha) {
+    bottomBar.getTabWithId(R.id.tab_sound).setAlpha(alpha);
+    bottomBar.getTabWithId(R.id.tab_share).setAlpha(alpha);
+  }
+
+  @Override
     public void resetPreview() {
         videonaPlayer.resetPreview();
     }
@@ -428,9 +436,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void onBackPressed() {
-        navigateTo(RecordActivity.class);
-        finish();
-    }
+      navigateTo(RecordActivity.class);
+      finish();
+  }
 
     @OnClick(R.id.fab_top)
     public void onClickFabRecord() {
@@ -453,4 +461,4 @@ public class EditActivity extends EditorActivity implements EditActivityView,
                 return false;
         }
     }
-}
+  }

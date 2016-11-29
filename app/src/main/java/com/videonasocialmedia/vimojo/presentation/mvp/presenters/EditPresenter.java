@@ -28,6 +28,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -57,10 +58,8 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     protected Project currentProject;
 
     public EditPresenter(EditActivityView editActivityView,
-                         ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack,
                          UserEventTracker userEventTracker) {
         this.editActivityView = editActivityView;
-        this.projectModifiedCallBack = projectModifiedCallBack;
 
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         remoVideoFromProjectUseCase = new RemoveVideoFromProjectUseCase();
@@ -110,7 +109,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     @Override
     public void onRemoveMediaItemFromTrackSuccess() {
         editActivityView.updateProject();
-        projectModifiedCallBack.onProjectModified();
 
     }
 
@@ -119,19 +117,20 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         this.videoList = videoList;
         List<Video> videoCopy = new ArrayList<>(videoList);
         editActivityView.enableEditActions();
+        editActivityView.enableBottomBar();
         //videonaPlayerView.bindVideoList(videoList);
         editActivityView.bindVideoList(videoCopy);
-        projectModifiedCallBack.onProjectModified();
     }
 
     @Override
     public void onNoVideosRetrieved() {
         editActivityView.disableEditActions();
+        editActivityView.disableBottomBar();
+        editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
         editActivityView.hideProgressDialog();
         editActivityView.showMessage(R.string.add_videos_to_project);
         editActivityView.expandFabMenu();
         editActivityView.resetPreview();
-        projectModifiedCallBack.onProjectModified();
     }
 
     public void removeVideoFromProject(int selectedVideoRemove) {

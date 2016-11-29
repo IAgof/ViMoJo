@@ -20,11 +20,12 @@
             android:layout_height="?attr/actionBarSize"
             app:theme="@style/VideonaDrawerIconStyle">
 
-            <com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator
-                android:id="@+id/navigator"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/container_navigator"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:layout_gravity="right"
                 android:gravity="center"
                 app:edit_selected="true"
                 />

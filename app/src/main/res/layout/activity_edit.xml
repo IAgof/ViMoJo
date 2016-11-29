@@ -16,25 +16,12 @@
             android:layout_height="wrap_content"
             />
 
-        <LinearLayout
-            android:id="@+id/linear_layout_edit_options"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal"
-            android:layout_below="@+id/videona_player"
-            android:padding="10dp">
-
-            <include layout="@layout/edit_activity_options_buttons"/>
-
-        </LinearLayout>
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_editor_timeline"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/linear_layout_edit_options"
+            android:layout_marginTop="4dp"
+            android:layout_below="@+id/videona_player"
             android:layout_marginBottom="@dimen/bb_height"
             android:scrollbars="horizontal"
             />

@@ -67,8 +67,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayerListen
   @Override
   protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-      LinearLayout contentFrameLayout = (LinearLayout) findViewById(R.id.container_layout);
-      getLayoutInflater().inflate(R.layout.activity_sound, contentFrameLayout);
+      inflateLinearLayout(R.id.container_layout,R.layout.activity_sound);
       ButterKnife.bind(this);
       createExportReceiver();
       restoreState(savedInstanceState);
@@ -173,7 +172,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayerListen
     navigateTo(MusicListActivity.class);
   }
 
-  @OnClick(R.id.fab_top)
+  @OnClick(R.id.fab_edit_room)
   public void onClickFabTop(){
     navigateTo(VoiceOverActivity.class);
   }

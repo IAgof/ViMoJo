@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -37,7 +38,8 @@ import butterknife.ButterKnife;
 
 public abstract class EditorActivity extends VimojoActivity implements EditorActivityView {
 
-  private SharedPreferences sharedPreferences;
+  protected SharedPreferences sharedPreferences;
+  protected UserEventTracker userEventTracker;
   private EditorPresenter editorPresenter;
   private AlertDialog alertDialog;
 
@@ -45,8 +47,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   DrawerLayout drawerLayout;
   @Bind(R.id.navigator_view)
   NavigationView navigationView;
-  @Bind(R.id.navigator)
-  ToolbarNavigator navigator;
+  @Bind(R.id.container_navigator)
+  LinearLayout navigator;
   @Bind(R.id.fab_edit_room)
   FloatingActionsMenu fab;
 
@@ -55,6 +57,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     super.onCreate(savedInstanceState);
     setContentView(R.layout.editor_activity);
     ButterKnife.bind(this);
+    this.userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
     sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
         Context.MODE_PRIVATE);
     editorPresenter = new EditorPresenter(this, sharedPreferences, VimojoApplication.getAppContext());
@@ -118,6 +121,11 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  protected void inflateLinearLayout(int linearLayoutContainer, int layoutToAdd) {
+    LinearLayout contentLayoutEditActivity = (LinearLayout) findViewById(linearLayoutContainer);
+    getLayoutInflater().inflate(layoutToAdd, contentLayoutEditActivity);
   }
 
   private void setupDrawerContent(NavigationView navigationView) {

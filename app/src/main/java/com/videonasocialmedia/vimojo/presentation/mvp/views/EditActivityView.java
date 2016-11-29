@@ -37,6 +37,12 @@ public interface EditActivityView {
 
     void disableEditActions();
 
+    void enableBottomBar();
+
+    void disableBottomBar();
+
+    void changeAlphaBottomBar(float alpha);
+
     void expandFabMenu();
 
     void resetPreview();
