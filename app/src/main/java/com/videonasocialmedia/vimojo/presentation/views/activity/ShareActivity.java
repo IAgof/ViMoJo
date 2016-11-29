@@ -22,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
@@ -54,7 +55,7 @@ import butterknife.OnClick;
 /**
  * Created by root on 31/05/16.
  */
-public class ShareActivity extends VimojoActivity implements ShareVideoView, VideonaPlayerExo.VideonaPlayerListener,
+public class ShareActivity extends VimojoActivity implements ShareVideoView, VideonaPlayer.VideonaPlayerListener,
         OnOptionsToShareListClickListener {
     @Nullable
     @Bind(R.id.coordinatorLayout)

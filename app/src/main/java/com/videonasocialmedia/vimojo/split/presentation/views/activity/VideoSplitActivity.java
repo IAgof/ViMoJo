@@ -20,6 +20,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -41,8 +42,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class VideoSplitActivity extends VimojoActivity implements SplitView, VideonaPlayerExo.VideonaPlayerListener,
-    SeekBar.OnSeekBarChangeListener {
+public class VideoSplitActivity extends VimojoActivity implements SplitView,
+        VideonaPlayer.VideonaPlayerListener, SeekBar.OnSeekBarChangeListener {
 
     private static final String SPLIT_POSITION = "split_position";
     private static final String SPLIT_VIDEO_POSITION = "split_video_position";

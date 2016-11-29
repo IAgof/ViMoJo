@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -47,7 +48,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class MusicDetailActivity extends VimojoActivity implements MusicDetailView, VideonaPlayerExo.VideonaPlayerListener {
+public class MusicDetailActivity extends VimojoActivity implements MusicDetailView,
+        VideonaPlayer.VideonaPlayerListener {
 
     private static final String MUSIC_DETAIL_PROJECT_POSITION = "music_detail_project_position";
 

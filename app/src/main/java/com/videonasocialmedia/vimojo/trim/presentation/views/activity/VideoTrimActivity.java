@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -45,7 +46,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class VideoTrimActivity extends VimojoActivity implements TrimView,
-        RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayerExo.VideonaPlayerListener {
+        RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayer.VideonaPlayerListener {
 
     public static final float MS_CORRECTION_FACTOR = 1000f;
     public static final float MIN_TRIM_OFFSET = 0.35f;

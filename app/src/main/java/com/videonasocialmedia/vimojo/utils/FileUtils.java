@@ -32,6 +32,7 @@ public class FileUtils {
     }
   }
 
+  // TODO(jliarte): 29/11/16 if this method uses some SDK constants, maybe it should belong to SDK?
   public static void cleanOldVideoIntermediates(File directory) {
     if (directory.exists()) {
       File[] files = directory.listFiles();

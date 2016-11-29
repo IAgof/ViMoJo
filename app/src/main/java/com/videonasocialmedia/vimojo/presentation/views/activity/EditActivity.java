@@ -32,6 +32,7 @@ import android.widget.ImageButton;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -62,7 +63,7 @@ import butterknife.OnClick;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class EditActivity extends VimojoActivity implements EditorView,
-        VideonaPlayerExo.VideonaPlayerListener, VideoTimeLineRecyclerViewClickListener {
+        VideonaPlayer.VideonaPlayerListener, VideoTimeLineRecyclerViewClickListener {
 
     private static final String CURRENT_TIME_POSITION = "current_time_position";
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;

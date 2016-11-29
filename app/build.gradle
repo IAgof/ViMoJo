@@ -180,8 +180,8 @@ dependencies {
     testCompile 'org.json:json:20140107'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':androidtranscoder')
-    compile project(':muxer')
+//    compile project(':androidtranscoder')
+//    compile project(':muxer')
     compile project(':avrecorder')
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:multidex:1.0.1'

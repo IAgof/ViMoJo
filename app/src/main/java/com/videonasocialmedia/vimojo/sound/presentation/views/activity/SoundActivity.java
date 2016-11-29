@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
@@ -35,7 +37,8 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
  * Created by ruth on 4/10/16.
  */
 
-public class SoundActivity extends VimojoActivity implements VideonaPlayerExo.VideonaPlayerListener, SoundView {
+public class SoundActivity extends VimojoActivity implements VideonaPlayer.VideonaPlayerListener,
+        SoundView {
 
     private static final String SOUND_ACTIVITY_PROJECT_POSITION = "sound_activity_project_position";
 

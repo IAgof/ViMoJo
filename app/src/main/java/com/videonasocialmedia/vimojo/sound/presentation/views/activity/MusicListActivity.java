@@ -16,6 +16,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -42,7 +44,7 @@ import butterknife.ButterKnife;
  *
  */
 public class MusicListActivity extends VimojoActivity implements MusicListView,
-        SoundRecyclerViewClickListener, VideonaPlayerExo.VideonaPlayerListener {
+        SoundRecyclerViewClickListener, VideonaPlayer.VideonaPlayerListener {
     private static final String MUSIC_LIST_PROJECT_POSITION = "music_list_project_position";
 
     @Bind(R.id.music_list)

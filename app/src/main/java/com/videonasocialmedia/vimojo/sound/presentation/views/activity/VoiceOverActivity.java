@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -30,7 +31,6 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverView;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
-import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.util.List;
 
@@ -41,8 +41,8 @@ import butterknife.OnClick;
 /**
  * Created by ruth on 14/09/16.
  */
-public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, VideonaPlayerExo.VideonaPlayerListener,
-        View.OnTouchListener {
+public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
+        VideonaPlayer.VideonaPlayerListener, View.OnTouchListener {
 
     private static final String VOICE_OVER_POSITION = "voice_over_position";
     private static final String VOICE_OVER_PROJECT_POSITION = "voice_over_project_position";

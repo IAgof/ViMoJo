@@ -29,6 +29,7 @@ import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.FileDescriptorBitmapDecoder;
 import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -50,7 +51,7 @@ import butterknife.OnClick;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoDuplicateActivity extends VimojoActivity implements DuplicateView,
-        VideonaPlayerExo.VideonaPlayerListener {
+        VideonaPlayer.VideonaPlayerListener {
 
     private static final String DUPLICATE_VIDEO_POSITION = "duplicate_video_position";
     @Bind(R.id.image_thumb_duplicate_video_left)

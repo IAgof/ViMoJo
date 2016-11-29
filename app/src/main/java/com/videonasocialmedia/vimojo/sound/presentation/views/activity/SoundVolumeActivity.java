@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -39,7 +41,8 @@ import butterknife.OnClick;
 /**
  * Created by ruth on 19/09/16.
  */
-public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSeekBarChangeListener, VideonaPlayerExo.VideonaPlayerListener, SoundVolumeView {
+public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSeekBarChangeListener,
+        VideonaPlayer.VideonaPlayerListener, SoundVolumeView {
 
     private static final String SOUND_VOLUME_POSITION_VOLUME = "sound_volume_position";
     private static final String SOUND_VOLUME_PROJECT_POSITION = "sound_volume_project_position";

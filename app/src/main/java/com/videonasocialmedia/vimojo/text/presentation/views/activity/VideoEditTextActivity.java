@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -45,7 +46,8 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 /**
  * Created by ruth on 1/09/16.
  */
-public class VideoEditTextActivity extends VimojoActivity implements EditTextView,VideonaPlayerExo.VideonaPlayerListener {
+public class VideoEditTextActivity extends VimojoActivity implements EditTextView,
+        VideonaPlayer.VideonaPlayerListener {
     private final int MAX_CHARS_PER_LINE = 20;
     private final int MAX_LINES = 2;
     private final String STATE_BUTTON_TOP = "state_button_top";

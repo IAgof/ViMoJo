@@ -52,7 +52,7 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
 
     private String TAG = VideonaPlayerMediaPlayer.class.getCanonicalName();
     private View videonaPlayerView;
-    private VideonaPlayerExo.VideonaPlayerListener videonaPlayerListener;
+    private VideonaPlayer.VideonaPlayerListener videonaPlayerListener;
     private AudioManager audio;
     private MediaPlayer videoPlayer;
     private MediaPlayer musicPlayer;
@@ -167,7 +167,7 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
     }
 
     @Override
-    public void setListener(VideonaPlayerExo.VideonaPlayerListener videonaPlayerListener) {
+    public void setListener(VideonaPlayer.VideonaPlayerListener videonaPlayerListener) {
         this.videonaPlayerListener = videonaPlayerListener;
     }
 
