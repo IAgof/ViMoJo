@@ -1,0 +1,12 @@
+<vector
+    android:height="36dp"
+    android:viewportHeight="31.1"
+    android:viewportWidth="31.1"
+    android:width="36dp"
+    android:tintMode="multiply"
+    android:tint="@color/button_color_toolbar"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <path
+        android:fillColor="@color/colorWhite"
+        android:pathData="M11,30.1l-10.7,-14.9l1.6,-1.1l9.1,12.6l18.5,-26l1.6,1.1z"/>
+</vector>

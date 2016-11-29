@@ -34,14 +34,5 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/activity_edit_clip_trim_normal"
         />
-    <ImageButton
-        android:id="@+id/button_edit_editText"
-        style="@style/Widget.AppCompat.ActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:scaleType="fitCenter"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/activity_edit_clip_text_normal"
-        />
 
 </LinearLayout>

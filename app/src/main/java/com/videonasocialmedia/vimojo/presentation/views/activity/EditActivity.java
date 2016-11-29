@@ -75,8 +75,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     ImageButton editDuplicateButton;
    @Nullable @Bind(R.id.button_edit_trim)
     ImageButton editTrimButton;
-    @Nullable @Bind(R.id.button_edit_editText)
-    ImageButton editTextButton;
    @Nullable @Bind(R.id.button_edit_split)
     ImageButton editSplitButton;
     @Nullable @Bind(R.id.recyclerview_editor_timeline)
@@ -272,13 +270,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         navigateTo(VideoDuplicateActivity.class, currentVideoIndex);
     }
 
-   @Nullable @OnClick(R.id.button_edit_editText)
-    public void onClickEditEditText() {
-        if (!editTextButton.isEnabled())
-            return;
-        navigateTo(VideoEditTextActivity.class, currentVideoIndex);
-    }
-
     public void navigateTo(Class cls, int currentVideoIndex) {
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
@@ -434,7 +425,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         editTrimButton.setEnabled(true);
         editSplitButton.setEnabled(true);
         editDuplicateButton.setEnabled(true);
-        editTextButton.setEnabled(true);
     }
 
     @Override
@@ -442,7 +432,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         editTrimButton.setEnabled(false);
         editSplitButton.setEnabled(false);
         editDuplicateButton.setEnabled(false);
-        editTextButton.setEnabled(false);
         videonaPlayer.releaseView();
   }
 
