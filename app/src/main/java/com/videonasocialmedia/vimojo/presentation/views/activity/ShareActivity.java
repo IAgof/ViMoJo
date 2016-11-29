@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -15,6 +16,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.vimojo.R;
@@ -31,9 +34,12 @@ import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlaye
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
+import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.FabUtils;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -58,6 +64,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     EditText editTextDialog;
     @Nullable @Bind(R.id.bottomBar)
     BottomBar bottomBar;
+  @Bind(R.id.fab_edit_room)
+  FloatingActionsMenu fabMenu;
 
     private String videoPath;
     private ShareVideoPresenter presenter;
@@ -78,7 +86,12 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
         restoreState(savedInstanceState);
         bottomBar.selectTabWithId(R.id.tab_share);
         setupBottomBar(bottomBar);
+        hideFab();
     }
+
+  private void hideFab() {
+    fabMenu.setVisibility(View.GONE);
+  }
 
   private void setupBottomBar(BottomBar bottomBar) {
     bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
@@ -97,7 +110,18 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     });
   }
 
-    @Override
+
+  private void onClickFabButton(final com.getbase.floatingactionbutton.FloatingActionButton fab) {
+    fab.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+
+      }
+    });
+  }
+
+
+  @Override
     protected void onPause() {
         super.onPause();
         videonaPlayer.onPause();
@@ -160,7 +184,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
         Intent intent = new Intent(getApplicationContext(), cls);
         startActivity(intent);
     }
-    /*@Nullable
+    @Nullable
     @OnClick(R.id.fab_share_room)
     public void showMoreNetworks() {
         updateNumTotalVideosShared();
@@ -170,7 +194,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
         Uri uri = Utils.obtainUriToShare(this, videoPath);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         startActivity(Intent.createChooser(intent, getString(R.string.share_using)));
-    }*/
+    }
 
 
     private void updateNumTotalVideosShared() {

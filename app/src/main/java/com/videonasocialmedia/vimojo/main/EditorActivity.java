@@ -26,7 +26,6 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import butterknife.Bind;
@@ -50,7 +49,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Bind(R.id.container_navigator)
   LinearLayout navigator;
   @Bind(R.id.fab_edit_room)
-  FloatingActionsMenu fab;
+  FloatingActionsMenu fabMenu;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -218,18 +217,18 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   public void expandFabMenu() {
-    fab.expand();
+    fabMenu.expand();
   }
 
   @Override
   public void showError(final int stringToast) {
-    Snackbar snackbar = Snackbar.make(fab, stringToast, Snackbar.LENGTH_LONG);
+    Snackbar snackbar = Snackbar.make(fabMenu, stringToast, Snackbar.LENGTH_LONG);
     snackbar.show();
   }
 
   @Override
   public void showMessage(final int stringToast) {
-    Snackbar snackbar = Snackbar.make(fab, stringToast, Snackbar.LENGTH_LONG);
+    Snackbar snackbar = Snackbar.make(fabMenu, stringToast, Snackbar.LENGTH_LONG);
     snackbar.show();
   }
 

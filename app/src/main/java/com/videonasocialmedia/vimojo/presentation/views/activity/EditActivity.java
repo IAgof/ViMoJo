@@ -28,6 +28,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
@@ -50,6 +52,8 @@ import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSpli
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.FabUtils;
+
 import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -62,6 +66,10 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     private static final String CURRENT_TIME_POSITION = "current_time_position";
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;
     private final int NUM_COLUMNS_GRID_TIMELINE_VERTICAL = 4;
+  private final int ID_BUTTON_FAB_TOP=1;
+  private final int ID_BUTTON_FAB_CENTER=2;
+  private final int ID_BUTTON_FAB_BOTTOM=3;
+
 
    @Nullable @Bind(R.id.button_edit_duplicate)
     ImageButton editDuplicateButton;
@@ -76,7 +84,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     @Nullable @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
     @Nullable @Bind(R.id.fab_edit_room)
-    FloatingActionsMenu fab;
+    FloatingActionsMenu fabMenu;
     @Nullable @Bind(R.id.navigator)
     ToolbarNavigator navigator;
     @Nullable @Bind(R.id.bottomBar)
@@ -91,6 +99,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     private VideoTimeLineAdapter timeLineAdapter;
     private AlertDialog progressDialog;
     private int selectedVideoRemovePosition;
+
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -128,25 +137,60 @@ public class EditActivity extends EditorActivity implements EditActivityView,
           }
         bottomBar.selectTabWithId(R.id.tab_editactivity);
         setupBottomBar(bottomBar);
+        setupFabMenu();
       }
 
-    private void setupBottomBar(BottomBar bottomBar) {
-      bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-        @Override
-        public void onTabSelected(@IdRes int tabId) {
-          switch (tabId){
-            case(R.id.tab_sound):
-              navigateTo(SoundActivity.class);
-              break;
-            case (R.id.tab_share):
-              Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
-              Snackbar.make(relativeLayoutActivityEdit, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
-              VimojoApplication.getAppContext().startService(intent);
-              break;
-          }
+  private void setupBottomBar(BottomBar bottomBar) {
+    bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+      @Override
+      public void onTabSelected(@IdRes int tabId) {
+        switch (tabId){
+          case(R.id.tab_sound):
+            navigateTo(SoundActivity.class);
+            break;
+          case (R.id.tab_share):
+            Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
+            Snackbar.make(relativeLayoutActivityEdit, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
+            VimojoApplication.getAppContext().startService(intent);
+            break;
         }
-      });
-    }
+      }
+    });
+  }
+
+   private void setupFabMenu() {
+     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.activity_edit_clip_text_normal, R.color.colorWhite );
+     addAndConfigurateFabButton(ID_BUTTON_FAB_CENTER, R.drawable.common_navigate_record, R.color.colorWhite);
+     addAndConfigurateFabButton(ID_BUTTON_FAB_BOTTOM, R.drawable.common_navigate_gallery, R.color.colorWhite);
+  }
+
+  private void addAndConfigurateFabButton(int id, int icon, int color) {
+    FloatingActionButton newFab = FabUtils.createNewFab(id, icon, color);
+    onClickFabButton(newFab);
+    fabMenu.addButton(newFab);
+  }
+
+  private void onClickFabButton(final FloatingActionButton fab) {
+    fab.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        switch (fab.getId()){
+          case ID_BUTTON_FAB_TOP:
+            fabMenu.collapse();
+            navigateTo(VideoEditTextActivity.class, currentVideoIndex);
+            break;
+          case ID_BUTTON_FAB_CENTER:
+            fabMenu.collapse();
+            navigateTo(RecordActivity.class);
+            break;
+          case ID_BUTTON_FAB_BOTTOM:
+            fabMenu.collapse();
+            navigateTo(GalleryActivity.class);
+            break;
+        }
+      }
+    });
+  }
 
     @Override
     protected void onStart() {
@@ -439,18 +483,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
       navigateTo(RecordActivity.class);
       finish();
   }
-
-    @OnClick(R.id.fab_top)
-    public void onClickFabRecord() {
-      fab.collapse();
-      navigateTo(RecordActivity.class);
-    }
-
-    @OnClick(R.id.fab_bottom)
-    public void onClickFabGallery() {
-      fab.collapse();
-      navigateTo(GalleryActivity.class);
-    }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {

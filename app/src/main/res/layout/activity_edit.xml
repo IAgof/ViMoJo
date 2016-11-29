@@ -32,6 +32,7 @@
         android:layout_height="56dp"
         app:bb_tabXmlResource="@xml/bottombar_tabs"
         android:layout_alignParentBottom="true"
+        android:background="@color/colorTransparent"
         />
     </RelativeLayout>
 
