@@ -3,8 +3,6 @@ package com.videonasocialmedia.vimojo.repository.project;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
-import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +17,6 @@ import io.realm.RealmResults;
 public class ProjectRealmRepository implements ProjectRepository {
   protected Mapper<Project, RealmProject> toRealmProjectMapper;
   protected Mapper<RealmProject, Project> toProjectMapper;
-  protected VideoRepository videoRepository = new VideoRealmRepository();
 
   public ProjectRealmRepository() {
     this.toProjectMapper = new RealmProjectToProjectMapper();

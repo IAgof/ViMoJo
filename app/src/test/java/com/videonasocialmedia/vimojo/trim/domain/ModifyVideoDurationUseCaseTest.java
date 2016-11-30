@@ -66,6 +66,7 @@ public class ModifyVideoDurationUseCaseTest {
           throws IOException {
     Video video = getVideoWithText();
     assert video.hasText();
+    injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedUseCase.trimVideo(video, videonaFormat, 0, 10, mediaTranscoderListener);
 
@@ -93,6 +94,7 @@ public class ModifyVideoDurationUseCaseTest {
     Video video = new Video("media/path");
     // TODO(jliarte): 19/10/16 should check if video is trimmed?
     assert ! video.hasText();
+    injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedUseCase.trimVideo(video, videonaFormat, 0, 10, mediaTranscoderListener);
 
@@ -103,6 +105,7 @@ public class ModifyVideoDurationUseCaseTest {
   @Test
   public void trimVideoCallsVideoRepositoryUpdate() {
     Video video = new Video("media/path");
+    injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedUseCase.trimVideo(video, videonaFormat, 2, 10, mediaTranscoderListener);
 

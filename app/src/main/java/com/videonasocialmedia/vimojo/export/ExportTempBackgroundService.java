@@ -13,7 +13,6 @@ import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentPr
 import com.videonasocialmedia.vimojo.export.domain.RelaunchExportTempBackgroundUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
@@ -21,6 +20,8 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.io.IOException;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by alvaro on 5/09/16.
@@ -34,10 +35,12 @@ public class ExportTempBackgroundService extends Service
 
     GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private VideonaFormat videoFormat;
-    private final VideoRepository videoRepository = new VideoRealmRepository();
+    @Inject VideoRepository videoRepository;
     private String tempVideoPathPreviewFadeInFadeOut;
     // TODO:(alvaro.martinez) 22/11/16 use project tmp directory
     private String intermediatesTempDirectory;
+    @Inject ModifyVideoDurationUseCase modifyVideoDurationUseCase;
+    @Inject ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
 
     public ExportTempBackgroundService() {
         getVideonaFormatFromCurrentProjectUseCase = new GetVideonaFormatFromCurrentProjectUseCase();
@@ -145,15 +148,12 @@ public class ExportTempBackgroundService extends Service
 
     private void addTextToVideo(Video video, MediaTranscoderListener useCaseListener,
                                 VideonaFormat videoFormat, String text, String textPosition) {
-        ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase =
-                new ModifyVideoTextAndPositionUseCase();
         modifyVideoTextAndPositionUseCase.addTextToVideo(video, videoFormat, text, textPosition,
                 useCaseListener);
     }
 
     private void trimVideo(Video video, MediaTranscoderListener useCaseListener,
                            VideonaFormat videoFormat, int startTimeMs, int finishTimeMs) {
-        ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase();
         modifyVideoDurationUseCase.trimVideo(video, videoFormat, startTimeMs, finishTimeMs,
                 useCaseListener);
     }

@@ -34,13 +34,18 @@ import de.greenrobot.event.EventBus;
  */
 public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectUseCase {
     protected ProjectRepository projectRepository;
-    protected VideoRepository videoRepository = new VideoRealmRepository();
+    protected VideoRepository videoRepository;
 
     /**
      * Default Constructor.
+     *
+     * @param projectRepository the project repository.
+     * @param videoRepository the video repository.
      */
-    @Inject public RemoveVideoFromProjectUseCase(ProjectRepository projectRepository) {
+    @Inject public RemoveVideoFromProjectUseCase(ProjectRepository projectRepository,
+                                                 VideoRepository videoRepository) {
         this.projectRepository = projectRepository;
+        this.videoRepository = videoRepository;
     }
 
     @Override
