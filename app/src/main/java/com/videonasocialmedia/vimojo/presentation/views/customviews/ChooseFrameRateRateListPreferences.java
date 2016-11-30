@@ -25,6 +25,8 @@ import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 class ChooseFrameRateRateListPreferences extends ListPreference {
 
     private Context mContext;
@@ -32,7 +34,7 @@ class ChooseFrameRateRateListPreferences extends ListPreference {
     private CharSequence[] entryValues;
     private SharedPreferences sharedPreferences;
     private Project currentProject;
-    private UpdateVideoFrameRateToProjectUseCase updateVideoFrameRateToProjectUseCase;
+    @Inject UpdateVideoFrameRateToProjectUseCase updateVideoFrameRateToProjectUseCase;
 
     public ChooseFrameRateRateListPreferences(Context context, AttributeSet attrs)
     {
@@ -40,7 +42,6 @@ class ChooseFrameRateRateListPreferences extends ListPreference {
         mContext = context;
         sharedPreferences =  mContext.getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
-        updateVideoFrameRateToProjectUseCase = new UpdateVideoFrameRateToProjectUseCase();
     }
 
     // NOTE:
