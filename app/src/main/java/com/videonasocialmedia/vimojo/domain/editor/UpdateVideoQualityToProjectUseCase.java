@@ -5,6 +5,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
+import javax.inject.Inject;
+
 /**
  * Created by alvaro on 20/10/16.
  */
@@ -12,7 +14,16 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 public class UpdateVideoQualityToProjectUseCase {
 
     private Project currentProject;
-    protected ProjectRepository projectRepository = new ProjectRealmRepository();
+    protected ProjectRepository projectRepository;
+
+  /**
+   * Default constructor with project repository argument.
+   *
+   * @param projectRepository the project repository.
+   */
+  @Inject public UpdateVideoQualityToProjectUseCase(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
+    }
 
     public void updateQuality(VideoQuality.Quality quality) {
         currentProject = Project.getInstance(null, null, null);

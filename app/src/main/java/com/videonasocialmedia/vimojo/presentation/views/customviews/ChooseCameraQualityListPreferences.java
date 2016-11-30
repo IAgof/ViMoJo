@@ -22,20 +22,21 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
+import javax.inject.Inject;
+
 public class ChooseCameraQualityListPreferences extends ListPreference {
 
     private Context mContext;
     private CharSequence[] entries;
     private CharSequence[] entryValues;
     private SharedPreferences sharedPreferences;
-    private UpdateVideoQualityToProjectUseCase updateVideoQualityToProjectUseCase;
+    @Inject UpdateVideoQualityToProjectUseCase updateVideoQualityToProjectUseCase;
 
     public ChooseCameraQualityListPreferences(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         sharedPreferences =  mContext.getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
-        updateVideoQualityToProjectUseCase = new UpdateVideoQualityToProjectUseCase();
     }
 
     @Override
