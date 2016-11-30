@@ -3,12 +3,14 @@ package com.videonasocialmedia.vimojo.split.domain;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
+import javax.inject.Inject;
+
 /**
  * Created by ruth on 4/08/16.
  */
 
 public class SplitVideoUseCase {
-    protected AddVideoToProjectUseCase addVideoToProjectUseCase = new AddVideoToProjectUseCase();
+    @Inject protected AddVideoToProjectUseCase addVideoToProjectUseCase;
 
     public void splitVideo(Video initialVideo, int positionInAdapter, int splitTimeMs,
                            OnSplitVideoListener listener) {

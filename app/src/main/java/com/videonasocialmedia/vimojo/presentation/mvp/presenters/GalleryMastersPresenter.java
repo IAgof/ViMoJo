@@ -19,6 +19,8 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoGalleryView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * This class is used for adding new videos to the project.
  */
@@ -26,7 +28,7 @@ public class GalleryMastersPresenter implements OnAddMediaFinishedListener,
         OnRemoveMediaFinishedListener, OnExportFinishedListener {
 
     RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
-    AddVideoToProjectUseCase addVideoToProjectUseCase;
+    @Inject AddVideoToProjectUseCase addVideoToProjectUseCase;
     GalleryPagerView galleryPagerView;
     VideoGalleryView galleryView;
 
@@ -36,7 +38,6 @@ public class GalleryMastersPresenter implements OnAddMediaFinishedListener,
     public GalleryMastersPresenter(VideoGalleryView galleryView) {
         this.galleryView = galleryView;
         removeVideoFromProjectUseCase = new RemoveVideoFromProjectUseCase();
-        addVideoToProjectUseCase = new AddVideoToProjectUseCase();
     }
 
     /**

@@ -24,6 +24,8 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * This class is used for adding new videos to the project.
  */
@@ -31,7 +33,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         OnRemoveMediaFinishedListener, OnExportFinishedListener {
     
     RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
-    AddVideoToProjectUseCase addVideoToProjectUseCase;
+    @Inject AddVideoToProjectUseCase addVideoToProjectUseCase;
     GalleryPagerView galleryPagerView;
     protected Project currentProject;
     ArrayList<Integer> listErrorVideoIds = new ArrayList<>();
@@ -43,7 +45,6 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     public GalleryPagerPresenter(GalleryPagerView galleryPagerView) {
         this.galleryPagerView = galleryPagerView;
         removeVideoFromProjectUseCase = new RemoveVideoFromProjectUseCase();
-        addVideoToProjectUseCase = new AddVideoToProjectUseCase();
         this.currentProject = loadCurrentProject();
     }
 

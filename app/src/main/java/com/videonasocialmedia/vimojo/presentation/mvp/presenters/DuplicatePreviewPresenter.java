@@ -19,6 +19,8 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by vlf on 7/7/15.
  */
@@ -33,7 +35,7 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
             new GetMediaListFromProjectUseCase();
-    protected AddVideoToProjectUseCase addVideoToProjectUseCase;
+    @Inject protected AddVideoToProjectUseCase addVideoToProjectUseCase;
 
     private DuplicateView duplicateView;
     protected UserEventTracker userEventTracker;
@@ -46,7 +48,6 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
         this.duplicateView = duplicateView;
         this.currentProject = loadCurrentProject();
         this.userEventTracker = userEventTracker;
-        this.addVideoToProjectUseCase = new AddVideoToProjectUseCase();
     }
 
     private Project loadCurrentProject() {
