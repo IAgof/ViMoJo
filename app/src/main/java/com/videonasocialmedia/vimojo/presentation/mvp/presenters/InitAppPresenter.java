@@ -4,13 +4,14 @@ import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 
+import javax.inject.Inject;
+
 /**
  * Created by jliarte on 22/10/16.
  */
 public class InitAppPresenter {
   private final InitAppView view;
-  protected CreateDefaultProjectUseCase createDefaultProjectUseCase =
-          new CreateDefaultProjectUseCase();
+  @Inject protected CreateDefaultProjectUseCase createDefaultProjectUseCase;
 
   public InitAppPresenter(InitAppView view) {
     this.view = view;

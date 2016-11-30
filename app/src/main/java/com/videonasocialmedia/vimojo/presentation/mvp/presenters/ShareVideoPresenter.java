@@ -37,7 +37,7 @@ public class ShareVideoPresenter {
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetFtpListUseCase getFtpListUseCase;
     @Inject ClearProjectUseCase clearProjectUseCase;
-    protected CreateDefaultProjectUseCase createDefaultProjectUseCase;
+    @Inject protected CreateDefaultProjectUseCase createDefaultProjectUseCase;
     private ShareVideoView shareVideoView;
     protected Project currentProject;
     protected UserEventTracker userEventTracker;
@@ -64,7 +64,6 @@ public class ShareVideoPresenter {
     public void onCreate() {
         obtainNetworksToShareUseCase = new ObtainNetworksToShareUseCase();
         getFtpListUseCase = new GetFtpListUseCase();
-        createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
     }
 
     public void onResume() {
