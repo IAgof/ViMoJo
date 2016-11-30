@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 /**

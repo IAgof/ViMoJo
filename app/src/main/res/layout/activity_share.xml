@@ -10,13 +10,12 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".presentation.views.activity.ShareActivity">
 
-    <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
-        android:id="@+id/videona_player"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/videonaPlayerExo_marginTop"
-        />
-
+       <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
+            android:id="@+id/videona_player"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/videonaPlayerExo_marginTop"
+            />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/options_to_share_list"

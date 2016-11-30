@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.model;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 
 import io.realm.DynamicRealm;
 import io.realm.DynamicRealmObject;

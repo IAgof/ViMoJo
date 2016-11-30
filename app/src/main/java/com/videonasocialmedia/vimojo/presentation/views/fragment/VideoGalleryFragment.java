@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoGalleryPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoGalleryView;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;

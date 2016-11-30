@@ -8,8 +8,8 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
-import com.videonasocialmedia.vimojo.model.entities.editor.track.Track;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 
 import java.util.List;

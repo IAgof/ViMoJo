@@ -16,16 +16,17 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
@@ -43,7 +44,7 @@ import butterknife.ButterKnife;
  *
  */
 public class MusicListActivity extends VimojoActivity implements MusicListView,
-        SoundRecyclerViewClickListener, VideonaPlayerListener {
+        SoundRecyclerViewClickListener, VideonaPlayer.VideonaPlayerListener {
     private static final String MUSIC_LIST_PROJECT_POSITION = "music_list_project_position";
 
     @Bind(R.id.music_list)

@@ -15,14 +15,23 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.EditorActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
@@ -38,7 +47,7 @@ import butterknife.ButterKnife;
  * Created by ruth on 4/10/16.
  */
 
-public class SoundActivity extends EditorActivity implements VideonaPlayerListener, SoundView {
+public class SoundActivity extends EditorActivity implements VideonaPlayer.VideonaPlayerListener, SoundView {
 
     private static final String SOUND_ACTIVITY_PROJECT_POSITION = "sound_activity_project_position";
   private final int ID_BUTTON_FAB_TOP=1;

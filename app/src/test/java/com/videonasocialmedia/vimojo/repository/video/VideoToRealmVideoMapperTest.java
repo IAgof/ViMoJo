@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.repository.video;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +33,7 @@ public class VideoToRealmVideoMapperTest {
     video.tempPath = "tmp/path";
     video.setTempPathFinished(true);
     video.setClipText("text");
-    video.setClipTextPosition(VideoEditTextActivity.TextPosition.CENTER.name());
+    video.setClipTextPosition(TextEffect.TextPosition.CENTER.name());
     video.setTextToVideoAdded(true);
     video.setTrimmedVideo(true);
     video.setStartTime(10);
@@ -49,7 +49,7 @@ public class VideoToRealmVideoMapperTest {
     assertThat(realmVideo.tempPath, is("tmp/path"));
     assertThat(realmVideo.isTempPathFinished, is(true));
     assertThat(realmVideo.clipText, is("text"));
-    assertThat(realmVideo.clipTextPosition, is(VideoEditTextActivity.TextPosition.CENTER.name()));
+    assertThat(realmVideo.clipTextPosition, is(TextEffect.TextPosition.CENTER.name()));
     assertThat(realmVideo.isTextToVideoAdded, is(true));
     assertThat(realmVideo.isTrimmedVideo, is(true));
     assertThat(realmVideo.startTime, is(10));

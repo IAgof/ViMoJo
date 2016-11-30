@@ -3,21 +3,25 @@ package com.videonasocialmedia.vimojo.trim.domain;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
-import com.videonasocialmedia.transcoder.format.VideonaFormat;
-import com.videonasocialmedia.vimojo.export.utils.TranscoderHelper;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
+import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.IOException;
+
+import javax.inject.Inject;
 
 /**
  * Created by jca on 27/5/15.
  */
 public class ModifyVideoDurationUseCase {
 
-  private TextToDrawable drawableGenerator = new TextToDrawable();
+  private TextToDrawable drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
   private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator, mediaTranscoder);
   protected VideoRepository videoRepository = new VideoRealmRepository();
@@ -36,7 +40,8 @@ public class ModifyVideoDurationUseCase {
       videoToEdit.setStartTime(startTimeMs);
       videoToEdit.setStopTime(finishTimeMs);
       videoToEdit.setTempPathFinished(false);
-      videoToEdit.setTempPath();
+      // TODO:(alvaro.martinez) 22/11/16 use project tmp path
+      videoToEdit.setTempPath(Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
       videoToEdit.setTrimmedVideo(true);
 
       if (videoToEdit.hasText()) {

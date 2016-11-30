@@ -1,8 +1,8 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
 
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Test;

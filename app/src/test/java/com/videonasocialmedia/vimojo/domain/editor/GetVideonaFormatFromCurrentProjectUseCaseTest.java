@@ -1,18 +1,16 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
-import com.videonasocialmedia.transcoder.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
 import static org.hamcrest.CoreMatchers.is;

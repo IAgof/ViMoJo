@@ -5,20 +5,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
+import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
-import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
-import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
+import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by ruth on 1/09/16.
@@ -26,7 +29,7 @@ import java.util.List;
 public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
     private final String LOG_TAG = getClass().getSimpleName();
-    private final TextToDrawable drawableGenerator = new TextToDrawable();
+    TextToDrawable drawableGenerator;
 
     private Video videoToEdit;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
@@ -39,6 +42,8 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         this.currentProject = loadCurrentProject();
         this.userEventTracker = userEventTracker;
+        // TODO:(alvaro.martinez) 23/11/16 Use Dagger for this injection
+        drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
     }
 
     private Project loadCurrentProject() {
@@ -72,7 +77,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
         editTextView.showText(drawable);
     }
 
-    public void setTextToVideo(String text, VideoEditTextActivity.TextPosition textPositionSelected) {
+    public void setTextToVideo(String text, TextEffect.TextPosition textPositionSelected) {
 
         Context appContext = VimojoApplication.getAppContext();
         Intent textToVideoServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
@@ -80,6 +85,8 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
         textToVideoServiceIntent.putExtra(IntentConstants.IS_TEXT_ADDED, true);
         textToVideoServiceIntent.putExtra(IntentConstants.TEXT_TO_ADD, text);
         textToVideoServiceIntent.putExtra(IntentConstants.TEXT_POSITION, textPositionSelected.name());
+        // TODO:(alvaro.martinez) 22/11/16 use project tmp path
+        textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY, Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
         appContext.startService(textToVideoServiceIntent);
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
     }

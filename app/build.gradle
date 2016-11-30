@@ -55,8 +55,6 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 23
-        //versionCode 18 // 20161107
-        //versionName "0.4.16" // 20161107
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -67,6 +65,7 @@ android {
             applicationId "com.videonasocialmedia.vimojo"
             versionCode 18 // 20161107
             versionName "0.4.16" // 20161107
+            resValue "string", "app_out_of_date", "2017-01-01"
             resValue "string", "app_name", "Vimojo"
             ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
             ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
@@ -75,7 +74,8 @@ android {
         hispanopost {
             applicationId "com.videonasocialmedia.vimojo.hispanopost"
             versionCode 1
-            versionName "0.0"
+            versionName "0.4.16" // 20161107
+            resValue "string", "app_out_of_date", "2016-12-01"
             resValue "string", "app_name", "HispanoPost"
             ext.fabricApiKey = "3fc92dd8023e505ebab31a962e1eb284f37696bb"
             ext.fabricApiSecret = "f88950e831f1f8c6d7402b96e4e93c1c2f71f1e021dc68b183b8b3d2456b9b67"
@@ -84,11 +84,22 @@ android {
         shoulderpod {
             applicationId "com.videonasocialmedia.vimojo.shoulderpod"
             versionCode 1
-            versionName "0.1" // 20160919
+            versionName "0.4.16" // 20161107
+            resValue "string", "app_out_of_date", "2016-12-01"
             resValue "string", "app_name", "Shoulderpod"
             ext.fabricApiKey = "cee2254b437b99953c8a2a690fb3bf98cf36c343"
             ext.fabricApiSecret = "356b560c9fa95c84d8635ad0ab7049a664ebe2917dd954a5b97ebd95faee4fa8"
             manifestPlaceholders = [appName: "Shoulderpod", fabricApiKey: "cee2254b437b99953c8a2a690fb3bf98cf36c343"]
+        }
+        veinteminutos {
+            applicationId "com.videonasocialmedia.vimojo.veinteminutos"
+            versionCode 1
+            versionName "0.4.16.f20minutos.1" // 20161128
+            resValue "string", "app_out_of_date", "2016-12-13"
+            resValue "string", "app_name", "Video 20M"
+            ext.fabricApiKey = "cf33bf18eadd90ff4f7f671588c2017052150cbf"
+            ext.fabricApiSecret = "93b01a6ab712ca7229c35b072324a5e5e89a3c075e107932b0db61864e2ea880"
+            manifestPlaceholders = [appName: "Video 20M", fabricApiKey: "cf33bf18eadd90ff4f7f671588c2017052150cbf"]
         }
     }
 
@@ -118,14 +129,14 @@ android {
             buildConfigField "String", "MIXPANEL_TOKEN", "\"6f46145c03bf5cf5104bb3536059d994\""
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            manifestPlaceholders = [ appName: "Vimojo", fabricApiKey: "1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
         }
         debug {
+            applicationIdSuffix ".debug"
             ext.betaDistributionGroupAliases="videona-dev-team"
             ext.betaDistributionReleaseNotesFilePath="${project.rootDir}/RELEASE"
             buildConfigField "String", "MIXPANEL_TOKEN", "\"c6617213110cd2513dfc0ad97dbaee66\""
             ext.fabricApiKey = "eba78720f87307ca48dfa4200dd90914ff6653f2"
-            ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
+            ext.fabricApiSecret = "1636d8a8a8c633c8ba87f5a67ca26a5cc354c414b108ef565df202f07f393ae9"
             manifestPlaceholders = [appName: "Vimojo", fabricApiKey: "eba78720f87307ca48dfa4200dd90914ff6653f2"]
         }
     }
@@ -169,8 +180,8 @@ dependencies {
     testCompile 'org.json:json:20140107'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':androidtranscoder')
-    compile project(':muxer')
+//    compile project(':androidtranscoder')
+//    compile project(':muxer')
     compile project(':avrecorder')
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:multidex:1.0.1'
@@ -200,7 +211,9 @@ dependencies {
     compile 'io.realm:android-adapters:1.3.0'
     compile 'com.roughike:bottom-bar:2.0.2'
 
-    compile(name:'videona-sdk-v0.0.8',ext:'aar')
+    compile(name:'videona-sdk-v0.1.0',ext:'aar')
+    compile 'com.googlecode.mp4parser:isoparser:1.0.5.4'
+    compile 'org.jcodec:jcodec:0.1.9'
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"

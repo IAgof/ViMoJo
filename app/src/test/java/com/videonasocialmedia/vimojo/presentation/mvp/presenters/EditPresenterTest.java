@@ -5,14 +5,14 @@ import android.support.annotation.NonNull;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoFrameRate;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -37,7 +37,7 @@ public class EditPresenterTest {
     @Mock GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     @InjectMocks private EditPresenter editPresenter;
     @Mock private EditActivityView mockedEditActivityView;
-    @Mock private VideonaPlayerView mockedVideonaPlayerView;
+    @Mock private VideonaPlayer mockedVideonaPlayer;
     @Mock private MixpanelAPI mockedMixpanelApi;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private ToolbarNavigator.ProjectModifiedCallBack mockedProjectModifiedCallback;

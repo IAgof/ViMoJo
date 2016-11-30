@@ -17,15 +17,15 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverView;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -41,8 +41,8 @@ import butterknife.OnClick;
 /**
  * Created by ruth on 14/09/16.
  */
-public class VoiceOverActivity extends VimojoActivity implements VoiceOverView, VideonaPlayerListener,
-        View.OnTouchListener {
+public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
+        VideonaPlayer.VideonaPlayerListener, View.OnTouchListener {
 
     private static final String VOICE_OVER_POSITION = "voice_over_position";
     private static final String VOICE_OVER_PROJECT_POSITION = "voice_over_project_position";

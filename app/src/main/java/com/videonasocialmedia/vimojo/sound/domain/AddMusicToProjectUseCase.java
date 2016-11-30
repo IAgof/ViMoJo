@@ -12,9 +12,9 @@ package com.videonasocialmedia.vimojo.sound.domain;
 
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
-import com.videonasocialmedia.vimojo.model.entities.editor.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;

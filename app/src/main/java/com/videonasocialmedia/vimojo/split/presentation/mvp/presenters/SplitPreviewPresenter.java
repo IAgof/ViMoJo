@@ -14,13 +14,14 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -104,6 +105,8 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
         trimServiceIntent.putExtra(IntentConstants.IS_VIDEO_TRIMMED, true);
         trimServiceIntent.putExtra(IntentConstants.START_TIME_MS, startTimeMs);
         trimServiceIntent.putExtra(IntentConstants.FINISH_TIME_MS, finishTimeMs);
+        // TODO:(alvaro.martinez) 22/11/16 use project tmp path
+        trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY, Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
         appContext.startService(trimServiceIntent);
     }
 }

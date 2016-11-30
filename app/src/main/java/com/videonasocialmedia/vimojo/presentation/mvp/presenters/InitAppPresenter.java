@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 
 /**

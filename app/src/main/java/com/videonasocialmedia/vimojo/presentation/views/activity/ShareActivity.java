@@ -20,19 +20,22 @@ import android.widget.RelativeLayout;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.vimojo.main.EditorActivity;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.OptionsToShareAdapter;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
+import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -52,7 +55,7 @@ import butterknife.OnClick;
 /**
  * Created by root on 31/05/16.
  */
-public class ShareActivity extends EditorActivity implements ShareVideoView, VideonaPlayerListener,
+public class ShareActivity extends EditorActivity implements ShareVideoView, VideonaPlayer.VideonaPlayerListener,
         OnOptionsToShareListClickListener {
     @Nullable @Bind(R.id.linear_layout_activity_share)
     RelativeLayout coordinatorLayout;

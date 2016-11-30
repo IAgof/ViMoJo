@@ -10,6 +10,8 @@
     <string name="permissions_denied_go_to_settings_button">Ir a ajustes</string>
     <string name="CloseBecauseOfPermissionsTitle">Permisos no aceptados</string>
 
+    <string name="app_out_of_date_message">Se ha expirado el tiempo de prueba de app</string>
+
     <!-- Record Activity -->
     <string name="chronometerDefault">00:00</string>
     <string name="toast_exit">Pulsa otra vez para salir</string>

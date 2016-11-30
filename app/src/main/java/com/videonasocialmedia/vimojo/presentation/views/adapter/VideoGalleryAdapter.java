@@ -11,10 +11,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnTransitionClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.listener.RecyclerViewClickListener;
-import com.videonasocialmedia.vimojo.utils.TimeUtils;
 import com.videonasocialmedia.vimojo.utils.recyclerselectionsupport.MultiItemSelectionSupport;
 
 import java.util.ArrayList;
@@ -69,7 +68,7 @@ public class VideoGalleryAdapter extends RecyclerView.Adapter<VideoGalleryAdapte
             holder.overlay.setActivated(selectionSupport.isItemChecked(position));
             holder.overlayIcon.setActivated(selectionSupport.isItemChecked(position));
         }
-        String duration = TimeUtils.toFormattedTimeHoursMinutesSecond(selectedVideo.getDuration());
+        String duration = com.videonasocialmedia.videonamediaframework.utils.TimeUtils.toFormattedTimeHoursMinutesSecond(selectedVideo.getDuration());
         holder.duration.setText(duration);
     }
 

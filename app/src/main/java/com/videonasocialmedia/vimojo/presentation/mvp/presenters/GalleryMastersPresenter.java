@@ -12,8 +12,8 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoGalleryView;
 

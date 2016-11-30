@@ -20,17 +20,17 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
@@ -42,8 +42,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class VideoSplitActivity extends VimojoActivity implements SplitView, VideonaPlayerListener,
-    SeekBar.OnSeekBarChangeListener {
+public class VideoSplitActivity extends VimojoActivity implements SplitView,
+        VideonaPlayer.VideonaPlayerListener, SeekBar.OnSeekBarChangeListener {
 
     private static final String SPLIT_POSITION = "split_position";
     private static final String SPLIT_VIDEO_POSITION = "split_video_position";
