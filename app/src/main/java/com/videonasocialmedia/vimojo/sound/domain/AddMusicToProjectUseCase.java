@@ -26,7 +26,7 @@ import javax.inject.Inject;
  */
 public class AddMusicToProjectUseCase {
     private Project currentProject = Project.getInstance(null, null, null);
-    protected ProjectRepository projectRepository = new ProjectRealmRepository();
+    protected ProjectRepository projectRepository;
 
     /**
      * Default constructor with project repository argument.

@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
+package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -10,7 +10,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
+import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.After;
@@ -34,6 +34,7 @@ public class MusicDetailPresenterTest {
     @Mock private VideonaPlayer playerView;
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
+    @Mock private RemoveMusicFromProjectUseCase mockedRemoveMusicUseCase;
 
     @Before
     public void injectMocks() {
@@ -64,7 +65,8 @@ public class MusicDetailPresenterTest {
 
     @Test
     public void onAddMediaItemToTrackSuccessCallsTrackMusicSet() {
-        MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(musicDetailView, mockedUserEventTracker);
+        MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(musicDetailView,
+                mockedUserEventTracker);
         Project videonaProject = getAProject();
         Music music = new Music(1, "Music title", 2, 3, "Music Author", "3");
         musicDetailPresenter.onMusicRetrieved(music);
@@ -79,6 +81,8 @@ public class MusicDetailPresenterTest {
         MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(musicDetailView, mockedUserEventTracker);
         Project videonaProject = getAProject();
         Music music = new Music(1, "Music title", 2, 3, "Music Author", "3");
+        musicDetailPresenter.removeMusicFromProjectUseCase = mockedRemoveMusicUseCase;
+
         musicDetailPresenter.removeMusic(music);
 
         Mockito.verify(mockedUserEventTracker).trackMusicSet(videonaProject);

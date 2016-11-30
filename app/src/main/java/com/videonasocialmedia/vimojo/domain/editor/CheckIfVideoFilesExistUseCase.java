@@ -16,10 +16,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CheckIfVideoFilesExistUseCase implements OnVideosRetrieved, OnRemoveMediaFinishedListener {
+import javax.inject.Inject;
+
+public class CheckIfVideoFilesExistUseCase implements OnVideosRetrieved,
+        OnRemoveMediaFinishedListener {
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    private RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
+    @Inject RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
 
     public void check() {
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
@@ -36,8 +39,8 @@ public class CheckIfVideoFilesExistUseCase implements OnVideosRetrieved, OnRemov
             }
         }
         if(mediasToDeleteFromProject.size() > 0) {
-            removeVideoFromProjectUseCase = new RemoveVideoFromProjectUseCase();
-            removeVideoFromProjectUseCase.removeMediaItemsFromProject(mediasToDeleteFromProject, this);
+            removeVideoFromProjectUseCase.removeMediaItemsFromProject(mediasToDeleteFromProject,
+                    this);
         }
     }
 

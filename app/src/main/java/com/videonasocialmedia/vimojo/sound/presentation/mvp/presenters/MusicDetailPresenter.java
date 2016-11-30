@@ -27,7 +27,7 @@ import javax.inject.Inject;
 public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback,
         OnAddMediaFinishedListener {
     @Inject AddMusicToProjectUseCase addMusicToProjectUseCase;
-    @Inject private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
+    @Inject RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
     private MusicDetailView musicDetailView;
@@ -100,7 +100,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     @Override
     public void onAddMediaItemToTrackError() {
-
+        // TODO(jliarte): 30/11/16 implement error processing
     }
 
     @Override

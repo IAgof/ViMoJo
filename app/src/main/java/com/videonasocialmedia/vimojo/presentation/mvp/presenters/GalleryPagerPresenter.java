@@ -13,7 +13,6 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.media.MediaMetadataRetriever;
 
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -32,7 +31,6 @@ import javax.inject.Inject;
 public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         OnRemoveMediaFinishedListener, OnExportFinishedListener {
     
-    RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
     @Inject AddVideoToProjectUseCase addVideoToProjectUseCase;
     GalleryPagerView galleryPagerView;
     protected Project currentProject;
@@ -44,7 +42,6 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
      */
     public GalleryPagerPresenter(GalleryPagerView galleryPagerView) {
         this.galleryPagerView = galleryPagerView;
-        removeVideoFromProjectUseCase = new RemoveVideoFromProjectUseCase();
         this.currentProject = loadCurrentProject();
     }
 

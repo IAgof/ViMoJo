@@ -33,6 +33,8 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener,
         OnVideosRetrieved, OnReorderMediaListener, GetMusicFromProjectCallback {
 
@@ -43,7 +45,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     /**
      * UseCases
      */
-    private RemoveVideoFromProjectUseCase remoVideoFromProjectUseCase;
+    @Inject RemoveVideoFromProjectUseCase remoVideoFromProjectUseCase;
     private ReorderMediaItemUseCase reorderMediaItemUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack;
@@ -63,7 +65,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         this.projectModifiedCallBack = projectModifiedCallBack;
 
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        remoVideoFromProjectUseCase = new RemoveVideoFromProjectUseCase();
         reorderMediaItemUseCase = new ReorderMediaItemUseCase();
         getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
         this.userEventTracker = userEventTracker;
@@ -77,9 +78,10 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
 
     public String getResolution() {
-        SharedPreferences sharedPreferences = VimojoApplication.getAppContext().getSharedPreferences(
-                ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
-                Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = VimojoApplication.getAppContext()
+                .getSharedPreferences(
+                        ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
+                        Context.MODE_PRIVATE);
 
         return sharedPreferences.getString(ConfigPreferences.RESOLUTION, "1280x720");
     }
