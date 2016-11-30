@@ -27,7 +27,7 @@ import javax.inject.Inject;
 public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback,
         OnAddMediaFinishedListener {
     @Inject AddMusicToProjectUseCase addMusicToProjectUseCase;
-    private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
+    @Inject private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
     private MusicDetailView musicDetailView;
@@ -38,7 +38,6 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     public MusicDetailPresenter(MusicDetailView musicDetailView,
                                 UserEventTracker userEventTracker) {
         this.musicDetailView = musicDetailView;
-        removeMusicFromProjectUseCase = new RemoveMusicFromProjectUseCase();
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
         this.currentProject = loadCurrentProject();

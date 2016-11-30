@@ -14,13 +14,15 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by ruth on 19/09/16.
  */
 public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListener {
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    protected RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
+    @Inject protected RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
     protected MixAudioUseCase mixAudioUseCase;
     private SoundVolumeView soundVolumeView;
 
@@ -34,7 +36,6 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
         this.soundVolumeView = soundVolumeView;
         this.getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         this.mixAudioUseCase = new MixAudioUseCase(this);
-        this.removeMusicFromProjectUseCase = new RemoveMusicFromProjectUseCase();
         this.currentProject = loadCurrentProject();
     }
 
