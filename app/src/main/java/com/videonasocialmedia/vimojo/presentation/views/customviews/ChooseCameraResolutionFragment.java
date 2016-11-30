@@ -23,13 +23,15 @@ import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 class ChooseCameraResolutionListPreferences extends ListPreference {
 
     private Context mContext;
     private CharSequence[] entries;
     private CharSequence[] entryValues;
     private SharedPreferences sharedPreferences;
-    private UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase;
+    @Inject UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase;
 
     public ChooseCameraResolutionListPreferences(Context context, AttributeSet attrs)
     {
@@ -37,7 +39,6 @@ class ChooseCameraResolutionListPreferences extends ListPreference {
         mContext = context;
         sharedPreferences =  mContext.getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
-        updateVideoResolutionToProjectUseCase = new UpdateVideoResolutionToProjectUseCase();
     }
 
     // NOTE:
