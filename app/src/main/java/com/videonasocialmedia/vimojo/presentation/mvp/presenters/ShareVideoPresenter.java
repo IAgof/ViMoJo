@@ -26,6 +26,8 @@ import com.videonasocialmedia.vimojo.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by jca on 11/12/15.
  */
@@ -34,7 +36,7 @@ public class ShareVideoPresenter {
     private final Context context;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetFtpListUseCase getFtpListUseCase;
-    private ClearProjectUseCase clearProjectUseCase;
+    @Inject ClearProjectUseCase clearProjectUseCase;
     protected CreateDefaultProjectUseCase createDefaultProjectUseCase;
     private ShareVideoView shareVideoView;
     protected Project currentProject;
@@ -62,7 +64,6 @@ public class ShareVideoPresenter {
     public void onCreate() {
         obtainNetworksToShareUseCase = new ObtainNetworksToShareUseCase();
         getFtpListUseCase = new GetFtpListUseCase();
-        clearProjectUseCase = new ClearProjectUseCase();
         createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
     }
 
