@@ -60,7 +60,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     public EditPresenter(EditActivityView editActivityView,
                          UserEventTracker userEventTracker) {
         this.editActivityView = editActivityView;
-
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         remoVideoFromProjectUseCase = new RemoveVideoFromProjectUseCase();
         reorderMediaItemUseCase = new ReorderMediaItemUseCase();
@@ -118,6 +117,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         List<Video> videoCopy = new ArrayList<>(videoList);
         editActivityView.enableEditActions();
         editActivityView.enableBottomBar();
+        editActivityView.enableFabText(true);
         //videonaPlayerView.bindVideoList(videoList);
         editActivityView.bindVideoList(videoCopy);
     }
@@ -126,6 +126,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     public void onNoVideosRetrieved() {
         editActivityView.disableEditActions();
         editActivityView.disableBottomBar();
+        editActivityView.enableFabText(false);
         editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
         editActivityView.hideProgressDialog();
         editActivityView.showMessage(R.string.add_videos_to_project);

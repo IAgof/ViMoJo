@@ -307,8 +307,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
                             navigateTo(SoundActivity.class);
                         if(resourceButtonId == R.id.button_edit_navigator)
                             navigateTo(EditActivity.class);
-                        if(resourceButtonId == R.id.navigator)
-                            finish();
                         break;
                 }
             }

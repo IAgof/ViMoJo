@@ -1,127 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
-    <android.support.design.widget.AppBarLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/VideonaTheme.PopupOverlay"
-            app:theme="@style/VideonaDrawerIconStyle"/>
+            android:layout_height="wrap_content">
 
-    </android.support.design.widget.AppBarLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/VideonaTheme.PopupOverlay"
+                app:theme="@style/VideonaDrawerIconStyle"/>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp">
+        </android.support.design.widget.AppBarLayout>
 
-        <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
-            android:id="@+id/videona_player"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            />
-        <ImageView
+           >
+
+            <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
+                android:id="@+id/videona_player"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitStart"
+                android:paddingRight="0dp"
+                android:id="@+id/imageVideoText"
+                android:layout_alignBottom="@+id/videona_player"
+                android:layout_alignLeft="@+id/videona_player"
+                />
+        </RelativeLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitStart"
-            android:paddingRight="0dp"
-            android:id="@+id/imageVideoText"
-            android:layout_alignBottom="@+id/videona_player"
-            android:layout_alignLeft="@+id/videona_player"
-            />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:id="@+id/layout_options_buttons">
-
-        <ImageButton
-            android:id="@+id/button_editText_top"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/activity_text_top_normal"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/layout_options_buttons">
+
+            <ImageButton
+                android:id="@+id/button_editText_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/activity_text_top_normal"
+                />
+
+            <ImageButton
+                android:id="@+id/button_editText_center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/activity_text_center_normal"
+                />
+
+            <ImageButton
+                android:id="@+id/button_editText_bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/activity_text_lower_normal"
+                />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/text_activityText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="12dp"
+            android:padding="16dp"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:hint="@string/edit_text_hint_VideoEditText"
+            android:textColorHint="@color/colorSecondaryLight"
+            android:imeOptions="actionDone"
+            android:background="@drawable/rectangle_edittext"
+            android:imeActionId="@+id/convertText"
+            android:lines="2"
+            android:maxLines="2"
             />
 
-        <ImageButton
-            android:id="@+id/button_editText_center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/activity_text_center_normal"
-            />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <ImageButton
-            android:id="@+id/button_editText_bottom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/activity_text_lower_normal"
-            />
+            <ImageButton
+                android:id="@+id/button_editText_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="12dp"
+                android:src="@drawable/activity_edit_common_icon_cancel"/>
+
+            <ImageButton
+                android:id="@+id/button_editText_accept"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="4dp"
+                android:layout_marginRight="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="12dp"
+                android:src="@drawable/activity_edit_common_icon_accept"/>
+        </RelativeLayout>
+
     </LinearLayout>
-
-    <EditText
-        android:id="@+id/text_activityText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="false"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="12dp"
-        android:padding="16dp"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:hint="@string/edit_text_hint_VideoEditText"
-        android:textColorHint="@color/colorSecondaryLight"
-        android:imeOptions="actionDone"
-        android:background="@drawable/rectangle_edittext"
-        android:imeActionId="@+id/convertText"
-        android:lines="2"
-        android:maxLines="2"
-        />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageButton
-            android:id="@+id/button_editText_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="12dp"
-            android:src="@drawable/activity_edit_common_icon_cancel"/>
-
-        <ImageButton
-            android:id="@+id/button_editText_accept"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="4dp"
-            android:layout_marginRight="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="12dp"
-            android:src="@drawable/activity_edit_common_icon_accept"/>
-    </RelativeLayout>
-
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

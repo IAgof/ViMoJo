@@ -12,7 +12,7 @@
         <item
             android:id="@+id/menu_navview_gallery"
             android:icon="@drawable/common_navigate_gallery"
-            android:title="Gallery"/>
+            android:title="@string/galleryActivityTitle"/>
     </group>
     <item
         android:id="@+id/navigation_subheader"

@@ -19,15 +19,6 @@
             app:popupTheme="@style/VideonaTheme.PopupOverlay"
             app:theme="@style/VideonaDrawerIconStyle">
 
-            <com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator
-                android:id="@+id/navigator"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center"
-                app:music_selected="true"
-                />
-
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

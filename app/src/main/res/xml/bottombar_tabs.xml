@@ -1,15 +1,15 @@
 <tabs>
     <tab
         id="@+id/tab_editactivity"
-        title="Edit"
+        title="@string/bottom_bar_edit"
         icon="@drawable/activity_edit_clip_normal"
         />
     <tab
         id="@+id/tab_sound"
         icon="@drawable/activity_edit_sound_normal"
-        title="Sound" />
+        title="@string/bottom_bar_sound" />
     <tab
         id="@+id/tab_share"
         icon="@drawable/activity_edit_share_normal"
-        title="Share" />
+        title="@string/bottom_bar_share" />
 </tabs>

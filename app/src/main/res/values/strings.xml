@@ -1693,5 +1693,8 @@ and Conditions.\n\n
     <string name="clear_project">Clean project</string>
     <string name="export">Starting export</string>
 
+    <string name="bottom_bar_edit">Edit</string>
+    <string name="bottom_bar_sound">Sound</string>
+    <string name="bottom_bar_share">Share</string>
 
 </resources>

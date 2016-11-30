@@ -585,5 +585,10 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="clear_project">Limpiar proyecto</string>
     <string name="export">Starting export</string>
 
+    <string name="bottom_bar_edit">Editar</string>
+    <string name="bottom_bar_sound">Audio</string>
+    <string name="bottom_bar_share">Compartir</string>
+
+
 
 </resources>

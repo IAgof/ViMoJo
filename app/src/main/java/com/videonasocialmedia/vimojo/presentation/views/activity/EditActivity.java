@@ -83,8 +83,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     VideonaPlayerExo videonaPlayer;
     @Nullable @Bind(R.id.fab_edit_room)
     FloatingActionsMenu fabMenu;
-    @Nullable @Bind(R.id.navigator)
-    ToolbarNavigator navigator;
     @Nullable @Bind(R.id.bottomBar)
     BottomBar bottomBar;
     @Nullable @Bind(R.id.relative_layout_activity_edit)
@@ -97,6 +95,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     private VideoTimeLineAdapter timeLineAdapter;
     private AlertDialog progressDialog;
     private int selectedVideoRemovePosition;
+    private FloatingActionButton newFab;
+    private boolean isEnableFabText =false;
 
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -157,13 +157,13 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   }
 
    private void setupFabMenu() {
-     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.activity_edit_clip_text_normal, R.color.colorWhite );
-     addAndConfigurateFabButton(ID_BUTTON_FAB_CENTER, R.drawable.common_navigate_record, R.color.colorWhite);
-     addAndConfigurateFabButton(ID_BUTTON_FAB_BOTTOM, R.drawable.common_navigate_gallery, R.color.colorWhite);
+     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.common_navigate_record, R.color.colorWhite);
+     addAndConfigurateFabButton(ID_BUTTON_FAB_CENTER, R.drawable.common_navigate_gallery, R.color.colorWhite);
+     addAndConfigurateFabButton(ID_BUTTON_FAB_BOTTOM, R.drawable.activity_edit_clip_text_normal, R.color.colorWhite );
   }
 
   private void addAndConfigurateFabButton(int id, int icon, int color) {
-    FloatingActionButton newFab = FabUtils.createNewFab(id, icon, color);
+    newFab = FabUtils.createNewFab(id, icon, color);
     onClickFabButton(newFab);
     fabMenu.addButton(newFab);
   }
@@ -175,15 +175,18 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         switch (fab.getId()){
           case ID_BUTTON_FAB_TOP:
             fabMenu.collapse();
-            navigateTo(VideoEditTextActivity.class, currentVideoIndex);
-            break;
+              navigateTo(RecordActivity.class);
+              break;
           case ID_BUTTON_FAB_CENTER:
             fabMenu.collapse();
-            navigateTo(RecordActivity.class);
+            navigateTo(GalleryActivity.class);
             break;
           case ID_BUTTON_FAB_BOTTOM:
-            fabMenu.collapse();
-            navigateTo(GalleryActivity.class);
+            if(isEnableFabText) {
+              fabMenu.collapse();
+              navigateTo(VideoEditTextActivity.class, currentVideoIndex);
+            }else
+              showMessage(R.string.add_videos_to_project);
             break;
         }
       }
@@ -459,7 +462,14 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     }
 
 
-    @Override
+  @Override
+  public void enableFabText(boolean enableFabText) {
+    isEnableFabText = enableFabText;
+  }
+
+
+
+  @Override
     public void newClipPlayed(int currentClipIndex) {
         currentVideoIndex = currentClipIndex;
         timeLineAdapter.updateSelection(currentClipIndex);

@@ -19,17 +19,6 @@
             android:layout_height="?attr/actionBarSize"
             app:theme="@style/VideonaDrawerIconStyle">
 
-            <com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator
-                android:id="@+id/navigator"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginEnd="50dp"
-                android:layout_marginStart="50dp"
-                android:gravity="center"
-                app:music_selected="true"
-                />
-
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

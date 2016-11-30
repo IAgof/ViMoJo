@@ -46,4 +46,6 @@ public interface EditActivityView {
     void expandFabMenu();
 
     void resetPreview();
+
+    void enableFabText(boolean isEnable);
 }
