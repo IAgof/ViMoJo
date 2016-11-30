@@ -18,13 +18,15 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 
 /**
  *
  */
-public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback, OnAddMediaFinishedListener {
-
-    private AddMusicToProjectUseCase addMusicToProjectUseCase;
+public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback,
+        OnAddMediaFinishedListener {
+    @Inject AddMusicToProjectUseCase addMusicToProjectUseCase;
     private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
@@ -33,9 +35,9 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     public Project currentProject;
     private Music musicSelected;
 
-    public MusicDetailPresenter(MusicDetailView musicDetailView, UserEventTracker userEventTracker) {
+    public MusicDetailPresenter(MusicDetailView musicDetailView,
+                                UserEventTracker userEventTracker) {
         this.musicDetailView = musicDetailView;
-        addMusicToProjectUseCase = new AddMusicToProjectUseCase();
         removeMusicFromProjectUseCase = new RemoveMusicFromProjectUseCase();
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
@@ -57,8 +59,6 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     }
 
     public void removeMusic(Music music) {
-        // (jliarte): 23/10/16 moving this to use case
-//        currentProject.setMusicOnProject(false);
         removeMusicFromProjectUseCase.removeMusicFromProject(music, 0);
         userEventTracker.trackMusicSet(currentProject);
     }
@@ -91,7 +91,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     @Override
     public void onMusicRetrieved(Music musicOnProject) {
-        if(musicOnProject!= null && musicOnProject.getMediaPath().compareTo(musicSelected.getMediaPath()) == 0) {
+        if(musicOnProject!= null && musicOnProject.getMediaPath()
+                .compareTo(musicSelected.getMediaPath()) == 0) {
             musicDetailView.setMusic(musicOnProject, true);
         } else {
             musicDetailView.setMusic(musicSelected, false);
@@ -105,8 +106,6 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     @Override
     public void onAddMediaItemToTrackSuccess(Media media) {
-        // (jliarte): 23/10/16 moving this to use case
-//        currentProject.setMusicOnProject(true);
         userEventTracker.trackMusicSet(currentProject);
         musicDetailView.goToEdit(media.getTitle());
     }

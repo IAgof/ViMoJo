@@ -19,13 +19,23 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinis
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
+import javax.inject.Inject;
+
 /**
  * This class is used to add a new videos to the project.
  */
 public class AddMusicToProjectUseCase {
-
     private Project currentProject = Project.getInstance(null, null, null);
     protected ProjectRepository projectRepository = new ProjectRealmRepository();
+
+    /**
+     * Default constructor with project repository argument.
+     *
+     * @param projectRepository the project repository
+     */
+    @Inject public AddMusicToProjectUseCase(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
+    }
 
     private AudioTrack obtainAudioTrack(int trackIndex) {
         return currentProject.getAudioTracks().get(trackIndex);

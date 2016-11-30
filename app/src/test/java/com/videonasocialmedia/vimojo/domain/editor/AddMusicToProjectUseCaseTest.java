@@ -124,7 +124,7 @@ public class AddMusicToProjectUseCaseTest {
         Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
         Music musicToAdd = new Music(42, "musicNameId", 3, 2, "","");
 
-        new AddMusicToProjectUseCase().addMusicToTrack(musicToAdd, 1, mockedOnAddMediaFinishedListener);
+        new AddMusicToProjectUseCase(mockedProjectRepository).addMusicToTrack(musicToAdd, 1, mockedOnAddMediaFinishedListener);
         AudioTrack projectAudioTrack = videonaProject.getAudioTracks().get(0);
 
         assertThat(projectAudioTrack.getItems().size(), is(0));

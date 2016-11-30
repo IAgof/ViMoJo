@@ -12,19 +12,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Future;
 
+import javax.inject.Inject;
+
 /**
  * Created by alvaro on 22/09/16.
  */
 
 public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinishedListener {
 
-    private final AddMusicToProjectUseCase addMusicToProjectUseCase;
+    @Inject AddMusicToProjectUseCase addMusicToProjectUseCase;
     String outputFile = Constants.OUTPUT_FILE_MIXED_AUDIO;
     private OnMixAudioListener listener;
     private float volume = 0.5f;
 
     public MixAudioUseCase(OnMixAudioListener listener) {
-        addMusicToProjectUseCase = new AddMusicToProjectUseCase();
         this.listener = listener;
 
         File f = new File(outputFile);
