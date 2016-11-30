@@ -19,7 +19,6 @@ import java.util.concurrent.Future;
 public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinishedListener {
 
     private final AddMusicToProjectUseCase addMusicToProjectUseCase;
-//    String outputFile = Constants.PATH_APP_TEMP + File.separator + "AudioMixed" + ".m4a";
     String outputFile = Constants.OUTPUT_FILE_MIXED_AUDIO;
     private OnMixAudioListener listener;
     private float volume = 0.5f;
@@ -36,8 +35,8 @@ public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinished
     public void mixAudio(String inputFileOne, String inputFileTwo, float volume) {
         this.volume = volume;
         try {
-            Future<Void> mFuture = MediaTranscoder.getInstance().mixAudioTwoFiles(inputFileOne, inputFileTwo,
-                    1-volume, Constants.PATH_APP_TEMP_AUDIO, outputFile, this);
+            Future<Void> mFuture = MediaTranscoder.getInstance().mixAudioTwoFiles(inputFileOne,
+                    inputFileTwo, 1-volume, Constants.PATH_APP_TEMP_AUDIO, outputFile, this);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -57,7 +57,7 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
     }
 
     public void setVolume(String voiceOverPath, String videoTemPathMixAudio, float volume) {
-        mixAudioUseCase.mixAudio(voiceOverPath, videoTemPathMixAudio,volume);
+        mixAudioUseCase.mixAudio(voiceOverPath, videoTemPathMixAudio, volume);
         voiceOverRecordedPath = voiceOverPath;
         tempVideoProjectExportedPath = videoTemPathMixAudio;
     }
