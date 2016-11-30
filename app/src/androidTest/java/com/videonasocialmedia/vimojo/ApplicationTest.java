@@ -2,6 +2,8 @@ package com.videonasocialmedia.vimojo;
 
 import android.test.ApplicationTestCase;
 
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
+
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */

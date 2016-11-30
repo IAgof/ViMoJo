@@ -3,7 +3,7 @@ package com.videonasocialmedia.vimojo.split.domain;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.junit.Before;

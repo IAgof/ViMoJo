@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.videonasocialmedia.muxer">
+          package="com.videonasocialmedia.videonamediaframework.muxer">
 
     <application
         android:allowBackup="true"

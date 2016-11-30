@@ -10,7 +10,7 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
 
 /**
  * This interface is used for monitoring when the new items have been added to the actual track.

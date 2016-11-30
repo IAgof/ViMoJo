@@ -12,7 +12,7 @@ package com.videonasocialmedia.vimojo.domain.editor;
 
 import android.test.AndroidTestCase;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.track.MediaTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 
 import org.mockito.ArgumentCaptor;

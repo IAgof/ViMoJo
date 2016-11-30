@@ -1,9 +1,9 @@
 package com.videonasocialmedia.vimojo.export.domain;
 
-import com.videonasocialmedia.transcoder.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoQuality;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 
 /**
  * Created by alvaro on 2/09/16.

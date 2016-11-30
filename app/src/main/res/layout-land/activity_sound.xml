@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:orientation="vertical">
-            <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
+            <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
                 android:id="@+id/videona_player"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

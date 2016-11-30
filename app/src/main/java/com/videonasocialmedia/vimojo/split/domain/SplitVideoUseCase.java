@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.split.domain;
 
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 /**
  * Created by ruth on 4/08/16.

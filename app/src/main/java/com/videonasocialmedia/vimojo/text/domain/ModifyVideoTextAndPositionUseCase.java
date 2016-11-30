@@ -2,12 +2,14 @@ package com.videonasocialmedia.vimojo.text.domain;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
-import com.videonasocialmedia.transcoder.format.VideonaFormat;
-import com.videonasocialmedia.vimojo.export.utils.TranscoderHelper;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
+import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.IOException;
 
@@ -16,7 +18,8 @@ import java.io.IOException;
  */
 public class ModifyVideoTextAndPositionUseCase {
 
-    private TextToDrawable drawableGenerator = new TextToDrawable();
+    // TODO:(alvaro.martinez) 23/11/16 Use Dagger for this injection
+    protected TextToDrawable drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
     private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
     protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator, mediaTranscoder);
     protected VideoRepository videoRepository = new VideoRealmRepository();
@@ -27,7 +30,8 @@ public class ModifyVideoTextAndPositionUseCase {
             videoToEdit.setClipText(text);
             videoToEdit.setClipTextPosition(textPosition);
             videoToEdit.setTempPathFinished(false);
-            videoToEdit.setTempPath();
+            // TODO:(alvaro.martinez) 22/11/16 use project tmp path
+            videoToEdit.setTempPath(Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
             videoToEdit.setTextToVideoAdded(true);
 
             // TODO(jliarte): 19/10/16 move this logic to TranscoderHelper?

@@ -32,21 +32,21 @@ import android.widget.ImageButton;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 
 import com.videonasocialmedia.vimojo.presentation.views.adapter.VideoTimeLineAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.videoTimeLineTouchHelperCallback;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaPlayerListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
@@ -63,7 +63,7 @@ import butterknife.OnClick;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class EditActivity extends VimojoActivity implements EditorView,
-        VideonaPlayerListener, VideoTimeLineRecyclerViewClickListener {
+        VideonaPlayer.VideonaPlayerListener, VideoTimeLineRecyclerViewClickListener {
 
     private static final String CURRENT_TIME_POSITION = "current_time_position";
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;

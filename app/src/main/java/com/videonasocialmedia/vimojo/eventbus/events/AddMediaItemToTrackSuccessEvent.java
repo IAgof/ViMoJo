@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.eventbus.events;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 /**
  * Created by jca on 16/9/15.

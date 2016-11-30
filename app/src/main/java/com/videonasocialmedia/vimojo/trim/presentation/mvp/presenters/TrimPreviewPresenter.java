@@ -13,10 +13,11 @@ import android.content.Intent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
@@ -94,6 +95,8 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
         trimServiceIntent.putExtra(IntentConstants.IS_VIDEO_TRIMMED, true);
         trimServiceIntent.putExtra(IntentConstants.START_TIME_MS, startTimeMs);
         trimServiceIntent.putExtra(IntentConstants.FINISH_TIME_MS, finishTimeMs);
+        // TODO:(alvaro.martinez) 22/11/16 use project tmp path
+        trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY, Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
         appContext.startService(trimServiceIntent);
         trackVideoTrimmed();
     }

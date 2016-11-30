@@ -26,7 +26,9 @@ public class IntentConstants {
     /**
      * Voice over activity
      */
-    public static final String VOICE_OVER_RECORDED_PATH= "voiceOverRecordedPath";
+    public static final String VOICE_OVER_RECORDED_PATH = "voiceOverRecordedPath";
+
+    public static final String VIDEO_TEMP_DIRECTORY = "intermediates_temp_directory";
 
     /**
      * Relaunch
@@ -42,6 +44,5 @@ public class IntentConstants {
      * Ftp Selected
      *
      */
-    public static final String FTP_SELECTED= "ftp_selected";
-
+    public static final String FTP_SELECTED = "ftp_selected";
 }

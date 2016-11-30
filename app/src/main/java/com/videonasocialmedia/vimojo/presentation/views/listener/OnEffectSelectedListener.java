@@ -7,7 +7,7 @@
 
 package com.videonasocialmedia.vimojo.presentation.views.listener;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.effects.Effect;
+import com.videonasocialmedia.videonamediaframework.model.media.effects.Effect;
 
 /**
  * Created by Veronica Lago Fominaya on 03/11/2015.
