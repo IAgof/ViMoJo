@@ -28,6 +28,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.ShareVideoPresenter;
@@ -37,6 +38,7 @@ import com.videonasocialmedia.vimojo.presentation.views.adapter.OptionsToShareAd
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
+import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -154,6 +156,8 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
 
         videonaPlayer.initPreviewLists(shareVideoList);
         videonaPlayer.initPreview(currentPosition);
+
+        presenter.exportWithVoiceOver(videoPath);
     }
 
     @Override
@@ -353,5 +357,20 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
     @Override
     public void newClipPlayed(int currentClipIndex) {
 
+    }
+
+    @Override
+    public void setVideo(String videoOver){
+
+        new File(videoPath).deleteOnExit();
+
+        List<Video> shareVideoList = new ArrayList<Video>();
+        Video videoShare = new Video(videoOver);
+        shareVideoList.add(videoShare);
+
+        videonaPlayer.initPreviewLists(shareVideoList);
+        videonaPlayer.initPreview(currentPosition);
+
+        videoPath = videoOver;
     }
 }

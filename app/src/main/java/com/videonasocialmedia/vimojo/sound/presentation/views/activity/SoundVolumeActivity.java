@@ -56,31 +56,10 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     TextView textSeekBarVolume;
     @Bind (R.id.seekBar_volume_sound)
     SeekBar seekBarVolume;
-    @Bind (R.id.button_volume_sound_accept)
-    ImageButton buttonVolumeSoundAccept;
-    @Bind (R.id.button_volume_sound_cancel)
-    ImageButton buttonVolumeSoundCancel;
     int videoIndexOnTrack;
     private int currentSoundVolumePosition =50;
     private int currentProjectPosition = 0;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
-            if (bundle != null) {
-                String videoTemPathMixAudio = bundle.getString(ExportProjectService.FILEPATH);
-                int resultCode = bundle.getInt(ExportProjectService.RESULT);
-                if (resultCode == RESULT_OK) {
-                    goToMixAudio(videoTemPathMixAudio);
-                } else {
-
-                    //showError(R.string.addMediaItemToTrackError);
-                }
-            }
-        }
-    };
     private String soundVoiceOverPath;
 
 
@@ -124,7 +103,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(receiver);
         videonaPlayer.onPause();
 
     }
@@ -132,7 +110,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(receiver, new IntentFilter(ExportProjectService.NOTIFICATION));
         videonaPlayer.onShown(this);
         presenter.init();
     }
@@ -198,19 +175,14 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         finish();
     }
 
-    private void goToMixAudio(String videoTemPathMixAudio) {
-        float volume = (float) (seekBarVolume.getProgress() * 0.01);
-        presenter.setVolume(soundVoiceOverPath, videoTemPathMixAudio, volume);
-    }
 
     @OnClick(R.id.button_volume_sound_accept)
     public void onClickVolumeSoundAccept() {
         // if music has been selected before, delete it
         presenter.removeMusicFromProject();
 
-        Intent intent = new Intent(this, ExportProjectService.class);
-        Snackbar.make(videonaPlayer, "Mixing audio for your video project", Snackbar.LENGTH_INDEFINITE).show();
-        this.startService(intent);
+        float volume = (float) (seekBarVolume.getProgress() * 0.01);
+        presenter.setVolume(soundVoiceOverPath, volume);
     }
 
     @OnClick(R.id.button_volume_sound_cancel)

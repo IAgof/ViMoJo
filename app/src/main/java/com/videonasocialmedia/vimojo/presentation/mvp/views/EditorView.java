@@ -9,6 +9,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.sound.model.VoiceOver;
 
 import java.util.List;
 
@@ -30,6 +31,8 @@ public interface EditorView {
     void bindVideoList(List<Video> movieList);
 
     void setMusic(Music music);
+
+    void setVoiceOver(String path, float volume);
 
     void updateProject();
 

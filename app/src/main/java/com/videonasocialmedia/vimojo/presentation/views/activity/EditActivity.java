@@ -420,6 +420,14 @@ public class EditActivity extends VimojoActivity implements EditorView,
     }
 
     @Override
+    public void setVoiceOver(String path, float volume) {
+        videonaPlayer.setVolumen(volume);
+        // TODO:(alvaro.martinez) 7/12/16 Separate music dependecy in VideonaPlayer
+        Music music = new Music(path);
+        videonaPlayer.setMusic(music);
+    }
+
+    @Override
     public void updateProject() {
         editPresenter.loadProject();
     }

@@ -166,6 +166,9 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
         if(currentProject.hasMusic())
             getMusicFromProjectUseCase.getMusicFromProject(this);
+        if(currentProject.hasVoiceOver()){
+            editorView.setVoiceOver(currentProject.getVoiceOverPath(), currentProject.getVoiceOverVolume());
+        }
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
+import com.videonasocialmedia.videonamediaframework.pipeline.ExportSwapAudioToVideoUseCase;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.ClearProjectUseCase;
@@ -19,17 +20,23 @@ import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
+import com.videonasocialmedia.vimojo.sound.domain.MixAudioUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.OnMixAudioListener;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by jca on 11/12/15.
  */
-public class ShareVideoPresenter {
+public class ShareVideoPresenter implements OnMixAudioListener, ExportSwapAudioToVideoUseCase.OnExportEndedSwapAudioListener {
 
     private final Context context;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
@@ -45,6 +52,10 @@ public class ShareVideoPresenter {
     private List optionToShareList;
     private SharedPreferences.Editor preferencesEditor;
     private ProfileRepository profileRepository;
+    private MixAudioUseCase mixAudioUseCase;
+    private ExportSwapAudioToVideoUseCase exportSwapAudioToVideoUseCase;
+    private String videoExportedWithVoiceOver;
+    private String videoExportedTemp;
 
     public ShareVideoPresenter(ShareVideoView shareVideoView, UserEventTracker userEventTracker,
                                SharedPreferences sharedPreferences, Context context) {
@@ -64,6 +75,9 @@ public class ShareVideoPresenter {
         getFtpListUseCase = new GetFtpListUseCase();
         clearProjectUseCase = new ClearProjectUseCase();
         createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
+        mixAudioUseCase = new MixAudioUseCase(this);
+        exportSwapAudioToVideoUseCase = new ExportSwapAudioToVideoUseCase(this);
+
     }
 
     public void onResume() {
@@ -85,6 +99,18 @@ public class ShareVideoPresenter {
         optionToShareList = new ArrayList();
         optionToShareList.addAll(ftpList);
         optionToShareList.addAll(socialNetworkList);
+    }
+
+    public void exportWithVoiceOver(String videoExportedTemp){
+        if(!currentProject.hasVoiceOver())
+            return;
+
+        this.videoExportedTemp = videoExportedTemp;
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String fileName = "V_EDIT_" + timeStamp + ".mp4";
+        videoExportedWithVoiceOver = Constants.PATH_APP_EDITED + File.separator + fileName;
+        mixAudioUseCase.mixAudio(videoExportedTemp, currentProject.getVoiceOverPath(),
+            currentProject.getVoiceOverVolume());
     }
 
     public void shareVideo(String videoPath, SocialNetwork appToShareWith, Context ctx) {
@@ -149,5 +175,27 @@ public class ShareVideoPresenter {
         preferencesEditor = sharedPreferences.edit();
         preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION, 0);
         preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS, 0);
+    }
+
+    @Override
+    public void onMixAudioSuccess(String pathAudioMixed) {
+        exportSwapAudioToVideoUseCase.export(videoExportedTemp, pathAudioMixed,
+            videoExportedWithVoiceOver);
+    }
+
+    @Override
+    public void onMixAudioError() {
+
+    }
+
+    @Override
+    public void onExportError(String s) {
+
+    }
+
+    @Override
+    public void onExportSuccess() {
+        // update video Share player
+        shareVideoView.setVideo(videoExportedWithVoiceOver);
     }
 }

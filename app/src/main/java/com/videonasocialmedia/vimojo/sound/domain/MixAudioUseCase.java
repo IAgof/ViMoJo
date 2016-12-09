@@ -16,16 +16,13 @@ import java.util.concurrent.Future;
  * Created by alvaro on 22/09/16.
  */
 
-public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinishedListener {
+public class MixAudioUseCase implements OnAudioMixerListener {
 
-    private final AddMusicToProjectUseCase addMusicToProjectUseCase;
 //    String outputFile = Constants.PATH_APP_TEMP + File.separator + "AudioMixed" + ".m4a";
     String outputFile = Constants.OUTPUT_FILE_MIXED_AUDIO;
     private OnMixAudioListener listener;
-    private float volume = 0.5f;
 
     public MixAudioUseCase(OnMixAudioListener listener) {
-        addMusicToProjectUseCase = new AddMusicToProjectUseCase();
         this.listener = listener;
 
         File f = new File(outputFile);
@@ -34,10 +31,10 @@ public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinished
     }
 
     public void mixAudio(String inputFileOne, String inputFileTwo, float volume) {
-        this.volume = volume;
+
         try {
             Future<Void> mFuture = MediaTranscoder.getInstance().mixAudioTwoFiles(inputFileOne, inputFileTwo,
-                    1-volume, Constants.PATH_APP_TEMP_AUDIO, outputFile, this);
+                    volume, Constants.PATH_APP_TEMP_AUDIO, outputFile, this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,9 +42,8 @@ public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinished
 
     @Override
     public void onAudioMixerSuccess(String outputFileMixed) {
-        Music music = new Music(outputFileMixed, volume);
-        music.setMusicTitle(Constants.MUSIC_AUDIO_MIXED_TITLE);
-        addMusicToProjectUseCase.addMusicToTrack(music, 0, this);
+        FileUtils.cleanDirectory(new File(Constants.PATH_APP_TEMP_AUDIO));
+        this.listener.onMixAudioSuccess(outputFileMixed);
     }
 
     @Override
@@ -56,20 +52,11 @@ public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinished
 
     @Override
     public void onAudioMixerError(String error) {
-        listener.onMixAudioError();
+        this.listener.onMixAudioError();
     }
 
     @Override
     public void onAudioMixerCanceled() {
     }
 
-    @Override
-    public void onAddMediaItemToTrackError() {
-    }
-
-    @Override
-    public void onAddMediaItemToTrackSuccess(Media media) {
-        FileUtils.cleanDirectory(new File(Constants.PATH_APP_TEMP_AUDIO));
-        listener.onMixAudioSuccess();
-    }
 }
