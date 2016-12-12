@@ -103,7 +103,9 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
 
     public void addVoiceOver() {
         mergeAudio();
-        cleanDirectory();
+        // (jliarte): 1/12/16 merge audio finally makes an async call, so files are deleted before
+        //            it completes
+//        cleanDirectory();
     }
 
     public void cleanDirectory() {
@@ -165,6 +167,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
 
     @Override
     public void onMergeVoiceOverAudioSuccess(String voiceOverRecordedPath) {
+        cleanDirectory();
         voiceOverView.navigateToSoundVolumeActivity(voiceOverRecordedPath);
     }
 

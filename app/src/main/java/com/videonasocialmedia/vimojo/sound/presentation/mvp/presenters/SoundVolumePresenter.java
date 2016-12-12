@@ -32,8 +32,11 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
     private String voiceOverRecordedPath;
     private String tempVideoProjectExportedPath;
 
-    public SoundVolumePresenter(SoundVolumeView soundVolumeView){
+    @Inject
+    public SoundVolumePresenter(SoundVolumeView soundVolumeView,
+                                RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {
         this.soundVolumeView = soundVolumeView;
+        this.removeMusicFromProjectUseCase = removeMusicFromProjectUseCase;
         this.getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         this.mixAudioUseCase = new MixAudioUseCase(this);
         this.currentProject = loadCurrentProject();

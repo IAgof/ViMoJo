@@ -26,8 +26,8 @@ import javax.inject.Inject;
  */
 public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback,
         OnAddMediaFinishedListener {
-    @Inject AddMusicToProjectUseCase addMusicToProjectUseCase;
-    @Inject RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
+    private AddMusicToProjectUseCase addMusicToProjectUseCase;
+    private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
     private MusicDetailView musicDetailView;
@@ -35,13 +35,19 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     public Project currentProject;
     private Music musicSelected;
 
-    public MusicDetailPresenter(MusicDetailView musicDetailView,
-                                UserEventTracker userEventTracker) {
+    @Inject public MusicDetailPresenter(MusicDetailView musicDetailView,
+                                        UserEventTracker userEventTracker,
+                                        AddMusicToProjectUseCase addMusicToProjectUseCase,
+                                        RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {
         this.musicDetailView = musicDetailView;
+        this.userEventTracker = userEventTracker;
+        this.addMusicToProjectUseCase = addMusicToProjectUseCase;
+        this.removeMusicFromProjectUseCase = removeMusicFromProjectUseCase;
+
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
+        // TODO(jliarte): 1/12/16 should it be a parameter of use case method?
         this.currentProject = loadCurrentProject();
-        this.userEventTracker = userEventTracker;
         musicSelected = new Music("");
     }
 

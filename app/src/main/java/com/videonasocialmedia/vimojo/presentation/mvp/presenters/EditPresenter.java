@@ -45,8 +45,8 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     /**
      * UseCases
      */
-    @Inject RemoveVideoFromProjectUseCase remoVideoFromProjectUseCase;
-    @Inject ReorderMediaItemUseCase reorderMediaItemUseCase;
+    RemoveVideoFromProjectUseCase remoVideoFromProjectUseCase;
+    ReorderMediaItemUseCase reorderMediaItemUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
@@ -58,11 +58,17 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
 
+    @Inject
     public EditPresenter(EditorView editorView,
                          ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack,
-                         UserEventTracker userEventTracker) {
+                         UserEventTracker userEventTracker,
+                         RemoveVideoFromProjectUseCase remoVideoFromProjectUseCase,
+                         ReorderMediaItemUseCase reorderMediaItemUseCase
+                         ) {
         this.editorView = editorView;
         this.projectModifiedCallBack = projectModifiedCallBack;
+        this.remoVideoFromProjectUseCase = remoVideoFromProjectUseCase;
+        this.reorderMediaItemUseCase = reorderMediaItemUseCase;
 
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();

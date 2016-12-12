@@ -163,7 +163,6 @@ public class ToolbarNavigator extends LinearLayout implements EditNavigatorView 
     }
 
     public class ProjectModifiedCallBack {
-
         public void onProjectModified() {
             navigatorPresenter.areThereVideosInProject();
         }

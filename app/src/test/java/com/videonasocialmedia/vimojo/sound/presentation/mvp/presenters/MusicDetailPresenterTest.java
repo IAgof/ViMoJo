@@ -10,6 +10,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -35,6 +36,7 @@ public class MusicDetailPresenterTest {
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private RemoveMusicFromProjectUseCase mockedRemoveMusicUseCase;
+    @Mock private AddMusicToProjectUseCase mockedAddMusicToProjectUseCase;
 
     @Before
     public void injectMocks() {
@@ -49,7 +51,9 @@ public class MusicDetailPresenterTest {
     @Test
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
-        MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(musicDetailView, userEventTracker);
+        MusicDetailPresenter musicDetailPresenter =
+                new MusicDetailPresenter(musicDetailView, userEventTracker,
+                        mockedAddMusicToProjectUseCase, mockedRemoveMusicUseCase);
 
         assertThat(musicDetailPresenter.userEventTracker, is(userEventTracker));
     }
@@ -58,15 +62,18 @@ public class MusicDetailPresenterTest {
     public void constructorSetsCurrentProject() {
         Project videonaProject = getAProject();
 
-        MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(musicDetailView, mockedUserEventTracker);
+        MusicDetailPresenter musicDetailPresenter =
+                new MusicDetailPresenter(musicDetailView, mockedUserEventTracker,
+                        mockedAddMusicToProjectUseCase, mockedRemoveMusicUseCase);
 
         assertThat(musicDetailPresenter.currentProject, is(videonaProject));
     }
 
     @Test
     public void onAddMediaItemToTrackSuccessCallsTrackMusicSet() {
-        MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(musicDetailView,
-                mockedUserEventTracker);
+        MusicDetailPresenter musicDetailPresenter =
+                new MusicDetailPresenter(musicDetailView, mockedUserEventTracker,
+                        mockedAddMusicToProjectUseCase, mockedRemoveMusicUseCase);
         Project videonaProject = getAProject();
         Music music = new Music(1, "Music title", 2, 3, "Music Author", "3");
         musicDetailPresenter.onMusicRetrieved(music);
@@ -78,10 +85,12 @@ public class MusicDetailPresenterTest {
 
     @Test
     public void removeMusicCallsTrackMusicSet() {
-        MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(musicDetailView, mockedUserEventTracker);
+        MusicDetailPresenter musicDetailPresenter =
+                new MusicDetailPresenter(musicDetailView, mockedUserEventTracker,
+                        mockedAddMusicToProjectUseCase, mockedRemoveMusicUseCase);
         Project videonaProject = getAProject();
         Music music = new Music(1, "Music title", 2, 3, "Music Author", "3");
-        musicDetailPresenter.removeMusicFromProjectUseCase = mockedRemoveMusicUseCase;
+//        musicDetailPresenter.removeMusicFromProjectUseCase = mockedRemoveMusicUseCase;
 
         musicDetailPresenter.removeMusic(music);
 

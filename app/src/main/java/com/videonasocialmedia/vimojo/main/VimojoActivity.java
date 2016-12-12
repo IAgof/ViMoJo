@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -36,9 +37,13 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.export.ExportTempBroadCastReceveiver;
+import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
+import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
+import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,6 +100,24 @@ public abstract class VimojoActivity extends AppCompatActivity {
             Dexter.continuePendingRequestsIfPossible(dialogMultiplePermissionsListener);
         }
     }
+
+    protected ActivityPresentersComponent getActivityPresentersComponent() {
+        return DaggerActivityPresentersComponent.builder()
+                .dataRepositoriesModule(new DataRepositoriesModule())
+                .activityPresentersModule(getActivityPresentersModule())
+                .trackerModule(new TrackerModule(this))
+                .build();
+    }
+
+    @NonNull
+    private ActivityPresentersModule getActivityPresentersModule() {
+        return new ActivityPresentersModule(this);
+    }
+
+//    protected UserEventTracker getUserEventTracker() {
+//        return UserEventTracker.getInstance(MixpanelAPI
+//                .getInstance(this, BuildConfig.MIXPANEL_TOKEN));
+//    }
 
     @Override
     protected void onDestroy() {

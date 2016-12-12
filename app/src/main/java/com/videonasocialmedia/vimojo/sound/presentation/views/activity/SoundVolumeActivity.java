@@ -34,6 +34,8 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -50,7 +52,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-    SoundVolumePresenter presenter;
+    @Inject SoundVolumePresenter presenter;
     @Bind(R.id.textView_seekBar_volume_sound)
     TextView textSeekBarVolume;
     @Bind (R.id.seekBar_volume_sound)
@@ -85,6 +87,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivityPresentersComponent().inject(this);
         setContentView(R.layout.activity_sound_volume);
         ButterKnife.bind(this);
 
@@ -98,7 +101,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         soundVoiceOverPath = intent.getStringExtra(IntentConstants.VOICE_OVER_RECORDED_PATH);
 
         restoreState(savedInstanceState);
-        presenter = new SoundVolumePresenter(this);
+//        presenter = new SoundVolumePresenter(this);
         videonaPlayer.setListener(this);
         seekBarVolume.setOnSeekBarChangeListener(this);
         seekBarVolume.setProgress(currentSoundVolumePosition);

@@ -24,6 +24,7 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
+import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
 
 import io.fabric.sdk.android.Fabric;
@@ -67,7 +68,12 @@ public class VimojoApplication extends Application {
         this.systemComponent = DaggerSystemComponent.builder()
                 .applicationModule(new ApplicationModule(this))
                 .dataRepositoriesModule(getDataRepositoriesModule())
+                .activityPresentersModule(getActivityPresentersModule())
                 .build();
+    }
+
+    private ActivityPresentersModule getActivityPresentersModule() {
+        return new ActivityPresentersModule(null);
     }
 
     public SystemComponent getSystemComponent() {

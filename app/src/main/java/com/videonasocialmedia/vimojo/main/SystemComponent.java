@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.main;
 
+import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 
@@ -11,7 +12,7 @@ import dagger.Component;
  * Created by jliarte on 2/11/16.
  */
 @Singleton
-@Component(modules = {ApplicationModule.class, DataRepositoriesModule.class})
+@Component(modules = {ApplicationModule.class, DataRepositoriesModule.class, ActivityPresentersModule.class})
 public interface SystemComponent {
   void inject(VimojoActivity activity);
 }
