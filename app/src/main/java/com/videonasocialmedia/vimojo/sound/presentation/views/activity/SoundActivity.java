@@ -102,7 +102,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
     addAndConfigurateFabButton(ID_BUTTON_FAB_BOTTOM, R.drawable.activity_edit_sound_voice_normal,R.color.colorWhite);
   }
   protected void addAndConfigurateFabButton(int id, int icon, int color) {
-    FloatingActionButton newFab = FabUtils.createNewFab(id, icon, color);
+    FloatingActionButton newFab = FabUtils.createNewFabMini(id, icon, color);
     onClickFabButton(newFab);
     fabMenu.addButton(newFab);
   }
