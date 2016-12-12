@@ -20,6 +20,12 @@
                 android:title="Gallery"
                 app:showAsAction="never"/>
             <item
+                android:id="@+id/action_settings_edit_projects"
+                android:icon="@drawable/menu_gallery"
+                android:title="Projects"
+                app:showAsAction="never"/>
+
+            <item
                 android:id="@+id/action_settings_edit_options"
                 android:icon="@drawable/menu_settings"
                 android:title="Settings"

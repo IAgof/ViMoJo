@@ -33,12 +33,6 @@ public class RetrieveProjectListActivity extends VimojoActivity implements Retri
 
     @Bind(R.id.recycler_retrieve_project)
     RecyclerView projectList;
-    @Bind(R.id.retrieve_project_button_delete)
-    ImageButton deleteButton;
-    @Bind(R.id.retrieve_project_button_edit)
-    ImageButton editButton;
-    @Bind(R.id.retrieve_project_button_duplicate)
-    ImageButton duplicateButton;
 
     private RetrieveProjectListPresenter presenter;
     private RetrieveProjectListAdapter projectAdapter;
