@@ -39,7 +39,7 @@ public class RetrieveProjectListAdapter extends  RecyclerView.Adapter<RetrievePr
 
     public void setRetrieveProjectClickListener(RetrieveProjectClickListener RetrieveProjectClickListener) {
         clickListener = RetrieveProjectClickListener;
-        }
+    }
 
     @Override
     public RetrieveProjectListItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -52,11 +52,12 @@ public class RetrieveProjectListAdapter extends  RecyclerView.Adapter<RetrievePr
     @Override
     public void onBindViewHolder(RetrieveProjectListItemViewHolder holder, int position) {
         Project project = projectList.get(position);
-        Video firstVideo= (Video)project.getMediaTrack().getItems().get(0);
 
+        Video firstVideo= (Video)project.getMediaTrack().getItems().get(0);
         drawVideoThumbnail(holder.imagenProject, firstVideo);
+
         holder.dateProject.setText(project.getTitle());
-        holder.durationProject.setText(project.getDuration());
+        holder.durationProject.setText("1:50");
         holder.titleProject.setText(project.getTitle());
         }
 

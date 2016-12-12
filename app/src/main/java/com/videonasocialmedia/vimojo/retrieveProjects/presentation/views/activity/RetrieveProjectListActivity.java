@@ -24,9 +24,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- *
- */
 public class RetrieveProjectListActivity extends VimojoActivity implements RetrieveProjectListView,
     RetrieveProjectClickListener, VideonaPlayer.VideonaPlayerListener {
     private static final String MUSIC_LIST_PROJECT_POSITION = "music_list_project_position";
@@ -58,7 +55,7 @@ public class RetrieveProjectListActivity extends VimojoActivity implements Retri
     private void initProjectListRecycler() {
         projectAdapter = new RetrieveProjectListAdapter();
         projectAdapter.setRetrieveProjectClickListener(this);
-        presenter.loadListProject();
+        presenter.getAvailableMusic();
         LinearLayoutManager layoutManager =
             new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         projectList.setLayoutManager(layoutManager);
