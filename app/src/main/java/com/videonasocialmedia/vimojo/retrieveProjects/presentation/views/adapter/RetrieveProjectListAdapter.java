@@ -54,25 +54,29 @@ public class RetrieveProjectListAdapter extends  RecyclerView.Adapter<RetrievePr
     @Override
     public void onBindViewHolder(RetrieveProjectListItemViewHolder holder, int position) {
         Project project = projectList.get(position);
-        Video firstVideo= (Video)project.getMediaTrack().getItems().get(0);
-
-        drawVideoThumbnail(holder.imagenProject, firstVideo);
+        if(project.getMediaTrack().getItems().size() > 0) {
+            drawVideoThumbnail(holder.imagenProject, project);
+        } else {
+            holder.imagenProject.setImageResource(R.drawable.fragment_gallery_no_image);
+        }
         holder.dateProject.setText(DateUtils.toFormatDateDayMonthYear(project.getTitle()));
         holder.durationProject.setText(
             TimeUtils.toFormattedTimeWithMinutesAndSeconds(project.getDuration()));
         holder.titleProject.setText(project.getTitle());
         }
 
-    public void drawVideoThumbnail(ImageView thumbnailView, Video firstVideo) {
+    public void drawVideoThumbnail(ImageView thumbnailView, Project project) {
+
+        Video    firstVideo = (Video) project.getMediaTrack().getItems().get(0);
         int microSecond = firstVideo.getStartTime() * 1000;
         BitmapPool bitmapPool = Glide.get(context).getBitmapPool();
         FileDescriptorBitmapDecoder decoder = new FileDescriptorBitmapDecoder(
-            new VideoBitmapDecoder(microSecond),
-            bitmapPool,
-            DecodeFormat.PREFER_ARGB_8888);
-
+                new VideoBitmapDecoder(microSecond),
+                bitmapPool,
+                DecodeFormat.PREFER_ARGB_8888);
         String path = firstVideo.getIconPath() != null
-            ? firstVideo.getIconPath() : firstVideo.getMediaPath();
+                ? firstVideo.getIconPath() : firstVideo.getMediaPath();
+
         Glide.with(context)
             .load(path)
             .centerCrop()

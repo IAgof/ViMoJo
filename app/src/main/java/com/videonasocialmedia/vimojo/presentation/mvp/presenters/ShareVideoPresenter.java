@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.ClearProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
@@ -45,6 +46,7 @@ public class ShareVideoPresenter {
     private List optionToShareList;
     private SharedPreferences.Editor preferencesEditor;
     private ProfileRepository profileRepository;
+    private AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase;
 
     public ShareVideoPresenter(ShareVideoView shareVideoView, UserEventTracker userEventTracker,
                                SharedPreferences sharedPreferences, Context context) {
@@ -64,6 +66,7 @@ public class ShareVideoPresenter {
         getFtpListUseCase = new GetFtpListUseCase();
         clearProjectUseCase = new ClearProjectUseCase();
         createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
+        addLastVideoExportedProjectUseCase = new AddLastVideoExportedToProjectUseCase();
     }
 
     public void onResume() {
@@ -149,5 +152,9 @@ public class ShareVideoPresenter {
         preferencesEditor = sharedPreferences.edit();
         preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION, 0);
         preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS, 0);
+    }
+
+    public void addVideoExportedToProject(String videoPath) {
+        addLastVideoExportedProjectUseCase.addLastVideoExportedToProject(videoPath);
     }
 }

@@ -107,6 +107,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
 
         presenter.onCreate();
         videoPath = getIntent().getStringExtra(Constants.VIDEO_TO_SHARE_PATH);
+        presenter.addVideoExportedToProject(videoPath);
         initOptionsShareList();
         videonaPlayer.setListener(this);
         restoreState(savedInstanceState);

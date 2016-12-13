@@ -1,6 +1,9 @@
 package com.videonasocialmedia.vimojo.model;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.utils.DateUtils;
+
+import java.util.UUID;
 
 import io.realm.DynamicRealm;
 import io.realm.DynamicRealmObject;
@@ -75,7 +78,7 @@ public class VimojoMigration implements RealmMigration {
             int stopTime;
     ************************************************/
     // Migrate from version 1 to version 2
-    if (oldVersion == 1) {
+    /*if (oldVersion == 1) {
       schema.get("RealmProject").addField("frameRate", String.class)
               .transform(new RealmObjectSchema.Function() {
                 @Override
@@ -83,6 +86,45 @@ public class VimojoMigration implements RealmMigration {
                   obj.setString("frameRate", VideoFrameRate.FrameRate.FPS25.name());
                 }
               });
+      oldVersion++;
+
+    }*/
+    if (oldVersion == 2) {
+      schema.get("RealmProject").addField("uuid", String.class)
+              .transform(new RealmObjectSchema.Function() {
+                @Override
+                public void apply(DynamicRealmObject obj) {
+                  obj.setString("uuid", UUID.randomUUID().toString());
+                }
+              });
+      schema.get("RealmProject").addField("lastModification", String.class)
+          .transform(new RealmObjectSchema.Function() {
+            @Override
+            public void apply(DynamicRealmObject obj) {
+              obj.setString("lastModification", DateUtils.getDateRightNow());
+            }
+          });
+      schema.get("RealmProject").addField("duration", Integer.class)
+          .transform(new RealmObjectSchema.Function() {
+            @Override
+            public void apply(DynamicRealmObject obj) {
+              obj.setInt("duration", 0);
+            }
+          });
+      schema.get("RealmProject").addField("pathLastVideoExported", String.class)
+          .transform(new RealmObjectSchema.Function() {
+            @Override
+            public void apply(DynamicRealmObject obj) {
+              obj.setString("pathLastVideoExported", "");
+            }
+          });
+      schema.get("RealmProject").addField("dateLastVideoExported", String.class)
+          .transform(new RealmObjectSchema.Function() {
+            @Override
+            public void apply(DynamicRealmObject obj) {
+              obj.setString("dateLastVideoExported", DateUtils.getDateRightNow());
+            }
+          });
       oldVersion++;
 
     }
