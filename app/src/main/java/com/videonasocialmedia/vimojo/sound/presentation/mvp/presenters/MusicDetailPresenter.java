@@ -60,7 +60,6 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         musicSelected = retrieveLocalMusic(musicPath);
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
         getMusicFromProjectUseCase.getMusicFromProject(this);
-
     }
 
     public void removeMusic(Music music) {
@@ -96,7 +95,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     @Override
     public void onMusicRetrieved(Music musicOnProject) {
-        if(musicOnProject!= null && musicOnProject.getMediaPath()
+        if (musicOnProject!= null && musicOnProject.getMediaPath()
                 .compareTo(musicSelected.getMediaPath()) == 0) {
             musicDetailView.setMusic(musicOnProject, true);
         } else {

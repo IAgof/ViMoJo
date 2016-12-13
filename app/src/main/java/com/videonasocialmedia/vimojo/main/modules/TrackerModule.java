@@ -2,7 +2,7 @@ package com.videonasocialmedia.vimojo.main.modules;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import javax.inject.Singleton;
@@ -15,14 +15,14 @@ import dagger.Provides;
  */
 @Module
 public class TrackerModule {
-  private final VimojoActivity activity;
+  private final VimojoApplication application;
 
-  public TrackerModule(VimojoActivity activity) {
-    this.activity = activity;
+  public TrackerModule(VimojoApplication application) {
+    this.application = application;
   }
 
   @Provides @Singleton UserEventTracker provideUserEventTracker() {
     return UserEventTracker.getInstance(MixpanelAPI
-            .getInstance(activity, BuildConfig.MIXPANEL_TOKEN));
+            .getInstance(application, BuildConfig.MIXPANEL_TOKEN));
   }
 }

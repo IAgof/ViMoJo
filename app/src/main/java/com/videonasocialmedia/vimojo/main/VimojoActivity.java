@@ -38,12 +38,9 @@ import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.export.ExportTempBroadCastReceveiver;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
-import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
-import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
-import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,7 +80,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
         configPermissions();
         trackerDelegate.onCreate();
 
-//        View root = ( (ViewGroup) findViewById(android.R.id.content) ).getChildAt(0);
         View root = findViewById(android.R.id.content);
         exportTempBroadCastReceveiver = new ExportTempBroadCastReceveiver(root);
     }
@@ -96,16 +92,14 @@ public abstract class VimojoActivity extends AppCompatActivity {
                     .withMessage("Both camera and audio permission are needed to take awsome videos with Videona")
                     .withButtonText(android.R.string.ok)
                     .build();
-//            new CustomPermissionListener(this, "titulo", "mensaje", "ok", null);
             Dexter.continuePendingRequestsIfPossible(dialogMultiplePermissionsListener);
         }
     }
 
     protected ActivityPresentersComponent getActivityPresentersComponent() {
         return DaggerActivityPresentersComponent.builder()
-                .dataRepositoriesModule(new DataRepositoriesModule())
                 .activityPresentersModule(getActivityPresentersModule())
-                .trackerModule(new TrackerModule(this))
+                .systemComponent(((VimojoApplication)getApplication()).getSystemComponent())
                 .build();
     }
 

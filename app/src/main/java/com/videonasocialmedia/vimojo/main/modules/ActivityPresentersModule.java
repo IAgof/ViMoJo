@@ -1,11 +1,15 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
+import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.internals.di.PerActivity;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePreviewPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
@@ -13,8 +17,6 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDeta
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-
-import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -31,19 +33,20 @@ public class ActivityPresentersModule {
     this.activity = vimojoActivity;
   }
 
-  @Provides SoundVolumePresenter getSoundVolumePresenter(RemoveMusicFromProjectUseCase useCase) {
+  @Provides @PerActivity
+  SoundVolumePresenter getSoundVolumePresenter(RemoveMusicFromProjectUseCase useCase) {
     return new SoundVolumePresenter((SoundVolumeView) activity, useCase);
   }
 
-  @Provides MusicDetailPresenter
-  provideMusicDetailPresenter(UserEventTracker userEventTracker,
+  @Provides @PerActivity
+  MusicDetailPresenter provideMusicDetailPresenter(UserEventTracker userEventTracker,
                               AddMusicToProjectUseCase addMusicToProjectUseCase,
                               RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {
     return new MusicDetailPresenter((MusicDetailView) activity, userEventTracker,
             addMusicToProjectUseCase, removeMusicFromProjectUseCase);
   }
 
-  @Provides @Singleton
+  @Provides @PerActivity
   EditPresenter provideEditPresenter(UserEventTracker userEventTracker,
                                      RemoveVideoFromProjectUseCase removeVideosFromProjectUseCase,
                                      ReorderMediaItemUseCase reorderMediaItemUseCase) {
@@ -52,11 +55,25 @@ public class ActivityPresentersModule {
             removeVideosFromProjectUseCase, reorderMediaItemUseCase);
   }
 
-  @Provides RemoveMusicFromProjectUseCase provideMusicRemover(ProjectRepository projectRepository) {
+  @Provides @PerActivity
+  DuplicatePreviewPresenter provideDuplicatePresenter(UserEventTracker userEventTracker,
+                                                      AddVideoToProjectUseCase addVideoToProjectUseCase) {
+    return new DuplicatePreviewPresenter((VideoDuplicateActivity) activity, userEventTracker,
+            addVideoToProjectUseCase);
+  }
+
+  @Provides
+  RemoveMusicFromProjectUseCase provideMusicRemover(ProjectRepository projectRepository) {
     return new RemoveMusicFromProjectUseCase(projectRepository);
   }
 
-  @Provides ReorderMediaItemUseCase provideMusicReorderer(ProjectRepository projectRepository) {
+  @Provides
+  ReorderMediaItemUseCase provideMusicReorderer(ProjectRepository projectRepository) {
     return new ReorderMediaItemUseCase(projectRepository);
+  }
+
+  @Provides
+  AddVideoToProjectUseCase provideVideoAdder(ProjectRepository projectRepository) {
+    return new AddVideoToProjectUseCase(projectRepository);
   }
 }

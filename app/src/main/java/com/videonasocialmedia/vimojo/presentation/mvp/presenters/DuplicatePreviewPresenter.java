@@ -35,7 +35,7 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
             new GetMediaListFromProjectUseCase();
-    @Inject protected AddVideoToProjectUseCase addVideoToProjectUseCase;
+    private AddVideoToProjectUseCase addVideoToProjectUseCase;
 
     private DuplicateView duplicateView;
     protected UserEventTracker userEventTracker;
@@ -44,10 +44,14 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
     /**
      * Get media list from project use case
      */
-    public DuplicatePreviewPresenter(DuplicateView duplicateView, UserEventTracker userEventTracker) {
+    @Inject public DuplicatePreviewPresenter(DuplicateView duplicateView,
+                                             UserEventTracker userEventTracker,
+                                             AddVideoToProjectUseCase addVideoToProjectUseCase) {
         this.duplicateView = duplicateView;
-        this.currentProject = loadCurrentProject();
         this.userEventTracker = userEventTracker;
+        this.addVideoToProjectUseCase = addVideoToProjectUseCase;
+
+        this.currentProject = loadCurrentProject();
     }
 
     private Project loadCurrentProject() {
