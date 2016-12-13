@@ -48,6 +48,7 @@ import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavig
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
+import com.videonasocialmedia.vimojo.retrieveProjects.presentation.views.activity.RetrieveProjectListActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
@@ -228,6 +229,9 @@ public class EditActivity extends VimojoActivity implements EditorView,
                 return true;
             case R.id.action_settings_edit_gallery:
                 navigateTo(GalleryActivity.class);
+                return true;
+            case R.id.action_settings_edit_projects:
+                navigateTo(RetrieveProjectListActivity.class);
                 return true;
             case android.R.id.home:
                 onBackPressed();

@@ -2,7 +2,8 @@
     android:height="36dp"
     android:viewportHeight="64.0"
     android:viewportWidth="64.0"
-    android:width="36dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    android:width="36dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <path
         android:fillColor="@color/button"
         android:pathData="M42.5,0h15.3C61.2,0 64,2.6 64,5.9v43.2c0,3.1 -2.6,5.7 -5.9,5.8v-1.7c2.3,-0.2 4.1,-1.9 4.1,-4.1v-4.4h-4.1V43h4.1V12h-4.1v-1.4c0,-0.1 0,-0.2 0,-0.3h4.1V5.9c0,-2.3 -2,-4.1 -4.4,-4.1h-4.5v2.8c-0.6,-0.2 -1.2,-0.3 -1.9,-0.3V1.7h-8.1v2.5h-1.9V1.7h-8.1v2.5h-1.9V1.7h-8.1v2.5h-1.9V1.7h-5.4c-1.8,0 -3.4,1 -4.1,2.5h-1.9c0.7,-2.4 3.1,-4.2 6,-4.2h26.1C42.3,0 42.4,0 42.5,0C42.4,0 42.4,0 42.5,0z"/>

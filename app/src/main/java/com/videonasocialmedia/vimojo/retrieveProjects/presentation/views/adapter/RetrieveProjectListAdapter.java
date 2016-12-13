@@ -41,7 +41,7 @@ public class RetrieveProjectListAdapter extends  RecyclerView.Adapter<RetrievePr
 
     public void setRetrieveProjectClickListener(RetrieveProjectClickListener RetrieveProjectClickListener) {
         clickListener = RetrieveProjectClickListener;
-        }
+    }
 
     @Override
     public RetrieveProjectListItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {

@@ -91,6 +91,7 @@
                     android:layout_height="24dp"
                     android:layout_weight="1"
                     android:scaleType="fitCenter"
+                    android:tint="@color/button_color"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/activity_edit_clip_duplicate_normal"/>
 
@@ -99,6 +100,8 @@
                     android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:tint="@color/button_color"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/activity_edit_share_normal"/>
 
@@ -107,6 +110,8 @@
                     android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:tint="@color/button_color"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/activity_edit_clip_delete_normal"/>
 
@@ -115,6 +120,8 @@
                     android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:tint="@color/button_color"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/activity_edit_clip_normal"/>
 

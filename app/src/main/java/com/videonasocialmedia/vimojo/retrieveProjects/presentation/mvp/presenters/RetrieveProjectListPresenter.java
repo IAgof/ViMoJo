@@ -39,10 +39,8 @@ public class RetrieveProjectListPresenter {
         return projectList;
     }
 
-    public void onStart() {
+    public void getAvailableMusic() {
         if (availableProject != null)
             retrieveProjectListView.showProjectList(availableProject);
-
     }
-
 }
