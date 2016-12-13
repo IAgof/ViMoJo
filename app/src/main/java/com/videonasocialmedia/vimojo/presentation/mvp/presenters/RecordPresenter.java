@@ -64,7 +64,7 @@ public class RecordPresenter {
     private boolean firstTimeRecording;
     private RecordView recordView;
     private SessionConfig config;
-    @Inject AddVideoToProjectUseCase addVideoToProjectUseCase;
+    private AddVideoToProjectUseCase addVideoToProjectUseCase;
     private AudioVideoRecorder recorder;
     private int recordedVideosNumber;
     private MixpanelAPI mixpanel;
@@ -78,16 +78,20 @@ public class RecordPresenter {
 
     private boolean externalIntent;
 
-
+    @Inject
     public RecordPresenter(Context context, RecordView recordView,
-                           GLCameraView cameraPreview, SharedPreferences sharedPreferences, boolean externalIntent) {
+                           GLCameraView cameraPreview, SharedPreferences sharedPreferences,
+                           boolean externalIntent,
+                           AddVideoToProjectUseCase addVideoToProjectUseCase) {
 
-        this.currentProject = loadCurrentProject();
-        this.recordView = recordView;
         this.context = context;
+        this.recordView = recordView;
         this.cameraPreview = cameraPreview;
         this.sharedPreferences = sharedPreferences;
         this.externalIntent = externalIntent;
+        this.addVideoToProjectUseCase = addVideoToProjectUseCase;
+
+        this.currentProject = loadCurrentProject();
         preferencesEditor = sharedPreferences.edit();
         recordedVideosNumber = 0;
         mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_TOKEN);

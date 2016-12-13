@@ -104,7 +104,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
     }
 
     @NonNull
-    private ActivityPresentersModule getActivityPresentersModule() {
+    public ActivityPresentersModule getActivityPresentersModule() {
         return new ActivityPresentersModule(this);
     }
 

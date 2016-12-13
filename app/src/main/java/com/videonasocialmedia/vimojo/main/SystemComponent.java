@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.main;
 
+import android.content.SharedPreferences;
+
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
@@ -21,6 +23,7 @@ public interface SystemComponent {
   ProjectRepository getProjectRepository();
   VideoRepository getVideoRepository();
   UserEventTracker getUserEventTracker();
+  SharedPreferences getSharedPreferences();
 
   void inject(VimojoActivity activity);
 }
