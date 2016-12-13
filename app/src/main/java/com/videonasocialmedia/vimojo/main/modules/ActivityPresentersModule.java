@@ -7,8 +7,10 @@ import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.internals.di.PerActivity;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePreviewPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GalleryPagerPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
@@ -60,6 +62,12 @@ public class ActivityPresentersModule {
                                                       AddVideoToProjectUseCase addVideoToProjectUseCase) {
     return new DuplicatePreviewPresenter((VideoDuplicateActivity) activity, userEventTracker,
             addVideoToProjectUseCase);
+  }
+
+  @Provides @PerActivity
+  GalleryPagerPresenter provideGalleryPagerPresenter(
+          AddVideoToProjectUseCase addVideoToProjectUseCase) {
+    return new GalleryPagerPresenter((GalleryActivity) activity, addVideoToProjectUseCase);
   }
 
   @Provides
