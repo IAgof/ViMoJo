@@ -13,10 +13,15 @@ import io.realm.annotations.PrimaryKey;
 public class RealmProject extends RealmObject {
   @PrimaryKey
   public String title;
+  public String uuid;
+  public String lastModification;
   public String projectPath;
   public String quality;
   public String resolution;
   public String frameRate;
+  public int duration;
+  public String pathLastVideoExported;
+  public String dateLastVideoExported;
   public String musicTitle;
   public float musicVolume = Music.DEFAULT_MUSIC_VOLUME;
   public RealmList<RealmVideo> videos;
@@ -25,12 +30,16 @@ public class RealmProject extends RealmObject {
     this.videos = new RealmList<RealmVideo>();
   }
 
-  public RealmProject(String title, String projectPath, String quality, String resolution, String frameRate) {
+  public RealmProject(String uuid, String title, String lastModification, String projectPath,
+                      String quality, String resolution, String frameRate, int duration) {
     this.title = title;
+    this.uuid = uuid;
+    this.lastModification = lastModification;
     this.projectPath = projectPath;
     this.quality = quality;
     this.resolution = resolution;
     this.frameRate = frameRate;
+    this.duration = duration;
     this.videos = new RealmList<RealmVideo>();
   }
 }

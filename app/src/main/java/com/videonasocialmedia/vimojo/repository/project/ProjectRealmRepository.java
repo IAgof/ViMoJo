@@ -5,6 +5,7 @@ import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.utils.DateUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +47,7 @@ public class ProjectRealmRepository implements ProjectRepository {
 
   @Override
   public void update(final Project item) {
+    item.setLastModification(DateUtils.getDateRightNow());
     Realm realm = Realm.getDefaultInstance();
     realm.executeTransaction(new Realm.Transaction() {
       @Override

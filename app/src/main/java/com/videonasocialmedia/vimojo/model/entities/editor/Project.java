@@ -19,9 +19,12 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.vimojo.utils.DateUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * Project representation that contains reference to media, audio, transitions and effects used in
@@ -51,6 +54,12 @@ public class Project {
 
   private VMComposition vmComposition;
 
+  private String lastModification;
+
+  private String uuid;
+
+  private LastVideoExported lastVideoExported;
+
 
     /**
      * Project profile. Defines some limitations and characteristic of the project based on user
@@ -76,41 +85,18 @@ public class Project {
     public Project(String title, String rootPath, Profile profile) {
         this.title = title;
         this.projectPath = rootPath + "/projects/" + title; //todo probablemente necesitemos un slugify de ese title.
-        this.checkPathSetup(rootPath);
         this.vmComposition = new VMComposition();
         this.profile = profile;
         this.duration = 0;
-
+        this.lastModification = DateUtils.getDateRightNow();
+        this.uuid = UUID.randomUUID().toString();
     }
 
   public VMComposition getVMComposition() {
     return vmComposition;
   }
 
-  /**
-     * @param rootPath
-     */
-    private void checkPathSetup(String rootPath) {
-
-        Project.VIDEONA_PATH = rootPath;
-        File projectPath = new File(this.projectPath);
-        projectPath.mkdirs();
-
-        Audio.AUDIO_PATH = rootPath + "/audios";
-        File audioPath = new File(Audio.AUDIO_PATH + "/thumbs");
-        audioPath.mkdirs();
-
-        Image.IMAGE_PATH = rootPath + "/images";
-        File imagePath = new File(Image.IMAGE_PATH + "thumbs");
-        imagePath.mkdirs();
-
-        Video.VIDEO_FOLDER_PATH = rootPath + "/videos";
-        File videoPath = new File(Video.VIDEO_FOLDER_PATH + "/thumbs");
-        videoPath.mkdirs();
-
-    }
-
-    /**
+     /**
      * Project factory.
      *
      * (jliarte): since 21/10/16 Project stops being a singleton :P
@@ -211,4 +197,44 @@ public class Project {
     public void setMusicTitleIdentifier(String musicTitleIdentifier) {
         this.musicTitleIdentifier = musicTitleIdentifier;
     }
+
+  public String getLastModification() {
+    return lastModification;
+  }
+
+  public void setLastModification(String lastModification) {
+    this.lastModification = lastModification;
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  public void setLastVideoExported(LastVideoExported lastVideoExported) {
+    this.lastVideoExported = lastVideoExported;
+  }
+
+  public boolean hasVideoExported(){
+    if(lastVideoExported!=null)
+      return true;
+    return false;
+  }
+
+  public String getPathLastVideoExported(){
+    if(lastVideoExported!= null){
+      return lastVideoExported.getPathLastVideoExported();
+    }
+    return "";
+  }
+
+  public String getDateLastVideoExported(){
+    if(lastVideoExported!= null){
+      return lastVideoExported.getDateLastVideoExported();
+    }
+    return "";
+  }
 }

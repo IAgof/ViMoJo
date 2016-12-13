@@ -20,6 +20,8 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.views.RetrieveProjectClickListener;
+import com.videonasocialmedia.vimojo.utils.DateUtils;
+import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +57,9 @@ public class RetrieveProjectListAdapter extends  RecyclerView.Adapter<RetrievePr
         Video firstVideo= (Video)project.getMediaTrack().getItems().get(0);
 
         drawVideoThumbnail(holder.imagenProject, firstVideo);
-        holder.dateProject.setText(project.getTitle());
-        holder.durationProject.setText(project.getDuration());
+        holder.dateProject.setText(DateUtils.toFormatDateDayMonthYear(project.getTitle()));
+        holder.durationProject.setText(
+            TimeUtils.toFormattedTimeWithMinutesAndSeconds(project.getDuration()));
         holder.titleProject.setText(project.getTitle());
         }
 

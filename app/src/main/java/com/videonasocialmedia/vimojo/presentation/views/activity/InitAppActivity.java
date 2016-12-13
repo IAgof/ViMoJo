@@ -354,6 +354,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
      * Checks the available cameras on the device (back/front), supported flash mode and the
      * supported resolutions
      */
+
     private void setupCameraSettings() {
         checkAvailableCameras();
         checkFlashMode();
@@ -598,7 +599,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     public void onCheckPathsAppSuccess() {
         //TODO Define path project. By default, path app. Path .temp, private data
         profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, this);
-        presenter.startLoadingProject(sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH, ""), profileRepository.getCurrentProfile());
+        presenter.startLoadingProject(Constants.PATH_APP, profileRepository.getCurrentProfile());
         moveVideonaVideosToDcim();
     }
 

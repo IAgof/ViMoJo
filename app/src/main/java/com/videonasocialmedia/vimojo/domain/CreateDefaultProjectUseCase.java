@@ -2,12 +2,9 @@ package com.videonasocialmedia.vimojo.domain;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.DateUtils;
 
 /**
  * Created by jliarte on 23/10/16.
@@ -22,8 +19,9 @@ public class CreateDefaultProjectUseCase {
     if (Project.INSTANCE == null) {
       Project.INSTANCE = projectRepository.getCurrentProject();
     }
-    //TODO Define project title (by date, by project count, ...)
-    Project currentProject = Project.getInstance(Constants.PROJECT_TITLE, rootPath, profile);
+    // By default project title,
+    String projectTitle = DateUtils.getDateRightNow();
+    Project currentProject = Project.getInstance(projectTitle, rootPath, profile);
     projectRepository.update(currentProject);
   }
 
