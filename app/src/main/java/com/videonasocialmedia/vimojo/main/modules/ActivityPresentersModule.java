@@ -25,6 +25,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.MixAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
@@ -59,8 +60,9 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  SoundVolumePresenter getSoundVolumePresenter(RemoveMusicFromProjectUseCase useCase) {
-    return new SoundVolumePresenter((SoundVolumeView) activity, useCase);
+  SoundVolumePresenter getSoundVolumePresenter(RemoveMusicFromProjectUseCase useCase,
+                                               MixAudioUseCase mixAudioUseCase) {
+    return new SoundVolumePresenter((SoundVolumeView) activity, useCase, mixAudioUseCase);
   }
 
   @Provides @PerActivity
@@ -150,5 +152,10 @@ public class ActivityPresentersModule {
   @Provides
   CreateDefaultProjectUseCase provideDefaultProjectCreator(ProjectRepository projectRepository) {
     return new CreateDefaultProjectUseCase(projectRepository);
+  }
+
+  @Provides
+  MixAudioUseCase provideAudioMixer(AddMusicToProjectUseCase addMusicToProjectUseCase) {
+    return new MixAudioUseCase(addMusicToProjectUseCase);
   }
 }

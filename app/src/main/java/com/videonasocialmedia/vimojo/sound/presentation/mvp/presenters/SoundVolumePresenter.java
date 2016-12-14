@@ -20,11 +20,10 @@ import javax.inject.Inject;
  * Created by ruth on 19/09/16.
  */
 public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListener {
-
-    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    @Inject protected RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
-    protected MixAudioUseCase mixAudioUseCase;
     private SoundVolumeView soundVolumeView;
+    private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
+    private MixAudioUseCase mixAudioUseCase;
+    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
 
     public UserEventTracker userEventTracker;
     public Project currentProject;
@@ -34,11 +33,13 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
 
     @Inject
     public SoundVolumePresenter(SoundVolumeView soundVolumeView,
-                                RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {
+                                RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase,
+                                MixAudioUseCase mixAudioUseCase) {
         this.soundVolumeView = soundVolumeView;
         this.removeMusicFromProjectUseCase = removeMusicFromProjectUseCase;
+        this.mixAudioUseCase = mixAudioUseCase;
+
         this.getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        this.mixAudioUseCase = new MixAudioUseCase(this);
         this.currentProject = loadCurrentProject();
     }
 
@@ -61,7 +62,7 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
     }
 
     public void setVolume(String voiceOverPath, String videoTemPathMixAudio, float volume) {
-        mixAudioUseCase.mixAudio(voiceOverPath, videoTemPathMixAudio, volume);
+        mixAudioUseCase.mixAudio(voiceOverPath, videoTemPathMixAudio, volume, this);
         voiceOverRecordedPath = voiceOverPath;
         tempVideoProjectExportedPath = videoTemPathMixAudio;
     }

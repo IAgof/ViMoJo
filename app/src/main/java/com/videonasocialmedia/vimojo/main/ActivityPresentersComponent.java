@@ -9,6 +9,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundVolumeActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 
 import dagger.Component;
@@ -29,4 +30,5 @@ public interface ActivityPresentersComponent {
   void inject(VideoSplitActivity activity);
   void inject(ShareActivity activity);
   void inject(InitAppActivity activity);
+  void inject(SoundVolumeActivity activity);
 }

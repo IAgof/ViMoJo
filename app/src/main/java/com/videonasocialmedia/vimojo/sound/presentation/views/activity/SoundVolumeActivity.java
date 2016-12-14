@@ -50,9 +50,10 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     private static final String VOICE_OVER_RECORDED_PATH = "voice_over_recorded_path";
     private static final String TAG = "SoundVolumeActivity";
 
+    @Inject SoundVolumePresenter presenter;
+
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-    @Inject SoundVolumePresenter presenter;
     @Bind(R.id.textView_seekBar_volume_sound)
     TextView textSeekBarVolume;
     @Bind (R.id.seekBar_volume_sound)
@@ -76,7 +77,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
                 if (resultCode == RESULT_OK) {
                     goToMixAudio(videoTemPathMixAudio);
                 } else {
-
                     //showError(R.string.addMediaItemToTrackError);
                 }
             }

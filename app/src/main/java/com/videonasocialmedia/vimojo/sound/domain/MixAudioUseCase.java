@@ -19,22 +19,22 @@ import javax.inject.Inject;
  */
 
 public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinishedListener {
-
-    @Inject AddMusicToProjectUseCase addMusicToProjectUseCase;
-    String outputFile = Constants.OUTPUT_FILE_MIXED_AUDIO;
+    private AddMusicToProjectUseCase addMusicToProjectUseCase;
+    private String outputFile = Constants.OUTPUT_FILE_MIXED_AUDIO;
     private OnMixAudioListener listener;
     private float volume = 0.5f;
 
-    public MixAudioUseCase(OnMixAudioListener listener) {
-        this.listener = listener;
-
+    public MixAudioUseCase(AddMusicToProjectUseCase addMusicToProjectUseCase) {
+        this.addMusicToProjectUseCase = addMusicToProjectUseCase;
         File f = new File(outputFile);
         if(f.exists())
             f.delete();
     }
 
-    public void mixAudio(String inputFileOne, String inputFileTwo, float volume) {
+    public void mixAudio(String inputFileOne, String inputFileTwo, float volume,
+                         OnMixAudioListener listener) {
         this.volume = volume;
+        this.listener = listener;
         try {
             Future<Void> mFuture = MediaTranscoder.getInstance().mixAudioTwoFiles(inputFileOne,
                     inputFileTwo, 1-volume, Constants.PATH_APP_TEMP_AUDIO, outputFile, this);

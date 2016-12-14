@@ -15,8 +15,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.main.DaggerExporterServiceComponent;
 import com.videonasocialmedia.vimojo.main.ExporterServiceComponent;
-import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.ExporterServiceModule;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
