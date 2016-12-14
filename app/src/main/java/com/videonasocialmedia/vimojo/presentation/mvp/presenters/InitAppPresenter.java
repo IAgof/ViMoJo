@@ -11,10 +11,12 @@ import javax.inject.Inject;
  */
 public class InitAppPresenter {
   private final InitAppView view;
-  @Inject protected CreateDefaultProjectUseCase createDefaultProjectUseCase;
+  private CreateDefaultProjectUseCase createDefaultProjectUseCase;
 
-  public InitAppPresenter(InitAppView view) {
+  public InitAppPresenter(InitAppView view,
+                          CreateDefaultProjectUseCase createDefaultProjectUseCase) {
     this.view = view;
+    this.createDefaultProjectUseCase = createDefaultProjectUseCase;
   }
 
   public void startLoadingProject(String rootPath, Profile profile) {
