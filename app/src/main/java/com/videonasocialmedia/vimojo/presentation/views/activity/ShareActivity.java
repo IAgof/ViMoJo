@@ -21,9 +21,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -41,12 +39,13 @@ import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActi
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
-import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -57,6 +56,9 @@ import butterknife.OnClick;
  */
 public class ShareActivity extends VimojoActivity implements ShareVideoView, VideonaPlayer.VideonaPlayerListener,
         OnOptionsToShareListClickListener {
+    @Inject ShareVideoPresenter presenter;
+    @Inject SharedPreferences sharedPreferences;
+
     @Nullable
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
@@ -80,13 +82,9 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
     ToolbarNavigator navigator;
 
     private String videoPath;
-    private ShareVideoPresenter presenter;
     private OptionsToShareAdapter optionsShareAdapter;
     private int currentPosition;
     private AlertDialog alertDialog, alertDialogClearProject ;
-
-    private SharedPreferences sharedPreferences;
-    protected UserEventTracker userEventTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,10 +98,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        this.userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-        sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
-                Context.MODE_PRIVATE);
-        presenter = new ShareVideoPresenter(this, userEventTracker, sharedPreferences, this);
+        getActivityPresentersComponent().inject(this);
 
         presenter.onCreate();
         videoPath = getIntent().getStringExtra(Constants.VIDEO_TO_SHARE_PATH);
