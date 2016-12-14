@@ -35,10 +35,11 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     public Project currentProject;
     private Music musicSelected;
 
-    @Inject public MusicDetailPresenter(MusicDetailView musicDetailView,
-                                        UserEventTracker userEventTracker,
-                                        AddMusicToProjectUseCase addMusicToProjectUseCase,
-                                        RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {
+    @Inject
+    public MusicDetailPresenter(MusicDetailView musicDetailView,
+                                UserEventTracker userEventTracker,
+                                AddMusicToProjectUseCase addMusicToProjectUseCase,
+                                RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.addMusicToProjectUseCase = addMusicToProjectUseCase;

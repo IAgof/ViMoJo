@@ -19,6 +19,10 @@ import android.util.AttributeSet;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoQualityToProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.vimojo.main.DaggerVideoFormatPreferencesComponent;
+import com.videonasocialmedia.vimojo.main.VideoFormatPreferencesComponent;
+import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
+import com.videonasocialmedia.vimojo.main.modules.VideoFormatPreferencesModule;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
@@ -34,9 +38,20 @@ public class ChooseCameraQualityListPreferences extends ListPreference {
 
     public ChooseCameraQualityListPreferences(Context context, AttributeSet attrs) {
         super(context, attrs);
+        VideoFormatPreferencesComponent videoFormatPreferencesComponent = initComponent();
+        videoFormatPreferencesComponent.inject(this);
         mContext = context;
         sharedPreferences =  mContext.getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+    }
+
+    private VideoFormatPreferencesComponent initComponent() {
+        // TODO(jliarte): 14/12/16 should access to systemComponent singleton instead of create a
+        //                new DataRepositoriesModule?
+        return DaggerVideoFormatPreferencesComponent.builder()
+                .videoFormatPreferencesModule(new VideoFormatPreferencesModule())
+                .dataRepositoriesModule(new DataRepositoriesModule())
+                .build();
     }
 
     @Override
