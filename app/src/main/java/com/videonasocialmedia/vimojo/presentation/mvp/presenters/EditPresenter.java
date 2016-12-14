@@ -45,8 +45,8 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     /**
      * UseCases
      */
-    RemoveVideoFromProjectUseCase remoVideoFromProjectUseCase;
-    ReorderMediaItemUseCase reorderMediaItemUseCase;
+    private RemoveVideoFromProjectUseCase remoVideoFromProjectUseCase;
+    private ReorderMediaItemUseCase reorderMediaItemUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
