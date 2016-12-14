@@ -12,8 +12,8 @@ import io.realm.annotations.PrimaryKey;
  */
 public class RealmProject extends RealmObject {
   @PrimaryKey
-  public String title;
   public String uuid;
+  public String title;
   public String lastModification;
   public String projectPath;
   public String quality;

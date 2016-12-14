@@ -13,17 +13,13 @@ import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.FileDescriptorBitmapDecoder;
 import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
-import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.views.RetrieveProjectClickListener;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -122,6 +118,30 @@ public class RetrieveProjectListAdapter extends  RecyclerView.Adapter<RetrievePr
         public void onClick() {
             Project project = projectList.get(getAdapterPosition());
             clickListener.onClick(project);
+        }
+
+        @OnClick(R.id.retrieve_project_button_duplicate)
+        public void onClickDuplicateProject(){
+            int position = getAdapterPosition();
+            notifyItemChanged(position);
+            clickListener.onDuplicateProject(projectList.get(position));
+        }
+
+        @OnClick(R.id.retrieve_project_button_delete)
+        public void onClickDeleteProject(){
+            int position = getAdapterPosition();
+            notifyItemChanged(position);
+            clickListener.onDeleteProject(projectList.get(position));
+        }
+
+        @OnClick (R.id.retrieve_project_button_edit)
+        public void onClickGoToEdit(){
+            clickListener.goToEditActivity(projectList.get(getAdapterPosition()));
+        }
+
+        @OnClick (R.id.retrieve_project_button_share)
+        public void onClickGoToShare(){
+            clickListener.goToShareActivity(projectList.get(getAdapterPosition()));
         }
     }
 }

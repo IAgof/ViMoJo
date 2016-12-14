@@ -16,12 +16,13 @@ public class ClearProjectUseCase {
 
   public void clearProject(Project project) {
     projectRepository.remove(project);
-    cleanTemporalDirectories();
+    cleanTemporalDirectories(project.getProjectPath());
     project.clear();
+
   }
 
-  private void cleanTemporalDirectories() {
-    File intermediateVideoDirectory = new File(Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
+  private void cleanTemporalDirectories(String projectPath) {
+    File intermediateVideoDirectory = new File(projectPath);
     FileUtils.cleanDirectory(intermediateVideoDirectory);
     // Vimojo versions prior to 14 keeps intermediate files in general tmp path, so we delete
     // just the files there

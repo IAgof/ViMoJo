@@ -13,14 +13,16 @@ public class CreateDefaultProjectUseCase {
   protected ProjectRepository projectRepository = new ProjectRealmRepository();
 
   public void loadOrCreateProject(String rootPath, Profile profile) {
+
+    // By default project title,
+    String projectTitle = DateUtils.getDateRightNow();
     // TODO(jliarte): 22/10/16 we should store current project in other place than Project instance.
     //                This is done for convenience only as we should get rid of all
     //                Project.getInstance calls
     if (Project.INSTANCE == null) {
-      Project.INSTANCE = projectRepository.getCurrentProject();
+      Project.INSTANCE = new Project(projectTitle,rootPath, profile); //projectRepository.getCurrentProject();
     }
-    // By default project title,
-    String projectTitle = DateUtils.getDateRightNow();
+
     Project currentProject = Project.getInstance(projectTitle, rootPath, profile);
     projectRepository.update(currentProject);
   }

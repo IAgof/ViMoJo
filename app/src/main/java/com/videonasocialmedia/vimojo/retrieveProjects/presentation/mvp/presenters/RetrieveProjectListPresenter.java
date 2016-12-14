@@ -1,17 +1,19 @@
 package com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.presenters;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.DeleteProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.DuplicateProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.UpdateCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
+import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.views.RetrieveProjectListView;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,28 +21,75 @@ import java.util.List;
  */
 public class RetrieveProjectListPresenter {
 
-    private List<Project> availableProject;
-    private List projectList;
+    private final SharedPreferences sharedPreferences;
+    private final Context context;
+    private final CreateDefaultProjectUseCase createDefaultProjectUseCase;
+    private List<Project> availableProjects;
     private RetrieveProjectListView retrieveProjectListView;
-    private LoadCurrentProjectUseCase loadCurrentProjectUseCase;
+    private UpdateCurrentProjectUseCase updateCurrentProjectUseCase;
+    private ProfileSharedPreferencesRepository profileRepository;
 
-    public RetrieveProjectListPresenter(RetrieveProjectListView retrieveProjectListView) {
+    public RetrieveProjectListPresenter(RetrieveProjectListView retrieveProjectListView,
+                                        SharedPreferences sharedPreferences, Context context) {
         this.retrieveProjectListView = retrieveProjectListView;
-        availableProject=loadListProject();
+        this.sharedPreferences = sharedPreferences;
+        this.context = context;
+        createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
+        availableProjects = loadListProjects();
+        updateCurrentProjectUseCase = new UpdateCurrentProjectUseCase();
 
     }
-    public List<Project> loadListProject(){
+    public List<Project> loadListProjects(){
+        //TODO use case
         ProjectRealmRepository projectRealmRepository= new ProjectRealmRepository();
-        Project project1= new LoadCurrentProjectUseCase(projectRealmRepository).loadCurrentProject();
-        Project project2= new LoadCurrentProjectUseCase(projectRealmRepository).loadCurrentProject();
-        projectList = new ArrayList();
-        projectList.add(project1);
-        projectList.add(project2);
-        return projectList;
+        return projectRealmRepository.getListProjects();
     }
 
-    public void getAvailableMusic() {
-        if (availableProject != null)
-            retrieveProjectListView.showProjectList(availableProject);
+    public void getAvailableProjects() {
+        if (availableProjects != null)
+            retrieveProjectListView.showProjectList(availableProjects);
+    }
+
+    public void duplicateProject(Project project) {
+      DuplicateProjectUseCase duplicateProjectUseCase = new DuplicateProjectUseCase();
+      duplicateProjectUseCase.duplicate(project);
+      //UpdateCurrentProjectUseCase updateCurrentProjectUseCase = new UpdateCurrentProjectUseCase();
+      //updateCurrentProjectUseCase.updateLastModifactionProject(project);
+    }
+
+    public void deleteProject(Project project) {
+      DeleteProjectUseCase deleteProjectUseCase = new DeleteProjectUseCase();
+      deleteProjectUseCase.delete(project);
+    }
+
+    public void updateProjectList() {
+        List<Project> projectList = loadListProjects();
+        if (projectList != null && projectList.size() > 0) {
+                retrieveProjectListView.showProjectList(projectList);
+                return;
+        }
+
+        retrieveProjectListView.createDefaultProject();
+    }
+
+    public void updateCurrentProject(Project project) {
+        updateCurrentProjectUseCase.updateLastModifactionProject(project);
+    }
+
+    public void resetProject(String pathApp) {
+        profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, context);
+        createDefaultProjectUseCase.loadOrCreateProject(pathApp, profileRepository.getCurrentProfile());
+    }
+
+    public void checkNavigationToShare(Project project) {
+        //TODO use case
+        if(project.hasVideoExported()
+            && project.getDateLastVideoExported().compareTo(project.getLastModification()) == 0){
+            updateCurrentProjectUseCase.updateLastModifactionProject(project);
+            retrieveProjectListView.navigateTo(ShareActivity.class, project.getPathLastVideoExported());
+        } else {
+            updateCurrentProjectUseCase.updateLastModifactionProject(project);
+            retrieveProjectListView.navigateTo(EditActivity.class);
+        }
     }
 }

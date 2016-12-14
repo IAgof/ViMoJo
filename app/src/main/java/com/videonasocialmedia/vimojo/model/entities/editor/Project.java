@@ -20,6 +20,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
+import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -84,13 +85,15 @@ public class Project {
      */
     public Project(String title, String rootPath, Profile profile) {
         this.title = title;
-        this.projectPath = rootPath + "/projects/" + title; //todo probablemente necesitemos un slugify de ese title.
         this.vmComposition = new VMComposition();
         this.profile = profile;
         this.duration = 0;
         this.lastModification = DateUtils.getDateRightNow();
         this.uuid = UUID.randomUUID().toString();
+        this.projectPath = rootPath + "/.projects/" + uuid; //todo probablemente necesitemos un slugify de ese title.
+        createFolder(projectPath);
     }
+
 
   public VMComposition getVMComposition() {
     return vmComposition;
@@ -206,6 +209,10 @@ public class Project {
     this.lastModification = lastModification;
   }
 
+  public void updateLastModification(){
+    this.lastModification = DateUtils.getDateRightNow();
+  }
+
   public String getUuid() {
     return uuid;
   }
@@ -237,4 +244,15 @@ public class Project {
     }
     return "";
   }
+
+  public String getProjectSizeMbVideoToExport(){
+    float scaleToMb = 0.125f;
+    int sizeBytes = getProfile().getVideoQuality().getVideoBitRate()*getDuration();
+    return (sizeBytes * scaleToMb) + " Mb";
+  }
+
+  public void createFolder(String projectPath) {
+    FileUtils.createFolder(projectPath);
+  }
+
 }
