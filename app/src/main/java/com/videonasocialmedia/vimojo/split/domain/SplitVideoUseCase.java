@@ -10,7 +10,11 @@ import javax.inject.Inject;
  */
 
 public class SplitVideoUseCase {
-    @Inject protected AddVideoToProjectUseCase addVideoToProjectUseCase;
+    private AddVideoToProjectUseCase addVideoToProjectUseCase;
+
+    public SplitVideoUseCase(AddVideoToProjectUseCase addVideoToProjectUseCase) {
+        this.addVideoToProjectUseCase = addVideoToProjectUseCase;
+    }
 
     public void splitVideo(Video initialVideo, int positionInAdapter, int splitTimeMs,
                            OnSplitVideoListener listener) {

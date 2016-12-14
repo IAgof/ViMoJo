@@ -23,6 +23,9 @@ import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
+import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
+import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
+import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import dagger.Module;
@@ -91,6 +94,13 @@ public class ActivityPresentersModule {
             externalIntent, addVideoToProjectUseCase);
   }
 
+  @Provides @PerActivity
+  SplitPreviewPresenter provideSplitPresenter(UserEventTracker userEventTracker,
+                                          SplitVideoUseCase splitVideoUseCase) {
+    return new SplitPreviewPresenter((VideoSplitActivity) activity, userEventTracker,
+            splitVideoUseCase);
+  }
+
   @Provides
   RemoveMusicFromProjectUseCase provideMusicRemover(ProjectRepository projectRepository) {
     return new RemoveMusicFromProjectUseCase(projectRepository);
@@ -104,5 +114,10 @@ public class ActivityPresentersModule {
   @Provides
   AddVideoToProjectUseCase provideVideoAdder(ProjectRepository projectRepository) {
     return new AddVideoToProjectUseCase(projectRepository);
+  }
+
+  @Provides
+  SplitVideoUseCase provideVideoSplitter(AddVideoToProjectUseCase addVideoToProjectUseCase) {
+    return new SplitVideoUseCase(addVideoToProjectUseCase);
   }
 }

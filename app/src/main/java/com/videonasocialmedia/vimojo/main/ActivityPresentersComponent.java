@@ -7,7 +7,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity
 import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
-import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 
 import dagger.Component;
 
@@ -24,4 +24,5 @@ public interface ActivityPresentersComponent {
   void inject(VideoDuplicateActivity activity);
   void inject(GalleryActivity activity);
   void inject(RecordActivity activity);
+  void inject(VideoSplitActivity activity);
 }

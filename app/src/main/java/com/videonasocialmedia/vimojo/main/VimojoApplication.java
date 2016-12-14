@@ -38,6 +38,7 @@ public class VimojoApplication extends Application {
     private static Context context;
 
     Tracker appTracker;
+    private DataRepositoriesModule dataRepositoriesModule;
 
     public static Context getAppContext() {
         return VimojoApplication.context;
@@ -87,7 +88,10 @@ public class VimojoApplication extends Application {
     }
 
     public DataRepositoriesModule getDataRepositoriesModule() {
-        return new DataRepositoriesModule();
+        if (dataRepositoriesModule == null) {
+            dataRepositoriesModule = new DataRepositoriesModule();
+        }
+        return dataRepositoriesModule;
     }
 
 

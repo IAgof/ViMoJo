@@ -13,6 +13,12 @@ import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentPr
 import com.videonasocialmedia.vimojo.export.domain.RelaunchExportTempBackgroundUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.main.DaggerExporterServiceComponent;
+import com.videonasocialmedia.vimojo.main.ExporterServiceComponent;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
+import com.videonasocialmedia.vimojo.main.modules.ExporterServiceModule;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
@@ -43,8 +49,21 @@ public class ExportTempBackgroundService extends Service
     @Inject ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
 
     public ExportTempBackgroundService() {
+        getExporterServiceComponent().inject(this);
         getVideonaFormatFromCurrentProjectUseCase = new GetVideonaFormatFromCurrentProjectUseCase();
         videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
+    }
+
+    private ExporterServiceComponent getExporterServiceComponent() {
+        return DaggerExporterServiceComponent.builder()
+                .exporterServiceModule(new ExporterServiceModule())
+                .dataRepositoriesModule(getDataRepositoriesModule())
+                .build();
+    }
+
+    private DataRepositoriesModule getDataRepositoriesModule() {
+//        return ((VimojoApplication) getApplication()).getDataRepositoriesModule();
+        return new DataRepositoriesModule();
     }
 
     @Nullable
