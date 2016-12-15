@@ -27,7 +27,13 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
+import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -55,10 +61,12 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     private List<Video> videoList;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
+    private ProfileRepository profileRepository;
+    protected ProjectRepository projectRepository;
 
     public EditPresenter(EditorView editorView,
                          ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack,
-                         UserEventTracker userEventTracker) {
+                         UserEventTracker userEventTracker, SharedPreferences sharedPreferences) {
         this.editorView = editorView;
         this.projectModifiedCallBack = projectModifiedCallBack;
 
@@ -66,13 +74,22 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         remoVideoFromProjectUseCase = new RemoveVideoFromProjectUseCase();
         reorderMediaItemUseCase = new ReorderMediaItemUseCase();
         getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
+        profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences,
+            VimojoApplication.getAppContext());
+        projectRepository = new ProjectRealmRepository();
         this.userEventTracker = userEventTracker;
         this.currentProject = loadCurrentProject();
     }
 
     public Project loadCurrentProject() {
-        // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
+        Project project = projectRepository.getCurrentProject();
+        if(project == null){
+            Project newProject = Project.getInstance(DateUtils.getDateRightNow(), Constants.PATH_APP,
+                profileRepository.getCurrentProfile());
+            projectRepository.update(newProject);
+            return newProject;
+        }
+        return projectRepository.getCurrentProject();
     }
 
 
@@ -83,8 +100,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
         return sharedPreferences.getString(ConfigPreferences.RESOLUTION, "1280x720");
     }
-
-
 
     public void moveItem(int fromPosition, int toPositon) {
         reorderMediaItemUseCase.moveMediaItem(videoList.get(fromPosition), toPositon, this);

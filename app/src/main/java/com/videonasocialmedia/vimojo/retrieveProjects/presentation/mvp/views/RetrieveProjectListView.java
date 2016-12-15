@@ -10,7 +10,6 @@ import java.util.List;
  */
 public interface RetrieveProjectListView {
     void showProjectList(List<Project> projectList);
-    void createDefaultProject();
     void navigateTo(Class cls);
     void navigateTo(Class cls, String path);
 }

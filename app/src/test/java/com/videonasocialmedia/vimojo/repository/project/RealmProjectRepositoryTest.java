@@ -6,13 +6,11 @@ import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -20,7 +18,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.File;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;

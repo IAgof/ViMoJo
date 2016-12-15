@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -27,109 +26,95 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class RetrieveProjectListActivity extends VimojoActivity implements RetrieveProjectListView,
-    RetrieveProjectClickListener, VideonaPlayer.VideonaPlayerListener {
-    private static final String MUSIC_LIST_PROJECT_POSITION = "music_list_project_position";
+    RetrieveProjectClickListener {
 
-    @Bind(R.id.recycler_retrieve_project)
-    RecyclerView projectList;
+  @Bind(R.id.recycler_retrieve_project)
+  RecyclerView projectList;
 
-    private RetrieveProjectListPresenter presenter;
-    private RetrieveProjectListAdapter projectAdapter;
-    private SharedPreferences sharedPreferences;
+  private RetrieveProjectListPresenter presenter;
+  private RetrieveProjectListAdapter projectAdapter;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_retrieve_project);
-        ButterKnife.bind(this);
-        setupToolbar();
-        sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
-            Context.MODE_PRIVATE);
-        presenter = new RetrieveProjectListPresenter(this, sharedPreferences, this);
-        initProjectListRecycler();
-    }
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_retrieve_project);
+    ButterKnife.bind(this);
+    setupToolbar();
+    presenter = new RetrieveProjectListPresenter(this);
+    initProjectListRecycler();
+  }
 
-    private void setupToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-    }
+  private void setupToolbar() {
+    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
+    getSupportActionBar().setDisplayShowTitleEnabled(false);
+    ActionBar ab = getSupportActionBar();
+    ab.setDisplayHomeAsUpEnabled(true);
+  }
 
-    private void initProjectListRecycler() {
-        projectAdapter = new RetrieveProjectListAdapter();
-        projectAdapter.setRetrieveProjectClickListener(this);
-        presenter.getAvailableProjects();
-        LinearLayoutManager layoutManager =
-            new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        projectList.setLayoutManager(layoutManager);
-        projectList.setAdapter(projectAdapter);
-    }
+  private void initProjectListRecycler() {
+    projectAdapter = new RetrieveProjectListAdapter();
+    projectAdapter.setRetrieveProjectClickListener(this);
+    presenter.getAvailableProjects();
+    LinearLayoutManager layoutManager =
+        new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+    projectList.setLayoutManager(layoutManager);
+    projectList.setAdapter(projectAdapter);
+  }
 
-    @Override
-    public void navigateTo(Class cls) {
-        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
-        startActivity(intent);
-    }
+  @Override
+  public void navigateTo(Class cls) {
+    Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
+    startActivity(intent);
+  }
 
-    @Override
-    public void navigateTo(Class cls, String videoToSharePath) {
-        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
-        intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoToSharePath);
-        startActivity(intent);
-    }
+  @Override
+  public void navigateTo(Class cls, String videoToSharePath) {
+    Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
+    intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoToSharePath);
+    startActivity(intent);
+  }
 
-    @Override
-    public void newClipPlayed(int i) {
+  @Override
+  public void showProjectList(List<Project> projectList) {
+    projectAdapter.setProjectList(projectList);
+    projectAdapter.notifyDataSetChanged();
+    this.projectList.setAdapter(projectAdapter);
+  }
 
-    }
+  @Override
+  public void onClick(Project project) {
+    // Go to detail project info activity
+  }
 
-    @Override
-    public void showProjectList(List<Project> projectList) {
-        projectAdapter.setProjectList(projectList);
-        projectAdapter.notifyDataSetChanged();
-        this.projectList.setAdapter(projectAdapter);
-    }
+  @Override
+  public void onDuplicateProject(Project project) {
+    presenter.duplicateProject(project);
+    presenter.updateProjectList();
+  }
 
-    @Override
-    public void createDefaultProject() {
-        presenter.resetProject(Constants.PATH_APP);
-        navigateTo(EditActivity.class);
-    }
+  @Override
+  public void onDeleteProject(Project project) {
+    presenter.deleteProject(project);
+    presenter.updateProjectList();
+  }
 
-    @Override
-    public void onClick(Project project) {
+  @Override
+  public void goToEditActivity(Project project) {
+    presenter.updateCurrentProject(project);
+    navigateTo(EditActivity.class);
+  }
 
-    }
+  @Override
+  public void goToShareActivity(Project project) {
+    presenter.checkNavigationToShare(project);
 
-    @Override
-    public void onDuplicateProject(Project project) {
-        presenter.duplicateProject(project);
-        presenter.updateProjectList();
-    }
-
-    @Override
-    public void onDeleteProject(Project project) {
-        presenter.deleteProject(project);
-        presenter.updateProjectList();
-    }
-
-    @Override
-    public void goToEditActivity(Project project) {
-        presenter.updateCurrentProject(project);
-        navigateTo(EditActivity.class);
-    }
-
-    @Override
-    public void goToShareActivity(Project project) {
-        presenter.checkNavigationToShare(project);
-
-    }
+  }
 
 }
 

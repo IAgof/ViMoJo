@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -52,6 +53,7 @@ import com.videonasocialmedia.vimojo.retrieveProjects.presentation.views.activit
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -92,6 +94,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
     private VideoTimeLineAdapter timeLineAdapter;
     private AlertDialog progressDialog;
     private int selectedVideoRemovePosition;
+    private SharedPreferences sharedPreferences;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -127,8 +130,11 @@ public class EditActivity extends VimojoActivity implements EditorView,
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
+        sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
+            Context.MODE_PRIVATE);
+
         UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-        editPresenter = new EditPresenter(this, navigator.getCallback(), userEventTracker);
+        editPresenter = new EditPresenter(this, navigator.getCallback(), userEventTracker, sharedPreferences);
 
         videonaPlayer.setListener(this);
 
@@ -232,6 +238,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
                 return true;
             case R.id.action_settings_edit_projects:
                 navigateTo(RetrieveProjectListActivity.class);
+                finish();
                 return true;
             case android.R.id.home:
                 onBackPressed();

@@ -4,6 +4,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,6 +30,7 @@ public class DuplicateProjectUseCaseTest {
     MockitoAnnotations.initMocks(this);
   }
 
+  @Ignore
   @Test
   public void duplicateProjectCallsCreateNewProjectRepository(){
     Project currentProject = Project.getInstance(null, null, null);
