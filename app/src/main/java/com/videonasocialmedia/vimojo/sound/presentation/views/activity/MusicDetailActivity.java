@@ -231,7 +231,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     private void updateCoverInfo(Music music) {
         musicAuthor.setText(music.getAuthor());
         musicTitle.setText(music.getTitle());
-        musicDuration.setText(music.getDurationMusic());
+        musicDuration.setText(music.getMusicDuration());
         Glide.with(VimojoApplication.getAppContext()).load(music.getIconResourceId()).error(R.drawable.fragment_gallery_no_image);
         musicImage.setImageResource(music.getIconResourceId());
         //
