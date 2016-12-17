@@ -17,15 +17,25 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+
+import javax.inject.Inject;
 
 /**
  * This class is used to removed videos from the project.
  */
 public class RemoveMusicFromProjectUseCase {
     private final Project currentProject = Project.getInstance(null, null, null);
-    protected ProjectRepository projectRepository = new ProjectRealmRepository();
+    protected ProjectRepository projectRepository;
+
+    /**
+     * Default constructor with project repository argument.
+     *
+     * @param projectRepository the project repository.
+     */
+    @Inject public RemoveMusicFromProjectUseCase(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
+    }
 
     /**
      * @param music      the music object to be removed

@@ -47,6 +47,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 
 /**
@@ -76,18 +78,21 @@ public class RecordPresenter {
 
     private boolean externalIntent;
 
-
+    @Inject
     public RecordPresenter(Context context, RecordView recordView,
-                           GLCameraView cameraPreview, SharedPreferences sharedPreferences, boolean externalIntent) {
+                           GLCameraView cameraPreview, SharedPreferences sharedPreferences,
+                           boolean externalIntent,
+                           AddVideoToProjectUseCase addVideoToProjectUseCase) {
 
-        this.currentProject = loadCurrentProject();
-        this.recordView = recordView;
         this.context = context;
+        this.recordView = recordView;
         this.cameraPreview = cameraPreview;
         this.sharedPreferences = sharedPreferences;
         this.externalIntent = externalIntent;
+        this.addVideoToProjectUseCase = addVideoToProjectUseCase;
+
+        this.currentProject = loadCurrentProject();
         preferencesEditor = sharedPreferences.edit();
-        addVideoToProjectUseCase = new AddVideoToProjectUseCase();
         recordedVideosNumber = 0;
         mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_TOKEN);
     }

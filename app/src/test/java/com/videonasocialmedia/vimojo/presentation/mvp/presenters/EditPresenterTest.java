@@ -6,6 +6,8 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -41,6 +43,8 @@ public class EditPresenterTest {
     @Mock private MixpanelAPI mockedMixpanelApi;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private ToolbarNavigator.ProjectModifiedCallBack mockedProjectModifiedCallback;
+    @Mock private RemoveVideoFromProjectUseCase mockedVideoRemover;
+    @Mock private ReorderMediaItemUseCase mockedMediaItemReorderer;
 
     @Before
     public void injectTestDoubles() {
@@ -82,7 +86,8 @@ public class EditPresenterTest {
     // Seems not needed since we already use @InjectMocks annotation
     @NonNull
     public EditPresenter getEditPresenter() {
-        return new EditPresenter(mockedEditorView, mockedProjectModifiedCallback, mockedUserEventTracker);
+        return new EditPresenter(mockedEditorView, mockedProjectModifiedCallback,
+                mockedUserEventTracker, mockedVideoRemover, mockedMediaItemReorderer);
     }
 
     public Project getAProject() {

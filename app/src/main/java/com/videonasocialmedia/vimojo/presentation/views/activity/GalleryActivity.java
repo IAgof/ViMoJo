@@ -27,13 +27,13 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.presentation.views.fragment.VideoGalleryFragment;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnSelectionModeListener;
 
-import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaDialogListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -50,9 +50,9 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     private final String MASTERS_FRAGMENT_TAG="MASTERS";
     private final String EDITED_FRAGMENT_TAG="EDITED";
     private final int REQUEST_CODE_REMOVE_VIDEOS_FROM_GALLERY = 1;
-    MyPagerAdapter adapterViewPager;
-    int selectedPage = 0;
-    GalleryPagerPresenter galleryPagerPresenter;
+
+    @Inject GalleryPagerPresenter galleryPagerPresenter;
+
     @Bind(R.id.button_ok_gallery)
     ImageButton okButton;
     @Bind(R.id.gallery_count_selected_videos)
@@ -61,6 +61,9 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     ImageView galleryImageViewClips;
     @Bind(R.id.selection_mode)
     LinearLayout selectionMode;
+
+    private MyPagerAdapter adapterViewPager;
+    private int selectedPage = 0;
     private int countVideosSelected = 0;
     private AlertDialog dialog;
 
@@ -80,9 +83,10 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         ViewPager vpPager = (ViewPager) findViewById(R.id.vpPager);
         adapterViewPager = new MyPagerAdapter(getFragmentManager(), savedInstanceState);
         vpPager.setAdapter(adapterViewPager);
-
         vpPager.setOnPageChangeListener(this);
-        galleryPagerPresenter = new GalleryPagerPresenter(this);
+
+        getActivityPresentersComponent().inject(this);
+//        galleryPagerPresenter = new GalleryPagerPresenter(this);
 
         PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_header);
         pagerTabStrip.setDrawFullUnderline(true);

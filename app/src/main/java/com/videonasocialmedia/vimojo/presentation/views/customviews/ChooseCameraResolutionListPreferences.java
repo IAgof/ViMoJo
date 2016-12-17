@@ -18,27 +18,43 @@ import android.util.AttributeSet;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.main.DaggerVideoFormatPreferencesComponent;
+import com.videonasocialmedia.vimojo.main.VideoFormatPreferencesComponent;
+import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
+import com.videonasocialmedia.vimojo.main.modules.VideoFormatPreferencesModule;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.util.ArrayList;
 
-class ChooseCameraResolutionListPreferences extends ListPreference {
+import javax.inject.Inject;
 
+public class ChooseCameraResolutionListPreferences extends ListPreference {
     private Context mContext;
     private CharSequence[] entries;
     private CharSequence[] entryValues;
     private SharedPreferences sharedPreferences;
-    private UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase;
+    @Inject UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase;
 
     public ChooseCameraResolutionListPreferences(Context context, AttributeSet attrs)
     {
         super(context, attrs);
+        VideoFormatPreferencesComponent videoFormatPreferencesComponent = initComponent();
+        videoFormatPreferencesComponent.inject(this);
         mContext = context;
         sharedPreferences =  mContext.getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
-        updateVideoResolutionToProjectUseCase = new UpdateVideoResolutionToProjectUseCase();
     }
+
+    private VideoFormatPreferencesComponent initComponent() {
+        // TODO(jliarte): 14/12/16 should access to systemComponent singleton instead of create a
+        //                new DataRepositoriesModule?
+        return DaggerVideoFormatPreferencesComponent.builder()
+                .videoFormatPreferencesModule(new VideoFormatPreferencesModule())
+                .dataRepositoriesModule(new DataRepositoriesModule())
+                .build();
+    }
+
 
     // NOTE:
     // The framework forgot to call notifyChanged() in setValue() on previous versions of android.

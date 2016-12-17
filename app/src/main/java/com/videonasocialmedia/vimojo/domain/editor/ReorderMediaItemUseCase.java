@@ -6,14 +6,24 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnReorderMediaListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+
+import javax.inject.Inject;
 
 /**
  * Created by jca on 7/7/15.
  */
 public class ReorderMediaItemUseCase {
-    protected ProjectRepository projectRepository = new ProjectRealmRepository();
+    protected ProjectRepository projectRepository;
+
+  /**
+   * Default constructor with project repository argument.
+   *
+   * @param projectRepository the project repository.
+   */
+  @Inject public ReorderMediaItemUseCase(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
+    }
 
     public void moveMediaItem(Media media, int toPositon, OnReorderMediaListener listener){
         Project project = Project.getInstance(null,null,null);

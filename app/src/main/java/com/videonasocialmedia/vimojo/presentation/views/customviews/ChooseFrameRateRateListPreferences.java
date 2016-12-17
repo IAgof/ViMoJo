@@ -18,29 +18,41 @@ import android.util.AttributeSet;
 
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoFrameRateToProjectUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.main.DaggerVideoFormatPreferencesComponent;
+import com.videonasocialmedia.vimojo.main.VideoFormatPreferencesComponent;
+import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
+import com.videonasocialmedia.vimojo.main.modules.VideoFormatPreferencesModule;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.util.ArrayList;
 
-class ChooseFrameRateRateListPreferences extends ListPreference {
+import javax.inject.Inject;
 
+public class ChooseFrameRateRateListPreferences extends ListPreference {
     private Context mContext;
     private CharSequence[] entries;
     private CharSequence[] entryValues;
     private SharedPreferences sharedPreferences;
-    private Project currentProject;
-    private UpdateVideoFrameRateToProjectUseCase updateVideoFrameRateToProjectUseCase;
+    @Inject UpdateVideoFrameRateToProjectUseCase updateVideoFrameRateToProjectUseCase;
 
-    public ChooseFrameRateRateListPreferences(Context context, AttributeSet attrs)
-    {
+    public ChooseFrameRateRateListPreferences(Context context, AttributeSet attrs) {
         super(context, attrs);
+        VideoFormatPreferencesComponent videoFormatPreferencesComponent = initComponent();
+        videoFormatPreferencesComponent.inject(this);
         mContext = context;
         sharedPreferences =  mContext.getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
-        updateVideoFrameRateToProjectUseCase = new UpdateVideoFrameRateToProjectUseCase();
+    }
+
+    private VideoFormatPreferencesComponent initComponent() {
+        // TODO(jliarte): 14/12/16 should access to systemComponent singleton instead of create a
+        //                new DataRepositoriesModule?
+        return DaggerVideoFormatPreferencesComponent.builder()
+                .videoFormatPreferencesModule(new VideoFormatPreferencesModule())
+                .dataRepositoriesModule(new DataRepositoriesModule())
+                .build();
     }
 
     // NOTE:
@@ -152,20 +164,16 @@ class ChooseFrameRateRateListPreferences extends ListPreference {
                         getDialog().cancel();
                     }
                 });
-
     }
 
     private void updateProfileProject(String item) {
-
         VideoFrameRate.FrameRate frameRate = Utils.getFrameRateFromItemName(mContext, item);
         updateVideoFrameRateToProjectUseCase.updateFrameRate(frameRate);
-
     }
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
-
     }
 
 }

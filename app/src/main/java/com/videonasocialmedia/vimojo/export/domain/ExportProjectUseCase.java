@@ -7,7 +7,6 @@
 
 package com.videonasocialmedia.vimojo.export.domain;
 
-import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.pipeline.Exporter;
 import com.videonasocialmedia.videonamediaframework.pipeline.ExporterImpl;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -16,9 +15,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishe
 
 import java.util.NoSuchElementException;
 
-
 public class ExportProjectUseCase implements Exporter.OnExportEndedListener {
-
   private OnExportFinishedListener onExportFinishedListener;
   private Exporter exporter;
   private Project project;
@@ -54,6 +51,5 @@ public class ExportProjectUseCase implements Exporter.OnExportEndedListener {
   @Override
   public void onExportSuccess(Video video) {
     onExportFinishedListener.onExportSuccess(video);
-
   }
 }

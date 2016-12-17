@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
-import com.videonasocialmedia.videonamediaframework.pipeline.ExportSwapAudioToVideoUseCase;
+import com.videonasocialmedia.videonamediaframework.pipeline.VideoAudioSwapper;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.ClearProjectUseCase;
@@ -33,16 +33,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by jca on 11/12/15.
  */
-public class ShareVideoPresenter implements OnMixAudioListener, ExportSwapAudioToVideoUseCase.OnExportEndedSwapAudioListener {
-
+public class ShareVideoPresenter implements VideoAudioSwapper.VideoAudioSwapperListener {
     private final Context context;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetFtpListUseCase getFtpListUseCase;
     private ClearProjectUseCase clearProjectUseCase;
-    protected CreateDefaultProjectUseCase createDefaultProjectUseCase;
+    private CreateDefaultProjectUseCase createDefaultProjectUseCase;
     private ShareVideoView shareVideoView;
     protected Project currentProject;
     protected UserEventTracker userEventTracker;
@@ -53,17 +54,25 @@ public class ShareVideoPresenter implements OnMixAudioListener, ExportSwapAudioT
     private SharedPreferences.Editor preferencesEditor;
     private ProfileRepository profileRepository;
     private MixAudioUseCase mixAudioUseCase;
-    private ExportSwapAudioToVideoUseCase exportSwapAudioToVideoUseCase;
-    private String videoExportedWithVoiceOver;
+    private VideoAudioSwapper videoAudioSwapper;
+    private String videoExportedWithVoiceOverPath;
     private String videoExportedTemp;
 
+    @Inject
     public ShareVideoPresenter(ShareVideoView shareVideoView, UserEventTracker userEventTracker,
-                               SharedPreferences sharedPreferences, Context context) {
+                               SharedPreferences sharedPreferences, Context context,
+                               ClearProjectUseCase clearProjectUseCase,
+                               CreateDefaultProjectUseCase createDefaultProjectUseCase,
+                               MixAudioUseCase mixAudioUseCase) {
         this.shareVideoView = shareVideoView;
         this.userEventTracker = userEventTracker;
         this.sharedPreferences = sharedPreferences;
-        currentProject = loadCurrentProject();
         this.context = context;
+        this.clearProjectUseCase = clearProjectUseCase;
+        this.createDefaultProjectUseCase = createDefaultProjectUseCase;
+        this.mixAudioUseCase = mixAudioUseCase;
+
+        currentProject = loadCurrentProject();
     }
 
     private Project loadCurrentProject() {
@@ -73,11 +82,7 @@ public class ShareVideoPresenter implements OnMixAudioListener, ExportSwapAudioT
     public void onCreate() {
         obtainNetworksToShareUseCase = new ObtainNetworksToShareUseCase();
         getFtpListUseCase = new GetFtpListUseCase();
-        clearProjectUseCase = new ClearProjectUseCase();
-        createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
-        mixAudioUseCase = new MixAudioUseCase(this);
-        exportSwapAudioToVideoUseCase = new ExportSwapAudioToVideoUseCase(this);
-
+        videoAudioSwapper = new VideoAudioSwapper(this);
     }
 
     public void onResume() {
@@ -95,22 +100,35 @@ public class ShareVideoPresenter implements OnMixAudioListener, ExportSwapAudioT
        socialNetworkList = obtainNetworksToShareUseCase.obtainMainNetworks();
     }
 
-    private void obtainListOptionsToShare(List<FtpNetwork> ftpList, List<SocialNetwork> socialNetworkList) {
+    private void obtainListOptionsToShare(List<FtpNetwork> ftpList,
+                                          List<SocialNetwork> socialNetworkList) {
         optionToShareList = new ArrayList();
         optionToShareList.addAll(ftpList);
         optionToShareList.addAll(socialNetworkList);
     }
 
-    public void exportWithVoiceOver(String videoExportedTemp){
+    public void exportWithVoiceOver(final String videoExportedTemp) {
         if(!currentProject.hasVoiceOver())
             return;
-
+        // TODO(jliarte): 16/12/16 move this logic to SDK ExporterImpl
         this.videoExportedTemp = videoExportedTemp;
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String fileName = "V_EDIT_" + timeStamp + ".mp4";
-        videoExportedWithVoiceOver = Constants.PATH_APP_EDITED + File.separator + fileName;
+        videoExportedWithVoiceOverPath = Constants.PATH_APP_EDITED + File.separator + fileName;
         mixAudioUseCase.mixAudio(videoExportedTemp, currentProject.getVoiceOverPath(),
-            currentProject.getVoiceOverVolume());
+                currentProject.getVoiceOverVolume(), new OnMixAudioListener() {
+                    @Override
+                    public void onMixAudioSuccess(String pathAudioMixed) {
+                        videoAudioSwapper.export(videoExportedTemp, pathAudioMixed,
+                                videoExportedWithVoiceOverPath);
+                    }
+
+                    @Override
+                    public void onMixAudioError() {
+                        // TODO(jliarte): 16/12/16 use constants or localized string?
+                        shareVideoView.showError("Error applying your audio track.");
+                    }
+                });
     }
 
     public void shareVideo(String videoPath, SocialNetwork appToShareWith, Context ctx) {
@@ -132,6 +150,7 @@ public class ShareVideoPresenter implements OnMixAudioListener, ExportSwapAudioT
         ctx.startActivity(intent);
     }
 
+    // TODO(jliarte): 15/12/16 safe delete this method - old way to show networks?
     public void obtainExtraAppsToShare() {
         List networks = obtainNetworksToShareUseCase.obtainSecondaryNetworks();
         shareVideoView.hideShareNetworks();
@@ -155,19 +174,20 @@ public class ShareVideoPresenter implements OnMixAudioListener, ExportSwapAudioT
     }
 
     public void trackVideoShared(String socialNetwork) {
-
         userEventTracker.trackVideoSharedSuperProperties();
         userEventTracker.trackVideoShared(socialNetwork, currentProject, getNumTotalVideosShared());
         userEventTracker.trackVideoSharedUserTraits();
     }
+
     public void resetProject(String rootPath) {
         clearProjectDataFromSharedPreferences();
         clearProjectUseCase.clearProject(currentProject);
         profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, context);
-        createDefaultProjectUseCase.loadOrCreateProject(rootPath, profileRepository.getCurrentProfile());
+        createDefaultProjectUseCase.loadOrCreateProject(rootPath,
+                profileRepository.getCurrentProfile());
     }
 
-    // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer?
+    // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?
     private void clearProjectDataFromSharedPreferences() {
         sharedPreferences = VimojoApplication.getAppContext().getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
@@ -178,24 +198,14 @@ public class ShareVideoPresenter implements OnMixAudioListener, ExportSwapAudioT
     }
 
     @Override
-    public void onMixAudioSuccess(String pathAudioMixed) {
-        exportSwapAudioToVideoUseCase.export(videoExportedTemp, pathAudioMixed,
-            videoExportedWithVoiceOver);
-    }
-
-    @Override
-    public void onMixAudioError() {
-
-    }
-
-    @Override
     public void onExportError(String s) {
-
+        // TODO(jliarte): 16/12/16 use constants or localized string?
+        shareVideoView.showError("Error exporting your final video.");
     }
 
     @Override
     public void onExportSuccess() {
         // update video Share player
-        shareVideoView.setVideo(videoExportedWithVoiceOver);
+        shareVideoView.setVideo(videoExportedWithVoiceOverPath);
     }
 }

@@ -1,8 +1,10 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import javax.inject.Singleton;
 
@@ -24,5 +26,11 @@ public class ApplicationModule {
   @Singleton
   Context provideVimojoApplication() {
     return vimojoApplication;
+  }
+
+  @Provides @Singleton
+  SharedPreferences provideSharedPreferences() {
+    return vimojoApplication.getSharedPreferences(
+            ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
   }
 }

@@ -33,6 +33,8 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener,
         OnVideosRetrieved, OnReorderMediaListener, GetMusicFromProjectCallback {
 
@@ -56,15 +58,19 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
 
+    @Inject
     public EditPresenter(EditorView editorView,
                          ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack,
-                         UserEventTracker userEventTracker) {
+                         UserEventTracker userEventTracker,
+                         RemoveVideoFromProjectUseCase remoVideoFromProjectUseCase,
+                         ReorderMediaItemUseCase reorderMediaItemUseCase
+                         ) {
         this.editorView = editorView;
         this.projectModifiedCallBack = projectModifiedCallBack;
+        this.remoVideoFromProjectUseCase = remoVideoFromProjectUseCase;
+        this.reorderMediaItemUseCase = reorderMediaItemUseCase;
 
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        remoVideoFromProjectUseCase = new RemoveVideoFromProjectUseCase();
-        reorderMediaItemUseCase = new ReorderMediaItemUseCase();
         getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
         this.userEventTracker = userEventTracker;
         this.currentProject = loadCurrentProject();
@@ -77,9 +83,10 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
 
     public String getResolution() {
-        SharedPreferences sharedPreferences = VimojoApplication.getAppContext().getSharedPreferences(
-                ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
-                Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = VimojoApplication.getAppContext()
+                .getSharedPreferences(
+                        ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
+                        Context.MODE_PRIVATE);
 
         return sharedPreferences.getString(ConfigPreferences.RESOLUTION, "1280x720");
     }

@@ -14,12 +14,11 @@ import com.videonasocialmedia.vimojo.utils.Utils;
  * Created by  on 26/05/16.
  */
 public class ExportProjectService extends IntentService implements OnExportFinishedListener {
-
     public static final String NOTIFICATION = Constants.NOTIFICATION_EXPORT_SERVICES_RECEIVER;
     public static final String FILEPATH = "filepath";
     public static final String RESULT = "result";
     private static final String TAG = "ExportProjectService";
-    ExportProjectUseCase exportUseCase;
+    private ExportProjectUseCase exportUseCase;
 
     //TODO Add persistence. Needed to navigate for ShareActivity if service has finished.
 
@@ -55,5 +54,4 @@ public class ExportProjectService extends IntentService implements OnExportFinis
         Utils.addFileToVideoGallery(video.getMediaPath().toString());
         publishResults(video.getMediaPath(), Activity.RESULT_OK);
     }
-
 }

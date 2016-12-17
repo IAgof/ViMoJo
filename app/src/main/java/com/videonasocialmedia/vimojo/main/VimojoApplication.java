@@ -24,6 +24,8 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
+import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
+import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
 
 import io.fabric.sdk.android.Fabric;
@@ -36,6 +38,7 @@ public class VimojoApplication extends Application {
     private static Context context;
 
     Tracker appTracker;
+    private DataRepositoriesModule dataRepositoriesModule;
 
     public static Context getAppContext() {
         return VimojoApplication.context;
@@ -67,7 +70,17 @@ public class VimojoApplication extends Application {
         this.systemComponent = DaggerSystemComponent.builder()
                 .applicationModule(new ApplicationModule(this))
                 .dataRepositoriesModule(getDataRepositoriesModule())
+                .trackerModule(getTrackerModule())
+//                .activityPresentersModule(getActivityPresentersModule())
                 .build();
+    }
+
+    private TrackerModule getTrackerModule() {
+        return new TrackerModule(this);
+    }
+
+    private ActivityPresentersModule getActivityPresentersModule() {
+        return new ActivityPresentersModule(null);
     }
 
     public SystemComponent getSystemComponent() {
@@ -75,7 +88,10 @@ public class VimojoApplication extends Application {
     }
 
     public DataRepositoriesModule getDataRepositoriesModule() {
-        return new DataRepositoriesModule();
+        if (dataRepositoriesModule == null) {
+            dataRepositoriesModule = new DataRepositoriesModule();
+        }
+        return dataRepositoriesModule;
     }
 
 

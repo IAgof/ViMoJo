@@ -60,7 +60,9 @@ public class DuplicatePreviewPresenterTest {
     @Test
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
-        DuplicatePreviewPresenter duplicatePreviewPresenter = new DuplicatePreviewPresenter(mockedDuplicateView, userEventTracker);
+        DuplicatePreviewPresenter duplicatePreviewPresenter =
+                new DuplicatePreviewPresenter(mockedDuplicateView, userEventTracker,
+                        mockedAddVideoToProjectUseCase);
 
         assertThat(duplicatePreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -69,7 +71,9 @@ public class DuplicatePreviewPresenterTest {
     public void constructorSetsCurrentProject() {
         Project videonaProject = getAProject();
 
-        DuplicatePreviewPresenter duplicatePreviewPresenter = new DuplicatePreviewPresenter(mockedDuplicateView, mockedUserEventTracker);
+        DuplicatePreviewPresenter duplicatePreviewPresenter =
+                new DuplicatePreviewPresenter(mockedDuplicateView, mockedUserEventTracker,
+                        mockedAddVideoToProjectUseCase);
 
         assertThat(duplicatePreviewPresenter.currentProject, is(videonaProject));
     }
@@ -77,7 +81,6 @@ public class DuplicatePreviewPresenterTest {
     @Test
     @Config(manifest="../app/AndroidManifest.xml", shadows = {MediaMetadataRetrieverShadow.class})
     public void duplicateVideoCallsTracking() {
-//        DuplicatePreviewPresenter presenter = new DuplicatePreviewPresenter(mockedDuplicateView, mockedUserEventTracker);
         Project videonaProject = getAProject();
         Video video = new Video("/media/path", 0, 10);
         int numCopies = 3;
@@ -86,14 +89,14 @@ public class DuplicatePreviewPresenterTest {
          * Exception accesing in getFileDuration as MediaMetadataRetriever.extractMetadata returns
          * null using a custom shadow instead
          */
-        injectedPresenter.addVideoToProjectUseCase = mockedAddVideoToProjectUseCase;
         injectedPresenter.duplicateVideo(video, 0, numCopies);
 
         Mockito.verify(mockedUserEventTracker).trackClipDuplicated(numCopies, videonaProject);
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
-                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+        return Project.getInstance("title", "/path",
+                Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+                        VideoFrameRate.FrameRate.FPS25));
     }
 }

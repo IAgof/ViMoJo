@@ -5,7 +5,6 @@ package com.videonasocialmedia.vimojo.sound.domain;
  */
 
 public interface OnMixAudioListener {
-
     void onMixAudioSuccess(String path);
     void onMixAudioError();
 }

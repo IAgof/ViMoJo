@@ -6,31 +6,39 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.OnMixAudioListener;
+import com.videonasocialmedia.vimojo.sound.domain.MixAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
-import com.videonasocialmedia.vimojo.utils.AndroidUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by ruth on 19/09/16.
  */
-public class SoundVolumePresenter implements OnVideosRetrieved{
-
-    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    protected RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
-    protected AddVoiceOverToProjectUseCase addVoiceOverToProject;
+public class SoundVolumePresenter implements OnVideosRetrieved {
     private SoundVolumeView soundVolumeView;
+    private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
+    private MixAudioUseCase mixAudioUseCase;
+    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+    private AddVoiceOverToProjectUseCase addVoiceOverToProject;
 
+    public UserEventTracker userEventTracker;
     public Project currentProject;
 
-    public SoundVolumePresenter(SoundVolumeView soundVolumeView){
+    @Inject
+    public SoundVolumePresenter(SoundVolumeView soundVolumeView,
+                                RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase,
+                                MixAudioUseCase mixAudioUseCase,
+                                AddVoiceOverToProjectUseCase addVoiceOverToProject) {
         this.soundVolumeView = soundVolumeView;
+        this.removeMusicFromProjectUseCase = removeMusicFromProjectUseCase;
+        this.mixAudioUseCase = mixAudioUseCase;
+        this.addVoiceOverToProject = addVoiceOverToProject;
+
         this.getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        this.addVoiceOverToProject = new AddVoiceOverToProjectUseCase();
-        this.removeMusicFromProjectUseCase = new RemoveMusicFromProjectUseCase();
         this.currentProject = loadCurrentProject();
     }
 
