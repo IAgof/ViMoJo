@@ -21,6 +21,7 @@ import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -28,120 +29,126 @@ import butterknife.OnClick;
 /**
  *
  */
-public class RetrieveProjectListAdapter extends  RecyclerView.Adapter<RetrieveProjectListAdapter.RetrieveProjectListItemViewHolder> {
+public class RetrieveProjectListAdapter extends
+    RecyclerView.Adapter<RetrieveProjectListAdapter.RetrieveProjectListItemViewHolder> {
 
-        Context context;
-        List<Project> projectList;
-        RetrieveProjectClickListener clickListener;
+  private Context context;
+  private List<Project> projectList;
+  private RetrieveProjectClickListener clickListener;
 
+  public void setRetrieveProjectClickListener(RetrieveProjectClickListener
+                                                  RetrieveProjectClickListener) {
+    clickListener = RetrieveProjectClickListener;
+  }
 
-    public void setRetrieveProjectClickListener(RetrieveProjectClickListener RetrieveProjectClickListener) {
-        clickListener = RetrieveProjectClickListener;
-    }
-
-    @Override
-    public RetrieveProjectListItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View rowView = LayoutInflater.from(viewGroup.getContext())
+  @Override
+  public RetrieveProjectListItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    View rowView = LayoutInflater.from(viewGroup.getContext())
         .inflate(R.layout.retrieve_project_view_holder, viewGroup, false);
-        this.context = viewGroup.getContext();
-        return new RetrieveProjectListItemViewHolder(rowView, projectList);
-        }
+    this.context = viewGroup.getContext();
+    return new RetrieveProjectListItemViewHolder(rowView, projectList);
+  }
 
-    @Override
-    public void onBindViewHolder(RetrieveProjectListItemViewHolder holder, int position) {
-        Project project = projectList.get(position);
-        if(project.getMediaTrack().getItems().size() > 0) {
-            drawVideoThumbnail(holder.imagenProject, project);
-        } else {
-            holder.imagenProject.setImageResource(R.drawable.fragment_gallery_no_image);
-        }
-        holder.dateProject.setText(DateUtils.toFormatDateDayMonthYear(project.getTitle()));
-        holder.durationProject.setText(
-            TimeUtils.toFormattedTimeWithMinutesAndSeconds(project.getDuration()));
-        holder.titleProject.setText(project.getTitle());
-        }
+  @Override
+  public void onBindViewHolder(RetrieveProjectListItemViewHolder holder, int position) {
+    Project project = projectList.get(position);
+    if (project.getMediaTrack().getItems().size() > 0) {
+      drawVideoThumbnail(holder.imagenProject, project);
+    } else {
+      holder.imagenProject.setImageResource(R.drawable.fragment_gallery_no_image);
+    }
+    holder.dateProject.setText(DateUtils.toFormatDateDayMonthYear(project.getTitle()));
+    holder.durationProject.setText(
+        TimeUtils.toFormattedTimeWithMinutesAndSeconds(project.getDuration()));
+    holder.titleProject.setText(project.getTitle());
+  }
 
-    public void drawVideoThumbnail(ImageView thumbnailView, Project project) {
+  public void drawVideoThumbnail(ImageView thumbnailView, Project project) {
 
-        Video    firstVideo = (Video) project.getMediaTrack().getItems().get(0);
-        int microSecond = firstVideo.getStartTime() * 1000;
-        BitmapPool bitmapPool = Glide.get(context).getBitmapPool();
-        FileDescriptorBitmapDecoder decoder = new FileDescriptorBitmapDecoder(
-                new VideoBitmapDecoder(microSecond),
-                bitmapPool,
-                DecodeFormat.PREFER_ARGB_8888);
-        String path = firstVideo.getIconPath() != null
-                ? firstVideo.getIconPath() : firstVideo.getMediaPath();
+    Video firstVideo = (Video) project.getMediaTrack().getItems().get(0);
+    int microSecond = firstVideo.getStartTime() * 1000;
+    BitmapPool bitmapPool = Glide.get(context).getBitmapPool();
+    FileDescriptorBitmapDecoder decoder = new FileDescriptorBitmapDecoder(
+        new VideoBitmapDecoder(microSecond),
+        bitmapPool,
+        DecodeFormat.PREFER_ARGB_8888);
+    String path = firstVideo.getIconPath() != null
+        ? firstVideo.getIconPath() : firstVideo.getMediaPath();
 
-        Glide.with(context)
-            .load(path)
-            .centerCrop()
-            .error(R.drawable.fragment_gallery_no_image)
-            .into(thumbnailView);
+    Glide.with(context)
+        .load(path)
+        .centerCrop()
+        .error(R.drawable.fragment_gallery_no_image)
+        .into(thumbnailView);
+  }
+
+  @Override
+  public int getItemCount() {
+    int result = 0;
+    if (projectList != null)
+      result = projectList.size();
+    return result;
+  }
+
+
+  public void setProjectList(List<Project> projectList) {
+    this.projectList = projectList;
+    notifyDataSetChanged();
+  }
+
+  class RetrieveProjectListItemViewHolder extends RecyclerView.ViewHolder {
+
+    @Bind(R.id.retrieve_project_date)
+    TextView dateProject;
+    @Bind(R.id.retrieve_project_duration)
+    TextView durationProject;
+    @Bind(R.id.retrieve_project_image)
+    ImageView imagenProject;
+    @Bind(R.id.retrieve_project_title)
+    TextView titleProject;
+
+
+    private List<Project> projectList;
+
+    public RetrieveProjectListItemViewHolder(View itemView, List<Project> projectList) {
+      super(itemView);
+      ButterKnife.bind(this, itemView);
+      this.projectList = projectList;
     }
 
-    @Override
-    public int getItemCount() {
-        int result = 0;
-        if (projectList != null)
-            result = projectList.size();
-        return result;
-        }
-
-
-    public void setProjectList(List<Project> projectList) {
-        this.projectList = projectList;
-        notifyDataSetChanged();
-        }
-
-    class RetrieveProjectListItemViewHolder extends RecyclerView.ViewHolder {
-
-        @Bind(R.id.retrieve_project_date)
-        TextView dateProject;
-        @Bind(R.id.retrieve_project_duration)
-        TextView durationProject;
-        @Bind(R.id.retrieve_project_image)
-        ImageView imagenProject;
-        @Bind(R.id.retrieve_project_title)
-        TextView titleProject;
-
-
-        private List<Project> projectList;
-
-        public RetrieveProjectListItemViewHolder(View itemView, List<Project> projectList) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-            this.projectList = projectList;
-         }
-
-        @OnClick({R.id.retrieve_project_menu})
-        public void onClick() {
-            Project project = projectList.get(getAdapterPosition());
-            clickListener.onClick(project);
-        }
-
-        @OnClick(R.id.retrieve_project_button_duplicate)
-        public void onClickDuplicateProject(){
-            int position = getAdapterPosition();
-            notifyItemChanged(position);
-            clickListener.onDuplicateProject(projectList.get(position));
-        }
-
-        @OnClick(R.id.retrieve_project_button_delete)
-        public void onClickDeleteProject(){
-            int position = getAdapterPosition();
-            notifyItemChanged(position);
-            clickListener.onDeleteProject(projectList.get(position));
-        }
-
-        @OnClick (R.id.retrieve_project_button_edit)
-        public void onClickGoToEdit(){
-            clickListener.goToEditActivity(projectList.get(getAdapterPosition()));
-        }
-
-        @OnClick (R.id.retrieve_project_button_share)
-        public void onClickGoToShare(){
-            clickListener.goToShareActivity(projectList.get(getAdapterPosition()));
-        }
+    @OnClick({R.id.retrieve_project_menu})
+    public void onClick() {
+      Project project = projectList.get(getAdapterPosition());
+      clickListener.onClick(project);
     }
+
+    @OnClick(R.id.retrieve_project_button_duplicate)
+    public void onClickDuplicateProject() {
+      int position = getAdapterPosition();
+      notifyItemChanged(position);
+      clickListener.onDuplicateProject(projectList.get(position));
+    }
+
+    @OnClick(R.id.retrieve_project_button_delete)
+    public void onClickDeleteProject() {
+      int position = getAdapterPosition();
+      notifyItemChanged(position);
+      clickListener.onDeleteProject(projectList.get(position));
+    }
+
+    @OnClick(R.id.retrieve_project_button_edit)
+    public void onClickGoToProjectDetail() {
+      clickListener.goToEditActivity(projectList.get(getAdapterPosition()));
+    }
+
+    @OnClick(R.id.retrieve_project_image)
+    public void onClickGoToEdit() {
+      clickListener.goToEditActivity(projectList.get(getAdapterPosition()));
+    }
+
+    @OnClick(R.id.retrieve_project_button_share)
+    public void onClickGoToShare() {
+      clickListener.goToShareActivity(projectList.get(getAdapterPosition()));
+    }
+  }
 }

@@ -75,6 +75,11 @@
     <string name="dialog_accept_delete_clip">Yes</string>
     <string name="dialog_cancel_delete_clip">No</string>
 
+    <!-- Gallery projects activity -->
+    <string name="dialog_project_remove_message">Remove project</string>
+    <string name="dialog_project_remove_accept">Yes</string>
+    <string name="dialog_project_remove_cancel">No</string>
+
     <!--SoundVolumeActivity-->
     <string name="exitSoundVolumeActivity" >Are you sure do you want to discard the changes and return to record again?</string>
     <string name="acceptExitSoundVolumeActivity">Yes</string>

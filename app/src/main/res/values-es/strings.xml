@@ -73,6 +73,11 @@
     <string name="dialog_cancel_delete_clip">No</string>
     <string name="error_video_format">Error, formato de vídeo diferente al del proyecto </string>
 
+    <!-- Gallery projects activity -->
+    <string name="dialog_project_remove_message">Borrar proyecto</string>
+    <string name="dialog_project_remove_accept">Sí</string>
+    <string name="dialog_project_remove_cancel">No</string>
+
     <!--SoundVolumeActivity-->
     <string name="exitSoundVolumeActivity" >¿Desea descartar los cambios y volver a grabar de nuevo?</string>
     <string name="acceptExitSoundVolumeActivity">Sí</string>

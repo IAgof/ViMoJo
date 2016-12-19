@@ -5,10 +5,12 @@ package com.videonasocialmedia.vimojo.retrieveProjects.presentation.views.activi
  */
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -102,9 +104,23 @@ public class RetrieveProjectListActivity extends VimojoActivity implements Retri
   }
 
   @Override
-  public void onDeleteProject(Project project) {
-    presenter.deleteProject(project);
-    presenter.updateProjectList();
+  public void onDeleteProject(final Project project) {
+
+    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        if(which == DialogInterface.BUTTON_POSITIVE) {
+            presenter.deleteProject(project);
+            presenter.updateProjectList();
+        }
+      }
+    };
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    builder.setMessage(R.string.dialog_project_remove_message)
+        .setPositiveButton(R.string.dialog_project_remove_accept, dialogClickListener)
+        .setNegativeButton(R.string.dialog_project_remove_cancel, dialogClickListener).show();
+
   }
 
   @Override
