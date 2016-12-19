@@ -4,6 +4,8 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditNavigatorView;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 /**
  *
@@ -11,11 +13,12 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.EditNavigatorView;
 public class EditNavigatorPresenter {
 
     EditNavigatorView navigatorView;
-    Project project;
+    private Project project;
+    private ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public EditNavigatorPresenter(EditNavigatorView navigatorView) {
         this.navigatorView = navigatorView;
-        project = Project.getInstance(null, null, null);
+        project = projectRepository.getCurrentProject();
         areThereVideosInProject();
     }
 

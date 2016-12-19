@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
@@ -32,6 +34,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     public UserEventTracker userEventTracker;
     public Project currentProject;
     private Music musicSelected;
+    ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public MusicDetailPresenter(MusicDetailView musicDetailView, UserEventTracker userEventTracker) {
         this.musicDetailView = musicDetailView;
@@ -46,7 +49,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
+        return projectRepository.getCurrentProject();
     }
 
     public void onResume(String musicPath) {

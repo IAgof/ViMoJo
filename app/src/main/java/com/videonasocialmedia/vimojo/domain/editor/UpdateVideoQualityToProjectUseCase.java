@@ -12,10 +12,10 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 public class UpdateVideoQualityToProjectUseCase {
 
     private Project currentProject;
-    protected ProjectRepository projectRepository = new ProjectRealmRepository();
+    private ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public void updateQuality(VideoQuality.Quality quality) {
-        currentProject = Project.getInstance(null, null, null);
+        currentProject = projectRepository.getCurrentProject();
         currentProject.getProfile().setQuality(quality);
         projectRepository.update(currentProject);
     }

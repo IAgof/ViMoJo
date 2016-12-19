@@ -7,6 +7,9 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
@@ -25,6 +28,7 @@ public class ModifyVideoDurationUseCase {
   private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator, mediaTranscoder);
   protected VideoRepository videoRepository = new VideoRealmRepository();
+  private ProjectRepository projectRepository = new ProjectRealmRepository();
 
   /**
    * Main method for video trimming use case.
@@ -41,7 +45,8 @@ public class ModifyVideoDurationUseCase {
       videoToEdit.setStopTime(finishTimeMs);
       videoToEdit.setTempPathFinished(false);
       // TODO:(alvaro.martinez) 22/11/16 use project tmp path
-      videoToEdit.setTempPath(Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
+      Project project = projectRepository.getCurrentProject();
+      videoToEdit.setTempPath(project.getProjectPath() + Constants.FOLDER_INTERMEDIATE_FILES);
       videoToEdit.setTrimmedVideo(true);
 
       if (videoToEdit.hasText()) {

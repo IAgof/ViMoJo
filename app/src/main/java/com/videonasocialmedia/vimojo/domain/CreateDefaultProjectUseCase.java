@@ -10,7 +10,8 @@ import com.videonasocialmedia.vimojo.utils.DateUtils;
  * Created by jliarte on 23/10/16.
  */
 public class CreateDefaultProjectUseCase {
-  protected ProjectRepository projectRepository = new ProjectRealmRepository();
+
+  private ProjectRepository projectRepository = new ProjectRealmRepository();
 
   public void loadOrCreateProject(String rootPath, Profile profile) {
 
@@ -25,6 +26,15 @@ public class CreateDefaultProjectUseCase {
 
     Project currentProject = Project.getInstance(projectTitle, rootPath, profile);
     projectRepository.update(currentProject);
+  }
+
+  public void createProject(String rootPath, Profile profile){
+
+    String projectTitle = DateUtils.getDateRightNow();
+    Project.INSTANCE = new Project(projectTitle,rootPath, profile);
+    Project currentProject = Project.getInstance(projectTitle, rootPath, profile);
+    projectRepository.update(currentProject);
+
   }
 
 //  //TODO Check user profile, by default 720p 10Mbps FPS25

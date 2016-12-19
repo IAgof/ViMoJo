@@ -27,6 +27,7 @@ public class FileUtils {
           if (f.isDirectory()) {
             if (cleanRecursively) {
               cleanDirectory(f);
+              f.delete();
             }
           } else {
             f.delete();

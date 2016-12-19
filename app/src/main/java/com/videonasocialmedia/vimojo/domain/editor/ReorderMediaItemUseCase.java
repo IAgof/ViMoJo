@@ -13,10 +13,10 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
  * Created by jca on 7/7/15.
  */
 public class ReorderMediaItemUseCase {
-    protected ProjectRepository projectRepository = new ProjectRealmRepository();
+    private ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public void moveMediaItem(Media media, int toPositon, OnReorderMediaListener listener){
-        Project project = Project.getInstance(null,null,null);
+        Project project = projectRepository.getCurrentProject();
         MediaTrack videoTrack = project.getMediaTrack();
         try {
             videoTrack.moveItemTo(toPositon,media);

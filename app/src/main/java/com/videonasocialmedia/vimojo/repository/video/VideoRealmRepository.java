@@ -35,6 +35,17 @@ public class VideoRealmRepository implements VideoRepository {
   }
 
   @Override
+  public List<Video> getListVideos(){
+    Realm realm = Realm.getDefaultInstance();
+    RealmResults<RealmVideo> realmResults = realm.where(RealmVideo.class).findAll();
+    List<Video> videoList = new ArrayList<>();
+    for(RealmVideo realmVideo: realmResults){
+      videoList.add(toVideoMapper.map(realm.copyFromRealm(realmVideo)));
+    }
+    return videoList;
+  }
+
+  @Override
   public void add(final Video item) {
     final Realm realm = Realm.getDefaultInstance();
     realm.executeTransaction(new Realm.Transaction() {

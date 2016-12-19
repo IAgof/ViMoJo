@@ -31,7 +31,7 @@ import de.greenrobot.event.EventBus;
  */
 // TODO(jliarte): 22/10/16 refactor this class to have a unique insert point. Get rid of event bus
 public class AddVideoToProjectUseCase {
-    protected ProjectRepository projectRepository = new ProjectRealmRepository();
+    private ProjectRepository projectRepository = new ProjectRealmRepository();
 
     /**
      * Constructor.
@@ -49,7 +49,7 @@ public class AddVideoToProjectUseCase {
 
     public void addVideoToTrack(Video video) {
         try {
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = projectRepository.getCurrentProject();
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(video);
             projectRepository.update(currentProject);
@@ -70,7 +70,7 @@ public class AddVideoToProjectUseCase {
      */
     public void addVideoToTrack(Video video, OnAddMediaFinishedListener listener) {
         try {
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = projectRepository.getCurrentProject();
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(video);
             projectRepository.update(currentProject);
@@ -86,7 +86,7 @@ public class AddVideoToProjectUseCase {
 
     public void addVideoToProjectAtPosition(Video video, int position) {
         try {
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = projectRepository.getCurrentProject();
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItemAt(position, video);
             projectRepository.update(currentProject);
@@ -97,7 +97,7 @@ public class AddVideoToProjectUseCase {
 
     public void addVideoListToTrack(List<Video> videoList, OnAddMediaFinishedListener listener) {
         try {
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = projectRepository.getCurrentProject();
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             for (Video video : videoList) {
                 mediaTrack.insertItem(video);

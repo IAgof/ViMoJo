@@ -4,16 +4,19 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 /**
  * Created by alvaro on 2/09/16.
  */
 public class GetVideonaFormatFromCurrentProjectUseCase {
 
-    public Project project;
+    private Project project;
+    private ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public GetVideonaFormatFromCurrentProjectUseCase() {
-        this.project = Project.getInstance(null, null, null);
+        this.project = projectRepository.getCurrentProject();
     }
 
     public VideonaFormat getVideonaFormatFromCurrentProject(){

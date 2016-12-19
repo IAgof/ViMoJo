@@ -20,6 +20,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,8 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
     AddVideoToProjectUseCase addVideoToProjectUseCase;
     GalleryPagerView galleryPagerView;
-    protected Project currentProject;
+    private ProjectRepository projectRepository = new ProjectRealmRepository();
+    private Project currentProject;
     ArrayList<Integer> listErrorVideoIds = new ArrayList<>();
     private boolean differentVideoFormat;
 
@@ -48,8 +51,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     }
 
     public Project loadCurrentProject() {
-        // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
+        return projectRepository.getCurrentProject();
     }
 
     /**

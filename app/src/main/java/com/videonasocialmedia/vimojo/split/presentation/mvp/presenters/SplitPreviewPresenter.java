@@ -18,6 +18,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
@@ -49,6 +51,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     private SplitView splitView;
     public UserEventTracker userEventTracker;
     public Project currentProject;
+    private ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public SplitPreviewPresenter(SplitView splitView, UserEventTracker userEventTracker) {
         this.splitView = splitView;
@@ -59,7 +62,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     }
 
     private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null);
+        return projectRepository.getCurrentProject();
     }
 
     public void loadProjectVideo(int videoToTrimIndex) {
@@ -101,12 +104,13 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     public void trimVideo(Video video, int startTimeMs, int finishTimeMs) {
         Context appContext = VimojoApplication.getAppContext();
         Intent trimServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-        trimServiceIntent.putExtra(IntentConstants.VIDEO_ID, video.getIdentifier());
+        trimServiceIntent.putExtra(IntentConstants.VIDEO_ID, video.getUuid());
         trimServiceIntent.putExtra(IntentConstants.IS_VIDEO_TRIMMED, true);
         trimServiceIntent.putExtra(IntentConstants.START_TIME_MS, startTimeMs);
         trimServiceIntent.putExtra(IntentConstants.FINISH_TIME_MS, finishTimeMs);
         // TODO:(alvaro.martinez) 22/11/16 use project tmp path
-        trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY, Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
+        trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY,
+            currentProject.getProjectPath() + Constants.FOLDER_INTERMEDIATE_FILES);
         appContext.startService(trimServiceIntent);
     }
 }

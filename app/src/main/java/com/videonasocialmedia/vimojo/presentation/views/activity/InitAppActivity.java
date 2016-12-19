@@ -315,7 +315,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private void initPaths() throws IOException {
         checkAndInitPath(Constants.PATH_APP);
         checkAndInitPath(Constants.PATH_APP_TEMP);
-        checkAndInitPath(Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
         checkAndInitPath(Constants.PATH_APP_TEMP_AUDIO);
         checkAndInitPath(Constants.PATH_APP_MASTERS);
 

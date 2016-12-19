@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.presente
 
 import android.content.SharedPreferences;
 
+import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.DeleteProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.UpdateCurrentProjectUseCase;
@@ -13,6 +14,7 @@ import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.views.RetrieveProjectListView;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
 
@@ -24,9 +26,13 @@ public class RetrieveProjectListPresenter {
   private List<Project> availableProjects;
   private RetrieveProjectListView retrieveProjectListView;
   private UpdateCurrentProjectUseCase updateCurrentProjectUseCase;
+  private ProfileSharedPreferencesRepository profileRepository;
+  private SharedPreferences sharedPreferences;
 
-  public RetrieveProjectListPresenter(RetrieveProjectListView retrieveProjectListView) {
+  public RetrieveProjectListPresenter(RetrieveProjectListView retrieveProjectListView,
+                                      SharedPreferences sharedPreferences) {
     this.retrieveProjectListView = retrieveProjectListView;
+    this.sharedPreferences = sharedPreferences;
     availableProjects = loadListProjects();
     updateCurrentProjectUseCase = new UpdateCurrentProjectUseCase();
 
@@ -57,8 +63,17 @@ public class RetrieveProjectListPresenter {
     if (projectList != null && projectList.size() > 0) {
       retrieveProjectListView.showProjectList(projectList);
     } else {
-      retrieveProjectListView.navigateTo(EditActivity.class);
+      createDefaultProject();
     }
+  }
+
+  public void createDefaultProject() {
+    CreateDefaultProjectUseCase createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
+    profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences,
+        VimojoApplication.getAppContext());
+    createDefaultProjectUseCase.createProject(Constants.PATH_APP,
+        profileRepository.getCurrentProfile());
+    retrieveProjectListView.navigateTo(EditActivity.class);
   }
 
   public void updateCurrentProject(Project project) {

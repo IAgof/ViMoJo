@@ -11,20 +11,17 @@
  */
 package com.videonasocialmedia.vimojo.model.entities.editor;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Audio;
-import com.videonasocialmedia.videonamediaframework.model.media.Image;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -92,7 +89,21 @@ public class Project {
         this.uuid = UUID.randomUUID().toString();
         this.projectPath = rootPath + "/.projects/" + uuid; //todo probablemente necesitemos un slugify de ese title.
         createFolder(projectPath);
+        createFolder(projectPath + Constants.FOLDER_INTERMEDIATE_FILES);
+        createFolder(projectPath + Constants.FOLDER_INTERMEDIATE_FILES
+            + Constants.FOLDER_INTERMEDIATE_FILES_TEMPAUDIO);
     }
+
+  public Project(Project project) {
+    title = DateUtils.getDateRightNow();
+    vmComposition = project.getVMComposition();
+    profile = project.getProfile();
+    duration = project.getDuration();
+    lastModification = project.getLastModification();
+    uuid = UUID.randomUUID().toString();
+    projectPath = new File(project.getProjectPath()).getParent() + File.separator + uuid;
+    createFolder(projectPath);
+  }
 
 
   public VMComposition getVMComposition() {
@@ -253,6 +264,7 @@ public class Project {
 
   public void createFolder(String projectPath) {
     FileUtils.createFolder(projectPath);
+
   }
 
 }

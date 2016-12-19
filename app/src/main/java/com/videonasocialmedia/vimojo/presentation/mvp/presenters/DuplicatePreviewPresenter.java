@@ -14,6 +14,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
     private DuplicateView duplicateView;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
+    private  ProjectRepository projectRepository = new ProjectRealmRepository();
 
     /**
      * Get media list from project use case
@@ -50,7 +53,7 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
     }
 
     private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null);
+        return projectRepository.getCurrentProject();
     }
 
     public void loadProjectVideo(int videoIndex) {

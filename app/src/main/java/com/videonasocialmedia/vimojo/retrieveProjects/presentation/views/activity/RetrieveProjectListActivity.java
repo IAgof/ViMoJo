@@ -38,6 +38,7 @@ public class RetrieveProjectListActivity extends VimojoActivity implements Retri
 
   private RetrieveProjectListPresenter presenter;
   private RetrieveProjectListAdapter projectAdapter;
+  private SharedPreferences sharedPreferences;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,9 @@ public class RetrieveProjectListActivity extends VimojoActivity implements Retri
     setContentView(R.layout.activity_retrieve_project);
     ButterKnife.bind(this);
     setupToolbar();
-    presenter = new RetrieveProjectListPresenter(this);
+    sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
+        Context.MODE_PRIVATE);
+    presenter = new RetrieveProjectListPresenter(this, sharedPreferences);
     initProjectListRecycler();
   }
 

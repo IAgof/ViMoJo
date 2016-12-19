@@ -18,6 +18,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import de.greenrobot.event.EventBus;
  */
 public class RemoveVideosUseCase {
 
+    private ProjectRealmRepository projectRealmRepository = new ProjectRealmRepository();
     /**
      * Constructor.
      */
@@ -38,7 +40,7 @@ public class RemoveVideosUseCase {
 
     public void removeMediaItemsFromProject() {
         boolean correct = false;
-        MediaTrack mediaTrack = Project.getInstance(null, null, null).getMediaTrack();
+        MediaTrack mediaTrack = projectRealmRepository.getCurrentProject().getMediaTrack();
         List<Media> list = new ArrayList<Media>(mediaTrack.getItems());
         for (Media media : list) {
             correct = removeVideoItemFromTrack(media, mediaTrack);
@@ -64,8 +66,8 @@ public class RemoveVideosUseCase {
         boolean result;
         try {
             mediaTrack.deleteItem(video);
-            EventBus.getDefault().post(new UpdateProjectDurationEvent(Project.getInstance(null, null, null).getDuration()));
-            EventBus.getDefault().post(new NumVideosChangedEvent(Project.getInstance(null, null, null).getMediaTrack().getNumVideosInProject()));
+            EventBus.getDefault().post(new UpdateProjectDurationEvent(projectRealmRepository.getCurrentProject().getDuration()));
+            EventBus.getDefault().post(new NumVideosChangedEvent(projectRealmRepository.getCurrentProject().getMediaTrack().getNumVideosInProject()));
             result = true;
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             result = false;

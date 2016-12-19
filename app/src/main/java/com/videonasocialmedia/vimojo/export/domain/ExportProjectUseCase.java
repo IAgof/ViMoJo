@@ -13,6 +13,8 @@ import com.videonasocialmedia.videonamediaframework.pipeline.ExporterImpl;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import java.util.NoSuchElementException;
 
@@ -22,6 +24,7 @@ public class ExportProjectUseCase implements Exporter.OnExportEndedListener {
   private OnExportFinishedListener onExportFinishedListener;
   private Exporter exporter;
   private Project project;
+  private ProjectRepository projectRepository = new ProjectRealmRepository();
 
   /**
    * Project exporter use case.
@@ -30,8 +33,8 @@ public class ExportProjectUseCase implements Exporter.OnExportEndedListener {
    */
   public ExportProjectUseCase(OnExportFinishedListener onExportFinishedListener) {
     this.onExportFinishedListener = onExportFinishedListener;
-    project = Project.getInstance(null, null, null);
-    exporter = new ExporterImpl(com.videonasocialmedia.vimojo.utils.Constants.PATH_APP, project.getVMComposition(),
+    project = projectRepository.getCurrentProject();
+    exporter = new ExporterImpl(project.getProjectPath(), project.getVMComposition(),
         project.getProfile(), this);
   }
 

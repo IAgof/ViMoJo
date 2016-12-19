@@ -13,6 +13,8 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -36,6 +38,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
     private EditTextView editTextView;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
+    private ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public EditTextPreviewPresenter(EditTextView editTextView, UserEventTracker userEventTracker) {
         this.editTextView = editTextView;
@@ -48,7 +51,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
     private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
+        return projectRepository.getCurrentProject();
     }
 
     public void init(int videoToEditTextIndex) {
@@ -81,12 +84,13 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
         Context appContext = VimojoApplication.getAppContext();
         Intent textToVideoServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-        textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoToEdit.getIdentifier());
+        textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoToEdit.getUuid());
         textToVideoServiceIntent.putExtra(IntentConstants.IS_TEXT_ADDED, true);
         textToVideoServiceIntent.putExtra(IntentConstants.TEXT_TO_ADD, text);
         textToVideoServiceIntent.putExtra(IntentConstants.TEXT_POSITION, textPositionSelected.name());
         // TODO:(alvaro.martinez) 22/11/16 use project tmp path
-        textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY, Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
+        textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY,
+            currentProject.getProjectPath() + Constants.FOLDER_INTERMEDIATE_FILES);
         appContext.startService(textToVideoServiceIntent);
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
     }

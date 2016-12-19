@@ -20,6 +20,8 @@ import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
@@ -46,6 +48,7 @@ public class ShareVideoPresenter {
     private List optionToShareList;
     private SharedPreferences.Editor preferencesEditor;
     private ProfileRepository profileRepository;
+    private ProjectRepository projectRepository;
     private AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase;
 
     public ShareVideoPresenter(ShareVideoView shareVideoView, UserEventTracker userEventTracker,
@@ -58,7 +61,8 @@ public class ShareVideoPresenter {
     }
 
     private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null);
+        projectRepository = new ProjectRealmRepository();
+        return projectRepository.getCurrentProject();
     }
 
     public void onCreate() {

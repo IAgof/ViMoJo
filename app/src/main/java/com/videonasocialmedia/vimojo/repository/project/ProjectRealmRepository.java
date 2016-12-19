@@ -85,10 +85,11 @@ public class ProjectRealmRepository implements ProjectRepository {
   @Override
   public Project getCurrentProject() {
     Realm realm = Realm.getDefaultInstance();
-    RealmResults<RealmProject> allRealmProjects = realm.where(RealmProject.class).findAll().sort("lastModification", Sort.DESCENDING);
+    RealmResults<RealmProject> allRealmProjects = realm.where(RealmProject.class).findAll()
+        .sort("lastModification", Sort.DESCENDING);
     RealmProject currentRealmProject = null;
     if(allRealmProjects.size() > 0) {
-      currentRealmProject = allRealmProjects.get(0);
+      currentRealmProject = allRealmProjects.first();
     }
    // RealmProject currentRealmProject = realm.where(RealmProject.class).findFirst();
     if (currentRealmProject == null) {

@@ -55,7 +55,7 @@ public class ExportTempBackgroundService extends Service implements ApplyAudioFa
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final int videoId = intent.getIntExtra(IntentConstants.VIDEO_ID, -51456);
+                final String videoId = intent.getStringExtra(IntentConstants.VIDEO_ID);
 
                 final boolean isVideoRelaunch = intent.getBooleanExtra(IntentConstants.RELAUNCH_EXPORT_TEMP, false);
 
@@ -77,7 +77,7 @@ public class ExportTempBackgroundService extends Service implements ApplyAudioFa
                     @Override
                     public void onTranscodeCompleted() {
                         try {
-                            applyAudioFadeInFadeOut(video, videoId);
+                            applyAudioFadeInFadeOut(video);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -131,7 +131,7 @@ public class ExportTempBackgroundService extends Service implements ApplyAudioFa
         return START_NOT_STICKY;
     }
 
-    public void applyAudioFadeInFadeOut(Video video, int videoId) throws IOException {
+    public void applyAudioFadeInFadeOut(Video video) throws IOException {
         tempVideoPathPreviewFadeInFadeOut = video.getTempPath();
         ApplyAudioFadeInFadeOutToVideo applyAudioFadeInFadeOutToVideo =
             new ApplyAudioFadeInFadeOutToVideo(this, intermediatesTempDirectory);
@@ -157,20 +157,20 @@ public class ExportTempBackgroundService extends Service implements ApplyAudioFa
         modifyVideoDurationUseCase.trimVideo(video, videoFormat, startTimeMs, finishTimeMs, useCaseListener);
     }
 
-    private void sendResultBroadcast(int videoId, boolean success) {
+    private void sendResultBroadcast(String videoId, boolean success) {
         Intent intent = new Intent(ACTION);
         intent.putExtra(IntentConstants.VIDEO_EXPORTED, success);
         intent.putExtra(IntentConstants.VIDEO_ID, videoId);
         sendBroadcast(intent);
     }
 
-    private Video getVideo(int videoId) {
+    private Video getVideo(String videoId) {
         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
+        List<Video> videoList = getMediaListFromProjectUseCase.getVideoListFromProject();
         if (videoList != null) {
-            for (Media media : videoList) {
-                if (media.getIdentifier() == videoId) {
-                    return (Video) media;
+            for (Video video : videoList) {
+                if (video.getUuid().compareTo(videoId) == 0) {
+                    return video;
                 }
             }
         }
@@ -183,7 +183,7 @@ public class ExportTempBackgroundService extends Service implements ApplyAudioFa
         video.setTempPathToPreviousEdition(tempVideoPathPreviewFadeInFadeOut);
         video.setTempPathFinished(true);
         videoRepository.update(video);
-        sendResultBroadcast(video.getIdentifier(), true);
+        sendResultBroadcast(video.getUuid(), true);
 
     }
 
@@ -191,6 +191,6 @@ public class ExportTempBackgroundService extends Service implements ApplyAudioFa
     public void OnGetAudioFadeInFadeOutSuccess(Video video) {
         video.setTempPathFinished(true);
         videoRepository.update(video);
-        sendResultBroadcast(video.getIdentifier(), true);
+        sendResultBroadcast(video.getUuid(), true);
     }
 }

@@ -10,6 +10,8 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishe
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.io.File;
+
 /**
  * Created by  on 26/05/16.
  */
@@ -52,8 +54,11 @@ public class ExportProjectService extends IntentService implements OnExportFinis
 
     @Override
     public void onExportSuccess(Video video) {
-        Utils.addFileToVideoGallery(video.getMediaPath().toString());
-        publishResults(video.getMediaPath(), Activity.RESULT_OK);
+        File f = new File(video.getMediaPath());
+        String destPath = Constants.PATH_APP + File.separator + f.getName();
+        f.renameTo(new File(destPath));
+        Utils.addFileToVideoGallery(destPath.toString());
+        publishResults(destPath, Activity.RESULT_OK);
     }
 
 }

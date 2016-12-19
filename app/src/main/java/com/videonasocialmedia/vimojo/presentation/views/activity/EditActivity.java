@@ -238,7 +238,6 @@ public class EditActivity extends VimojoActivity implements EditorView,
                 return true;
             case R.id.action_settings_edit_projects:
                 navigateTo(RetrieveProjectListActivity.class);
-                finish();
                 return true;
             case android.R.id.home:
                 onBackPressed();

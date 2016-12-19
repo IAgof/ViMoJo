@@ -16,20 +16,16 @@ import java.util.UUID;
 
 public class DuplicateProjectUseCase {
 
-  protected ProjectRealmRepository projectRealmRepository = new ProjectRealmRepository();
+  private ProjectRealmRepository projectRealmRepository = new ProjectRealmRepository();
 
   public DuplicateProjectUseCase() {
 
   }
 
   public void duplicate(Project project) {
-    Project newProject = project;
-    String newUuid = UUID.randomUUID().toString();
-    newProject.setUuid(newUuid);
-    String newProjectPath = new File(project.getProjectPath()).getParent() + File.separator + newUuid;
-    newProject.setProjectPath(newProjectPath);
-    newProject.createFolder(newProjectPath);
-    copyFilesToNewProject(project.getProjectPath(), newProjectPath);
+    String origPath = project.getProjectPath();
+    Project newProject = new Project(project);
+    copyFilesToNewProject(origPath, newProject.getProjectPath());
     projectRealmRepository.createProject(newProject);
   }
 

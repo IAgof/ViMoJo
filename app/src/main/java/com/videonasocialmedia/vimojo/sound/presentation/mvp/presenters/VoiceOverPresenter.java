@@ -8,6 +8,8 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.MergeVoiceOverAudiosUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.OnMergeVoiceOverAudiosListener;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverView;
@@ -47,6 +49,8 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     private int numAudiosRecorded = 0;
     private boolean firstTimeRecording;
 
+    private ProjectRepository projectRepository = new ProjectRealmRepository();
+
     public VoiceOverPresenter(VoiceOverView voiceOverView) {
         this.voiceOverView = voiceOverView;
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
@@ -79,7 +83,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null);
+        return projectRepository.getCurrentProject();
     }
 
     public void loadProjectVideo(int videoToTrimIndex) {
@@ -158,7 +162,8 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     private void renameAudioRecorded(int numAudiosRecorded) {
         File originalFile = new File(sessionConfig.getOutputPath());
         String fileName = "AUD_" + numAudiosRecorded + ".mp4";
-        File destinationFile = new File(Constants.PATH_APP_TEMP_AUDIO, fileName);
+        File destinationFile = new File(currentProject.getProjectPath()
+            + Constants.FOLDER_INTERMEDIATE_FILES, fileName);
         originalFile.renameTo(destinationFile);
     }
 

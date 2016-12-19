@@ -5,6 +5,10 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.googlecode.mp4parser.authoring.Movie;
 import com.videonasocialmedia.videonamediaframework.muxer.Appender;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.File;
@@ -21,6 +25,7 @@ public class MergeVoiceOverAudiosUseCase {
 
     private static final String TAG = "MergeVoiceOverAudiosUC";
     OnMergeVoiceOverAudiosListener listener;
+    private ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public MergeVoiceOverAudiosUseCase(OnMergeVoiceOverAudiosListener listener) {
         this.listener = listener;
@@ -49,7 +54,9 @@ public class MergeVoiceOverAudiosUseCase {
 
     private void saveFinalVideo(Movie result) {
         try {
-            String pathAudioEdited = Constants.PATH_APP_TEMP + File.separator + "AUD_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".mp4";
+            Project project = projectRepository.getCurrentProject();
+            String pathAudioEdited = project.getProjectPath() + Constants.FOLDER_INTERMEDIATE_FILES
+                + File.separator + "AUD_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".mp4";
             com.videonasocialmedia.videonamediaframework.muxer.utils.Utils.createFile(result, pathAudioEdited);
             listener.onMergeVoiceOverAudioSuccess(pathAudioEdited);
         } catch (IOException | NullPointerException e) {

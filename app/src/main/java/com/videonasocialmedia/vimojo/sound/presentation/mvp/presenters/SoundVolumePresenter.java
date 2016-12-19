@@ -5,6 +5,8 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.MixAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.OnMixAudioListener;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
@@ -30,6 +32,8 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
     private String voiceOverRecordedPath;
     private String tempVideoProjectExportedPath;
 
+    private ProjectRepository projectRepository = new ProjectRealmRepository();
+
     public SoundVolumePresenter(SoundVolumeView soundVolumeView){
         this.soundVolumeView = soundVolumeView;
         this.getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
@@ -39,7 +43,7 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
     }
 
     private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null);
+        return projectRepository.getCurrentProject();
     }
 
     public void init() {
