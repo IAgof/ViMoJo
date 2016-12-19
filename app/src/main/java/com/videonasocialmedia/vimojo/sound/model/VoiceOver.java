@@ -5,7 +5,6 @@ package com.videonasocialmedia.vimojo.sound.model;
  */
 
 public class VoiceOver {
-
   private final String path;
   private final float volume;
 
@@ -18,7 +17,7 @@ public class VoiceOver {
     return path;
   }
 
-  public float getVolume(){
+  public float getVolume() {
     return volume;
   }
 }

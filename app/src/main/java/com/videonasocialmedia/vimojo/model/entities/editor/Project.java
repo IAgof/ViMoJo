@@ -223,14 +223,14 @@ public class Project {
     }
 
     public String getVoiceOverPath(){
-      if(voiceOver!=null){
+      if (voiceOver != null) {
         return voiceOver.getPath();
       }
         return "";
     }
 
     public float getVoiceOverVolume(){
-      if(voiceOver!=null){
+      if (voiceOver != null) {
         return voiceOver.getVolume();
       }
       return 0;

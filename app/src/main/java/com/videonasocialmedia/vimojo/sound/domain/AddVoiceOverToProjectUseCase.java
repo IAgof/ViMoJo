@@ -10,20 +10,14 @@ import com.videonasocialmedia.vimojo.sound.model.VoiceOver;
  */
 
 public class AddVoiceOverToProjectUseCase {
-
   protected ProjectRepository projectRepository = new ProjectRealmRepository();
 
-  public AddVoiceOverToProjectUseCase(){
-
+  public AddVoiceOverToProjectUseCase() {
   }
 
-  public void setVoiceOver(String voiceOverPath, float volume){
-
+  public void setVoiceOver(Project project, String voiceOverPath, float volume){
     VoiceOver voiceOver = new VoiceOver(voiceOverPath, volume);
-    Project currentProject = Project.getInstance(null, null, null);
-    currentProject.setVoiceOver(voiceOver);
-    projectRepository.update(currentProject);
-
+    project.setVoiceOver(voiceOver);
+    projectRepository.update(project);
   }
-
 }

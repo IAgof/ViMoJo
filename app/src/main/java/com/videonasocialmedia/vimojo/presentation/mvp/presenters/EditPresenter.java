@@ -37,10 +37,6 @@ import javax.inject.Inject;
 
 public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener,
         OnVideosRetrieved, OnReorderMediaListener, GetMusicFromProjectCallback {
-
-    /**
-     * LOG_TAG
-     */
     private final String LOG_TAG = getClass().getSimpleName();
     /**
      * UseCases
@@ -76,13 +72,13 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         this.currentProject = loadCurrentProject();
     }
 
-    public Project loadCurrentProject() {
+    private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
         return Project.getInstance(null, null, null);
     }
 
-
     public String getResolution() {
+        // TODO(jliarte): 19/12/16 inject sharedPreferences
         SharedPreferences sharedPreferences = VimojoApplication.getAppContext()
                 .getSharedPreferences(
                         ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
@@ -90,8 +86,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
         return sharedPreferences.getString(ConfigPreferences.RESOLUTION, "1280x720");
     }
-
-
 
     public void moveItem(int fromPosition, int toPositon) {
         reorderMediaItemUseCase.moveMediaItem(videoList.get(fromPosition), toPositon, this);
@@ -105,7 +99,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     @Override
     public void onAddMediaItemToTrackSuccess(Media media) {
-
     }
 
     @Override
@@ -118,7 +111,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     public void onRemoveMediaItemFromTrackSuccess() {
         editorView.updateProject();
         projectModifiedCallBack.onProjectModified();
-
     }
 
     @Override
@@ -165,15 +157,16 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         obtainVideos();
     }
 
-    public void obtainVideos() {
+    private void obtainVideos() {
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 
     public void loadProject() {
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
-        if(currentProject.hasMusic())
+        obtainVideos();
+        if (currentProject.hasMusic()) {
             getMusicFromProjectUseCase.getMusicFromProject(this);
-        if(currentProject.hasVoiceOver()){
+        }
+        if (currentProject.hasVoiceOver()) {
             editorView.setVoiceOver(currentProject.getVoiceOverPath(), currentProject.getVoiceOverVolume());
         }
     }
@@ -182,5 +175,4 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     public void onMusicRetrieved(Music music) {
         editorView.setMusic(music);
     }
-
 }
