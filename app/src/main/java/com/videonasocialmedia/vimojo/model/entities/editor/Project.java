@@ -256,10 +256,12 @@ public class Project {
     return "";
   }
 
-  public String getProjectSizeMbVideoToExport(){
+  public double getProjectSizeMbVideoToExport(){
     float scaleToMb = 0.125f;
-    int sizeBytes = getProfile().getVideoQuality().getVideoBitRate()*getDuration();
-    return (sizeBytes * scaleToMb) + " Mb";
+    double durationSeconds =  getDuration()* 0.001;
+    double videoBitRateMb = getProfile().getVideoQuality().getVideoBitRate()*0.000001;
+    double sizeBytes = videoBitRateMb*durationSeconds;
+    return sizeBytes * scaleToMb;
   }
 
   public void createFolder(String projectPath) {

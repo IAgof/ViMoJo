@@ -73,6 +73,12 @@ public class RetrieveProjectListActivity extends VimojoActivity implements Retri
   }
 
   @Override
+  public void onResume(){
+    super.onResume();
+    presenter.updateProjectList();
+  }
+
+  @Override
   public void navigateTo(Class cls) {
     Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
     startActivity(intent);
@@ -133,6 +139,11 @@ public class RetrieveProjectListActivity extends VimojoActivity implements Retri
   public void goToShareActivity(Project project) {
     presenter.checkNavigationToShare(project);
 
+  }
+
+  @Override
+  public void goToDetailActivity() {
+    navigateTo(DetailProjectActivity.class);
   }
 
 }

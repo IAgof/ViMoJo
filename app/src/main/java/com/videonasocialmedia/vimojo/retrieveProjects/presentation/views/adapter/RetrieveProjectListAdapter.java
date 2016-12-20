@@ -55,9 +55,9 @@ public class RetrieveProjectListAdapter extends
     if (project.getMediaTrack().getItems().size() > 0) {
       drawVideoThumbnail(holder.imagenProject, project);
     } else {
-      holder.imagenProject.setImageResource(R.drawable.fragment_gallery_no_image);
+      holder.imagenProject.setImageResource(R.drawable.activity_gallery_project_no_preview);
     }
-    holder.dateProject.setText(DateUtils.toFormatDateDayMonthYear(project.getTitle()));
+    holder.dateProject.setText(DateUtils.toFormatDateDayMonthYear(project.getLastModification()));
     holder.durationProject.setText(
         TimeUtils.toFormattedTimeWithMinutesAndSeconds(project.getDuration()));
     holder.titleProject.setText(project.getTitle());
@@ -138,7 +138,7 @@ public class RetrieveProjectListAdapter extends
 
     @OnClick(R.id.retrieve_project_button_edit)
     public void onClickGoToProjectDetail() {
-      clickListener.goToEditActivity(projectList.get(getAdapterPosition()));
+      clickListener.goToDetailActivity();
     }
 
     @OnClick(R.id.retrieve_project_image)

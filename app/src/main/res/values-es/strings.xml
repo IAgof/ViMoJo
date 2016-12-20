@@ -78,6 +78,19 @@
     <string name="dialog_project_remove_accept">Sí</string>
     <string name="dialog_project_remove_cancel">No</string>
 
+    <!-- Detail project activity -->
+    <string name="detail_project_hint_title">Introduzca nombre</string>
+    <string name="detail_project_info_duration">Duración</string>
+    <string name="detail_project_info_size">Tamaño</string>
+    <string name="detail_project_info_quality">Calidad</string>
+    <string name="detail_project_info_format">Formato</string>
+    <string name="detail_project_info_bitrate">Tasa de bits</string>
+    <string name="detail_project_info_framerate">Frame rate</string>
+
+    <string name="dialog_project_edit_title_message"> Título de proyecto</string>
+    <string name="dialog_project_edit_title_accept">Sí</string>
+    <string name="dialog_project_edit_title_cancel">No</string>
+
     <!--SoundVolumeActivity-->
     <string name="exitSoundVolumeActivity" >¿Desea descartar los cambios y volver a grabar de nuevo?</string>
     <string name="acceptExitSoundVolumeActivity">Sí</string>

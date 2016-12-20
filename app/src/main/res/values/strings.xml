@@ -80,6 +80,19 @@
     <string name="dialog_project_remove_accept">Yes</string>
     <string name="dialog_project_remove_cancel">No</string>
 
+    <!-- Detail project activity -->
+    <string name="detail_project_hint_title">Enter your name here</string>
+    <string name="detail_project_info_duration">Duration</string>
+    <string name="detail_project_info_size">Size</string>
+    <string name="detail_project_info_quality">Quality</string>
+    <string name="detail_project_info_format">Format</string>
+    <string name="detail_project_info_bitrate">Bitrate</string>
+    <string name="detail_project_info_framerate">Frame rate</string>
+
+    <string name="dialog_project_edit_title_message">Set project title</string>
+    <string name="dialog_project_edit_title_accept">Yes</string>
+    <string name="dialog_project_edit_title_cancel">No</string>
+
     <!--SoundVolumeActivity-->
     <string name="exitSoundVolumeActivity" >Are you sure do you want to discard the changes and return to record again?</string>
     <string name="acceptExitSoundVolumeActivity">Yes</string>

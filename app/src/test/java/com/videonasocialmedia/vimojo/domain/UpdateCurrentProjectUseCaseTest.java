@@ -1,14 +1,13 @@
 package com.videonasocialmedia.vimojo.domain;
 
+import com.videonasocialmedia.vimojo.domain.project.UpdateCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.utils.DateUtils;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import static junit.framework.Assert.assertEquals;

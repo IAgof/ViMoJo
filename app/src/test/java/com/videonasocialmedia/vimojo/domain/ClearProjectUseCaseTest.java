@@ -1,25 +1,20 @@
 package com.videonasocialmedia.vimojo.domain;
 
+import com.videonasocialmedia.vimojo.domain.project.ClearProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.RobolectricTestRunner;
 
 import java.io.File;
@@ -37,7 +32,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class ClearProjectUseCaseTest {
 
   @Mock ProjectRepository mockedProjectRepository;
-  @InjectMocks ClearProjectUseCase injectedUseCase;
+  @InjectMocks
+  ClearProjectUseCase injectedUseCase;
 
   @Before
   public void injectDoubles() {

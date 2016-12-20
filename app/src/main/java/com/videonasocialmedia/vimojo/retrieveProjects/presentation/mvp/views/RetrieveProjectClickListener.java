@@ -12,4 +12,5 @@ public interface RetrieveProjectClickListener {
     void onDeleteProject(Project project);
     void goToEditActivity(Project project);
     void goToShareActivity(Project project);
+    void goToDetailActivity();
 }

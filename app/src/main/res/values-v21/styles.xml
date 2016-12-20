@@ -80,6 +80,7 @@
     </style>
 
     <style name="VideonaDialog" parent="Theme.AppCompat.Light.Dialog">
+
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 

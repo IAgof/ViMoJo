@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.domain;
 
+import com.videonasocialmedia.vimojo.domain.project.DeleteProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.project.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;

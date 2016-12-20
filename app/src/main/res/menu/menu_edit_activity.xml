@@ -21,7 +21,7 @@
                 app:showAsAction="never"/>
             <item
                 android:id="@+id/action_settings_edit_projects"
-                android:icon="@drawable/menu_gallery"
+                android:icon="@drawable/activity_gallery_projects_icon"
                 android:title="Projects"
                 app:showAsAction="never"/>
 

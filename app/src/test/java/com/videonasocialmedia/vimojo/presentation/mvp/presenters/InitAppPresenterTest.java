@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
