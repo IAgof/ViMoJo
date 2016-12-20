@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.pipeline.VideoAudioSwapper;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -20,8 +22,8 @@ import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
+import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.MixAudioUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.OnMixAudioListener;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -57,13 +59,15 @@ public class ShareVideoPresenter implements VideoAudioSwapper.VideoAudioSwapperL
     private VideoAudioSwapper videoAudioSwapper;
     private String videoExportedWithVoiceOverPath;
     private String videoExportedTemp;
+    private AddMusicToProjectUseCase addMusicToProjectUseCase;
 
     @Inject
     public ShareVideoPresenter(ShareVideoView shareVideoView, UserEventTracker userEventTracker,
                                SharedPreferences sharedPreferences, Context context,
                                ClearProjectUseCase clearProjectUseCase,
                                CreateDefaultProjectUseCase createDefaultProjectUseCase,
-                               MixAudioUseCase mixAudioUseCase) {
+                               MixAudioUseCase mixAudioUseCase,
+                               AddMusicToProjectUseCase addMusicToProjectUseCase) {
         this.shareVideoView = shareVideoView;
         this.userEventTracker = userEventTracker;
         this.sharedPreferences = sharedPreferences;
@@ -71,6 +75,7 @@ public class ShareVideoPresenter implements VideoAudioSwapper.VideoAudioSwapperL
         this.clearProjectUseCase = clearProjectUseCase;
         this.createDefaultProjectUseCase = createDefaultProjectUseCase;
         this.mixAudioUseCase = mixAudioUseCase;
+        this.addMusicToProjectUseCase = addMusicToProjectUseCase;
 
         currentProject = loadCurrentProject();
     }
@@ -115,10 +120,29 @@ public class ShareVideoPresenter implements VideoAudioSwapper.VideoAudioSwapperL
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String fileName = "V_EDIT_" + timeStamp + ".mp4";
         videoExportedWithVoiceOverPath = Constants.PATH_APP_EDITED + File.separator + fileName;
+        final float volume = currentProject.getVoiceOverVolume();
         mixAudioUseCase.mixAudio(videoExportedTemp, currentProject.getVoiceOverPath(),
-                currentProject.getVoiceOverVolume(), new OnMixAudioListener() {
+                volume, Constants.PATH_APP_TEMP_AUDIO,
+                new MixAudioUseCase.OnMixAudioListener() {
                     @Override
                     public void onMixAudioSuccess(String pathAudioMixed) {
+                        // TODO(jliarte): 17/12/16 old implementation set mixed audio as music in VMComposition,
+                        //                this way voice over persist in database as a music (current workarround)
+                        //                and was later used on final video export
+                        // update(jliarte): 20/12/16 this is currently "later", the actual export, so I think this is not needed anymore
+                        Music music = new Music(pathAudioMixed, volume);
+                        music.setMusicTitle(Constants.MUSIC_AUDIO_MIXED_TITLE);
+                        addMusicToProjectUseCase.addMusicToTrack(music, 0, new OnAddMediaFinishedListener() {
+                            @Override
+                            public void onAddMediaItemToTrackError() {
+
+                            }
+
+                            @Override
+                            public void onAddMediaItemToTrackSuccess(Media media) {
+
+                            }
+                        });
                         videoAudioSwapper.export(videoExportedTemp, pathAudioMixed,
                                 videoExportedWithVoiceOverPath);
                     }

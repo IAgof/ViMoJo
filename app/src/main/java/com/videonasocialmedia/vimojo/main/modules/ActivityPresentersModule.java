@@ -34,6 +34,7 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeVie
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import dagger.Module;
@@ -116,9 +117,10 @@ public class ActivityPresentersModule {
                                                  SharedPreferences sharedPreferences,
                                                  ClearProjectUseCase cleartProjectUseCase,
                                                  CreateDefaultProjectUseCase createDelaultProjectUseCase,
-                                                  MixAudioUseCase mixAudioUseCase) {
+                                                 MixAudioUseCase mixAudioUseCase, AddMusicToProjectUseCase addMusicToProjectUseCase) {
     return new ShareVideoPresenter((ShareActivity) activity, userEventTracker, sharedPreferences,
-            activity, cleartProjectUseCase, createDelaultProjectUseCase, mixAudioUseCase);
+            activity, cleartProjectUseCase, createDelaultProjectUseCase, mixAudioUseCase,
+            addMusicToProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -159,7 +161,7 @@ public class ActivityPresentersModule {
 
   @Provides
   MixAudioUseCase provideAudioMixer(AddMusicToProjectUseCase addMusicToProjectUseCase) {
-    return new MixAudioUseCase(addMusicToProjectUseCase);
+    return new MixAudioUseCase(Constants.OUTPUT_FILE_MIXED_AUDIO);
   }
 
   @Provides
