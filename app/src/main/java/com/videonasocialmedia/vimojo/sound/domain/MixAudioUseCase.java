@@ -26,7 +26,7 @@ public class MixAudioUseCase implements OnAudioMixerListener, OnAddMediaFinished
     private AddMusicToProjectUseCase addMusicToProjectUseCase;
     private OnMixAudioListener listener;
     private float volume = Music.DEFAULT_MUSIC_VOLUME;
-    // TODO(jliarte): 17/12/16 are those two the same path?
+    // TODO(jliarte): 17/12/16 are those two the same path? yes, there are!
     private String outputFile = Constants.OUTPUT_FILE_MIXED_AUDIO;
     private String outputFileMixedPath;
 

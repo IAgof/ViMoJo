@@ -6,7 +6,6 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.sound.domain.MixAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 
@@ -44,7 +43,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @PrepareForTest({Realm.class, RealmLog.class})
 public class SoundVolumePresenterTest {
 //  @Mock SoundVolumeView soundVolumeView;
-  @Mock MixAudioUseCase mockedMixAudioUseCase;
   @Mock RemoveMusicFromProjectUseCase mockedRemoveMusicFromProjectUseCase;
   @InjectMocks SoundVolumePresenter injectedPresenter;
 //  private File mockedStorageDir;

@@ -41,7 +41,7 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -140,10 +140,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
 
 
     public void showPreview() {
-        List<Video> shareVideoList = new ArrayList<Video>();
-        Video videoShare = new Video(videoPath);
-        shareVideoList.add(videoShare);
-
+        List<Video> shareVideoList = Collections.singletonList(new Video(videoPath));
         videonaPlayer.initPreviewLists(shareVideoList);
         videonaPlayer.initPreview(currentPosition);
 
@@ -344,10 +341,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
     @Override
     public void setVideo(String videoOver){
         new File(videoPath).deleteOnExit();
-
-        List<Video> shareVideoList = new ArrayList<Video>();
-        Video videoShare = new Video(videoOver);
-        shareVideoList.add(videoShare);
+        List<Video> shareVideoList = Collections.singletonList(new Video(videoOver));
 
         videonaPlayer.initPreviewLists(shareVideoList);
         videonaPlayer.initPreview(currentPosition);

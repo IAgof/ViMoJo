@@ -6,7 +6,6 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.MixAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -21,7 +20,6 @@ import javax.inject.Inject;
 public class SoundVolumePresenter implements OnVideosRetrieved {
     private SoundVolumeView soundVolumeView;
     private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
-    private MixAudioUseCase mixAudioUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private AddVoiceOverToProjectUseCase addVoiceOverToProject;
 
@@ -31,11 +29,9 @@ public class SoundVolumePresenter implements OnVideosRetrieved {
     @Inject
     public SoundVolumePresenter(SoundVolumeView soundVolumeView,
                                 RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase,
-                                MixAudioUseCase mixAudioUseCase,
                                 AddVoiceOverToProjectUseCase addVoiceOverToProject) {
         this.soundVolumeView = soundVolumeView;
         this.removeMusicFromProjectUseCase = removeMusicFromProjectUseCase;
-        this.mixAudioUseCase = mixAudioUseCase;
         this.addVoiceOverToProject = addVoiceOverToProject;
 
         this.getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();

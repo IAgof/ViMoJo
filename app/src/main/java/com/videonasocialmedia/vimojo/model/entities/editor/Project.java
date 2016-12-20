@@ -218,18 +218,18 @@ public class Project {
       this.voiceOver = voiceOver;
     }
 
-    public boolean hasVoiceOver(){
+    public boolean hasVoiceOver() {
       return voiceOver != null;
     }
 
-    public String getVoiceOverPath(){
+    public String getVoiceOverPath() {
       if (voiceOver != null) {
         return voiceOver.getPath();
       }
-        return "";
+      return "";
     }
 
-    public float getVoiceOverVolume(){
+    public float getVoiceOverVolume() {
       if (voiceOver != null) {
         return voiceOver.getVolume();
       }

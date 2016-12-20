@@ -110,7 +110,7 @@ public class ShareVideoPresenter implements VideoAudioSwapper.VideoAudioSwapperL
     public void exportWithVoiceOver(final String videoExportedTemp) {
         if(!currentProject.hasVoiceOver())
             return;
-        // TODO(jliarte): 16/12/16 move this logic to SDK ExporterImpl
+        // TODO(jliarte): 16/12/16 move this logic to SDK VMCompositionExportSessionImpl
         this.videoExportedTemp = videoExportedTemp;
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String fileName = "V_EDIT_" + timeStamp + ".mp4";

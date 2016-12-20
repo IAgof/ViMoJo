@@ -62,9 +62,8 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   SoundVolumePresenter getSoundVolumePresenter(RemoveMusicFromProjectUseCase useCase,
-                                               MixAudioUseCase mixAudioUseCase,
                                                AddVoiceOverToProjectUseCase addVoiceOverToProjectUseCase) {
-    return new SoundVolumePresenter((SoundVolumeView) activity, useCase, mixAudioUseCase,
+    return new SoundVolumePresenter((SoundVolumeView) activity, useCase,
             addVoiceOverToProjectUseCase);
   }
 

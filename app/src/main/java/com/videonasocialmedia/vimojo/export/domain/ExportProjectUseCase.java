@@ -7,28 +7,28 @@
 
 package com.videonasocialmedia.vimojo.export.domain;
 
-import com.videonasocialmedia.videonamediaframework.pipeline.Exporter;
-import com.videonasocialmedia.videonamediaframework.pipeline.ExporterImpl;
+import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
+import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSessionImpl;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 
 import java.util.NoSuchElementException;
 
-public class ExportProjectUseCase implements Exporter.OnExportEndedListener {
+public class ExportProjectUseCase implements VMCompositionExportSession.OnExportEndedListener {
   private OnExportFinishedListener onExportFinishedListener;
-  private Exporter exporter;
+  private VMCompositionExportSession VMCompositionExportSession;
   private Project project;
 
   /**
-   * Project exporter use case.
+   * Project VMCompositionExportSession use case.
    *
    * @param onExportFinishedListener listener for the use case to send callbacks
    */
   public ExportProjectUseCase(OnExportFinishedListener onExportFinishedListener) {
     this.onExportFinishedListener = onExportFinishedListener;
     project = Project.getInstance(null, null, null);
-    exporter = new ExporterImpl(com.videonasocialmedia.vimojo.utils.Constants.PATH_APP, project.getVMComposition(),
+    VMCompositionExportSession = new VMCompositionExportSessionImpl(com.videonasocialmedia.vimojo.utils.Constants.PATH_APP, project.getVMComposition(),
         project.getProfile(), this);
   }
 
@@ -37,7 +37,7 @@ public class ExportProjectUseCase implements Exporter.OnExportEndedListener {
    */
   public void export() {
     try {
-      exporter.export();
+      VMCompositionExportSession.export();
     } catch (NoSuchElementException exception) {
       onExportError(String.valueOf(exception));
     }
