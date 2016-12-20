@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -41,6 +42,7 @@ public class EditPresenterTest {
     @Mock private MixpanelAPI mockedMixpanelApi;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private ToolbarNavigator.ProjectModifiedCallBack mockedProjectModifiedCallback;
+    @Mock private SharedPreferences mockedSharedPreferences;
 
     @Before
     public void injectTestDoubles() {
@@ -82,7 +84,8 @@ public class EditPresenterTest {
     // Seems not needed since we already use @InjectMocks annotation
     @NonNull
     public EditPresenter getEditPresenter() {
-        return new EditPresenter(mockedEditorView, mockedProjectModifiedCallback, mockedUserEventTracker);
+        return new EditPresenter(mockedEditorView, mockedProjectModifiedCallback,
+            mockedUserEventTracker, mockedSharedPreferences);
     }
 
     public Project getAProject() {

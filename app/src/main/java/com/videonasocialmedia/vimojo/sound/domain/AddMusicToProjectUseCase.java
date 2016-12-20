@@ -24,7 +24,6 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
  */
 public class AddMusicToProjectUseCase {
 
-
     private ProjectRepository projectRepository = new ProjectRealmRepository();
     private Project currentProject = projectRepository.getCurrentProject();
 

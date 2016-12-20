@@ -35,7 +35,8 @@ public class GetVideonaFormatFromCurrentProjectUseCaseTest {
     GetVideonaFormatFromCurrentProjectUseCase useCase =
         new GetVideonaFormatFromCurrentProjectUseCase();
 
-    assertThat("Project field set after construction", useCase.project, is(currentProject));
+    assertThat("Project field set after construction", useCase.project,
+        is(currentProject));
   }
 
   // TODO:(alvaro.martinez) 24/10/16 Profile.setQuality(null), Profile.setResolution(null)
@@ -58,7 +59,7 @@ public class GetVideonaFormatFromCurrentProjectUseCaseTest {
 
   @Test
   public void getVideonaFormatFromCurrentProjectReturnsFormatWithProfileValues() {
-    Project currentProject = getAProject();
+
     GetVideonaFormatFromCurrentProjectUseCase useCase =
         new GetVideonaFormatFromCurrentProjectUseCase();
 
@@ -75,7 +76,7 @@ public class GetVideonaFormatFromCurrentProjectUseCaseTest {
     String rootPath = "project/root/path";
     Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
-    return Project.getInstance(title, rootPath, profile);
+    return new Project(title, rootPath, profile);
   }
 
 }

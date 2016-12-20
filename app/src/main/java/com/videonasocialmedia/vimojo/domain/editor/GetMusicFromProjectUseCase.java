@@ -10,9 +10,8 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
  * Created by jliarte on 31/05/16.
  */
 public class GetMusicFromProjectUseCase {
-    private Project project;
+    public Project project;
     private ProjectRepository projectRepository = new ProjectRealmRepository();
-
 
     public GetMusicFromProjectUseCase() {
         this.project = projectRepository.getCurrentProject();

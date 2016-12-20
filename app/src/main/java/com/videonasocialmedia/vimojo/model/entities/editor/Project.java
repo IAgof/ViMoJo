@@ -16,7 +16,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
-import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
@@ -88,11 +87,17 @@ public class Project {
         this.lastModification = DateUtils.getDateRightNow();
         this.uuid = UUID.randomUUID().toString();
         this.projectPath = rootPath + "/.projects/" + uuid; //todo probablemente necesitemos un slugify de ese title.
-        createFolder(projectPath);
-        createFolder(projectPath + Constants.FOLDER_INTERMEDIATE_FILES);
-        createFolder(projectPath + Constants.FOLDER_INTERMEDIATE_FILES
-            + Constants.FOLDER_INTERMEDIATE_FILES_TEMPAUDIO);
+        createProjectFolders();
     }
+
+  public void createProjectFolders() {
+    createFolder(projectPath);
+    createFolder(projectPath + File.separator + "intermediate_files");
+    // TODO:(alvaro.martinez) 20/12/16 Get rid of this Constants dependency
+    createFolder(projectPath + File.separator + "intermediate_files" + File.separator
+        + ".tempAudio");
+        //+ Constants.FOLDER_INTERMEDIATE_FILES_TEMPAUDIO);
+  }
 
   public Project(Project project) {
     title = DateUtils.getDateRightNow();
@@ -266,7 +271,6 @@ public class Project {
 
   public void createFolder(String projectPath) {
     FileUtils.createFolder(projectPath);
-
   }
 
 }

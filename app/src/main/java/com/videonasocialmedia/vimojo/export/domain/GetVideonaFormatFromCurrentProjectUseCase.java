@@ -12,7 +12,7 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
  */
 public class GetVideonaFormatFromCurrentProjectUseCase {
 
-    private Project project;
+    public Project project;
     private ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public GetVideonaFormatFromCurrentProjectUseCase() {
