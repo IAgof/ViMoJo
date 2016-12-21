@@ -31,7 +31,7 @@ public class GetMediaListFromProjectUseCase {
      * @return
      */
     public List<Media> getMediaListFromProject() {
-        Project project = projectRepository.getCurrentProject();
+        Project project=Project.getInstance(null, null, null);
         Track track=project.getMediaTrack();
         return track.getItems();
     }
@@ -42,7 +42,7 @@ public class GetMediaListFromProjectUseCase {
 
 
     public void getMediaListFromProject(OnVideosRetrieved listener){
-        Project project = projectRepository.getCurrentProject();
+        Project project=Project.getInstance(null, null, null);
         Track track=project.getMediaTrack();
         List items= track.getItems();
         if (items.size()>0)

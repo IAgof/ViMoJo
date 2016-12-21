@@ -35,7 +35,7 @@ public class ModifyVideoTextAndPositionUseCase {
             videoToEdit.setClipTextPosition(textPosition);
             videoToEdit.setTempPathFinished(false);
             // TODO:(alvaro.martinez) 22/11/16 use project tmp path
-            Project project = projectRepository.getCurrentProject();
+            Project project = Project.getInstance(null, null, null); //projectRepository.getCurrentProject();
             videoToEdit.setTempPath(project.getProjectPath() + Constants.FOLDER_INTERMEDIATE_FILES);
             videoToEdit.setTextToVideoAdded(true);
 

@@ -18,8 +18,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
@@ -51,7 +49,6 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     private SplitView splitView;
     public UserEventTracker userEventTracker;
     public Project currentProject;
-    private ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public SplitPreviewPresenter(SplitView splitView, UserEventTracker userEventTracker) {
         this.splitView = splitView;
@@ -62,7 +59,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     }
 
     private Project loadCurrentProject() {
-        return projectRepository.getCurrentProject();
+        return Project.getInstance(null, null, null);
     }
 
     public void loadProjectVideo(int videoToTrimIndex) {

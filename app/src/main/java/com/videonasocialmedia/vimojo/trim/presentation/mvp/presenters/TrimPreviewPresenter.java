@@ -59,7 +59,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
 
     private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return projectRepository.getCurrentProject();
+        return Project.getInstance(null, null, null);
     }
 
     public void init(int videoToTrimIndex) {

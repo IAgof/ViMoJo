@@ -13,7 +13,7 @@ import com.videonasocialmedia.vimojo.utils.DateUtils;
 public class AddLastVideoExportedToProjectUseCase {
 
   private ProjectRepository projectRepository = new ProjectRealmRepository();
-  private Project currentProject = projectRepository.getCurrentProject();
+  private Project currentProject = Project.getInstance(null,null,null); //projectRepository.getCurrentProject();
 
   /*public AddLastVideoExportedToProjectUseCase(Project currentProject) {
     this.currentProject = currentProject;

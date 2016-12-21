@@ -18,15 +18,11 @@ public class DuplicateProjectUseCase {
 
   private ProjectRealmRepository projectRealmRepository = new ProjectRealmRepository();
 
-  public DuplicateProjectUseCase() {
-
-  }
-
   public void duplicate(Project project) {
     String origPath = project.getProjectPath();
     Project newProject = new Project(project);
-    copyFilesToNewProject(origPath, newProject.getProjectPath());
     projectRealmRepository.createProject(newProject);
+    copyFilesToNewProject(origPath, newProject.getProjectPath());
   }
 
   private void copyFilesToNewProject(String projectPath, String newProjectPath) {

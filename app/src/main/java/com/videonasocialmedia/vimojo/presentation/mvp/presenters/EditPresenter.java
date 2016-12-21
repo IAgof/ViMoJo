@@ -83,14 +83,15 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     }
 
     public Project loadCurrentProject() {
-        Project project = projectRepository.getCurrentProject();
+       /* Project project = projectRepository.getCurrentProject();
         if(project == null){
             Project newProject = Project.getInstance(DateUtils.getDateRightNow(), Constants.PATH_APP,
                 profileRepository.getCurrentProfile());
             projectRepository.update(newProject);
             return newProject;
         }
-        return projectRepository.getCurrentProject();
+        return projectRepository.getCurrentProject();*/
+        return Project.getInstance(null, null, null);
     }
 
 

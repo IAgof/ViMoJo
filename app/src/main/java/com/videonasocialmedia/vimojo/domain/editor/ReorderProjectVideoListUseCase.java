@@ -3,8 +3,6 @@ package com.videonasocialmedia.vimojo.domain.editor;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import java.util.LinkedList;
 
@@ -13,9 +11,8 @@ import java.util.LinkedList;
  */
 
 public class ReorderProjectVideoListUseCase {
-  private ProjectRepository projectRepository = new ProjectRealmRepository();
   public void reorderVideoList() {
-    Project project = projectRepository.getCurrentProject();
+    Project project = Project.getInstance(null, null, null);
     Track track = project.getMediaTrack();
 
     LinkedList<Media> videoList = track.getItems();

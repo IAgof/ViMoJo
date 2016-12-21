@@ -61,8 +61,7 @@ public class ShareVideoPresenter {
     }
 
     private Project loadCurrentProject() {
-        projectRepository = new ProjectRealmRepository();
-        return projectRepository.getCurrentProject();
+        return Project.getInstance(null, null, null);
     }
 
     public void onCreate() {

@@ -49,7 +49,7 @@ public class AddVideoToProjectUseCase {
 
     public void addVideoToTrack(Video video) {
         try {
-            Project currentProject = projectRepository.getCurrentProject();
+            Project currentProject = Project.getInstance(null, null, null);
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(video);
             projectRepository.update(currentProject);
@@ -70,7 +70,7 @@ public class AddVideoToProjectUseCase {
      */
     public void addVideoToTrack(Video video, OnAddMediaFinishedListener listener) {
         try {
-            Project currentProject = projectRepository.getCurrentProject();
+            Project currentProject = Project.getInstance(null, null, null);
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(video);
             projectRepository.update(currentProject);
@@ -86,7 +86,7 @@ public class AddVideoToProjectUseCase {
 
     public void addVideoToProjectAtPosition(Video video, int position) {
         try {
-            Project currentProject = projectRepository.getCurrentProject();
+            Project currentProject = Project.getInstance(null, null, null);
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItemAt(position, video);
             projectRepository.update(currentProject);
@@ -97,7 +97,7 @@ public class AddVideoToProjectUseCase {
 
     public void addVideoListToTrack(List<Video> videoList, OnAddMediaFinishedListener listener) {
         try {
-            Project currentProject = projectRepository.getCurrentProject();
+            Project currentProject = Project.getInstance(null, null, null);
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             for (Video video : videoList) {
                 mediaTrack.insertItem(video);

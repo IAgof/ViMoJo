@@ -24,8 +24,8 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
  * This class is used to removed videos from the project.
  */
 public class RemoveMusicFromProjectUseCase {
-    private ProjectRepository projectRepository = new ProjectRealmRepository();
-    private final Project currentProject = projectRepository.getCurrentProject();
+    private final Project currentProject = Project.getInstance(null, null, null);
+    protected ProjectRepository projectRepository = new ProjectRealmRepository();
 
     /**
      * @param music      the music object to be removed

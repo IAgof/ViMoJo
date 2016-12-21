@@ -32,8 +32,8 @@ import de.greenrobot.event.EventBus;
  * This class is used to removed videos from the project.
  */
 public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectUseCase {
-    private ProjectRepository projectRepository = new ProjectRealmRepository();
-    private VideoRepository videoRepository = new VideoRealmRepository();
+    protected ProjectRepository projectRepository = new ProjectRealmRepository();
+    protected VideoRepository videoRepository = new VideoRealmRepository();
     /**
      * Default empty Constructor.
      */
@@ -43,7 +43,7 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectUseC
     @Override
     public void removeMediaItemsFromProject(ArrayList<Media> mediaList, OnRemoveMediaFinishedListener listener) {
         boolean correct = false;
-        Project currentProject = projectRepository.getCurrentProject();
+        Project currentProject = Project.getInstance(null, null, null);
         MediaTrack mediaTrack = currentProject.getMediaTrack();
         for (Media media : mediaList) {
             correct = removeVideoItemFromTrack(media, mediaTrack);
@@ -69,8 +69,8 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectUseC
         try {
             mediaTrack.deleteItem(video);
             // TODO(jliarte): 23/10/16 get rid of EventBus?
-            EventBus.getDefault().post(new UpdateProjectDurationEvent(projectRepository.getCurrentProject().getDuration()));
-            EventBus.getDefault().post(new NumVideosChangedEvent(projectRepository.getCurrentProject().getMediaTrack().getNumVideosInProject()));
+            EventBus.getDefault().post(new UpdateProjectDurationEvent(Project.getInstance(null, null, null).getDuration()));
+            EventBus.getDefault().post(new NumVideosChangedEvent(Project.getInstance(null, null, null).getMediaTrack().getNumVideosInProject()));
             result = true;
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             result = false;

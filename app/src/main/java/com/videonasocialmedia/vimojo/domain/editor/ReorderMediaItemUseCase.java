@@ -16,7 +16,8 @@ public class ReorderMediaItemUseCase {
     private ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public void moveMediaItem(Media media, int toPositon, OnReorderMediaListener listener){
-        Project project = projectRepository.getCurrentProject();
+        //Project project = projectRepository.getCurrentProject();
+        Project project = Project.getInstance(null, null, null);
         MediaTrack videoTrack = project.getMediaTrack();
         try {
             videoTrack.moveItemTo(toPositon,media);

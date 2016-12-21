@@ -47,7 +47,7 @@ public class ProjectTest {
 
         assertThat(videonaProject, not(projectInstance));
         assertThat(projectInstance.getTitle(), nullValue());
-        assertThat(projectInstance.getProjectPath(), is("null/projects/null"));
+        assertThat(projectInstance.getProjectPath(), not(nullValue()));
         assertThat(projectInstance.getProfile(), nullValue());
     }
 

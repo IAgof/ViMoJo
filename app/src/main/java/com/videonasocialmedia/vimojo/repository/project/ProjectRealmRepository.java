@@ -114,7 +114,14 @@ public class ProjectRealmRepository implements ProjectRepository {
 
   @Override
   public void createProject(final Project item){
-    update(item);
+    item.setLastModification(DateUtils.getDateRightNow());
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransaction(new Realm.Transaction() {
+      @Override
+      public void execute(Realm realm) {
+        realm.copyToRealmOrUpdate(toRealmProjectMapper.map(item));
+      }
+    });
   }
 
 }

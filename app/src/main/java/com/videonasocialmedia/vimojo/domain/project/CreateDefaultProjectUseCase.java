@@ -21,7 +21,7 @@ public class CreateDefaultProjectUseCase {
     //                This is done for convenience only as we should get rid of all
     //                Project.getInstance calls
     if (Project.INSTANCE == null) {
-      Project.INSTANCE = new Project(projectTitle,rootPath, profile); //projectRepository.getCurrentProject();
+      Project.INSTANCE = projectRepository.getCurrentProject();
     }
 
     Project currentProject = Project.getInstance(projectTitle, rootPath, profile);
