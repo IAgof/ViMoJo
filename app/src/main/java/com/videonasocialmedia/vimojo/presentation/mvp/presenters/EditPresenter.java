@@ -36,6 +36,7 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,12 +132,38 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
-        this.videoList = videoList;
-        List<Video> videoCopy = new ArrayList<>(videoList);
+        int sizeVideoList = videoList.size();
+        List<Video> checkedVideoList = checkMediaPathVideosExist(videoList);
+        this.videoList = checkedVideoList;
+
+        List<Video> videoCopy = new ArrayList<>(checkedVideoList);
+
+        if(sizeVideoList > checkedVideoList.size()){
+            editorView.showDialogMediasNotFound();
+        }
+
         editorView.enableEditActions();
         //videonaPlayerView.bindVideoList(videoList);
         editorView.bindVideoList(videoCopy);
         projectModifiedCallBack.onProjectModified();
+    }
+
+    private List<Video> checkMediaPathVideosExist(List<Video> videoCopy) {
+
+        List<Video> checkedVideoList = new ArrayList<>();
+
+        for (int index = 0; index < videoCopy.size(); index++) {
+            Video video = videoCopy.get(index);
+            if(!new File(video.getMediaPath()).exists()){
+                ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
+                mediaToDeleteFromProject.add(video);
+                remoVideoFromProjectUseCase.removeMediaItemsFromProject(mediaToDeleteFromProject, this);
+            } else {
+                checkedVideoList.add(video);
+            }
+        }
+
+        return checkedVideoList;
     }
 
     @Override

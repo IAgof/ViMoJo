@@ -461,6 +461,25 @@ public class EditActivity extends VimojoActivity implements EditorView,
         videonaPlayer.resetPreview();
     }
 
+    @Override
+    public void showDialogMediasNotFound() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
+        dialog.setTitle(R.string.error_video_format);
+
+        String message = "Some videos will not be added to project";
+
+        dialog.setMessage(message);
+
+        dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
 
     @Override
     public void newClipPlayed(int currentClipIndex) {

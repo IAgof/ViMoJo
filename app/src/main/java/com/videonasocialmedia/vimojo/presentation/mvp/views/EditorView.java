@@ -40,4 +40,6 @@ public interface EditorView {
     void expandFabMenu();
 
     void resetPreview();
+
+    void showDialogMediasNotFound();
 }
