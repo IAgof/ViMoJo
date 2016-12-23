@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * @author Juan Javier Cabanas Abascal
  */
-public interface EditorView {
+public interface EditActivityView {
 
     void goToShare(String videoToSharePath);
 
@@ -37,9 +37,17 @@ public interface EditorView {
 
     void disableEditActions();
 
+    void enableBottomBar();
+
+    void disableBottomBar();
+
+    void changeAlphaBottomBar(float alpha);
+
     void expandFabMenu();
 
     void resetPreview();
 
     void showDialogMediasNotFound();
+
+    void enableFabText(boolean isEnable);
 }

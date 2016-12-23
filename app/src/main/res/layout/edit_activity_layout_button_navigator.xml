@@ -1,41 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
     <ImageButton
-        android:id="@+id/button_edit_navigator"
+        android:id="@+id/button_edit_duplicate"
         style="@style/Widget.AppCompat.ActionButton"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:layout_weight="1"
         android:scaleType="fitCenter"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
-        android:src="@drawable/activity_edit_clip_normal"
+        android:src="@drawable/activity_edit_clip_duplicate_normal"
         />
 
     <ImageButton
-        android:id="@+id/button_music_navigator"
+        android:id="@+id/button_edit_split"
         style="@style/Widget.AppCompat.ActionButton"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:layout_weight="1"
         android:scaleType="fitCenter"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/activity_edit_sound_normal"
+        android:src="@drawable/activity_edit_clip_divide_normal"
         />
-
     <ImageButton
-        android:id="@+id/button_share_navigator"
+        android:id="@+id/button_edit_trim"
         style="@style/Widget.AppCompat.ActionButton"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:layout_weight="1"
         android:scaleType="fitCenter"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/activity_edit_share_normal"
+        android:src="@drawable/activity_edit_clip_trim_normal"
         />
 
 </LinearLayout>

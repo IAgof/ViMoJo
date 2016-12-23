@@ -70,10 +70,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ButterKnife.bind(this);
-        setupActivityButtons();
 
         Log.d("GALLERY ACTIVITY", "Creating Activity");
 
@@ -86,17 +83,11 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
         PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_header);
         pagerTabStrip.setDrawFullUnderline(true);
-        pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorWhite));
-        pagerTabStrip.setTextColor(getResources().getColor(R.color.colorWhite));
+        pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorSecondary));
+        pagerTabStrip.setTextColor(getResources().getColor(R.color.colorSecondary));
     }
 
-    private void setupActivityButtons() {
-        tintGalleryButtons(R.color.button_color);
-    }
 
-    private void tintGalleryButtons(int tintList) {
-        tintButton(okButton, tintList);
-    }
 
     @Override
     public void onPause() {
