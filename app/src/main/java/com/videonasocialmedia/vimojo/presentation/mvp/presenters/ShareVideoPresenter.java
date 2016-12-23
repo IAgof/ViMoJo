@@ -23,6 +23,7 @@ import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferences
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
@@ -158,6 +159,7 @@ public class ShareVideoPresenter {
     }
 
     public void addVideoExportedToProject(String videoPath) {
-        addLastVideoExportedProjectUseCase.addLastVideoExportedToProject(videoPath);
+        addLastVideoExportedProjectUseCase.addLastVideoExportedToProject(videoPath,
+            DateUtils.getDateRightNow());
     }
 }

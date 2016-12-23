@@ -49,7 +49,7 @@ import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavig
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
-import com.videonasocialmedia.vimojo.retrieveProjects.presentation.views.activity.RetrieveProjectListActivity;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
@@ -95,6 +95,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
     private AlertDialog progressDialog;
     private int selectedVideoRemovePosition;
     private SharedPreferences sharedPreferences;
+
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -163,6 +164,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
             }
         }
         videonaPlayer.onShown(this);
+
         editPresenter.loadProject();
     }
 
@@ -237,7 +239,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
                 navigateTo(GalleryActivity.class);
                 return true;
             case R.id.action_settings_edit_projects:
-                navigateTo(RetrieveProjectListActivity.class);
+                navigateTo(GalleryProjectListActivity.class);
                 return true;
             case android.R.id.home:
                 onBackPressed();
@@ -464,19 +466,14 @@ public class EditActivity extends VimojoActivity implements EditorView,
     @Override
     public void showDialogMediasNotFound() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
-        dialog.setTitle(R.string.error_video_format);
-
-        String message = "Some videos will not be added to project";
-
-        dialog.setMessage(message);
-
+        dialog.setTitle(R.string.titleVideosNotFound);
+        dialog.setMessage(getString(R.string.messageVideosNotFound));
         dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-
         dialog.show();
     }
 

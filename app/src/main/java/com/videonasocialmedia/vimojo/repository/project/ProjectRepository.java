@@ -10,7 +10,7 @@ import java.util.List;
  */
 
 public interface ProjectRepository extends Repository<Project> {
+  void updateWithDate(Project item, String date);
   Project getCurrentProject();
   List<Project> getListProjects();
-  void createProject(Project project);
 }

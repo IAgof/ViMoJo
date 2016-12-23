@@ -98,9 +98,8 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
         trimServiceIntent.putExtra(IntentConstants.IS_VIDEO_TRIMMED, true);
         trimServiceIntent.putExtra(IntentConstants.START_TIME_MS, startTimeMs);
         trimServiceIntent.putExtra(IntentConstants.FINISH_TIME_MS, finishTimeMs);
-        // TODO:(alvaro.martinez) 22/11/16 use project tmp path
         trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY,
-            currentProject.getProjectPath() + Constants.FOLDER_INTERMEDIATE_FILES);
+            currentProject.getProjectPathIntermediateFiles());
         appContext.startService(trimServiceIntent);
         trackVideoTrimmed();
     }

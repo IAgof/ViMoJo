@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.views;
+package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views;
 
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -6,11 +6,11 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 /**
  *
  */
-public interface RetrieveProjectClickListener {
+public interface GalleryProjectClickListener {
     void onClick(Project project);
     void onDuplicateProject(Project project);
     void onDeleteProject(Project project);
     void goToEditActivity(Project project);
     void goToShareActivity(Project project);
-    void goToDetailActivity();
+    void goToDetailActivity(Project project);
 }

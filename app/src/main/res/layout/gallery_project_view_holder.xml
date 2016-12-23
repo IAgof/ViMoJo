@@ -29,7 +29,7 @@
 
 
         <ImageView
-            android:id="@+id/retrieve_project_image"
+            android:id="@+id/project_image"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -47,7 +47,7 @@
 
 
             <TextView
-                android:id="@+id/retrieve_project_title"
+                android:id="@+id/project_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -58,7 +58,7 @@
                 tools:text="Guitarra"/>
 
             <TextView
-                android:id="@+id/retrieve_project_date"
+                android:id="@+id/project_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -68,7 +68,7 @@
                 tools:text="20-10-2016"/>
 
             <TextView
-                android:id="@+id/retrieve_project_duration"
+                android:id="@+id/project_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -86,7 +86,7 @@
                 android:layout_marginTop="24dp">
 
                 <ImageButton
-                    android:id="@+id/retrieve_project_button_duplicate"
+                    android:id="@+id/project_button_duplicate"
                     android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:layout_weight="1"
@@ -96,7 +96,7 @@
                     android:src="@drawable/activity_gallery_projects_duplicate"/>
 
                 <ImageButton
-                    android:id="@+id/retrieve_project_button_share"
+                    android:id="@+id/project_button_share"
                     android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:layout_weight="1"
@@ -106,7 +106,7 @@
                     android:src="@drawable/activity_edit_share_normal"/>
 
                 <ImageButton
-                    android:id="@+id/retrieve_project_button_delete"
+                    android:id="@+id/project_button_delete"
                     android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:layout_weight="1"
@@ -116,7 +116,7 @@
                     android:src="@drawable/activity_edit_clip_delete_normal"/>
 
                 <ImageButton
-                    android:id="@+id/retrieve_project_button_edit"
+                    android:id="@+id/project_button_edit"
                     android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:layout_weight="1"

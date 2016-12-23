@@ -162,8 +162,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     private void renameAudioRecorded(int numAudiosRecorded) {
         File originalFile = new File(sessionConfig.getOutputPath());
         String fileName = "AUD_" + numAudiosRecorded + ".mp4";
-        File destinationFile = new File(currentProject.getProjectPath()
-            + Constants.FOLDER_INTERMEDIATE_FILES, fileName);
+        File destinationFile = new File(currentProject.getProjectPathIntermediateFiles(), fileName);
         originalFile.renameTo(destinationFile);
     }
 

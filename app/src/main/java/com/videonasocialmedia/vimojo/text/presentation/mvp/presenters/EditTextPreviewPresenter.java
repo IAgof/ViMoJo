@@ -88,9 +88,8 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
         textToVideoServiceIntent.putExtra(IntentConstants.IS_TEXT_ADDED, true);
         textToVideoServiceIntent.putExtra(IntentConstants.TEXT_TO_ADD, text);
         textToVideoServiceIntent.putExtra(IntentConstants.TEXT_POSITION, textPositionSelected.name());
-        // TODO:(alvaro.martinez) 22/11/16 use project tmp path
         textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY,
-            currentProject.getProjectPath() + Constants.FOLDER_INTERMEDIATE_FILES);
+            currentProject.getProjectPathIntermediateFiles());
         appContext.startService(textToVideoServiceIntent);
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
     }

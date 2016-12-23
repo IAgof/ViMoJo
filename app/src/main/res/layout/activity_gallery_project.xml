@@ -26,14 +26,14 @@
         <android.support.v7.widget.RecyclerView
             xmlns:android="http://schemas.android.com/apk/res/android"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:id="@+id/recycler_retrieve_project"
+            android:id="@+id/recycler_gallery_project"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:padding="3dp"
             android:scrollbars="horizontal"
-            tools:listitem="@layout/retrieve_project_view_holder"/>
+            tools:listitem="@layout/gallery_project_view_holder"/>
 
 </android.support.design.widget.CoordinatorLayout>
 

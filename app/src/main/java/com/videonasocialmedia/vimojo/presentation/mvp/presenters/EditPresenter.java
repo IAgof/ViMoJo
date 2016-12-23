@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
@@ -32,8 +33,6 @@ import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferences
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
-import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.io.File;
@@ -55,6 +54,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
+    private LoadCurrentProjectUseCase loadCurrentProjectUseCase;
     /**
      * Editor View
      */
@@ -78,22 +78,10 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences,
             VimojoApplication.getAppContext());
         projectRepository = new ProjectRealmRepository();
+        loadCurrentProjectUseCase = new LoadCurrentProjectUseCase(projectRepository);
         this.userEventTracker = userEventTracker;
-        this.currentProject = loadCurrentProject();
+        this.currentProject =  loadCurrentProjectUseCase.loadCurrentProject(); //loadCurrentProject();
     }
-
-    public Project loadCurrentProject() {
-       /* Project project = projectRepository.getCurrentProject();
-        if(project == null){
-            Project newProject = Project.getInstance(DateUtils.getDateRightNow(), Constants.PATH_APP,
-                profileRepository.getCurrentProfile());
-            projectRepository.update(newProject);
-            return newProject;
-        }
-        return projectRepository.getCurrentProject();*/
-        return Project.getInstance(null, null, null);
-    }
-
 
     public String getResolution() {
         SharedPreferences sharedPreferences = VimojoApplication.getAppContext().getSharedPreferences(
@@ -133,23 +121,22 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
-        int sizeVideoList = videoList.size();
-        List<Video> checkedVideoList = checkMediaPathVideosExist(videoList);
+        int sizeOriginalVideoList = videoList.size();
+        List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videoList);
         this.videoList = checkedVideoList;
 
         List<Video> videoCopy = new ArrayList<>(checkedVideoList);
 
-        if(sizeVideoList > checkedVideoList.size()){
+        if(sizeOriginalVideoList > checkedVideoList.size()){
             editorView.showDialogMediasNotFound();
         }
 
         editorView.enableEditActions();
-        //videonaPlayerView.bindVideoList(videoList);
         editorView.bindVideoList(videoCopy);
         projectModifiedCallBack.onProjectModified();
     }
 
-    private List<Video> checkMediaPathVideosExist(List<Video> videoCopy) {
+    private List<Video> checkMediaPathVideosExistOnDevice(List<Video> videoCopy) {
 
         List<Video> checkedVideoList = new ArrayList<>();
 

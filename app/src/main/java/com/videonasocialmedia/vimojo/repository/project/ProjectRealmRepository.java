@@ -60,6 +60,18 @@ public class ProjectRealmRepository implements ProjectRepository {
   }
 
   @Override
+  public void updateWithDate(final Project item, String date) {
+    item.setLastModification(date);
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransaction(new Realm.Transaction() {
+      @Override
+      public void execute(Realm realm) {
+        realm.copyToRealmOrUpdate(toRealmProjectMapper.map(item));
+      }
+    });
+  }
+
+  @Override
   public void remove(final Project item) {
     Realm realm = Realm.getDefaultInstance();
     realm.executeTransaction(new Realm.Transaction() {
@@ -91,7 +103,7 @@ public class ProjectRealmRepository implements ProjectRepository {
     if(allRealmProjects.size() > 0) {
       currentRealmProject = allRealmProjects.first();
     }
-   // RealmProject currentRealmProject = realm.where(RealmProject.class).findFirst();
+
     if (currentRealmProject == null) {
       return null;
       // TODO(jliarte): 22/10/16 the return line throws
@@ -110,18 +122,6 @@ public class ProjectRealmRepository implements ProjectRepository {
       projectList.add(toProjectMapper.map(realm.copyFromRealm(realmProject)));
     }
     return projectList;
-  }
-
-  @Override
-  public void createProject(final Project item){
-    item.setLastModification(DateUtils.getDateRightNow());
-    Realm realm = Realm.getDefaultInstance();
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        realm.copyToRealmOrUpdate(toRealmProjectMapper.map(item));
-      }
-    });
   }
 
 }

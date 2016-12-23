@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.retrieveProjects.presentation.views.activity;
+package com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity;
 
 /**
  *
@@ -20,10 +20,10 @@ import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.presenters.RetrieveProjectListPresenter;
-import com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.views.RetrieveProjectListView;
-import com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.views.RetrieveProjectClickListener;
-import com.videonasocialmedia.vimojo.retrieveProjects.presentation.views.adapter.RetrieveProjectListAdapter;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectClickListener;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.adapter.GalleryProjectListAdapter;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -32,25 +32,25 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class RetrieveProjectListActivity extends VimojoActivity implements RetrieveProjectListView,
-    RetrieveProjectClickListener {
+public class GalleryProjectListActivity extends VimojoActivity implements GalleryProjectListView,
+    GalleryProjectClickListener {
 
-  @Bind(R.id.recycler_retrieve_project)
+  @Bind(R.id.recycler_gallery_project)
   RecyclerView projectList;
 
-  private RetrieveProjectListPresenter presenter;
-  private RetrieveProjectListAdapter projectAdapter;
+  private GalleryProjectListPresenter presenter;
+  private GalleryProjectListAdapter projectAdapter;
   private SharedPreferences sharedPreferences;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_retrieve_project);
+    setContentView(R.layout.activity_gallery_project);
     ButterKnife.bind(this);
     setupToolbar();
     sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
         Context.MODE_PRIVATE);
-    presenter = new RetrieveProjectListPresenter(this, sharedPreferences);
+    presenter = new GalleryProjectListPresenter(this, sharedPreferences);
     initProjectListRecycler();
   }
 
@@ -63,9 +63,9 @@ public class RetrieveProjectListActivity extends VimojoActivity implements Retri
   }
 
   private void initProjectListRecycler() {
-    projectAdapter = new RetrieveProjectListAdapter();
+    projectAdapter = new GalleryProjectListAdapter();
     projectAdapter.setRetrieveProjectClickListener(this);
-    presenter.getAvailableProjects();
+    presenter.init();
     LinearLayoutManager layoutManager =
         new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
     projectList.setLayoutManager(layoutManager);
@@ -96,6 +96,12 @@ public class RetrieveProjectListActivity extends VimojoActivity implements Retri
     projectAdapter.setProjectList(projectList);
     projectAdapter.notifyDataSetChanged();
     this.projectList.setAdapter(projectAdapter);
+  }
+
+  @Override
+  public void createDefaultProject() {
+    presenter.createDefaultProject();
+    presenter.updateProjectList();
   }
 
   @Override
@@ -142,7 +148,8 @@ public class RetrieveProjectListActivity extends VimojoActivity implements Retri
   }
 
   @Override
-  public void goToDetailActivity() {
+  public void goToDetailActivity(Project project) {
+    presenter.updateCurrentProject(project);
     navigateTo(DetailProjectActivity.class);
   }
 

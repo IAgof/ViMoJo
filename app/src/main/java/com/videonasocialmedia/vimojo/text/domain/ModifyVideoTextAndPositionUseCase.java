@@ -26,7 +26,6 @@ public class ModifyVideoTextAndPositionUseCase {
     private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
     protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator, mediaTranscoder);
     protected VideoRepository videoRepository = new VideoRealmRepository();
-    private ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public void addTextToVideo(Video videoToEdit, VideonaFormat format, String text, String textPosition,
                                MediaTranscoderListener listener) {
@@ -34,9 +33,8 @@ public class ModifyVideoTextAndPositionUseCase {
             videoToEdit.setClipText(text);
             videoToEdit.setClipTextPosition(textPosition);
             videoToEdit.setTempPathFinished(false);
-            // TODO:(alvaro.martinez) 22/11/16 use project tmp path
-            Project project = Project.getInstance(null, null, null); //projectRepository.getCurrentProject();
-            videoToEdit.setTempPath(project.getProjectPath() + Constants.FOLDER_INTERMEDIATE_FILES);
+            Project project = Project.getInstance(null, null, null);
+            videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
             videoToEdit.setTextToVideoAdded(true);
 
             // TODO(jliarte): 19/10/16 move this logic to TranscoderHelper?

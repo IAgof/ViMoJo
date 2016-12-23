@@ -1,9 +1,15 @@
-package com.videonasocialmedia.vimojo.domain;
+package com.videonasocialmedia.vimojo.galleryprojects.domain;
 
-import com.videonasocialmedia.vimojo.domain.project.UpdateCurrentProjectUseCase;
+
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -37,7 +43,7 @@ public class UpdateCurrentProjectUseCaseTest {
     currentProject.setLastModification("FakeDate");
     String oldLastModification = currentProject.getLastModification();
 
-    injectedUseCase.updateLastModifactionProject(currentProject);
+    injectedUseCase.updateLastModificationAndProjectInstance(currentProject);
 
     Project actualProject = Project.getInstance(null, null, null);
     String newLastModification = actualProject.getLastModification();
@@ -49,9 +55,21 @@ public class UpdateCurrentProjectUseCaseTest {
   @Test
   public void updateCurrentProjectCallsUpdateProjectRepository(){
     Project currentProject = Project.getInstance(null, null, null);
-    injectedUseCase.updateLastModifactionProject(currentProject);
+    injectedUseCase.updateLastModificationAndProjectInstance(currentProject);
     verify(mockedProjectRepository).update(currentProject);
   }
 
+  @Test
+  public void shouldUpdateProjectInstanceIfProjectIsUpdate(){
+    Project project = getAProject();
+    injectedUseCase.updateLastModificationAndProjectInstance(project);
+    Project currentProject = Project.getInstance(null,null,null);
+    assertThat("currentProject is different", currentProject, CoreMatchers.is(project));
+  }
+
+  private Project getAProject() {
+    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+  }
 
 }

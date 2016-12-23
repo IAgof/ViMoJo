@@ -11,6 +11,7 @@
  */
 package com.videonasocialmedia.vimojo.model.entities.editor;
 
+import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
@@ -31,7 +32,10 @@ import java.util.UUID;
  * one
  */
 public class Project {
-    private final String TAG = getClass().getCanonicalName();
+  public static final String INTERMEDIATE_FILES = "intermediate_files";
+  // TODO:(alvaro.martinez) 23/12/16 Change VideonaSDK, receive path temo from app, folder name ".tempAudio";
+  public static final String TEMP_AUDIO = Constants.DIRECTORY_NAME_TEMP_AUDIO_FILES;
+  private final String TAG = getClass().getCanonicalName();
     public static String VIDEONA_PATH = "";
     /**
      * There could be just one project open at a time. So this converts Project in a Singleton.
@@ -89,15 +93,6 @@ public class Project {
         this.projectPath = rootPath + "/.projects/" + uuid; //todo probablemente necesitemos un slugify de ese title.
         createProjectFolders();
     }
-
-  public void createProjectFolders() {
-    createFolder(projectPath);
-    createFolder(projectPath + File.separator + "intermediate_files");
-    // TODO:(alvaro.martinez) 20/12/16 Get rid of this Constants dependency
-    createFolder(projectPath + File.separator + "intermediate_files" + File.separator
-        + ".tempAudio");
-        //+ Constants.FOLDER_INTERMEDIATE_FILES_TEMPAUDIO);
-  }
 
   public Project(Project project) {
     title = DateUtils.getDateRightNow();
@@ -225,10 +220,6 @@ public class Project {
     this.lastModification = lastModification;
   }
 
-  public void updateLastModification(){
-    this.lastModification = DateUtils.getDateRightNow();
-  }
-
   public String getUuid() {
     return uuid;
   }
@@ -237,6 +228,7 @@ public class Project {
     this.uuid = uuid;
   }
 
+  //// TODO:(alvaro.martinez) 22/12/16 Move to composition last video exported
   public void setLastVideoExported(LastVideoExported lastVideoExported) {
     this.lastVideoExported = lastVideoExported;
   }
@@ -268,6 +260,22 @@ public class Project {
     double sizeBytes = videoBitRateMb*durationSeconds;
     return sizeBytes * scaleToMb;
   }
+
+  public void createProjectFolders() {
+    createFolder(projectPath);
+    createFolder(projectPath + File.separator + INTERMEDIATE_FILES);
+    createFolder(projectPath + File.separator + INTERMEDIATE_FILES + File.separator
+        + TEMP_AUDIO);
+  }
+
+  public String getProjectPathIntermediateFiles(){
+    return getProjectPath() + File.separator + INTERMEDIATE_FILES;
+  }
+
+  public String getProjectPathIntermediateAudioFiles(){
+    return getProjectPath() + File.separator + TEMP_AUDIO;
+  }
+
 
   public void createFolder(String projectPath) {
     FileUtils.createFolder(projectPath);

@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.retrieveProjects.presentation.views.adapter;
+package com.videonasocialmedia.vimojo.galleryprojects.presentation.views.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +16,7 @@ import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.views.RetrieveProjectClickListener;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectClickListener;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
@@ -29,22 +29,22 @@ import butterknife.OnClick;
 /**
  *
  */
-public class RetrieveProjectListAdapter extends
-    RecyclerView.Adapter<RetrieveProjectListAdapter.RetrieveProjectListItemViewHolder> {
+public class GalleryProjectListAdapter extends
+    RecyclerView.Adapter<GalleryProjectListAdapter.RetrieveProjectListItemViewHolder> {
 
   private Context context;
   private List<Project> projectList;
-  private RetrieveProjectClickListener clickListener;
+  private GalleryProjectClickListener clickListener;
 
-  public void setRetrieveProjectClickListener(RetrieveProjectClickListener
-                                                  RetrieveProjectClickListener) {
-    clickListener = RetrieveProjectClickListener;
+  public void setRetrieveProjectClickListener(GalleryProjectClickListener
+                                                  GalleryProjectClickListener) {
+    clickListener = GalleryProjectClickListener;
   }
 
   @Override
   public RetrieveProjectListItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
     View rowView = LayoutInflater.from(viewGroup.getContext())
-        .inflate(R.layout.retrieve_project_view_holder, viewGroup, false);
+        .inflate(R.layout.gallery_project_view_holder, viewGroup, false);
     this.context = viewGroup.getContext();
     return new RetrieveProjectListItemViewHolder(rowView, projectList);
   }
@@ -98,13 +98,13 @@ public class RetrieveProjectListAdapter extends
 
   class RetrieveProjectListItemViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.retrieve_project_date)
+    @Bind(R.id.project_date)
     TextView dateProject;
-    @Bind(R.id.retrieve_project_duration)
+    @Bind(R.id.project_duration)
     TextView durationProject;
-    @Bind(R.id.retrieve_project_image)
+    @Bind(R.id.project_image)
     ImageView imagenProject;
-    @Bind(R.id.retrieve_project_title)
+    @Bind(R.id.project_title)
     TextView titleProject;
 
 
@@ -122,31 +122,31 @@ public class RetrieveProjectListAdapter extends
       clickListener.onClick(project);
     }
 
-    @OnClick(R.id.retrieve_project_button_duplicate)
+    @OnClick(R.id.project_button_duplicate)
     public void onClickDuplicateProject() {
       int position = getAdapterPosition();
       notifyItemChanged(position);
       clickListener.onDuplicateProject(projectList.get(position));
     }
 
-    @OnClick(R.id.retrieve_project_button_delete)
+    @OnClick(R.id.project_button_delete)
     public void onClickDeleteProject() {
       int position = getAdapterPosition();
       notifyItemChanged(position);
       clickListener.onDeleteProject(projectList.get(position));
     }
 
-    @OnClick(R.id.retrieve_project_button_edit)
+    @OnClick(R.id.project_button_edit)
     public void onClickGoToProjectDetail() {
-      clickListener.goToDetailActivity();
+      clickListener.goToDetailActivity(projectList.get(getAdapterPosition()));
     }
 
-    @OnClick(R.id.retrieve_project_image)
+    @OnClick(R.id.project_image)
     public void onClickGoToEdit() {
       clickListener.goToEditActivity(projectList.get(getAdapterPosition()));
     }
 
-    @OnClick(R.id.retrieve_project_button_share)
+    @OnClick(R.id.project_button_share)
     public void onClickGoToShare() {
       clickListener.goToShareActivity(projectList.get(getAdapterPosition()));
     }

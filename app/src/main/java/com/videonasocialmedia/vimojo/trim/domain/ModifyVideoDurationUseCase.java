@@ -28,7 +28,6 @@ public class ModifyVideoDurationUseCase {
   private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator, mediaTranscoder);
   protected VideoRepository videoRepository = new VideoRealmRepository();
-  private ProjectRepository projectRepository = new ProjectRealmRepository();
 
   /**
    * Main method for video trimming use case.
@@ -44,9 +43,8 @@ public class ModifyVideoDurationUseCase {
       videoToEdit.setStartTime(startTimeMs);
       videoToEdit.setStopTime(finishTimeMs);
       videoToEdit.setTempPathFinished(false);
-      // TODO:(alvaro.martinez) 22/11/16 use project tmp path
-      Project project = Project.getInstance(null,null,null); //projectRepository.getCurrentProject();
-      videoToEdit.setTempPath(project.getProjectPath() + Constants.FOLDER_INTERMEDIATE_FILES);
+      Project project = Project.getInstance(null,null,null);
+      videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
       videoToEdit.setTrimmedVideo(true);
 
       if (videoToEdit.hasText()) {

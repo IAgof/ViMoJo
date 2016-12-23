@@ -196,17 +196,18 @@
             android:parentActivityName=".presentation.views.activity.EditActivity"/>
 
         <activity
-            android:name=".retrieveProjects.presentation.views.activity.RetrieveProjectListActivity"
+            android:name=".galleryprojects.presentation.views.activity.GalleryProjectListActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".presentation.views.activity.EditActivity"/>
 
         <activity
-            android:name=".retrieveProjects.presentation.views.activity.DetailProjectActivity"
+            android:name=".galleryprojects.presentation.views.activity.DetailProjectActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
-            android:parentActivityName=".retrieveProjects.presentation.views.activity.RetrieveProjectListActivity"/>
+            android:parentActivityName=".galleryprojects.presentation.views.activity.GalleryProjectListActivity"/>
 
         <activity
             android:name=".sound.presentation.views.activity.SoundActivity"

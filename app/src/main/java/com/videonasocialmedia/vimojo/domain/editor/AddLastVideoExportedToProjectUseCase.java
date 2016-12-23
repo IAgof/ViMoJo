@@ -13,18 +13,13 @@ import com.videonasocialmedia.vimojo.utils.DateUtils;
 public class AddLastVideoExportedToProjectUseCase {
 
   private ProjectRepository projectRepository = new ProjectRealmRepository();
-  private Project currentProject = Project.getInstance(null,null,null); //projectRepository.getCurrentProject();
+  private Project currentProject = Project.getInstance(null,null,null);
 
-  /*public AddLastVideoExportedToProjectUseCase(Project currentProject) {
-    this.currentProject = currentProject;
-  }*/
-
-  public void addLastVideoExportedToProject(String pathVideoExported){
+  public void addLastVideoExportedToProject(String pathVideoExported, String date){
     //// TODO:(alvaro.martinez) 19/12/16 Move this functionality to VMComposition
-    LastVideoExported lastVideoExported = new LastVideoExported(pathVideoExported,
-        DateUtils.getDateRightNow());
+    LastVideoExported lastVideoExported = new LastVideoExported(pathVideoExported, date);
     currentProject.setLastVideoExported(lastVideoExported);
-    projectRepository.update(currentProject);
+    projectRepository.updateWithDate(currentProject, date);
 
   }
 

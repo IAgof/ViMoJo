@@ -1,11 +1,11 @@
-package com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.presenters;
+package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.domain.project.UpdateTitleProjectUseCase;
+import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateTitleProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.views.DetailProjectView;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
 
 /**
  * Created by alvaro on 19/12/16.
@@ -14,15 +14,13 @@ import com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.views.Det
 public class DetailProjectPresenter {
 
   private DetailProjectView detailProjectView;
-  private ProjectRepository projectRepository;
   private Project currentProject;
-  private UpdateTitleProjectUseCase updateTitleProjectUseCase;
+  protected UpdateTitleProjectUseCase updateTitleProjectUseCase;
 
   public DetailProjectPresenter(DetailProjectView detailProjectView){
     this.detailProjectView = detailProjectView;
-    projectRepository = new ProjectRealmRepository();
-    currentProject = projectRepository.getCurrentProject();
     updateTitleProjectUseCase = new UpdateTitleProjectUseCase();
+    currentProject = Project.getInstance(null,null,null);
   }
 
   public void init(){

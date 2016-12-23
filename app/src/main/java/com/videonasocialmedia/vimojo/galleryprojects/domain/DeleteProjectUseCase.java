@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.domain.project;
+package com.videonasocialmedia.vimojo.galleryprojects.domain;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;

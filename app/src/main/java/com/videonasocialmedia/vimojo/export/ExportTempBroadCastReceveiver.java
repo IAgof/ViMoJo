@@ -50,10 +50,9 @@ public class ExportTempBroadCastReceveiver extends BroadcastReceiver {
             Intent trimServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
             trimServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoId);
             trimServiceIntent.putExtra(IntentConstants.RELAUNCH_EXPORT_TEMP, true);
-            // TODO:(alvaro.martinez) 22/11/16 use project tmp path
             Project project = projectRepository.getCurrentProject();
             trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY,
-                project.getProjectPath() + Constants.FOLDER_INTERMEDIATE_FILES);
+                project.getProjectPathIntermediateFiles());
             appContext.startService(trimServiceIntent);
         } else {
             // TODO:(alvaro.martinez) 28/09/16 Define user experience

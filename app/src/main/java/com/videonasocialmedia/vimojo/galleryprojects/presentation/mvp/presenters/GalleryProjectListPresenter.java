@@ -1,19 +1,20 @@
-package com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.presenters;
+package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters;
 
 import android.content.SharedPreferences;
 
-import com.videonasocialmedia.vimojo.domain.project.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.project.DeleteProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.project.DuplicateProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.project.UpdateCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
+import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
+import com.videonasocialmedia.vimojo.galleryprojects.domain.DuplicateProjectUseCase;
+import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
-import com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.views.RetrieveProjectListView;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
@@ -21,10 +22,10 @@ import java.util.List;
 /**
  * Created by ruth on 13/09/16.
  */
-public class RetrieveProjectListPresenter implements OnProjectExportedListener {
+public class GalleryProjectListPresenter implements OnProjectExportedListener {
 
-  private List<Project> availableProjects;
-  private RetrieveProjectListView retrieveProjectListView;
+  private ProjectRepository projectRealmRepository;
+  private GalleryProjectListView galleryProjectListView;
   private UpdateCurrentProjectUseCase updateCurrentProjectUseCase;
   private ProfileSharedPreferencesRepository profileRepository;
   private SharedPreferences sharedPreferences;
@@ -34,27 +35,24 @@ public class RetrieveProjectListPresenter implements OnProjectExportedListener {
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCaseUseCase;
 
-  public RetrieveProjectListPresenter(RetrieveProjectListView retrieveProjectListView,
-                                      SharedPreferences sharedPreferences) {
-    this.retrieveProjectListView = retrieveProjectListView;
+  public GalleryProjectListPresenter(GalleryProjectListView galleryProjectListView,
+                                     SharedPreferences sharedPreferences) {
+    this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
-    availableProjects = loadListProjects();
     updateCurrentProjectUseCase = new UpdateCurrentProjectUseCase();
     duplicateProjectUseCase = new DuplicateProjectUseCase();
     deleteProjectUseCase = new DeleteProjectUseCase();
     createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
     checkIfProjectHasBeenExportedUseCaseUseCase = new CheckIfProjectHasBeenExportedUseCase();
+    projectRealmRepository = new ProjectRealmRepository();
+  }
 
+  public void init() {
+    updateProjectList();
   }
 
   public List<Project> loadListProjects() {
-    ProjectRealmRepository projectRealmRepository = new ProjectRealmRepository();
     return projectRealmRepository.getListProjects();
-  }
-
-  public void getAvailableProjects() {
-    if (availableProjects != null)
-      retrieveProjectListView.showProjectList(availableProjects);
   }
 
   public void duplicateProject(Project project) {
@@ -68,9 +66,9 @@ public class RetrieveProjectListPresenter implements OnProjectExportedListener {
   public void updateProjectList() {
     List<Project> projectList = loadListProjects();
     if (projectList != null && projectList.size() > 0) {
-      retrieveProjectListView.showProjectList(projectList);
+      galleryProjectListView.showProjectList(projectList);
     } else {
-      createDefaultProject();
+      galleryProjectListView.createDefaultProject();
     }
   }
 
@@ -79,26 +77,26 @@ public class RetrieveProjectListPresenter implements OnProjectExportedListener {
         VimojoApplication.getAppContext());
     createDefaultProjectUseCase.createProject(Constants.PATH_APP,
         profileRepository.getCurrentProfile());
-    updateProjectList();
   }
 
   public void updateCurrentProject(Project project) {
-    updateCurrentProjectUseCase.updateLastModifactionProject(project);
+    updateCurrentProjectUseCase.updateLastModificationAndProjectInstance(project);
   }
 
   public void checkNavigationToShare(Project project) {
-    updateCurrentProjectUseCase.updateLastModifactionProject(project);
+    updateCurrentProjectUseCase.updateLastModificationAndProjectInstance(project);
+    // if video to export has been exported before and is exactly the same, use it.
     checkIfProjectHasBeenExportedUseCaseUseCase.compareDate(project, this);
   }
 
   @Override
   public void videoExported(String videoPath) {
-    retrieveProjectListView.navigateTo(ShareActivity.class, videoPath);
+    galleryProjectListView.navigateTo(ShareActivity.class, videoPath);
   }
 
   @Override
   public void exportNewVideo() {
     //// TODO:(alvaro.martinez) 20/12/16 Launch export process. Provisional, go to editActivity.
-    retrieveProjectListView.navigateTo(EditActivity.class);
+    galleryProjectListView.navigateTo(EditActivity.class);
   }
 }

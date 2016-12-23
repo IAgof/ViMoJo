@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.retrieveProjects.presentation.views.activity;
+package com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -16,8 +16,8 @@ import com.bumptech.glide.Glide;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.presenters.DetailProjectPresenter;
-import com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.views.DetailProjectView;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.DetailProjectPresenter;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import butterknife.Bind;

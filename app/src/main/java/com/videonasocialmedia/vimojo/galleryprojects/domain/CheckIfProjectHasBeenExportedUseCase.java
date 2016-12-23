@@ -1,7 +1,7 @@
-package com.videonasocialmedia.vimojo.domain.project;
+package com.videonasocialmedia.vimojo.galleryprojects.domain;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.presenters.OnProjectExportedListener;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.OnProjectExportedListener;
 
 /**
  * Created by alvaro on 20/12/16.

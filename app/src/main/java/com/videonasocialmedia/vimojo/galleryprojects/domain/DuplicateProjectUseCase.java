@@ -1,14 +1,15 @@
-package com.videonasocialmedia.vimojo.domain.project;
+package com.videonasocialmedia.vimojo.galleryprojects.domain;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.utils.DateUtils;
+import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 
 /**
  * Created by alvaro on 14/12/16.
@@ -16,12 +17,12 @@ import java.util.UUID;
 
 public class DuplicateProjectUseCase {
 
-  private ProjectRealmRepository projectRealmRepository = new ProjectRealmRepository();
+  private ProjectRepository projectRepository = new ProjectRealmRepository();
 
   public void duplicate(Project project) {
     String origPath = project.getProjectPath();
     Project newProject = new Project(project);
-    projectRealmRepository.createProject(newProject);
+    projectRepository.update(newProject);
     copyFilesToNewProject(origPath, newProject.getProjectPath());
   }
 

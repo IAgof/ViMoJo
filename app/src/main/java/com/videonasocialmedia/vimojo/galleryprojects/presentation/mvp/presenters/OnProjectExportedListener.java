@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.retrieveProjects.presentation.mvp.presenters;
+package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters;
 
 /**
  * Created by alvaro on 20/12/16.

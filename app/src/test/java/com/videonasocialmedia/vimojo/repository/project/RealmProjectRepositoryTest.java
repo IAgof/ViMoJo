@@ -1,28 +1,18 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
-import android.content.Context;
-
-import com.videonasocialmedia.videonamediaframework.model.media.Profile;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmQuery;
-import io.realm.RealmResults;
 import io.realm.internal.log.RealmLog;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -38,14 +28,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Realm.class, RealmLog.class, RealmQuery.class})
 public class RealmProjectRepositoryTest {
-
   private Realm mockedRealm;
-  private RealmResults<RealmProject> mockedAllRealmProjects;
-
-  @Mock
-  private Context mockedContext;
-  private RealmConfiguration defaultConfig;
-
 
   @Before
   public void injectDoubles() {
@@ -54,12 +37,13 @@ public class RealmProjectRepositoryTest {
 
   @Before
   public void setup() {
-
     mockStatic(RealmLog.class);
     mockStatic(Realm.class);
 
     Realm mockRealm = PowerMockito.mock(Realm.class);
+
     when(Realm.getDefaultInstance()).thenReturn(mockRealm);
+
     this.mockedRealm = mockRealm;
   }
 
@@ -69,13 +53,13 @@ public class RealmProjectRepositoryTest {
   }
 
 
+  // TODO:(alvaro.martinez) 22/12/16 Study how to test getCurrentProject, now Query depends of date
   @Ignore
   @Test
   public void testGetCurrentProjectReturnsLastSavedProject() {
     ProjectRealmRepository repo = new ProjectRealmRepository();
     RealmQuery<RealmProject> mockedRealmQuery = PowerMockito.mock(RealmQuery.class);
     when(mockedRealm.where(RealmProject.class)).thenReturn(mockedRealmQuery);
-
 
     Project project = repo.getCurrentProject();
 
@@ -88,14 +72,6 @@ public class RealmProjectRepositoryTest {
 
     assertThat(repo.toRealmProjectMapper, is(notNullValue()));
     assertThat(repo.toProjectMapper, is(notNullValue()));
-  }
-
-
-  private Project createProject(){
-      Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
-          VideoFrameRate.FrameRate.FPS25);
-    Project project = new Project("Project title", "root/path", profile);
-    return project;
   }
 
   // TODO(jliarte): 21/10/16 dont know how to test this yet

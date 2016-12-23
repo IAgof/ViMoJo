@@ -52,6 +52,8 @@
     <string name="videos_removed">Videos borrados del proyecto, grabe o añada nuevos videos</string>
     <string name="error">error</string>
     <string name="editTextActionLabel">Hecho</string>
+    <string name="titleVideosNotFound">Videos no encontrados en el teléfono</string>
+    <string name="messageVideosNotFound">Algunos vídeos no serán cargados en el proyecto</string>
 
     <!--VideoEditText activity-->
     <string name="error_videoEdit">El número máximo de líneas a dibujar son dos</string>

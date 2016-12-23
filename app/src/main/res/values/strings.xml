@@ -55,6 +55,8 @@
     <string name="videos_removed">Clear videos from project, record or add new videos</string>
     <string name="error">error</string>
     <string name="editTextActionLabel">Done</string>
+    <string name="titleVideosNotFound">Videos not found in device</string>
+    <string name="messageVideosNotFound">Some videos will not be loaded into project</string>
 
     <!--VideoEditText activity-->
     <string name="error_videoEdit">The maximum number of lines to draw is two</string>
