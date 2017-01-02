@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,9 +20,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -41,12 +38,13 @@ import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActi
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
-import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -55,8 +53,11 @@ import butterknife.OnClick;
 /**
  * Created by root on 31/05/16.
  */
-public class ShareActivity extends VimojoActivity implements ShareVideoView, VideonaPlayer.VideonaPlayerListener,
-        OnOptionsToShareListClickListener {
+public class ShareActivity extends VimojoActivity implements ShareVideoView,
+        VideonaPlayer.VideonaPlayerListener, OnOptionsToShareListClickListener {
+    @Inject ShareVideoPresenter presenter;
+    @Inject SharedPreferences sharedPreferences;
+
     @Nullable
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
@@ -80,13 +81,8 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
     ToolbarNavigator navigator;
 
     private String videoPath;
-    private ShareVideoPresenter presenter;
     private OptionsToShareAdapter optionsShareAdapter;
     private int currentPosition;
-    private AlertDialog alertDialog, alertDialogClearProject ;
-
-    private SharedPreferences sharedPreferences;
-    protected UserEventTracker userEventTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,10 +96,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        this.userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-        sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
-                Context.MODE_PRIVATE);
-        presenter = new ShareVideoPresenter(this, userEventTracker, sharedPreferences, this);
+        getActivityPresentersComponent().inject(this);
 
         presenter.onCreate();
         videoPath = getIntent().getStringExtra(Constants.VIDEO_TO_SHARE_PATH);
@@ -147,11 +140,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
 
 
     public void showPreview() {
-
-        List<Video> shareVideoList = new ArrayList<Video>();
-        Video videoShare = new Video(videoPath);
-        shareVideoList.add(videoShare);
-
+        List<Video> shareVideoList = Collections.singletonList(new Video(videoPath));
         videonaPlayer.initPreviewLists(shareVideoList);
         videonaPlayer.initPreview(currentPosition);
     }
@@ -184,7 +173,6 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-
         switch (item.getItemId()) {
             case R.id.action_settings_edit_options:
                 navigateTo(SettingsActivity.class);
@@ -195,7 +183,6 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
             default:
 
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -203,6 +190,7 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         Intent intent = new Intent(getApplicationContext(), cls);
         startActivity(intent);
     }
+
     @Nullable
     @OnClick(R.id.fab_share_room)
     public void showMoreNetworks() {
@@ -214,7 +202,6 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         startActivity(Intent.createChooser(intent, getString(R.string.share_using)));
     }
-
 
     private void updateNumTotalVideosShared() {
         presenter.updateNumTotalVideosShared();
@@ -230,17 +217,14 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
 
     @Override
     public void hideShareNetworks() {
-
     }
 
     @Override
     public void showMoreNetworks(List<SocialNetwork> networks) {
-
     }
 
     @Override
     public void hideExtraNetworks() {
-
     }
 
     @Override
@@ -260,10 +244,8 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
     }
 
     private void createDialogToInsertNameProject(final FtpNetwork ftpSelected) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
-        editTextDialog=(EditText)dialogView.findViewById(R.id.text_dialog);
+        editTextDialog = (EditText) dialogView.findViewById(R.id.text_dialog);
         editTextDialog.requestFocus();
         editTextDialog.setHint(R.string.text_hint_dialog_shareActivity);
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -281,7 +263,8 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
             }
         };
 
-        alertDialog = builder.setCancelable(false)
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
+        AlertDialog alertDialog = builder.setCancelable(false)
                 .setTitle(R.string.title_dialog_sharedActivity)
                 .setView(dialogView)
                 .setPositiveButton(R.string.positiveButtonDialogShareActivity, dialogClickListener)
@@ -303,16 +286,17 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         startService(intent);
     }
 
-
     public void showMessage(final int stringToast) {
         Snackbar snackbar = Snackbar.make(coordinatorLayout, stringToast, Snackbar.LENGTH_LONG);
         snackbar.show();
     }
+
     @Nullable
     @OnClick (R.id.button_music_navigator)
     public void onMusicNavigatorClickListener(){
         showDialogClearProject(R.id.button_music_navigator);
     }
+
     @Nullable
     @OnClick (R.id.button_edit_navigator)
     public void onEditNavigatorClickListener(){
@@ -320,16 +304,15 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
     }
 
     private void showDialogClearProject(final int resourceButtonId){
-
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        presenter.resetProject(sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH, ""));
+                        presenter.resetProject(sharedPreferences
+                                .getString(ConfigPreferences.PRIVATE_PATH, ""));
                         navigator.navigateTo(EditActivity.class);
                         break;
-
                     case DialogInterface.BUTTON_NEGATIVE:
                         if(resourceButtonId == R.id.button_music_navigator)
                             navigateTo(SoundActivity.class);
@@ -343,15 +326,13 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaAlertDialog);
-
-         alertDialogClearProject = builder.setCancelable(false)
-                 .setMessage(R.string.dialog_message_clean_project)
-                 .setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
-                 .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
+        AlertDialog alertDialogClearProject = builder.setCancelable(false)
+                .setMessage(R.string.dialog_message_clean_project)
+                .setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
+                .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
     }
 
     @Override
     public void newClipPlayed(int currentClipIndex) {
-
     }
 }

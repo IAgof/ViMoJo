@@ -1,9 +1,9 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
-import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import javax.inject.Singleton;
 
@@ -18,5 +18,10 @@ public class DataRepositoriesModule {
   @Provides @Singleton
   ProjectRepository provideDefaultProjectRepository() {
     return new ProjectRealmRepository();
+  }
+
+  @Provides @Singleton
+  VideoRepository provideDefaultVideoRepository() {
+    return new VideoRealmRepository();
   }
 }

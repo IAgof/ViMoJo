@@ -16,28 +16,16 @@ import java.util.List;
  * @author Juan Javier Cabanas Abascal
  */
 public interface EditorView {
-
     void goToShare(String videoToSharePath);
-
     void showProgressDialog();
-
     void hideProgressDialog();
-
     void showError(int causeTextResource);
-
     void showMessage(int stringToast);
-
     void bindVideoList(List<Video> movieList);
-
     void setMusic(Music music);
-
     void updateProject();
-
     void enableEditActions();
-
     void disableEditActions();
-
     void expandFabMenu();
-
     void resetPreview();
 }

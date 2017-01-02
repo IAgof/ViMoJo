@@ -7,32 +7,35 @@
 
 package com.videonasocialmedia.vimojo.export.domain;
 
-import com.videonasocialmedia.videonamediaframework.model.Constants;
-import com.videonasocialmedia.videonamediaframework.pipeline.Exporter;
-import com.videonasocialmedia.videonamediaframework.pipeline.ExporterImpl;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
+import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSessionImpl;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.NoSuchElementException;
 
-
-public class ExportProjectUseCase implements Exporter.OnExportEndedListener {
-
+public class ExportProjectUseCase implements VMCompositionExportSession.OnExportEndedListener {
   private OnExportFinishedListener onExportFinishedListener;
-  private Exporter exporter;
+  private VMCompositionExportSession VMCompositionExportSession;
   private Project project;
 
   /**
-   * Project exporter use case.
+   * Project VMCompositionExportSession use case.
    *
    * @param onExportFinishedListener listener for the use case to send callbacks
    */
   public ExportProjectUseCase(OnExportFinishedListener onExportFinishedListener) {
     this.onExportFinishedListener = onExportFinishedListener;
     project = Project.getInstance(null, null, null);
-    exporter = new ExporterImpl(com.videonasocialmedia.vimojo.utils.Constants.PATH_APP, project.getVMComposition(),
-        project.getProfile(), this);
+    // TODO(jliarte): 2/01/17 this has to be project path
+    String tempFilesDirectory = Constants.PATH_APP_TEMP;
+    String outputFilesDirectory = Constants.PATH_APP;
+    VMCompositionExportSession = new VMCompositionExportSessionImpl(
+            project.getVMComposition(), project.getProfile(),
+            outputFilesDirectory, tempFilesDirectory, this);
   }
 
   /**
@@ -40,20 +43,24 @@ public class ExportProjectUseCase implements Exporter.OnExportEndedListener {
    */
   public void export() {
     try {
-      exporter.export();
+      VMCompositionExportSession.export();
     } catch (NoSuchElementException exception) {
       onExportError(String.valueOf(exception));
     }
   }
 
   @Override
-  public void onExportError(String error) {
-    onExportFinishedListener.onExportError(error);
+  public void onExportSuccess(Video video) {
+    onExportFinishedListener.onExportSuccess(video);
   }
 
   @Override
-  public void onExportSuccess(Video video) {
-    onExportFinishedListener.onExportSuccess(video);
+  public void onExportProgress(String progressMsg) {
+    // TODO(jliarte): 23/12/16 process progress messages
+  }
 
+  @Override
+  public void onExportError(String error) {
+    onExportFinishedListener.onExportError(error);
   }
 }

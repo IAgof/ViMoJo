@@ -2,18 +2,25 @@ package com.videonasocialmedia.vimojo.domain;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
+
+import javax.inject.Inject;
 
 /**
  * Created by jliarte on 23/10/16.
  */
 public class CreateDefaultProjectUseCase {
-  protected ProjectRepository projectRepository = new ProjectRealmRepository();
+  protected ProjectRepository projectRepository;
+
+  /**
+   * Default constructor with project repository argument.
+   *
+   * @param projectRepository the project repository.
+   */
+  @Inject public CreateDefaultProjectUseCase(ProjectRepository projectRepository) {
+    this.projectRepository = projectRepository;
+  }
 
   public void loadOrCreateProject(String rootPath, Profile profile) {
     // TODO(jliarte): 22/10/16 we should store current project in other place than Project instance.

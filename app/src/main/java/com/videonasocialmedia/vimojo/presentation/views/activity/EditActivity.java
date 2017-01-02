@@ -31,9 +31,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -52,9 +50,10 @@ import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSpli
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -68,6 +67,9 @@ public class EditActivity extends VimojoActivity implements EditorView,
     private static final String CURRENT_TIME_POSITION = "current_time_position";
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;
     private final int NUM_COLUMNS_GRID_TIMELINE_VERTICAL = 4;
+
+    @Inject EditPresenter editPresenter;
+
     @Bind(R.id.button_edit_duplicate)
     ImageButton editDuplicateButton;
     @Bind(R.id.button_edit_trim)
@@ -87,7 +89,6 @@ public class EditActivity extends VimojoActivity implements EditorView,
     private List<Video> videoList;
     private int currentVideoIndex = 0;
     private int currentProjectTimePosition = 0;
-    private EditPresenter editPresenter;
     private VideoTimeLineAdapter timeLineAdapter;
     private AlertDialog progressDialog;
     private int selectedVideoRemovePosition;
@@ -126,8 +127,9 @@ public class EditActivity extends VimojoActivity implements EditorView,
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-        editPresenter = new EditPresenter(this, navigator.getCallback(), userEventTracker);
+        getActivityPresentersComponent().inject(this);
+//        UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
+//        editPresenter = new EditPresenter(this, getNavigatorCallback(), userEventTracker);
 
         videonaPlayer.setListener(this);
 
@@ -137,6 +139,10 @@ public class EditActivity extends VimojoActivity implements EditorView,
             currentProjectTimePosition = savedInstanceState.getInt(CURRENT_TIME_POSITION, 0);
         }
 
+    }
+
+    public ToolbarNavigator.ProjectModifiedCallBack getNavigatorCallback() {
+        return navigator.getCallback();
     }
 
     @Override
@@ -416,7 +422,6 @@ public class EditActivity extends VimojoActivity implements EditorView,
     @Override
     public void setMusic(Music music) {
         videonaPlayer.setMusic(music);
-        videonaPlayer.setVolumen(1f);
     }
 
     @Override

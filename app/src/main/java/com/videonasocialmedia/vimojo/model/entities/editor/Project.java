@@ -48,7 +48,6 @@ public class Project {
      */
     private String projectPath;
 
-
   private VMComposition vmComposition;
 
 
@@ -211,4 +210,5 @@ public class Project {
     public void setMusicTitleIdentifier(String musicTitleIdentifier) {
         this.musicTitleIdentifier = musicTitleIdentifier;
     }
+
 }

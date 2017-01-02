@@ -26,16 +26,17 @@ import com.videonasocialmedia.vimojo.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by jca on 11/12/15.
  */
 public class ShareVideoPresenter {
-
     private final Context context;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetFtpListUseCase getFtpListUseCase;
     private ClearProjectUseCase clearProjectUseCase;
-    protected CreateDefaultProjectUseCase createDefaultProjectUseCase;
+    private CreateDefaultProjectUseCase createDefaultProjectUseCase;
     private ShareVideoView shareVideoView;
     protected Project currentProject;
     protected UserEventTracker userEventTracker;
@@ -46,13 +47,19 @@ public class ShareVideoPresenter {
     private SharedPreferences.Editor preferencesEditor;
     private ProfileRepository profileRepository;
 
+    @Inject
     public ShareVideoPresenter(ShareVideoView shareVideoView, UserEventTracker userEventTracker,
-                               SharedPreferences sharedPreferences, Context context) {
+                               SharedPreferences sharedPreferences, Context context,
+                               ClearProjectUseCase clearProjectUseCase,
+                               CreateDefaultProjectUseCase createDefaultProjectUseCase) {
         this.shareVideoView = shareVideoView;
         this.userEventTracker = userEventTracker;
         this.sharedPreferences = sharedPreferences;
-        currentProject = loadCurrentProject();
         this.context = context;
+        this.clearProjectUseCase = clearProjectUseCase;
+        this.createDefaultProjectUseCase = createDefaultProjectUseCase;
+
+        currentProject = loadCurrentProject();
     }
 
     private Project loadCurrentProject() {
@@ -62,8 +69,6 @@ public class ShareVideoPresenter {
     public void onCreate() {
         obtainNetworksToShareUseCase = new ObtainNetworksToShareUseCase();
         getFtpListUseCase = new GetFtpListUseCase();
-        clearProjectUseCase = new ClearProjectUseCase();
-        createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
     }
 
     public void onResume() {
@@ -81,7 +86,8 @@ public class ShareVideoPresenter {
        socialNetworkList = obtainNetworksToShareUseCase.obtainMainNetworks();
     }
 
-    private void obtainListOptionsToShare(List<FtpNetwork> ftpList, List<SocialNetwork> socialNetworkList) {
+    private void obtainListOptionsToShare(List<FtpNetwork> ftpList,
+                                          List<SocialNetwork> socialNetworkList) {
         optionToShareList = new ArrayList();
         optionToShareList.addAll(ftpList);
         optionToShareList.addAll(socialNetworkList);
@@ -106,6 +112,7 @@ public class ShareVideoPresenter {
         ctx.startActivity(intent);
     }
 
+    // TODO(jliarte): 15/12/16 safe delete this method - old way to show networks?
     public void obtainExtraAppsToShare() {
         List networks = obtainNetworksToShareUseCase.obtainSecondaryNetworks();
         shareVideoView.hideShareNetworks();
@@ -129,19 +136,20 @@ public class ShareVideoPresenter {
     }
 
     public void trackVideoShared(String socialNetwork) {
-
         userEventTracker.trackVideoSharedSuperProperties();
         userEventTracker.trackVideoShared(socialNetwork, currentProject, getNumTotalVideosShared());
         userEventTracker.trackVideoSharedUserTraits();
     }
+
     public void resetProject(String rootPath) {
         clearProjectDataFromSharedPreferences();
         clearProjectUseCase.clearProject(currentProject);
         profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, context);
-        createDefaultProjectUseCase.loadOrCreateProject(rootPath, profileRepository.getCurrentProfile());
+        createDefaultProjectUseCase.loadOrCreateProject(rootPath,
+                profileRepository.getCurrentProfile());
     }
 
-    // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer?
+    // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?
     private void clearProjectDataFromSharedPreferences() {
         sharedPreferences = VimojoApplication.getAppContext().getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,

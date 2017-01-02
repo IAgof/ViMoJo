@@ -13,7 +13,6 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.media.MediaMetadataRetriever;
 
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -24,14 +23,15 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * This class is used for adding new videos to the project.
  */
 public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         OnRemoveMediaFinishedListener, OnExportFinishedListener {
     
-    RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
-    AddVideoToProjectUseCase addVideoToProjectUseCase;
+    private AddVideoToProjectUseCase addVideoToProjectUseCase;
     GalleryPagerView galleryPagerView;
     protected Project currentProject;
     ArrayList<Integer> listErrorVideoIds = new ArrayList<>();
@@ -40,10 +40,11 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     /**
      * Constructor.
      */
-    public GalleryPagerPresenter(GalleryPagerView galleryPagerView) {
+    @Inject public GalleryPagerPresenter(GalleryPagerView galleryPagerView,
+                                 AddVideoToProjectUseCase addVideoToProjectUseCase) {
         this.galleryPagerView = galleryPagerView;
-        removeVideoFromProjectUseCase = new RemoveVideoFromProjectUseCase();
-        addVideoToProjectUseCase = new AddVideoToProjectUseCase();
+        this.addVideoToProjectUseCase = addVideoToProjectUseCase;
+
         this.currentProject = loadCurrentProject();
     }
 
@@ -63,7 +64,6 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     }
 
     public void loadVideoListToProject(List<Video> videoList) {
-
         List<Video> checkedVideoList = checkFormatVideoSelected(videoList);
 
         if(listErrorVideoIds.size() > 0){
@@ -73,12 +73,9 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         addVideoToProjectUseCase.addVideoListToTrack(checkedVideoList, this);
     }
 
-    public List<Video> checkFormatVideoSelected(List<Video> videoList){
-
+    public List<Video> checkFormatVideoSelected(List<Video> videoList) {
         List<Video> checkedFortmatVideoList = new ArrayList<>();
-
         VideoResolution videoResolution = currentProject.getProfile().getVideoResolution();
-
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         for (int index = 0; index < videoList.size(); index++) {
             Video video = videoList.get(index);
@@ -97,20 +94,16 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
                 } else {
                     checkedFortmatVideoList.add(video);
                 }
-
             } catch (Exception e) {
                 video.setDuration(0);
                 e.printStackTrace();
             }
         }
-
         return checkedFortmatVideoList;
     }
 
-
     @Override
     public void onRemoveMediaItemFromTrackError() {
-
     }
 
     @Override
@@ -119,7 +112,6 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
 
     @Override
     public void onAddMediaItemToTrackError() {
-
     }
 
     /*
@@ -144,7 +136,6 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
 
     @Override
     public void onExportError(String error) {
-
     }
 
     @Override
