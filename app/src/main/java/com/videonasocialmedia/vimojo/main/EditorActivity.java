@@ -21,6 +21,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -135,9 +136,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
           public boolean onNavigationItemSelected(MenuItem menuItem) {
 
             switch (menuItem.getItemId()) {
-              case R.id.menu_navview_gallery:
+              case R.id.menu_navview_gallery_projects:
                 drawerLayout.closeDrawers();
-                navigateTo(GalleryActivity.class);
+                navigateTo(GalleryProjectListActivity.class);
                 return false;
               case R.id.menu_navview_delete_clip:
                 createDialog(R.id.menu_navview_delete_clip);

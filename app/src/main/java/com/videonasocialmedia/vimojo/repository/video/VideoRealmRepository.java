@@ -108,4 +108,5 @@ public class VideoRealmRepository implements VideoRepository {
   public List<Video> query(Specification specification) {
     return null;
   }
+
 }

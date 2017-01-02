@@ -22,8 +22,8 @@ public class DuplicateProjectUseCase {
   public void duplicate(Project project) {
     String origPath = project.getProjectPath();
     Project newProject = new Project(project);
-    projectRepository.update(newProject);
     copyFilesToNewProject(origPath, newProject.getProjectPath());
+    projectRepository.update(newProject);
   }
 
   private void copyFilesToNewProject(String projectPath, String newProjectPath) {

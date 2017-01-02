@@ -65,7 +65,7 @@ android {
             applicationId "com.videonasocialmedia.vimojo"
             versionCode 18 // 20161107
             versionName "0.4.16" // 20161107
-            resValue "string", "app_out_of_date", "2017-01-01"
+            resValue "string", "app_out_of_date", "2017-01-31"
             resValue "string", "app_name", "Vimojo"
             ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
             ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"

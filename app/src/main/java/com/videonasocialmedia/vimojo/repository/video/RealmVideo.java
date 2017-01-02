@@ -2,6 +2,8 @@ package com.videonasocialmedia.vimojo.repository.video;
 
 import com.videonasocialmedia.vimojo.repository.project.RealmProject;
 
+import java.util.UUID;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -44,4 +46,5 @@ public class RealmVideo extends RealmObject {
         this.startTime = startTime;
         this.stopTime = stopTime;
     }
+
 }

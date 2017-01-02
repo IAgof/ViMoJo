@@ -49,7 +49,7 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectUseC
             correct = removeVideoItemFromTrack(media, mediaTrack);
             if (!correct) break;
             //video repository remove media, remove videos from other projects also.
-            //videoRepository.remove((Video) media);
+            videoRepository.remove((Video) media);
         }
         if (correct) {
             projectRepository.update(currentProject);

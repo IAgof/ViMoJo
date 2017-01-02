@@ -10,9 +10,9 @@
             android:icon="@drawable/activity_edit_ic_mail"
             android:title="@string/emailPreference"/>
         <item
-            android:id="@+id/menu_navview_gallery"
-            android:icon="@drawable/common_navigate_gallery"
-            android:title="@string/galleryActivityTitle"/>
+            android:id="@+id/menu_navview_gallery_projects"
+            android:icon="@drawable/activity_gallery_projects_icon"
+            android:title="@string/galleryProjectActivityTitle"/>
     </group>
     <item
         android:id="@+id/navigation_subheader"

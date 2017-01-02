@@ -57,7 +57,7 @@ public class Project {
 
   private String lastModification;
 
-  private String uuid;
+  private String uuid = UUID.randomUUID().toString();
 
   private LastVideoExported lastVideoExported;
 
@@ -89,20 +89,19 @@ public class Project {
         this.profile = profile;
         this.duration = 0;
         this.lastModification = DateUtils.getDateRightNow();
-        this.uuid = UUID.randomUUID().toString();
         this.projectPath = rootPath + "/.projects/" + uuid; //todo probablemente necesitemos un slugify de ese title.
         createProjectFolders();
     }
 
   public Project(Project project) {
-    title = DateUtils.getDateRightNow();
-    vmComposition = project.getVMComposition();
-    profile = project.getProfile();
-    duration = project.getDuration();
-    lastModification = project.getLastModification();
-    uuid = UUID.randomUUID().toString();
-    projectPath = new File(project.getProjectPath()).getParent() + File.separator + uuid;
-    createFolder(projectPath);
+    throw new RuntimeException("not implemented!!");
+//    title = DateUtils.getDateRightNow();
+//    vmComposition = new VMComposition(project.getVMComposition());
+//    profile = new Profile(project.getProfile());
+//    duration = project.getDuration();
+//    lastModification = project.getLastModification();
+//    projectPath = new File(project.getProjectPath()).getParent() + File.separator + uuid;
+//    createFolder(projectPath);
   }
 
 

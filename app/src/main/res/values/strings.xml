@@ -78,6 +78,7 @@
     <string name="dialog_cancel_delete_clip">No</string>
 
     <!-- Gallery projects activity -->
+    <string name="galleryProjectActivityTitle">Projects</string>
     <string name="dialog_project_remove_message">Remove project</string>
     <string name="dialog_project_remove_accept">Yes</string>
     <string name="dialog_project_remove_cancel">No</string>
@@ -1718,5 +1719,6 @@ and Conditions.\n\n
     <string name="bottom_bar_edit">Edit</string>
     <string name="bottom_bar_sound">Sound</string>
     <string name="bottom_bar_share">Share</string>
+
 
 </resources>

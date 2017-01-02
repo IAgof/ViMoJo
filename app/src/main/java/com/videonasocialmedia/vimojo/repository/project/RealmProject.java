@@ -32,8 +32,8 @@ public class RealmProject extends RealmObject {
 
   public RealmProject(String uuid, String title, String lastModification, String projectPath,
                       String quality, String resolution, String frameRate, int duration) {
-    this.title = title;
     this.uuid = uuid;
+    this.title = title;
     this.lastModification = lastModification;
     this.projectPath = projectPath;
     this.quality = quality;

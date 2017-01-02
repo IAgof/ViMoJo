@@ -51,7 +51,8 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
 
   @NonNull
   private Project mapProject(RealmProject realmProject){
-    Project currentProject = new Project(realmProject.title, null, mapProfile(realmProject));
+    Project currentProject = new Project(realmProject.title, realmProject.projectPath,
+        mapProfile(realmProject));
     currentProject.setProjectPath(realmProject.projectPath);
     currentProject.setUuid(realmProject.uuid);
     currentProject.setLastModification(realmProject.lastModification);
@@ -90,7 +91,6 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
           realmProject.pathLastVideoExported,realmProject.dateLastVideoExported);
       project.setLastVideoExported(lastVideoExported);
     }
-
 
   }
 

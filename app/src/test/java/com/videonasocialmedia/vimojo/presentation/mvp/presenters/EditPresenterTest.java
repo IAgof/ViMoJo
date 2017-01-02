@@ -41,7 +41,6 @@ public class EditPresenterTest {
     @Mock private VideonaPlayer mockedVideonaPlayer;
     @Mock private MixpanelAPI mockedMixpanelApi;
     @Mock private UserEventTracker mockedUserEventTracker;
-    @Mock private ToolbarNavigator.ProjectModifiedCallBack mockedProjectModifiedCallback;
     @Mock private SharedPreferences mockedSharedPreferences;
 
     @Before
@@ -84,8 +83,8 @@ public class EditPresenterTest {
     // Seems not needed since we already use @InjectMocks annotation
     @NonNull
     public EditPresenter getEditPresenter() {
-        return new EditPresenter(mockedEditorView, mockedProjectModifiedCallback,
-            mockedUserEventTracker, mockedSharedPreferences);
+        return new EditPresenter(mockedEditActivityView, mockedUserEventTracker,
+            mockedSharedPreferences);
     }
 
     public Project getAProject() {

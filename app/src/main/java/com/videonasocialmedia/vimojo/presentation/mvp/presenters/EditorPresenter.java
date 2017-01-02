@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.ClearProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.project.ClearProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
