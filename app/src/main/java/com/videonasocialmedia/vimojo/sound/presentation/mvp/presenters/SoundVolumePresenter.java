@@ -56,7 +56,10 @@ public class SoundVolumePresenter implements OnVideosRetrieved {
         soundVolumeView.resetPreview();
     }
 
-    public void setVolume(String voiceOverPath, float volume) {
+    public void setVoiceOver(String voiceOverPath, float volume) {
+        // if music has been selected before, delete it
+        removeMusicFromProject();
+
         addVoiceOverToProject.setVoiceOver(currentProject, voiceOverPath, volume);
         soundVolumeView.goToEditActivity();
     }

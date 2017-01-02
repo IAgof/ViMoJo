@@ -36,7 +36,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener,
-        OnVideosRetrieved, OnReorderMediaListener, GetMusicFromProjectCallback {
+        OnVideosRetrieved, OnReorderMediaListener {
     private final String LOG_TAG = getClass().getSimpleName();
     /**
      * UseCases
@@ -59,15 +59,15 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                          ToolbarNavigator.ProjectModifiedCallBack projectModifiedCallBack,
                          UserEventTracker userEventTracker,
                          RemoveVideoFromProjectUseCase remoVideoFromProjectUseCase,
-                         ReorderMediaItemUseCase reorderMediaItemUseCase
-                         ) {
+                         ReorderMediaItemUseCase reorderMediaItemUseCase,
+                         GetMusicFromProjectUseCase getMusicFromProjectUseCase) {
         this.editorView = editorView;
         this.projectModifiedCallBack = projectModifiedCallBack;
         this.remoVideoFromProjectUseCase = remoVideoFromProjectUseCase;
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
+        this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
 
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
         this.userEventTracker = userEventTracker;
         this.currentProject = loadCurrentProject();
     }
@@ -118,7 +118,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         this.videoList = videoList;
         List<Video> videoCopy = new ArrayList<>(videoList);
         editorView.enableEditActions();
-        //videonaPlayerView.bindVideoList(videoList);
         editorView.bindVideoList(videoCopy);
         projectModifiedCallBack.onProjectModified();
     }
@@ -163,16 +162,13 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     public void loadProject() {
         obtainVideos();
-        if (currentProject.hasMusic()) {
-            getMusicFromProjectUseCase.getMusicFromProject(this);
+        if (currentProject.getVMComposition().hasMusic()) {
+            getMusicFromProjectUseCase.getMusicFromProject(new GetMusicFromProjectCallback() {
+                @Override
+                public void onMusicRetrieved(Music music) {
+                    editorView.setMusic(music);
+                }
+            });
         }
-        if (currentProject.hasVoiceOver()) {
-            editorView.setVoiceOver(currentProject.getVoiceOverPath(), currentProject.getVoiceOverVolume());
-        }
-    }
-
-    @Override
-    public void onMusicRetrieved(Music music) {
-        editorView.setMusic(music);
     }
 }

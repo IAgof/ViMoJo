@@ -3,6 +3,8 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.support.annotation.NonNull;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -16,15 +18,14 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
-import com.videonasocialmedia.vimojo.sound.model.VoiceOver;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class EditPresenterTest {
-  @Mock private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
+  @Mock private GetMusicFromProjectUseCase mockedGetMusicFromProjectUseCase;
   @Mock private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
   @Mock private EditorView mockedEditorView;
   @Mock private VideonaPlayer mockedVideonaPlayer;
@@ -52,6 +53,11 @@ public class EditPresenterTest {
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
+  }
+
+  @After
+  public void clearProjectInstance() {
+    Project.INSTANCE.clear();
   }
 
   @Test
@@ -80,7 +86,7 @@ public class EditPresenterTest {
 
   @Test
   public void trackClipsReorderedIsCalledOnMediaReordered() {
-    Project videonaProject = Project.getInstance("title", "/path", Profile.getInstance(null, null, null));
+    Project videonaProject = getAProject();
 
     injectedEditPresenter.onMediaReordered(null, 2);
 
@@ -88,20 +94,21 @@ public class EditPresenterTest {
   }
 
   @Test
-  public void loadProjectCallsEditorViewSetVoiceOverIfProjectHasVoiceOver() {
+  public void loadProjectCallsEditorViewSetMusicIfProjectHasVoiceOver()
+          throws IllegalItemOnTrack {
     Project project = getAProject();
-    project.setVoiceOver(new VoiceOver("voice/over/path", 0.6f));
+    String musicPath = "voice/over/path";
+    float musicVolume = 0.6f;
+    Music voiceOver = new Music(musicPath, musicVolume);
+    project.getVMComposition().getAudioTracks().get(0).insertItem(voiceOver);
+    GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
+    EditPresenter presenter = new EditPresenter(mockedEditorView, mockedProjectModifiedCallback,
+            mockedUserEventTracker, mockedVideoRemover, mockedMediaItemReorderer,
+            getMusicFromProjectUseCase);
 
-    injectedEditPresenter.loadProject();
+    presenter.loadProject();
 
-    verify(mockedEditorView).setVoiceOver("voice/over/path", 0.6f);
-  }
-
-  // Seems not needed since we already use @InjectMocks annotation
-  @NonNull
-  public EditPresenter getInjectedEditPresenter() {
-    return new EditPresenter(mockedEditorView, mockedProjectModifiedCallback,
-            mockedUserEventTracker, mockedVideoRemover, mockedMediaItemReorderer);
+    verify(mockedEditorView).setMusic(voiceOver);
   }
 
   public Project getAProject() {

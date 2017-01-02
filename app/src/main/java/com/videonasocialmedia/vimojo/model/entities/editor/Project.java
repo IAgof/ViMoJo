@@ -19,7 +19,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
-import com.videonasocialmedia.vimojo.sound.model.VoiceOver;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,8 +47,6 @@ public class Project {
      * The folder where de temp files of the project are stored
      */
     private String projectPath;
-
-    private VoiceOver voiceOver;
 
   private VMComposition vmComposition;
 
@@ -212,28 +209,6 @@ public class Project {
 
     public void setMusicTitleIdentifier(String musicTitleIdentifier) {
         this.musicTitleIdentifier = musicTitleIdentifier;
-    }
-
-    public void setVoiceOver(VoiceOver voiceOver){
-      this.voiceOver = voiceOver;
-    }
-
-    public boolean hasVoiceOver() {
-      return voiceOver != null;
-    }
-
-    public String getVoiceOverPath() {
-      if (voiceOver != null) {
-        return voiceOver.getPath();
-      }
-      return "";
-    }
-
-    public float getVoiceOverVolume() {
-      if (voiceOver != null) {
-        return voiceOver.getVolume();
-      }
-      return 0;
     }
 
 }

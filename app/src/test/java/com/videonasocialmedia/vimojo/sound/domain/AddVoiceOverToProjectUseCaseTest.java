@@ -7,6 +7,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class AddVoiceOverToProjectUseCaseTest {
   @Mock private ProjectRepository mockedProjectRepository;
+  @Mock private AddMusicToProjectUseCase mockedAddMusicToProjectUseCase;
   @InjectMocks AddVoiceOverToProjectUseCase injectedUseCase;
 
   @Before
@@ -32,16 +34,25 @@ public class AddVoiceOverToProjectUseCaseTest {
     MockitoAnnotations.initMocks(this);
   }
 
+  @After
+  public void clearProject() {
+    Project.INSTANCE.clear();
+  }
+
   @Test
-  public void setVoiceOverSetsVoiceOverToProject() {
+  public void setVoiceOverSetsMusicToComposition() {
     Project project = getAProject();
-    assert ! project.hasVoiceOver();
+    assert ! project.getVMComposition().hasMusic();
+    AddMusicToProjectUseCase addMusicToProjectUseCase =
+            new AddMusicToProjectUseCase(mockedProjectRepository);
+    AddVoiceOverToProjectUseCase useCase = new AddVoiceOverToProjectUseCase(mockedProjectRepository,
+            addMusicToProjectUseCase);
 
-    injectedUseCase.setVoiceOver(project, "voice/over/path", 0.7f);
+    useCase.setVoiceOver(project, "voice/over/path", 0.7f);
 
-    assertThat(project.hasVoiceOver(), is(true));
-    assertThat(project.getVoiceOverPath(), is("voice/over/path"));
-    assertThat(project.getVoiceOverVolume(), is(0.7f));
+    assertThat(project.getVMComposition().hasMusic(), is(true));
+    assertThat(project.getVMComposition().getMusic().getMediaPath(), is("voice/over/path"));
+    assertThat(project.getVMComposition().getMusic().getVolume(), is(0.7f));
   }
 
   @Test
@@ -56,6 +67,6 @@ public class AddVoiceOverToProjectUseCaseTest {
   private Project getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.GOOD,
             VideoFrameRate.FrameRate.FPS25);
-    return new Project("project title", "root/path", profile);
+    return Project.getInstance("project title", "root/path", profile);
   }
 }

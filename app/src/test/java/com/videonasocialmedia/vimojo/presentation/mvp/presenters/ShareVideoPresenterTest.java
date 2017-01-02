@@ -20,7 +20,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.MixAudioUseCase;
+import com.videonasocialmedia.videonamediaframework.pipeline.AudioMixer;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 
@@ -45,7 +45,7 @@ public class ShareVideoPresenterTest {
     @Mock private Context mockContext;
     @Mock private CreateDefaultProjectUseCase mockedCreateDefaultProjectUseCase;
     @Mock private ClearProjectUseCase mockedClearProjectUseCase;
-    @Mock private MixAudioUseCase mockedMixAudioUseCase;
+    @Mock private AudioMixer mockedAudioMixer;
     @Mock private AddMusicToProjectUseCase mockedAddMusicToProjectUseCase;
 
     @Before
@@ -64,8 +64,7 @@ public class ShareVideoPresenterTest {
 
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
                 mockedUserEventTracker, mockSharedPrefs, mockContext, mockedClearProjectUseCase,
-                mockedCreateDefaultProjectUseCase, mockedMixAudioUseCase,
-                mockedAddMusicToProjectUseCase);
+                mockedCreateDefaultProjectUseCase);
 
         assertThat(shareVideoPresenter.currentProject, is(videonaProject));
     }
@@ -76,8 +75,7 @@ public class ShareVideoPresenterTest {
 
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
                 userEventTracker, mockSharedPrefs, mockContext, mockedClearProjectUseCase,
-                mockedCreateDefaultProjectUseCase, mockedMixAudioUseCase,
-                mockedAddMusicToProjectUseCase);
+                mockedCreateDefaultProjectUseCase);
 
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
@@ -86,8 +84,7 @@ public class ShareVideoPresenterTest {
     public void shareVideoPresenterCallsTracking(){
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
                 mockedUserEventTracker, mockSharedPrefs, mockContext, mockedClearProjectUseCase,
-                mockedCreateDefaultProjectUseCase, mockedMixAudioUseCase,
-                mockedAddMusicToProjectUseCase);
+                mockedCreateDefaultProjectUseCase);
         Project videonaProject = getAProject();
         String socialNetwokId = "SocialNetwork";
         int totalVideosShared = 0;

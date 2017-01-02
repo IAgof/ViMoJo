@@ -171,11 +171,8 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
 
     @OnClick(R.id.button_volume_sound_accept)
     public void onClickVolumeSoundAccept() {
-        // if music has been selected before, delete it
-        presenter.removeMusicFromProject();
-
         float volume = (float) (seekBarVolume.getProgress() * 0.01);
-        presenter.setVolume(soundVoiceOverPath, volume);
+        presenter.setVoiceOver(soundVoiceOverPath, volume);
     }
 
     @OnClick(R.id.button_volume_sound_cancel)

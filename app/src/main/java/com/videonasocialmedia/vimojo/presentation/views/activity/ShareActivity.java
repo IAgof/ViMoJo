@@ -53,8 +53,8 @@ import butterknife.OnClick;
 /**
  * Created by root on 31/05/16.
  */
-public class ShareActivity extends VimojoActivity implements ShareVideoView, VideonaPlayer.VideonaPlayerListener,
-        OnOptionsToShareListClickListener {
+public class ShareActivity extends VimojoActivity implements ShareVideoView,
+        VideonaPlayer.VideonaPlayerListener, OnOptionsToShareListClickListener {
     @Inject ShareVideoPresenter presenter;
     @Inject SharedPreferences sharedPreferences;
 
@@ -143,8 +143,6 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
         List<Video> shareVideoList = Collections.singletonList(new Video(videoPath));
         videonaPlayer.initPreviewLists(shareVideoList);
         videonaPlayer.initPreview(currentPosition);
-
-        presenter.exportWithVoiceOver(videoPath);
     }
 
     @Override
@@ -336,16 +334,5 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView, Vid
 
     @Override
     public void newClipPlayed(int currentClipIndex) {
-    }
-
-    @Override
-    public void setVideo(String videoOver){
-        new File(videoPath).deleteOnExit();
-        List<Video> shareVideoList = Collections.singletonList(new Video(videoOver));
-
-        videonaPlayer.initPreviewLists(shareVideoList);
-        videonaPlayer.initPreview(currentPosition);
-
-        videoPath = videoOver;
     }
 }
