@@ -116,7 +116,7 @@ public class ProjectRealmRepository implements ProjectRepository {
   }
 
   @Override
-  public List<Project> getListProjects() {
+  public List<Project> getListProjectsByLastModificationDescending() {
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmProject> allRealmProjects = realm.where(RealmProject.class).findAll()
         .sort("lastModification", Sort.DESCENDING);

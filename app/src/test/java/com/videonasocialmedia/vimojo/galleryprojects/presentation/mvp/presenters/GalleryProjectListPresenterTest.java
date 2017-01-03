@@ -7,40 +7,23 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateTitleProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.project.RealmProject;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.RealmQuery;
-import io.realm.RealmResults;
-import io.realm.internal.RealmCore;
-import io.realm.internal.log.RealmLog;
-
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
@@ -74,7 +57,7 @@ public class GalleryProjectListPresenterTest {
 
     List<Project> projectList = new ArrayList<>();
     projectList.add(getAProject());
-    doReturn(projectList).when(mockedProjectRepository).getListProjects();
+    doReturn(projectList).when(mockedProjectRepository).getListProjectsByLastModificationDescending();
     injectedPresenter.updateProjectList();
   }
 
@@ -96,7 +79,7 @@ public class GalleryProjectListPresenterTest {
   public void ifProjectRepositoryHasProjectsUpdateProjectListCallsGalleryProjectListViewShow(){
     List<Project> projectList = new ArrayList<>();
     projectList.add(getAProject());
-    doReturn(projectList).when(mockedProjectRepository).getListProjects();
+    doReturn(projectList).when(mockedProjectRepository).getListProjectsByLastModificationDescending();
     injectedPresenter.updateProjectList();
     verify(mockedGalleryProjectListView).showProjectList(projectList);
   }
@@ -104,7 +87,7 @@ public class GalleryProjectListPresenterTest {
   @Test
   public void ifProjectRepositoryHasNotProjectAfterDeleteCreateNewDefaultProject(){
     List<Project> projectList = new ArrayList<>();
-    doReturn(projectList).when(mockedProjectRepository).getListProjects();
+    doReturn(projectList).when(mockedProjectRepository).getListProjectsByLastModificationDescending();
     injectedPresenter.updateProjectList();
     verify(mockedGalleryProjectListView).createDefaultProject();
   }

@@ -52,7 +52,7 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
   }
 
   public List<Project> loadListProjects() {
-    return projectRealmRepository.getListProjects();
+    return projectRealmRepository.getListProjectsByLastModificationDescending();
   }
 
   public void duplicateProject(Project project) {
