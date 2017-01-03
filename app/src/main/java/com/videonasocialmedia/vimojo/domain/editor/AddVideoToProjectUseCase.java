@@ -19,10 +19,11 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
@@ -31,12 +32,15 @@ import de.greenrobot.event.EventBus;
  */
 // TODO(jliarte): 22/10/16 refactor this class to have a unique insert point. Get rid of event bus
 public class AddVideoToProjectUseCase {
-    private ProjectRepository projectRepository = new ProjectRealmRepository();
+    protected ProjectRepository projectRepository;
 
     /**
-     * Constructor.
+     * Default Constructor with project repository argument.
+     *
+     * @param projectRepository the project repository
      */
-    public AddVideoToProjectUseCase() {
+    @Inject public AddVideoToProjectUseCase(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
     }
 
     /**

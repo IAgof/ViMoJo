@@ -51,7 +51,7 @@ public class SoundListAdapter extends  RecyclerView.Adapter<SoundListAdapter.Sou
         holder.soundImage.setImageResource(music.getIconResourceId());
         holder.soundTitle.setText(music.getMusicTitle());
         holder.soundAuthor.setText(music.getAuthor());
-        holder.soundDuration.setText(music.getDurationMusic());
+        holder.soundDuration.setText(music.getMusicDuration());
         }
 
     @Override

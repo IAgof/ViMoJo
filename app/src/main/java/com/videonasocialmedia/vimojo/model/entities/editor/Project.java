@@ -52,7 +52,6 @@ public class Project {
      */
     private String projectPath;
 
-
   private VMComposition vmComposition;
 
   private String lastModification;
@@ -109,7 +108,8 @@ public class Project {
     return vmComposition;
   }
 
-     /**
+
+    /**
      * Project factory.
      *
      * (jliarte): since 21/10/16 Project stops being a singleton :P

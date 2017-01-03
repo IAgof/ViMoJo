@@ -14,8 +14,12 @@ import android.test.AndroidTestCase;
 
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
+import org.junit.Before;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,12 +34,17 @@ import static org.mockito.Mockito.verify;
  * This class tests the add video to project use case.
  */
 public class AddVideoToProjectUseCaseAndroidTest extends AndroidTestCase {
-
+    @Mock private ProjectRepository mockedProjectRepository;
     AddVideoToProjectUseCase useCase;
     OnAddMediaFinishedListener listener;
 
+    @Before
+    public void injectDoubles() {
+        MockitoAnnotations.initMocks(this);
+    }
+
     public AddVideoToProjectUseCaseAndroidTest() {
-        useCase = new AddVideoToProjectUseCase();
+        useCase = new AddVideoToProjectUseCase(mockedProjectRepository);
         listener = mock(OnAddMediaFinishedListener.class);
     }
 

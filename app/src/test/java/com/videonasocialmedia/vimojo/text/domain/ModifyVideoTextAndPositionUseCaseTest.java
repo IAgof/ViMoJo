@@ -118,6 +118,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
   public void addTextToVideoCallsVideoRepositoryUpdate() {
     Video video = new Video("media/path");
     String textPosition = TextEffect.TextPosition.BOTTOM.name();
+    injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedUseCase.addTextToVideo(video, videonaFormat, "text", textPosition, mediaTranscoderListener);
 

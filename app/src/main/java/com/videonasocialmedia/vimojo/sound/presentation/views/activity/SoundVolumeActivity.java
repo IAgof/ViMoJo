@@ -1,18 +1,13 @@
 package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -26,13 +21,14 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -43,46 +39,24 @@ import butterknife.OnClick;
  */
 public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSeekBarChangeListener,
         VideonaPlayer.VideonaPlayerListener, SoundVolumeView {
-
     private static final String SOUND_VOLUME_POSITION_VOLUME = "sound_volume_position";
     private static final String SOUND_VOLUME_PROJECT_POSITION = "sound_volume_project_position";
     private static final String VOICE_OVER_RECORDED_PATH = "voice_over_recorded_path";
     private static final String TAG = "SoundVolumeActivity";
 
+    @Inject SoundVolumePresenter presenter;
+
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-    SoundVolumePresenter presenter;
     @Bind(R.id.textView_seekBar_volume_sound)
     TextView textSeekBarVolume;
     @Bind (R.id.seekBar_volume_sound)
     SeekBar seekBarVolume;
-    @Bind (R.id.button_volume_sound_accept)
-    ImageButton buttonVolumeSoundAccept;
-    @Bind (R.id.button_volume_sound_cancel)
-    ImageButton buttonVolumeSoundCancel;
+
     int videoIndexOnTrack;
     private int currentSoundVolumePosition =50;
     private int currentProjectPosition = 0;
-
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
-            if (bundle != null) {
-                String videoTemPathMixAudio = bundle.getString(ExportProjectService.FILEPATH);
-                int resultCode = bundle.getInt(ExportProjectService.RESULT);
-                if (resultCode == RESULT_OK) {
-                    goToMixAudio(videoTemPathMixAudio);
-                } else {
-
-                    //showError(R.string.addMediaItemToTrackError);
-                }
-            }
-        }
-    };
     private String soundVoiceOverPath;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +73,8 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         Intent intent = getIntent();
         soundVoiceOverPath = intent.getStringExtra(IntentConstants.VOICE_OVER_RECORDED_PATH);
 
+        getActivityPresentersComponent().inject(this);
         restoreState(savedInstanceState);
-        presenter = new SoundVolumePresenter(this);
         videonaPlayer.setListener(this);
         seekBarVolume.setOnSeekBarChangeListener(this);
         seekBarVolume.setProgress(currentSoundVolumePosition);
@@ -124,15 +98,12 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(receiver);
         videonaPlayer.onPause();
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(receiver, new IntentFilter(ExportProjectService.NOTIFICATION));
         videonaPlayer.onShown(this);
         presenter.init();
     }
@@ -174,19 +145,10 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         finish();
     }
 
-    private void goToMixAudio(String videoTemPathMixAudio) {
-        float volume = (float) (seekBarVolume.getProgress() * 0.01);
-        presenter.setVolume(soundVoiceOverPath, videoTemPathMixAudio, volume);
-    }
-
     @OnClick(R.id.button_volume_sound_accept)
     public void onClickVolumeSoundAccept() {
-        // if music has been selected before, delete it
-        presenter.removeMusicFromProject();
-
-        Intent intent = new Intent(this, ExportProjectService.class);
-        Snackbar.make(videonaPlayer, "Mixing audio for your video project", Snackbar.LENGTH_INDEFINITE).show();
-        this.startService(intent);
+        float volume = (float) (seekBarVolume.getProgress() * 0.01);
+        presenter.setVoiceOver(soundVoiceOverPath, volume);
     }
 
     @OnClick(R.id.button_volume_sound_cancel)
@@ -206,7 +168,8 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-        builder.setMessage(R.string.exitSoundVolumeActivity).setPositiveButton(R.string.acceptExitSoundVolumeActivity, dialogClickListener)
+        builder.setMessage(R.string.exitSoundVolumeActivity)
+                .setPositiveButton(R.string.acceptExitSoundVolumeActivity, dialogClickListener)
                 .setNegativeButton(R.string.cancelExitSoundVolumeActvity, dialogClickListener).show();
     }
 
@@ -233,12 +196,10 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         videonaPlayer.setVolume(currentSoundVolumePosition*0.01f);
     }
 
-
     @Override
     public void resetPreview() {
         videonaPlayer.resetPreview();
     }
-
 
     @Override
     public void goToEditActivity() {

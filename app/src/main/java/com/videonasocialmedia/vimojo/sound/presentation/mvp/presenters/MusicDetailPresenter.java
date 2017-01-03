@@ -18,12 +18,14 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 
 /**
  *
  */
-public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback, OnAddMediaFinishedListener {
-
+public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback,
+        OnAddMediaFinishedListener {
     private AddMusicToProjectUseCase addMusicToProjectUseCase;
     private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
@@ -33,14 +35,20 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     public Project currentProject;
     private Music musicSelected;
 
-    public MusicDetailPresenter(MusicDetailView musicDetailView, UserEventTracker userEventTracker) {
+    @Inject
+    public MusicDetailPresenter(MusicDetailView musicDetailView,
+                                UserEventTracker userEventTracker,
+                                AddMusicToProjectUseCase addMusicToProjectUseCase,
+                                RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {
         this.musicDetailView = musicDetailView;
-        addMusicToProjectUseCase = new AddMusicToProjectUseCase();
-        removeMusicFromProjectUseCase = new RemoveMusicFromProjectUseCase();
+        this.userEventTracker = userEventTracker;
+        this.addMusicToProjectUseCase = addMusicToProjectUseCase;
+        this.removeMusicFromProjectUseCase = removeMusicFromProjectUseCase;
+
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
+        // TODO(jliarte): 1/12/16 should it be a parameter of use case method?
         this.currentProject = loadCurrentProject();
-        this.userEventTracker = userEventTracker;
         musicSelected = new Music("");
     }
 
@@ -53,12 +61,9 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         musicSelected = retrieveLocalMusic(musicPath);
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
         getMusicFromProjectUseCase.getMusicFromProject(this);
-
     }
 
     public void removeMusic(Music music) {
-        // (jliarte): 23/10/16 moving this to use case
-//        currentProject.setMusicOnProject(false);
         removeMusicFromProjectUseCase.removeMusicFromProject(music, 0);
         userEventTracker.trackMusicSet(currentProject);
     }
@@ -91,7 +96,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     @Override
     public void onMusicRetrieved(Music musicOnProject) {
-        if(musicOnProject!= null && musicOnProject.getMediaPath().compareTo(musicSelected.getMediaPath()) == 0) {
+        if (musicOnProject!= null && musicOnProject.getMediaPath()
+                .compareTo(musicSelected.getMediaPath()) == 0) {
             musicDetailView.setMusic(musicOnProject, true);
         } else {
             musicDetailView.setMusic(musicSelected, false);
@@ -100,13 +106,11 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     @Override
     public void onAddMediaItemToTrackError() {
-
+        // TODO(jliarte): 30/11/16 implement error processing
     }
 
     @Override
     public void onAddMediaItemToTrackSuccess(Media media) {
-        // (jliarte): 23/10/16 moving this to use case
-//        currentProject.setMusicOnProject(true);
         userEventTracker.trackMusicSet(currentProject);
         musicDetailView.goToEdit(media.getTitle());
     }

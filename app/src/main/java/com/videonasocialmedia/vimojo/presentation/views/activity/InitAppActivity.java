@@ -60,6 +60,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -77,6 +79,10 @@ import butterknife.ButterKnife;
 
 public class InitAppActivity extends VimojoActivity implements InitAppView, OnInitAppEventListener {
     private final String LOG_TAG = this.getClass().getSimpleName();
+    private long MINIMUN_WAIT_TIME = 900;
+
+    @Inject InitAppPresenter presenter;
+
     protected Handler handler = new Handler();
     @Bind(R.id.videona_version)
     TextView versionName;
@@ -84,7 +90,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     ViewGroup initRootView;
     @Bind(R.id.splash_screen)
     ImageView splashScreen;
-    private long MINIMUN_WAIT_TIME = 900;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private Camera camera;
@@ -93,13 +98,14 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private String androidId = null;
     private String initState;
     private CompositeMultiplePermissionsListener compositePermissionsListener;
-    private InitAppPresenter presenter = new InitAppPresenter(this);
     private ProfileRepository profileRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+
+        getActivityPresentersComponent().inject(this);
 
         //remove title, mode fullscreen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

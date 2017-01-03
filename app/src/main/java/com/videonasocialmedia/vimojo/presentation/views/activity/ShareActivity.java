@@ -3,29 +3,30 @@ package com.videonasocialmedia.vimojo.presentation.views.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.OnTabSelectListener;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
-import com.videonasocialmedia.vimojo.main.EditorActivity;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
@@ -37,16 +38,17 @@ import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavig
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
-import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.FabUtils;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -57,6 +59,9 @@ import butterknife.OnClick;
  */
 public class ShareActivity extends EditorActivity implements ShareVideoView, VideonaPlayer.VideonaPlayerListener,
         OnOptionsToShareListClickListener {
+    @Inject ShareVideoPresenter presenter;
+    @Inject SharedPreferences sharedPreferences;
+
     @Nullable @Bind(R.id.linear_layout_activity_share)
     RelativeLayout coordinatorLayout;
     @Nullable @Bind(R.id.videona_player)
@@ -67,21 +72,20 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     EditText editTextDialog;
     @Nullable @Bind(R.id.bottomBar)
     BottomBar bottomBar;
-  @Bind(R.id.fab_edit_room)
-  FloatingActionsMenu fabMenu;
+    @Bind(R.id.fab_edit_room)
+    FloatingActionsMenu fabMenu;
 
     private String videoPath;
-    private ShareVideoPresenter presenter;
     private OptionsToShareAdapter optionsShareAdapter;
     private int currentPosition;
-    private AlertDialog alertDialog, alertDialogClearProject ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         inflateLinearLayout(R.id.container_layout, R.layout.activity_share);
         ButterKnife.bind(this);
-        presenter = new ShareVideoPresenter(this, userEventTracker, sharedPreferences, this);
+        getActivityPresentersComponent().inject(this);
         presenter.onCreate();
         videoPath = getIntent().getStringExtra(Constants.VIDEO_TO_SHARE_PATH);
         presenter.addVideoExportedToProject(videoPath);
@@ -159,11 +163,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
 
 
     public void showPreview() {
-
-        List<Video> shareVideoList = new ArrayList<Video>();
-        Video videoShare = new Video(videoPath);
-        shareVideoList.add(videoShare);
-
+        List<Video> shareVideoList = Collections.singletonList(new Video(videoPath));
         videonaPlayer.initPreviewLists(shareVideoList);
         videonaPlayer.initPreview(currentPosition);
     }
@@ -188,6 +188,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
         Intent intent = new Intent(getApplicationContext(), cls);
         startActivity(intent);
     }
+
     @Nullable
     @OnClick(R.id.fab_share_room)
     public void showMoreNetworks() {
@@ -199,7 +200,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         startActivity(Intent.createChooser(intent, getString(R.string.share_using)));
     }
-
 
     private void updateNumTotalVideosShared() {
         presenter.updateNumTotalVideosShared();
@@ -215,17 +215,14 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
 
     @Override
     public void hideShareNetworks() {
-
     }
 
     @Override
     public void showMoreNetworks(List<SocialNetwork> networks) {
-
     }
 
     @Override
     public void hideExtraNetworks() {
-
     }
 
     @Override
@@ -245,10 +242,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     }
 
     private void createDialogToInsertNameProject(final FtpNetwork ftpSelected) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
-        editTextDialog=(EditText)dialogView.findViewById(R.id.text_dialog);
+        editTextDialog = (EditText) dialogView.findViewById(R.id.text_dialog);
         editTextDialog.requestFocus();
         editTextDialog.setHint(R.string.text_hint_dialog_shareActivity);
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -266,7 +261,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
             }
         };
 
-        alertDialog = builder.setCancelable(false)
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
+        AlertDialog alertDialog = builder.setCancelable(false)
                 .setTitle(R.string.title_dialog_sharedActivity)
                 .setView(dialogView)
                 .setPositiveButton(R.string.positiveButtonDialogShareActivity, dialogClickListener)
@@ -288,7 +284,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
         startService(intent);
     }
 
-
     public void showMessage(final int stringToast) {
         Snackbar snackbar = Snackbar.make(coordinatorLayout, stringToast, Snackbar.LENGTH_LONG);
         snackbar.show();
@@ -296,7 +291,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
 
 
     private void showDialogClearProject(final int resourceButtonId){
-
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -305,7 +299,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
                         presenter.resetProject(Constants.PATH_APP);
                         navigateTo(EditActivity.class);
                         break;
-
                     case DialogInterface.BUTTON_NEGATIVE:
                         if(resourceButtonId == R.id.button_music_navigator)
                             navigateTo(SoundActivity.class);
@@ -317,15 +310,13 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaAlertDialog);
-
-         alertDialogClearProject = builder.setCancelable(false)
-                 .setMessage(R.string.dialog_message_clean_project)
-                 .setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
-                 .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
+        AlertDialog alertDialogClearProject = builder.setCancelable(false)
+                .setMessage(R.string.dialog_message_clean_project)
+                .setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
+                .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
     }
 
     @Override
     public void newClipPlayed(int currentClipIndex) {
-
     }
 }

@@ -16,38 +16,21 @@ import java.util.List;
  * @author Juan Javier Cabanas Abascal
  */
 public interface EditActivityView {
-
     void goToShare(String videoToSharePath);
-
     void showProgressDialog();
-
     void hideProgressDialog();
-
     void showError(int causeTextResource);
-
     void showMessage(int stringToast);
-
     void bindVideoList(List<Video> movieList);
-
     void setMusic(Music music);
-
     void updateProject();
-
     void enableEditActions();
-
     void disableEditActions();
-
     void enableBottomBar();
-
     void disableBottomBar();
-
     void changeAlphaBottomBar(float alpha);
-
     void expandFabMenu();
-
     void resetPreview();
-
     void showDialogMediasNotFound();
-
     void enableFabText(boolean isEnable);
 }

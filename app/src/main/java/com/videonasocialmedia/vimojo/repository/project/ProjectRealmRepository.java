@@ -25,7 +25,6 @@ import io.realm.Sort;
 public class ProjectRealmRepository implements ProjectRepository {
   protected Mapper<Project, RealmProject> toRealmProjectMapper;
   protected Mapper<RealmProject, Project> toProjectMapper;
-  protected VideoRepository videoRepository = new VideoRealmRepository();
 
   public ProjectRealmRepository() {
     this.toProjectMapper = new RealmProjectToProjectMapper();

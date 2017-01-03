@@ -28,6 +28,8 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by vlf on 7/7/15.
  */
@@ -50,12 +52,15 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     public UserEventTracker userEventTracker;
     public Project currentProject;
 
-    public SplitPreviewPresenter(SplitView splitView, UserEventTracker userEventTracker) {
+    @Inject
+    public SplitPreviewPresenter(SplitView splitView, UserEventTracker userEventTracker,
+                                 SplitVideoUseCase splitVideoUseCase) {
         this.splitView = splitView;
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        splitVideoUseCase= new SplitVideoUseCase();
-        this.currentProject = loadCurrentProject();
         this.userEventTracker = userEventTracker;
+        this.splitVideoUseCase = splitVideoUseCase;
+
+        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+        this.currentProject = loadCurrentProject();
     }
 
     private Project loadCurrentProject() {

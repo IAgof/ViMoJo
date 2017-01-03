@@ -5,28 +5,36 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.vimojo.main.DaggerExporterServiceComponent;
+import com.videonasocialmedia.vimojo.main.ExporterServiceComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
+import com.videonasocialmedia.vimojo.main.modules.ExporterServiceModule;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  *
  */
-public class ExportTempBroadCastReceveiver extends BroadcastReceiver {
+public class ExportTempBroadcastReceveiver extends BroadcastReceiver {
 
     private static final int MAX_NUM_TRIES_TO_EXPORT_VIDEO = 4;
     private final View parent;
     private ProjectRepository projectRepository = new ProjectRealmRepository();
-    public ExportTempBroadCastReceveiver(View parent) {
+    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+
+    public ExportTempBroadcastReceveiver(View parent) {
         this.parent = parent;
+        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
     }
 
     @Override
@@ -60,12 +68,11 @@ public class ExportTempBroadCastReceveiver extends BroadcastReceiver {
     }
 
     private Video getVideo(String videoId) {
-        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        List<Video> videoList = getMediaListFromProjectUseCase.getVideoListFromProject();
+        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
         if (videoList != null) {
-            for (Video video : videoList) {
-                if (video.getUuid().compareTo(videoId) == 0) {
-                    return video;
+            for (Media video : videoList) {
+                if (((Video) video).getUuid().compareTo(videoId) == 0) {
+                    return (Video) video;
                 }
             }
         }

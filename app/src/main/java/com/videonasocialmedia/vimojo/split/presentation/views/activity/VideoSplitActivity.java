@@ -19,9 +19,7 @@ import android.view.MenuItem;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
@@ -34,9 +32,10 @@ import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
-import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -44,17 +43,19 @@ import butterknife.OnClick;
 
 public class VideoSplitActivity extends VimojoActivity implements SplitView,
         VideonaPlayer.VideonaPlayerListener, SeekBar.OnSeekBarChangeListener {
-
     private static final String SPLIT_POSITION = "split_position";
     private static final String SPLIT_VIDEO_POSITION = "split_video_position";
+
+    @Inject SplitPreviewPresenter presenter;
+
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
     @Bind(R.id.text_time_split)
     TextView timeTag;
     @Bind(R.id.seekBar_split)
     SeekBar splitSeekBar;
+
     int videoIndexOnTrack;
-    private SplitPreviewPresenter presenter;
     private Video video;
     private int currentSplitPosition = 0;
     private int currentVideoPosition = 0;
@@ -72,8 +73,9 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-        presenter = new SplitPreviewPresenter(this, userEventTracker);
+        getActivityPresentersComponent().inject(this);
+//        UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
+//        presenter = new SplitPreviewPresenter(this, userEventTracker);
 
         splitSeekBar.setProgress(0);
         splitSeekBar.setOnSeekBarChangeListener(this);
@@ -115,7 +117,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -128,14 +129,12 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-
         switch (item.getItemId()) {
             case android.R.id.home:
                onBackPressed();
                 return true;
             default:
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -166,7 +165,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
 
     @OnClick(R.id.button_split_accept)
     public void onClickSplitAccept() {
-
         presenter.splitVideo(video, videoIndexOnTrack, currentSplitPosition);
         navigateTo(EditActivity.class, videoIndexOnTrack);
     }
@@ -188,18 +186,15 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     private void refreshTimeTag(int currentPosition) {
-
         timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(currentPosition + startTime));
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-
     }
 
     @Override
@@ -209,7 +204,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         this.startTime = startTime;
         refreshTimeTag(currentSplitPosition);
     }
-
 
     @Override
     public void playPreview() {
@@ -230,7 +224,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
 
     @Override
     public void showError(String message) {
-
     }
 
     @Override

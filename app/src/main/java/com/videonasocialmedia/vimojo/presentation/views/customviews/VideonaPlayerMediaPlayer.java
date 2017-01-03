@@ -39,7 +39,8 @@ import butterknife.OnTouch;
  * Use new Implementation based in ExoPlayer instead: see {@link VideonaPlayerExo}
  * @deprecated
  */
-public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaPlayer, SeekBar.OnSeekBarChangeListener {
+public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaPlayer,
+        SeekBar.OnSeekBarChangeListener {
 
     private final Context context;
     protected Handler handler = new Handler();
@@ -242,9 +243,12 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
         this.music = music;
     }
 
-    @Override
-    public void setVolumen(float volume) {
 
+    @Override
+    public void setVolume(float volume) {
+        if (musicPlayer != null) {
+            musicPlayer.setVolume(volume, volume);
+        }
     }
 
     @Override

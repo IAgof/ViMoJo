@@ -15,7 +15,6 @@ public class GetMusicFromProjectUseCase {
     }
 
     public void getMusicFromProject(GetMusicFromProjectCallback listener) {
-
         Music music = null;
         try {
             music = (Music) project.getAudioTracks().get(0).getItems().get(0);

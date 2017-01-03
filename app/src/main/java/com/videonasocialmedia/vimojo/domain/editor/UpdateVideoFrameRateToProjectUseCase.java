@@ -5,14 +5,24 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
+import javax.inject.Inject;
+
 /**
  * Created by alvaro on 20/10/16.
  */
 
 public class UpdateVideoFrameRateToProjectUseCase {
-
     private Project currentProject;
-    protected ProjectRepository projectRepository = new ProjectRealmRepository();
+    protected ProjectRepository projectRepository;
+
+    /**
+     * Default constructor with project repository argument.
+     *
+     * @param projectRepository the project repository.
+     */
+    @Inject public UpdateVideoFrameRateToProjectUseCase(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
+    }
 
     public void updateFrameRate(VideoFrameRate.FrameRate frameRate) {
         currentProject = Project.getInstance(null, null, null);
