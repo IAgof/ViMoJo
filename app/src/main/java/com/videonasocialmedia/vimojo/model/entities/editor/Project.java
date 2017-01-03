@@ -14,6 +14,7 @@ package com.videonasocialmedia.vimojo.model.entities.editor;
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
@@ -92,15 +93,15 @@ public class Project {
         createProjectFolders();
     }
 
-  public Project(Project project) {
-    throw new RuntimeException("not implemented!!");
-//    title = DateUtils.getDateRightNow();
-//    vmComposition = new VMComposition(project.getVMComposition());
-//    profile = new Profile(project.getProfile());
-//    duration = project.getDuration();
-//    lastModification = project.getLastModification();
-//    projectPath = new File(project.getProjectPath()).getParent() + File.separator + uuid;
-//    createFolder(projectPath);
+  public Project(Project project) throws IllegalItemOnTrack {
+
+    title = DateUtils.getDateRightNow();
+    vmComposition = new VMComposition(project.getVMComposition());
+    profile = new Profile(project.getProfile());
+    duration = project.getDuration();
+    lastModification = project.getLastModification();
+    projectPath = new File(project.getProjectPath()).getParent() + File.separator + uuid;
+    createFolder(projectPath);
   }
 
 

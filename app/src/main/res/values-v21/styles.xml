@@ -21,7 +21,7 @@
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
         <item name="android:textColorPrimaryInverse">@color/colorAccent</item>
-        <item name="android:colorControlNormal">@color/colorSecondaryLight</item>
+        <item name="android:colorControlNormal">@color/colorWhite</item>
 
         <!-- Hide scrollbar in scrollViews -->
         <item name="android:scrollbarThumbHorizontal">@color/colorTransparent</item>

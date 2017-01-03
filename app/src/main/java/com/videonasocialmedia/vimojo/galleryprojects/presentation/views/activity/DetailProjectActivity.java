@@ -20,6 +20,8 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -29,6 +31,8 @@ import butterknife.OnClick;
  */
 
 public class DetailProjectActivity extends VimojoActivity implements DetailProjectView {
+
+  @Inject DetailProjectPresenter presenter;
 
   @Bind(R.id.detail_project_duration)
   TextView textViewDuration;
@@ -49,7 +53,6 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   @Bind(R.id.detail_project_thumb)
   ImageView imageViewThumb;
 
-  DetailProjectPresenter presenter;
   private boolean isTitleSelected = false;
 
   @Override
@@ -58,8 +61,7 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
     setContentView(R.layout.activity_detail_project);
     ButterKnife.bind(this);
     setupToolbar();
-
-    presenter = new DetailProjectPresenter(this);
+    getActivityPresentersComponent().inject(this);
     presenter.init();
 
   }

@@ -7,11 +7,11 @@ import android.support.annotation.Nullable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.pipeline.ApplyAudioFadeInFadeOutToVideo;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchExportTempBackgroundUseCase;
-import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.main.DaggerExporterServiceComponent;
 import com.videonasocialmedia.vimojo.main.ExporterServiceComponent;
@@ -184,11 +184,11 @@ public class ExportTempBackgroundService extends Service
 
     private Video getVideo(String videoId) {
         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        List<Video> videoList = getMediaListFromProjectUseCase.getVideoListFromProject();
+        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
         if (videoList != null) {
-            for (Video video : videoList) {
-                if (video.getUuid().compareTo(videoId) == 0) {
-                    return video;
+            for (Media video : videoList) {
+                if (((Video) video).getUuid().compareTo(videoId) == 0) {
+                    return (Video) video;
                 }
             }
         }

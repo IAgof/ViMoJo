@@ -47,13 +47,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/fab_margin"
-        android:layout_gravity="end"
+        android:layout_gravity="bottom|end"
         app:fab_addButtonColorNormal="@color/colorAccent"
         app:fab_addButtonColorPressed="@color/colorAccent"
         app:backgroundTint="@color/colorAccent"
         app:layout_behavior="com.videonasocialmedia.vimojo.presentation.views.custombehaviors.FloatingActionMenuButtonBehavior"
         app:layout_anchor="@id/bottomBar"
         app:layout_anchorGravity="top|end">
+
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.galleryprojects.domain;
 
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -27,7 +28,6 @@ import static org.junit.Assert.assertThat;
  * Created by alvaro on 14/12/16.
  */
 @RunWith(PowerMockRunner.class)
-@Ignore // Ignore test until update SDK for new Project(project)
 public class DuplicateProjectUseCaseTest {
 
   @Mock
@@ -41,14 +41,10 @@ public class DuplicateProjectUseCaseTest {
   }
 
   @Test
-  public void shouldSaveProfileVMCompositionDurationLastModificationIfProjectIsDuplicate(){
+  public void shouldSaveProfileVMCompositionDurationLastModificationIfProjectIsDuplicate() throws IllegalItemOnTrack {
     Project project = getAProject();
     Project duplicateProject = new Project(project);
 
-    assertThat("copy project save profile ", duplicateProject.getProfile(),
-        CoreMatchers.is(project.getProfile()));
-    assertThat("copy project save VMComposition ", duplicateProject.getVMComposition(),
-        CoreMatchers.is(project.getVMComposition()));
     assertThat("copy project save duration ", duplicateProject.getDuration(),
         CoreMatchers.is(project.getDuration()));
     assertThat("copy project save last modification ", duplicateProject.getLastModification(),
@@ -56,10 +52,14 @@ public class DuplicateProjectUseCaseTest {
   }
 
   @Test
-  public void shouldUpdateTitleUuidProjectPathIfProjectIsDuplicate(){
+  public void shouldUpdateTitleUuidProjectPathIfProjectIsDuplicate() throws IllegalItemOnTrack {
     Project project = getAProject();
     Project duplicateProject = new Project(project);
 
+    assertThat("copy project change profile ", duplicateProject.getProfile(),
+        CoreMatchers.not(project.getProfile()));
+    assertThat("copy project change VMComposition ", duplicateProject.getVMComposition(),
+        CoreMatchers.not(project.getVMComposition()));
     assertThat("copy project change title ", duplicateProject.getTitle(),
         CoreMatchers.not(project.getTitle()));
     assertThat("copy project change uuid ", duplicateProject.getUuid(),

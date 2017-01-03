@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.galleryprojects.domain;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -19,7 +20,7 @@ public class DuplicateProjectUseCase {
 
   private ProjectRepository projectRepository = new ProjectRealmRepository();
 
-  public void duplicate(Project project) {
+  public void duplicate(Project project) throws IllegalItemOnTrack {
     String origPath = project.getProjectPath();
     Project newProject = new Project(project);
     copyFilesToNewProject(origPath, newProject.getProjectPath());

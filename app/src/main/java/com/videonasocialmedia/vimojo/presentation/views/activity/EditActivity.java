@@ -10,6 +10,7 @@ package com.videonasocialmedia.vimojo.presentation.views.activity;
  *
  */
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,41 +21,41 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.EditorActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 
+import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.VideoTimeLineAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.videoTimeLineTouchHelperCallback;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.utils.FabUtils;
+
 
 import java.util.List;
 
@@ -63,6 +64,8 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class EditActivity extends EditorActivity implements EditActivityView,
@@ -74,17 +77,16 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Inject EditPresenter editPresenter;
 
-    @Bind(R.id.button_edit_duplicate)
   private final int ID_BUTTON_FAB_TOP=1;
   private final int ID_BUTTON_FAB_CENTER=2;
   private final int ID_BUTTON_FAB_BOTTOM=3;
 
 
-   @Nullable @Bind(R.id.button_edit_duplicate)
+    @Nullable @Bind(R.id.button_edit_duplicate)
     ImageButton editDuplicateButton;
-   @Nullable @Bind(R.id.button_edit_trim)
+    @Nullable @Bind(R.id.button_edit_trim)
     ImageButton editTrimButton;
-   @Nullable @Bind(R.id.button_edit_split)
+    @Nullable @Bind(R.id.button_edit_split)
     ImageButton editSplitButton;
     @Nullable @Bind(R.id.recyclerview_editor_timeline)
     RecyclerView videoListRecyclerView;
@@ -136,21 +138,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         inflateLinearLayout(R.id.container_layout,R.layout.activity_edit);
         inflateLinearLayout(R.id.container_navigator,R.layout.edit_activity_layout_button_navigator);
         ButterKnife.bind(this);
-        setupActivityButtons();
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-
-      //sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
-          Context.MODE_PRIVATE);
-      //editPresenter = new EditPresenter(this, userEventTracker,sharedPreferences);
-
         getActivityPresentersComponent().inject(this);
-       // UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-       // editPresenter = new EditPresenter(this, navigator.getCallback(), userEventTracker);
 
         videonaPlayer.setListener(this);
         createProgressDialog();

@@ -33,6 +33,7 @@ import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessE
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -79,18 +80,20 @@ public class RecordPresenter {
     private boolean externalIntent;
 
     private ProjectRepository projectRepository;
+
     @Inject
     public RecordPresenter(Context context, RecordView recordView,
                            GLCameraView cameraPreview, SharedPreferences sharedPreferences,
                            boolean externalIntent,
-                           AddVideoToProjectUseCase addVideoToProjectUseCase) {
-
+                           AddVideoToProjectUseCase addVideoToProjectUseCase,
+                           ProjectRepository projectRepository) {
         this.context = context;
         this.recordView = recordView;
         this.cameraPreview = cameraPreview;
         this.sharedPreferences = sharedPreferences;
         this.externalIntent = externalIntent;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
+        this.projectRepository = projectRepository;
 
         this.currentProject = loadCurrentProject();
         preferencesEditor = sharedPreferences.edit();

@@ -15,34 +15,39 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
+import javax.inject.Inject;
+
 /**
  * Created by ruth on 23/11/16.
  */
 
 public class EditorPresenter {
-
   private EditorActivityView editorActivityView;
   private SharedPreferences sharedPreferences;
   private ProfileRepository profileRepository;
   protected UserEventTracker userEventTracker;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
+  private ClearProjectUseCase clearProjectUseCase;
   protected Project currentProject;
   private SharedPreferences.Editor preferencesEditor;
   private Context context;
 
+  @Inject
   public EditorPresenter(EditorActivityView editorActivityView,
-                         SharedPreferences sharedPreferences, Context context) {
-
+                         SharedPreferences sharedPreferences, Context context,
+                         CreateDefaultProjectUseCase createDefaultProjectUseCase,
+                               ClearProjectUseCase clearProjectUseCase) {
     this.editorActivityView = editorActivityView;
-    this.sharedPreferences=sharedPreferences;
-    this.context=context;
-    createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
-    this.currentProject=loadCurrentProject();
+    this.sharedPreferences = sharedPreferences;
+    this.context = context;
+    this.createDefaultProjectUseCase = createDefaultProjectUseCase;
+    this.clearProjectUseCase = clearProjectUseCase;
 
-
+    this.currentProject = loadCurrentProject();
   }
+
   public Project loadCurrentProject() {
-    ProjectRealmRepository projectRealmRepository= new ProjectRealmRepository();
+    ProjectRealmRepository projectRealmRepository = new ProjectRealmRepository();
     return new LoadCurrentProjectUseCase(projectRealmRepository).loadCurrentProject();
   }
 
@@ -67,10 +72,10 @@ public class EditorPresenter {
 
 
   public void resetProject() {
-    String rootPath= sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH,"");
+    String rootPath = sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH,"");
     clearProjectDataFromSharedPreferences();
 
-      new ClearProjectUseCase().clearProject(currentProject);
+    clearProjectUseCase.clearProject(currentProject);
       profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, context);
       createDefaultProjectUseCase.loadOrCreateProject(rootPath, profileRepository.getCurrentProfile());
       editorActivityView.updateViewResetProject();

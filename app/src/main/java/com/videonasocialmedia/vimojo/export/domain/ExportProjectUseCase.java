@@ -7,7 +7,6 @@
 
 package com.videonasocialmedia.vimojo.export.domain;
 
-import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSessionImpl;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;

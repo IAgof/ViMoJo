@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenter
 
 import android.content.SharedPreferences;
 
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
@@ -12,7 +13,6 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class GalleryProjectListPresenter implements OnProjectExportedListener {
 
-  private ProjectRepository projectRealmRepository;
+  private ProjectRepository projectRepository;
   private GalleryProjectListView galleryProjectListView;
   private UpdateCurrentProjectUseCase updateCurrentProjectUseCase;
   private ProfileSharedPreferencesRepository profileRepository;
@@ -36,15 +36,18 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
   private CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCaseUseCase;
 
   public GalleryProjectListPresenter(GalleryProjectListView galleryProjectListView,
-                                     SharedPreferences sharedPreferences) {
+                                     SharedPreferences sharedPreferences,
+                                     CreateDefaultProjectUseCase createDefaultProjectUseCase,
+                                     ProjectRepository projectRepository) {
     this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
+    this.createDefaultProjectUseCase = createDefaultProjectUseCase;
+    this.projectRepository = projectRepository;
+
     updateCurrentProjectUseCase = new UpdateCurrentProjectUseCase();
     duplicateProjectUseCase = new DuplicateProjectUseCase();
     deleteProjectUseCase = new DeleteProjectUseCase();
-    createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
     checkIfProjectHasBeenExportedUseCaseUseCase = new CheckIfProjectHasBeenExportedUseCase();
-    projectRealmRepository = new ProjectRealmRepository();
   }
 
   public void init() {
@@ -52,10 +55,10 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
   }
 
   public List<Project> loadListProjects() {
-    return projectRealmRepository.getListProjectsByLastModificationDescending();
+    return projectRepository.getListProjectsByLastModificationDescending();
   }
 
-  public void duplicateProject(Project project) {
+  public void duplicateProject(Project project) throws IllegalItemOnTrack {
     duplicateProjectUseCase.duplicate(project);
   }
 

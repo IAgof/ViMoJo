@@ -6,13 +6,9 @@ import android.content.Intent;
 import android.view.View;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
-import com.videonasocialmedia.vimojo.main.DaggerExporterServiceComponent;
-import com.videonasocialmedia.vimojo.main.ExporterServiceComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
-import com.videonasocialmedia.vimojo.main.modules.ExporterServiceModule;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -42,18 +38,14 @@ public class ExportTempBroadcastReceveiver extends BroadcastReceiver {
         //// TODO:(alvaro.martinez) 22/08/16 Here manage error trimming case, define new user story
         boolean result = intent.getBooleanExtra("videoExported", false);
         String videoId = intent.getStringExtra("videoId");
-        if(!result){
+        if (!result) {
             relaunchTranscoder(videoId);
         }
-
     }
 
     private void relaunchTranscoder(String videoId) {
-
         Video video = getVideo(videoId);
-
         if(video.getNumTriesToExportVideo() < MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
-
             Context appContext = VimojoApplication.getAppContext();
             Intent trimServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
             trimServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoId);

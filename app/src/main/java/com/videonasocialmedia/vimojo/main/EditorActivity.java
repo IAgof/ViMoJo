@@ -1,10 +1,8 @@
 package com.videonasocialmedia.vimojo.main;
 
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -18,8 +16,6 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
@@ -27,8 +23,10 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
-import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -37,10 +35,9 @@ import butterknife.ButterKnife;
  */
 
 public abstract class EditorActivity extends VimojoActivity implements EditorActivityView {
+  @Inject UserEventTracker userEventTracker;
+  @Inject EditorPresenter editorPresenter;
 
-  protected SharedPreferences sharedPreferences;
-  protected UserEventTracker userEventTracker;
-  private EditorPresenter editorPresenter;
   private AlertDialog alertDialog;
 
   @Bind(R.id.edit_activity_drawer_layout)
@@ -57,12 +54,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     super.onCreate(savedInstanceState);
     setContentView(R.layout.editor_activity);
     ButterKnife.bind(this);
-    this.userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-    sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
-        Context.MODE_PRIVATE);
-    editorPresenter = new EditorPresenter(this, sharedPreferences, VimojoApplication.getAppContext());
+    getActivityPresentersComponent().inject(this);
+//    this.userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
+//    sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
+//        Context.MODE_PRIVATE);
+//    editorPresenter = new EditorPresenter(this, sharedPreferences, VimojoApplication.getAppContext());
   }
-
 
   @Override
   public void setContentView(int layout) {

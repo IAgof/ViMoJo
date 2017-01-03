@@ -4,10 +4,8 @@ package com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activit
  *
  */
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -15,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -24,10 +23,11 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectClickListener;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.adapter.GalleryProjectListAdapter;
-import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -35,12 +35,12 @@ import butterknife.ButterKnife;
 public class GalleryProjectListActivity extends VimojoActivity implements GalleryProjectListView,
     GalleryProjectClickListener {
 
+  @Inject GalleryProjectListPresenter presenter;
+
   @Bind(R.id.recycler_gallery_project)
   RecyclerView projectList;
 
-  private GalleryProjectListPresenter presenter;
   private GalleryProjectListAdapter projectAdapter;
-  private SharedPreferences sharedPreferences;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +48,10 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
     setContentView(R.layout.activity_gallery_project);
     ButterKnife.bind(this);
     setupToolbar();
-    sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
-        Context.MODE_PRIVATE);
-    presenter = new GalleryProjectListPresenter(this, sharedPreferences);
+    getActivityPresentersComponent().inject(this);
+//    sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
+//        Context.MODE_PRIVATE);
+//    presenter = new GalleryProjectListPresenter(this, sharedPreferences);
     initProjectListRecycler();
   }
 
@@ -111,8 +112,13 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Override
   public void onDuplicateProject(Project project) {
-    presenter.duplicateProject(project);
-    presenter.updateProjectList();
+    try {
+      presenter.duplicateProject(project);
+      presenter.updateProjectList();
+    } catch (IllegalItemOnTrack illegalItemOnTrack) {
+      illegalItemOnTrack.printStackTrace();
+    }
+
   }
 
   @Override

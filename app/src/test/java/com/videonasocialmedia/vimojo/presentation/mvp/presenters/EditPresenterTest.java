@@ -8,6 +8,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -15,7 +16,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -40,7 +41,7 @@ import static org.mockito.Mockito.verify;
 public class EditPresenterTest {
   @Mock private GetMusicFromProjectUseCase mockedGetMusicFromProjectUseCase;
   @Mock private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-  @Mock private EditorView mockedEditorView;
+  @Mock private EditActivityView mockedEditorView;
   @Mock private VideonaPlayer mockedVideonaPlayer;
   @Mock private MixpanelAPI mockedMixpanelApi;
   @Mock private UserEventTracker mockedUserEventTracker;
@@ -49,6 +50,7 @@ public class EditPresenterTest {
   @Mock private ReorderMediaItemUseCase mockedMediaItemReorderer;
 
   @InjectMocks private EditPresenter injectedEditPresenter;
+  @Mock private LoadCurrentProjectUseCase mockedLoadCurrentProjectUseCase;
 
   @Before
   public void injectTestDoubles() {
@@ -57,7 +59,14 @@ public class EditPresenterTest {
 
   @After
   public void clearProjectInstance() {
-    Project.INSTANCE.clear();
+    //Project.INSTANCE.clear();
+    getAProject().INSTANCE.clear();
+  }
+
+  @Before
+  public void clearProjectInstanceBefore() {
+    //Project.INSTANCE.clear();
+    getAProject().INSTANCE.clear();
   }
 
   @Test
@@ -66,15 +75,8 @@ public class EditPresenterTest {
   }
 
   @Test
-  public void constructorSetsCurrentProject() {
-    Project videonaProject = getAProject();
-
-    assertThat(injectedEditPresenter.currentProject, is(videonaProject));
-  }
-
-  @Test
   public void loadProjectCallsGetMediaListFromProjectUseCase() {
-    injectedEditPresenter.loadProject();
+    injectedEditPresenter.obtainVideos();
     verify(getMediaListFromProjectUseCase).getMediaListFromProject(injectedEditPresenter);
   }
 
@@ -87,7 +89,6 @@ public class EditPresenterTest {
   @Test
   public void trackClipsReorderedIsCalledOnMediaReordered() {
     Project videonaProject = getAProject();
-
     injectedEditPresenter.onMediaReordered(null, 2);
 
     verify(mockedUserEventTracker).trackClipsReordered(videonaProject);
@@ -102,9 +103,9 @@ public class EditPresenterTest {
     Music voiceOver = new Music(musicPath, musicVolume);
     project.getVMComposition().getAudioTracks().get(0).insertItem(voiceOver);
     GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
-    EditPresenter presenter = new EditPresenter(mockedEditorView, mockedProjectModifiedCallback,
-            mockedUserEventTracker, mockedVideoRemover, mockedMediaItemReorderer,
-            getMusicFromProjectUseCase);
+    EditPresenter presenter = new EditPresenter(mockedEditorView, mockedUserEventTracker,
+        mockedVideoRemover, mockedMediaItemReorderer, getMusicFromProjectUseCase,
+        mockedLoadCurrentProjectUseCase);
 
     presenter.loadProject();
 

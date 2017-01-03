@@ -40,11 +40,13 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
     protected Project currentProject;
     private ProjectRepository projectRepository = new ProjectRealmRepository();
 
-    public EditTextPreviewPresenter(EditTextView editTextView, UserEventTracker userEventTracker) {
+    public EditTextPreviewPresenter(EditTextView editTextView, UserEventTracker userEventTracker,
+                                    GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
         this.editTextView = editTextView;
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        this.currentProject = loadCurrentProject();
         this.userEventTracker = userEventTracker;
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+
+        this.currentProject = loadCurrentProject();
         // TODO:(alvaro.martinez) 23/11/16 Use Dagger for this injection
         drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
     }

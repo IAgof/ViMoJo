@@ -36,6 +36,8 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -56,7 +58,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     private final String VIDEO_POSITION = "video_position";
     private final String CURRENT_TEXT = "current_text";
     private final String TEXT_TO_ADD = "image_of_text";
-    boolean hasTypedMoreThanTwoLines =false;
+    boolean hasTypedMoreThanTwoLines = false;
+
+    @Inject EditTextPreviewPresenter presenter;
 
     private boolean stateWasRestored = false;
 
@@ -75,7 +79,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     private Video video;
     int videoIndexOnTrack;
-    private EditTextPreviewPresenter presenter;
     private int currentPosition = 0;
     private String typedText;
 
@@ -91,8 +94,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-        presenter = new EditTextPreviewPresenter(this, userEventTracker);
+        getActivityPresentersComponent().inject(this);
+//        UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
+//        presenter = new EditTextPreviewPresenter(this, userEventTracker);
         videonaPlayer.setSeekBarLayoutEnabled(false);
         videonaPlayer.setListener(this);
 
@@ -362,6 +366,4 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
                 (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
-
-
 }

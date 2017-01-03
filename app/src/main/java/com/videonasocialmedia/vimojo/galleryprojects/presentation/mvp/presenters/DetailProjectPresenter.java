@@ -15,17 +15,18 @@ public class DetailProjectPresenter {
 
   private DetailProjectView detailProjectView;
   private Project currentProject;
-  protected UpdateTitleProjectUseCase updateTitleProjectUseCase;
+  private UpdateTitleProjectUseCase updateTitleProjectUseCase;
 
-  public DetailProjectPresenter(DetailProjectView detailProjectView){
+  public DetailProjectPresenter(DetailProjectView detailProjectView, UpdateTitleProjectUseCase
+                                updateTitleProjectUseCase){
     this.detailProjectView = detailProjectView;
-    updateTitleProjectUseCase = new UpdateTitleProjectUseCase();
+    this.updateTitleProjectUseCase = updateTitleProjectUseCase;
     currentProject = Project.getInstance(null,null,null);
   }
 
   public void init(){
 
-    if(currentProject.getMediaTrack().getItems().size() >0) {
+    if(currentProject.getVMComposition().hasVideos()) {
       Video firstVideo = (Video) currentProject.getMediaTrack().getItems().get(0);
       String path = firstVideo.getIconPath() != null
           ? firstVideo.getIconPath() : firstVideo.getMediaPath();
