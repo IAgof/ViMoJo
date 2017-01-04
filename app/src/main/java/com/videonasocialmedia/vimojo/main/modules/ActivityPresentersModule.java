@@ -7,17 +7,15 @@ import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProject
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
-import com.videonasocialmedia.vimojo.domain.project.ClearProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateTitleProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.DetailProjectPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
-import com.videonasocialmedia.vimojo.main.EditorActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.internals.di.PerActivity;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePreviewPresenter;
@@ -34,6 +32,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity
 import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
+import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
@@ -93,11 +92,9 @@ public class ActivityPresentersModule {
   EditPresenter provideEditPresenter(UserEventTracker userEventTracker,
                                      RemoveVideoFromProjectUseCase removeVideosFromProjectUseCase,
                                      ReorderMediaItemUseCase reorderMediaItemUseCase,
-                                     GetMusicFromProjectUseCase getMusicFromProjectUseCase,
-                                     LoadCurrentProjectUseCase loadCurrentProjectUseCase) {
+                                     GetMusicFromProjectUseCase getMusicFromProjectUseCase) {
     return new EditPresenter((EditActivity) activity, userEventTracker,
-        removeVideosFromProjectUseCase, reorderMediaItemUseCase, getMusicFromProjectUseCase,
-        loadCurrentProjectUseCase);
+        removeVideosFromProjectUseCase, reorderMediaItemUseCase, getMusicFromProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -132,35 +129,30 @@ public class ActivityPresentersModule {
   ShareVideoPresenter
   provideVideoSharePresenter(UserEventTracker userEventTracker,
                              SharedPreferences sharedPreferences,
-                             ClearProjectUseCase clearProjectUseCase,
                              CreateDefaultProjectUseCase createDefaultProjectUseCase,
                              AddLastVideoExportedToProjectUseCase
                                  addLastVideoExportedProjectUseCase) {
     return new ShareVideoPresenter((ShareActivity) activity, userEventTracker, sharedPreferences,
-            activity, clearProjectUseCase, createDefaultProjectUseCase,
-            addLastVideoExportedProjectUseCase);
+            activity, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase);
   }
 
   @Provides @PerActivity
-  InitAppPresenter provideInitAppPresenter(
-          CreateDefaultProjectUseCase createDefaultProjectUseCase) {
+  InitAppPresenter provideInitAppPresenter(CreateDefaultProjectUseCase createDefaultProjectUseCase) {
     return new InitAppPresenter((InitAppActivity) activity, createDefaultProjectUseCase);
   }
 
   @Provides @PerActivity
   EditorPresenter provideEditorPresenter(SharedPreferences sharedPreferences,
-                                         CreateDefaultProjectUseCase createDefaultProjectUseCase,
-                                         ClearProjectUseCase clearProjectUseCase) {
+                                         CreateDefaultProjectUseCase createDefaultProjectUseCase) {
     return new EditorPresenter((EditorActivity) activity, sharedPreferences, activity,
-        createDefaultProjectUseCase, clearProjectUseCase);
+        createDefaultProjectUseCase);
   }
 
   @Provides @PerActivity
   GalleryProjectListPresenter provideGalleryProjectListPresenter(
-      SharedPreferences sharedPreferences,
       CreateDefaultProjectUseCase createDefaultProjectUseCase,
       ProjectRepository projectRepository) {
-    return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, sharedPreferences,
+    return new GalleryProjectListPresenter((GalleryProjectListActivity) activity,
         createDefaultProjectUseCase, projectRepository);
   }
 
@@ -198,13 +190,9 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  ClearProjectUseCase provideProjectClearer(ProjectRepository projectRepository) {
-    return new ClearProjectUseCase(projectRepository);
-  }
-
-  @Provides
-  CreateDefaultProjectUseCase provideDefaultProjectCreator(ProjectRepository projectRepository) {
-    return new CreateDefaultProjectUseCase(projectRepository);
+  CreateDefaultProjectUseCase provideDefaultProjectCreator(ProjectRepository projectRepository,
+                                                            ProfileRepository profileRepository) {
+    return new CreateDefaultProjectUseCase(projectRepository, profileRepository);
   }
 
   @Provides

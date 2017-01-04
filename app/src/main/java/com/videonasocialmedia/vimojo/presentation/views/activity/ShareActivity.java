@@ -22,7 +22,6 @@ import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.main.EditorActivity;
 import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.ShareVideoPresenter;
@@ -99,11 +98,11 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
       public void onTabSelected(@IdRes int tabId) {
         switch (tabId){
           case(R.id.tab_editactivity):
-            showDialogClearProject(R.id.button_edit_navigator);
+            showDialogNewProject(R.id.button_edit_navigator);
 
             break;
           case (R.id.tab_sound):
-            showDialogClearProject(R.id.button_music_navigator);
+            showDialogNewProject(R.id.button_music_navigator);
             break;
         }
       }
@@ -282,13 +281,13 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     }
 
 
-    private void showDialogClearProject(final int resourceButtonId){
+    private void showDialogNewProject(final int resourceButtonId){
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        presenter.resetProject(Constants.PATH_APP);
+                        presenter.newDefaultProject(Constants.PATH_APP);
                         navigateTo(EditActivity.class);
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:

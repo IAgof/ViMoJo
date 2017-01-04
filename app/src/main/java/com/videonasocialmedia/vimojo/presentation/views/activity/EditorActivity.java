@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.main;
+package com.videonasocialmedia.vimojo.presentation.views.activity;
 
 
 import android.content.DialogInterface;
@@ -18,11 +18,14 @@ import android.widget.LinearLayout;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import javax.inject.Inject;
@@ -55,10 +58,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     setContentView(R.layout.editor_activity);
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
-//    this.userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-//    sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
-//        Context.MODE_PRIVATE);
-//    editorPresenter = new EditorPresenter(this, sharedPreferences, VimojoApplication.getAppContext());
   }
 
   @Override
@@ -171,7 +170,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
           case DialogInterface.BUTTON_POSITIVE:
             drawerLayout.closeDrawers();
             if(resourceItemMenuId == R.id.menu_navview_delete_clip)
-              editorPresenter.resetProject();
+                editorPresenter.createNewProject(Constants.PATH_APP);
             if(resourceItemMenuId == R.id.menu_navview_mail)
               navigateTo(SettingsActivity.class);
             if(resourceItemMenuId == R.id.menu_navview_username)

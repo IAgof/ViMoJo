@@ -19,7 +19,7 @@ public class InitAppPresenter {
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
   }
 
-  public void startLoadingProject(String rootPath, Profile profile) {
-    createDefaultProjectUseCase.loadOrCreateProject(rootPath, profile);
+  public void startLoadingProject(String rootPath) {
+    createDefaultProjectUseCase.loadOrCreateProject(rootPath);
   }
 }

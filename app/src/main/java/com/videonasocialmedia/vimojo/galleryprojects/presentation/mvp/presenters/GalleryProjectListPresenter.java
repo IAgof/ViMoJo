@@ -27,8 +27,6 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
   private ProjectRepository projectRepository;
   private GalleryProjectListView galleryProjectListView;
   private UpdateCurrentProjectUseCase updateCurrentProjectUseCase;
-  private ProfileSharedPreferencesRepository profileRepository;
-  private SharedPreferences sharedPreferences;
 
   private DuplicateProjectUseCase duplicateProjectUseCase;
   private DeleteProjectUseCase deleteProjectUseCase;
@@ -36,14 +34,11 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
   private CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCaseUseCase;
 
   public GalleryProjectListPresenter(GalleryProjectListView galleryProjectListView,
-                                     SharedPreferences sharedPreferences,
                                      CreateDefaultProjectUseCase createDefaultProjectUseCase,
                                      ProjectRepository projectRepository) {
     this.galleryProjectListView = galleryProjectListView;
-    this.sharedPreferences = sharedPreferences;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.projectRepository = projectRepository;
-
     updateCurrentProjectUseCase = new UpdateCurrentProjectUseCase();
     duplicateProjectUseCase = new DuplicateProjectUseCase();
     deleteProjectUseCase = new DeleteProjectUseCase();
@@ -75,11 +70,8 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
     }
   }
 
-  public void createDefaultProject() {
-    profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences,
-        VimojoApplication.getAppContext());
-    createDefaultProjectUseCase.createProject(Constants.PATH_APP,
-        profileRepository.getCurrentProfile());
+  public void createNewDefaultProject() {
+    createDefaultProjectUseCase.createProject(Constants.PATH_APP);
   }
 
   public void updateCurrentProject(Project project) {

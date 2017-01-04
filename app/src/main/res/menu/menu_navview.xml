@@ -11,7 +11,7 @@
             android:title="@string/emailPreference"/>
         <item
             android:id="@+id/menu_navview_gallery_projects"
-            android:icon="@drawable/activity_gallery_projects_icon"
+            android:icon="@drawable/activity_editor_drawer_projects"
             android:title="@string/galleryProjectActivityTitle"/>
     </group>
     <item
@@ -20,8 +20,8 @@
         <menu>
             <item
                 android:id="@+id/menu_navview_delete_clip"
-                android:icon="@drawable/activity_edit_clip_delete"
-                android:title="@string/clear_project"/>
+                android:icon="@drawable/activity_editor_drawer_new_project"
+                android:title="@string/new_project"/>
         </menu>
     </item>
 

@@ -6,6 +6,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.junit.Before;
@@ -17,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -29,6 +31,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class CreateDefaultProjectUseCaseTest {
   @Mock ProjectRepository mockedProjectRepository;
+  @Mock ProfileRepository mockedProfileRepository;
   @InjectMocks
   CreateDefaultProjectUseCase injectedUseCase;
 
@@ -64,7 +67,7 @@ public class CreateDefaultProjectUseCaseTest {
     assert Project.INSTANCE == null;
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
-    injectedUseCase.loadOrCreateProject("root/path", profile);
+    injectedUseCase.loadOrCreateProject("root/path");
 
     verify(mockedProjectRepository).getCurrentProject();
   }
@@ -73,7 +76,7 @@ public class CreateDefaultProjectUseCaseTest {
   public void startLoadingProjectDoesNotCallGetCurrentProjectIfNonNullInstance() {
     Project project = Project.INSTANCE = new Project(null, null, null);
 
-    injectedUseCase.loadOrCreateProject("root/path", project.getProfile());
+    injectedUseCase.loadOrCreateProject("root/path");
 
     verify(mockedProjectRepository, never()).getCurrentProject();
     assertThat(Project.getInstance(null, null, null), is(project));
@@ -84,25 +87,39 @@ public class CreateDefaultProjectUseCaseTest {
     assert Project.INSTANCE == null;
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
-    Project currentProject = new Project("current project", "current/path", profile);
+    Project currentProject = new Project("current project title", "current/path", profile);
     doReturn(currentProject).when(mockedProjectRepository).getCurrentProject();
 
-    injectedUseCase.loadOrCreateProject("root/path", profile);
+    injectedUseCase.loadOrCreateProject("root/path");
 
     assertThat(Project.getInstance(null, null, null), is(currentProject));
   }
 
   @Test
-  public void startLoadingProjectSaveOrUpdateProjectInstance() {
-    assert Project.INSTANCE == null;
-    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
-            VideoFrameRate.FrameRate.FPS25);
-    Project currentProject = new Project("current project", "current/path", profile);
-    doReturn(currentProject).when(mockedProjectRepository).getCurrentProject();
-
-    injectedUseCase.loadOrCreateProject("root/path", profile);
-
-    verify(mockedProjectRepository).update(currentProject);
+  public void loadOrCreateUpdateProjectRepository(){
+    injectedUseCase.loadOrCreateProject("root/path");
+    Project actualProject = Project.getInstance(null,null,null);
+    verify(mockedProjectRepository).update(actualProject);
   }
 
-}
+  @Test
+  public void createProjectUpdateProjectRepository(){
+    injectedUseCase.createProject("root/path");
+    Project actualProject = Project.getInstance(null,null,null);
+    verify(mockedProjectRepository).update(actualProject);
+  }
+
+  @Test
+  public void createProjectUpdateProjectInstance() {
+    assert Project.INSTANCE == null;
+    /*Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+        VideoFrameRate.FrameRate.FPS25);
+    doReturn(profile).when(mockedProfileRepository).getCurrentProfile();
+    Project currentProject = Project.getInstance("current project", "current/path", profile);
+    assertThat(Project.getInstance(null,null,null), is(currentProject));*/
+    injectedUseCase.createProject("root/path");
+    Project actualProject = Project.getInstance(null,null,null);
+
+  }
+
+  }

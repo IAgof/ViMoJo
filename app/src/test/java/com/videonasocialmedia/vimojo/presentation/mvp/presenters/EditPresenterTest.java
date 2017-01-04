@@ -1,14 +1,11 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import android.support.annotation.NonNull;
-
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
-import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -18,7 +15,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.After;
@@ -39,18 +35,16 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class EditPresenterTest {
-  @Mock private GetMusicFromProjectUseCase mockedGetMusicFromProjectUseCase;
-  @Mock private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+
+  @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock private EditActivityView mockedEditorView;
   @Mock private VideonaPlayer mockedVideonaPlayer;
   @Mock private MixpanelAPI mockedMixpanelApi;
   @Mock private UserEventTracker mockedUserEventTracker;
-  @Mock private ToolbarNavigator.ProjectModifiedCallBack mockedProjectModifiedCallback;
   @Mock private RemoveVideoFromProjectUseCase mockedVideoRemover;
   @Mock private ReorderMediaItemUseCase mockedMediaItemReorderer;
 
   @InjectMocks private EditPresenter injectedEditPresenter;
-  @Mock private LoadCurrentProjectUseCase mockedLoadCurrentProjectUseCase;
 
   @Before
   public void injectTestDoubles() {
@@ -59,14 +53,7 @@ public class EditPresenterTest {
 
   @After
   public void clearProjectInstance() {
-    //Project.INSTANCE.clear();
-    getAProject().INSTANCE.clear();
-  }
-
-  @Before
-  public void clearProjectInstanceBefore() {
-    //Project.INSTANCE.clear();
-    getAProject().INSTANCE.clear();
+    Project.INSTANCE.clear();
   }
 
   @Test
@@ -77,20 +64,13 @@ public class EditPresenterTest {
   @Test
   public void loadProjectCallsGetMediaListFromProjectUseCase() {
     injectedEditPresenter.obtainVideos();
-    verify(getMediaListFromProjectUseCase).getMediaListFromProject(injectedEditPresenter);
+    verify(mockedGetMediaListFromProjectUseCase).getMediaListFromProject(injectedEditPresenter);
   }
 
-  @Test
-  public void loadProjectCallsGetMusicFromProjectUseCaseIfProjectHasMusic() {
-    Project videonaProject = getAProject();
-    // TODO:(alvaro.martinez) 10/10/16 Check and improve hasMusic, setter not needed.
-  }
-
-  @Test
+    @Test
   public void trackClipsReorderedIsCalledOnMediaReordered() {
     Project videonaProject = getAProject();
     injectedEditPresenter.onMediaReordered(null, 2);
-
     verify(mockedUserEventTracker).trackClipsReordered(videonaProject);
   }
 
@@ -104,8 +84,7 @@ public class EditPresenterTest {
     project.getVMComposition().getAudioTracks().get(0).insertItem(voiceOver);
     GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
     EditPresenter presenter = new EditPresenter(mockedEditorView, mockedUserEventTracker,
-        mockedVideoRemover, mockedMediaItemReorderer, getMusicFromProjectUseCase,
-        mockedLoadCurrentProjectUseCase);
+        mockedVideoRemover, mockedMediaItemReorderer, getMusicFromProjectUseCase);
 
     presenter.loadProject();
 

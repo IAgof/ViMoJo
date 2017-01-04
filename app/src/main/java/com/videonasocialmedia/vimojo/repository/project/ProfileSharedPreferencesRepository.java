@@ -92,8 +92,8 @@ public class ProfileSharedPreferencesRepository implements ProfileRepository {
         return VideoFrameRate.FrameRate.FPS30;
       }
     }
-    // default
-    return VideoFrameRate.FrameRate.NOT_SUPPORTED;
+    // default 30 fps, standard
+    return VideoFrameRate.FrameRate.FPS30;
   }
 
 }

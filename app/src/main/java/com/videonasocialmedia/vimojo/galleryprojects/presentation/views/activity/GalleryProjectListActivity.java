@@ -101,7 +101,7 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Override
   public void createDefaultProject() {
-    presenter.createDefaultProject();
+    presenter.createNewDefaultProject();
     presenter.updateProjectList();
   }
 

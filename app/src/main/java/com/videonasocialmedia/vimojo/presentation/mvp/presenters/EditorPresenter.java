@@ -3,15 +3,13 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.project.ClearProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -22,12 +20,11 @@ import javax.inject.Inject;
  */
 
 public class EditorPresenter {
+
   private EditorActivityView editorActivityView;
   private SharedPreferences sharedPreferences;
-  private ProfileRepository profileRepository;
   protected UserEventTracker userEventTracker;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
-  private ClearProjectUseCase clearProjectUseCase;
   protected Project currentProject;
   private SharedPreferences.Editor preferencesEditor;
   private Context context;
@@ -35,20 +32,17 @@ public class EditorPresenter {
   @Inject
   public EditorPresenter(EditorActivityView editorActivityView,
                          SharedPreferences sharedPreferences, Context context,
-                         CreateDefaultProjectUseCase createDefaultProjectUseCase,
-                               ClearProjectUseCase clearProjectUseCase) {
+                         CreateDefaultProjectUseCase createDefaultProjectUseCase) {
     this.editorActivityView = editorActivityView;
     this.sharedPreferences = sharedPreferences;
     this.context = context;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
-    this.clearProjectUseCase = clearProjectUseCase;
-
     this.currentProject = loadCurrentProject();
   }
 
   public Project loadCurrentProject() {
-    ProjectRealmRepository projectRealmRepository = new ProjectRealmRepository();
-    return new LoadCurrentProjectUseCase(projectRealmRepository).loadCurrentProject();
+    // TODO(jliarte): this should make use of a repository or use case to load the Project
+    return Project.getInstance(null, null, null);
   }
 
   public void getPreferenceUserName() {
@@ -70,15 +64,10 @@ public class EditorPresenter {
 
   }
 
-
-  public void resetProject() {
-    String rootPath = sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH,"");
+  public void createNewProject(String roothPath){
+    createDefaultProjectUseCase.createProject(roothPath);
     clearProjectDataFromSharedPreferences();
-
-    clearProjectUseCase.clearProject(currentProject);
-      profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, context);
-      createDefaultProjectUseCase.loadOrCreateProject(rootPath, profileRepository.getCurrentProfile());
-      editorActivityView.updateViewResetProject();
+    editorActivityView.updateViewResetProject();
   }
 
   private void clearProjectDataFromSharedPreferences() {

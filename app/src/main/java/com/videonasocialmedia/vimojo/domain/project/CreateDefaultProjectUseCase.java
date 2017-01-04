@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.domain.project;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
@@ -11,6 +12,8 @@ import javax.inject.Inject;
  * Created by jliarte on 23/10/16.
  */
 public class CreateDefaultProjectUseCase {
+
+  protected ProfileRepository profileRepository;
   protected ProjectRepository projectRepository;
 
   /**
@@ -18,11 +21,13 @@ public class CreateDefaultProjectUseCase {
    *
    * @param projectRepository the project repository.
    */
-  @Inject public CreateDefaultProjectUseCase(ProjectRepository projectRepository) {
+  @Inject public CreateDefaultProjectUseCase(ProjectRepository projectRepository, ProfileRepository
+                                             profileRepository) {
     this.projectRepository = projectRepository;
+    this.profileRepository = profileRepository;
   }
 
-  public void loadOrCreateProject(String rootPath, Profile profile) {
+  public void loadOrCreateProject(String rootPath) {
 
     // By default project title,
     String projectTitle = DateUtils.getDateRightNow();
@@ -33,22 +38,15 @@ public class CreateDefaultProjectUseCase {
       Project.INSTANCE = projectRepository.getCurrentProject();
     }
 
-    Project currentProject = Project.getInstance(projectTitle, rootPath, profile);
+    Project currentProject = Project.getInstance(projectTitle, rootPath, profileRepository.getCurrentProfile());
     projectRepository.update(currentProject);
   }
 
-  public void createProject(String rootPath, Profile profile){
-
+  public void createProject(String rootPath){
     String projectTitle = DateUtils.getDateRightNow();
-    Project.INSTANCE = new Project(projectTitle,rootPath, profile);
-    Project currentProject = Project.getInstance(projectTitle, rootPath, profile);
+    Project currentProject = new Project(projectTitle,rootPath, profileRepository.getCurrentProfile());
+    Project.INSTANCE = currentProject;
     projectRepository.update(currentProject);
   }
 
-//  //TODO Check user profile, by default 720p 10Mbps FPS25
-//  private Profile getDefaultFreeProfile() {
-//
-//    return Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
-//            VideoFrameRate.FrameRate.FPS25);
-//  }
 }
