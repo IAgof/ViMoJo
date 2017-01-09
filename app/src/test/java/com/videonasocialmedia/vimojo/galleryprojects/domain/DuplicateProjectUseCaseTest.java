@@ -21,7 +21,9 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 
 
 /**
@@ -40,32 +42,12 @@ public class DuplicateProjectUseCaseTest {
     MockitoAnnotations.initMocks(this);
   }
 
+  @Ignore // TODO:(alvaro.martinez) 5/01/17 What this useCase should test? CopyFiles¿?
   @Test
-  public void shouldSaveProfileVMCompositionDurationLastModificationIfProjectIsDuplicate() throws IllegalItemOnTrack {
+  public void duplicateProjectCopyFileToNewProject() throws IllegalItemOnTrack {
     Project project = getAProject();
-    Project duplicateProject = new Project(project);
+    injectedUseCase.duplicate(project);
 
-    assertThat("copy project save duration ", duplicateProject.getDuration(),
-        CoreMatchers.is(project.getDuration()));
-    assertThat("copy project save last modification ", duplicateProject.getLastModification(),
-        CoreMatchers.is(project.getLastModification()));
-  }
-
-  @Test
-  public void shouldUpdateTitleUuidProjectPathIfProjectIsDuplicate() throws IllegalItemOnTrack {
-    Project project = getAProject();
-    Project duplicateProject = new Project(project);
-
-    assertThat("copy project change profile ", duplicateProject.getProfile(),
-        CoreMatchers.not(project.getProfile()));
-    assertThat("copy project change VMComposition ", duplicateProject.getVMComposition(),
-        CoreMatchers.not(project.getVMComposition()));
-    assertThat("copy project change title ", duplicateProject.getTitle(),
-        CoreMatchers.not(project.getTitle()));
-    assertThat("copy project change uuid ", duplicateProject.getUuid(),
-        CoreMatchers.not(project.getUuid()));
-    assertThat("copy project change project path ", duplicateProject.getProjectPath(),
-        CoreMatchers.not(project.getProjectPath()));
   }
 
   private Project getAProject() {

@@ -36,7 +36,7 @@ public class ExportTempBroadcastReceveiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         //// TODO:(alvaro.martinez) 22/08/16 Here manage error trimming case, define new user story
-        boolean result = intent.getBooleanExtra("videoExported", false);
+        boolean result = intent.getBooleanExtra("videoExportedNavigateToShareActivity", false);
         String videoId = intent.getStringExtra("videoId");
         if (!result) {
             relaunchTranscoder(videoId);
@@ -50,9 +50,11 @@ public class ExportTempBroadcastReceveiver extends BroadcastReceiver {
             Intent trimServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
             trimServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoId);
             trimServiceIntent.putExtra(IntentConstants.RELAUNCH_EXPORT_TEMP, true);
-            Project project = projectRepository.getCurrentProject();
+            Project project = Project.getInstance(null,null,null);
             trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY,
                 project.getProjectPathIntermediateFiles());
+            trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY_FADE_AUDIO,
+                project.getProjectPathIntermediateFileAudioFade());
             appContext.startService(trimServiceIntent);
         } else {
             // TODO:(alvaro.martinez) 28/09/16 Define user experience

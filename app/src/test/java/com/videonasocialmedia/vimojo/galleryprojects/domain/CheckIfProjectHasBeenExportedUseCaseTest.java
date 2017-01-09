@@ -45,8 +45,8 @@ public class CheckIfProjectHasBeenExportedUseCaseTest {
 
     injectedUseCase.compareDate(project, mockedOnProjectExportedListener);
 
-    verify(mockedOnProjectExportedListener, never()).exportNewVideo();
-    verify(mockedOnProjectExportedListener, times(1)).videoExported("somePath");
+    verify(mockedOnProjectExportedListener, never()).exportProject(project);
+    verify(mockedOnProjectExportedListener, times(1)).videoExportedNavigateToShareActivity(project);
   }
 
   @Test
@@ -57,8 +57,8 @@ public class CheckIfProjectHasBeenExportedUseCaseTest {
 
     injectedUseCase.compareDate(project, mockedOnProjectExportedListener);
 
-    verify(mockedOnProjectExportedListener, times(1)).exportNewVideo();
-    verify(mockedOnProjectExportedListener, never()).videoExported("somePath");
+    verify(mockedOnProjectExportedListener, times(1)).exportProject(project);
+    verify(mockedOnProjectExportedListener, never()).videoExportedNavigateToShareActivity(project);
   }
 
   private Project getAProjectWithVideoExportedAndSameDates() {

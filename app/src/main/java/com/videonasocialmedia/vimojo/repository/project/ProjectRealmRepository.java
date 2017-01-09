@@ -58,7 +58,6 @@ public class ProjectRealmRepository implements ProjectRepository {
 
   @Override
   public void updateWithDate(final Project item, String date) {
-    item.setLastModification(date);
     Realm realm = Realm.getDefaultInstance();
     realm.executeTransaction(new Realm.Transaction() {
       @Override

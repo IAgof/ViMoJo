@@ -79,21 +79,17 @@ public class RecordPresenter {
 
     private boolean externalIntent;
 
-    private ProjectRepository projectRepository;
-
     @Inject
     public RecordPresenter(Context context, RecordView recordView,
                            GLCameraView cameraPreview, SharedPreferences sharedPreferences,
                            boolean externalIntent,
-                           AddVideoToProjectUseCase addVideoToProjectUseCase,
-                           ProjectRepository projectRepository) {
+                           AddVideoToProjectUseCase addVideoToProjectUseCase) {
         this.context = context;
         this.recordView = recordView;
         this.cameraPreview = cameraPreview;
         this.sharedPreferences = sharedPreferences;
         this.externalIntent = externalIntent;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-        this.projectRepository = projectRepository;
 
         this.currentProject = loadCurrentProject();
         preferencesEditor = sharedPreferences.edit();
@@ -102,7 +98,7 @@ public class RecordPresenter {
     }
 
     public Project loadCurrentProject() {
-        return projectRepository.getCurrentProject();
+        return Project.getInstance(null,null,null);
     }
 
     private VideoEncoderConfig getVideoEncoderConfigFromProfileProject() {
@@ -388,7 +384,7 @@ public class RecordPresenter {
     }
 
     public int getProjectDuration() {
-        return projectRepository.getCurrentProject().getDuration();
+        return currentProject.getDuration();
     }
 
     public int getNumVideosOnProject() {

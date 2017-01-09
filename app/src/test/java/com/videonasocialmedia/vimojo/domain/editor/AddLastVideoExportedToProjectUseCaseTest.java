@@ -8,7 +8,6 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -45,8 +44,10 @@ public class AddLastVideoExportedToProjectUseCaseTest {
     String date = DateUtils.getDateRightNow();
     injectedUseCase.addLastVideoExportedToProject("newVideoExported", date);
 
-    assertThat("Date of last modification and videoExported are equal ",
-        actualProject.getLastModification(), is(actualProject.getDateLastVideoExported()));
+    Project currentProject = Project.getInstance(null, null, null);
+
+    assertThat("Date of last modification and videoExportedNavigateToShareActivity are equal ",
+        currentProject.getLastModification(), is(currentProject.getDateLastVideoExported()));
   }
 
   @Test

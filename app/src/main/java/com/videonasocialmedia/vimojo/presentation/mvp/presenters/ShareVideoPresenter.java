@@ -145,7 +145,7 @@ public class ShareVideoPresenter {
 
     public void newDefaultProject(String rootPath){
         clearProjectDataFromSharedPreferences();
-        createDefaultProjectUseCase.loadOrCreateProject(rootPath);
+        createDefaultProjectUseCase.createProject(rootPath);
     }
 
     // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?

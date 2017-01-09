@@ -38,7 +38,6 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
     private EditTextView editTextView;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
-    private ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public EditTextPreviewPresenter(EditTextView editTextView, UserEventTracker userEventTracker,
                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
@@ -53,7 +52,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
     private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return projectRepository.getCurrentProject();
+        return Project.getInstance(null,null,null);
     }
 
     public void init(int videoToEditTextIndex) {
@@ -92,6 +91,8 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
         textToVideoServiceIntent.putExtra(IntentConstants.TEXT_POSITION, textPositionSelected.name());
         textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY,
             currentProject.getProjectPathIntermediateFiles());
+        textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY_FADE_AUDIO,
+            currentProject.getProjectPathIntermediateFileAudioFade());
         appContext.startService(textToVideoServiceIntent);
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
     }

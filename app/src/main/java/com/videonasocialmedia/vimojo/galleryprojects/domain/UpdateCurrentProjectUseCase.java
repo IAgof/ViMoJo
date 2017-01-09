@@ -1,7 +1,6 @@
 package com.videonasocialmedia.vimojo.galleryprojects.domain;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
@@ -11,7 +10,11 @@ import com.videonasocialmedia.vimojo.utils.DateUtils;
 
 public class UpdateCurrentProjectUseCase {
 
-  protected ProjectRepository projectRepository = new ProjectRealmRepository();
+  protected ProjectRepository projectRepository;
+
+  public UpdateCurrentProjectUseCase(ProjectRepository projectRepository){
+    this.projectRepository = projectRepository;
+  }
 
   public void updateLastModificationAndProjectInstance(Project project){
     project.setLastModification(DateUtils.getDateRightNow());

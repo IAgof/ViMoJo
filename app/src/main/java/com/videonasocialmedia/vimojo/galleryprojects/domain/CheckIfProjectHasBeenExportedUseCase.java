@@ -12,9 +12,9 @@ public class CheckIfProjectHasBeenExportedUseCase {
   public void compareDate(Project project, OnProjectExportedListener listener) {
     if (project.hasVideoExported()
         && project.getDateLastVideoExported().compareTo(project.getLastModification()) == 0) {
-      listener.videoExported(project.getPathLastVideoExported());
+      listener.videoExportedNavigateToShareActivity(project);
     } else{
-      listener.exportNewVideo();
+      listener.exportProject(project);
     }
   }
 }

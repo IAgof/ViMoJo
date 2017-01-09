@@ -51,27 +51,10 @@ public class GalleryProjectListPresenterTest {
     MockitoAnnotations.initMocks(this);
   }
 
-
-  @Test
-  public void clickEditProjectNavigateToDetailActivity(){
-
-    List<Project> projectList = new ArrayList<>();
-    projectList.add(getAProject());
-    doReturn(projectList).when(mockedProjectRepository).getListProjectsByLastModificationDescending();
-    injectedPresenter.updateProjectList();
-  }
-
   @Test
   public void updateCurrentProjectCallsUpdateLastModificationAndProjectInstance(){
     Project project = getAProject();
     injectedPresenter.updateCurrentProject(project);
-    verify(mockedUpdateCurrentProjectUseCase).updateLastModificationAndProjectInstance(project);
-  }
-
-  @Test
-  public void checkNavigationToShareCallsUpdateLastModificationAndProjectInstance(){
-    Project project = getAProject();
-    injectedPresenter.checkNavigationToShare(project);
     verify(mockedUpdateCurrentProjectUseCase).updateLastModificationAndProjectInstance(project);
   }
 

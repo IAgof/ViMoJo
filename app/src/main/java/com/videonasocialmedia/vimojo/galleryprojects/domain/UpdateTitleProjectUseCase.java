@@ -1,7 +1,6 @@
 package com.videonasocialmedia.vimojo.galleryprojects.domain;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 /**
@@ -9,8 +8,11 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
  */
 
 public class UpdateTitleProjectUseCase {
+  ProjectRepository projectRepository;
 
-  ProjectRepository projectRepository = new ProjectRealmRepository();
+  public UpdateTitleProjectUseCase(ProjectRepository projectRepository){
+    this.projectRepository = projectRepository;
+  }
 
   public void setTitle(Project project, String newTitle){
     project.setTitle(newTitle);

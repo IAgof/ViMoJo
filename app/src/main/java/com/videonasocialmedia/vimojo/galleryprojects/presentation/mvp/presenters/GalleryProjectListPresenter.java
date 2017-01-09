@@ -1,18 +1,14 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters;
 
-import android.content.SharedPreferences;
-
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -34,15 +30,20 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
   private CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCaseUseCase;
 
   public GalleryProjectListPresenter(GalleryProjectListView galleryProjectListView,
+                                     ProjectRepository projectRepository,
                                      CreateDefaultProjectUseCase createDefaultProjectUseCase,
-                                     ProjectRepository projectRepository) {
+                                     UpdateCurrentProjectUseCase updateCurrentProjectUseCase,
+                                     DuplicateProjectUseCase duplicateProjectUseCase,
+                                     DeleteProjectUseCase deleteProjectUseCase,
+                                     CheckIfProjectHasBeenExportedUseCase
+                                         checkIfProjectHasBeenExportedUseCase) {
     this.galleryProjectListView = galleryProjectListView;
-    this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.projectRepository = projectRepository;
-    updateCurrentProjectUseCase = new UpdateCurrentProjectUseCase();
-    duplicateProjectUseCase = new DuplicateProjectUseCase();
-    deleteProjectUseCase = new DeleteProjectUseCase();
-    checkIfProjectHasBeenExportedUseCaseUseCase = new CheckIfProjectHasBeenExportedUseCase();
+    this.createDefaultProjectUseCase = createDefaultProjectUseCase;
+    this.updateCurrentProjectUseCase = updateCurrentProjectUseCase;
+    this.duplicateProjectUseCase = duplicateProjectUseCase;
+    this.deleteProjectUseCase = deleteProjectUseCase;
+    checkIfProjectHasBeenExportedUseCaseUseCase = checkIfProjectHasBeenExportedUseCase;
   }
 
   public void init() {
@@ -70,8 +71,8 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
     }
   }
 
-  public void createNewDefaultProject() {
-    createDefaultProjectUseCase.createProject(Constants.PATH_APP);
+  public void createNewDefaultProject(String rootPath) {
+    createDefaultProjectUseCase.createProject(rootPath);
   }
 
   public void updateCurrentProject(Project project) {
@@ -79,18 +80,19 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
   }
 
   public void checkNavigationToShare(Project project) {
-    updateCurrentProjectUseCase.updateLastModificationAndProjectInstance(project);
     // if video to export has been exported before and is exactly the same, use it.
     checkIfProjectHasBeenExportedUseCaseUseCase.compareDate(project, this);
   }
 
   @Override
-  public void videoExported(String videoPath) {
-    galleryProjectListView.navigateTo(ShareActivity.class, videoPath);
+  public void videoExportedNavigateToShareActivity(Project project) {
+    updateCurrentProjectUseCase.updateLastModificationAndProjectInstance(project);
+    galleryProjectListView.navigateTo(ShareActivity.class, project.getPathLastVideoExported());
   }
 
   @Override
-  public void exportNewVideo() {
+  public void exportProject(Project project) {
+    updateCurrentProjectUseCase.updateLastModificationAndProjectInstance(project);
     //// TODO:(alvaro.martinez) 20/12/16 Launch export process. Provisional, go to editActivity.
     galleryProjectListView.navigateTo(EditActivity.class);
   }

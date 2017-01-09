@@ -11,13 +11,13 @@
  */
 package com.videonasocialmedia.vimojo.model.entities.editor;
 
-import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
@@ -34,8 +34,10 @@ import java.util.UUID;
  */
 public class Project {
   public static final String INTERMEDIATE_FILES = "intermediate_files";
+  public static final String INTERMEDIATE_FILES_TEMP_AUDIO_FADE = "tempAudioFade";
   // TODO:(alvaro.martinez) 23/12/16 Change VideonaSDK, receive path temo from app, folder name ".tempAudio";
-  public static final String TEMP_AUDIO = Constants.DIRECTORY_NAME_TEMP_AUDIO_FILES;
+  public static final String TEMP_FILES_AUDIO_MIXED = "tempMixedAudio";
+  public static final String TEMP_FILES_AUDIO_MIXED_VOICE_OVER_RECORD = "voiceOverRecord";
   private final String TAG = getClass().getCanonicalName();
     public static String VIDEONA_PATH = "";
     /**
@@ -89,8 +91,9 @@ public class Project {
         this.profile = profile;
         this.duration = 0;
         this.lastModification = DateUtils.getDateRightNow();
-        this.projectPath = rootPath + "/.projects/" + uuid; //todo probablemente necesitemos un slugify de ese title.
-        createProjectFolders();
+        this.projectPath = rootPath + File.separator + Constants.FOLDER_NAME_VIMOJO_PROJECTS +
+            File.separator + uuid; //todo probablemente necesitemos un slugify de ese title.
+      //  createProjectFolders();
     }
 
   public Project(Project project) throws IllegalItemOnTrack {
@@ -132,10 +135,6 @@ public class Project {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getProjectPath() {
-        return projectPath;
     }
 
     public void setProjectPath(String projectPath) {
@@ -264,20 +263,45 @@ public class Project {
   public void createProjectFolders() {
     createFolder(projectPath);
     createFolder(projectPath + File.separator + INTERMEDIATE_FILES);
+    createFolder(projectPath + File.separator + TEMP_FILES_AUDIO_MIXED);
     createFolder(projectPath + File.separator + INTERMEDIATE_FILES + File.separator
-        + TEMP_AUDIO);
+        + INTERMEDIATE_FILES_TEMP_AUDIO_FADE);
+  }
+
+  public String getProjectPath() {
+    createFolder(projectPath);
+    return projectPath;
   }
 
   public String getProjectPathIntermediateFiles(){
-    return getProjectPath() + File.separator + INTERMEDIATE_FILES;
+    String pathIntermediateFiles = getProjectPath() + File.separator + INTERMEDIATE_FILES;
+    createFolder(pathIntermediateFiles);
+    return pathIntermediateFiles;
   }
 
-  public String getProjectPathIntermediateAudioFiles(){
-    return getProjectPath() + File.separator + TEMP_AUDIO;
+  public String getProjectPathIntermediateFileAudioFade(){
+    String pathIntermediateFilesTempAudioFade = projectPath + File.separator + INTERMEDIATE_FILES
+        + File.separator+ INTERMEDIATE_FILES_TEMP_AUDIO_FADE;
+    createFolder(pathIntermediateFilesTempAudioFade);
+    return pathIntermediateFilesTempAudioFade;
+  }
+
+  public String getProjectPathIntermediateAudioMixedFiles(){
+    String pathTempFilesAudioMixed = getProjectPath() + File.separator + TEMP_FILES_AUDIO_MIXED;
+    createFolder(pathTempFilesAudioMixed);
+    return pathTempFilesAudioMixed;
+  }
+
+  public String getProjectPathIntermediateAudioFilesVoiceOverRecord(){
+    String pathTempFilesAudioMixedVoiceOverRecord = getProjectPath() + File.separator
+        + TEMP_FILES_AUDIO_MIXED + File.separator + TEMP_FILES_AUDIO_MIXED_VOICE_OVER_RECORD;
+    createFolder(pathTempFilesAudioMixedVoiceOverRecord);
+    return pathTempFilesAudioMixedVoiceOverRecord;
   }
 
 
-  public void createFolder(String projectPath) {
+
+  private void createFolder(String projectPath) {
     FileUtils.createFolder(projectPath);
   }
 

@@ -70,7 +70,7 @@ public class SoundVolumePresenterTest {
     AddMusicToProjectUseCase addMusicToProjectUseCase =
             new AddMusicToProjectUseCase(mockedProjectRepository);
     AddVoiceOverToProjectUseCase addVoiceOverToProjectUseCase = new AddVoiceOverToProjectUseCase(
-            mockedProjectRepository, addMusicToProjectUseCase);
+            mockedProjectRepository, addMusicToProjectUseCase, removeMusicFromProjectUseCase);
     SoundVolumePresenter presenter = new SoundVolumePresenter(mockedSoundVolumeView,
             removeMusicFromProjectUseCase, addVoiceOverToProjectUseCase);
 

@@ -49,9 +49,6 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
     ButterKnife.bind(this);
     setupToolbar();
     getActivityPresentersComponent().inject(this);
-//    sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
-//        Context.MODE_PRIVATE);
-//    presenter = new GalleryProjectListPresenter(this, sharedPreferences);
     initProjectListRecycler();
   }
 
@@ -101,7 +98,7 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Override
   public void createDefaultProject() {
-    presenter.createNewDefaultProject();
+    presenter.createNewDefaultProject(Constants.PATH_APP);
     presenter.updateProjectList();
   }
 

@@ -112,6 +112,8 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
         trimServiceIntent.putExtra(IntentConstants.FINISH_TIME_MS, finishTimeMs);
         trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY,
             currentProject.getProjectPathIntermediateFiles());
+        trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY_FADE_AUDIO,
+            currentProject.getProjectPathIntermediateFileAudioFade());
         appContext.startService(trimServiceIntent);
     }
 }

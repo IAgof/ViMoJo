@@ -14,11 +14,10 @@ public class EditNavigatorPresenter {
 
     EditNavigatorView navigatorView;
     private Project project;
-    private ProjectRepository projectRepository = new ProjectRealmRepository();
 
     public EditNavigatorPresenter(EditNavigatorView navigatorView) {
         this.navigatorView = navigatorView;
-        project = projectRepository.getCurrentProject();
+        project = Project.getInstance(null, null, null);
         areThereVideosInProject();
     }
 

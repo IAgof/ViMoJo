@@ -29,12 +29,11 @@ public class ExportProjectUseCase implements VMCompositionExportSession.OnExport
   public ExportProjectUseCase(OnExportFinishedListener onExportFinishedListener) {
     this.onExportFinishedListener = onExportFinishedListener;
     project = Project.getInstance(null, null, null);
-    // TODO(jliarte): 2/01/17 this has to be project path
-    String tempFilesDirectory = Constants.PATH_APP_TEMP;
+
+    String tempPathIntermediateAudioFilesDirectory = project.getProjectPathIntermediateAudioMixedFiles();
     String outputFilesDirectory = Constants.PATH_APP;
-    VMCompositionExportSession = new VMCompositionExportSessionImpl(
-            project.getVMComposition(), project.getProfile(),
-            outputFilesDirectory, tempFilesDirectory, this);
+    VMCompositionExportSession = new VMCompositionExportSessionImpl( project.getVMComposition(),
+        outputFilesDirectory, tempPathIntermediateAudioFilesDirectory, this);
   }
 
   /**

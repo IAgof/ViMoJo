@@ -49,8 +49,6 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     private int numAudiosRecorded = 0;
     private boolean firstTimeRecording;
 
-    private ProjectRepository projectRepository = new ProjectRealmRepository();
-
     public VoiceOverPresenter(VoiceOverView voiceOverView) {
         this.voiceOverView = voiceOverView;
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
@@ -62,7 +60,8 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
 
     public void initAudioRecorder() {
         try {
-            sessionConfig = new SessionConfig(Constants.PATH_APP_TEMP_AUDIO, 1);
+            sessionConfig = new
+                SessionConfig(currentProject.getProjectPathIntermediateAudioFilesVoiceOverRecord(), 1);
             audioRecorder = new AudioRecorder(sessionConfig);
             firstTimeRecording = true;
         } catch (IOException e) {
@@ -83,7 +82,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     private Project loadCurrentProject() {
-        return projectRepository.getCurrentProject();
+        return Project.getInstance(null,null, null);
     }
 
     public void loadProjectVideo(int videoToTrimIndex) {
@@ -105,19 +104,22 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
         voiceOverView.resetPreview();
     }
 
-    public void addVoiceOver() {
-        mergeAudio();
+    public void addVoiceOver(String finalNamePathAudioMerge) {
+        mergeAudio(finalNamePathAudioMerge);
         // (jliarte): 1/12/16 merge audio finally makes an async call, so files are deleted before
         //            it completes
 //        cleanDirectory();
     }
 
     public void cleanDirectory() {
-       FileUtils.cleanDirectory(new File(Constants.PATH_APP_TEMP_AUDIO));
+       FileUtils.cleanDirectory(new
+           File(currentProject.getProjectPathIntermediateAudioFilesVoiceOverRecord()));
     }
 
-    private void mergeAudio() {
-        mergeVoiceOverAudiosUseCase.mergeAudio();
+    private void mergeAudio(String finalNamePathAudioMerge) {
+        String path = currentProject.getProjectPathIntermediateFiles() + File.separator
+            + finalNamePathAudioMerge;
+        mergeVoiceOverAudiosUseCase.mergeAudio(path);
     }
 
     public void trackVoiceOverVideo() {
@@ -139,7 +141,8 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     private void resetAudioRecorder() throws IOException {
-        sessionConfig = new SessionConfig(Constants.PATH_APP_TEMP_AUDIO, 1);
+        sessionConfig = new
+            SessionConfig(currentProject.getProjectPathIntermediateAudioFilesVoiceOverRecord(), 1);
         audioRecorder.reset(sessionConfig);
 
         startRecording();
@@ -165,7 +168,8 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     private void renameAudioRecorded(int numAudiosRecorded) {
         File originalFile = new File(sessionConfig.getOutputPath());
         String fileName = "AUD_" + numAudiosRecorded + ".mp4";
-        File destinationFile = new File(currentProject.getProjectPathIntermediateFiles(), fileName);
+        File destinationFile = new
+            File(currentProject.getProjectPathIntermediateAudioFilesVoiceOverRecord(), fileName);
         originalFile.renameTo(destinationFile);
     }
 

@@ -6,7 +6,7 @@ package com.videonasocialmedia.vimojo.utils;
 public class IntentConstants {
 
     public final static String VIDEO_ID = "videoId";
-    public final static String VIDEO_EXPORTED = "videoExported";
+    public final static String VIDEO_EXPORTED = "videoExportedNavigateToShareActivity";
 
     /**
      * Trimming files
@@ -29,7 +29,8 @@ public class IntentConstants {
     public static final String VOICE_OVER_RECORDED_PATH = "voiceOverRecordedPath";
 
     public static final String VIDEO_TEMP_DIRECTORY = "intermediates_temp_directory";
-
+    public static final String VIDEO_TEMP_DIRECTORY_FADE_AUDIO =
+        "intermediates_temp_directory_fade_audio";
     /**
      * Relaunch
      */

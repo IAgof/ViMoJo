@@ -43,6 +43,7 @@ public class ExportTempBackgroundService extends Service
     private String tempVideoPathPreviewFadeInFadeOut;
     // TODO:(alvaro.martinez) 22/11/16 use project tmp directory
     private String intermediatesTempDirectory;
+    private String intermediatesTempAudioFadeDirectory;
     @Inject ModifyVideoDurationUseCase modifyVideoDurationUseCase;
     @Inject ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
 
@@ -91,6 +92,8 @@ public class ExportTempBackgroundService extends Service
                 final String textPosition = intent.getStringExtra(IntentConstants.TEXT_POSITION);
                 intermediatesTempDirectory = intent.getStringExtra(
                         IntentConstants.VIDEO_TEMP_DIRECTORY);
+                intermediatesTempAudioFadeDirectory = intent.getStringExtra(
+                    IntentConstants.VIDEO_TEMP_DIRECTORY_FADE_AUDIO);
 
                 final Video video = getVideo(videoId);
                 MediaTranscoderListener useCaseListener = new MediaTranscoderListener() {
@@ -153,7 +156,7 @@ public class ExportTempBackgroundService extends Service
     public void applyAudioFadeInFadeOut(Video video) throws IOException {
         tempVideoPathPreviewFadeInFadeOut = video.getTempPath();
         ApplyAudioFadeInFadeOutToVideo applyAudioFadeInFadeOutToVideo =
-            new ApplyAudioFadeInFadeOutToVideo(this, intermediatesTempDirectory);
+            new ApplyAudioFadeInFadeOutToVideo(this, intermediatesTempAudioFadeDirectory);
         applyAudioFadeInFadeOutToVideo.applyAudioFadeToVideo(video, TIME_FADE_IN_MS, TIME_FADE_OUT_MS);
     }
 

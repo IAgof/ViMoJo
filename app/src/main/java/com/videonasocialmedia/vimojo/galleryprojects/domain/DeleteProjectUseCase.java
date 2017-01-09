@@ -4,14 +4,11 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -20,8 +17,13 @@ import java.util.LinkedList;
 
 public class DeleteProjectUseCase {
 
-  protected ProjectRepository projectRepository = new ProjectRealmRepository();
-  protected VideoRepository videoRepository = new VideoRealmRepository();
+  protected ProjectRepository projectRepository;
+  protected VideoRepository videoRepository;
+
+  public DeleteProjectUseCase(ProjectRepository projectRepository, VideoRepository videoRepository){
+    this.projectRepository = projectRepository;
+    this.videoRepository = videoRepository;
+  }
 
   public void delete(Project project){
     MediaTrack mediaTrack = project.getMediaTrack();
