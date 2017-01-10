@@ -19,8 +19,6 @@ import butterknife.ButterKnife;
  */
 public class SettingsActivity extends VimojoActivity {
 
-    protected final int REQUEST_CODE_RATE_APP = 1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

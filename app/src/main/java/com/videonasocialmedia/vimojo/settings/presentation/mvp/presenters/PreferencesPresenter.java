@@ -16,12 +16,13 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.RemoveVideosUseCase;
-import com.videonasocialmedia.vimojo.domain.social.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
+import com.videonasocialmedia.vimojo.settings.domain.UpdateVideoTransitionPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
@@ -45,6 +46,13 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private Preference emailPref;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private boolean isPreferenceAvailable = false;
+    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
+    private UpdateAudioTransitionPreferenceToProjectUseCase
+        updateAudioTransitionPreferenceToProjectUseCase;
+    private UpdateVideoTransitionPreferenceToProjectUseCase
+        updateVideoTransitionPreferenceToProjectUseCase;
+    private UpdateIntermediateTemporalFilesTransitionsUseCase
+        updateIntermediateTemporalFilesTransitionsUseCase;
 
     /**
      * Constructor
@@ -55,7 +63,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      * @param context
      * @param sharedPreferences
      */
-    public PreferencesPresenter(PreferencesView preferencesView, PreferenceCategory cameraSettingsPref,
+    public PreferencesPresenter(PreferencesView preferencesView,
+                                PreferenceCategory cameraSettingsPref,
                                 ListPreference resolutionPref, ListPreference qualityPref,
                                 ListPreference frameRatePref, Preference transitionVideoPref,
                                 Preference transitionAudioPref, Preference emailPref,
@@ -70,7 +79,16 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.emailPref = emailPref;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
+        // TODO:(alvaro.martinez) 10/01/17 inject with Dagger
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+        getPreferencesTransitionFromProjectUseCase =
+            new GetPreferencesTransitionFromProjectUseCase();
+        updateAudioTransitionPreferenceToProjectUseCase =
+            new UpdateAudioTransitionPreferenceToProjectUseCase();
+        updateVideoTransitionPreferenceToProjectUseCase =
+            new UpdateVideoTransitionPreferenceToProjectUseCase();
+        updateIntermediateTemporalFilesTransitionsUseCase =
+            new UpdateIntermediateTemporalFilesTransitionsUseCase();
     }
 
     /**
@@ -109,8 +127,16 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     private void checkTransitionPreference(String key) {
         // TODO:(alvaro.martinez) 9/01/17 Get this data from Project not preferences
-        boolean data = sharedPreferences.getBoolean(key, false);
-        preferencesView.setTransitionsPref(key, data);
+        boolean data =false;
+        if(key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0){
+            data = getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
+            preferencesView.setTransitionsPref(key, data);
+        } else {
+            if(key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0){
+                data = getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
+                preferencesView.setTransitionsPref(key, data);
+            }
+        }
     }
 
     private void checkCameraSettingsEnabled() {
@@ -335,13 +361,21 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.compareTo(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY) == 0 ||
-                key.compareTo(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION) == 0) {
-            if (BuildConfig.FLAVOR.compareTo("stable") == 0) {
-                RemoveVideosUseCase videoRemover = new RemoveVideosUseCase();
-                videoRemover.removeMediaItemsFromProject();
-            }
-        }
+
+    switch (key){
+        case ConfigPreferences.TRANSITION_AUDIO:
+            boolean dataTransitionAudio = sharedPreferences.getBoolean(key,false);
+            updateAudioTransitionPreferenceToProjectUseCase.setAudioFadeTransitionActivated(dataTransitionAudio);
+            updateIntermediateTemporalFilesTransitionsUseCase.execute();
+            break;
+        case ConfigPreferences.TRANSITION_VIDEO:
+            boolean dataTransitionVideo = sharedPreferences.getBoolean(key, false);
+            updateVideoTransitionPreferenceToProjectUseCase.setVideoFadeTransitionActivated(dataTransitionVideo);
+            updateIntermediateTemporalFilesTransitionsUseCase.execute();
+            break;
+        default:
+
+    }
     }
 
 }

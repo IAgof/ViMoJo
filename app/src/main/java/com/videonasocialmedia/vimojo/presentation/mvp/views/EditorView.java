@@ -23,6 +23,8 @@ public interface EditorView {
     void showMessage(int stringToast);
     void bindVideoList(List<Video> movieList);
     void setMusic(Music music);
+    void setVideoFadeTransitionAmongVideos();
+    void setAudioFadeTransitionAmongVideos();
     void updateProject();
     void enableEditActions();
     void disableEditActions();

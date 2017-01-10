@@ -33,13 +33,14 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 /**
  * Created by Veronica Lago Fominaya on 26/11/2015.
  */
 public class SettingsFragment extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener, PreferencesView {
 
-    protected final int REQUEST_CODE_EXIT_APP = 1;
     protected PreferenceCategory cameraSettingsPref;
     protected Preference emailPref;
     protected ListPreference resolutionPref;
@@ -176,9 +177,6 @@ public class SettingsFragment extends PreferenceFragment implements
 
     @Override
     public void setTransitionsPref(String key, boolean value) {
-        Preference preference = findPreference(key);
-
-
         if(key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0) {
             transitionsAudioPref.setChecked(value);
         }

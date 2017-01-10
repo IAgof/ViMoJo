@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.export.domain;
 
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
@@ -42,6 +43,8 @@ public class RelaunchExportTempBackgroundUseCaseTest {
   @Mock TextToDrawable mockedDrawableGenerator;
   @Mock MediaTranscoder mockedMediaTranscoder;
   @Mock TranscoderHelper mockedTranscoderHelper;
+  @Mock Drawable mockDrawableFadeTransition;
+  boolean isVideoFadeTransitionActivated;
 
   @InjectMocks RelaunchExportTempBackgroundUseCase injectedRelaunchExportTempBackgroundUseCase;
   private final MediaTranscoderListener mediaTranscoderListener = getMediaTranscoderListener();
@@ -57,8 +60,8 @@ public class RelaunchExportTempBackgroundUseCaseTest {
     Video video = new Video("media/path");
     assertThat(video.getClipText(), is(nullValue()));
 
-    new RelaunchExportTempBackgroundUseCase().relaunchExport(video, mediaTranscoderListener,
-            videonaFormat);
+    new RelaunchExportTempBackgroundUseCase().relaunchExport(mockDrawableFadeTransition, video,
+        mediaTranscoderListener, videonaFormat);
   }
 
   @Test
@@ -71,10 +74,11 @@ public class RelaunchExportTempBackgroundUseCaseTest {
     injectedRelaunchExportTempBackgroundUseCase.transcoderHelper =
             new TranscoderHelper(mockedDrawableGenerator, mockedMediaTranscoder);
 
-    injectedRelaunchExportTempBackgroundUseCase.relaunchExport(video, mediaTranscoderListener,
-            videonaFormat);
+    injectedRelaunchExportTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
+        mediaTranscoderListener, videonaFormat);
 
-    verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(eq(video.getMediaPath()),
+    verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
+        eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()),
             eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener),
             Matchers.any(Image.class), eq(video.getStartTime()), eq(video.getStopTime()));
   }
@@ -85,11 +89,12 @@ public class RelaunchExportTempBackgroundUseCaseTest {
     Video video = getVideoWithText();
     assert video.hasText();
 
-    injectedRelaunchExportTempBackgroundUseCase.relaunchExport(video, mediaTranscoderListener,
-            videonaFormat);
+    injectedRelaunchExportTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition,
+        video, mediaTranscoderListener, videonaFormat);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(video,
-            videonaFormat, mediaTranscoderListener);
+    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(
+        mockDrawableFadeTransition, isVideoFadeTransitionActivated, video, videonaFormat,
+        mediaTranscoderListener);
   }
 
   @Test
@@ -99,12 +104,13 @@ public class RelaunchExportTempBackgroundUseCaseTest {
     injectedRelaunchExportTempBackgroundUseCase.transcoderHelper =
             new TranscoderHelper(mockedDrawableGenerator, mockedMediaTranscoder);
 
-    injectedRelaunchExportTempBackgroundUseCase.relaunchExport(video, mediaTranscoderListener,
-            videonaFormat);
+    injectedRelaunchExportTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
+        mediaTranscoderListener, videonaFormat);
 
-    verify(mockedMediaTranscoder).transcodeAndTrimVideo(eq(video.getMediaPath()),
-            eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener),
-            eq(video.getStartTime()), eq(video.getStopTime()));
+    verify(mockedMediaTranscoder).transcodeAndTrimVideo(eq(mockDrawableFadeTransition),
+        eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()), eq(video.getTempPath()),
+        eq(videonaFormat), eq(mediaTranscoderListener), eq(video.getStartTime()),
+        eq(video.getStopTime()));
   }
 
   @Test
@@ -113,11 +119,11 @@ public class RelaunchExportTempBackgroundUseCaseTest {
     Video video = new Video("media/path");
     assert ! video.hasText();
 
-    injectedRelaunchExportTempBackgroundUseCase.relaunchExport(video, mediaTranscoderListener,
-            videonaFormat);
+    injectedRelaunchExportTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
+        mediaTranscoderListener, videonaFormat);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithTrimming(video, videonaFormat,
-            mediaTranscoderListener);
+    verify(mockedTranscoderHelper).generateOutputVideoWithTrimming(mockDrawableFadeTransition,
+        isVideoFadeTransitionActivated, video, videonaFormat, mediaTranscoderListener);
   }
 
   @NonNull

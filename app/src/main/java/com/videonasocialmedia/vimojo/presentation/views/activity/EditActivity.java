@@ -426,6 +426,20 @@ public class EditActivity extends VimojoActivity implements EditorView,
     }
 
     @Override
+    public void setVideoFadeTransitionAmongVideos(){
+        // TODO:(alvaro.martinez) 10/01/17 implement VideonaSDK videonaPlayer.setVideoTransitionFade(),
+        // Once implemented, update also VoiceOverActivity, SoundActivity, MusicListActivity
+        //videonaPlayer.setVideoTransitionFade();
+    }
+
+    @Override
+    public void setAudioFadeTransitionAmongVideos(){
+        // TODO:(alvaro.martinez) 10/01/17 implement VideonaSDK videonaPlayer.setAudioTransitionFade(),
+        // Once implemented, update algo VoiceOverActivity, SoundActivity, MusicListActivity
+        //videonaPlayer.setAudioTransitionFade();
+    }
+
+    @Override
     public void updateProject() {
         editPresenter.loadProject();
     }

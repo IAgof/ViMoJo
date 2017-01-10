@@ -2,12 +2,14 @@ package com.videonasocialmedia.vimojo.export;
 
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.ApplyAudioFadeInFadeOutToVideo;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchExportTempBackgroundUseCase;
@@ -15,9 +17,11 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.main.DaggerExporterServiceComponent;
 import com.videonasocialmedia.vimojo.main.ExporterServiceComponent;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.ExporterServiceModule;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
@@ -46,10 +50,15 @@ public class ExportTempBackgroundService extends Service
     @Inject ModifyVideoDurationUseCase modifyVideoDurationUseCase;
     @Inject ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
 
+    private Drawable drawableFadeTransitionVideo;
+    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
+
     public ExportTempBackgroundService() {
         getExporterServiceComponent().inject(this);
         getVideonaFormatFromCurrentProjectUseCase = new GetVideonaFormatFromCurrentProjectUseCase();
         videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
+        drawableFadeTransitionVideo = VimojoApplication.getAppContext().getDrawable(R.drawable.alpha_transition_black);
+        getPreferencesTransitionFromProjectUseCase = new GetPreferencesTransitionFromProjectUseCase();
     }
 
     private ExporterServiceComponent getExporterServiceComponent() {
@@ -101,7 +110,11 @@ public class ExportTempBackgroundService extends Service
                     @Override
                     public void onTranscodeCompleted() {
                         try {
-                            applyAudioFadeInFadeOut(video, videoId);
+                            if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated()) {
+                                applyAudioFadeInFadeOut(video);
+                            } else {
+                                exportTempBackgroundSuccess(video);
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -139,7 +152,8 @@ public class ExportTempBackgroundService extends Service
                         addTextToVideo(video, useCaseListener, videoFormat, text, textPosition);
                     }
                     if(isVideoTrimmed) {
-                        trimVideo(video, useCaseListener, videoFormat, startTimeMs, finishTimeMs);
+                        trimVideo(video, useCaseListener,
+                            videoFormat, startTimeMs, finishTimeMs);
                     }
                 } else {
                     useCaseListener.onTranscodeFailed(null);
@@ -150,7 +164,7 @@ public class ExportTempBackgroundService extends Service
         return START_NOT_STICKY;
     }
 
-    public void applyAudioFadeInFadeOut(Video video, int videoId) throws IOException {
+    public void applyAudioFadeInFadeOut(Video video) throws IOException {
         tempVideoPathPreviewFadeInFadeOut = video.getTempPath();
         ApplyAudioFadeInFadeOutToVideo applyAudioFadeInFadeOutToVideo =
             new ApplyAudioFadeInFadeOutToVideo(this, intermediatesTempDirectory);
@@ -160,19 +174,19 @@ public class ExportTempBackgroundService extends Service
     private void relaunchExportVideo(Video video, MediaTranscoderListener useCaseListener,
                                      VideonaFormat videoFormat) {
         RelaunchExportTempBackgroundUseCase useCase = new RelaunchExportTempBackgroundUseCase();
-        useCase.relaunchExport(video, useCaseListener, videoFormat);
+        useCase.relaunchExport(drawableFadeTransitionVideo, video, useCaseListener, videoFormat);
     }
 
     private void addTextToVideo(Video video, MediaTranscoderListener useCaseListener,
                                 VideonaFormat videoFormat, String text, String textPosition) {
-        modifyVideoTextAndPositionUseCase.addTextToVideo(video, videoFormat, text, textPosition,
-                useCaseListener);
+        modifyVideoTextAndPositionUseCase.addTextToVideo(drawableFadeTransitionVideo, video,
+            videoFormat, text, textPosition, useCaseListener);
     }
 
     private void trimVideo(Video video, MediaTranscoderListener useCaseListener,
                            VideonaFormat videoFormat, int startTimeMs, int finishTimeMs) {
-        modifyVideoDurationUseCase.trimVideo(video, videoFormat, startTimeMs, finishTimeMs,
-                useCaseListener);
+        modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, video, videoFormat,
+            startTimeMs, finishTimeMs, useCaseListener);
     }
 
     private void sendResultBroadcast(int videoId, boolean success) {
@@ -200,13 +214,15 @@ public class ExportTempBackgroundService extends Service
     public void OnGetAudioFadeInFadeOutError(String message, Video video) {
         video.deleteTempVideo();
         video.setTempPathToPreviousEdition(tempVideoPathPreviewFadeInFadeOut);
-        video.setTempPathFinished(true);
-        videoRepository.update(video);
-        sendResultBroadcast(video.getIdentifier(), true);
+        exportTempBackgroundSuccess(video);
     }
 
     @Override
     public void OnGetAudioFadeInFadeOutSuccess(Video video) {
+        exportTempBackgroundSuccess(video);
+    }
+
+    private void exportTempBackgroundSuccess(Video video) {
         video.setTempPathFinished(true);
         videoRepository.update(video);
         sendResultBroadcast(video.getIdentifier(), true);
