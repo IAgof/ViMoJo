@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.activity;
+package com.videonasocialmedia.vimojo.settings.presentation.views.activity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -10,9 +10,7 @@ import android.view.MenuItem;
 
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
-import com.videonasocialmedia.vimojo.presentation.views.fragment.SettingsFragment;
-import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaDialogListener;
+import com.videonasocialmedia.vimojo.settings.presentation.views.fragment.SettingsFragment;
 
 import butterknife.ButterKnife;
 

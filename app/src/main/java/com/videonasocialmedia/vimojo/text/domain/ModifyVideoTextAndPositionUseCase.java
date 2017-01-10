@@ -36,7 +36,7 @@ public class ModifyVideoTextAndPositionUseCase {
 
     public void addTextToVideo(Video videoToEdit, VideonaFormat format, String text, String textPosition,
                                MediaTranscoderListener listener) {
-        try {
+      /*  try {
             videoToEdit.setClipText(text);
             videoToEdit.setClipTextPosition(textPosition);
             videoToEdit.setTempPathFinished(false);
@@ -54,7 +54,7 @@ public class ModifyVideoTextAndPositionUseCase {
         } catch (IOException e) {
             // TODO(javi.cabanas): 2/8/16 mangage io expception on external library and send onTranscodeFailed if neccessary
             listener.onTranscodeFailed(e);
-        }
+        } */
     }
 }
 

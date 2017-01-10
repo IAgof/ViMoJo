@@ -29,6 +29,8 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
       Profile profile = mapProfile(realmProject);
       Project project = new Project(realmProject.title, null, profile);
       project.setProjectPath(realmProject.projectPath);
+      project.setAudioFadeTransitionActivated(realmProject.isAudioFadeTransitionActivated);
+      project.setVideoFadeTransitionActivated(realmProject.isVideoFadeTransitionActivated);
       setProjectMusic(project, realmProject);
       setProjectVideos(project, realmProject);
       return project;

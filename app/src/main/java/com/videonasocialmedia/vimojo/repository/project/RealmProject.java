@@ -19,18 +19,24 @@ public class RealmProject extends RealmObject {
   public String frameRate;
   public String musicTitle;
   public float musicVolume = Music.DEFAULT_MUSIC_VOLUME;
+  public boolean isAudioFadeTransitionActivated;
+  public boolean isVideoFadeTransitionActivated;
   public RealmList<RealmVideo> videos;
 
   public RealmProject() {
     this.videos = new RealmList<RealmVideo>();
   }
 
-  public RealmProject(String title, String projectPath, String quality, String resolution, String frameRate) {
+  public RealmProject(String title, String projectPath, String quality, String resolution,
+                      String frameRate, boolean isAudioFadeTransitionActivated,
+                      boolean isVideoFadeTransitionActivated) {
     this.title = title;
     this.projectPath = projectPath;
     this.quality = quality;
     this.resolution = resolution;
     this.frameRate = frameRate;
     this.videos = new RealmList<RealmVideo>();
+    this.isAudioFadeTransitionActivated = isAudioFadeTransitionActivated;
+    this.isVideoFadeTransitionActivated = isVideoFadeTransitionActivated;
   }
 }

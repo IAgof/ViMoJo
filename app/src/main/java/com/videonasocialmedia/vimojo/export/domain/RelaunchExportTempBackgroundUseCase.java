@@ -33,7 +33,7 @@ public class RelaunchExportTempBackgroundUseCase {
   public void relaunchExport(Video videoToEdit, MediaTranscoderListener listener,
                              VideonaFormat videonaFormat) {
     videoToEdit.increaseNumTriesToExportVideo();
-    try {
+   /* try {
       if (videoToEdit.hasText()) {
         transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(videoToEdit, videonaFormat,
                 listener);
@@ -43,6 +43,6 @@ public class RelaunchExportTempBackgroundUseCase {
     } catch (IOException exception) {
       exception.printStackTrace();
       listener.onTranscodeFailed(exception);
-    }
+    }*/
   }
 }

@@ -54,6 +54,21 @@
             android:key="list_preferences_frame_rate"
             android:summary="@string/good_frame_rate_name"
             android:title="@string/frame_rate"/>
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="@string/title_fade_transition">
+        <SwitchPreference
+            android:key="video_fade_transition"
+            android:title="Video fade transition"
+            android:defaultValue="false" />
+
+        <SwitchPreference
+            android:key="audio_fade_transition"
+            android:title="Audio fade transition"
+            android:defaultValue="false" />
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -34,7 +34,7 @@ public class ExportProjectUseCase implements VMCompositionExportSession.OnExport
     String tempFilesDirectory = Constants.PATH_APP_TEMP;
     String outputFilesDirectory = Constants.PATH_APP;
     VMCompositionExportSession = new VMCompositionExportSessionImpl(
-            project.getVMComposition(), project.getProfile(),
+            project.getVMComposition(),
             outputFilesDirectory, tempFilesDirectory, this);
   }
 

@@ -65,6 +65,9 @@ public class Project {
 
     private boolean isMusicOnProject = false;
 
+  private boolean isAudioFadeTransitionActivated;
+  private boolean isVideoFadeTransitionActivated;
+
     /**
      * Constructor of minimum number of parameters. This is the Default constructor.
      *
@@ -79,7 +82,8 @@ public class Project {
         this.vmComposition = new VMComposition();
         this.profile = profile;
         this.duration = 0;
-
+        this.isAudioFadeTransitionActivated = false;
+        this.isVideoFadeTransitionActivated = false;
     }
 
   public VMComposition getVMComposition() {
@@ -211,4 +215,19 @@ public class Project {
         this.musicTitleIdentifier = musicTitleIdentifier;
     }
 
+  public boolean isAudioFadeTransitionActivated() {
+    return isAudioFadeTransitionActivated;
+  }
+
+  public void setAudioFadeTransitionActivated(boolean audioFadeTransitionActivated) {
+    isAudioFadeTransitionActivated = audioFadeTransitionActivated;
+  }
+
+  public boolean isVideoFadeTransitionActivated() {
+    return isVideoFadeTransitionActivated;
+  }
+
+  public void setVideoFadeTransitionActivated(boolean videoFadeTransitionActivated) {
+    isVideoFadeTransitionActivated = videoFadeTransitionActivated;
+  }
 }

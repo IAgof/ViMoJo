@@ -8,7 +8,7 @@
  * Veronica Lago Fominaya
  */
 
-package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
+package com.videonasocialmedia.vimojo.settings.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -22,7 +22,7 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideosUseCase;
 import com.videonasocialmedia.vimojo.domain.social.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.PreferencesView;
+import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import java.util.ArrayList;
@@ -40,8 +40,9 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private ListPreference resolutionPref;
     private ListPreference qualityPref;
     private ListPreference frameRatePref;
+    private Preference transitionVideoPref;
+    private Preference transitionAudioPref;
     private Preference emailPref;
-    private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private boolean isPreferenceAvailable = false;
 
@@ -56,18 +57,19 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      */
     public PreferencesPresenter(PreferencesView preferencesView, PreferenceCategory cameraSettingsPref,
                                 ListPreference resolutionPref, ListPreference qualityPref,
-                                ListPreference frameRatePref, Preference emailPref, Context context,
-                                SharedPreferences sharedPreferences) {
-
-        this.cameraSettingsPref = cameraSettingsPref;
+                                ListPreference frameRatePref, Preference transitionVideoPref,
+                                Preference transitionAudioPref, Preference emailPref,
+                                Context context, SharedPreferences sharedPreferences) {
         this.preferencesView = preferencesView;
+        this.cameraSettingsPref = cameraSettingsPref;
         this.resolutionPref = resolutionPref;
         this.qualityPref = qualityPref;
         this.frameRatePref = frameRatePref;
+        this.transitionVideoPref = transitionVideoPref;
+        this.transitionAudioPref = transitionAudioPref;
         this.emailPref = emailPref;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
-        obtainNetworksToShareUseCase = new ObtainNetworksToShareUseCase();
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
     }
 
@@ -97,6 +99,18 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         checkAvailableResolution();
         checkAvailableQuality();
         checkAvailableFrameRate();
+        checkTransitions();
+    }
+
+    private void checkTransitions() {
+        checkTransitionPreference(ConfigPreferences.TRANSITION_VIDEO);
+        checkTransitionPreference(ConfigPreferences.TRANSITION_AUDIO);
+    }
+
+    private void checkTransitionPreference(String key) {
+        // TODO:(alvaro.martinez) 9/01/17 Get this data from Project not preferences
+        boolean data = sharedPreferences.getBoolean(key, false);
+        preferencesView.setTransitionsPref(key, data);
     }
 
     private void checkCameraSettingsEnabled() {
@@ -328,10 +342,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                 videoRemover.removeMediaItemsFromProject();
             }
         }
-    }
-
-    public boolean checkIfWhatsappIsInstalled() {
-        return obtainNetworksToShareUseCase.checkIfSocialNetworkIsInstalled("whatsapp");
     }
 
 }

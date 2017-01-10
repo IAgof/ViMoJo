@@ -44,7 +44,7 @@ public class ModifyVideoDurationUseCase {
    */
   public void trimVideo(Video videoToEdit, VideonaFormat format, final int startTimeMs,
                         final int finishTimeMs, MediaTranscoderListener listener) {
-    try {
+   /* try {
       videoToEdit.setStartTime(startTimeMs);
       videoToEdit.setStopTime(finishTimeMs);
       videoToEdit.setTempPathFinished(false);
@@ -62,6 +62,6 @@ public class ModifyVideoDurationUseCase {
     } catch (IOException exception) {
       exception.printStackTrace();
       listener.onTranscodeFailed(exception);
-    }
+    } */
   }
 }
