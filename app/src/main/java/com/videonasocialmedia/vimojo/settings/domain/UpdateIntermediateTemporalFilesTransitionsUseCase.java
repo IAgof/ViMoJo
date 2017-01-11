@@ -21,8 +21,8 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCase {
 
   private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
 
-  public UpdateIntermediateTemporalFilesTransitionsUseCase(){
-    getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+  public UpdateIntermediateTemporalFilesTransitionsUseCase(GetMediaListFromProjectUseCase getMediaListFromProjectUseCase){
+    this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
   }
 
   public void execute() {
@@ -36,12 +36,7 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCase {
     Context appContext = VimojoApplication.getAppContext();
     Intent exportTempBackgroudnServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
     exportTempBackgroudnServiceIntent.putExtra(IntentConstants.VIDEO_ID, video.getIdentifier());
-    exportTempBackgroudnServiceIntent.putExtra(IntentConstants.IS_TEXT_ADDED, video.isTextToVideoAdded());
-    exportTempBackgroudnServiceIntent.putExtra(IntentConstants.TEXT_TO_ADD, video.getClipText());
-    exportTempBackgroudnServiceIntent.putExtra(IntentConstants.TEXT_POSITION, video.getClipTextPosition());
-    exportTempBackgroudnServiceIntent.putExtra(IntentConstants.IS_VIDEO_TRIMMED, video.isTrimmedVideo());
-    exportTempBackgroudnServiceIntent.putExtra(IntentConstants.START_TIME_MS, video.getStartTime());
-    exportTempBackgroudnServiceIntent.putExtra(IntentConstants.FINISH_TIME_MS, video.getStopTime());
+    exportTempBackgroudnServiceIntent.putExtra(IntentConstants.RELAUNCH_EXPORT_TEMP, true);
     // TODO:(alvaro.martinez) 22/11/16 use project tmp path
     exportTempBackgroudnServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY, Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
     appContext.startService(exportTempBackgroudnServiceIntent);

@@ -46,7 +46,7 @@
             android:summary="@string/good_quality_name"
             android:title="@string/quality"/>
 
-        <com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseFrameRateRateListPreferences
+        <com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseFrameRateListPreferences
             android:theme="@style/VideonaAlertDialog"
             android:dialogTitle="@string/frame_rate"
             android:entries="@array/camera_frame_rate_names"

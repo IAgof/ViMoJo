@@ -11,10 +11,10 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 public class UpdateAudioTransitionPreferenceToProjectUseCase {
 
   private Project currentProject;
-  private ProjectRepository projectRepository = new ProjectRealmRepository();
+  private ProjectRepository projectRepository;
 
-  public UpdateAudioTransitionPreferenceToProjectUseCase(){
-
+  public UpdateAudioTransitionPreferenceToProjectUseCase(ProjectRepository projectRepository){
+    this.projectRepository = projectRepository;
   }
 
   public void setAudioFadeTransitionActivated(boolean data) {

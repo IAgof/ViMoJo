@@ -64,12 +64,22 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      * @param sharedPreferences
      */
     public PreferencesPresenter(PreferencesView preferencesView,
-                                PreferenceCategory cameraSettingsPref,
-                                ListPreference resolutionPref, ListPreference qualityPref,
-                                ListPreference frameRatePref, Preference transitionVideoPref,
-                                Preference transitionAudioPref, Preference emailPref,
-                                Context context, SharedPreferences sharedPreferences) {
+        Context context, SharedPreferences sharedPreferences,
+        PreferenceCategory cameraSettingsPref,
+        ListPreference resolutionPref, ListPreference qualityPref,
+        ListPreference frameRatePref, Preference transitionVideoPref,
+        Preference transitionAudioPref, Preference emailPref,
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+        GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+        UpdateAudioTransitionPreferenceToProjectUseCase
+                                    updateAudioTransitionPreferenceToProjectUseCase,
+        UpdateVideoTransitionPreferenceToProjectUseCase
+                                    updateVideoTransitionPreferenceToProjectUseCase,
+        UpdateIntermediateTemporalFilesTransitionsUseCase
+                                    updateIntermediateTemporalFilesTransitionsUseCase) {
         this.preferencesView = preferencesView;
+        this.context = context;
+        this.sharedPreferences = sharedPreferences;
         this.cameraSettingsPref = cameraSettingsPref;
         this.resolutionPref = resolutionPref;
         this.qualityPref = qualityPref;
@@ -77,18 +87,15 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.transitionVideoPref = transitionVideoPref;
         this.transitionAudioPref = transitionAudioPref;
         this.emailPref = emailPref;
-        this.context = context;
-        this.sharedPreferences = sharedPreferences;
-        // TODO:(alvaro.martinez) 10/01/17 inject with Dagger
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        getPreferencesTransitionFromProjectUseCase =
-            new GetPreferencesTransitionFromProjectUseCase();
-        updateAudioTransitionPreferenceToProjectUseCase =
-            new UpdateAudioTransitionPreferenceToProjectUseCase();
-        updateVideoTransitionPreferenceToProjectUseCase =
-            new UpdateVideoTransitionPreferenceToProjectUseCase();
-        updateIntermediateTemporalFilesTransitionsUseCase =
-            new UpdateIntermediateTemporalFilesTransitionsUseCase();
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.getPreferencesTransitionFromProjectUseCase =
+            getPreferencesTransitionFromProjectUseCase;
+        this.updateAudioTransitionPreferenceToProjectUseCase =
+            updateAudioTransitionPreferenceToProjectUseCase;
+        this.updateVideoTransitionPreferenceToProjectUseCase =
+            updateVideoTransitionPreferenceToProjectUseCase;
+        this.updateIntermediateTemporalFilesTransitionsUseCase =
+            updateIntermediateTemporalFilesTransitionsUseCase;
     }
 
     /**

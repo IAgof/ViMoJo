@@ -11,10 +11,10 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 public class UpdateVideoTransitionPreferenceToProjectUseCase {
 
   private Project currentProject;
-  private ProjectRepository projectRepository = new ProjectRealmRepository();
+  private ProjectRepository projectRepository;
 
-  public UpdateVideoTransitionPreferenceToProjectUseCase(){
-
+  public UpdateVideoTransitionPreferenceToProjectUseCase(ProjectRepository projectRepository){
+      this.projectRepository = projectRepository;
   }
 
   public void setVideoFadeTransitionActivated(boolean data) {
