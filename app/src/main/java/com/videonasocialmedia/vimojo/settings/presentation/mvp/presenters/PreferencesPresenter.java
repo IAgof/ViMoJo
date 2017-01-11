@@ -23,6 +23,7 @@ import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFro
 import com.videonasocialmedia.vimojo.settings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.UpdateVideoTransitionPreferenceToProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.OnRelaunchTemporalFileListener;
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
@@ -32,7 +33,8 @@ import java.util.List;
 /**
  * This class is used to show the setting menu.
  */
-public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenceChangeListener,
+    OnRelaunchTemporalFileListener{
 
     private Context context;
     private SharedPreferences sharedPreferences;
@@ -368,21 +370,24 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
-    switch (key){
-        case ConfigPreferences.TRANSITION_AUDIO:
-            boolean dataTransitionAudio = sharedPreferences.getBoolean(key,false);
-            updateAudioTransitionPreferenceToProjectUseCase.setAudioFadeTransitionActivated(dataTransitionAudio);
-            updateIntermediateTemporalFilesTransitionsUseCase.execute();
-            break;
-        case ConfigPreferences.TRANSITION_VIDEO:
-            boolean dataTransitionVideo = sharedPreferences.getBoolean(key, false);
-            updateVideoTransitionPreferenceToProjectUseCase.setVideoFadeTransitionActivated(dataTransitionVideo);
-            updateIntermediateTemporalFilesTransitionsUseCase.execute();
-            break;
-        default:
-
-    }
+        switch (key){
+            case ConfigPreferences.TRANSITION_AUDIO:
+                boolean dataTransitionAudio = sharedPreferences.getBoolean(key,false);
+                updateAudioTransitionPreferenceToProjectUseCase.setAudioFadeTransitionActivated(dataTransitionAudio);
+                updateIntermediateTemporalFilesTransitionsUseCase.execute(this);
+                break;
+            case ConfigPreferences.TRANSITION_VIDEO:
+                boolean dataTransitionVideo = sharedPreferences.getBoolean(key, false);
+                updateVideoTransitionPreferenceToProjectUseCase.setVideoFadeTransitionActivated(dataTransitionVideo);
+                updateIntermediateTemporalFilesTransitionsUseCase.execute(this);
+                break;
+            default:
+        }
     }
 
+
+    @Override
+    public void videoToRelaunch(int videoIdentifier) {
+        preferencesView.setRelaunchExportTempBackground(videoIdentifier);
+    }
 }

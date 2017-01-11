@@ -19,9 +19,9 @@ import android.widget.TextView;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.main.DaggerFragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.FragmentPresentersComponent;
-import com.videonasocialmedia.vimojo.main.SystemComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.FragmentPresentersModule;
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.presenters.PreferencesPresenter;
@@ -34,6 +34,8 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceA
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.ArrayList;
 
@@ -196,6 +198,16 @@ public class SettingsFragment extends PreferenceFragment implements
         if(key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0) {
             transitionsVideoPref.setChecked(value);
         }
+    }
+
+    @Override
+    public void setRelaunchExportTempBackground(int videoIdentifier) {
+        Context appContext = VimojoApplication.getAppContext();
+        Intent exportTempBackgroudnServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
+        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoIdentifier);
+        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.RELAUNCH_EXPORT_TEMP, true);
+        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY, Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
+        appContext.startService(exportTempBackgroudnServiceIntent);
     }
 
     @Override

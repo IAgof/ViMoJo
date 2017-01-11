@@ -12,6 +12,8 @@ package com.videonasocialmedia.vimojo.settings.presentation.mvp.views;
 
 import android.preference.ListPreference;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+
 import java.util.ArrayList;
 
 /**
@@ -59,4 +61,6 @@ public interface PreferencesView {
     void setUserPropertyToMixpanel (String property, String value);
 
     void setTransitionsPref(String key, boolean value);
+
+    void setRelaunchExportTempBackground(int videoIdentifier);
 }
