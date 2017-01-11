@@ -58,4 +58,7 @@ public interface PreferencesView {
     void showError(int message);
 
     void setUserPropertyToMixpanel (String property, String value);
+
+    void hideFtpsViews();
+
 }

@@ -91,8 +91,13 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     public void checkAvailablePreferences() {
         checkUserAccountData();
-        checkUserFTP1Data();
-        checkUserFTP2Data();
+        if(BuildConfig.FEATURE_FTP) {
+            checkUserFTP1Data();
+            checkUserFTP2Data();
+        } else {
+            // Visibility FTP gone
+            preferencesView.hideFtpsViews();
+        }
         checkCameraSettingsEnabled();
         checkAvailableResolution();
         checkAvailableQuality();

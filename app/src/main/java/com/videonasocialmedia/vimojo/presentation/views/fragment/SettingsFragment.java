@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +42,8 @@ public class SettingsFragment extends PreferenceFragment implements
 
     protected final int REQUEST_CODE_EXIT_APP = 1;
     protected PreferenceCategory cameraSettingsPref;
+    protected PreferenceCategory ftp1Pref;
+    protected PreferenceCategory ftp2Pref;
     protected Preference emailPref;
     protected ListPreference resolutionPref;
     protected ListPreference qualityPref;
@@ -58,6 +62,7 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = VimojoApplication.getAppContext();
+
         initPreferences();
         preferencesPresenter = new PreferencesPresenter(this,cameraSettingsPref, resolutionPref,
                 qualityPref, frameRatePref, emailPref, context, sharedPreferences);
@@ -183,6 +188,14 @@ public class SettingsFragment extends PreferenceFragment implements
         mixpanel.getPeople().set(property,value);
         if(property=="account_email")
             mixpanel.getPeople().setOnce("$email", value);
+    }
+
+    @Override
+    public void hideFtpsViews() {
+        ftp1Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP1_Section));
+        getPreferenceScreen().removePreference(ftp1Pref);
+        ftp2Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP2_Section));
+        getPreferenceScreen().removePreference(ftp2Pref);
     }
 
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.ClearProjectUseCase;
@@ -89,7 +90,8 @@ public class ShareVideoPresenter {
     private void obtainListOptionsToShare(List<FtpNetwork> ftpList,
                                           List<SocialNetwork> socialNetworkList) {
         optionToShareList = new ArrayList();
-        optionToShareList.addAll(ftpList);
+        if(BuildConfig.FEATURE_FTP)
+            optionToShareList.addAll(ftpList);
         optionToShareList.addAll(socialNetworkList);
     }
 

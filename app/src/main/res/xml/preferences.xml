@@ -57,7 +57,8 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/title_FTP1_Section">
+        android:title="@string/title_FTP1_Section"
+        android:key="@string/title_FTP1_Section">
 
         <EditTextPreference
             android:key="host"
@@ -96,7 +97,8 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/title_FTP2_Section">
+        android:title="@string/title_FTP2_Section"
+        android:key="@string/title_FTP2_Section">
 
         <EditTextPreference
             android:key="host_FTP2"
