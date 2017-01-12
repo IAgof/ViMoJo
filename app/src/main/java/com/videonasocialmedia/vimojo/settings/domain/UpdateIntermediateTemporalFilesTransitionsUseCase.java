@@ -23,8 +23,10 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCase {
     List<Media> items = getMediaListFromProjectUseCase.getMediaListFromProject();
     for(Media media: items){
       Video video = (Video) media;
-      if(video.isEdited())
+      if(video.isEdited()) {
+        video.setTempPathFinished(false);
         listener.videoToRelaunch(video.getIdentifier());
+      }
     }
   }
 }
