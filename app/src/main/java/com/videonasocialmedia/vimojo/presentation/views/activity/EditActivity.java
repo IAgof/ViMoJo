@@ -165,7 +165,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   }
 
   private void addAndConfigurateFabButton(int id, int icon, int color) {
-    newFab = FabUtils.createNewFab(id, icon, color);
+    newFab = FabUtils.createNewFabMini(id, icon, color);
     onClickFabButton(newFab);
     fabMenu.addButton(newFab);
   }
