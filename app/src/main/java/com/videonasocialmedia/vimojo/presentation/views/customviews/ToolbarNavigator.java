@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditNavigatorView;
@@ -79,7 +80,11 @@ public class ToolbarNavigator extends LinearLayout implements EditNavigatorView 
             public void onClick(View v) {
                 if (navigateToMusicButton.isEnabled()) {
                    //navigatorPresenter.checkMusicAndNavigate();
-                    navigateTo(SoundActivity.class);
+                    if(BuildConfig.FEATURE_VOICE_OVER) {
+                        navigateTo(SoundActivity.class);
+                    } else {
+                        navigateTo(MusicListActivity.class);
+                    }
                 }
             }
         });

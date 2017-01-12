@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -34,6 +35,7 @@ import com.videonasocialmedia.vimojo.presentation.views.adapter.OptionsToShareAd
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -315,7 +317,11 @@ public class ShareActivity extends VimojoActivity implements ShareVideoView,
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         if(resourceButtonId == R.id.button_music_navigator)
-                            navigateTo(SoundActivity.class);
+                            if(BuildConfig.FEATURE_VOICE_OVER) {
+                                navigateTo(SoundActivity.class);
+                            } else {
+                                navigateTo(MusicListActivity.class);
+                            }
                         if(resourceButtonId == R.id.button_edit_navigator)
                             navigator.navigateTo(EditActivity.class);
                         if(resourceButtonId == R.id.navigator)
