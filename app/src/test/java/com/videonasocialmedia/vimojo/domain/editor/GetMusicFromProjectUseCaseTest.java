@@ -83,6 +83,8 @@ public class GetMusicFromProjectUseCaseTest {
         assertThat("Music retrieved when no audio tracks", retrievedMusicCaptor.getValue(), CoreMatchers.<Music>nullValue());
     }
 
+
+
     @NonNull
     public ArrayList<AudioTrack> getAudioTracks(Music music) {
         ArrayList<AudioTrack> audioTracks = new ArrayList<AudioTrack>();

@@ -168,7 +168,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       public void onClick(DialogInterface dialog, int which) {
         switch (which) {
           case DialogInterface.BUTTON_POSITIVE:
-            drawerLayout.closeDrawers();
+           // drawerLayout.closeDrawers();
             if(resourceItemMenuId == R.id.menu_navview_delete_clip)
                 editorPresenter.createNewProject(Constants.PATH_APP);
             if(resourceItemMenuId == R.id.menu_navview_mail)

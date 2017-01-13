@@ -164,9 +164,18 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
     }
 
     @Override
+    public void goToDetailActivity(String mediaPath) {
+        navigateToMusicDetailActivity(mediaPath);
+    }
+
+    @Override
     public void onClick(Music music) {
+        navigateToMusicDetailActivity(music.getMediaPath());
+    }
+
+    private void navigateToMusicDetailActivity(String mediaPath) {
         Intent i = new Intent(VimojoApplication.getAppContext(), MusicDetailActivity.class);
-        i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, music.getMediaPath());
+        i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, mediaPath);
         startActivity(i);
         finish();
     }
