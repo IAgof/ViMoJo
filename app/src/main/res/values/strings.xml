@@ -35,6 +35,9 @@
     <string name="new_project">New project</string>
     <string name="clear_project">Clean project</string>
     <string name="other_options">Other options</string>
+    <string name="record">Record</string>
+    <string name="gallery">Gallery</string>
+
 
     <!-- Edit Activity -->
     <string name="tab_edit">Edit</string>

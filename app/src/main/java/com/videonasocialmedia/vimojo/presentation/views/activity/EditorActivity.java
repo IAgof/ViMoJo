@@ -209,7 +209,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   public void updateViewResetProject() {
-    navigateTo(EditActivity.class);
+    navigateTo(GoToRecordOrGalleryActivity.class);
   }
 
   @Override

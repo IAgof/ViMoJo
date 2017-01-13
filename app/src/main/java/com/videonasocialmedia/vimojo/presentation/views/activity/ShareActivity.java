@@ -288,7 +288,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         presenter.newDefaultProject(Constants.PATH_APP);
-                        navigateTo(EditActivity.class);
+                        navigateTo(GoToRecordOrGalleryActivity.class);
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         if(resourceButtonId == R.id.button_music_navigator)
