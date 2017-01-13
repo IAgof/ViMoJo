@@ -15,7 +15,6 @@ import io.realm.RealmResults;
 
 public interface VideoRepository extends Repository<Video>{
     void update(Video item, RealmProject realmProject);
-    RealmResults<RealmVideo> getVideos();
-    List<Video> getListVideos();
+    List<Video> getAllVideos();
     void removeAllVideos();
 }

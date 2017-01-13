@@ -77,7 +77,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         return Project.getInstance(null, null, null);
     }
 
-
     public String getResolution() {
         // TODO(jliarte): 19/12/16 inject sharedPreferences
         SharedPreferences sharedPreferences = VimojoApplication.getAppContext()
@@ -111,7 +110,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     @Override
     public void onRemoveMediaItemFromTrackSuccess() {
         editActivityView.updateProject();
-
     }
 
     @Override
@@ -132,9 +130,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     }
 
     private List<Video> checkMediaPathVideosExistOnDevice(List<Video> videoCopy) {
-
         List<Video> checkedVideoList = new ArrayList<>();
-
         for (int index = 0; index < videoCopy.size(); index++) {
             Video video = videoCopy.get(index);
             if(!new File(video.getMediaPath()).exists()){
@@ -145,7 +141,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 checkedVideoList.add(video);
             }
         }
-
         return checkedVideoList;
     }
 

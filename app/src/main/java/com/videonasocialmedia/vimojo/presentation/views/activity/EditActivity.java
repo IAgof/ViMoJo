@@ -16,7 +16,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -103,9 +102,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     private int selectedVideoRemovePosition;
     private FloatingActionButton newFab;
     private boolean isEnableFabText =false;
-
-    private SharedPreferences sharedPreferences;
-
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
