@@ -1,41 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    android:id="@+id/coordinatorLayout"
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".sound.presentation.views.activity.MusicListActivity">
-
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:theme="@style/VideonaDrawerIconStyle">
-
-            <com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator
-                android:id="@+id/navigator"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginEnd="50dp"
-                android:layout_marginStart="50dp"
-                android:gravity="center"
-                app:music_selected="true"
-                />
-
-        </android.support.v7.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
+    android:id="@+id/relative_layout_activity_sound">
 
     <LinearLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:weightSum="7"
         android:orientation="horizontal"
         android:baselineAligned="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -52,42 +27,21 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 app:aspect="sixteen_nine"/>
+
         </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="80dp"
-            android:layout_marginLeft="8dp"
-            android:layout_weight="3"
-            android:clipChildren="false"
-            android:id="@+id/layout_options_sound_activity">
-
-            <ImageButton
-                android:id="@+id/button_music"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                app:srcCompat="@drawable/activity_edit_sound_music_normal"
-                />
-
-            <ImageButton
-                android:id="@+id/button_microphone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                app:srcCompat="@drawable/activity_edit_sound_voice_normal"
-                />
-
-        </LinearLayout>
 
     </LinearLayout>
 
+    <com.roughike.bottombar.BottomBar
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:bb_tabXmlResource="@xml/bottombar_tabs"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorTransparent"
+        />
+
+</RelativeLayout>
 
 
-</android.support.design.widget.CoordinatorLayout>
+

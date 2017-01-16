@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.UUID;
+
 import io.realm.RealmObject;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,6 +37,9 @@ public class RealmProjectTest {
     realmProject.quality = VideoQuality.Quality.GOOD.name();
     realmProject.musicTitle = "My cool music";
     realmProject.musicVolume = 0.5f;
+    realmProject.uuid = "123456";
+    realmProject.lastModification = "Date";
+    realmProject.duration = 10;
 
     assertThat(realmProject.title, is("Project title"));
     assertThat(realmProject.projectPath, is("root/path"));
@@ -42,6 +47,9 @@ public class RealmProjectTest {
     assertThat(realmProject.quality, is(VideoQuality.Quality.GOOD.name()));
     assertThat(realmProject.musicTitle, is("My cool music"));
     assertThat(realmProject.musicVolume, is(0.5f));
+    assertThat(realmProject.uuid, is("123456"));
+    assertThat(realmProject.lastModification, is("Date"));
+    assertThat(realmProject.duration, is(10));
   }
 
 }

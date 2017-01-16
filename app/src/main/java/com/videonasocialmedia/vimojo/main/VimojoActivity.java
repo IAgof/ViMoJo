@@ -36,7 +36,7 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
-import com.videonasocialmedia.vimojo.export.ExportTempBroadCastReceveiver;
+import com.videonasocialmedia.vimojo.export.ExportTempBroadcastReceveiver;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -61,7 +61,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
     protected Tracker tracker;
     protected boolean criticalPermissionDenied = false;
     protected MultiplePermissionsListener dialogMultiplePermissionsListener;
-    private ExportTempBroadCastReceveiver exportTempBroadCastReceveiver;
+    private ExportTempBroadcastReceveiver exportTempBroadcastReceveiver;
     @Inject protected LoadCurrentProjectUseCase loadCurrentProjectUseCase;
     @Inject ProjectRepository projectRepository;
 
@@ -81,7 +81,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
         trackerDelegate.onCreate();
 
         View root = findViewById(android.R.id.content);
-        exportTempBroadCastReceveiver = new ExportTempBroadCastReceveiver(root);
+        exportTempBroadcastReceveiver = new ExportTempBroadcastReceveiver(root);
     }
 
     private void configPermissions() {
@@ -123,7 +123,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         JSONObject activityProperties = new JSONObject();
-        unregisterReceiver(exportTempBroadCastReceveiver);
+        unregisterReceiver(exportTempBroadcastReceveiver);
         try {
             activityProperties.put(AnalyticsConstants.ACTIVITY, getClass().getSimpleName());
             mixpanel.track(AnalyticsConstants.TIME_IN_ACTIVITY, activityProperties);
@@ -134,7 +134,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        registerReceiver(exportTempBroadCastReceveiver, new IntentFilter(
+        registerReceiver(exportTempBroadcastReceveiver, new IntentFilter(
                 ExportTempBackgroundService.ACTION));
         super.onResume();
 

@@ -7,9 +7,9 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
-import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.IOException;
 
@@ -48,8 +48,8 @@ public class ModifyVideoDurationUseCase {
       videoToEdit.setStartTime(startTimeMs);
       videoToEdit.setStopTime(finishTimeMs);
       videoToEdit.setTempPathFinished(false);
-      // TODO:(alvaro.martinez) 22/11/16 use project tmp path
-      videoToEdit.setTempPath(Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
+      Project project = Project.getInstance(null,null,null);
+      videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
       videoToEdit.setTrimmedVideo(true);
 
       if (videoToEdit.hasText()) {

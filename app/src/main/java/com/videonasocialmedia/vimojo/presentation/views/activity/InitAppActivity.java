@@ -40,8 +40,6 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnInitAppEventListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
-import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.AppStart;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -98,7 +96,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private String androidId = null;
     private String initState;
     private CompositeMultiplePermissionsListener compositePermissionsListener;
-    private ProfileRepository profileRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -321,8 +318,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private void initPaths() throws IOException {
         checkAndInitPath(Constants.PATH_APP);
         checkAndInitPath(Constants.PATH_APP_TEMP);
-        checkAndInitPath(Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
-        checkAndInitPath(Constants.PATH_APP_TEMP_AUDIO);
+        checkAndInitPath(Constants.PATH_APP_PROJECTS);
         checkAndInitPath(Constants.PATH_APP_MASTERS);
 
         File privateDataFolderModel = getDir(Constants.FOLDER_VIDEONA_PRIVATE_MODEL, Context.MODE_PRIVATE);
@@ -360,6 +356,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
      * Checks the available cameras on the device (back/front), supported flash mode and the
      * supported resolutions
      */
+
     private void setupCameraSettings() {
         checkAvailableCameras();
         checkFlashMode();
@@ -602,9 +599,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     @Override
     public void onCheckPathsAppSuccess() {
-        //TODO Define path project. By default, path app. Path .temp, private data
-        profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, this);
-        presenter.startLoadingProject(sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH, ""), profileRepository.getCurrentProfile());
+        presenter.startLoadingProject(Constants.PATH_APP);
         moveVideonaVideosToDcim();
     }
 
