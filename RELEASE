@@ -1,4 +1,3 @@
-v0.4.16
-- Update record screen, new design.
-- Update application colors.
-- Fixed some bugs and improved user experience.
+v0.4.17
+- Moved voice over mixing to final share step
+- Bug fixing and improved overall media backend performance.
