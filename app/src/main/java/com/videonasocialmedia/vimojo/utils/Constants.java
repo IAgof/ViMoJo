@@ -45,7 +45,7 @@ public class Constants {
     final public static String VIDEO_TEMP_RECORD_FILENAME = "VID_temp.mp4";
 
     final public static String PATH_APP_TEMP_AUDIO = PATH_APP_TEMP_INTERMEDIATE_FILES +
-        File.separator + com.videonasocialmedia.videonamediaframework.model.Constants.DIRECTORY_NAME_TEMP_AUDIO_FILES;
+        File.separator + "tempAudioFade";
    
 
     final public static String AUDIO_MUSIC_FILE_EXTENSION = ".m4a";
