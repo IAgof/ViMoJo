@@ -12,11 +12,9 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.OnRelaunchTemporalFileListener;
-import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -27,36 +25,36 @@ import static org.mockito.Mockito.verify;
  */
 
 public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
-
-  @Mock
-  ProjectRepository mockedProjectRepository;
-  @Mock
-  VideoRepository mockedVideoRepository;
-  @Mock
-  OnRelaunchTemporalFileListener mockedOnRelaunchTemporalFileListener;
-
+  @Mock ProjectRepository mockedProjectRepository;
+  @Mock VideoRepository mockedVideoRepository;
+  @Mock OnRelaunchTemporalFileListener mockedOnRelaunchTemporalFileListener;
 
   @Before
-  public void setup(){
+  public void injectTestDoubles(){
     MockitoAnnotations.initMocks(this);
   }
 
   @Test
   public void ifProjectHasTempFileUseCaseCallsVideoToRelaunchListener(){
     Project project = getAProject();
-    AddVideoToProjectUseCase addVideoToProjectUseCase = new AddVideoToProjectUseCase(mockedProjectRepository);
+    AddVideoToProjectUseCase addVideoToProjectUseCase =
+            new AddVideoToProjectUseCase(mockedProjectRepository);
     Video videoAdded = new Video("somepath");
     videoAdded.setTempPath("tempDirectory");
     addVideoToProjectUseCase.addVideoToProjectAtPosition(videoAdded, 0);
-    GetMediaListFromProjectUseCase getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+    GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
+            new GetMediaListFromProjectUseCase();
 
-    new UpdateIntermediateTemporalFilesTransitionsUseCase(getMediaListFromProjectUseCase).execute(mockedOnRelaunchTemporalFileListener);
+    new UpdateIntermediateTemporalFilesTransitionsUseCase(getMediaListFromProjectUseCase)
+            .execute(mockedOnRelaunchTemporalFileListener);
 
-    verify(mockedOnRelaunchTemporalFileListener).videoToRelaunch(videoAdded.getUuid());
+    verify(mockedOnRelaunchTemporalFileListener).videoToRelaunch(videoAdded.getUuid(),
+            project.getProjectPathIntermediateFileAudioFade());
   }
 
   private Project getAProject() {
-    return new Project("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+    return Project.getInstance("title", "/path", Profile.getInstance(
+            VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+            VideoFrameRate.FrameRate.FPS25));
   }
 }
