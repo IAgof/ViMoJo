@@ -1,105 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    android:id="@+id/coordinatorLayout"
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_layout_activity_edit"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".presentation.views.activity.EditActivity">
-
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/VideonaTheme.PopupOverlay"
-            app:theme="@style/VideonaDrawerIconStyle">
-
-            <com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator
-                android:id="@+id/navigator"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center"
-                app:edit_selected="true"
-                />
-
-
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:baselineAligned="false"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
 
         <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
             android:id="@+id/videona_player"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/videonaPlayerExo_marginTop"
             />
-
-        <LinearLayout
-            android:id="@+id/linear_layout_edit_options"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal"
-            android:padding="10dp">
-
-            <include layout="@layout/edit_activity_options_buttons"/>
-
-        </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_editor_timeline"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="4dp"
+            android:layout_below="@+id/videona_player"
+            android:layout_marginBottom="@dimen/bb_height"
             android:scrollbars="horizontal"
             />
 
-    </LinearLayout>
+    <com.roughike.bottombar.BottomBar
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:bb_tabXmlResource="@xml/bottombar_tabs"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorTransparent"
+        />
+    </RelativeLayout>
 
-    <com.getbase.floatingactionbutton.FloatingActionsMenu
-        android:id="@+id/fab_edit_room"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        app:fab_addButtonColorNormal="@color/colorAccent"
-        app:fab_addButtonColorPressed="@color/colorAccent"
-        app:backgroundTint="@color/colorAccent"
-        app:layout_behavior="com.videonasocialmedia.vimojo.presentation.views.custombehaviors.FloatingActionMenuButtonBehavior"
-        android:layout_gravity="bottom|right|end">
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/fab_margin"
-            app:fab_colorNormal="@color/colorWhite"
-            app:fab_colorPressed="@color/colorWhite"
-            android:src="@drawable/common_navigate_record"
-            android:id="@+id/fab_go_to_record"
-            />
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/fab_margin"
-            app:fab_colorNormal="@color/colorWhite"
-            app:fab_colorPressed="@color/colorWhite"
-            android:src="@drawable/common_navigate_gallery"
-            android:id="@+id/fab_go_to_gallery"/>
-
-    </com.getbase.floatingactionbutton.FloatingActionsMenu>
-
-</android.support.design.widget.CoordinatorLayout>

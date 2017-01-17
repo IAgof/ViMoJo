@@ -27,6 +27,7 @@ import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
@@ -113,7 +114,7 @@ public class VimojoApplication extends Application {
     protected void setupDataBase() {
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
                 .name("vimojoDB")
-                .schemaVersion(2) // 20161024
+                .schemaVersion(3) // 20161213
                 .migration(new VimojoMigration())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);

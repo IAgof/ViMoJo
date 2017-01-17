@@ -42,10 +42,12 @@ public class MusicSource {
                 R.raw.we_beat_as_one_b, R.color.colorPrimary, "Harlin James, Paul Lewis", "03:30"));
     }
 
-    public Music getMusicByTitle(String musicTitle) {
+    public Music getMusicByTitle(String projectPathIntermediateFile, String musicTitle) {
         // TODO(jliarte): 23/10/16 workarround for voice over persistence
-        if (musicTitle.equals(Constants.MUSIC_AUDIO_MIXED_TITLE)) {
-            Music music = new Music(Constants.OUTPUT_FILE_MIXED_AUDIO);
+        if (musicTitle.equals(Constants.MUSIC_AUDIO_VOICEOVER_TITLE)) {
+            String musicPath = projectPathIntermediateFile + File.separator +
+                    Constants.AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME;
+            Music music = new Music(musicPath);
             music.setMusicTitle(musicTitle);
             return music;
         }

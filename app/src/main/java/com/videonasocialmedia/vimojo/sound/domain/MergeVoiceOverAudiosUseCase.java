@@ -9,12 +9,11 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.muxer.Appender;
 import com.videonasocialmedia.videonamediaframework.pipeline.AudioCompositionExportSession;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by alvaro on 16/09/16.
@@ -31,12 +30,13 @@ public class MergeVoiceOverAudiosUseCase {
         this.appender = new Appender();
     }
 
-    public void mergeAudio() {
+    public void mergeAudio(String pathAudioMerge) {
         // TODO(jliarte): 30/11/16 make this in just one step and build AVComposition?
         //                Move this to presenter and pass composition as an argument?
-        ArrayList<String> audioPathList = createAudioPathList();
-        final String pathAudioEdited = Constants.PATH_APP_TEMP + File.separator + "AUD_" +
-                new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".mp4";
+        Project project = Project.getInstance(null,null,null);
+        ArrayList<String> audioPathList =
+            createAudioPathList(project.getProjectPathIntermediateAudioFilesVoiceOverRecord());
+        final String pathAudioEdited = pathAudioMerge;
 
         VMComposition audioComposition = new VMComposition();
         try {
@@ -72,9 +72,9 @@ public class MergeVoiceOverAudiosUseCase {
         }
     }
 
-    private ArrayList<String> createAudioPathList() {
+    private ArrayList<String> createAudioPathList(String path) {
         // (jliarte): 29/11/16 this uses IO, so it should be in a background thread
-        File directory = new File(Constants.PATH_APP_TEMP_AUDIO);
+        File directory = new File(path);
         ArrayList<String> audiosList = new ArrayList<String>();;
         for(File audio: directory.listFiles()){
             audiosList.add(audio.getAbsolutePath());

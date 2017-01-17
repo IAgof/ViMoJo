@@ -6,6 +6,7 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -40,8 +41,8 @@ public class ModifyVideoTextAndPositionUseCase {
             videoToEdit.setClipText(text);
             videoToEdit.setClipTextPosition(textPosition);
             videoToEdit.setTempPathFinished(false);
-            // TODO:(alvaro.martinez) 22/11/16 use project tmp path
-            videoToEdit.setTempPath(Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
+            Project project = Project.getInstance(null, null, null);
+            videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
             videoToEdit.setTextToVideoAdded(true);
 
             // TODO(jliarte): 19/10/16 move this logic to TranscoderHelper?

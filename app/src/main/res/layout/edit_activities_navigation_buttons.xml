@@ -11,6 +11,8 @@
         android:layout_height="24dp"
         android:layout_weight="1"
         android:scaleType="fitCenter"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
         android:src="@drawable/activity_edit_clip_normal"
         />
 

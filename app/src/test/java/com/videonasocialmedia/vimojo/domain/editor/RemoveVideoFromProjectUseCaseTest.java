@@ -66,6 +66,9 @@ public class RemoveVideoFromProjectUseCaseTest {
     verify(mockedProjectRepository).update(currentProject);
   }
 
+  /*
+    Test not needed anymore. With multiproject, videoRepository cannot remove video, other projects
+    could be using this media item.
   @Test
   public void testRemoveMediaItemsFromProjectCallsRemoveRealmVideos() {
     Project currentProject = Project.getInstance(null, null, null);
@@ -78,7 +81,7 @@ public class RemoveVideoFromProjectUseCaseTest {
     injectedUseCase.removeMediaItemsFromProject(videos, listener);
 
     verify(mockedVideoRepository).remove(video);
-  }
+  }*/
 
   @NonNull
   private OnRemoveMediaFinishedListener getOnRemoveMediaFinishedListener() {
