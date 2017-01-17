@@ -52,7 +52,7 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
 
     new UpdateIntermediateTemporalFilesTransitionsUseCase(getMediaListFromProjectUseCase).execute(mockedOnRelaunchTemporalFileListener);
 
-    verify(mockedOnRelaunchTemporalFileListener).videoToRelaunch(videoAdded.getIdentifier());
+    verify(mockedOnRelaunchTemporalFileListener).videoToRelaunch(videoAdded.getUuid());
   }
 
   private Project getAProject() {

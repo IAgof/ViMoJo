@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.settings.domain;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.OnRelaunchTemporalFileListener;
 
 import java.util.List;
@@ -20,12 +21,13 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCase {
   }
 
   public void execute(OnRelaunchTemporalFileListener listener) {
+    Project project = Project.getInstance(null,null,null);
     List<Media> items = getMediaListFromProjectUseCase.getMediaListFromProject();
     for(Media media: items){
       Video video = (Video) media;
       if(video.isEdited()) {
         video.setTempPathFinished(false);
-        listener.videoToRelaunch(video.getIdentifier());
+        listener.videoToRelaunch(video.getUuid(), project.getProjectPathIntermediateFileAudioFade());
       }
     }
   }

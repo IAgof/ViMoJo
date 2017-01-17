@@ -26,8 +26,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
-import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorView;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -201,11 +199,11 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
             });
         }
         if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
-            editorView.setVideoFadeTransitionAmongVideos();
+            editActivityView.setVideoFadeTransitionAmongVideos();
         }
         if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
             !currentProject.getVMComposition().hasMusic()){
-            editorView.setAudioFadeTransitionAmongVideos();
+            editActivityView.setAudioFadeTransitionAmongVideos();
         }
     }
 }

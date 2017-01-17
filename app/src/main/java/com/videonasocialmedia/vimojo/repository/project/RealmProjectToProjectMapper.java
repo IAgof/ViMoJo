@@ -27,11 +27,6 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
   @Override
   public Project map(RealmProject realmProject) {
     try {
-      Profile profile = mapProfile(realmProject);
-      Project project = new Project(realmProject.title, null, profile);
-      project.setProjectPath(realmProject.projectPath);
-      project.setAudioFadeTransitionActivated(realmProject.isAudioFadeTransitionActivated);
-      project.setVideoFadeTransitionActivated(realmProject.isVideoFadeTransitionActivated);
 
       Project project = mapProject(realmProject);
       setProjectMusic(project, realmProject);
@@ -62,6 +57,8 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
     currentProject.setUuid(realmProject.uuid);
     currentProject.setLastModification(realmProject.lastModification);
     currentProject.setDuration(realmProject.duration);
+    currentProject.setAudioFadeTransitionActivated(realmProject.isAudioFadeTransitionActivated);
+    currentProject.setVideoFadeTransitionActivated(realmProject.isVideoFadeTransitionActivated);
 
     return currentProject;
   }

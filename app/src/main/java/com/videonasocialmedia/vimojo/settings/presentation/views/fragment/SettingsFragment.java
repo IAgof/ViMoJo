@@ -201,12 +201,13 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     @Override
-    public void setRelaunchExportTempBackground(int videoIdentifier) {
+    public void setRelaunchExportTempBackground(String videoUuid, String intermediatesTempAudioFadeDirectory) {
         Context appContext = VimojoApplication.getAppContext();
         Intent exportTempBackgroudnServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoIdentifier);
+        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoUuid);
         exportTempBackgroudnServiceIntent.putExtra(IntentConstants.RELAUNCH_EXPORT_TEMP, true);
-        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY, Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
+        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY_FADE_AUDIO,
+            intermediatesTempAudioFadeDirectory);
         appContext.startService(exportTempBackgroudnServiceIntent);
     }
 

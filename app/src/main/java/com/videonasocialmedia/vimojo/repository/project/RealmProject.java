@@ -32,11 +32,10 @@ public class RealmProject extends RealmObject {
     this.videos = new RealmList<RealmVideo>();
   }
 
-  public RealmProject(String title, String projectPath, String quality, String resolution,
-                      String frameRate, boolean isAudioFadeTransitionActivated,
-                      boolean isVideoFadeTransitionActivated) {
   public RealmProject(String uuid, String title, String lastModification, String projectPath,
-                      String quality, String resolution, String frameRate, int duration) {
+                      String quality, String resolution, String frameRate, int duration,
+                      boolean isAudioFadeTransitionActivated,
+                      boolean isVideoFadeTransitionActivated) {
     this.uuid = uuid;
     this.title = title;
     this.lastModification = lastModification;
