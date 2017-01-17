@@ -32,6 +32,11 @@
     <string name="credentialFTPNull">FTP connection data not set. Please configure FTP in settings.</string>
 
     <!-- Editor Activity -->
+    <string name="new_project">New project</string>
+    <string name="clear_project">Clean project</string>
+    <string name="other_options">Other options</string>
+
+    <!-- Edit Activity -->
     <string name="tab_edit">Edit</string>
     <string name="tab_music">Music</string>
     <string name="tab_share">Share</string>
@@ -55,6 +60,8 @@
     <string name="videos_removed">Clear videos from project, record or add new videos</string>
     <string name="error">error</string>
     <string name="editTextActionLabel">Done</string>
+    <string name="titleVideosNotFound">Videos not found in device</string>
+    <string name="messageVideosNotFound">Some videos will not be loaded into project</string>
 
     <!--VideoEditText activity-->
     <string name="error_videoEdit">The maximum number of lines to draw is two</string>
@@ -74,6 +81,25 @@
     <string name="error_video_format">Video format different to video project </string>
     <string name="dialog_accept_delete_clip">Yes</string>
     <string name="dialog_cancel_delete_clip">No</string>
+
+    <!-- Gallery projects activity -->
+    <string name="galleryProjectActivityTitle">Projects</string>
+    <string name="dialog_project_remove_message">Remove project</string>
+    <string name="dialog_project_remove_accept">Yes</string>
+    <string name="dialog_project_remove_cancel">No</string>
+
+    <!-- Detail project activity -->
+    <string name="detail_project_hint_title">Enter your name here</string>
+    <string name="detail_project_info_duration">Duration</string>
+    <string name="detail_project_info_size">Size</string>
+    <string name="detail_project_info_quality">Quality</string>
+    <string name="detail_project_info_format">Format</string>
+    <string name="detail_project_info_bitrate">Bitrate</string>
+    <string name="detail_project_info_framerate">Frame rate</string>
+
+    <string name="dialog_project_edit_title_message">Set project title</string>
+    <string name="dialog_project_edit_title_accept">Yes</string>
+    <string name="dialog_project_edit_title_cancel">No</string>
 
     <!--SoundVolumeActivity-->
     <string name="exitSoundVolumeActivity" >Are you sure do you want to discard the changes and return to record again?</string>
@@ -1693,6 +1719,14 @@ and Conditions.\n\n
     <string name="dialog_message_clean_project">Do you want to start a new project?</string>
     <string name="dialog_accept_clean_project">Yes</string>
     <string name="dialog_cancel_clean_project">No</string>
+
+    <string name="dialog_change_user_name">Do you want to change your username?</string>
+    <string name="dialog_change_email">Do you want to change your email?</string>
+    <string name="export">Starting export</string>
+
+    <string name="bottom_bar_edit">Edit</string>
+    <string name="bottom_bar_sound">Sound</string>
+    <string name="bottom_bar_share">Share</string>
 
 
 </resources>

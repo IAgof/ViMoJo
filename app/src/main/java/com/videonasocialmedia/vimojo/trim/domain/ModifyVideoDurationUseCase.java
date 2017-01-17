@@ -60,8 +60,8 @@ public class ModifyVideoDurationUseCase {
       videoToEdit.setStartTime(startTimeMs);
       videoToEdit.setStopTime(finishTimeMs);
       videoToEdit.setTempPathFinished(false);
-      // TODO:(alvaro.martinez) 22/11/16 use project tmp path
-      videoToEdit.setTempPath(Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
+      Project project = Project.getInstance(null,null,null);
+      videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
       videoToEdit.setTrimmedVideo(true);
 
       if (videoToEdit.hasText()) {

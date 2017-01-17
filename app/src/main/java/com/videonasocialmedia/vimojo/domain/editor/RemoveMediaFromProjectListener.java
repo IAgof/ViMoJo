@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * This interface is used to delete an existing media items from the project.
  */
-public interface RemoveMediaFromProjectUseCase {
+public interface RemoveMediaFromProjectListener {
     /**
      * This method is used to remove media items from the project.
      *

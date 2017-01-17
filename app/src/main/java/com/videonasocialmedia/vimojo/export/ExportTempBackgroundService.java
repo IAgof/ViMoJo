@@ -8,12 +8,12 @@ import android.support.annotation.Nullable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.pipeline.ApplyAudioFadeInFadeOutToVideo;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchExportTempBackgroundUseCase;
-import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.main.DaggerExporterServiceComponent;
 import com.videonasocialmedia.vimojo.main.ExporterServiceComponent;
@@ -47,6 +47,7 @@ public class ExportTempBackgroundService extends Service
     private String tempVideoPathPreviewFadeInFadeOut;
     // TODO:(alvaro.martinez) 22/11/16 use project tmp directory
     private String intermediatesTempDirectory;
+    private String intermediatesTempAudioFadeDirectory;
     @Inject ModifyVideoDurationUseCase modifyVideoDurationUseCase;
     @Inject ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
 
@@ -84,7 +85,7 @@ public class ExportTempBackgroundService extends Service
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final int videoId = intent.getIntExtra(IntentConstants.VIDEO_ID, -51456);
+                final String videoId = intent.getStringExtra(IntentConstants.VIDEO_ID);
 
                 final boolean isVideoRelaunch = intent.getBooleanExtra(
                         IntentConstants.RELAUNCH_EXPORT_TEMP, false);
@@ -100,6 +101,8 @@ public class ExportTempBackgroundService extends Service
                 final String textPosition = intent.getStringExtra(IntentConstants.TEXT_POSITION);
                 intermediatesTempDirectory = intent.getStringExtra(
                         IntentConstants.VIDEO_TEMP_DIRECTORY);
+                intermediatesTempAudioFadeDirectory = intent.getStringExtra(
+                    IntentConstants.VIDEO_TEMP_DIRECTORY_FADE_AUDIO);
 
                 final Video video = getVideo(videoId);
                 MediaTranscoderListener useCaseListener = new MediaTranscoderListener() {
@@ -167,7 +170,7 @@ public class ExportTempBackgroundService extends Service
     public void applyAudioFadeInFadeOut(Video video) throws IOException {
         tempVideoPathPreviewFadeInFadeOut = video.getTempPath();
         ApplyAudioFadeInFadeOutToVideo applyAudioFadeInFadeOutToVideo =
-            new ApplyAudioFadeInFadeOutToVideo(this, intermediatesTempDirectory);
+            new ApplyAudioFadeInFadeOutToVideo(this, intermediatesTempAudioFadeDirectory);
         applyAudioFadeInFadeOutToVideo.applyAudioFadeToVideo(video, TIME_FADE_IN_MS, TIME_FADE_OUT_MS);
     }
 
@@ -189,21 +192,20 @@ public class ExportTempBackgroundService extends Service
             startTimeMs, finishTimeMs, useCaseListener);
     }
 
-    private void sendResultBroadcast(int videoId, boolean success) {
+    private void sendResultBroadcast(String videoId, boolean success) {
         Intent intent = new Intent(ACTION);
         intent.putExtra(IntentConstants.VIDEO_EXPORTED, success);
         intent.putExtra(IntentConstants.VIDEO_ID, videoId);
         sendBroadcast(intent);
     }
 
-    private Video getVideo(int videoId) {
-        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
-                new GetMediaListFromProjectUseCase();
+    private Video getVideo(String videoId) {
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
         if (videoList != null) {
-            for (Media media : videoList) {
-                if (media.getIdentifier() == videoId) {
-                    return (Video) media;
+            for (Media video : videoList) {
+                if (((Video) video).getUuid().compareTo(videoId) == 0) {
+                    return (Video) video;
                 }
             }
         }
@@ -225,6 +227,6 @@ public class ExportTempBackgroundService extends Service
     private void exportTempBackgroundSuccess(Video video) {
         video.setTempPathFinished(true);
         videoRepository.update(video);
-        sendResultBroadcast(video.getIdentifier(), true);
+        sendResultBroadcast(video.getUuid(), true);
     }
 }

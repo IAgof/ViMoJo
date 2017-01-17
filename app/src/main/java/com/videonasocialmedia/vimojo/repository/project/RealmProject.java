@@ -12,11 +12,16 @@ import io.realm.annotations.PrimaryKey;
  */
 public class RealmProject extends RealmObject {
   @PrimaryKey
+  public String uuid;
   public String title;
+  public String lastModification;
   public String projectPath;
   public String quality;
   public String resolution;
   public String frameRate;
+  public int duration;
+  public String pathLastVideoExported;
+  public String dateLastVideoExported;
   public String musicTitle;
   public float musicVolume = Music.DEFAULT_MUSIC_VOLUME;
   public boolean isAudioFadeTransitionActivated;
@@ -30,11 +35,16 @@ public class RealmProject extends RealmObject {
   public RealmProject(String title, String projectPath, String quality, String resolution,
                       String frameRate, boolean isAudioFadeTransitionActivated,
                       boolean isVideoFadeTransitionActivated) {
+  public RealmProject(String uuid, String title, String lastModification, String projectPath,
+                      String quality, String resolution, String frameRate, int duration) {
+    this.uuid = uuid;
     this.title = title;
+    this.lastModification = lastModification;
     this.projectPath = projectPath;
     this.quality = quality;
     this.resolution = resolution;
     this.frameRate = frameRate;
+    this.duration = duration;
     this.videos = new RealmList<RealmVideo>();
     this.isAudioFadeTransitionActivated = isAudioFadeTransitionActivated;
     this.isVideoFadeTransitionActivated = isVideoFadeTransitionActivated;

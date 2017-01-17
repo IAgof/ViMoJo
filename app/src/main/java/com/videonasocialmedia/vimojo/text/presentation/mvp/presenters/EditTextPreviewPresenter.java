@@ -13,6 +13,8 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -37,18 +39,20 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
 
-    public EditTextPreviewPresenter(EditTextView editTextView, UserEventTracker userEventTracker) {
+    public EditTextPreviewPresenter(EditTextView editTextView, UserEventTracker userEventTracker,
+                                    GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
         this.editTextView = editTextView;
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        this.currentProject = loadCurrentProject();
         this.userEventTracker = userEventTracker;
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+
+        this.currentProject = loadCurrentProject();
         // TODO:(alvaro.martinez) 23/11/16 Use Dagger for this injection
         drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
     }
 
     private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null,null,null);
     }
 
     public void init(int videoToEditTextIndex) {
@@ -81,12 +85,14 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
         Context appContext = VimojoApplication.getAppContext();
         Intent textToVideoServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-        textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoToEdit.getIdentifier());
+        textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoToEdit.getUuid());
         textToVideoServiceIntent.putExtra(IntentConstants.IS_TEXT_ADDED, true);
         textToVideoServiceIntent.putExtra(IntentConstants.TEXT_TO_ADD, text);
         textToVideoServiceIntent.putExtra(IntentConstants.TEXT_POSITION, textPositionSelected.name());
-        // TODO:(alvaro.martinez) 22/11/16 use project tmp path
-        textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY, Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
+        textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY,
+            currentProject.getProjectPathIntermediateFiles());
+        textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY_FADE_AUDIO,
+            currentProject.getProjectPathIntermediateFileAudioFade());
         appContext.startService(textToVideoServiceIntent);
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
     }

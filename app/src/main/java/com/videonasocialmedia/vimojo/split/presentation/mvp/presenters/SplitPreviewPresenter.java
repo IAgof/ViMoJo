@@ -106,12 +106,14 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     public void trimVideo(Video video, int startTimeMs, int finishTimeMs) {
         Context appContext = VimojoApplication.getAppContext();
         Intent trimServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-        trimServiceIntent.putExtra(IntentConstants.VIDEO_ID, video.getIdentifier());
+        trimServiceIntent.putExtra(IntentConstants.VIDEO_ID, video.getUuid());
         trimServiceIntent.putExtra(IntentConstants.IS_VIDEO_TRIMMED, true);
         trimServiceIntent.putExtra(IntentConstants.START_TIME_MS, startTimeMs);
         trimServiceIntent.putExtra(IntentConstants.FINISH_TIME_MS, finishTimeMs);
-        // TODO:(alvaro.martinez) 22/11/16 use project tmp path
-        trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY, Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
+        trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY,
+            currentProject.getProjectPathIntermediateFiles());
+        trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY_FADE_AUDIO,
+            currentProject.getProjectPathIntermediateFileAudioFade());
         appContext.startService(trimServiceIntent);
     }
 }
