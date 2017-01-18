@@ -3,8 +3,6 @@ package com.videonasocialmedia.vimojo.record.presentation.views.util;
 import android.util.Log;
 import android.util.Size;
 
-import com.videonasocialmedia.vimojo.record.presentation.views.fragment.RecordCamera2Fragment;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

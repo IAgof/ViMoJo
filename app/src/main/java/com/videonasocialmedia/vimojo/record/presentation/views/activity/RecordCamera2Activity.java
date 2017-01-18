@@ -1,53 +1,42 @@
 package com.videonasocialmedia.vimojo.record.presentation.views.activity;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.res.Configuration;
+import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.RectF;
-import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.SystemClock;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.util.DisplayMetrics;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.util.Size;
-import android.view.Surface;
-import android.view.TextureView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
+import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
+import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
+import com.videonasocialmedia.vimojo.record.presentation.views.camera.Camera2Wrapper;
 import com.videonasocialmedia.vimojo.record.presentation.views.customview.AutoFitTextureView;
-import com.videonasocialmedia.vimojo.record.presentation.views.util.RecordCamera2Utils;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
-import java.util.Arrays;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
+import java.io.File;
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnTouch;
 
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
@@ -55,7 +44,7 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
  * Created by alvaro on 16/01/17.
  */
 
-public class RecordCamera2Activity extends VimojoActivity implements TextureView.SurfaceTextureListener {
+public class RecordCamera2Activity extends VimojoActivity implements RecordCamera2View {
 
   private final String LOG_TAG = getClass().getSimpleName();
 
@@ -77,6 +66,28 @@ public class RecordCamera2Activity extends VimojoActivity implements TextureView
   TextView numVideosRecordedTextView;
   @Bind(R.id.button_navigate_edit_or_gallery)
   CircleImageView thumbClipRecordedButton;
+  @Bind(R.id.button_record)
+  ImageButton recordButton;
+  @Bind(R.id.control_chronometer_and_rec_point)
+  View chronometerAndRecPointView;
+  @Bind(R.id.imageRecPoint)
+  ImageView recordingIndicator;
+  @Bind(R.id.clear_button)
+  ImageButton clearButton;
+  @Bind(R.id.hud)
+  View hudView;
+  @Bind(R.id.controls)
+  View controlsView;
+  @Bind(R.id.picometer)
+  View picometerView;
+  @Bind(R.id.zoom_bar)
+  View zommBarView;
+  @Bind(R.id.settings_bar)
+  View settingsBarView;
+  @Bind(R.id.settings_bar_submenu)
+  View settingsBarSubmenuView;
+  @Bind(R.id.button_resolution_indicator)
+  ImageView resolutionIndicatorButton;
 
   /**
    * An {@link AutoFitTextureView} for camera preview.
@@ -84,99 +95,31 @@ public class RecordCamera2Activity extends VimojoActivity implements TextureView
   @Bind(R.id.textureView)
   AutoFitTextureView textureView;
 
-  /**
-   * A refernce to the opened {@link android.hardware.camera2.CameraDevice}.
-   */
-  private CameraDevice cameraDevice;
-  /**
-   * A reference to the current {@link android.hardware.camera2.CameraCaptureSession} for
-   * preview.
-   */
-  private CameraCaptureSession previewSession;
-  /**
-   * An additional thread for running tasks that shouldn't block the UI.
-   */
-  private HandlerThread backgroundThread;
-
-  /**
-   * A {@link Handler} for running tasks in the background.
-   */
-  private Handler backgroundHandler;
-
-  /**
-   * A {@link Semaphore} to prevent the app from exiting before closing the camera.
-   */
-  private Semaphore cameraOpenCloseLock = new Semaphore(1);
-
-  /**
-   * The {@link android.util.Size} of camera preview.
-   */
-  private Size previewSize;
-
-  /**
-   * The {@link android.util.Size} of video recording.
-   */
-  private Size videoSize;
-
-  /**
-   * MediaRecorder
-   */
-  private MediaRecorder mediaRecorder;
-
-  private Integer sensorOrientation;
-  private CaptureRequest.Builder previewBuilder;
-
-  /**
-   * {@link CameraDevice.StateCallback} is called when {@link CameraDevice} changes its status.
-   */
-  private CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
-
-    @Override
-    public void onOpened(CameraDevice cameraDevice) {
-      RecordCamera2Activity.this.cameraDevice = cameraDevice;
-      startPreview();
-      cameraOpenCloseLock.release();
-      if (null != textureView) {
-        configureTransform(textureView.getWidth(), textureView.getHeight());
-      }
-    }
-
-    @Override
-    public void onDisconnected(CameraDevice cameraDevice) {
-      cameraOpenCloseLock.release();
-      cameraDevice.close();
-      RecordCamera2Activity.this.cameraDevice = null;
-    }
-
-    @Override
-    public void onError(CameraDevice cameraDevice, int error) {
-      cameraOpenCloseLock.release();
-      cameraDevice.close();
-      RecordCamera2Activity.this.cameraDevice = null;
-      Activity activity = RecordCamera2Activity.this;
-      if (null != activity) {
-        activity.finish();
-      }
-    }
-
-  };
+  RecordCamera2Presenter presenter;
 
   /**
    * if for result
    **/
   private String resultVideoPath;
   private boolean externalIntent = false;
+  private boolean isRecording = false;
+  private boolean isProjectHasVideo = false;
+  private boolean buttonBackPressed = false;
+
+  private boolean isFrontCameraSelected = false;
+  private String EXTRA_FRONT_CAMERA_SELECTED = "front_camera_selected";
+
+  // TODO:(alvaro.martinez) 18/01/17 Move this values to Constants
+  private final int RESOLUTION_SELECTED_HD720 = 720;
+  private final int RESOLUTION_SELECTED_HD1080 = 1080;
+  private final int RESOLUTION_SELECTED_HD4K = 2160;
+
+  private Camera2Wrapper camera2Wrapper;
 
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-   /* setContentView(R.layout.activity_record_camera2);
-    if (null == savedInstanceState) {
-      getFragmentManager().beginTransaction()
-          .replace(R.id.container, RecordCamera2Fragment.newInstance())
-          .commit();
-    } */
 
     Log.d(LOG_TAG, "onCreate");
     setContentView(R.layout.activity_record_camera2);
@@ -186,6 +129,15 @@ public class RecordCamera2Activity extends VimojoActivity implements TextureView
     checkAction();
     configChronometer();
     configShowThumbAndNumberClips();
+
+    // TODO:(alvaro.martinez) 18/01/17 Inject with Dagger
+    presenter = new RecordCamera2Presenter(this);
+    isFrontCameraSelected = getIntent().getBooleanExtra(EXTRA_FRONT_CAMERA_SELECTED, false);
+
+    int cameraId = 0;
+    if(isFrontCameraSelected)
+      cameraId = 1;
+    camera2Wrapper = new Camera2Wrapper(this, cameraId, textureView);
 
   }
 
@@ -248,242 +200,317 @@ public class RecordCamera2Activity extends VimojoActivity implements TextureView
   @Override
   public void onResume() {
     super.onResume();
-    startBackgroundThread();
-    if (textureView.isAvailable()) {
-      openCamera(textureView.getWidth(), textureView.getHeight());
-    } else {
-      textureView.setSurfaceTextureListener(this);
-    }
+    camera2Wrapper.onResume();
+    hideSystemUi();
+  }
+
+  private void hideSystemUi() {
+    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        WindowManager.LayoutParams.FLAG_FULLSCREEN);
   }
 
   @Override
   public void onPause() {
-    closeCamera();
-    stopBackgroundThread();
+    camera2Wrapper.onPause();
     super.onPause();
   }
 
-  /**
-   * Starts a background thread and its {@link Handler}.
-   */
-  private void startBackgroundThread() {
-    backgroundThread = new HandlerThread("CameraBackground");
-    backgroundThread.start();
-    backgroundHandler = new Handler(backgroundThread.getLooper());
+  /*.*.*.*.*.*.*.*.*.*.*.*.*. RecordCamera2View *.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*/
+
+  @Override
+  public void showRecordButton() {
+    recordButton.setImageResource(R.drawable.record_activity_ic_rec);
+    isRecording = false;
   }
 
-  /**
-   * Stops the background thread and its {@link Handler}.
-   */
-  private void stopBackgroundThread() {
-    backgroundThread.quitSafely();
+  @Override
+  public void showStopButton() {
+    recordButton.setImageResource(R.drawable.activity_record_icon_stop);
+    isRecording = true;
+  }
+
+  @Override
+  public void showSettingsOptions() {
+    navigateSettingsButtons.setEnabled(true);
+  }
+
+  @Override
+  public void hideSettingsOptions() {
+    navigateSettingsButtons.setEnabled(false);
+  }
+
+  @Override
+  public void showChronometer() {
+    chronometerAndRecPointView.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void hideChronometer() {
+    chronometerAndRecPointView.setVisibility(View.INVISIBLE);
+  }
+
+  @Override
+  public void startChronometer() {
+    resetChronometer();
+    chronometer.start();
+    showRecordingIndicator();
+  }
+
+  private void resetChronometer() {
+    chronometer.setBase(SystemClock.elapsedRealtime());
+    chronometer.setText("00:00");
+  }
+
+  private void showRecordingIndicator() {
+    recordingIndicator.setVisibility(View.VISIBLE);
+  }
+
+
+  @Override
+  public void stopChronometer() {
+    chronometer.stop();
+    hideRecordingIndicator();
+  }
+
+  private void hideRecordingIndicator() {
+    recordingIndicator.setVisibility(View.INVISIBLE);
+  }
+
+
+  @Override
+  public void showFlashOn(boolean on) {
+    // TODO:(alvaro.martinez) 18/01/17 Review flash tracking trackUserInteracted(AnalyticsConstants.CHANGE_FLASH, String.valueOf(on));
+    flashButton.setActivated(on);
+    flashButton.setSelected(on);
+  }
+
+  @Override
+  public void showFlashSupported(boolean supported) {
+    flashButton.setActivated(false);
+    if (supported) {
+      flashButton.setEnabled(true);
+    } else {
+      flashButton.setEnabled(false);
+    }
+  }
+
+  @Override
+  public void showFrontCameraSelected() {
+    // TODO:(alvaro.martinez) 18/01/17 Tracking change camera
+    changeCameraButton.setActivated(false);
+    changeCameraButton.setSelected(true);
+  }
+
+  @Override
+  public void showBackCameraSelected() {
+// TODO:(alvaro.martinez) 18/01/17 Tracking change camera
+    changeCameraButton.setActivated(false);
+    changeCameraButton.setSelected(false);
+  }
+
+  @Override
+  public void showError(int stringResourceId) {
+    // TODO:(alvaro.martinez) 18/01/17 test snack bar in record activity
+    showMessage(stringResourceId);
+  }
+
+  @Override
+  public void finishActivityForResult(String originalVideoPath) {
     try {
-      backgroundThread.join();
-      backgroundThread = null;
-      backgroundThread = null;
-    } catch (InterruptedException e) {
+      if (resultVideoPath != null) {
+        Utils.copyFile(originalVideoPath, resultVideoPath);
+        Utils.removeVideo(originalVideoPath);
+      } else
+        resultVideoPath = originalVideoPath;
+      Uri videoUri = Uri.fromFile(new File(resultVideoPath));
+      Intent returnIntent = new Intent();
+      returnIntent.setData(videoUri);
+      setResult(RESULT_OK, returnIntent);
+      finish();
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
   @Override
-  public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-    openCamera(width, height);
+  public void hidePrincipalViews() {
+    clearButton.setImageResource(R.drawable.record_activity_ic_shrink);
+    clearButton.setAlpha(0.5f);
+    clearButton.setBackground(null);
+    clearButton.setActivated(true);
+    hudView.setVisibility(View.INVISIBLE);
+    controlsView.setVisibility(View.INVISIBLE);
+    hideControlsViewButton.setVisibility(View.INVISIBLE);
+    showControlsButton.setVisibility(View.INVISIBLE);
+    picometerView.setVisibility(View.INVISIBLE);
+    zommBarView.setVisibility(View.INVISIBLE);
+    settingsBarSubmenuView.setVisibility(View.INVISIBLE);
+    settingsBarView.setVisibility(View.INVISIBLE);
   }
 
   @Override
-  public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-    configureTransform(width, height);
+  public void showPrincipalViews() {
+    clearButton.setImageResource(R.drawable.record_activity_ic_expand);
+    clearButton.setBackground(getResources().getDrawable(R.drawable.circle_background));
+    clearButton.setAlpha(1f);
+    clearButton.setActivated(false);
+    hudView.setVisibility(View.VISIBLE);
+    showControlsButton.setVisibility(View.VISIBLE);
   }
 
   @Override
-  public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-    return false;
+  public void showRecordedVideoThumb(String path) {
+    thumbClipRecordedButton.setVisibility(View.VISIBLE);
+    Glide.with(this).load(path).into(thumbClipRecordedButton);
   }
 
   @Override
-  public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
+  public void hideRecordedVideoThumb() {
+    thumbClipRecordedButton.setVisibility(View.INVISIBLE);
   }
 
-  /**
-   * Tries to open a {@link CameraDevice}. The result is listened by `stateCallback`.
-   */
-  private void openCamera(int width, int height) {
+  @Override
+  public void showVideosRecordedNumber(int numberOfVideos) {
+    numVideosRecordedTextView.setVisibility(View.VISIBLE);
+    numVideosRecordedTextView.setText(String.valueOf(numberOfVideos));
+    isProjectHasVideo=true;
+  }
 
-    final Activity activity = this;
-    if (null == activity || activity.isFinishing()) {
-      return;
+  @Override
+  public void hideVideosRecordedNumber() {
+    numVideosRecordedTextView.setVisibility(View.INVISIBLE);
+  }
+
+  @Override
+  public void showResolutionSelected(int resolutionSelected) {
+    switch (resolutionSelected){
+      case (RESOLUTION_SELECTED_HD720):
+        resolutionIndicatorButton.setImageResource(R.drawable.record_activity_ic_resolution_720);
+        break;
+      case(RESOLUTION_SELECTED_HD1080):
+        resolutionIndicatorButton.setImageResource(R.drawable.record_activity_ic_resolution_1080);
+        break;
+      case (RESOLUTION_SELECTED_HD4K):
+        resolutionIndicatorButton.setImageResource(R.drawable.record_activity_ic_resolution_4k);
+        break;
+      default:
+        resolutionIndicatorButton.setImageResource(R.drawable.record_activity_ic_resolution_720);
+        break;
     }
-//    CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
-    CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
-    try {
-      Log.d(LOG_TAG, "tryAcquire");
-      if (!cameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
-        throw new RuntimeException("Time out waiting to lock camera opening.");
+  }
+
+  /*.*.*.*.*.*.*.*.*.*.*.*.*. OnClicks *.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*/
+
+  @OnClick(R.id.button_toggle_flash)
+  public void toggleFlash() {
+    // TODO:(alvaro.martinez) 18/01/17 implement flash
+    //presenter.toggleFlash();
+  }
+
+  @OnClick(R.id.button_change_camera)
+  public void changeCamera() {
+    // TODO:(alvaro.martinez) 18/01/17 Implement changeCamera
+   /* presenter.setFlashOff();
+    presenter.changeCamera(0);*/
+
+    if(!isFrontCameraSelected){
+      isFrontCameraSelected = true;
+    } else {
+      isFrontCameraSelected = false;
+    }
+
+    Intent intent = new Intent(RecordCamera2Activity.this, RecordCamera2Activity.class);
+    //intent.putExtras(getIntent().getExtras());      //Pass all the current intent parameters
+    intent.putExtra(EXTRA_FRONT_CAMERA_SELECTED, isFrontCameraSelected);
+    //startActivityForResult(intent, REQUESTCODE_SWITCHCAMERA);
+    startActivity(intent);
+    overridePendingTransition(R.anim.from_middle, R.anim.to_middle);
+  }
+
+  @OnClick (R.id.button_navigate_edit_or_gallery)
+  public void navigateToEditOrGallery() {
+    if (!isRecording && !externalIntent) {
+      //presenter.setFlashOff();
+      if (isProjectHasVideo){
+        navigateTo(EditActivity.class);
+      }else {
+        navigateTo(GalleryActivity.class);
       }
-      String cameraId = manager.getCameraIdList()[0];
+    }
+  }
 
-      // Choose the sizes for camera preview and video recording
-      CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-      StreamConfigurationMap map = characteristics
-          .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-      sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-      videoSize = RecordCamera2Utils.chooseVideoSize(map.getOutputSizes(MediaRecorder.class));
-      previewSize = RecordCamera2Utils.chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
-          width, height, videoSize);
+  @OnClick(R.id.button_navigate_settings)
+  public void navigateToSettings() {
+    if (!isRecording && !externalIntent) {
+      navigateTo(SettingsActivity.class);
+    }
+  }
 
-      int orientation = getResources().getConfiguration().orientation;
-      if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        textureView.setAspectRatio(previewSize.getWidth(), previewSize.getHeight());
+  @OnClick(R.id.clear_button)
+  public void clearAndShrinkScreen() {
+    if (clearButton.isActivated() == true) {
+      showPrincipalViews();
+    } else {
+      hidePrincipalViews();
+    }
+  }
+
+  @OnClick(R.id.button_to_show_controls)
+  public void showControls() {
+    showControlsButton.setVisibility(View.INVISIBLE);
+    hideControlsViewButton.setVisibility(View.VISIBLE);
+    controlsView.setVisibility(View.VISIBLE);
+  }
+
+  @OnClick(R.id.button_to_hide_controls)
+  public void hideControls(){
+    hideControlsViewButton.setVisibility(View.INVISIBLE);
+    showControlsButton.setVisibility(View.VISIBLE);
+    controlsView.setVisibility(View.INVISIBLE);
+  }
+
+  @OnTouch(R.id.button_record)
+  boolean onTouch(MotionEvent event) {
+    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+      if (!isRecording) {
+        // TODO:(alvaro.martinez) 18/01/17 Implement start record
+        //presenter.startRecord();
+        camera2Wrapper.startRecordingVideo();
+        isRecording = true;
       } else {
-        textureView.setAspectRatio(previewSize.getHeight(), previewSize.getWidth());
+        // TODO:(alvaro.martinez) 18/01/17 Implement stop record
+        //presenter.stopRecord();
+        camera2Wrapper.stopRecordingVideo();
       }
-      configureTransform(width, height);
-      mediaRecorder = new MediaRecorder();
-      if (ActivityCompat.checkSelfPermission(VimojoApplication.getAppContext(),
-          android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-        // TODO: Consider calling
-        //    ActivityCompat#requestPermissions
-        // here to request the missing permissions, and then overriding
-        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-        //                                          int[] grantResults)
-        // to handle the case where the user grants the permission. See the documentation
-        // for ActivityCompat#requestPermissions for more details.
-        return;
-      }
-      manager.openCamera(cameraId, stateCallback, null);
-    } catch (CameraAccessException e) {
-      Toast.makeText(activity, "Cannot access the camera.", Toast.LENGTH_SHORT).show();
-      activity.finish();
-    } catch (NullPointerException e) {
-      // Currently an NPE is thrown when the Camera2API is used but not supported on the
-      // device this code runs.
-      // TODO:(alvaro.martinez) 17/01/17 Manage this NPE
-      // ErrorDialog.newInstance("error dialog")
-      //   .show(getChildFragmentManager(), FRAGMENT_DIALOG);
-    } catch (InterruptedException e) {
-      throw new RuntimeException("Interrupted while trying to lock camera opening.");
+    }
+    return true;
+  }
+
+  @Override
+  public void onBackPressed() {
+    if (buttonBackPressed) {
+        buttonBackPressed = false;
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//***Change Here***
+        startActivity(intent);
+        finish();
+        System.exit(0);
+    } else {
+        buttonBackPressed = true;
+        showMessage(R.string.toast_exit);
     }
   }
 
-  private void closeCamera() {
-    try {
-      cameraOpenCloseLock.acquire();
-      closePreviewSession();
-      if (null != cameraDevice) {
-        cameraDevice.close();
-        cameraDevice = null;
-      }
-      if (null != mediaRecorder) {
-        mediaRecorder.release();
-        mediaRecorder = null;
-      }
-    } catch (InterruptedException e) {
-      throw new RuntimeException("Interrupted while trying to lock camera closing.");
-    } finally {
-      cameraOpenCloseLock.release();
-    }
+  public void navigateTo(Class cls) {
+    Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
+    startActivity(intent);
   }
 
-  /**
-   * Configures the necessary {@link android.graphics.Matrix} transformation to `mTextureView`.
-   * This method should not to be called until the camera preview size is determined in
-   * openCamera, or until the size of `mTextureView` is fixed.
-   *
-   * @param viewWidth  The width of `mTextureView`
-   * @param viewHeight The height of `mTextureView`
-   */
-  private void configureTransform(int viewWidth, int viewHeight) {
-    Activity activity = this;
-    if (null == textureView || null == previewSize || null == activity) {
-      return;
-    }
-    int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-    Matrix matrix = new Matrix();
-    RectF viewRect = new RectF(0, 0, viewWidth, viewHeight);
-    RectF bufferRect = new RectF(0, 0, previewSize.getHeight(), previewSize.getWidth());
-    float centerX = viewRect.centerX();
-    float centerY = viewRect.centerY();
-    if (Surface.ROTATION_90 == rotation || Surface.ROTATION_270 == rotation) {
-      bufferRect.offset(centerX - bufferRect.centerX(), centerY - bufferRect.centerY());
-      matrix.setRectToRect(viewRect, bufferRect, Matrix.ScaleToFit.FILL);
-      float scale = Math.max(
-          (float) viewHeight / previewSize.getHeight(),
-          (float) viewWidth / previewSize.getWidth());
-      matrix.postScale(scale, scale, centerX, centerY);
-      matrix.postRotate(90 * (rotation - 2), centerX, centerY);
-    }
-    textureView.setTransform(matrix);
-  }
-
-
-  /**
-   * Start the camera preview.
-   */
-  private void startPreview() {
-    if (null == cameraDevice || !textureView.isAvailable() || null == previewSize) {
-      return;
-    }
-    try {
-      closePreviewSession();
-      SurfaceTexture texture = textureView.getSurfaceTexture();
-      assert texture != null;
-      texture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
-      previewBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-
-      Surface previewSurface = new Surface(texture);
-      previewBuilder.addTarget(previewSurface);
-
-      cameraDevice.createCaptureSession(Arrays.asList(previewSurface),
-          new CameraCaptureSession.StateCallback() {
-
-            @Override
-            public void onConfigured(CameraCaptureSession cameraCaptureSession) {
-              previewSession = cameraCaptureSession;
-              updatePreview();
-            }
-
-            @Override
-            public void onConfigureFailed(CameraCaptureSession cameraCaptureSession) {
-              Activity activity = RecordCamera2Activity.this;
-              if (null != activity) {
-                Toast.makeText(activity, "Failed", Toast.LENGTH_SHORT).show();
-              }
-            }
-          }, backgroundHandler);
-    } catch (CameraAccessException e) {
-      e.printStackTrace();
-    }
-  }
-
-
-  /**
-   * Update the camera preview. {@link #startPreview()} needs to be called in advance.
-   */
-  private void updatePreview() {
-    if (null == cameraDevice) {
-      return;
-    }
-    try {
-      setUpCaptureRequestBuilder(previewBuilder);
-      HandlerThread thread = new HandlerThread("CameraPreview");
-      thread.start();
-      previewSession.setRepeatingRequest(previewBuilder.build(), null, backgroundHandler);
-    } catch (CameraAccessException e) {
-      e.printStackTrace();
-    }
-  }
-
-  private void setUpCaptureRequestBuilder(CaptureRequest.Builder builder) {
-    builder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-  }
-
-  private void closePreviewSession() {
-    if (previewSession != null) {
-      previewSession.close();
-      previewSession = null;
-    }
+  private void showMessage(int stringResourceId) {
+    //// TODO:(alvaro.martinez) 18/01/17 test snackBar, toast, aler dialog
+    Snackbar snackbar = Snackbar.make(chronometerAndRecPointView, stringResourceId, Snackbar.LENGTH_SHORT);
+    snackbar.show();
   }
 
 }

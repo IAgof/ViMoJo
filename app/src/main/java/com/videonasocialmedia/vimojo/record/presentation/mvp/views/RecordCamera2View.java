@@ -30,12 +30,6 @@ public interface RecordCamera2View {
 
     void stopChronometer();
 
-    void lockScreenRotation();
-
-    void unlockScreenRotation();
-
-    void reStartScreenRotation();
-
     void showFlashOn(boolean on);
 
     void showFlashSupported(boolean state);
@@ -44,15 +38,7 @@ public interface RecordCamera2View {
 
     void showBackCameraSelected();
 
-    void showError(String errorMessage); //videonaView
-
-    void showError(int stringResourceId); //videonaView
-
-    void goToShare(String videoToSharePath);
-
-    void showProgressDialog();
-
-    void hideProgressDialog();
+    void showError(int stringResourceId);
 
     void finishActivityForResult(String path);
 

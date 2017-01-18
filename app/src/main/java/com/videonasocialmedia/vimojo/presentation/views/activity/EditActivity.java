@@ -46,6 +46,7 @@ import com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavig
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
+import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
@@ -252,7 +253,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
     @OnClick(R.id.fab_go_to_record)
     public void onClickFabRecord() {
         fabEditRoom.collapse();
-        navigateTo(RecordActivity.class);
+        navigateTo(RecordCamera2Activity.class);
     }
 
     @OnClick(R.id.fab_go_to_gallery)
@@ -467,8 +468,7 @@ public class EditActivity extends VimojoActivity implements EditorView,
 
     @Override
     public void onBackPressed() {
-        navigateTo(RecordActivity.class);
-        finish();
+        navigateTo(RecordCamera2Activity.class);
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {

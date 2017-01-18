@@ -93,7 +93,7 @@
                     android:layout_marginRight="8dp"/>
 
                 <ImageView
-                    android:id="@+id/activity_record_icon_resolution"
+                    android:id="@+id/button_resolution_indicator"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:scaleType="fitCenter"

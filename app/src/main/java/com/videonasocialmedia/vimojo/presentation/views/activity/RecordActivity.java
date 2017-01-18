@@ -120,7 +120,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ImageButton buttonToHideControlsView;
     @Bind (R.id.button_to_show_controls)
     ImageButton buttonToShowControls;
-    @Bind(R.id.activity_record_icon_resolution)
+    @Bind(R.id.button_resolution_indicator)
     ImageView resolutionIndicator;
 
     private boolean buttonBackPressed;
