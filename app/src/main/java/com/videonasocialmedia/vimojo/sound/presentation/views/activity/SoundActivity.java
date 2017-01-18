@@ -40,7 +40,7 @@ import butterknife.ButterKnife;
 
 public class SoundActivity extends EditorActivity implements VideonaPlayer.VideonaPlayerListener, SoundView {
 
-    private static final String SOUND_ACTIVITY_PROJECT_POSITION = "sound_activity_project_position";
+  private static final String SOUND_ACTIVITY_PROJECT_POSITION = "sound_activity_project_position";
   private final int ID_BUTTON_FAB_TOP=1;
   private final int ID_BUTTON_FAB_BOTTOM=3;
 

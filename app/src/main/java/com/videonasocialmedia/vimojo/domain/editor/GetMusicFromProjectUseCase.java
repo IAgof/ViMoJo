@@ -23,4 +23,8 @@ public class GetMusicFromProjectUseCase {
         }
           listener.onMusicRetrieved(music);
     }
+
+    public boolean hasBeenMusicSelected(){
+      return (project.getVMComposition().hasMusic() && (project.getMusic().getVolume() >= 1f));
+    }
 }

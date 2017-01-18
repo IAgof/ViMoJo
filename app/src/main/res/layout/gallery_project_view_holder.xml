@@ -36,6 +36,7 @@
             android:scaleType="fitXY"
             android:layout_centerVertical="true"
             android:layout_marginRight="8dp"
+            android:padding="16dp"
             tools:src="@drawable/fragment_gallery_no_image"/>
 
         <LinearLayout
