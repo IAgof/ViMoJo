@@ -135,3 +135,8 @@
 -keep @io.realm.internal.Keep class *
 -dontwarn javax.**
 -dontwarn io.realm.**
+
+# Temporary fix of error with roughhike bottom bar at release build
+#   with version: com.roughike:bottom-bar:2.0.2
+# See: https://github.com/roughike/BottomBar/issues/456
+-dontwarn com.roughike.bottombar.**

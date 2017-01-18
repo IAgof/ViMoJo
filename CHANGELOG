@@ -1,3 +1,11 @@
+v0.4.18
+- Multiproject support, now the user can save and restore multiple projects to work on
+- Edit views redesign according to material design guides
+
+v0.4.17
+- Moved voice over mixing to final share step
+- Bug fixing and improved overall media backend performance.
+
 v0.4.16
 - Update record screen, new design.
 - Update application colors.

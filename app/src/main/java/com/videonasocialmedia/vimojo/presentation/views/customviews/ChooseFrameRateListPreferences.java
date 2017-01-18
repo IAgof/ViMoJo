@@ -30,14 +30,14 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-public class ChooseFrameRateRateListPreferences extends ListPreference {
+public class ChooseFrameRateListPreferences extends ListPreference {
     private Context mContext;
     private CharSequence[] entries;
     private CharSequence[] entryValues;
     private SharedPreferences sharedPreferences;
     @Inject UpdateVideoFrameRateToProjectUseCase updateVideoFrameRateToProjectUseCase;
 
-    public ChooseFrameRateRateListPreferences(Context context, AttributeSet attrs) {
+    public ChooseFrameRateListPreferences(Context context, AttributeSet attrs) {
         super(context, attrs);
         VideoFormatPreferencesComponent videoFormatPreferencesComponent = initComponent();
         videoFormatPreferencesComponent.inject(this);

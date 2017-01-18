@@ -62,8 +62,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo"
-            versionCode 18 // 20161107
-            versionName "0.4.16" // 20161107
+            versionCode 20 // 20170116
+            versionName "0.4.18" // 20170116
             resValue "string", "app_out_of_date", "2017-01-31"
             resValue "string", "app_name", "Vimojo"
             ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"

@@ -25,17 +25,7 @@ public class VideoRealmRepository implements VideoRepository {
   }
 
   @Override
-  public RealmResults<RealmVideo> getVideos() {
-    ArrayList<Video> videoList = new ArrayList<Video>();
-
-    final Realm realm = Realm.getDefaultInstance();
-    RealmResults<RealmVideo> realmResults = realm.where(RealmVideo.class).findAll();
-
-    return realmResults;
-  }
-
-  @Override
-  public List<Video> getListVideos(){
+  public List<Video> getAllVideos(){
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmVideo> realmResults = realm.where(RealmVideo.class).findAll();
     List<Video> videoList = new ArrayList<>();

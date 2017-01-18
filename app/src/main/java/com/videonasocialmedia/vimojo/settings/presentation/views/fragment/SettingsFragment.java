@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.fragment;
+package com.videonasocialmedia.vimojo.settings.presentation.views.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +19,13 @@ import android.widget.TextView;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
+import com.videonasocialmedia.vimojo.main.DaggerFragmentPresentersComponent;
+import com.videonasocialmedia.vimojo.main.FragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.PreferencesPresenter;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.PreferencesView;
+import com.videonasocialmedia.vimojo.main.modules.FragmentPresentersModule;
+import com.videonasocialmedia.vimojo.settings.presentation.mvp.presenters.PreferencesPresenter;
+import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.AboutActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.LegalNoticeActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.LicensesActivity;
@@ -29,8 +34,12 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceA
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 /**
  * Created by Veronica Lago Fominaya on 26/11/2015.
@@ -38,7 +47,8 @@ import java.util.ArrayList;
 public class SettingsFragment extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener, PreferencesView {
 
-    protected final int REQUEST_CODE_EXIT_APP = 1;
+    @Inject PreferencesPresenter preferencesPresenter;
+
     protected PreferenceCategory cameraSettingsPref;
     protected Preference emailPref;
     protected ListPreference resolutionPref;
@@ -47,7 +57,8 @@ public class SettingsFragment extends PreferenceFragment implements
     protected Preference resolutionPrefNotAvailable;
     protected Preference qualityPrefNotAvailable;
     protected Preference frameRatePrefNotAvailable;
-    protected PreferencesPresenter preferencesPresenter;
+    protected SwitchPreference transitionsVideoPref;
+    protected SwitchPreference transitionsAudioPref;
     protected Context context;
     protected SharedPreferences sharedPreferences;
     protected SharedPreferences.Editor editor;
@@ -59,9 +70,18 @@ public class SettingsFragment extends PreferenceFragment implements
         super.onCreate(savedInstanceState);
         context = VimojoApplication.getAppContext();
         initPreferences();
-        preferencesPresenter = new PreferencesPresenter(this,cameraSettingsPref, resolutionPref,
-                qualityPref, frameRatePref, emailPref, context, sharedPreferences);
+        FragmentPresentersComponent fragmentPresentersComponent = initComponent();
+        fragmentPresentersComponent.inject(this);
         mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_TOKEN);
+    }
+
+    private FragmentPresentersComponent initComponent() {
+        return DaggerFragmentPresentersComponent.builder()
+            .fragmentPresentersModule(new FragmentPresentersModule(this, context, cameraSettingsPref,
+                resolutionPref,qualityPref, frameRatePref, transitionsVideoPref,
+                transitionsAudioPref, emailPref))
+            .systemComponent(((VimojoApplication)getActivity().getApplication()).getSystemComponent())
+            .build();
     }
 
     private void initPreferences() {
@@ -74,6 +94,7 @@ public class SettingsFragment extends PreferenceFragment implements
         editor = sharedPreferences.edit();
 
         setupCameraSettings();
+        setupTransitions();
         setupMailValid();
         setupAboutUs();
         setupPrivacyPolicy();
@@ -84,6 +105,11 @@ public class SettingsFragment extends PreferenceFragment implements
 
     private void setupMailValid() {
         emailPref=findPreference(ConfigPreferences.EMAIL);
+    }
+
+    private void setupTransitions(){
+        transitionsVideoPref = (SwitchPreference) findPreference(ConfigPreferences.TRANSITION_VIDEO);
+        transitionsAudioPref = (SwitchPreference) findPreference(ConfigPreferences.TRANSITION_AUDIO);
     }
 
     private void setupCameraSettings() {
@@ -165,6 +191,27 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     @Override
+    public void setTransitionsPref(String key, boolean value) {
+        if(key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0) {
+            transitionsAudioPref.setChecked(value);
+        }
+        if(key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0) {
+            transitionsVideoPref.setChecked(value);
+        }
+    }
+
+    @Override
+    public void setRelaunchExportTempBackground(String videoUuid, String intermediatesTempAudioFadeDirectory) {
+        Context appContext = VimojoApplication.getAppContext();
+        Intent exportTempBackgroudnServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
+        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoUuid);
+        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.RELAUNCH_EXPORT_TEMP, true);
+        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY_FADE_AUDIO,
+            intermediatesTempAudioFadeDirectory);
+        appContext.startService(exportTempBackgroudnServiceIntent);
+    }
+
+    @Override
     public void setCameraSettingsAvailable(boolean isAvailable) {
         if(isAvailable){
             resolutionPrefNotAvailable = findPreference(context.getString(R.string.resolution));
@@ -200,10 +247,15 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                           String key) {
         Preference connectionPref = findPreference(key);
-        trackQualityAndResolutionAndFrameRateUserTraits(key, sharedPreferences.getString(key, ""));
+        if(key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0 ||
+            key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0){
+            return;
+        }
         if(!key.equals(ConfigPreferences.PASSWORD_FTP) && !key.equals(ConfigPreferences.PASSWORD_FTP2)){
             connectionPref.setSummary(sharedPreferences.getString(key, ""));
+            return;
         }
+        trackQualityAndResolutionAndFrameRateUserTraits(key, sharedPreferences.getString(key, ""));
 
     }
 

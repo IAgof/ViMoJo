@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.trim.domain;
 
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
@@ -37,6 +38,8 @@ public class ModifyVideoDurationUseCaseTest {
   @Mock MediaTranscoder mockedMediaTranscoder;
   @Mock TranscoderHelper mockedTranscoderHelper;
   @Mock VideoRepository mockedVideoRepository;
+  @Mock Drawable mockDrawableFadeTransition;
+  boolean isVideoFadeTransitionActivated;
   @InjectMocks ModifyVideoDurationUseCase injectedUseCase;
   private final VideonaFormat videonaFormat = new VideonaFormat();
   private final MediaTranscoderListener mediaTranscoderListener = getMediaTranscoderListener();
@@ -54,10 +57,12 @@ public class ModifyVideoDurationUseCaseTest {
     injectedUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
             mockedMediaTranscoder);
 
-    injectedUseCase.trimVideo(video, videonaFormat, 0, 10, mediaTranscoderListener);
+    injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
+        mediaTranscoderListener);
 
     verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
-            eq(video.getMediaPath()), eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener),
+        eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()),
+        eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener),
             Matchers.any(Image.class), eq(0), eq(10));
   }
 
@@ -68,10 +73,12 @@ public class ModifyVideoDurationUseCaseTest {
     assert video.hasText();
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
-    injectedUseCase.trimVideo(video, videonaFormat, 0, 10, mediaTranscoderListener);
+    injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
+        mediaTranscoderListener);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(video,
-            videonaFormat, mediaTranscoderListener);
+    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(
+        mockDrawableFadeTransition, isVideoFadeTransitionActivated, video,videonaFormat,
+        mediaTranscoderListener);
   }
 
   @Test
@@ -82,10 +89,12 @@ public class ModifyVideoDurationUseCaseTest {
     injectedUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
             mockedMediaTranscoder);
 
-    injectedUseCase.trimVideo(video, videonaFormat, 0, 10, mediaTranscoderListener);
+    injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
+        mediaTranscoderListener);
 
-    verify(mockedMediaTranscoder).transcodeAndTrimVideo(eq(video.getMediaPath()),
-            eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener), eq(0), eq(10));
+    verify(mockedMediaTranscoder).transcodeAndTrimVideo(eq(mockDrawableFadeTransition),
+        eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()),eq(video.getTempPath()),
+        eq(videonaFormat), eq(mediaTranscoderListener), eq(0), eq(10));
   }
 
   @Test
@@ -96,10 +105,11 @@ public class ModifyVideoDurationUseCaseTest {
     assert ! video.hasText();
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
-    injectedUseCase.trimVideo(video, videonaFormat, 0, 10, mediaTranscoderListener);
+    injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
+        mediaTranscoderListener);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithTrimming(video, videonaFormat,
-            mediaTranscoderListener);
+    verify(mockedTranscoderHelper).generateOutputVideoWithTrimming(mockDrawableFadeTransition,
+        isVideoFadeTransitionActivated, video, videonaFormat, mediaTranscoderListener);
   }
 
   @Test
@@ -107,7 +117,8 @@ public class ModifyVideoDurationUseCaseTest {
     Video video = new Video("media/path");
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
-    injectedUseCase.trimVideo(video, videonaFormat, 2, 10, mediaTranscoderListener);
+    injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 2, 10,
+        mediaTranscoderListener);
 
     verify(mockedVideoRepository).update(video);
     assertThat(video.getStartTime(), is(2));

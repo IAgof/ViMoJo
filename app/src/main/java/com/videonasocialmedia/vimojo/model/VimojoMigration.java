@@ -50,35 +50,35 @@ public class VimojoMigration implements RealmMigration {
           int startTime;
           int stopTime;
 
-          // Version 2
-          class RealmProject extends RealmObject {
-            @PrimaryKey
-            String title;
-            String projectPath;
-            String quality;
-            String resolution;
-            String frameRate; // Added frameRate field, set default value to
-                                 VideoFrameRate.FrameRate.FPS25
-            String musicTitle;
-            float musicVolume = Music.DEFAULT_MUSIC_VOLUME;
-            RealmList<RealmVideo> videos;
+        // Version 2
+        class RealmProject extends RealmObject {
+          @PrimaryKey
+          String title;
+          String projectPath;
+          String quality;
+          String resolution;
+          String frameRate; // Added frameRate field, set default value to
+                               VideoFrameRate.FrameRate.FPS25
+          String musicTitle;
+          float musicVolume = Music.DEFAULT_MUSIC_VOLUME;
+          RealmList<RealmVideo> videos;
 
-          class RealmVideo extends RealmObject {
-            @PrimaryKey
-            String uuid;
-            int position;
-            String mediaPath;
-            String tempPath;
-            boolean isTempPathFinished;
-            String clipText;
-            String clipTextPosition;
-            boolean isTextToVideoAdded = false;
-            boolean isTrimmedVideo = false;
-            int startTime;
-            int stopTime;
+        class RealmVideo extends RealmObject {
+          @PrimaryKey
+          String uuid;
+          int position;
+          String mediaPath;
+          String tempPath;
+          boolean isTempPathFinished;
+          String clipText;
+          String clipTextPosition;
+          boolean isTextToVideoAdded = false;
+          boolean isTrimmedVideo = false;
+          int startTime;
+          int stopTime;
     ************************************************/
-    // Migrate from version 1 to version 2
-    /*if (oldVersion == 1) {
+    // Migrate from version 0 to version 1
+    if (oldVersion == 1) {
       schema.get("RealmProject").addField("frameRate", String.class)
               .transform(new RealmObjectSchema.Function() {
                 @Override
@@ -87,8 +87,8 @@ public class VimojoMigration implements RealmMigration {
                 }
               });
       oldVersion++;
-
-    }*/
+    }
+    // Migrate from version 1 to version 2
     if (oldVersion == 2) {
       schema.get("RealmProject").addField("uuid", String.class)
               .transform(new RealmObjectSchema.Function() {
@@ -123,6 +123,25 @@ public class VimojoMigration implements RealmMigration {
             @Override
             public void apply(DynamicRealmObject obj) {
               obj.setString("dateLastVideoExported", DateUtils.getDateRightNow());
+            }
+          });
+      oldVersion++;
+    }
+
+    // Migrate from version 2 to version 3,
+    if (oldVersion == 3) {
+      schema.get("RealmProject").addField("isAudioFadeTransitionActivated", boolean.class)
+          .transform(new RealmObjectSchema.Function() {
+            @Override
+            public void apply(DynamicRealmObject obj) {
+              obj.setBoolean("isAudioFadeTransitionActivated", false);
+            }
+          });
+      schema.get("RealmProject").addField("isVideoFadeTransitionActivated", boolean.class)
+          .transform(new RealmObjectSchema.Function() {
+            @Override
+            public void apply(DynamicRealmObject obj) {
+              obj.setBoolean("isVideoFadeTransitionActivated", false);
             }
           });
       oldVersion++;
