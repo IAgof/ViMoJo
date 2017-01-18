@@ -680,7 +680,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private void exitSplashScreen() {
 
         InAppNotification notification = mixpanel.getPeople().getNotificationIfAvailable();
-        navigate(RecordActivity.class);
+        //navigate(RecordActivity.class);
+        navigate(RecordCamera2Activity.class);
         if (notification != null) {
             Log.d("INAPP", "in-app notification received");
             mixpanel.getPeople().showGivenNotification(notification, this);

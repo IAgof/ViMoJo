@@ -220,7 +220,7 @@ public class RecordCamera2Fragment extends Fragment
    */
   private static Size chooseVideoSize(Size[] choices) {
     for (Size size : choices) {
-      if (size.getWidth() == size.getHeight() * 4 / 3 && size.getWidth() <= 1080) {
+      if (size.getWidth() == size.getHeight() * 16 / 9 && size.getWidth() <= 1080) {
         return size;
       }
     }
@@ -364,7 +364,8 @@ public class RecordCamera2Fragment extends Fragment
       }
       configureTransform(width, height);
       mMediaRecorder = new MediaRecorder();
-      if (ActivityCompat.checkSelfPermission(VimojoApplication.getAppContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+      if (ActivityCompat.checkSelfPermission(VimojoApplication.getAppContext(),
+          android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
         // TODO: Consider calling
         //    ActivityCompat#requestPermissions
         // here to request the missing permissions, and then overriding
@@ -381,8 +382,9 @@ public class RecordCamera2Fragment extends Fragment
     } catch (NullPointerException e) {
       // Currently an NPE is thrown when the Camera2API is used but not supported on the
       // device this code runs.
-      ErrorDialog.newInstance("error dialog")
-          .show(getChildFragmentManager(), FRAGMENT_DIALOG);
+      // TODO:(alvaro.martinez) 17/01/17 Manage this NPE
+     // ErrorDialog.newInstance("error dialog")
+       //   .show(getChildFragmentManager(), FRAGMENT_DIALOG);
     } catch (InterruptedException e) {
       throw new RuntimeException("Interrupted while trying to lock camera opening.");
     }
@@ -424,7 +426,8 @@ public class RecordCamera2Fragment extends Fragment
       Surface previewSurface = new Surface(texture);
       mPreviewBuilder.addTarget(previewSurface);
 
-      mCameraDevice.createCaptureSession(Arrays.asList(previewSurface), new CameraCaptureSession.StateCallback() {
+      mCameraDevice.createCaptureSession(Arrays.asList(previewSurface),
+          new CameraCaptureSession.StateCallback() {
 
         @Override
         public void onConfigured(CameraCaptureSession cameraCaptureSession) {
@@ -632,37 +635,6 @@ public class RecordCamera2Fragment extends Fragment
           (long) rhs.getWidth() * rhs.getHeight());
     }
 
-  }
-
-  public static class ErrorDialog extends DialogFragment {
-
-    private static final String ARG_MESSAGE = "message";
-
-    public static ErrorDialog newInstance(String message) {
-      ErrorDialog dialog = new ErrorDialog();
-      Bundle args = new Bundle();
-      args.putString(ARG_MESSAGE, message);
-      dialog.setArguments(args);
-      return dialog;
-    }
-
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-      final Activity activity = getActivity();
-      return new AlertDialog.Builder(activity)
-          .setMessage(getArguments().getString(ARG_MESSAGE))
-          .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-              activity.finish();
-            }
-          })
-          .create();
-    }
-
-    public void show(FragmentManager childFragmentManager, String fragmentDialog) {
-
-    }
   }
 
 }

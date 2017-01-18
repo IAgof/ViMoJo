@@ -86,7 +86,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ImageButton rotateCameraButton;
     @Bind(R.id.button_navigate_settings)
     ImageButton buttonNavigateSettings;
-    @Bind(R.id.settings_camera_button)
+    @Bind(R.id.button_settings_camera)
     ImageButton settingsCameraButton;
     @Bind(R.id.button_navigate_edit_or_gallery)
     CircleImageView buttonThumbClipRecorded;
