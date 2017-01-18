@@ -212,6 +212,11 @@
     <string name="cancelSettingsCamera">Cancel</string>
     <string name="preference_not_available">Preference not available</string>
 
+    <!-- Transition Settings -->
+    <string name="title_fade_transition">Transition</string>
+    <string name="title_video_fade_transition">Video fade transition</string>
+    <string name="title_audio_fade_transition">Audio fade transition</string>
+
     <!-- More info Settings -->
     <string name="aboutUsTitle">About us</string>
     <string name="moreInformation">More information</string>

@@ -8,9 +8,11 @@
  * Veronica Lago Fominaya
  */
 
-package com.videonasocialmedia.vimojo.presentation.mvp.views;
+package com.videonasocialmedia.vimojo.settings.presentation.mvp.views;
 
 import android.preference.ListPreference;
+
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import java.util.ArrayList;
 
@@ -52,10 +54,13 @@ public interface PreferencesView {
      */
     void setSummary(String key, String value);
 
-
     void setCameraSettingsAvailable(boolean isAvailable);
 
     void showError(int message);
 
     void setUserPropertyToMixpanel (String property, String value);
+
+    void setTransitionsPref(String key, boolean value);
+
+    void setRelaunchExportTempBackground(String videoUuid, String intermediatesTempAudioFadeDirectory);
 }
