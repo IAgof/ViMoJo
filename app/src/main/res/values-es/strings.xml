@@ -35,6 +35,9 @@
     <string name="new_project">New project</string>
     <string name="clear_project">Clean project</string>
     <string name="other_options">Otras opciones</string>
+    <string name="record">Grabar</string>
+    <string name="gallery">Galería</string>
+
 
     <!-- Edit Activity -->
     <string name="edit_title_name">Sala de edición</string>
@@ -189,6 +192,11 @@
     <string name="quality">Calidad</string>
     <string name="cancelSettingsCamera">Cancelar</string>
     <string name="preference_not_available">Ajuste no disponible</string>
+
+    <!-- Transition Settings -->
+    <string name="title_fade_transition">Transiciones</string>
+    <string name="title_video_fade_transition">Transición entre vídeos</string>
+    <string name="title_audio_fade_transition">Transición entre audios</string>
 
     <!-- More info Settings -->
     <string name="aboutUsTitle">Sobre nosotros</string>

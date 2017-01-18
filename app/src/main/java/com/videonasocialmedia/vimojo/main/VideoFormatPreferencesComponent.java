@@ -4,7 +4,7 @@ import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.VideoFormatPreferencesModule;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseCameraQualityListPreferences;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseCameraResolutionListPreferences;
-import com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseFrameRateRateListPreferences;
+import com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseFrameRateListPreferences;
 
 import javax.inject.Singleton;
 
@@ -16,7 +16,7 @@ import dagger.Component;
 @Singleton
 @Component(modules = {VideoFormatPreferencesModule.class, DataRepositoriesModule.class})
 public interface VideoFormatPreferencesComponent {
-  void inject(ChooseFrameRateRateListPreferences preferences);
+  void inject(ChooseFrameRateListPreferences preferences);
   void inject(ChooseCameraQualityListPreferences preferences);
   void inject(ChooseCameraResolutionListPreferences preferences);
 }

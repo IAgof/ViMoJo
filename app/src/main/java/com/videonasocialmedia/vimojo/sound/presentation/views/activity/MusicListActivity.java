@@ -23,7 +23,7 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
+import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
@@ -164,9 +164,18 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
     }
 
     @Override
+    public void goToDetailActivity(String mediaPath) {
+        navigateToMusicDetailActivity(mediaPath);
+    }
+
+    @Override
     public void onClick(Music music) {
+        navigateToMusicDetailActivity(music.getMediaPath());
+    }
+
+    private void navigateToMusicDetailActivity(String mediaPath) {
         Intent i = new Intent(VimojoApplication.getAppContext(), MusicDetailActivity.class);
-        i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, music.getMediaPath());
+        i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, mediaPath);
         startActivity(i);
         finish();
     }

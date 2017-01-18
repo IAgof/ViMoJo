@@ -37,6 +37,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePrevie
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 
+import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;

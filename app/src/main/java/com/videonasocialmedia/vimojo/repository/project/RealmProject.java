@@ -24,6 +24,8 @@ public class RealmProject extends RealmObject {
   public String dateLastVideoExported;
   public String musicTitle;
   public float musicVolume = Music.DEFAULT_MUSIC_VOLUME;
+  public boolean isAudioFadeTransitionActivated;
+  public boolean isVideoFadeTransitionActivated;
   public RealmList<RealmVideo> videos;
 
   public RealmProject() {
@@ -31,7 +33,9 @@ public class RealmProject extends RealmObject {
   }
 
   public RealmProject(String uuid, String title, String lastModification, String projectPath,
-                      String quality, String resolution, String frameRate, int duration) {
+                      String quality, String resolution, String frameRate, int duration,
+                      boolean isAudioFadeTransitionActivated,
+                      boolean isVideoFadeTransitionActivated) {
     this.uuid = uuid;
     this.title = title;
     this.lastModification = lastModification;
@@ -41,5 +45,7 @@ public class RealmProject extends RealmObject {
     this.frameRate = frameRate;
     this.duration = duration;
     this.videos = new RealmList<RealmVideo>();
+    this.isAudioFadeTransitionActivated = isAudioFadeTransitionActivated;
+    this.isVideoFadeTransitionActivated = isVideoFadeTransitionActivated;
   }
 }

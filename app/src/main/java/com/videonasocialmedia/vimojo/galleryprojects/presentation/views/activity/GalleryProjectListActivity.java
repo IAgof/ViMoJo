@@ -23,6 +23,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectClickListener;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.adapter.GalleryProjectListAdapter;
+import com.videonasocialmedia.vimojo.presentation.views.activity.GoToRecordOrGalleryActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
@@ -99,7 +100,8 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
   @Override
   public void createDefaultProject() {
     presenter.createNewDefaultProject(Constants.PATH_APP);
-    presenter.updateProjectList();
+    //presenter.updateProjectList();
+    navigateTo(GoToRecordOrGalleryActivity.class);
   }
 
   @Override

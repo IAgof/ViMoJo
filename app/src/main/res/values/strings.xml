@@ -35,6 +35,9 @@
     <string name="new_project">New project</string>
     <string name="clear_project">Clean project</string>
     <string name="other_options">Other options</string>
+    <string name="record">Record</string>
+    <string name="gallery">Gallery</string>
+
 
     <!-- Edit Activity -->
     <string name="tab_edit">Edit</string>
@@ -211,6 +214,11 @@
     <string name="high_frame_rate_name">30 fps</string>
     <string name="cancelSettingsCamera">Cancel</string>
     <string name="preference_not_available">Preference not available</string>
+
+    <!-- Transition Settings -->
+    <string name="title_fade_transition">Transition</string>
+    <string name="title_video_fade_transition">Video fade transition</string>
+    <string name="title_audio_fade_transition">Audio fade transition</string>
 
     <!-- More info Settings -->
     <string name="aboutUsTitle">About us</string>

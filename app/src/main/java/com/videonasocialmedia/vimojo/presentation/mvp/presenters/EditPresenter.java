@@ -26,6 +26,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
+import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -48,6 +49,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     private ReorderMediaItemUseCase reorderMediaItemUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
+    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     /**
      * Editor View
      */
@@ -67,6 +69,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
 
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+        getPreferencesTransitionFromProjectUseCase = new GetPreferencesTransitionFromProjectUseCase();
         this.userEventTracker = userEventTracker;
 
         this.currentProject = loadCurrentProject();
@@ -194,6 +197,13 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                     editActivityView.setMusic(music);
                 }
             });
+        }
+        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+            editActivityView.setVideoFadeTransitionAmongVideos();
+        }
+        if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
+            !currentProject.getVMComposition().hasMusic()){
+            editActivityView.setAudioFadeTransitionAmongVideos();
         }
     }
 }

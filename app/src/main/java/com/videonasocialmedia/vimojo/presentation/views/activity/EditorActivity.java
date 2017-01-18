@@ -22,9 +22,7 @@ import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
+import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -168,7 +166,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       public void onClick(DialogInterface dialog, int which) {
         switch (which) {
           case DialogInterface.BUTTON_POSITIVE:
-            drawerLayout.closeDrawers();
+           // drawerLayout.closeDrawers();
             if(resourceItemMenuId == R.id.menu_navview_delete_clip)
                 editorPresenter.createNewProject(Constants.PATH_APP);
             if(resourceItemMenuId == R.id.menu_navview_mail)
@@ -209,7 +207,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   public void updateViewResetProject() {
-    navigateTo(EditActivity.class);
+    navigateTo(GoToRecordOrGalleryActivity.class);
   }
 
   @Override

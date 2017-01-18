@@ -78,6 +78,9 @@ public class Project {
 
     private boolean isMusicOnProject = false;
 
+  private boolean isAudioFadeTransitionActivated;
+  private boolean isVideoFadeTransitionActivated;
+
     /**
      * Constructor of minimum number of parameters. This is the Default constructor.
      *
@@ -90,6 +93,8 @@ public class Project {
         this.vmComposition = new VMComposition();
         this.profile = profile;
         this.duration = 0;
+        this.isAudioFadeTransitionActivated = false;
+        this.isVideoFadeTransitionActivated = false;
         this.lastModification = DateUtils.getDateRightNow();
         this.projectPath = rootPath + File.separator + Constants.FOLDER_NAME_VIMOJO_PROJECTS +
             File.separator + uuid; //todo probablemente necesitemos un slugify de ese title.
@@ -102,6 +107,8 @@ public class Project {
     vmComposition = new VMComposition(project.getVMComposition());
     profile = new Profile(project.getProfile());
     duration = project.getDuration();
+    isAudioFadeTransitionActivated = project.isAudioFadeTransitionActivated();
+    isVideoFadeTransitionActivated = project.isVideoFadeTransitionActivated();
     lastModification = project.getLastModification();
     projectPath = new File(project.getProjectPath()).getParent() + File.separator + uuid;
     createFolder(projectPath);
@@ -211,6 +218,21 @@ public class Project {
         this.musicTitleIdentifier = musicTitleIdentifier;
     }
 
+  public boolean isAudioFadeTransitionActivated() {
+    return isAudioFadeTransitionActivated;
+  }
+
+  public void setAudioFadeTransitionActivated(boolean audioFadeTransitionActivated) {
+    isAudioFadeTransitionActivated = audioFadeTransitionActivated;
+  }
+
+  public boolean isVideoFadeTransitionActivated() {
+    return isVideoFadeTransitionActivated;
+  }
+
+  public void setVideoFadeTransitionActivated(boolean videoFadeTransitionActivated) {
+    isVideoFadeTransitionActivated = videoFadeTransitionActivated;
+  }
   public String getLastModification() {
     return lastModification;
   }

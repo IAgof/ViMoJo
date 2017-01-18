@@ -44,6 +44,7 @@
                     app:layout_widthPercent="100%"
                     app:layout_aspectRatio="178%"
                     android:src="@drawable/activity_gallery_project_no_preview"
+                    android:padding="24dp"
                     />
 
             </android.support.percent.PercentFrameLayout>

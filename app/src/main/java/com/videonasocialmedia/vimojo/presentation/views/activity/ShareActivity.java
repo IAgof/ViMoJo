@@ -30,6 +30,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.OptionsToShareAdapter;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
+import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
@@ -288,7 +289,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         presenter.newDefaultProject(Constants.PATH_APP);
-                        navigateTo(EditActivity.class);
+                        navigateTo(GoToRecordOrGalleryActivity.class);
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         if(resourceButtonId == R.id.button_music_navigator)

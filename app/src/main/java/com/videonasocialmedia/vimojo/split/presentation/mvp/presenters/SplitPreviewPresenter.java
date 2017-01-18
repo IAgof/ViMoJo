@@ -21,7 +21,6 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetriev
 import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
-import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 

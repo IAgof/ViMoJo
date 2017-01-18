@@ -21,7 +21,9 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
     RealmProject realmProject = new RealmProject(project.getUuid(), project.getTitle(),
             project.getLastModification(), project.getProjectPath(),
             project.getProfile().getQuality().name(), project.getProfile().getResolution().name(),
-            project.getProfile().getFrameRate().name(), project.getDuration());
+            project.getProfile().getFrameRate().name(), project.getDuration(),
+            project.isAudioFadeTransitionActivated(), project.isVideoFadeTransitionActivated());
+
     if (project.hasMusic()) {
       realmProject.musicTitle = project.getMusic().getMusicTitle();
       realmProject.musicVolume = project.getMusic().getVolume();

@@ -127,5 +127,25 @@ public class VimojoMigration implements RealmMigration {
           });
       oldVersion++;
     }
+
+    // Migrate from version 2 to version 3,
+    if (oldVersion == 3) {
+      schema.get("RealmProject").addField("isAudioFadeTransitionActivated", boolean.class)
+          .transform(new RealmObjectSchema.Function() {
+            @Override
+            public void apply(DynamicRealmObject obj) {
+              obj.setBoolean("isAudioFadeTransitionActivated", false);
+            }
+          });
+      schema.get("RealmProject").addField("isVideoFadeTransitionActivated", boolean.class)
+          .transform(new RealmObjectSchema.Function() {
+            @Override
+            public void apply(DynamicRealmObject obj) {
+              obj.setBoolean("isVideoFadeTransitionActivated", false);
+            }
+          });
+      oldVersion++;
+
+    }
   }
 }

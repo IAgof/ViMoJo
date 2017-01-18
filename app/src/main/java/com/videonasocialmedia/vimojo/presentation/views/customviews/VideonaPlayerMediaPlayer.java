@@ -252,6 +252,11 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
     }
 
     @Override
+    public void setTransitionFade() {
+        // do nothing, implemented only for VideonaPlayerExo
+    }
+
+    @Override
     public void bindVideoList(List<Video> videoList) {
         this.initPreviewLists(videoList);
         this.initPreview(currentTimePositionInList);
