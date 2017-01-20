@@ -3,16 +3,28 @@ package com.videonasocialmedia.vimojo.main.modules;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
-import com.videonasocialmedia.vimojo.domain.ClearProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
+import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
+import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
+import com.videonasocialmedia.vimojo.galleryprojects.domain.DuplicateProjectUseCase;
+import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateTitleProjectUseCase;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.DetailProjectPresenter;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.internals.di.PerActivity;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePreviewPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GalleryPagerPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.RecordPresenter;
@@ -24,7 +36,9 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity
 import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
+import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.pipeline.AudioMixer;
@@ -35,6 +49,8 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeVie
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
+import com.videonasocialmedia.vimojo.text.presentation.mvp.presenters.EditTextPreviewPresenter;
+import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -82,9 +98,8 @@ public class ActivityPresentersModule {
                                      RemoveVideoFromProjectUseCase removeVideosFromProjectUseCase,
                                      ReorderMediaItemUseCase reorderMediaItemUseCase,
                                      GetMusicFromProjectUseCase getMusicFromProjectUseCase) {
-    return new EditPresenter((EditActivity) activity,
-            ((EditActivity) activity).getNavigatorCallback(), userEventTracker,
-            removeVideosFromProjectUseCase, reorderMediaItemUseCase, getMusicFromProjectUseCase);
+    return new EditPresenter((EditActivity) activity, userEventTracker,
+        removeVideosFromProjectUseCase, reorderMediaItemUseCase, getMusicFromProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -115,18 +130,52 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  ShareVideoPresenter provideVideoSharePresenter(UserEventTracker userEventTracker,
-                                                 SharedPreferences sharedPreferences,
-                                                 ClearProjectUseCase clearProjectUseCase,
-                                                 CreateDefaultProjectUseCase createDefaultProjectUseCase) {
+  ShareVideoPresenter
+  provideVideoSharePresenter(UserEventTracker userEventTracker,
+                             SharedPreferences sharedPreferences,
+                             CreateDefaultProjectUseCase createDefaultProjectUseCase,
+                             AddLastVideoExportedToProjectUseCase
+                                 addLastVideoExportedProjectUseCase) {
     return new ShareVideoPresenter((ShareActivity) activity, userEventTracker, sharedPreferences,
-            activity, clearProjectUseCase, createDefaultProjectUseCase);
+            activity, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase);
   }
 
   @Provides @PerActivity
-  InitAppPresenter provideInitAppPresenter(
-          CreateDefaultProjectUseCase createDefaultProjectUseCase) {
+  InitAppPresenter provideInitAppPresenter(CreateDefaultProjectUseCase createDefaultProjectUseCase) {
     return new InitAppPresenter((InitAppActivity) activity, createDefaultProjectUseCase);
+  }
+
+  @Provides @PerActivity
+  EditorPresenter provideEditorPresenter(SharedPreferences sharedPreferences,
+                                         CreateDefaultProjectUseCase createDefaultProjectUseCase) {
+    return new EditorPresenter((EditorActivity) activity, sharedPreferences, activity,
+        createDefaultProjectUseCase);
+  }
+
+  @Provides @PerActivity
+  GalleryProjectListPresenter provideGalleryProjectListPresenter(
+      ProjectRepository projectRepository,
+      CreateDefaultProjectUseCase createDefaultProjectUseCase,
+      UpdateCurrentProjectUseCase updateCurrentProjectUseCase,
+      DuplicateProjectUseCase duplicateProjectUseCase,
+      DeleteProjectUseCase deleteProjectUseCase,
+      CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCase) {
+    return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, projectRepository,
+        createDefaultProjectUseCase, updateCurrentProjectUseCase, duplicateProjectUseCase,
+        deleteProjectUseCase, checkIfProjectHasBeenExportedUseCase);
+  }
+
+  @Provides @PerActivity
+  DetailProjectPresenter provideDetailProjectPresenter(UpdateTitleProjectUseCase updateTitleProjectUseCase){
+    return new DetailProjectPresenter((DetailProjectActivity) activity, updateTitleProjectUseCase);
+  }
+
+  @Provides @PerActivity
+  EditTextPreviewPresenter provideEditTextPreviewPresenter(
+      UserEventTracker userEventTracker,
+      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
+    return new EditTextPreviewPresenter((VideoEditTextActivity) activity, userEventTracker,
+        getMediaListFromProjectUseCase);
   }
 
   @Provides
@@ -150,29 +199,54 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  ClearProjectUseCase provideProjectClearer(ProjectRepository projectRepository) {
-    return new ClearProjectUseCase(projectRepository);
-  }
-
-  @Provides
-  CreateDefaultProjectUseCase provideDefaultProjectCreator(ProjectRepository projectRepository) {
-    return new CreateDefaultProjectUseCase(projectRepository);
-  }
-
-  @Provides
-  AudioMixer provideAudioMixer() {
-    return new AudioMixer(Constants.OUTPUT_FILE_MIXED_AUDIO);
+  CreateDefaultProjectUseCase provideDefaultProjectCreator(ProjectRepository projectRepository,
+                                                            ProfileRepository profileRepository) {
+    return new CreateDefaultProjectUseCase(projectRepository, profileRepository);
   }
 
   @Provides
   AddVoiceOverToProjectUseCase
   provideVoiceOverSetter(ProjectRepository projectRepository,
-                         AddMusicToProjectUseCase addMusicToProjectUseCase) {
-    return new AddVoiceOverToProjectUseCase(projectRepository, addMusicToProjectUseCase);
+                         AddMusicToProjectUseCase addMusicToProjectUseCase,
+                         RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {
+    return new AddVoiceOverToProjectUseCase(projectRepository, addMusicToProjectUseCase,
+        removeMusicFromProjectUseCase);
   }
 
   @Provides
   GetMusicFromProjectUseCase provideMusicRetriever() {
     return new GetMusicFromProjectUseCase();
+  }
+
+  @Provides GetMediaListFromProjectUseCase provideMediaListRetriever() {
+    return new GetMediaListFromProjectUseCase();
+  }
+
+  @Provides AddLastVideoExportedToProjectUseCase provideLastVideoExporterAdded(ProjectRepository
+                                                                               projectRepository) {
+    return new AddLastVideoExportedToProjectUseCase(projectRepository);
+  }
+
+  @Provides UpdateTitleProjectUseCase provideUpdateTitleProject(ProjectRepository
+                                                                    projectRepository){
+    return new UpdateTitleProjectUseCase(projectRepository);
+  }
+
+  @Provides UpdateCurrentProjectUseCase provideUpdateCurrentProject(ProjectRepository
+                                                                        projectRepository){
+    return new UpdateCurrentProjectUseCase(projectRepository);
+  }
+
+  @Provides DuplicateProjectUseCase provideDuplicateProject(ProjectRepository projectRepository){
+    return new DuplicateProjectUseCase(projectRepository);
+  }
+
+  @Provides DeleteProjectUseCase provideDeleteProject(ProjectRepository projectRepository,
+                                                      VideoRepository videoRepository){
+    return new DeleteProjectUseCase(projectRepository, videoRepository);
+  }
+
+  @Provides CheckIfProjectHasBeenExportedUseCase provideCheckIfProjectHasBeenExported(){
+    return new CheckIfProjectHasBeenExportedUseCase();
   }
 }

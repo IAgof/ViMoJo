@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
+import android.os.Environment;
+
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -14,6 +16,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.io.File;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.doReturn;
@@ -21,11 +27,16 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.reflect.Whitebox.setInternalState;
 
 /**
  * Created by jliarte on 23/10/16.
  */
-@RunWith(MockitoJUnitRunner.class)
+//@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Environment.class})
 public class LoadCurrentProjectUseCaseTest {
   @Mock
   ProjectRepository mockedProjectRepository;
@@ -35,6 +46,14 @@ public class LoadCurrentProjectUseCaseTest {
   @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
+
+    mockStatic(Environment.class);
+    when(Environment.getExternalStorageState()).thenReturn("mounted");
+    setInternalState(Environment.class, "DIRECTORY_DCIM", "DCIM");
+
+    when(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))
+        .thenReturn(new File("DCIM/Vimojo/.temp"));
+
   }
 
   @Before

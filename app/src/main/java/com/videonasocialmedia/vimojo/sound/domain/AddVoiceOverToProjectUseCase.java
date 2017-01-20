@@ -14,16 +14,25 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 public class AddVoiceOverToProjectUseCase {
   protected ProjectRepository projectRepository;
   private AddMusicToProjectUseCase addMusicToProjectUseCase;
+  private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
 
   public AddVoiceOverToProjectUseCase(ProjectRepository projectRepository,
-                                      AddMusicToProjectUseCase addMusicToProjectUseCase) {
+                                      AddMusicToProjectUseCase addMusicToProjectUseCase,
+                                      RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {
     this.projectRepository = projectRepository;
     this.addMusicToProjectUseCase = addMusicToProjectUseCase;
+    this.removeMusicFromProjectUseCase = removeMusicFromProjectUseCase;
   }
 
-  public void setVoiceOver(Project project, String voiceOverPath, float volume) {
+  public void setVoiceOver(final Project project, String voiceOverPath, float volume) {
     Music voiceOver = new Music(voiceOverPath, volume);
-    voiceOver.setMusicTitle(Constants.MUSIC_AUDIO_MIXED_TITLE);
+    voiceOver.setMusicTitle(Constants.MUSIC_AUDIO_VOICEOVER_TITLE);
+
+    // if hasMusic, first removeFromTrack and then add VoiceOver as music
+    if(project.getVMComposition().hasMusic()){
+      removeMusicFromProjectUseCase.removeMusicFromProject(project.getMusic(),0);
+    }
+
     // TODO(jliarte): 23/12/16 maybe use a different track for voice over? a different
     //                VMComposition method or use case?
     addMusicToProjectUseCase.addMusicToTrack(voiceOver, 0, new OnAddMediaFinishedListener() {

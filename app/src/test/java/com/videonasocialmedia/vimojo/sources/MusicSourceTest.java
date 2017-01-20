@@ -3,11 +3,13 @@ package com.videonasocialmedia.vimojo.sources;
 import android.os.Environment;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -28,6 +30,9 @@ import static org.hamcrest.Matchers.notNullValue;
 public class MusicSourceTest {
 
   private File mockedStorageDir;
+
+  @Mock
+  Project mockedProject;
 
   @Before
   public void setupTestEnvironment() {
@@ -56,7 +61,7 @@ public class MusicSourceTest {
     // TODO(jliarte): 23/10/16 Utils.getMusicFileByName returns NPE
     Mockito.doNothing().when(musicSource).addPathToMusic(musicSource.localMusic);
 
-    Music musicFound = musicSource.getMusicByTitle(musicToFind.getMusicTitle());
+    Music musicFound = musicSource.getMusicByTitle("somePath", musicToFind.getMusicTitle());
 
     assertThat(musicFound, is(musicToFind));
   }
@@ -66,15 +71,17 @@ public class MusicSourceTest {
     MusicSource musicSource = new MusicSource();
     musicSource = Mockito.spy(musicSource);
     musicSource.populateLocalMusic();
-    Music musicToFind = new Music(Constants.OUTPUT_FILE_MIXED_AUDIO);
-    musicToFind.setMusicTitle(Constants.MUSIC_AUDIO_MIXED_TITLE);
+    String mixedMusicPath = "somePath" + File.separator +
+        Constants.AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME;
+    Music musicToFind = new Music(mixedMusicPath);
+    musicToFind.setMusicTitle(Constants.MUSIC_AUDIO_VOICEOVER_TITLE);
     Mockito.doNothing().when(musicSource).addPathToMusic(musicSource.localMusic);
 
-    Music musicFound = musicSource.getMusicByTitle(musicToFind.getMusicTitle());
+    Music musicFound = musicSource.getMusicByTitle("somePath", musicToFind.getMusicTitle());
 
     assertThat(musicFound, notNullValue());
-    assertThat(musicFound.getMusicTitle(), is(Constants.MUSIC_AUDIO_MIXED_TITLE));
-    assertThat(musicFound.getMediaPath(), is(Constants.OUTPUT_FILE_MIXED_AUDIO));
+    assertThat(musicFound.getMusicTitle(), is(Constants.MUSIC_AUDIO_VOICEOVER_TITLE));
+    assertThat(musicFound.getMediaPath(), is(mixedMusicPath));
   }
 
 }

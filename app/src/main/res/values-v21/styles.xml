@@ -1,6 +1,5 @@
 <resources>
 
-
     <style name="TwoWayView">
         <item name="android:orientation">horizontal</item>
     </style>
@@ -22,7 +21,7 @@
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
         <item name="android:textColorPrimaryInverse">@color/colorAccent</item>
-        <item name="android:colorControlNormal">@color/colorSecondaryLight</item>
+        <item name="android:colorControlNormal">@color/colorWhite</item>
 
         <!-- Hide scrollbar in scrollViews -->
         <item name="android:scrollbarThumbHorizontal">@color/colorTransparent</item>
@@ -40,7 +39,9 @@
         <item name="android:editTextStyle">@style/VideonaEditText</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorPrimary">@color/colorPrimary</item>
-
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <style name="VideonaAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
@@ -63,23 +64,20 @@
     </style>
 
     <style name="VideonaEditText" parent="Widget.AppCompat.EditText">
-
         <item name="android:backgroundTint">@color/colorSecondaryLight</item>
         <item name="android:textColor">@color/textColorPrimary</item>
         <item name="android:textCursorDrawable">@null</item>
-
     </style>
 
     <style name="VideonaIntroTutorial" parent="Theme.AppCompat.Light">
-
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-
     </style>
 
     <style name="VideonaDialog" parent="Theme.AppCompat.Light.Dialog">
+
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
