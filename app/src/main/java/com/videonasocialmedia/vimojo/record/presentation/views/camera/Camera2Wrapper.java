@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.record.presentation.views.customview.AutoFitTextureView;
+import com.videonasocialmedia.vimojo.record.presentation.views.recorder.MediaRecorderWrapper;
 import com.videonasocialmedia.vimojo.record.presentation.views.util.RecordCamera2Utils;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -48,8 +49,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   private final String LOG_TAG = getClass().getSimpleName();
 
-  private final Context context;
 
+  private final Context context;
+  private final Camera2WrapperListener listener;
 
   /**
    * A refernce to the opened {@link android.hardware.camera2.CameraDevice}.
@@ -86,9 +88,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private Size videoSize;
 
   /**
-   * MediaRecorder
+   * MediaRecorderWrapper
    */
-  private MediaRecorder mediaRecorder;
+  private MediaRecorderWrapper mediaRecorder;
 
   /**
    * Whether the app is recording video now
@@ -97,27 +99,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   private Integer sensorOrientation;
   private CaptureRequest.Builder previewBuilder;
-  private String nextVideoAbsolutePath;
   private Surface recorderSurface;
-
-  private static final int SENSOR_ORIENTATION_DEFAULT_DEGREES = 90;
-  private static final int SENSOR_ORIENTATION_INVERSE_DEGREES = 270;
-  private static final SparseIntArray DEFAULT_ORIENTATIONS = new SparseIntArray();
-  private static final SparseIntArray INVERSE_ORIENTATIONS = new SparseIntArray();
-
-  static {
-    DEFAULT_ORIENTATIONS.append(Surface.ROTATION_0, 90);
-    DEFAULT_ORIENTATIONS.append(Surface.ROTATION_90, 0);
-    DEFAULT_ORIENTATIONS.append(Surface.ROTATION_180, 270);
-    DEFAULT_ORIENTATIONS.append(Surface.ROTATION_270, 180);
-  }
-
-  static {
-    INVERSE_ORIENTATIONS.append(Surface.ROTATION_0, 270);
-    INVERSE_ORIENTATIONS.append(Surface.ROTATION_90, 180);
-    INVERSE_ORIENTATIONS.append(Surface.ROTATION_180, 90);
-    INVERSE_ORIENTATIONS.append(Surface.ROTATION_270, 0);
-  }
 
   AutoFitTextureView textureView;
 
@@ -156,11 +138,15 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   };
   private int cameraIdSelected;
+  private CameraCharacteristics characteristics;
+  private String videoPath;
 
-  public Camera2Wrapper(Context context, int cameraIdSelected, AutoFitTextureView textureView){
+  public Camera2Wrapper(Context context, Camera2WrapperListener listener, int cameraIdSelected,
+                        AutoFitTextureView textureView){
     this.context = context;
     this.cameraIdSelected = cameraIdSelected;
     this.textureView = textureView;
+    this.listener = listener;
   }
 
   public void onResume() {
@@ -205,11 +191,13 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   @Override
   public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
     openCamera(width, height);
+    Log.d(LOG_TAG, "onSurfaceTextureAvailable " + width + " x " + height );
   }
 
   @Override
   public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
     configureTransform(width, height);
+    Log.d(LOG_TAG, "onSurfaceTextureSizeChanged " + width + " x " + height );
   }
 
   @Override
@@ -231,7 +219,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     if (null == activity || activity.isFinishing()) {
       return;
     }
-//    CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
     CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
     try {
       Log.d(LOG_TAG, "tryAcquire");
@@ -242,13 +229,19 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       String cameraId = manager.getCameraIdList()[cameraIdSelected];
 
       // Choose the sizes for camera preview and video isRecording
-      CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+      characteristics = manager.getCameraCharacteristics(cameraId);
+      listener.setFlashSupport();
       StreamConfigurationMap map = characteristics
           .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
       sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+
       videoSize = RecordCamera2Utils.chooseVideoSize(map.getOutputSizes(MediaRecorder.class));
       previewSize = RecordCamera2Utils.chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
           width, height, videoSize);
+
+      Log.d(LOG_TAG, "VideoSize " + videoSize.getWidth() + " x " + videoSize.getHeight());
+      Log.d(LOG_TAG, "PreviewSize " + previewSize.getWidth() + " x " + previewSize.getHeight());
+
 
       int orientation = context.getResources().getConfiguration().orientation;
       if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -257,7 +250,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         textureView.setAspectRatio(previewSize.getHeight(), previewSize.getWidth());
       }
       configureTransform(width, height);
-      mediaRecorder = new MediaRecorder();
+      int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+      
+      mediaRecorder = new MediaRecorderWrapper(new MediaRecorder(), sensorOrientation, rotation,
+          videoPath);
       if (ActivityCompat.checkSelfPermission(VimojoApplication.getAppContext(),
           android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
         // TODO: Consider calling
@@ -334,7 +330,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     textureView.setTransform(matrix);
   }
 
-
   /**
    * Start the camera preview.
    */
@@ -403,52 +398,14 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
-  /** Move from this if it is possible to MediaRecorderWrapper */
-
-  private void setUpMediaRecorder() throws IOException {
-    final Activity activity = (Activity) context;
-    if (null == activity) {
-      return;
-    }
-    mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-    mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
-    mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-    if (nextVideoAbsolutePath == null || nextVideoAbsolutePath.isEmpty()) {
-      nextVideoAbsolutePath = getVideoFilePath((Activity)context);
-    }
-    mediaRecorder.setOutputFile(nextVideoAbsolutePath);
-    mediaRecorder.setVideoEncodingBitRate(10000000);
-    mediaRecorder.setVideoFrameRate(30);
-    mediaRecorder.setVideoSize(1280, 720);
-    mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-    mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-    mediaRecorder.setAudioChannels(1);
-    mediaRecorder.setAudioSamplingRate(48000);
-    mediaRecorder.setAudioEncodingBitRate(192000);
-    int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-    switch (sensorOrientation) {
-      case SENSOR_ORIENTATION_DEFAULT_DEGREES:
-        mediaRecorder.setOrientationHint(DEFAULT_ORIENTATIONS.get(rotation));
-        break;
-      case SENSOR_ORIENTATION_INVERSE_DEGREES:
-        mediaRecorder.setOrientationHint(INVERSE_ORIENTATIONS.get(rotation));
-        break;
-    }
-    mediaRecorder.prepare();
-  }
-
-  private String getVideoFilePath(Context context) {
-    return Constants.PATH_APP + "/"
-        + System.currentTimeMillis() + ".mp4";
-  }
-
   public void startRecordingVideo() {
+    Log.d(LOG_TAG, "startRecordingVideo");
     if (null == cameraDevice || !textureView.isAvailable() || null == previewSize) {
       return;
     }
     try {
       closePreviewSession();
-      setUpMediaRecorder();
+      mediaRecorder.setUpMediaRecorder();
       SurfaceTexture texture = textureView.getSurfaceTexture();
       assert texture != null;
       texture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
@@ -476,10 +433,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
           ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-              // UI
-              //mButtonVideo.setText("Stop");
               isRecordingVideo = true;
-
               // Start recording
               mediaRecorder.start();
             }
@@ -503,23 +457,44 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   public void stopRecordingVideo() {
-    // UI
+    Log.d(LOG_TAG, "stopRecordingVideo");
     isRecordingVideo = false;
-    //mButtonVideo.setText(R.string.record);
-    //mButtonVideo.setText("Record");
+
     // Stop recording
     mediaRecorder.stop();
     mediaRecorder.reset();
 
-    Activity activity = (Activity) context;
-    if (null != activity) {
-      Toast.makeText(activity, "Video saved: " + nextVideoAbsolutePath,
-          Toast.LENGTH_SHORT).show();
-      Log.d(LOG_TAG, "Video saved: " + nextVideoAbsolutePath);
-    }
-    nextVideoAbsolutePath = null;
-    startPreview();
+    listener.videoRecorded(videoPath);
+   // startPreview();
   }
 
+  public boolean isFlashSupported() {
+    return characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+  }
 
+  public void setFlashOff() {
+    previewBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF);
+    try {
+      previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
+    } catch (CameraAccessException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void setFlashOn() {
+    previewBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
+    try {
+      previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
+    } catch (CameraAccessException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private String getVideoFilePath() {
+    // TODO:(alvaro.martinez) 19/01/17 Get this path from Project ¿?
+    videoPath = Constants.PATH_APP_MASTERS + "/"
+        + System.currentTimeMillis() + ".mp4";
+
+    return videoPath;
+  }
 }

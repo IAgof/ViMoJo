@@ -58,9 +58,8 @@ public class AutoFitTextureView extends TextureView {
     int height = MeasureSpec.getSize(heightMeasureSpec);
 
     // full screen implementation, does not check aspect ratio
-    setMeasuredDimension(width, height);
+    //setMeasuredDimension(width, height);
 
-    /*
     if (0 == mRatioWidth || 0 == mRatioHeight) {
       setMeasuredDimension(width, height);
     } else {
@@ -69,7 +68,7 @@ public class AutoFitTextureView extends TextureView {
       } else {
         setMeasuredDimension(height * mRatioWidth / mRatioHeight, height);
       }
-    }*/
+    }
   }
 
 

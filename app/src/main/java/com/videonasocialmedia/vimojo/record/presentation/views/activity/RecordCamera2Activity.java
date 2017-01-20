@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.record.presentation.views.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -28,6 +29,7 @@ import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCa
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.record.presentation.views.camera.Camera2Wrapper;
 import com.videonasocialmedia.vimojo.record.presentation.views.customview.AutoFitTextureView;
+import com.videonasocialmedia.vimojo.record.presentation.views.recorder.MediaRecorderWrapper;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
@@ -114,8 +116,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private final int RESOLUTION_SELECTED_HD1080 = 1080;
   private final int RESOLUTION_SELECTED_HD4K = 2160;
 
-  private Camera2Wrapper camera2Wrapper;
-
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -130,15 +130,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     configChronometer();
     configShowThumbAndNumberClips();
 
-    // TODO:(alvaro.martinez) 18/01/17 Inject with Dagger
-    presenter = new RecordCamera2Presenter(this);
     isFrontCameraSelected = getIntent().getBooleanExtra(EXTRA_FRONT_CAMERA_SELECTED, false);
 
-    int cameraId = 0;
-    if(isFrontCameraSelected)
-      cameraId = 1;
-    camera2Wrapper = new Camera2Wrapper(this, cameraId, textureView);
-
+    // TODO:(alvaro.martinez) 18/01/17 Inject with Dagger presenter
+    presenter = new RecordCamera2Presenter(this, this, isFrontCameraSelected, textureView,
+        externalIntent);
   }
 
   private void keepScreenOn() {
@@ -200,7 +196,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void onResume() {
     super.onResume();
-    camera2Wrapper.onResume();
+    presenter.onResume();
     hideSystemUi();
   }
 
@@ -211,7 +207,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void onPause() {
-    camera2Wrapper.onPause();
+    presenter.onPause();
     super.onPause();
   }
 
@@ -278,7 +274,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
 
   @Override
-  public void showFlashOn(boolean on) {
+  public void showFlash(boolean on) {
     // TODO:(alvaro.martinez) 18/01/17 Review flash tracking trackUserInteracted(AnalyticsConstants.CHANGE_FLASH, String.valueOf(on));
     flashButton.setActivated(on);
     flashButton.setSelected(on);
@@ -403,15 +399,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @OnClick(R.id.button_toggle_flash)
   public void toggleFlash() {
-    // TODO:(alvaro.martinez) 18/01/17 implement flash
-    //presenter.toggleFlash();
+    presenter.toggleFlash();
   }
 
   @OnClick(R.id.button_change_camera)
   public void changeCamera() {
-    // TODO:(alvaro.martinez) 18/01/17 Implement changeCamera
-   /* presenter.setFlashOff();
-    presenter.changeCamera(0);*/
 
     if(!isFrontCameraSelected){
       isFrontCameraSelected = true;
@@ -420,9 +412,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
 
     Intent intent = new Intent(RecordCamera2Activity.this, RecordCamera2Activity.class);
-    //intent.putExtras(getIntent().getExtras());      //Pass all the current intent parameters
     intent.putExtra(EXTRA_FRONT_CAMERA_SELECTED, isFrontCameraSelected);
-    //startActivityForResult(intent, REQUESTCODE_SWITCHCAMERA);
     startActivity(intent);
     overridePendingTransition(R.anim.from_middle, R.anim.to_middle);
   }
@@ -430,7 +420,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnClick (R.id.button_navigate_edit_or_gallery)
   public void navigateToEditOrGallery() {
     if (!isRecording && !externalIntent) {
-      //presenter.setFlashOff();
+      presenter.setFlashOff();
       if (isProjectHasVideo){
         navigateTo(EditActivity.class);
       }else {
@@ -473,14 +463,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   boolean onTouch(MotionEvent event) {
     if (event.getAction() == MotionEvent.ACTION_DOWN) {
       if (!isRecording) {
-        // TODO:(alvaro.martinez) 18/01/17 Implement start record
-        //presenter.startRecord();
-        camera2Wrapper.startRecordingVideo();
+        presenter.startRecord();
         isRecording = true;
       } else {
-        // TODO:(alvaro.martinez) 18/01/17 Implement stop record
-        //presenter.stopRecord();
-        camera2Wrapper.stopRecordingVideo();
+        presenter.stopRecord();
       }
     }
     return true;

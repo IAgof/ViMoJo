@@ -30,7 +30,7 @@ public interface RecordCamera2View {
 
     void stopChronometer();
 
-    void showFlashOn(boolean on);
+    void showFlash(boolean on);
 
     void showFlashSupported(boolean state);
 
