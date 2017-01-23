@@ -12,8 +12,6 @@ package com.videonasocialmedia.vimojo.settings.presentation.mvp.views;
 
 import android.preference.ListPreference;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
-
 import java.util.ArrayList;
 
 /**

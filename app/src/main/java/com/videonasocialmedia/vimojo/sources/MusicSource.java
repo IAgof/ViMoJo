@@ -1,9 +1,10 @@
 package com.videonasocialmedia.vimojo.sources;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
-import com.videonasocialmedia.vimojo.model.sources.MusicProvider;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
+import com.videonasocialmedia.vimojo.model.sources.MusicProvider;
 
 import java.io.File;
 import java.util.ArrayList;

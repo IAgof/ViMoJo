@@ -32,7 +32,6 @@ import com.videonasocialmedia.vimojo.presentation.views.adapter.OptionsToShareAd
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
-import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
@@ -301,9 +300,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
                                 navigateTo(MusicListActivity.class);
                             }
                         if(resourceButtonId == R.id.button_edit_navigator)
-                            navigator.navigateTo(EditActivity.class);
-                        if(resourceButtonId == R.id.navigator)
-                            finish();
+                            navigateTo(EditActivity.class);
                         break;
                 }
             }

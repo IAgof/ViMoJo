@@ -12,24 +12,30 @@ import java.util.List;
 
 public class MusicProvider {
 
-  public MusicProvider(){
+  Context context = VimojoApplication.getAppContext();
 
+  public MusicProvider(){
   }
 
   public List<Music> getMusicAppsInstalled() {
 
     List<Music> musicList = new ArrayList<>();
 
-    musicList.add(new Music(R.drawable.ic_galloping_a_stuart_roslyn_matt_foundling, "Galloping",
-        R.raw.goinghigher, R.color.colorPrimary, "Stuart Roslyn, Matt Foundling", "02:01"));
-    musicList.add(new Music(R.drawable.ic_we_beat_as_one_b_harlin_james_paul_lewis1, "We beat as one",
-        R.raw.ukulele, R.color.colorPrimary, "Harlin James, Paul Lewis", "03:30"));
-    musicList.add(new Music(R.drawable.ic_sorrow_and_sadness_b_david_john_vanacore_ehren_ebbage, "Sorrow and sadness",
-        R.raw.jazzyfrenchy, R.color.colorPrimary, "David Jhon, Vanacore Ehrenebbage", "01:33"));
-    musicList.add(new Music(R.drawable.ic_free_the_cold_wind_george_stephenson_bradford_lawrence_ellis, "Free the cold wind",
-        R.raw.acousticbreeze, R.color.colorPrimary, "George Stephenson, Bradford Lawrence Ellis", "02:45"));
+    musicList.add(new Music(R.drawable.ic_going_higher, "Going higher", R.raw.goinghigher,
+        R.color.colorPrimary,
+        context.getString(R.string.activity_music_title_going_higher), "04:04"));
+    musicList.add(new Music(R.drawable.ic_ukulele, "Ukulele",
+        R.raw.ukulele, R.color.colorPrimary,
+        context.getString(R.string.activity_music_title_ukulele),"02:26"));
+    musicList.add(new Music(R.drawable.ic_jazzy_frenchy,
+        "Jazzy-Frenchy", R.raw.jazzyfrenchy, R.color.colorPrimary,
+        context.getString(R.string.activity_music_title_jazzy_frenchy), "01:44"));
+    musicList.add(new Music(R.drawable.ic_acoustic_breeze, "Acoustic Breeze",
+        R.raw.acousticbreeze, R.color.colorPrimary,
+        context.getString(R.string.activity_music_title_acoustic_breeze), "02:37"));
 
     return  musicList;
 
   }
 }
+

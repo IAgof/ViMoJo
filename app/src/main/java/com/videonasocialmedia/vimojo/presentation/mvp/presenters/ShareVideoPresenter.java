@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;

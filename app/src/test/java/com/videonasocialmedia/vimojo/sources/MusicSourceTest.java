@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.sources;
 
+import android.content.Context;
 import android.os.Environment;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -11,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -34,12 +36,16 @@ public class MusicSourceTest {
   @Mock
   Project mockedProject;
 
+  @Mock
+  Context mockedContext;
+
   @Before
   public void setupTestEnvironment() {
     PowerMockito.mockStatic(Environment.class);
     mockedStorageDir = PowerMockito.mock(File.class);
     PowerMockito.when(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)).
             thenReturn(mockedStorageDir);
+    MockitoAnnotations.initMocks(this);
   }
 
   @Test
