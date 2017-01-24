@@ -16,7 +16,9 @@ package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -66,7 +68,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   private boolean externalIntent;
 
   private Camera2Wrapper camera2Wrapper;
-  private boolean isFlashActivated = false;
 
  /* @Inject
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
@@ -87,7 +88,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }*/
 
   public RecordCamera2Presenter(RecordCamera2View recordView, Context context,
-                                boolean isFrontCameraSelected, AutoFitTextureView textureView,
+                                boolean isFrontCameraSelected, boolean isPrincipalViewSelected,
+                                boolean isRightControlsViewSelected, AutoFitTextureView textureView,
                                 boolean externalIntent) {
 
     this.recordView = recordView;
@@ -99,13 +101,23 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     this.externalIntent = externalIntent;
 
     addVideoToProjectUseCase = new AddVideoToProjectUseCase(new ProjectRealmRepository());
-    initViews(recordView);
+    initViews(recordView, isPrincipalViewSelected, isRightControlsViewSelected);
   }
 
-  private void initViews(RecordCamera2View recordView) {
-    recordView.showResolutionSelected(height);
-    hideInitialsButtons();
-    recordView.hidePrincipalViews();
+  private void initViews(RecordCamera2View recordView, boolean isPrincipalViewSelected, boolean
+      isRightControlsViewSelected) {
+    recordView.setResolutionSelected(height);
+    recordView.hideChronometer();
+    if(isPrincipalViewSelected) {
+      recordView.showPrincipalViews();
+    }else {
+      recordView.hidePrincipalViews();
+    }
+    if(isRightControlsViewSelected) {
+      recordView.showRightControlsView();
+    }else {
+      recordView.hideRightControlsView();
+    }
   }
 
   public Project loadCurrentProject() {
@@ -199,9 +211,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     recordView.showStopButton();
     recordView.startChronometer();
     recordView.showChronometer();
-    recordView.hideSettingsOptions();
+    recordView.hideNavigateToSettingsActivity();
     recordView.hideVideosRecordedNumber();
     recordView.hideRecordedVideoThumb();
+    recordView.hideChangeCamera();
   }
 
   public void stopRecord() {
@@ -303,10 +316,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   @Override
   public void setFlashSupport() {
     if (camera2Wrapper.isFlashSupported()) {
-      recordView.showFlashSupported(true);
+      recordView.setFlashSupported(true);
       Log.d(LOG_TAG, "checkSupportFlash flash Supported camera");
     } else {
-       recordView.showFlashSupported(false);
+       recordView.setFlashSupported(false);
       Log.d(LOG_TAG, "checkSupportFlash flash NOT Supported camera");
     }
   }
@@ -318,9 +331,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     } else {
       addVideoToProjectUseCase.addVideoToTrack(path);
       recordView.showRecordButton();
-      recordView.showSettingsOptions();
+      recordView.showNavigateToSettingsActivity();
       recordView.stopChronometer();
       recordView.hideChronometer();
+      recordView.showChangeCamera();
       recordView.showRecordedVideoThumb(path);
       recordView.showVideosRecordedNumber(++recordedVideosNumber);
       camera2Wrapper.onPause();
@@ -330,19 +344,60 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 
   public void setFlashOff() {
     camera2Wrapper.setFlashOff();
-    recordView.showFlash(false);
+    recordView.setFlash(false);
   }
 
-  public void toggleFlash() {
-    if(!isFlashActivated) {
+  public void toggleFlash(boolean isSelected) {
+   /* if(!isFlashActivated) {
       camera2Wrapper.setFlashOn();
       isFlashActivated = true;
     } else {
       camera2Wrapper.setFlashOff();
       isFlashActivated = false;
     }
-    recordView.showFlash(isFlashActivated);
+    recordView.setFlash(isFlashActivated);*/
+    if(isSelected){
+      camera2Wrapper.setFlashOff();
+    } else {
+      camera2Wrapper.setFlashOn();
+    }
+    recordView.setFlash(!isSelected);
   }
 
+  public void onTouch(MotionEvent event) {
+    camera2Wrapper.onTouch(event);
+  }
+
+  public void showRightControls() {
+    recordView.showRightControlsView();
+  }
+
+  public void hideRightControls() {
+    recordView.hideRightControlsView();
+  }
+
+  public void bottomSettingsCamera(boolean isSelected) {
+    if(isSelected) {
+      recordView.hideBottomControlsView();
+    } else {
+      recordView.showBottomControlsView();
+    }
+  }
+
+  public void onTouchFocus(MotionEvent event) {
+    int x = Math.round(event.getX());
+    int y = Math.round(event.getY());
+    //camera2Wrapper.setFocus(calculateBounds(x, y));
+    camera2Wrapper.setFocus(calculateBounds(x, y), 100);
+  }
+
+  private Rect calculateBounds(int x, int y) {
+    Rect focusIconBounds = new Rect();
+    // TODO:(alvaro.martinez) 24/01/17 Define area to calculate autofocus
+    int halfHeight = 100; // focusIcon.getIntrinsicHeight();
+    int halfWidth = 100; //focusIcon.getIntrinsicWidth();
+    focusIconBounds.set(x - halfWidth, y - halfHeight, x + halfWidth, y + halfHeight);
+    return focusIconBounds;
+  }
 }
 

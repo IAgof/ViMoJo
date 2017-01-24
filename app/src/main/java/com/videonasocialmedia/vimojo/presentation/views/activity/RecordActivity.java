@@ -118,7 +118,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     View settingsBarSubmenu;
     @Bind(R.id.button_to_hide_controls)
     ImageButton buttonToHideControlsView;
-    @Bind (R.id.button_to_show_controls)
+    @Bind (R.id.button_to_show_controls_right)
     ImageButton buttonToShowControls;
     @Bind(R.id.button_resolution_indicator)
     ImageView resolutionIndicator;
@@ -689,7 +689,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
             hidePrincipalViews();
         }
     }
-    @OnClick(R.id.button_to_show_controls)
+    @OnClick(R.id.button_to_show_controls_right)
     public void showControls() {
         buttonToShowControls.setVisibility(View.INVISIBLE);
         buttonToHideControlsView.setVisibility(View.VISIBLE);

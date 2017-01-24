@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -14,6 +15,7 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaRecorder;
 import android.os.Handler;
@@ -23,11 +25,14 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
 import android.widget.Toast;
 
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.views.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.record.presentation.views.recorder.MediaRecorderWrapper;
 import com.videonasocialmedia.vimojo.record.presentation.views.util.RecordCamera2Utils;
@@ -103,6 +108,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   AutoFitTextureView textureView;
 
+  // zoom, move to custom view
+  public float finger_spacing = 0;
+  public int zoom_level = 1;
+
   /**
    * {@link CameraDevice.StateCallback} is called when {@link CameraDevice} changes its status.
    */
@@ -140,6 +149,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private int cameraIdSelected;
   private CameraCharacteristics characteristics;
   private String videoPath;
+  private CameraManager manager;
 
   public Camera2Wrapper(Context context, Camera2WrapperListener listener, int cameraIdSelected,
                         AutoFitTextureView textureView){
@@ -219,7 +229,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     if (null == activity || activity.isFinishing()) {
       return;
     }
-    CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
+    manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
     try {
       Log.d(LOG_TAG, "tryAcquire");
       if (!cameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
@@ -251,10 +261,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       }
       configureTransform(width, height);
       int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-      
-      mediaRecorder = new MediaRecorderWrapper(new MediaRecorder(), sensorOrientation, rotation,
-          videoPath);
-      if (ActivityCompat.checkSelfPermission(VimojoApplication.getAppContext(),
+
+      mediaRecorder = new MediaRecorderWrapper(new MediaRecorder(), cameraIdSelected,
+          sensorOrientation, rotation, getVideoFilePath());
+     if (ActivityCompat.checkSelfPermission(VimojoApplication.getAppContext(),
           android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
         // TODO: Consider calling
         //    ActivityCompat#requestPermissions
@@ -496,5 +506,95 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         + System.currentTimeMillis() + ".mp4";
 
     return videoPath;
+  }
+
+
+  public boolean onTouch(MotionEvent event) {
+    try {
+      //Activity activity = getActivity();
+      //CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
+
+      String cameraId = manager.getCameraIdList()[cameraIdSelected];
+
+      CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+      float maxzoom = (characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM))*10;
+
+      Rect m = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+      int action = event.getAction();
+      float current_finger_spacing;
+
+      if (event.getPointerCount() > 1) {
+        // Multi touch logic
+        current_finger_spacing = getFingerSpacing(event);
+
+        if(finger_spacing != 0){
+          if(current_finger_spacing > finger_spacing && maxzoom > zoom_level){
+            zoom_level++;
+
+          }
+          else if (current_finger_spacing < finger_spacing && zoom_level > 1){
+            zoom_level--;
+
+          }
+          int minW = (int) (m.width() / maxzoom);
+          int minH = (int) (m.height() / maxzoom);
+          int difW = m.width() - minW;
+          int difH = m.height() - minH;
+          int cropW = difW /100 *(int)zoom_level;
+          int cropH = difH /100 *(int)zoom_level;
+          cropW -= cropW & 3;
+          cropH -= cropH & 3;
+          Rect zoom = new Rect(cropW, cropH, m.width() - cropW, m.height() - cropH);
+          previewBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoom);
+        }
+        finger_spacing = current_finger_spacing;
+      }
+      else{
+        if (action == MotionEvent.ACTION_UP) {
+          //single touch logic
+        }
+      }
+
+      try {
+        previewSession.setRepeatingRequest(previewBuilder.build(), null,
+            null);
+      }
+      catch (CameraAccessException e) {
+        e.printStackTrace();
+      }
+      catch (NullPointerException ex)
+      {
+        ex.printStackTrace();
+      }
+    }
+    catch (CameraAccessException e)
+    {
+      throw new RuntimeException("can not access camera.", e);
+    }
+
+    return true;
+  }
+
+
+  //Determine the space between the first two fingers
+  @SuppressWarnings("deprecation")
+  private float getFingerSpacing(MotionEvent event) {
+
+    float x = event.getX(0) - event.getX(1);
+    float y = event.getY(0) - event.getY(1);
+    return (float) Math.sqrt(x * x + y * y);
+  }
+
+  public void setFocus(Rect rect, int focusArea) {
+
+    MeteringRectangle meteringRectangle = new MeteringRectangle(rect, focusArea); // MeteringRectangle.METERING_WEIGHT_DONT_CARE);
+    MeteringRectangle[] areas = previewBuilder.get(CaptureRequest.CONTROL_AF_REGIONS);
+
+    previewBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[]{meteringRectangle});
+    try {
+      previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
+    } catch (CameraAccessException e) {
+      e.printStackTrace();
+    }
   }
 }

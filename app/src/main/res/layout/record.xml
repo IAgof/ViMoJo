@@ -427,7 +427,7 @@
             </LinearLayout>
 
             <ImageButton
-                android:id="@+id/button_to_show_controls"
+                android:id="@+id/button_to_show_controls_right"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="@drawable/circle_background"

@@ -14,6 +14,7 @@ import java.io.IOException;
 public class MediaRecorderWrapper {
 
   private final String videoPath;
+  private final int cameraIdSelected;
   /**
    * MediaRecorder
    */
@@ -45,9 +46,11 @@ public class MediaRecorderWrapper {
     INVERSE_ORIENTATIONS.append(Surface.ROTATION_270, 0);
   }
 
-  public MediaRecorderWrapper(MediaRecorder mediaRecorder, int sensorOrientation, int rotation, String videoPath){
+  public MediaRecorderWrapper(MediaRecorder mediaRecorder, int cameraIdSelected,
+                              int sensorOrientation, int rotation, String videoPath){
 
     this.mediaRecorder = mediaRecorder;
+    this.cameraIdSelected = cameraIdSelected;
     this.sensorOrientation = sensorOrientation;
     this.rotation = rotation;
     this.videoPath = videoPath;
@@ -66,6 +69,7 @@ public class MediaRecorderWrapper {
     mediaRecorder.setVideoEncodingBitRate(currentProject.getProfile().getVideoQuality()
         .getVideoBitRate());
     mediaRecorder.setVideoFrameRate(currentProject.getProfile().getVideoFrameRate().getFrameRate());
+    mediaRecorder.setCaptureRate(currentProject.getProfile().getVideoFrameRate().getFrameRate());
     mediaRecorder.setVideoSize(currentProject.getProfile().getVideoResolution().getWidth(),
         currentProject.getProfile().getVideoResolution().getHeight());
     mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
@@ -74,6 +78,8 @@ public class MediaRecorderWrapper {
     mediaRecorder.setAudioChannels(1);
     mediaRecorder.setAudioSamplingRate(48000);
     mediaRecorder.setAudioEncodingBitRate(192000);
+    if(cameraIdSelected == 1)
+      sensorOrientation = (sensorOrientation - 180 + 360) % 360;
     switch (sensorOrientation) {
       case SENSOR_ORIENTATION_DEFAULT_DEGREES:
         mediaRecorder.setOrientationHint(DEFAULT_ORIENTATIONS.get(rotation));

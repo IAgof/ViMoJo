@@ -14,13 +14,12 @@ package com.videonasocialmedia.vimojo.record.presentation.mvp.views;
 
 public interface RecordCamera2View {
 
+
+    // Start/Stop record view
+
     void showRecordButton();
 
     void showStopButton();
-
-    void showSettingsOptions();
-
-    void hideSettingsOptions();
 
     void showChronometer();
 
@@ -30,21 +29,13 @@ public interface RecordCamera2View {
 
     void stopChronometer();
 
-    void showFlash(boolean on);
+    void showNavigateToSettingsActivity();
 
-    void showFlashSupported(boolean state);
+    void hideNavigateToSettingsActivity();
 
-    void showFrontCameraSelected();
+    void showChangeCamera();
 
-    void showBackCameraSelected();
-
-    void showError(int stringResourceId);
-
-    void finishActivityForResult(String path);
-
-    void hidePrincipalViews();
-
-    void showPrincipalViews();
+    void hideChangeCamera();
 
     void showRecordedVideoThumb(String path);
 
@@ -54,6 +45,35 @@ public interface RecordCamera2View {
 
     void hideVideosRecordedNumber();
 
-    void showResolutionSelected(int height);
+
+    // UI Views showed/hidden by user
+
+    void hidePrincipalViews();
+
+    void showPrincipalViews();
+
+    void hideRightControlsView();
+
+    void showRightControlsView();
+
+    void showBottomControlsView();
+
+    void hideBottomControlsView();
+
+
+    // Setters camera
+
+    void setFlash(boolean on);
+
+    void setFlashSupported(boolean state);
+
+    void setResolutionSelected(int height);
+
+
+    // Others
+
+    void showError(int stringResourceId);
+
+    void finishActivityForResult(String path);
 
 }

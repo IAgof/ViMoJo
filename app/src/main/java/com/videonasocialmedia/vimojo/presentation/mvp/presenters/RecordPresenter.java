@@ -17,6 +17,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.avrecorder.AudioVideoRecorder;
@@ -441,6 +442,5 @@ public class RecordPresenter {
     public void rotateCamera(int rotation) {
         recorder.rotateCamera(rotation);
     }
-
 
 }

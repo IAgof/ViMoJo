@@ -1,15 +1,15 @@
 package com.videonasocialmedia.vimojo.record.presentation.views.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.MediaStore;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Chronometer;
@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.videonasocialmedia.avrecorder.view.CustomManualFocusView;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -27,9 +28,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivit
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
-import com.videonasocialmedia.vimojo.record.presentation.views.camera.Camera2Wrapper;
 import com.videonasocialmedia.vimojo.record.presentation.views.customview.AutoFitTextureView;
-import com.videonasocialmedia.vimojo.record.presentation.views.recorder.MediaRecorderWrapper;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
@@ -56,7 +55,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton flashButton;
   @Bind(R.id.button_change_camera)
   ImageButton changeCameraButton;
-  @Bind(R.id.button_to_show_controls)
+  @Bind(R.id.button_to_show_controls_right)
   ImageButton showControlsButton;
   @Bind(R.id.button_to_hide_controls)
   ImageButton hideControlsViewButton;
@@ -90,6 +89,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   View settingsBarSubmenuView;
   @Bind(R.id.button_resolution_indicator)
   ImageView resolutionIndicatorButton;
+  @Bind(R.id.customManualFocusView)
+  CustomManualFocusView customManualFocusView;
+  @Bind(R.id.rotateDeviceHint)
+  ImageView rotateDeviceHint;
 
   /**
    * An {@link AutoFitTextureView} for camera preview.
@@ -109,12 +112,17 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private boolean buttonBackPressed = false;
 
   private boolean isFrontCameraSelected = false;
+
   private String EXTRA_FRONT_CAMERA_SELECTED = "front_camera_selected";
+  private String UI_PRINCIPAL_VIEW = "ui_principal_views";
+  private String UI_RIGHT_CONTROLS_VIEW = "ui_right_controls_view";
+
 
   // TODO:(alvaro.martinez) 18/01/17 Move this values to Constants
   private final int RESOLUTION_SELECTED_HD720 = 720;
   private final int RESOLUTION_SELECTED_HD1080 = 1080;
   private final int RESOLUTION_SELECTED_HD4K = 2160;
+  private OrientationHelper orientationHelper;
 
 
   @Override
@@ -129,12 +137,18 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     checkAction();
     configChronometer();
     configShowThumbAndNumberClips();
+    initOrientationHelper();
 
     isFrontCameraSelected = getIntent().getBooleanExtra(EXTRA_FRONT_CAMERA_SELECTED, false);
-
+    boolean isPrincipalViewsSelected = getIntent().getBooleanExtra(UI_PRINCIPAL_VIEW, false);
+    int getControlsViewSelected = getIntent().getIntExtra(UI_RIGHT_CONTROLS_VIEW, View.INVISIBLE);
+    boolean isControlsViewSelected = false;
+    if(getControlsViewSelected == View.VISIBLE){
+      isControlsViewSelected = true;
+    }
     // TODO:(alvaro.martinez) 18/01/17 Inject with Dagger presenter
-    presenter = new RecordCamera2Presenter(this, this, isFrontCameraSelected, textureView,
-        externalIntent);
+    presenter = new RecordCamera2Presenter(this, this, isFrontCameraSelected,
+        isPrincipalViewsSelected, isControlsViewSelected, textureView, externalIntent);
   }
 
   private void keepScreenOn() {
@@ -142,9 +156,15 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   public void setupActivityButtons() {
-    // TODO:(alvaro.martinez) 7/11/16 implement this functionality
+    // TODO:(alvaro.martinez) 7/11/16 implement this functionality, use case check support camera
     settingsCameraButton.setEnabled(false);
     tintRecordButtons(R.color.button_color_record_activity);
+
+    // Disable until implement camera pro
+    picometerView.setVisibility(View.INVISIBLE);
+    zommBarView.setVisibility(View.INVISIBLE);
+    settingsBarSubmenuView.setVisibility(View.INVISIBLE);
+    settingsBarView.setVisibility(View.INVISIBLE);
   }
 
   private void tintRecordButtons(int button_color) {
@@ -193,6 +213,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     numVideosRecordedTextView.setVisibility(View.GONE);
   }
 
+  private void initOrientationHelper() {
+    orientationHelper = new OrientationHelper(this);
+  }
+
   @Override
   public void onResume() {
     super.onResume();
@@ -223,16 +247,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void showStopButton() {
     recordButton.setImageResource(R.drawable.activity_record_icon_stop);
     isRecording = true;
-  }
-
-  @Override
-  public void showSettingsOptions() {
-    navigateSettingsButtons.setEnabled(true);
-  }
-
-  @Override
-  public void hideSettingsOptions() {
-    navigateSettingsButtons.setEnabled(false);
   }
 
   @Override
@@ -268,20 +282,30 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     hideRecordingIndicator();
   }
 
+  @Override
+  public void showNavigateToSettingsActivity() {
+    navigateSettingsButtons.setEnabled(true);
+  }
+
+  @Override
+  public void hideNavigateToSettingsActivity() {
+    navigateSettingsButtons.setEnabled(false);
+  }
+
   private void hideRecordingIndicator() {
     recordingIndicator.setVisibility(View.INVISIBLE);
   }
 
 
   @Override
-  public void showFlash(boolean on) {
+  public void setFlash(boolean on) {
     // TODO:(alvaro.martinez) 18/01/17 Review flash tracking trackUserInteracted(AnalyticsConstants.CHANGE_FLASH, String.valueOf(on));
     flashButton.setActivated(on);
     flashButton.setSelected(on);
   }
 
   @Override
-  public void showFlashSupported(boolean supported) {
+  public void setFlashSupported(boolean supported) {
     flashButton.setActivated(false);
     if (supported) {
       flashButton.setEnabled(true);
@@ -290,18 +314,17 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
   }
 
+
   @Override
-  public void showFrontCameraSelected() {
-    // TODO:(alvaro.martinez) 18/01/17 Tracking change camera
-    changeCameraButton.setActivated(false);
-    changeCameraButton.setSelected(true);
+  public void showChangeCamera() {
+    changeCameraButton.setEnabled(true);
+    changeCameraButton.setActivated(true);
   }
 
   @Override
-  public void showBackCameraSelected() {
-// TODO:(alvaro.martinez) 18/01/17 Tracking change camera
+  public void hideChangeCamera() {
+    changeCameraButton.setEnabled(false);
     changeCameraButton.setActivated(false);
-    changeCameraButton.setSelected(false);
   }
 
   @Override
@@ -338,10 +361,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     controlsView.setVisibility(View.INVISIBLE);
     hideControlsViewButton.setVisibility(View.INVISIBLE);
     showControlsButton.setVisibility(View.INVISIBLE);
-    picometerView.setVisibility(View.INVISIBLE);
-    zommBarView.setVisibility(View.INVISIBLE);
-    settingsBarSubmenuView.setVisibility(View.INVISIBLE);
-    settingsBarView.setVisibility(View.INVISIBLE);
   }
 
   @Override
@@ -352,6 +371,32 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     clearButton.setActivated(false);
     hudView.setVisibility(View.VISIBLE);
     showControlsButton.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void hideRightControlsView() {
+    hideControlsViewButton.setVisibility(View.INVISIBLE);
+    showControlsButton.setVisibility(View.VISIBLE);
+    controlsView.setVisibility(View.INVISIBLE);
+  }
+
+  @Override
+  public void showRightControlsView() {
+    showControlsButton.setVisibility(View.INVISIBLE);
+    hideControlsViewButton.setVisibility(View.VISIBLE);
+    controlsView.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void showBottomControlsView() {
+    settingsBarSubmenuView.setVisibility(View.VISIBLE);
+    settingsCameraButton.setSelected(true);
+  }
+
+  @Override
+  public void hideBottomControlsView() {
+    settingsBarSubmenuView.setVisibility(View.GONE);
+    settingsCameraButton.setSelected(false);
   }
 
   @Override
@@ -378,7 +423,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
-  public void showResolutionSelected(int resolutionSelected) {
+  public void setResolutionSelected(int resolutionSelected) {
     switch (resolutionSelected){
       case (RESOLUTION_SELECTED_HD720):
         resolutionIndicatorButton.setImageResource(R.drawable.record_activity_ic_resolution_720);
@@ -399,7 +444,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @OnClick(R.id.button_toggle_flash)
   public void toggleFlash() {
-    presenter.toggleFlash();
+    presenter.toggleFlash(flashButton.isSelected());
   }
 
   @OnClick(R.id.button_change_camera)
@@ -413,6 +458,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
     Intent intent = new Intent(RecordCamera2Activity.this, RecordCamera2Activity.class);
     intent.putExtra(EXTRA_FRONT_CAMERA_SELECTED, isFrontCameraSelected);
+    intent.putExtra(UI_PRINCIPAL_VIEW, !clearButton.isActivated());
+    intent.putExtra(UI_RIGHT_CONTROLS_VIEW, controlsView.getVisibility());
     startActivity(intent);
     overridePendingTransition(R.anim.from_middle, R.anim.to_middle);
   }
@@ -427,6 +474,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         navigateTo(GalleryActivity.class);
       }
     }
+  }
+
+  @OnClick(R.id.button_settings_camera)
+  public void showHideBottomSettingsCamera(){
+    presenter.bottomSettingsCamera(settingsCameraButton.isSelected());
   }
 
   @OnClick(R.id.button_navigate_settings)
@@ -445,18 +497,14 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
   }
 
-  @OnClick(R.id.button_to_show_controls)
-  public void showControls() {
-    showControlsButton.setVisibility(View.INVISIBLE);
-    hideControlsViewButton.setVisibility(View.VISIBLE);
-    controlsView.setVisibility(View.VISIBLE);
+  @OnClick(R.id.button_to_show_controls_right)
+  public void showRightControls() {
+    presenter.showRightControls();
   }
 
   @OnClick(R.id.button_to_hide_controls)
-  public void hideControls(){
-    hideControlsViewButton.setVisibility(View.INVISIBLE);
-    showControlsButton.setVisibility(View.VISIBLE);
-    controlsView.setVisibility(View.INVISIBLE);
+  public void hideRightControls(){
+    presenter.hideRightControls();
   }
 
   @OnTouch(R.id.button_record)
@@ -469,6 +517,20 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         presenter.stopRecord();
       }
     }
+    return true;
+  }
+
+  @OnTouch(R.id.customManualFocusView)
+  boolean onTouchCustomManualFocusView(MotionEvent event){
+
+    if(event.getAction() == MotionEvent.ACTION_DOWN){
+      // Do touch focus
+      customManualFocusView.onTouchEvent(event);
+      presenter.onTouchFocus(event);
+      return true;
+    }
+
+    presenter.onTouch(event);
     return true;
   }
 
@@ -495,8 +557,38 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private void showMessage(int stringResourceId) {
     //// TODO:(alvaro.martinez) 18/01/17 test snackBar, toast, aler dialog
-    Snackbar snackbar = Snackbar.make(chronometerAndRecPointView, stringResourceId, Snackbar.LENGTH_SHORT);
-    snackbar.show();
+    /*Snackbar snackbar = Snackbar.make(chronometerAndRecPointView, stringResourceId, Snackbar.LENGTH_SHORT);
+    snackbar.show();*/
+  }
+
+
+  private class OrientationHelper extends OrientationEventListener {
+    Context context;
+
+    public OrientationHelper(Context context) {
+      super(context);
+      this.context = context;
+      if (this.canDetectOrientation())
+        this.enable();
+    }
+
+    @Override
+    public void onOrientationChanged(int orientation) {
+      if (( orientation > 345 || orientation < 15 ) && orientation != -1) {
+        rotateDeviceHint.setRotation(270);
+        rotateDeviceHint.setRotationX(0);
+        rotateDeviceHint.setVisibility(View.VISIBLE);
+        recordButton.setEnabled(false);
+      } else if (orientation > 165 && orientation < 195) {
+        rotateDeviceHint.setRotation(-270);
+        rotateDeviceHint.setRotationX(180);
+        rotateDeviceHint.setVisibility(View.VISIBLE);
+        recordButton.setEnabled(false);
+      } else {
+        rotateDeviceHint.setVisibility(View.GONE);
+        recordButton.setEnabled(true);
+      }
+    }
   }
 
 }
