@@ -1,7 +1,10 @@
 package com.videonasocialmedia.vimojo.model.sources;
 
+import android.content.Context;
+
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 
 import java.util.ArrayList;
 import java.util.List;
