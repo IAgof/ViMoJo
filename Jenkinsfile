@@ -4,8 +4,15 @@ node {
   stage 'Stage Checkout'
 
   // Checkout code from repository and update any submodules
-  checkout scm
-  sh 'git submodule update --init'
+//  checkout scm
+//  sh 'git submodule update --init'
+  checkout([
+          $class: 'GitSCM',
+          branches: scm.branches,
+          doGenerateSubmoduleConfigurations: true,
+          extensions: scm.extensions + [[$class: 'SubmoduleOption', parentCredentials: true]],
+          userRemoteConfigs: scm.userRemoteConfigs
+  ])
 
   stage 'Stage Build'
 
