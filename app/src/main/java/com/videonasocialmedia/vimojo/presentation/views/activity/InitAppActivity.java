@@ -474,7 +474,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(LOG_TAG, "timePassed " + timePassed);
                         exitSplashScreen();
                     }
                 }, MINIMUN_WAIT_TIME - timePassed);
