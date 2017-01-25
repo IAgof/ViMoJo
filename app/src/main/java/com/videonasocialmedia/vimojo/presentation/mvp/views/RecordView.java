@@ -12,8 +12,9 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
 
-import com.videonasocialmedia.videonamediaframework.model.media.effects.Effect;
-
+/**
+ * @deprecated Not used, RecordPresenter deprecated.
+ */
 public interface RecordView {
 
     void showRecordButton();

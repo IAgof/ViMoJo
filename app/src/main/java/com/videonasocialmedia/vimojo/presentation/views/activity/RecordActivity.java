@@ -69,6 +69,7 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 /**
  * RecordActivity manages a single live record.
+ * @deprecated Update and clean activity RecordCamera2Activity. Delete dependency with camera1 and avrecorder module
  */
 public class RecordActivity extends VimojoActivity implements RecordView {
     private final String LOG_TAG = getClass().getSimpleName();

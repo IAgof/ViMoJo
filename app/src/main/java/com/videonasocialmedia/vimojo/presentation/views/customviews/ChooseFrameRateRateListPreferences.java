@@ -30,6 +30,9 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+/**
+ * @deprecated Set Video frame rate not supported in camera2, TODO study how manage different fps
+ */
 public class ChooseFrameRateRateListPreferences extends ListPreference {
     private Context mContext;
     private CharSequence[] entries;

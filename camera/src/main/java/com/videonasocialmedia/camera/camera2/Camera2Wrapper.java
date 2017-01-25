@@ -106,6 +106,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   AutoFitTextureView textureView;
 
+  private VideoFormat videoFormat;
+
   // zoom, move to custom view
   public float finger_spacing = 0;
   public int zoom_level = 1;
@@ -151,12 +153,14 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private CameraManager manager;
 
   public Camera2Wrapper(Context context, Camera2WrapperListener listener, int cameraIdSelected,
-                        AutoFitTextureView textureView, String directorySaveVideos){
+                        AutoFitTextureView textureView, String directorySaveVideos, VideoFormat
+                        videoFormat){
     this.context = context;
     this.listener = listener;
     this.cameraIdSelected = cameraIdSelected;
     this.textureView = textureView;
     this.directorySaveVideos = directorySaveVideos;
+    this.videoFormat = videoFormat;
   }
 
   public void onResume() {
@@ -169,10 +173,18 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   public void onPause() {
-    if(isRecordingVideo)
-      stopRecordingVideo();
+    if(isRecordingVideo) {
+      stopRecordVideo();
+    }
     closeCamera();
     stopBackgroundThread();
+  }
+
+  public void stopRecordVideo() {
+    isRecordingVideo = false;
+    mediaRecorder.stop();
+    mediaRecorder.reset();
+    listener.videoRecorded(videoPath);
   }
 
   /**
@@ -262,9 +274,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       configureTransform(width, height);
       int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
 
-      // TODO:(alvaro.martinez) 25/01/17 Get VideoFormat from user prefrerences settings
       mediaRecorder = new MediaRecorderWrapper(new MediaRecorder(), cameraIdSelected,
-          sensorOrientation, rotation, getVideoFilePath(), new VideoFormat());
+          sensorOrientation, rotation, getVideoFilePath(), videoFormat);
      if (ActivityCompat.checkSelfPermission(context,
           android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
         // TODO: Consider calling
@@ -465,18 +476,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       e.printStackTrace();
     }
 
-  }
-
-  public void stopRecordingVideo() {
-    Log.d(LOG_TAG, "stopRecordingVideo");
-    isRecordingVideo = false;
-
-    // Stop recording
-    mediaRecorder.stop();
-    mediaRecorder.reset();
-
-    listener.videoRecorded(videoPath);
-   // startPreview();
   }
 
   public boolean isFlashSupported() {

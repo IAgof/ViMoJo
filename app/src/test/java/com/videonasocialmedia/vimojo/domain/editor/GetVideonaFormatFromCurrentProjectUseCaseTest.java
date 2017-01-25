@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -32,8 +32,8 @@ public class GetVideonaFormatFromCurrentProjectUseCaseTest {
   public void constructorSetsProjectInstance() {
     Project currentProject = getAProject();
 
-    GetVideonaFormatFromCurrentProjectUseCase useCase =
-        new GetVideonaFormatFromCurrentProjectUseCase();
+    GetVideoFormatFromCurrentProjectUseCase useCase =
+        new GetVideoFormatFromCurrentProjectUseCase();
 
     assertThat("Project field set after construction", useCase.project, is(currentProject));
   }
@@ -45,11 +45,11 @@ public class GetVideonaFormatFromCurrentProjectUseCaseTest {
   public void getVideonaFormatFromCurrentProjectReturnsDefaultFormatIfANullValueInProfile() {
     Project currentProject = getAProject();
     currentProject.getProfile().setQuality(null);
-    GetVideonaFormatFromCurrentProjectUseCase useCase =
-        new GetVideonaFormatFromCurrentProjectUseCase();
+    GetVideoFormatFromCurrentProjectUseCase useCase =
+        new GetVideoFormatFromCurrentProjectUseCase();
     VideonaFormat defaultVideonaFormat = new VideonaFormat();
 
-    VideonaFormat videonaFormat = useCase.getVideonaFormatFromCurrentProject();
+    VideonaFormat videonaFormat = useCase.getVideoTranscodedFormatFromCurrentProject();
 
     assertThat(videonaFormat.getVideoBitrate(), is(defaultVideonaFormat.getVideoBitrate()));
     assertThat(videonaFormat.getVideoHeight(), is(defaultVideonaFormat.getVideoHeight()));
@@ -59,10 +59,10 @@ public class GetVideonaFormatFromCurrentProjectUseCaseTest {
   @Test
   public void getVideonaFormatFromCurrentProjectReturnsFormatWithProfileValues() {
     Project currentProject = getAProject();
-    GetVideonaFormatFromCurrentProjectUseCase useCase =
-        new GetVideonaFormatFromCurrentProjectUseCase();
+    GetVideoFormatFromCurrentProjectUseCase useCase =
+        new GetVideoFormatFromCurrentProjectUseCase();
 
-    VideonaFormat videonaFormat = useCase.getVideonaFormatFromCurrentProject();
+    VideonaFormat videonaFormat = useCase.getVideoTranscodedFormatFromCurrentProject();
 
     assertThat("videoBitRate", 10 * 1000 * 1000, is(videonaFormat.getVideoBitrate()));
     assertThat("videoWidth", 1280, is(videonaFormat.getVideoWidth()));

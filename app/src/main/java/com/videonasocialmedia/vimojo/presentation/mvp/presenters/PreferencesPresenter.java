@@ -39,7 +39,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private PreferenceCategory cameraSettingsPref;
     private ListPreference resolutionPref;
     private ListPreference qualityPref;
-    private ListPreference frameRatePref;
     private Preference emailPref;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
@@ -56,14 +55,13 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      */
     public PreferencesPresenter(PreferencesView preferencesView, PreferenceCategory cameraSettingsPref,
                                 ListPreference resolutionPref, ListPreference qualityPref,
-                                ListPreference frameRatePref, Preference emailPref, Context context,
+                                Preference emailPref, Context context,
                                 SharedPreferences sharedPreferences) {
 
         this.cameraSettingsPref = cameraSettingsPref;
         this.preferencesView = preferencesView;
         this.resolutionPref = resolutionPref;
         this.qualityPref = qualityPref;
-        this.frameRatePref = frameRatePref;
         this.emailPref = emailPref;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
@@ -96,7 +94,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         checkCameraSettingsEnabled();
         checkAvailableResolution();
         checkAvailableQuality();
-        checkAvailableFrameRate();
     }
 
     private void checkCameraSettingsEnabled() {
@@ -254,54 +251,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         }
     }
 
-    private void checkAvailableFrameRate(){
-        ArrayList<String> frameRateNames = new ArrayList<>();
-        ArrayList<String> frameRateValues = new ArrayList<>();
-        String defaultFrameRate = null;
-        String key = ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE; //"list_preference_quality";
-
-        if(!isPreferenceAvailable){
-            frameRatePref.setTitle(R.string.frame_rate);
-            frameRatePref.setSummary(R.string.preference_not_available);
-            return;
-        }
-
-        if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false)) {
-            frameRateNames.add(context.getResources().getString(R.string.good_frame_rate_name));
-            frameRateValues.add(context.getResources().getString(R.string.good_frame_rate_value));
-            if (defaultFrameRate == null) {
-                defaultFrameRate = context.getResources().getString(R.string.good_frame_rate_name);
-            }
-        }
-
-        if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false)) {
-            frameRateNames.add(context.getResources().getString(R.string.low_frame_rate_name));
-            frameRateValues.add(context.getResources().getString(R.string.low_frame_rate_value));
-            if (defaultFrameRate == null) {
-                defaultFrameRate = context.getResources().getString(R.string.low_frame_rate_name);
-            }
-        }
-
-        if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, false)) {
-            frameRateNames.add(context.getResources().getString(R.string.high_frame_rate_name));
-            frameRateValues.add(context.getResources().getString(R.string.high_frame_rate_value));
-            if (defaultFrameRate == null) {
-                defaultFrameRate = context.getResources().getString(R.string.high_frame_rate_name);
-            }
-        }
-
-        if (frameRateNames.size() > 0 && defaultFrameRate != null) {
-            preferencesView.setAvailablePreferences(frameRatePref, frameRateNames, frameRateValues);
-            if (updateDefaultPreference(key, frameRateNames)) {
-                preferencesView.setDefaultPreference(frameRatePref, defaultFrameRate, key);
-            } else {
-                preferencesView.setPreference(frameRatePref, sharedPreferences.getString(key, ""));
-            }
-        } else {
-            frameRateNames.add(context.getResources().getString(R.string.good_frame_rate_name));
-            preferencesView.setAvailablePreferences(frameRatePref, frameRateNames, frameRateValues);
-        }
-    }
 
     /**
      * Checks if the actual default value in shared preferences is supported by the device

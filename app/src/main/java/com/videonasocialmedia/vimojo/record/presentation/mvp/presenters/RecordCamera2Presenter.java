@@ -24,9 +24,11 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
+import com.videonasocialmedia.camera.utils.VideoFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
@@ -98,11 +100,21 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     if(isFrontCameraSelected)
       cameraId = 1;
     // TODO:(alvaro.martinez) 25/01/17 Support camera1, api <21 or combine both. Make Camera1Wrapper
-    camera = new Camera2Wrapper(context, this, cameraId, textureView, Constants.PATH_APP_MASTERS);
+    camera = new Camera2Wrapper(context, this, cameraId, textureView, Constants.PATH_APP_MASTERS,
+        getVideoFormatFromProject());
     this.externalIntent = externalIntent;
 
     addVideoToProjectUseCase = new AddVideoToProjectUseCase(new ProjectRealmRepository());
     initViews(recordView, isPrincipalViewSelected, isRightControlsViewSelected);
+  }
+
+  private VideoFormat getVideoFormatFromProject() {
+
+    GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase =
+        new GetVideoFormatFromCurrentProjectUseCase();
+
+    return  getVideoFormatFromCurrentProjectUseCase.getVideoRecordedFormatFromCurrentProjectUseCase();
+
   }
 
   private void initViews(RecordCamera2View recordView, boolean isPrincipalViewSelected, boolean
@@ -219,7 +231,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   public void stopRecord() {
-    camera.stopRecordingVideo();
+    camera.stopRecordVideo();
+    restartPreview();
   }
 
 
@@ -338,9 +351,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
       recordView.showChangeCamera();
       recordView.showRecordedVideoThumb(path);
       recordView.showVideosRecordedNumber(++recordedVideosNumber);
-      camera.onPause();
-      camera.onResume();
     }
+  }
+
+  public void restartPreview(){
+    camera.onPause();
+    camera.onResume();
   }
 
   public void setFlashOff() {
@@ -349,14 +365,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   public void toggleFlash(boolean isSelected) {
-   /* if(!isFlashActivated) {
-      camera.setFlashOn();
-      isFlashActivated = true;
-    } else {
-      camera.setFlashOff();
-      isFlashActivated = false;
-    }
-    recordView.setFlash(isFlashActivated);*/
+
     if(isSelected){
       camera.setFlashOff();
     } else {
@@ -388,8 +397,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   public void onTouchFocus(MotionEvent event) {
     int x = Math.round(event.getX());
     int y = Math.round(event.getY());
-    //camera.setFocus(calculateBounds(x, y));
-    camera.setFocus(calculateBounds(x, y), 100);
+    //camera.setFocus(calculateBounds(x, y), 100);
   }
 
   private Rect calculateBounds(int x, int y) {

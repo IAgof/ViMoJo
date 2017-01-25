@@ -9,7 +9,7 @@ import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.ApplyAudioFadeInFadeOutToVideo;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchExportTempBackgroundUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -37,7 +37,7 @@ public class ExportTempBackgroundService extends Service
     public static final int TIME_FADE_IN_MS = 2000;
     public static final int TIME_FADE_OUT_MS = 500;
 
-    GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
+    GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
     private VideonaFormat videoFormat;
     @Inject VideoRepository videoRepository;
     private String tempVideoPathPreviewFadeInFadeOut;
@@ -48,8 +48,8 @@ public class ExportTempBackgroundService extends Service
 
     public ExportTempBackgroundService() {
         getExporterServiceComponent().inject(this);
-        getVideonaFormatFromCurrentProjectUseCase = new GetVideonaFormatFromCurrentProjectUseCase();
-        videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
+        getVideoFormatFromCurrentProjectUseCase = new GetVideoFormatFromCurrentProjectUseCase();
+        videoFormat = getVideoFormatFromCurrentProjectUseCase.getVideoTranscodedFormatFromCurrentProject();
     }
 
     private ExporterServiceComponent getExporterServiceComponent() {

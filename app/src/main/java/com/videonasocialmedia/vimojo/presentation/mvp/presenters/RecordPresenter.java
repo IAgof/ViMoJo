@@ -56,6 +56,9 @@ import de.greenrobot.event.EventBus;
  * @author Juan Javier Cabanas
  */
 
+/**
+ * @deprecated RecordPresenter use camera1, avrecorder. Not used, asynchronous video recorded.
+ */
 public class RecordPresenter {
 
     /**

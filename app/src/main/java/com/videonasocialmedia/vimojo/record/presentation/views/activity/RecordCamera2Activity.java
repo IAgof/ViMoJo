@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
@@ -556,9 +557,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void showMessage(int stringResourceId) {
-    //// TODO:(alvaro.martinez) 18/01/17 test snackBar, toast, aler dialog
-    /*Snackbar snackbar = Snackbar.make(chronometerAndRecPointView, stringResourceId, Snackbar.LENGTH_SHORT);
-    snackbar.show();*/
+    //// TODO:(alvaro.martinez) 18/01/17 test snackBar, toast, alert dialog ...
+    Snackbar snackbar = Snackbar.make(chronometerAndRecPointView, stringResourceId, Snackbar.LENGTH_SHORT);
+    snackbar.show();
   }
 
 

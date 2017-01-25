@@ -43,7 +43,6 @@ public class SettingsFragment extends PreferenceFragment implements
     protected Preference emailPref;
     protected ListPreference resolutionPref;
     protected ListPreference qualityPref;
-    protected ListPreference frameRatePref;
     protected Preference resolutionPrefNotAvailable;
     protected Preference qualityPrefNotAvailable;
     protected Preference frameRatePrefNotAvailable;
@@ -60,7 +59,7 @@ public class SettingsFragment extends PreferenceFragment implements
         context = VimojoApplication.getAppContext();
         initPreferences();
         preferencesPresenter = new PreferencesPresenter(this,cameraSettingsPref, resolutionPref,
-                qualityPref, frameRatePref, emailPref, context, sharedPreferences);
+                qualityPref, emailPref, context, sharedPreferences);
         mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_TOKEN);
     }
 
@@ -92,7 +91,6 @@ public class SettingsFragment extends PreferenceFragment implements
 
         resolutionPref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION);
         qualityPref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY);
-        frameRatePref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE);
     }
 
 
