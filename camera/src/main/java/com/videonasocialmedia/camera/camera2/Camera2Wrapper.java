@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.record.presentation.views.camera;
+package com.videonasocialmedia.camera.camera2;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,20 +24,17 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Size;
-import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
-import android.view.View;
 import android.widget.Toast;
 
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
-import com.videonasocialmedia.vimojo.record.presentation.views.customview.AutoFitTextureView;
-import com.videonasocialmedia.vimojo.record.presentation.views.recorder.MediaRecorderWrapper;
-import com.videonasocialmedia.vimojo.record.presentation.views.util.RecordCamera2Utils;
-import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.camera.customview.AutoFitTextureView;
+import com.videonasocialmedia.camera.recorder.MediaRecorderWrapper;
+import com.videonasocialmedia.camera.utils.Camera2Utils;
+import com.videonasocialmedia.camera.utils.VideoFormat;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,6 +54,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   private final Context context;
   private final Camera2WrapperListener listener;
+  private final String directorySaveVideos;
 
   /**
    * A refernce to the opened {@link android.hardware.camera2.CameraDevice}.
@@ -148,15 +146,17 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   };
   private int cameraIdSelected;
   private CameraCharacteristics characteristics;
+
   private String videoPath;
   private CameraManager manager;
 
   public Camera2Wrapper(Context context, Camera2WrapperListener listener, int cameraIdSelected,
-                        AutoFitTextureView textureView){
+                        AutoFitTextureView textureView, String directorySaveVideos){
     this.context = context;
+    this.listener = listener;
     this.cameraIdSelected = cameraIdSelected;
     this.textureView = textureView;
-    this.listener = listener;
+    this.directorySaveVideos = directorySaveVideos;
   }
 
   public void onResume() {
@@ -229,7 +229,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     if (null == activity || activity.isFinishing()) {
       return;
     }
-    manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
+    manager = (CameraManager) activity.getSystemService(context.CAMERA_SERVICE);
     try {
       Log.d(LOG_TAG, "tryAcquire");
       if (!cameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
@@ -245,8 +245,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
           .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
       sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
 
-      videoSize = RecordCamera2Utils.chooseVideoSize(map.getOutputSizes(MediaRecorder.class));
-      previewSize = RecordCamera2Utils.chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
+      videoSize = Camera2Utils.chooseVideoSize(map.getOutputSizes(MediaRecorder.class));
+      previewSize = Camera2Utils.chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
           width, height, videoSize);
 
       Log.d(LOG_TAG, "VideoSize " + videoSize.getWidth() + " x " + videoSize.getHeight());
@@ -262,9 +262,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       configureTransform(width, height);
       int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
 
+      // TODO:(alvaro.martinez) 25/01/17 Get VideoFormat from user prefrerences settings
       mediaRecorder = new MediaRecorderWrapper(new MediaRecorder(), cameraIdSelected,
-          sensorOrientation, rotation, getVideoFilePath());
-     if (ActivityCompat.checkSelfPermission(VimojoApplication.getAppContext(),
+          sensorOrientation, rotation, getVideoFilePath(), new VideoFormat());
+     if (ActivityCompat.checkSelfPermission(context,
           android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
         // TODO: Consider calling
         //    ActivityCompat#requestPermissions
@@ -502,7 +503,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   private String getVideoFilePath() {
     // TODO:(alvaro.martinez) 19/01/17 Get this path from Project ¿?
-    videoPath = Constants.PATH_APP_MASTERS + "/"
+    videoPath = directorySaveVideos + File.separator
         + System.currentTimeMillis() + ".mp4";
 
     return videoPath;
@@ -596,5 +597,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     } catch (CameraAccessException e) {
       e.printStackTrace();
     }
+  }
+
+  public String getVideoPath() {
+    return videoPath;
   }
 }

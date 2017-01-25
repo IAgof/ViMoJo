@@ -1,10 +1,10 @@
-package com.videonasocialmedia.vimojo.record.presentation.views.recorder;
+package com.videonasocialmedia.camera.recorder;
 
 import android.media.MediaRecorder;
 import android.util.SparseIntArray;
 import android.view.Surface;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.camera.utils.VideoFormat;
 import java.io.IOException;
 
 /**
@@ -15,9 +15,7 @@ public class MediaRecorderWrapper {
 
   private final String videoPath;
   private final int cameraIdSelected;
-  /**
-   * MediaRecorder
-   */
+
   private MediaRecorder mediaRecorder;
 
   private String nextVideoAbsolutePath;
@@ -25,7 +23,7 @@ public class MediaRecorderWrapper {
   private int rotation;
   private int sensorOrientation;
 
-  Project currentProject;
+  VideoFormat videoFormat;
 
   private static final int SENSOR_ORIENTATION_DEFAULT_DEGREES = 90;
   private static final int SENSOR_ORIENTATION_INVERSE_DEGREES = 270;
@@ -47,14 +45,15 @@ public class MediaRecorderWrapper {
   }
 
   public MediaRecorderWrapper(MediaRecorder mediaRecorder, int cameraIdSelected,
-                              int sensorOrientation, int rotation, String videoPath){
+                              int sensorOrientation, int rotation, String videoPath, VideoFormat
+                              videoFormat){
 
     this.mediaRecorder = mediaRecorder;
     this.cameraIdSelected = cameraIdSelected;
     this.sensorOrientation = sensorOrientation;
     this.rotation = rotation;
     this.videoPath = videoPath;
-    currentProject = Project.getInstance(null,null,null);
+    this.videoFormat = videoFormat;
   }
 
   public void setUpMediaRecorder() throws IOException {
@@ -66,18 +65,17 @@ public class MediaRecorderWrapper {
       nextVideoAbsolutePath = videoPath;
     }
     mediaRecorder.setOutputFile(nextVideoAbsolutePath);
-    mediaRecorder.setVideoEncodingBitRate(currentProject.getProfile().getVideoQuality()
-        .getVideoBitRate());
-    mediaRecorder.setVideoFrameRate(currentProject.getProfile().getVideoFrameRate().getFrameRate());
-    mediaRecorder.setCaptureRate(currentProject.getProfile().getVideoFrameRate().getFrameRate());
-    mediaRecorder.setVideoSize(currentProject.getProfile().getVideoResolution().getWidth(),
-        currentProject.getProfile().getVideoResolution().getHeight());
+    mediaRecorder.setVideoEncodingBitRate(videoFormat.getVideoBitrate());
+    // TODO:(alvaro.martinez) 25/01/17 Check and support different bit rate
+    mediaRecorder.setVideoFrameRate(30);
+    mediaRecorder.setCaptureRate(30);
+    mediaRecorder.setVideoSize(videoFormat.getVideoWidth(), videoFormat.getVideoHeight());
     mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
     mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
     // TODO:(alvaro.martinez) 19/01/17 Update Profile, get Default num_channels, SamplingRate, BitRate
-    mediaRecorder.setAudioChannels(1);
-    mediaRecorder.setAudioSamplingRate(48000);
-    mediaRecorder.setAudioEncodingBitRate(192000);
+    mediaRecorder.setAudioChannels(videoFormat.getAudioChannels());
+    mediaRecorder.setAudioSamplingRate(videoFormat.getAudioSamplingRate());
+    mediaRecorder.setAudioEncodingBitRate(videoFormat.getAudioBitrate());
     if(cameraIdSelected == 1)
       sensorOrientation = (sensorOrientation - 180 + 360) % 360;
     switch (sensorOrientation) {

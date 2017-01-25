@@ -1,14 +1,11 @@
-package com.videonasocialmedia.vimojo.record.presentation.views.customview;
+package com.videonasocialmedia.camera.customview;
 
 /**
  * Created by alvaro on 16/01/17.
  */
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.Surface;
 import android.view.TextureView;
 
 /**

@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.record.presentation.views.camera;
+package com.videonasocialmedia.camera.camera2;
 
 /**
  * Created by alvaro on 19/01/17.

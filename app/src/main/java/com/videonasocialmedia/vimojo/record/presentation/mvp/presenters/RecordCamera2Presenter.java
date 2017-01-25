@@ -21,14 +21,14 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
+import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
+import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
-import com.videonasocialmedia.vimojo.record.presentation.views.camera.Camera2Wrapper;
-import com.videonasocialmedia.vimojo.record.presentation.views.camera.Camera2WrapperListener;
-import com.videonasocialmedia.vimojo.record.presentation.views.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -67,7 +67,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 
   private boolean externalIntent;
 
-  private Camera2Wrapper camera2Wrapper;
+  private Camera2Wrapper camera;
 
  /* @Inject
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
@@ -97,7 +97,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     int cameraId = 0;
     if(isFrontCameraSelected)
       cameraId = 1;
-    camera2Wrapper = new Camera2Wrapper(context, this, cameraId, textureView);
+    // TODO:(alvaro.martinez) 25/01/17 Support camera1, api <21 or combine both. Make Camera1Wrapper
+    camera = new Camera2Wrapper(context, this, cameraId, textureView, Constants.PATH_APP_MASTERS);
     this.externalIntent = externalIntent;
 
     addVideoToProjectUseCase = new AddVideoToProjectUseCase(new ProjectRealmRepository());
@@ -157,12 +158,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     if (!externalIntent)
       showThumbAndNumber();
     Log.d(LOG_TAG, "resume presenter");
-    camera2Wrapper.onResume();
+    camera.onResume();
   }
 
 
   public void onPause() {
-    camera2Wrapper.onPause();
+    camera.onPause();
   }
 
   private void showThumbAndNumber() {
@@ -203,7 +204,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 
   public void startRecord() {
 
-    camera2Wrapper.startRecordingVideo();
+    camera.startRecordingVideo();
 
     //mixpanel.timeEvent(AnalyticsConstants.VIDEO_RECORDED);
    // trackUserInteracted(AnalyticsConstants.RECORD, AnalyticsConstants.START);
@@ -218,7 +219,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   public void stopRecord() {
-    camera2Wrapper.stopRecordingVideo();
+    camera.stopRecordingVideo();
   }
 
 
@@ -315,7 +316,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   // TODO:(alvaro.martinez) 18/01/17 Check flash support, hardwareCameraRepository?
   @Override
   public void setFlashSupport() {
-    if (camera2Wrapper.isFlashSupported()) {
+    if (camera.isFlashSupported()) {
       recordView.setFlashSupported(true);
       Log.d(LOG_TAG, "checkSupportFlash flash Supported camera");
     } else {
@@ -337,35 +338,35 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
       recordView.showChangeCamera();
       recordView.showRecordedVideoThumb(path);
       recordView.showVideosRecordedNumber(++recordedVideosNumber);
-      camera2Wrapper.onPause();
-      camera2Wrapper.onResume();
+      camera.onPause();
+      camera.onResume();
     }
   }
 
   public void setFlashOff() {
-    camera2Wrapper.setFlashOff();
+    camera.setFlashOff();
     recordView.setFlash(false);
   }
 
   public void toggleFlash(boolean isSelected) {
    /* if(!isFlashActivated) {
-      camera2Wrapper.setFlashOn();
+      camera.setFlashOn();
       isFlashActivated = true;
     } else {
-      camera2Wrapper.setFlashOff();
+      camera.setFlashOff();
       isFlashActivated = false;
     }
     recordView.setFlash(isFlashActivated);*/
     if(isSelected){
-      camera2Wrapper.setFlashOff();
+      camera.setFlashOff();
     } else {
-      camera2Wrapper.setFlashOn();
+      camera.setFlashOn();
     }
     recordView.setFlash(!isSelected);
   }
 
   public void onTouch(MotionEvent event) {
-    camera2Wrapper.onTouch(event);
+    camera.onTouch(event);
   }
 
   public void showRightControls() {
@@ -387,8 +388,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   public void onTouchFocus(MotionEvent event) {
     int x = Math.round(event.getX());
     int y = Math.round(event.getY());
-    //camera2Wrapper.setFocus(calculateBounds(x, y));
-    camera2Wrapper.setFocus(calculateBounds(x, y), 100);
+    //camera.setFocus(calculateBounds(x, y));
+    camera.setFocus(calculateBounds(x, y), 100);
   }
 
   private Rect calculateBounds(int x, int y) {

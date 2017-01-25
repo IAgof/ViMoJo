@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.record.presentation.views.util;
+package com.videonasocialmedia.camera.utils;
 
 import android.util.Log;
 import android.util.Size;
@@ -13,9 +13,9 @@ import java.util.List;
  * Created by alvaro on 17/01/17.
  */
 
-public class RecordCamera2Utils {
+public class Camera2Utils {
 
-  private static final String TAG = "RecordCamera2Utils";
+  private static final String TAG = "Camera2Utils";
 
   /**
    * In this sample, we choose a video size with 3x4 aspect ratio. Also, we don't use sizes
