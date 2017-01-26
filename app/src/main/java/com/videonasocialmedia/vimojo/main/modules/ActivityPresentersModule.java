@@ -3,12 +3,14 @@ package com.videonasocialmedia.vimojo.main.modules;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
+import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.domain.ClearProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.internals.di.PerActivity;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePreviewPresenter;
@@ -24,6 +26,8 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity
 import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
+import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
+import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
@@ -48,6 +52,10 @@ import dagger.Provides;
 @Module
 public class ActivityPresentersModule {
   private final VimojoActivity activity;
+  private boolean isRightControlsViewSelected;
+  private boolean isPrincipalViewSelected;
+  private boolean isFrontCameraSelected;
+  private AutoFitTextureView textureView;
   private GLCameraView cameraView = null;
   private boolean externalIntent;
 
@@ -60,6 +68,19 @@ public class ActivityPresentersModule {
     this.activity = activity;
     this.externalIntent = externalIntent;
     this.cameraView = cameraView;
+  }
+
+  public ActivityPresentersModule(RecordCamera2Activity activity, boolean isFrontCameraSelected,
+                                  boolean isPrincipalViewSelected,
+                                  boolean isRightControlsViewSelected,
+                                  AutoFitTextureView textureView,
+                                  boolean externalIntent) {
+    this.activity = activity;
+    this.isFrontCameraSelected = isFrontCameraSelected;
+    this.isPrincipalViewSelected = isPrincipalViewSelected;
+    this.isRightControlsViewSelected = isRightControlsViewSelected;
+    this.textureView = textureView;
+    this.externalIntent = externalIntent;
   }
 
   @Provides @PerActivity
@@ -105,6 +126,16 @@ public class ActivityPresentersModule {
                                          AddVideoToProjectUseCase addVideoToProjectUseCase) {
     return new RecordPresenter(activity, (RecordActivity) activity, cameraView, sharedPreferences,
             externalIntent, addVideoToProjectUseCase);
+  }
+
+  @Provides @PerActivity
+  RecordCamera2Presenter provideRecordCamera2Presenter(GetVideoFormatFromCurrentProjectUseCase
+                                                           getVideoFormatFromCurrentProjectUseCase, AddVideoToProjectUseCase
+                                                           addVideoToProjectUseCase){
+
+    return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity,
+        isFrontCameraSelected, isPrincipalViewSelected, isRightControlsViewSelected, textureView,
+        externalIntent, getVideoFormatFromCurrentProjectUseCase, addVideoToProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -174,5 +205,10 @@ public class ActivityPresentersModule {
   @Provides
   GetMusicFromProjectUseCase provideMusicRetriever() {
     return new GetMusicFromProjectUseCase();
+  }
+
+  @Provides
+  GetVideoFormatFromCurrentProjectUseCase provideVideoFormatFromCurrentProject(){
+    return new GetVideoFormatFromCurrentProjectUseCase();
   }
 }

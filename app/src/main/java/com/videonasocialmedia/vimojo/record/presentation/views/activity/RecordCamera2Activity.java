@@ -24,6 +24,7 @@ import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
@@ -34,6 +35,8 @@ import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -49,6 +52,9 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 public class RecordCamera2Activity extends VimojoActivity implements RecordCamera2View {
 
   private final String LOG_TAG = getClass().getSimpleName();
+
+  @Inject
+  RecordCamera2Presenter presenter;
 
   @Bind(R.id.button_settings_camera)
   ImageButton settingsCameraButton;
@@ -101,8 +107,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Bind(R.id.textureView)
   AutoFitTextureView textureView;
 
-  RecordCamera2Presenter presenter;
-
   /**
    * if for result
    **/
@@ -124,6 +128,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private final int RESOLUTION_SELECTED_HD1080 = 1080;
   private final int RESOLUTION_SELECTED_HD4K = 2160;
   private OrientationHelper orientationHelper;
+  private boolean isPrincipalViewsSelected = false;
+  private boolean isControlsViewSelected = false;
 
 
   @Override
@@ -141,15 +147,24 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     initOrientationHelper();
 
     isFrontCameraSelected = getIntent().getBooleanExtra(EXTRA_FRONT_CAMERA_SELECTED, false);
-    boolean isPrincipalViewsSelected = getIntent().getBooleanExtra(UI_PRINCIPAL_VIEW, false);
+    isPrincipalViewsSelected = getIntent().getBooleanExtra(UI_PRINCIPAL_VIEW, false);
     int getControlsViewSelected = getIntent().getIntExtra(UI_RIGHT_CONTROLS_VIEW, View.INVISIBLE);
-    boolean isControlsViewSelected = false;
+    isControlsViewSelected = false;
     if(getControlsViewSelected == View.VISIBLE){
       isControlsViewSelected = true;
     }
+
+    this.getActivityPresentersComponent().inject(this);
+
     // TODO:(alvaro.martinez) 18/01/17 Inject with Dagger presenter
-    presenter = new RecordCamera2Presenter(this, this, isFrontCameraSelected,
-        isPrincipalViewsSelected, isControlsViewSelected, textureView, externalIntent);
+  /*  presenter = new RecordCamera2Presenter(this, this, isFrontCameraSelected,
+        isPrincipalViewsSelected, isControlsViewSelected, textureView, externalIntent);*/
+  }
+
+  @Override
+  public ActivityPresentersModule getActivityPresentersModule() {
+    return new ActivityPresentersModule(this, isFrontCameraSelected, isPrincipalViewsSelected,
+        isControlsViewSelected, textureView, externalIntent);
   }
 
   private void keepScreenOn() {
