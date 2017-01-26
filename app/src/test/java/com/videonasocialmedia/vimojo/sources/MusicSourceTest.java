@@ -30,14 +30,9 @@ import static org.hamcrest.Matchers.notNullValue;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Environment.class)
 public class MusicSourceTest {
-
   private File mockedStorageDir;
-
-  @Mock
-  Project mockedProject;
-
-  @Mock
-  Context mockedContext;
+  @Mock Project mockedProject;
+  @Mock Context mockedContext;
 
   @Before
   public void setupTestEnvironment() {
@@ -50,7 +45,7 @@ public class MusicSourceTest {
 
   @Test
   public void testPopulateLocalMusicSetsMusicList() {
-    MusicSource musicSource = new MusicSource();
+    MusicSource musicSource = new MusicSource(mockedContext);
 
     musicSource.populateLocalMusic();
 
@@ -59,7 +54,7 @@ public class MusicSourceTest {
 
   @Test
   public void testGetMusicByTitleReturnsFoundMusic() {
-    MusicSource musicSource = new MusicSource();
+    MusicSource musicSource = new MusicSource(mockedContext);
     musicSource = Mockito.spy(musicSource);
     musicSource.populateLocalMusic();
     assert musicSource.localMusic.size() > 0;
@@ -74,7 +69,7 @@ public class MusicSourceTest {
 
   @Test
   public void getMusicByTitleReturnsAudioMixedIfTitleIsAudioMixedTitle() {
-    MusicSource musicSource = new MusicSource();
+    MusicSource musicSource = new MusicSource(mockedContext);
     musicSource = Mockito.spy(musicSource);
     musicSource.populateLocalMusic();
     String mixedMusicPath = "somePath" + File.separator +

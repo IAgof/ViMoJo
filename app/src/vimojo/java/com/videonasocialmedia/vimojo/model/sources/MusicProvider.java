@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +13,10 @@ import java.util.List;
  */
 
 public class MusicProvider {
+  Context context;
 
-  // TODO:(alvaro.martinez) 20/01/17 What can we do with this context?  needed to obtain Strings data title
-  Context context = VimojoApplication.getAppContext();
-
-  public MusicProvider(){
+  public MusicProvider(Context context) {
+    this.context = context;
   }
 
   public List<Music> getMusicAppsInstalled() {

@@ -35,7 +35,6 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceA
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
-import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.ArrayList;

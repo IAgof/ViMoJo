@@ -14,16 +14,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
@@ -37,6 +33,8 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -47,13 +45,14 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         SoundRecyclerViewClickListener, VideonaPlayer.VideonaPlayerListener {
     private static final String MUSIC_LIST_PROJECT_POSITION = "music_list_project_position";
 
+    @Inject MusicListPresenter presenter;
+
     @Bind(R.id.music_list)
     RecyclerView soundList;
+
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-
     private SoundListAdapter soundAdapter;
-    private MusicListPresenter presenter;
     private BroadcastReceiver exportReceiver;
     private int currentProjectPosition;
 
@@ -66,7 +65,8 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         createExportReceiver();
         restoreState(savedInstanceState);
         videonaPlayer.setListener(this);
-        presenter = new MusicListPresenter(this);
+        getActivityPresentersComponent().inject(this);
+//        presenter = new MusicListPresenter(this, this);
         initVideoListRecycler();
     }
 

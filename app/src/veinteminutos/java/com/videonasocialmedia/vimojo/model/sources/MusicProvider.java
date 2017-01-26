@@ -14,16 +14,14 @@ import java.util.List;
  */
 
 public class MusicProvider {
+  private Context context;
 
-  Context context = VimojoApplication.getAppContext();
-
-  public MusicProvider(){
+  public MusicProvider(Context context) {
+    this.context = context;
   }
 
   public List<Music> getMusicAppsInstalled() {
-
     List<Music> musicList = new ArrayList<>();
-
     musicList.add(new Music(R.drawable.ic_going_higher, "Going higher", R.raw.goinghigher,
         R.color.colorPrimary,
         context.getString(R.string.activity_music_title_going_higher), "04:04"));
@@ -36,8 +34,6 @@ public class MusicProvider {
     musicList.add(new Music(R.drawable.ic_acoustic_breeze, "Acoustic Breeze",
         R.raw.acousticbreeze, R.color.colorPrimary,
         context.getString(R.string.activity_music_title_acoustic_breeze), "02:37"));
-
     return  musicList;
-
   }
 }

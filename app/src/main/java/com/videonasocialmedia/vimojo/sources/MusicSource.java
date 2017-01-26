@@ -1,7 +1,8 @@
 package com.videonasocialmedia.vimojo.sources;
 
+import android.content.Context;
+
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 import com.videonasocialmedia.vimojo.model.sources.MusicProvider;
@@ -14,8 +15,12 @@ import java.util.List;
  *
  */
 public class MusicSource {
-
     protected List<Music> localMusic = new ArrayList();
+    private Context context;
+
+    public MusicSource(Context context) {
+        this.context = context;
+    }
 
     public List<Music> retrieveLocalMusic() {
         if (localMusic.size() == 0)
@@ -34,7 +39,7 @@ public class MusicSource {
 
 
     protected void populateLocalMusic() {
-        for(Music music: new MusicProvider().getMusicAppsInstalled()){
+        for (Music music: new MusicProvider(context).getMusicAppsInstalled()) {
             localMusic.add(music);
         }
     }

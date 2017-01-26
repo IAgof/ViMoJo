@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
+import android.content.Context;
+
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
@@ -20,7 +22,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-
 /**
  *
  */
@@ -34,16 +35,19 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     public UserEventTracker userEventTracker;
     public Project currentProject;
     private Music musicSelected;
+    private Context context;
 
     @Inject
     public MusicDetailPresenter(MusicDetailView musicDetailView,
                                 UserEventTracker userEventTracker,
                                 AddMusicToProjectUseCase addMusicToProjectUseCase,
-                                RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {
+                                RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase,
+                                Context context) {
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.addMusicToProjectUseCase = addMusicToProjectUseCase;
         this.removeMusicFromProjectUseCase = removeMusicFromProjectUseCase;
+        this.context = context;
 
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
@@ -70,7 +74,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     private Music retrieveLocalMusic(String musicPath) {
         Music result = null;
-        GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase();
+        GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase(context);
         List<Music> musicList = getMusicListUseCase.getAppMusic();
         for (Music music : musicList) {
             if (musicPath.compareTo(music.getMediaPath()) == 0) {
