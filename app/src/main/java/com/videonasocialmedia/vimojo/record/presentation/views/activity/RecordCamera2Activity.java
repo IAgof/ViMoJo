@@ -579,12 +579,14 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         rotateDeviceHint.setRotation(270);
         rotateDeviceHint.setRotationX(0);
         rotateDeviceHint.setVisibility(View.VISIBLE);
-        recordButton.setEnabled(false);
+        if(!isRecording)
+          recordButton.setEnabled(false);
       } else if (orientation > 165 && orientation < 195) {
         rotateDeviceHint.setRotation(-270);
         rotateDeviceHint.setRotationX(180);
         rotateDeviceHint.setVisibility(View.VISIBLE);
-        recordButton.setEnabled(false);
+        if(!isRecording)
+          recordButton.setEnabled(false);
       } else {
         rotateDeviceHint.setVisibility(View.GONE);
         recordButton.setEnabled(true);
