@@ -20,12 +20,18 @@ import javax.inject.Inject;
 
 public class CheckIfVideoFilesExistUseCase implements OnVideosRetrieved,
         OnRemoveMediaFinishedListener {
+    GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+    RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
 
-    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    @Inject RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
+    @Inject
+    public CheckIfVideoFilesExistUseCase(
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+        RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase) {
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
+    }
 
     public void check() {
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 

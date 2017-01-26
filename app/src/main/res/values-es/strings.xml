@@ -32,6 +32,14 @@
     <string name="credentialFTPNull">Conexión a FTP no establecida. Por favor, configure los datos FTP en ajustes.</string>
 
     <!-- Editor Activity -->
+    <string name="new_project">New project</string>
+    <string name="clear_project">Clean project</string>
+    <string name="other_options">Otras opciones</string>
+    <string name="record">Grabar</string>
+    <string name="gallery">Galería</string>
+
+
+    <!-- Edit Activity -->
     <string name="edit_title_name">Sala de edición</string>
     <string name="edit_text_fx">Trabajando en los efectos</string>
     <string name="edit_text_look">Trabajando en la magia</string>
@@ -52,6 +60,8 @@
     <string name="videos_removed">Videos borrados del proyecto, grabe o añada nuevos videos</string>
     <string name="error">error</string>
     <string name="editTextActionLabel">Hecho</string>
+    <string name="titleVideosNotFound">Videos no encontrados en el teléfono</string>
+    <string name="messageVideosNotFound">Algunos vídeos no serán cargados en el proyecto</string>
 
     <!--VideoEditText activity-->
     <string name="error_videoEdit">El número máximo de líneas a dibujar son dos</string>
@@ -59,6 +69,7 @@
 
 
     <!-- Gallery activity -->
+    <string name="galleryProjectActivityTitle">Proyectos</string>
     <string name="confirmDeleteTitle">Eliminar</string>
     <string name="confirmDeleteTitle1">vídeo</string>
     <string name="confirmDeleteTitle2">vídeos</string>
@@ -72,6 +83,24 @@
     <string name="dialog_accept_delete_clip">Sí</string>
     <string name="dialog_cancel_delete_clip">No</string>
     <string name="error_video_format">Error, formato de vídeo diferente al del proyecto </string>
+
+    <!-- Gallery projects activity -->
+    <string name="dialog_project_remove_message">Borrar proyecto</string>
+    <string name="dialog_project_remove_accept">Sí</string>
+    <string name="dialog_project_remove_cancel">No</string>
+
+    <!-- Detail project activity -->
+    <string name="detail_project_hint_title">Introduzca nombre</string>
+    <string name="detail_project_info_duration">Duración</string>
+    <string name="detail_project_info_size">Tamaño</string>
+    <string name="detail_project_info_quality">Calidad</string>
+    <string name="detail_project_info_format">Formato</string>
+    <string name="detail_project_info_bitrate">Tasa de bits</string>
+    <string name="detail_project_info_framerate">Frame rate</string>
+
+    <string name="dialog_project_edit_title_message"> Título de proyecto</string>
+    <string name="dialog_project_edit_title_accept">Sí</string>
+    <string name="dialog_project_edit_title_cancel">No</string>
 
     <!--SoundVolumeActivity-->
     <string name="exitSoundVolumeActivity" >¿Desea descartar los cambios y volver a grabar de nuevo?</string>
@@ -163,6 +192,11 @@
     <string name="quality">Calidad</string>
     <string name="cancelSettingsCamera">Cancelar</string>
     <string name="preference_not_available">Ajuste no disponible</string>
+
+    <!-- Transition Settings -->
+    <string name="title_fade_transition">Transiciones</string>
+    <string name="title_video_fade_transition">Transición entre vídeos</string>
+    <string name="title_audio_fade_transition">Transición entre audios</string>
 
     <!-- More info Settings -->
     <string name="aboutUsTitle">Sobre nosotros</string>
@@ -580,6 +614,15 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="dialog_message_clean_project">¿Quiere empezar un nuevo proyecto?</string>
     <string name="dialog_accept_clean_project">Sí</string>
     <string name="dialog_cancel_clean_project">No</string>
+
+    <string name="dialog_change_user_name">¿Quiere cambiar su nombre de usuario?</string>
+    <string name="dialog_change_email">¿Quiere cambiar su dirección de email?</string>
+    <string name="export">Starting export</string>
+
+    <string name="bottom_bar_edit">Editar</string>
+    <string name="bottom_bar_sound">Audio</string>
+    <string name="bottom_bar_share">Compartir</string>
+
 
 
 </resources>

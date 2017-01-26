@@ -31,7 +31,7 @@ import de.greenrobot.event.EventBus;
 /**
  * This class is used to removed videos from the project.
  */
-public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectUseCase {
+public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectListener {
     protected ProjectRepository projectRepository;
     protected VideoRepository videoRepository;
 
@@ -56,6 +56,7 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectUseC
         for (Media media : mediaList) {
             correct = removeVideoItemFromTrack(media, mediaTrack);
             if (!correct) break;
+            //video repository remove media, remove videos from other projects also.
             videoRepository.remove((Video) media);
         }
         if (correct) {

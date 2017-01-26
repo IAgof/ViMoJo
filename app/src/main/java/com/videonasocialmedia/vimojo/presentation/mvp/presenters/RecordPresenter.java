@@ -34,6 +34,7 @@ import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessE
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -87,7 +88,6 @@ public class RecordPresenter {
                            GLCameraView cameraPreview, SharedPreferences sharedPreferences,
                            boolean externalIntent,
                            AddVideoToProjectUseCase addVideoToProjectUseCase) {
-
         this.context = context;
         this.recordView = recordView;
         this.cameraPreview = cameraPreview;
@@ -102,8 +102,7 @@ public class RecordPresenter {
     }
 
     public Project loadCurrentProject() {
-        // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null,null,null);
     }
 
     private VideoEncoderConfig getVideoEncoderConfigFromProfileProject() {
@@ -389,7 +388,7 @@ public class RecordPresenter {
     }
 
     public int getProjectDuration() {
-        return Project.getInstance(null, null, null).getDuration();
+        return currentProject.getDuration();
     }
 
     public int getNumVideosOnProject() {

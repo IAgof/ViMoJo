@@ -1,8 +1,11 @@
 package com.videonasocialmedia.vimojo.main;
 
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.main.internals.di.PerActivity;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
@@ -12,6 +15,7 @@ import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCa
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundVolumeActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
+import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 
 import dagger.Component;
 
@@ -33,4 +37,8 @@ public interface ActivityPresentersComponent {
   void inject(ShareActivity activity);
   void inject(InitAppActivity activity);
   void inject(SoundVolumeActivity activity);
+  void inject(EditorActivity activity);
+  void inject(GalleryProjectListActivity activity);
+  void inject(DetailProjectActivity activity);
+  void inject(VideoEditTextActivity activity);
 }

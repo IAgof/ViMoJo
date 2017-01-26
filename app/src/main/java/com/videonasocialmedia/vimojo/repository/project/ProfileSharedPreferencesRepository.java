@@ -76,7 +76,7 @@ public class ProfileSharedPreferencesRepository implements ProfileRepository {
 
   private VideoFrameRate.FrameRate getFrameRateFromPreferenceSettings() {
     String frameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE,
-        "0");
+        context.getString(R.string.high_frame_rate_name));
     if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false)) {
       if (frameRate.compareTo(context.getString(R.string.low_frame_rate_name)) == 0) {
         return VideoFrameRate.FrameRate.FPS24;
@@ -92,8 +92,8 @@ public class ProfileSharedPreferencesRepository implements ProfileRepository {
         return VideoFrameRate.FrameRate.FPS30;
       }
     }
-    // default
-    return VideoFrameRate.FrameRate.NOT_SUPPORTED;
+    // default 30 fps, standard
+    return VideoFrameRate.FrameRate.FPS30;
   }
 
 }

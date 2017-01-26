@@ -1,11 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
-import com.videonasocialmedia.videonamediaframework.model.media.Profile;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +17,6 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class InitAppPresenterTest {
-  @Mock ProjectRepository mockedProjectRepo;
   @Mock CreateDefaultProjectUseCase mockedUseCase;
 
   @InjectMocks InitAppPresenter injectedPresenter;
@@ -34,10 +28,8 @@ public class InitAppPresenterTest {
 
   @Test
   public void startLoadingProjectCallsLoadOrCreateProject() {
-    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
-        VideoFrameRate.FrameRate.FPS25);
-    injectedPresenter.startLoadingProject("root/path", profile);
+    injectedPresenter.startLoadingProject("root/path");
 
-    verify(mockedUseCase).loadOrCreateProject("root/path", profile);
+    verify(mockedUseCase).loadOrCreateProject("root/path");
   }
 }

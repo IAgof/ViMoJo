@@ -45,8 +45,10 @@ public class AddVoiceOverToProjectUseCaseTest {
     assert ! project.getVMComposition().hasMusic();
     AddMusicToProjectUseCase addMusicToProjectUseCase =
             new AddMusicToProjectUseCase(mockedProjectRepository);
+    RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase =
+        new RemoveMusicFromProjectUseCase(mockedProjectRepository);
     AddVoiceOverToProjectUseCase useCase = new AddVoiceOverToProjectUseCase(mockedProjectRepository,
-            addMusicToProjectUseCase);
+            addMusicToProjectUseCase, removeMusicFromProjectUseCase);
 
     useCase.setVoiceOver(project, "voice/over/path", 0.7f);
 

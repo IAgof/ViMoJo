@@ -99,7 +99,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private String androidId = null;
     private String initState;
     private CompositeMultiplePermissionsListener compositePermissionsListener;
-    private ProfileRepository profileRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -300,8 +299,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private void initPaths() throws IOException {
         checkAndInitPath(Constants.PATH_APP);
         checkAndInitPath(Constants.PATH_APP_TEMP);
-        checkAndInitPath(Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
-        checkAndInitPath(Constants.PATH_APP_TEMP_AUDIO);
+        checkAndInitPath(Constants.PATH_APP_PROJECTS);
         checkAndInitPath(Constants.PATH_APP_MASTERS);
 
         File privateDataFolderModel = getDir(Constants.FOLDER_VIDEONA_PRIVATE_MODEL, Context.MODE_PRIVATE);
@@ -407,7 +405,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     public void onCheckPathsAppSuccess() {
         //TODO Define path project. By default, path app. Path .temp, private data
         profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, this);
-        presenter.startLoadingProject(sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH, ""), profileRepository.getCurrentProfile());
+        presenter.startLoadingProject(Constants.PATH_APP);
     }
 
     @Override
