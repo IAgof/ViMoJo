@@ -2,7 +2,6 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
 
-import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
@@ -12,7 +11,6 @@ import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -29,11 +27,11 @@ public class RecordCamera2PresenterTest {
 
   @Mock RecordCamera2View mockedRecordView;
   @Mock Context mockedContext;
-  boolean mockedIsFrontCameraSelected;
-  boolean mockedIsPrincipalViewSelected;
-  boolean mockedIsRightControlsViewSelected;
+  boolean isFrontCameraSelected = true;
+  boolean isPrincipalViewSelected = true;
+  boolean isRightControlsViewSelected = true;
   @Mock AutoFitTextureView mockedTextureView;
-  boolean mockedExternalIntent;
+  boolean externalIntent;
   String directorySaveVideos;
   @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideoFormatFromCurrentProjectUseCase;
   @Mock AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
@@ -41,21 +39,18 @@ public class RecordCamera2PresenterTest {
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
-
-    presenter = new RecordCamera2Presenter(mockedContext, mockedRecordView,
-        mockedIsFrontCameraSelected, mockedIsPrincipalViewSelected,
-        mockedIsRightControlsViewSelected, mockedTextureView, mockedExternalIntent,
-        directorySaveVideos, mockedGetVideoFormatFromCurrentProjectUseCase,
-        mockedAddVideoToProjectUseCase);
   }
 
   @Test
   public void initViewsWithPrincipalAndRightControlsViewSelectedCallsCorrectRecordView(){
-    boolean isPrincipalViewSelected = true;
-    boolean isRightControlsViewSelected = true;
 
-    presenter.initViews(mockedRecordView, isPrincipalViewSelected,
-        isRightControlsViewSelected);
+    presenter = new RecordCamera2Presenter(mockedContext, mockedRecordView,
+        isFrontCameraSelected, isPrincipalViewSelected,
+        isRightControlsViewSelected, mockedTextureView, externalIntent,
+        directorySaveVideos, mockedGetVideoFormatFromCurrentProjectUseCase,
+        mockedAddVideoToProjectUseCase);
+
+    presenter.initViews();
 
     verify(mockedRecordView).hideChronometer();
     verify(mockedRecordView).setResolutionSelected(720);
@@ -66,19 +61,22 @@ public class RecordCamera2PresenterTest {
 
   @Test
   public void initViewsDefaultInitializationCallsCorrectRecordView(){
-    boolean isPrincipalViewSelected = false;
-    boolean isRightControlsViewSelected = false;
+    isPrincipalViewSelected = false;
+    isRightControlsViewSelected = false;
 
-    presenter.initViews(mockedRecordView, isPrincipalViewSelected,
-        isRightControlsViewSelected);
+    presenter = new RecordCamera2Presenter(mockedContext, mockedRecordView,
+        isFrontCameraSelected, isPrincipalViewSelected,
+        isRightControlsViewSelected, mockedTextureView, externalIntent,
+        directorySaveVideos, mockedGetVideoFormatFromCurrentProjectUseCase,
+        mockedAddVideoToProjectUseCase);
+
+    presenter.initViews();
 
     verify(mockedRecordView).hideChronometer();
     verify(mockedRecordView).setResolutionSelected(720);
 
     verify(mockedRecordView).hidePrincipalViews();
     verify(mockedRecordView).hideRightControlsView();
-
-
   }
 
 }

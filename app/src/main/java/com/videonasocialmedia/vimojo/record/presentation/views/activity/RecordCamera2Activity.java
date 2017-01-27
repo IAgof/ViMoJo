@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Chronometer;
@@ -132,7 +133,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private boolean isPrincipalViewsSelected = false;
   private boolean isControlsViewSelected = false;
 
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -156,16 +156,12 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
 
     this.getActivityPresentersComponent().inject(this);
-
-    // TODO:(alvaro.martinez) 18/01/17 Inject with Dagger presenter
-  /*  presenter = new RecordCamera2Presenter(this, this, isFrontCameraSelected,
-        isPrincipalViewsSelected, isControlsViewSelected, textureView, externalIntent);*/
   }
 
   @Override
   public ActivityPresentersModule getActivityPresentersModule() {
     return new ActivityPresentersModule(this, isFrontCameraSelected, isPrincipalViewsSelected,
-        isControlsViewSelected, Constants.PATH_APP, textureView, externalIntent);
+        isControlsViewSelected, Constants.PATH_APP_MASTERS, textureView, externalIntent);
   }
 
   private void keepScreenOn() {
@@ -237,7 +233,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void onResume() {
     super.onResume();
-    presenter.initViews(this, isPrincipalViewsSelected, isControlsViewSelected);
+    presenter.initViews();
     presenter.onResume();
     hideSystemUi();
   }
@@ -332,6 +328,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
   }
 
+  @Override
+  public void setZoom(float value){
+    // TODO:(alvaro.martinez) 27/01/17 Implement zoom_bar_view
+  }
 
   @Override
   public void showChangeCamera() {
@@ -458,6 +458,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
   }
 
+  @Override
+  public void setFocus(MotionEvent event) {
+    customManualFocusView.onTouchEvent(event);
+  }
+
   /*.*.*.*.*.*.*.*.*.*.*.*.*. OnClicks *.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*/
 
   @OnClick(R.id.button_toggle_flash)
@@ -541,18 +546,22 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnTouch(R.id.customManualFocusView)
   boolean onTouchCustomManualFocusView(MotionEvent event){
 
-    if(event.getAction() == MotionEvent.ACTION_DOWN){
-      // Do touch focus
-      //customManualFocusView.onTouchEvent(event);
+    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+      // TODO:(alvaro.martinez) 27/01/17 single touch logic
       //presenter.onTouchFocus(event);
       return true;
     }
 
-    presenter.onTouch(event);
+    if (event.getPointerCount() > 1) {
+      // zoom touch
+      presenter.onTouchZoom(event);
+    }
+
     return true;
   }
 
-  @Override
+
+    @Override
   public void onBackPressed() {
     if (buttonBackPressed) {
         buttonBackPressed = false;
@@ -578,7 +587,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     Snackbar snackbar = Snackbar.make(chronometerAndRecPointView, stringResourceId, Snackbar.LENGTH_SHORT);
     snackbar.show();
   }
-
 
   private class OrientationHelper extends OrientationEventListener {
     Context context;

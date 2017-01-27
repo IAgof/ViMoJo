@@ -12,6 +12,8 @@
 package com.videonasocialmedia.vimojo.record.presentation.mvp.views;
 
 
+import android.view.MotionEvent;
+
 public interface RecordCamera2View {
 
 
@@ -68,6 +70,10 @@ public interface RecordCamera2View {
     void setFlashSupported(boolean state);
 
     void setResolutionSelected(int height);
+
+    void setFocus(MotionEvent event);
+
+    void setZoom(float value);
 
 
     // Others

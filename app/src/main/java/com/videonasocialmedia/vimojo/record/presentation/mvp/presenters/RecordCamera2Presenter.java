@@ -15,38 +15,21 @@
 package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
-import com.videonasocialmedia.camera.utils.VideoFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
-import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
-import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
-import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.Utils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-
-import javax.inject.Inject;
 
 /**
  *  Created by alvaro on 16/01/17.
@@ -91,8 +74,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 
   }
 
-  public void initViews(RecordCamera2View recordView, boolean isPrincipalViewSelected, boolean
-      isRightControlsViewSelected) {
+  public void initViews() {
     recordView.setResolutionSelected(height);
     recordView.hideChronometer();
     if(isPrincipalViewSelected) {
@@ -179,6 +161,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     }
   }
 
+  @Override
+  public void setZoom(Rect rectValue) {
+    // TODO:(alvaro.martinez) 27/01/17 Convert zoom from 0 to 1 and show on RecordView
+    //recordView.setZoom(0.5f);
+  }
+
   public void restartPreview(){
     camera.onPause();
     camera.onResume();
@@ -199,8 +187,18 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     recordView.setFlash(!isSelected);
   }
 
-  public void onTouch(MotionEvent event) {
-    camera.onTouch(event);
+  public void onTouchZoom(MotionEvent event) {
+    camera.onTouchZoom(getFingerSpacing(event));
+    // RecordView show slide zoom, from 0 to 1
+  }
+
+  //Determine the space between the first two fingers
+  @SuppressWarnings("deprecation")
+  private float getFingerSpacing(MotionEvent event) {
+
+    float x = event.getX(0) - event.getX(1);
+    float y = event.getY(0) - event.getY(1);
+    return (float) Math.sqrt(x * x + y * y);
   }
 
   public void showRightControls() {
@@ -223,6 +221,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     int x = Math.round(event.getX());
     int y = Math.round(event.getY());
     camera.setFocus(calculateBounds(x, y), 100);
+    recordView.setFocus(event);
   }
 
   private Rect calculateBounds(int x, int y) {
