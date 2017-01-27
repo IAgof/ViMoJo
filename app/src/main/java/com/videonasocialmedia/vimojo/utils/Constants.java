@@ -66,4 +66,6 @@ public class Constants {
     public static final float ALPHA_DISABLED_BOTTOM_BAR= 0.3f;
     public static final int DEFAULT_VIMOJO_BITRATE = 10*1000*1000;
     public static final int DEFAULT_VIMOJO_FRAME_RATE = 25;
+
+    public static final String USER_THUMB = "userThumb.jpg";
 }

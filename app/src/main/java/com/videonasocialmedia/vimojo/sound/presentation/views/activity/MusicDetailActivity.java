@@ -200,6 +200,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         videonaPlayer.setVolume(1f);
         updateCoverInfo(music);
         this.music = music;
+        videonaPlayer.playPreview();
     }
 
     private void updateCoverInfo(Music music) {
