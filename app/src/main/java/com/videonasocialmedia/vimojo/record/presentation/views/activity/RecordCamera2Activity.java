@@ -27,10 +27,11 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
+import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
@@ -164,7 +165,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public ActivityPresentersModule getActivityPresentersModule() {
     return new ActivityPresentersModule(this, isFrontCameraSelected, isPrincipalViewsSelected,
-        isControlsViewSelected, textureView, externalIntent);
+        isControlsViewSelected, Constants.PATH_APP, textureView, externalIntent);
   }
 
   private void keepScreenOn() {
@@ -236,6 +237,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void onResume() {
     super.onResume();
+    presenter.initViews(this, isPrincipalViewsSelected, isControlsViewSelected);
     presenter.onResume();
     hideSystemUi();
   }
@@ -541,8 +543,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
     if(event.getAction() == MotionEvent.ACTION_DOWN){
       // Do touch focus
-      customManualFocusView.onTouchEvent(event);
-      presenter.onTouchFocus(event);
+      //customManualFocusView.onTouchEvent(event);
+      //presenter.onTouchFocus(event);
       return true;
     }
 

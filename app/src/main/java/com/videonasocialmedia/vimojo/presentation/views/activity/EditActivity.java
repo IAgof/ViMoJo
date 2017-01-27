@@ -267,19 +267,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         startActivity(intent);
     }
 
-    @OnClick(R.id.fab_go_to_record)
-    public void onClickFabRecord() {
-        fabEditRoom.collapse();
-        navigateTo(RecordCamera2Activity.class);
-    }
-
-    @OnClick(R.id.fab_go_to_gallery)
-    public void onClickFabGallery() {
-        fabEditRoom.collapse();
-        navigateTo(GalleryActivity.class);
-    }
-
-    @OnClick(R.id.button_edit_fullscreen)
    @Nullable @OnClick(R.id.button_edit_fullscreen)
     public void onClickEditFullscreen() {
         // navigateTo(Activity.class)
@@ -527,9 +514,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     public void onBackPressed() {
         navigateTo(RecordCamera2Activity.class);
     }
-      navigateTo(RecordActivity.class);
-      finish();
-  }
+
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {

@@ -403,8 +403,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     @Override
     public void onCheckPathsAppSuccess() {
-        //TODO Define path project. By default, path app. Path .temp, private data
-        profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, this);
         presenter.startLoadingProject(Constants.PATH_APP);
     }
 

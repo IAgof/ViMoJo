@@ -4,8 +4,6 @@ import android.content.SharedPreferences;
 
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
-import com.videonasocialmedia.vimojo.domain.ClearProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -47,7 +45,6 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
-import com.videonasocialmedia.videonamediaframework.pipeline.AudioMixer;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
@@ -76,6 +73,7 @@ public class ActivityPresentersModule {
   private AutoFitTextureView textureView;
   private GLCameraView cameraView = null;
   private boolean externalIntent;
+  private String directorySaveVideos;
 
   public ActivityPresentersModule(VimojoActivity vimojoActivity) {
     this.activity = vimojoActivity;
@@ -91,6 +89,7 @@ public class ActivityPresentersModule {
   public ActivityPresentersModule(RecordCamera2Activity activity, boolean isFrontCameraSelected,
                                   boolean isPrincipalViewSelected,
                                   boolean isRightControlsViewSelected,
+                                  String directorySaveVideos,
                                   AutoFitTextureView textureView,
                                   boolean externalIntent) {
     this.activity = activity;
@@ -99,6 +98,7 @@ public class ActivityPresentersModule {
     this.isRightControlsViewSelected = isRightControlsViewSelected;
     this.textureView = textureView;
     this.externalIntent = externalIntent;
+    this.directorySaveVideos = directorySaveVideos;
   }
 
   @Provides @PerActivity
@@ -152,7 +152,8 @@ public class ActivityPresentersModule {
 
     return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity,
         isFrontCameraSelected, isPrincipalViewSelected, isRightControlsViewSelected, textureView,
-        externalIntent, getVideoFormatFromCurrentProjectUseCase, addVideoToProjectUseCase);
+        externalIntent, directorySaveVideos, getVideoFormatFromCurrentProjectUseCase,
+        addVideoToProjectUseCase);
   }
 
   @Provides @PerActivity

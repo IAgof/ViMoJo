@@ -57,6 +57,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private static final String LOG_TAG = "RecordPresenter";
   private final Context context;
+  private final boolean isRightControlsViewSelected;
+  private final boolean isPrincipalViewSelected;
   private RecordCamera2View recordView;
   private AddVideoToProjectUseCase addVideoToProjectUseCase;
   private int recordedVideosNumber;
@@ -65,29 +67,31 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   private boolean externalIntent;
   private Camera2Wrapper camera;
 
-  @Inject
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
                                 boolean isFrontCameraSelected, boolean isPrincipalViewSelected,
                                 boolean isRightControlsViewSelected, AutoFitTextureView textureView,
-                                boolean externalIntent, GetVideoFormatFromCurrentProjectUseCase
-                                getVideoFormatFromCurrentProjectUseCase, AddVideoToProjectUseCase
-                                addVideoToProjectUseCase) {
+                                boolean externalIntent, String directorySaveVideos,
+                                GetVideoFormatFromCurrentProjectUseCase
+                                    getVideoFormatFromCurrentProjectUseCase,
+                                AddVideoToProjectUseCase addVideoToProjectUseCase) {
 
     this.recordView = recordView;
     this.context = context;
+    this.isPrincipalViewSelected = isPrincipalViewSelected;
+    this.isRightControlsViewSelected = isRightControlsViewSelected;
     this.externalIntent = externalIntent;
     int cameraId = 0;
     if(isFrontCameraSelected)
       cameraId = 1;
     // TODO:(alvaro.martinez) 25/01/17 Support camera1, api <21 or combine both. Make Camera1Wrapper
-    camera = new Camera2Wrapper(context, this, cameraId, textureView, Constants.PATH_APP_MASTERS,
+    camera = new Camera2Wrapper(context, this, cameraId, textureView, directorySaveVideos,
         getVideoFormatFromCurrentProjectUseCase.getVideoRecordedFormatFromCurrentProjectUseCase());
 
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-    initViews(recordView, isPrincipalViewSelected, isRightControlsViewSelected);
+
   }
 
-  private void initViews(RecordCamera2View recordView, boolean isPrincipalViewSelected, boolean
+  public void initViews(RecordCamera2View recordView, boolean isPrincipalViewSelected, boolean
       isRightControlsViewSelected) {
     recordView.setResolutionSelected(height);
     recordView.hideChronometer();
@@ -218,7 +222,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   public void onTouchFocus(MotionEvent event) {
     int x = Math.round(event.getX());
     int y = Math.round(event.getY());
-    //camera.setFocus(calculateBounds(x, y), 100);
+    camera.setFocus(calculateBounds(x, y), 100);
   }
 
   private Rect calculateBounds(int x, int y) {

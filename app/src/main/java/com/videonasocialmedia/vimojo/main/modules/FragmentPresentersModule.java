@@ -31,7 +31,6 @@ public class FragmentPresentersModule {
   private ListPreference qualityPref;
   private SwitchPreference transitionAudioPref;
   private SwitchPreference transitionVideoPref;
-  private ListPreference frameRatePref;
   private Preference emailPref;
   private ListPreference resolutionPref;
   private PreferenceCategory cameraSettingsPref;
@@ -45,7 +44,6 @@ public class FragmentPresentersModule {
                                   PreferenceCategory cameraSettingsPref,
                                   ListPreference resolutionPref,
                                   ListPreference qualityPref,
-                                  ListPreference frameRatePref,
                                   SwitchPreference transitionsVideoPref,
                                   SwitchPreference transitionsAudioPref,
                                   Preference emailPref) {
@@ -54,7 +52,6 @@ public class FragmentPresentersModule {
     this.cameraSettingsPref = cameraSettingsPref;
     this.resolutionPref = resolutionPref;
     this.qualityPref = qualityPref;
-    this.frameRatePref = frameRatePref;
     this.transitionVideoPref = transitionsVideoPref;
     this.transitionAudioPref = transitionsAudioPref;
     this.emailPref = emailPref;
@@ -64,7 +61,8 @@ public class FragmentPresentersModule {
   // For singleton objects, annotate with same scope as component, i.e. @PerFragment
   @Provides
   @PerFragment
-  public PreferencesPresenter providePreferencePresenter(SharedPreferences sharedPreferences,                                                        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+  public PreferencesPresenter providePreferencePresenter(SharedPreferences sharedPreferences,
+             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
              GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
              UpdateAudioTransitionPreferenceToProjectUseCase
               updateAudioTransitionPreferenceToProjectUseCase,
@@ -74,7 +72,7 @@ public class FragmentPresentersModule {
               updateIntermediateTemporalFilesTransitionsUseCase){
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
-        cameraSettingsPref, resolutionPref, qualityPref, frameRatePref, transitionVideoPref,
+        cameraSettingsPref, resolutionPref, qualityPref, transitionVideoPref,
         transitionAudioPref, emailPref, getMediaListFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase,
         updateAudioTransitionPreferenceToProjectUseCase,

@@ -36,8 +36,10 @@ import com.videonasocialmedia.camera.utils.VideoFormat;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -501,9 +503,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   private String getVideoFilePath() {
-    // TODO:(alvaro.martinez) 19/01/17 Get this path from Project ¿?
-    videoPath = directorySaveVideos + File.separator
-        + System.currentTimeMillis() + ".mp4";
+    // TODO:(alvaro.martinez) 19/01/17 Get pattern VID_ from where?
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    String fileName = "VID_" + timeStamp + ".mp4";
+    videoPath = directorySaveVideos + File.separator + fileName;
 
     return videoPath;
   }
