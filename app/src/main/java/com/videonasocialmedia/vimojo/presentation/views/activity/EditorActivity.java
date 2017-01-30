@@ -32,8 +32,10 @@ import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageV
 import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -84,11 +86,18 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       }
     });
 
-    updateUserThumb();
+    updateUserThumb(userThumbPath);
   }
 
-  private void updateUserThumb() {
-    File thumb = new File(userThumbPath);
+  private void updateUserThumb(String path){
+    File thumb = new File(path);
+    if(thumb.getName().compareTo(Constants.USER_THUMB) != 0){
+      try {
+        Utils.copyFile(path,userThumbPath);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
     if(thumb.exists())
       Glide.with(this)
           .load(userThumbPath)
@@ -288,9 +297,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
             takePicIntent .putExtra("aspectY", 1);
             takePicIntent .putExtra("scale", true);
             takePicIntent .putExtra(MediaStore.EXTRA_OUTPUT, uri);
-            takePicIntent .putExtra("outputFormat",
-
-                Bitmap.CompressFormat.JPEG.toString());
+            takePicIntent .putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
             startActivityForResult(takePicIntent , REQUEST_ICON_USER);
 
 
@@ -309,9 +316,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
             pickImageIntent.putExtra("aspectY", 1);
             pickImageIntent.putExtra("scale", true);
             pickImageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-            pickImageIntent.putExtra("outputFormat",
-
-                Bitmap.CompressFormat.JPEG.toString());
+            pickImageIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
             startActivityForResult(pickImageIntent, REQUEST_ICON_USER);
 
             break;
@@ -329,13 +334,15 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-    if (resultCode == RESULT_OK) {
-      if (requestCode == REQUEST_ICON_USER){
-        // Update picture
-        updateUserThumb();
-        }
+    if (resultCode == RESULT_OK && requestCode == REQUEST_ICON_USER && data != null){
+      if(data.getData() != null) {
+        final String inPath = Utils.getPath(this, data.getData());
+        if (inPath != null)
+          updateUserThumb(inPath);
+      }
     }
   }
+
 }
 
 
