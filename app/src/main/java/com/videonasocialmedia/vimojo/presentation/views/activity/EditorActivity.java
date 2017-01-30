@@ -50,8 +50,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Inject UserEventTracker userEventTracker;
   @Inject EditorPresenter editorPresenter;
 
-  private AlertDialog alertDialog;
-
   @Bind(R.id.edit_activity_drawer_layout)
   DrawerLayout drawerLayout;
   @Bind(R.id.navigator_view)
