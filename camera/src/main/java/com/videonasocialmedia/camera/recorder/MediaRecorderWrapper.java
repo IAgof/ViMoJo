@@ -68,7 +68,7 @@ public class MediaRecorderWrapper {
     mediaRecorder.setVideoEncodingBitRate(videoFormat.getVideoBitrate());
     // TODO:(alvaro.martinez) 25/01/17 Check and support different bit rate
     mediaRecorder.setVideoFrameRate(30);
-    mediaRecorder.setCaptureRate(30);
+    //mediaRecorder.setCaptureRate(30);
     mediaRecorder.setVideoSize(videoFormat.getVideoWidth(), videoFormat.getVideoHeight());
     mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
     mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
