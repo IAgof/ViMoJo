@@ -181,7 +181,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         switch (fab.getId()){
           case ID_BUTTON_FAB_TOP:
             fabMenu.collapse();
-              navigateTo(RecordActivity.class);
+              //navigateTo(RecordActivity.class);
+              navigateTo(RecordCamera2Activity.class);
               break;
           case ID_BUTTON_FAB_CENTER:
             fabMenu.collapse();

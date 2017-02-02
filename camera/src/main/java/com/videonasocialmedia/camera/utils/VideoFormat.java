@@ -10,7 +10,7 @@ public class VideoFormat {
   private int videoHeight = 720;
   private int videoBitrate = 5 * 1000 * 1000;
   private int audioBitrate = 192 * 1000;
-  private int audioChannels = 2;
+  private int audioChannels = 1;
   private int samplingRate = 48 * 1000;
 
   public VideoFormat(int videoWidth, int videoHeight, int videoBitrate){
