@@ -426,14 +426,14 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     public void setVideoFadeTransitionAmongVideos(){
         // TODO:(alvaro.martinez) 10/01/17 implement VideonaSDK videonaPlayer.setVideoTransitionFade(),
         // Once implemented, update also VoiceOverActivity, SoundActivity, MusicListActivity
-        //videonaPlayer.setVideoTransitionFade();
+        videonaPlayer.setVideoTransitionFade();
     }
 
     @Override
     public void setAudioFadeTransitionAmongVideos(){
         // TODO:(alvaro.martinez) 10/01/17 implement VideonaSDK videonaPlayer.setAudioTransitionFade(),
         // Once implemented, update algo VoiceOverActivity, SoundActivity, MusicListActivity
-        //videonaPlayer.setAudioTransitionFade();
+        videonaPlayer.setAudioTransitionFade();
     }
 
     @Override
@@ -492,6 +492,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         });
         dialog.show();
     }
+
 
 
   @Override
