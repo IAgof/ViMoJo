@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.export.domain;
 
-import com.videonasocialmedia.camera.utils.VideoFormat;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.camera.utils.VideoCameraFormat;
+import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -17,32 +17,32 @@ public class GetVideoFormatFromCurrentProjectUseCase {
         this.project = Project.getInstance(null, null, null);
     }
 
-    public VideonaFormat getVideoTranscodedFormatFromCurrentProject(){
-        VideonaFormat videonaFormat;
+    public VideoTranscoderFormat getVideoTranscodedFormatFromCurrentProject(){
+        VideoTranscoderFormat videoTranscoderFormat;
 
         VideoResolution resolution = project.getProfile().getVideoResolution();
         VideoQuality quality = project.getProfile().getVideoQuality();
 
         if(resolution!=null && quality!=null) {
-            videonaFormat = new VideonaFormat(quality.getVideoBitRate(), resolution.getWidth(),
+            videoTranscoderFormat = new VideoTranscoderFormat(quality.getVideoBitRate(), resolution.getWidth(),
                     resolution.getHeight());
         } else {
-            videonaFormat = new VideonaFormat();
+            videoTranscoderFormat = new VideoTranscoderFormat();
         }
 
-        return videonaFormat;
+        return videoTranscoderFormat;
     }
 
-    public VideoFormat getVideoRecordedFormatFromCurrentProjectUseCase() {
+    public VideoCameraFormat getVideoRecordedFormatFromCurrentProjectUseCase() {
 
-        VideoFormat videoFormat;
+        VideoCameraFormat videoCameraFormat;
 
         VideoResolution resolution = project.getProfile().getVideoResolution();
         VideoQuality quality = project.getProfile().getVideoQuality();
 
-        videoFormat = new VideoFormat(resolution.getWidth(), resolution.getHeight(),
+        videoCameraFormat = new VideoCameraFormat(resolution.getWidth(), resolution.getHeight(),
             quality.getVideoBitRate());
 
-        return videoFormat;
+        return videoCameraFormat;
     }
 }

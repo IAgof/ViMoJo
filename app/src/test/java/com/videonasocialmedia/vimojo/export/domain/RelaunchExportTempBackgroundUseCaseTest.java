@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
 import com.videonasocialmedia.transcoder.video.overlay.Image;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
@@ -48,7 +48,7 @@ public class RelaunchExportTempBackgroundUseCaseTest {
 
   @InjectMocks RelaunchExportTempBackgroundUseCase injectedRelaunchExportTempBackgroundUseCase;
   private final MediaTranscoderListener mediaTranscoderListener = getMediaTranscoderListener();
-  private final VideonaFormat videonaFormat = new VideonaFormat();
+  private final VideoTranscoderFormat videoTranscoderFormat = new VideoTranscoderFormat();
 
   @Before
   public void injectDoubles() throws Exception {
@@ -61,7 +61,7 @@ public class RelaunchExportTempBackgroundUseCaseTest {
     assertThat(video.getClipText(), is(nullValue()));
 
     new RelaunchExportTempBackgroundUseCase().relaunchExport(mockDrawableFadeTransition, video,
-        mediaTranscoderListener, videonaFormat);
+        mediaTranscoderListener, videoTranscoderFormat);
   }
 
   @Test
@@ -75,11 +75,11 @@ public class RelaunchExportTempBackgroundUseCaseTest {
             new TranscoderHelper(mockedDrawableGenerator, mockedMediaTranscoder);
 
     injectedRelaunchExportTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
-        mediaTranscoderListener, videonaFormat);
+        mediaTranscoderListener, videoTranscoderFormat);
 
     verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
         eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()),
-            eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener),
+            eq(video.getTempPath()), eq(videoTranscoderFormat), eq(mediaTranscoderListener),
             Matchers.any(Image.class), eq(video.getStartTime()), eq(video.getStopTime()));
   }
 
@@ -90,10 +90,10 @@ public class RelaunchExportTempBackgroundUseCaseTest {
     assert video.hasText();
 
     injectedRelaunchExportTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition,
-        video, mediaTranscoderListener, videonaFormat);
+        video, mediaTranscoderListener, videoTranscoderFormat);
 
     verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(
-        mockDrawableFadeTransition, isVideoFadeTransitionActivated, video, videonaFormat,
+        mockDrawableFadeTransition, isVideoFadeTransitionActivated, video, videoTranscoderFormat,
         mediaTranscoderListener);
   }
 
@@ -105,11 +105,11 @@ public class RelaunchExportTempBackgroundUseCaseTest {
             new TranscoderHelper(mockedDrawableGenerator, mockedMediaTranscoder);
 
     injectedRelaunchExportTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
-        mediaTranscoderListener, videonaFormat);
+        mediaTranscoderListener, videoTranscoderFormat);
 
     verify(mockedMediaTranscoder).transcodeAndTrimVideo(eq(mockDrawableFadeTransition),
         eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()), eq(video.getTempPath()),
-        eq(videonaFormat), eq(mediaTranscoderListener), eq(video.getStartTime()),
+        eq(videoTranscoderFormat), eq(mediaTranscoderListener), eq(video.getStartTime()),
         eq(video.getStopTime()));
   }
 
@@ -120,10 +120,10 @@ public class RelaunchExportTempBackgroundUseCaseTest {
     assert ! video.hasText();
 
     injectedRelaunchExportTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
-        mediaTranscoderListener, videonaFormat);
+        mediaTranscoderListener, videoTranscoderFormat);
 
     verify(mockedTranscoderHelper).generateOutputVideoWithTrimming(mockDrawableFadeTransition,
-        isVideoFadeTransitionActivated, video, videonaFormat, mediaTranscoderListener);
+        isVideoFadeTransitionActivated, video, videoTranscoderFormat, mediaTranscoderListener);
   }
 
   @NonNull

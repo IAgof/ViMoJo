@@ -261,6 +261,9 @@
         <service android:name=".export.ExportTempBackgroundService"
             android:exported="false"/>
 
+        <service android:name=".record.presentation.views.service.RecordBackgroundService"
+                 android:exported="false" />
+
         <service
             android:name=".ftp.presentation.services.FtpUploaderService"
             android:exported="false"

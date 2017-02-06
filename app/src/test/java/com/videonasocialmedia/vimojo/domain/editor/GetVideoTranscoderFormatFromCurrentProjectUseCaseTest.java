@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -19,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Created by alvaro on 5/09/16.
  */
-public class GetVideonaFormatFromCurrentProjectUseCaseTest {
+public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
 
   @Before
   public void setUp() throws Exception {
@@ -42,31 +42,31 @@ public class GetVideonaFormatFromCurrentProjectUseCaseTest {
   // Profile.setFrameRate(null) throw NPE
   @Ignore
   @Test
-  public void getVideonaFormatFromCurrentProjectReturnsDefaultFormatIfANullValueInProfile() {
+  public void getVideoTranscoderFormatFromCurrentProjectReturnsDefaultFormatIfANullValueInProfile() {
     Project currentProject = getAProject();
     currentProject.getProfile().setQuality(null);
     GetVideoFormatFromCurrentProjectUseCase useCase =
         new GetVideoFormatFromCurrentProjectUseCase();
-    VideonaFormat defaultVideonaFormat = new VideonaFormat();
+    VideoTranscoderFormat defaultVideoTranscoderFormat = new VideoTranscoderFormat();
 
-    VideonaFormat videonaFormat = useCase.getVideoTranscodedFormatFromCurrentProject();
+    VideoTranscoderFormat videoTranscoderFormat = useCase.getVideoTranscodedFormatFromCurrentProject();
 
-    assertThat(videonaFormat.getVideoBitrate(), is(defaultVideonaFormat.getVideoBitrate()));
-    assertThat(videonaFormat.getVideoHeight(), is(defaultVideonaFormat.getVideoHeight()));
-    assertThat(videonaFormat.getVideoWidth(), is(defaultVideonaFormat.getVideoWidth()));
+    assertThat(videoTranscoderFormat.getVideoBitrate(), is(defaultVideoTranscoderFormat.getVideoBitrate()));
+    assertThat(videoTranscoderFormat.getVideoHeight(), is(defaultVideoTranscoderFormat.getVideoHeight()));
+    assertThat(videoTranscoderFormat.getVideoWidth(), is(defaultVideoTranscoderFormat.getVideoWidth()));
   }
 
   @Test
-  public void getVideonaFormatFromCurrentProjectReturnsFormatWithProfileValues() {
+  public void getVideoTranscoderFormatFromCurrentProjectReturnsFormatWithProfileValues() {
     Project currentProject = getAProject();
     GetVideoFormatFromCurrentProjectUseCase useCase =
         new GetVideoFormatFromCurrentProjectUseCase();
 
-    VideonaFormat videonaFormat = useCase.getVideoTranscodedFormatFromCurrentProject();
+    VideoTranscoderFormat videoTranscoderFormat = useCase.getVideoTranscodedFormatFromCurrentProject();
 
-    assertThat("videoBitRate", 10 * 1000 * 1000, is(videonaFormat.getVideoBitrate()));
-    assertThat("videoWidth", 1280, is(videonaFormat.getVideoWidth()));
-    assertThat("videoHeight", 720, is(videonaFormat.getVideoHeight()));
+    assertThat("videoBitRate", 10 * 1000 * 1000, is(videoTranscoderFormat.getVideoBitrate()));
+    assertThat("videoWidth", 1280, is(videoTranscoderFormat.getVideoWidth()));
+    assertThat("videoHeight", 720, is(videoTranscoderFormat.getVideoHeight()));
 
   }
 

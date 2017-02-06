@@ -4,7 +4,7 @@ import android.graphics.drawable.Drawable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
@@ -37,19 +37,19 @@ public class RelaunchExportTempBackgroundUseCase {
    * Launch clip transcoding to generate intermediate video file for final export process.
    * @param videoToEdit video to apply operations with
    * @param listener listener for this use case
-   * @param videonaFormat output format for the clip transcoding
+   * @param videoTranscoderFormat output format for the clip transcoding
    */
   public void relaunchExport(Drawable drawableFadeTransition, Video videoToEdit,
-                             MediaTranscoderListener listener, VideonaFormat videonaFormat) {
+                             MediaTranscoderListener listener, VideoTranscoderFormat videoTranscoderFormat) {
     videoToEdit.increaseNumTriesToExportVideo();
     boolean isVideoFadeTransitionActivated = getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
     try {
       if (videoToEdit.hasText()) {
         transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(drawableFadeTransition,
-            isVideoFadeTransitionActivated, videoToEdit, videonaFormat, listener);
+            isVideoFadeTransitionActivated, videoToEdit, videoTranscoderFormat, listener);
       } else {
         transcoderHelper.generateOutputVideoWithTrimming(drawableFadeTransition,
-            isVideoFadeTransitionActivated, videoToEdit, videonaFormat, listener);
+            isVideoFadeTransitionActivated, videoToEdit, videoTranscoderFormat, listener);
       }
     } catch (IOException exception) {
       exception.printStackTrace();

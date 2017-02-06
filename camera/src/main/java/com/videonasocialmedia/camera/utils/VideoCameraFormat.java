@@ -4,7 +4,7 @@ package com.videonasocialmedia.camera.utils;
  * Created by alvaro on 25/01/17.
  */
 
-public class VideoFormat {
+public class VideoCameraFormat {
 
   private int videoWidth = 1280;
   private int videoHeight = 720;
@@ -13,7 +13,7 @@ public class VideoFormat {
   private int audioChannels = 1;
   private int samplingRate = 48 * 1000;
 
-  public VideoFormat(int videoWidth, int videoHeight, int videoBitrate){
+  public VideoCameraFormat(int videoWidth, int videoHeight, int videoBitrate){
     this.videoWidth = videoWidth;
     this.videoHeight = videoHeight;
     this.videoBitrate = videoBitrate;

@@ -24,7 +24,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Size;
-import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.widget.Toast;
@@ -32,7 +31,7 @@ import android.widget.Toast;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.camera.recorder.MediaRecorderWrapper;
 import com.videonasocialmedia.camera.utils.Camera2Utils;
-import com.videonasocialmedia.camera.utils.VideoFormat;
+import com.videonasocialmedia.camera.utils.VideoCameraFormat;
 
 import java.io.File;
 import java.io.IOException;
@@ -108,7 +107,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   AutoFitTextureView textureView;
 
-  private VideoFormat videoFormat;
+  private VideoCameraFormat videoCameraFormat;
 
   // zoom, move to custom view
   public float finger_spacing = 0;
@@ -155,14 +154,14 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private CameraManager manager;
 
   public Camera2Wrapper(Context context, Camera2WrapperListener listener, int cameraIdSelected,
-                        AutoFitTextureView textureView, String directorySaveVideos, VideoFormat
-                        videoFormat){
+                        AutoFitTextureView textureView, String directorySaveVideos, VideoCameraFormat
+                            videoCameraFormat){
     this.context = context;
     this.listener = listener;
     this.cameraIdSelected = cameraIdSelected;
     this.textureView = textureView;
     this.directorySaveVideos = directorySaveVideos;
-    this.videoFormat = videoFormat;
+    this.videoCameraFormat = videoCameraFormat;
   }
 
   public void onResume() {
@@ -277,7 +276,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
 
       mediaRecorder = new MediaRecorderWrapper(new MediaRecorder(), cameraIdSelected,
-          sensorOrientation, rotation, getVideoFilePath(), videoFormat);
+          sensorOrientation, rotation, getVideoFilePath(), videoCameraFormat);
      if (ActivityCompat.checkSelfPermission(context,
           android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
         // TODO: Consider calling
@@ -430,6 +429,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     try {
       closePreviewSession();
       mediaRecorder.setUpMediaRecorder();
+      //mediaRecorder.setUpCameraProfileMediaRecoder();
+
       SurfaceTexture texture = textureView.getSurfaceTexture();
       assert texture != null;
       texture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
@@ -503,6 +504,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   private String getVideoFilePath() {
+
     // TODO:(alvaro.martinez) 19/01/17 Get pattern VID_ from where?
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
     String fileName = "VID_" + timeStamp + ".mp4";

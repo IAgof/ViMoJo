@@ -15,6 +15,7 @@
 package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,10 +26,18 @@ import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
+import com.videonasocialmedia.vimojo.record.presentation.views.service.RecordBackgroundService;
+import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -146,11 +155,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   @Override
-  public void videoRecorded(String path){
+  public void videoRecorded(String path) {
     if (externalIntent) {
       recordView.finishActivityForResult(path);
     } else {
-      addVideoToProjectUseCase.addVideoToTrack(path);
       recordView.showRecordButton();
       recordView.showNavigateToSettingsActivity();
       recordView.stopChronometer();
@@ -158,7 +166,21 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
       recordView.showChangeCamera();
       recordView.showRecordedVideoThumb(path);
       recordView.showVideosRecordedNumber(++recordedVideosNumber);
+      moveAndAdaptVideoRecorded(path);
     }
+  }
+
+  private void moveAndAdaptVideoRecorded(String origPath) {
+
+    File tempPath = new File(origPath);
+    String finalPath = Constants.PATH_APP_MASTERS + File.separator + tempPath.getName();
+
+    Context appContext = VimojoApplication.getAppContext();
+    Intent textToVideoServiceIntent = new Intent(appContext, RecordBackgroundService.class);
+    textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_RECORDED_ORIG, origPath);
+    textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_RECORDED_DEST, finalPath);
+    appContext.startService(textToVideoServiceIntent);
+
   }
 
   @Override

@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -13,7 +13,6 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
-import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.IOException;
 
@@ -49,7 +48,7 @@ public class ModifyVideoDurationUseCase {
    * @param finishTimeMs
    * @param listener
    */
-  public void trimVideo(Drawable drawableFadeTransition, Video videoToEdit, VideonaFormat format,
+  public void trimVideo(Drawable drawableFadeTransition, Video videoToEdit, VideoTranscoderFormat format,
                         final int startTimeMs, final int finishTimeMs,
                         MediaTranscoderListener listener) {
     try {

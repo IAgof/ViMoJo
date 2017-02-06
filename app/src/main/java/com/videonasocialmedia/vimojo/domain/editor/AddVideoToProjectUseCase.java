@@ -20,7 +20,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -58,10 +60,10 @@ public class AddVideoToProjectUseCase {
             mediaTrack.insertItem(video);
             projectRepository.update(currentProject);
             // TODO(jliarte): 22/10/16 should get rid of EventBus calls?
-            EventBus.getDefault().post(new AddMediaItemToTrackSuccessEvent(video));
+          /*  EventBus.getDefault().post(new AddMediaItemToTrackSuccessEvent(video));
             EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
             EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumVideosInProject()));
-            EventBus.getDefault().post(new VideoAddedToTrackEvent());
+            EventBus.getDefault().post(new VideoAddedToTrackEvent());*/
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             //TODO manejar error
         }
@@ -79,10 +81,11 @@ public class AddVideoToProjectUseCase {
             mediaTrack.insertItem(video);
             projectRepository.update(currentProject);
             listener.onAddMediaItemToTrackSuccess(video);
+
             // TODO(jliarte): 22/10/16 should get rid of EventBus calls?
-            EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
+          /*  EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
             EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumVideosInProject()));
-            EventBus.getDefault().post(new VideoAddedToTrackEvent());
+            EventBus.getDefault().post(new VideoAddedToTrackEvent());*/
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             listener.onAddMediaItemToTrackError();
         }
@@ -107,11 +110,11 @@ public class AddVideoToProjectUseCase {
                 mediaTrack.insertItem(video);
             }
             projectRepository.update(currentProject);
-            listener.onAddMediaItemToTrackSuccess(null);
+            listener.onAddMediaItemToTrackSuccess(videoList.get(0));
             // TODO(jliarte): 22/10/16 should get rid of EventBus calls?
-            EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
+         /*   EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
             EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumVideosInProject()));
-            EventBus.getDefault().post(new VideoAddedToTrackEvent());
+            EventBus.getDefault().post(new VideoAddedToTrackEvent());*/
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             listener.onAddMediaItemToTrackError();
         }

@@ -44,7 +44,6 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
                                  AddVideoToProjectUseCase addVideoToProjectUseCase) {
         this.galleryPagerView = galleryPagerView;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-
         this.currentProject = loadCurrentProject();
     }
 

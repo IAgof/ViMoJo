@@ -7,7 +7,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.pipeline.ApplyAudioFadeInFadeOutToVideo;
 import com.videonasocialmedia.vimojo.R;
@@ -42,7 +42,7 @@ public class ExportTempBackgroundService extends Service
     public static final int TIME_FADE_OUT_MS = 500;
 
     GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
-    private VideonaFormat videoFormat;
+    private VideoTranscoderFormat videoFormat;
     @Inject VideoRepository videoRepository;
     private String tempVideoPathPreviewFadeInFadeOut;
     // TODO:(alvaro.martinez) 22/11/16 use project tmp directory
@@ -158,6 +158,7 @@ public class ExportTempBackgroundService extends Service
                         trimVideo(video, useCaseListener,
                             videoFormat, startTimeMs, finishTimeMs);
                     }
+
                 } else {
                     useCaseListener.onTranscodeFailed(null);
                 }
@@ -175,19 +176,19 @@ public class ExportTempBackgroundService extends Service
     }
 
     private void relaunchExportVideo(Video video, MediaTranscoderListener useCaseListener,
-                                     VideonaFormat videoFormat) {
+                                     VideoTranscoderFormat videoFormat) {
         RelaunchExportTempBackgroundUseCase useCase = new RelaunchExportTempBackgroundUseCase();
         useCase.relaunchExport(drawableFadeTransitionVideo, video, useCaseListener, videoFormat);
     }
 
     private void addTextToVideo(Video video, MediaTranscoderListener useCaseListener,
-                                VideonaFormat videoFormat, String text, String textPosition) {
+                                VideoTranscoderFormat videoFormat, String text, String textPosition) {
         modifyVideoTextAndPositionUseCase.addTextToVideo(drawableFadeTransitionVideo, video,
             videoFormat, text, textPosition, useCaseListener);
     }
 
     private void trimVideo(Video video, MediaTranscoderListener useCaseListener,
-                           VideonaFormat videoFormat, int startTimeMs, int finishTimeMs) {
+                           VideoTranscoderFormat videoFormat, int startTimeMs, int finishTimeMs) {
         modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, video, videoFormat,
             startTimeMs, finishTimeMs, useCaseListener);
     }
