@@ -215,7 +215,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
             }
         }
         videonaPlayer.onShown(this);
-        editPresenter.loadProject();
+        editPresenter.init();
     }
 
     @Override
@@ -438,7 +438,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void updateProject() {
-        editPresenter.loadProject();
+        editPresenter.init();
     }
 
     @Override

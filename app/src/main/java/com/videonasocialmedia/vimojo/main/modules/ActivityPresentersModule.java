@@ -7,6 +7,7 @@ import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProject
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
@@ -39,19 +40,26 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateA
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
-import com.videonasocialmedia.videonamediaframework.pipeline.AudioMixer;
+import com.videonasocialmedia.vimojo.sound.domain.MergeVoiceOverAudiosUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.OnMergeVoiceOverAudiosListener;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverActivity;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.presenters.EditTextPreviewPresenter;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
-import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import dagger.Module;
@@ -80,26 +88,67 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   SoundVolumePresenter getSoundVolumePresenter(RemoveMusicFromProjectUseCase useCase,
-                                               AddVoiceOverToProjectUseCase addVoiceOverToProjectUseCase) {
+                                     AddVoiceOverToProjectUseCase addVoiceOverToProjectUseCase,
+                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                     GetPreferencesTransitionFromProjectUseCase
+                                         getPreferencesTransitionFromProjectUseCase) {
     return new SoundVolumePresenter((SoundVolumeView) activity, useCase,
-            addVoiceOverToProjectUseCase);
+        addVoiceOverToProjectUseCase, getMediaListFromProjectUseCase,
+        getPreferencesTransitionFromProjectUseCase);
+  }
+
+  @Provides @PerActivity
+  VoiceOverPresenter voiceOverPresenter(GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                         GetPreferencesTransitionFromProjectUseCase
+                                             getPreferencesTransitionFromProjectUseCase,
+                                        MergeVoiceOverAudiosUseCase mergeVoiceOverAudiosUseCase) {
+    return new VoiceOverPresenter((VoiceOverActivity) activity, getMediaListFromProjectUseCase,
+        getPreferencesTransitionFromProjectUseCase, mergeVoiceOverAudiosUseCase);
   }
 
   @Provides @PerActivity
   MusicDetailPresenter provideMusicDetailPresenter(UserEventTracker userEventTracker,
                               AddMusicToProjectUseCase addMusicToProjectUseCase,
-                              RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {
+                              RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase,
+                              GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                              GetMusicFromProjectUseCase getMusicFromProjectUseCase,
+                              GetPreferencesTransitionFromProjectUseCase
+                                 getPreferencesTransitionFromProjectUseCase) {
     return new MusicDetailPresenter((MusicDetailView) activity, userEventTracker,
-            addMusicToProjectUseCase, removeMusicFromProjectUseCase);
+            addMusicToProjectUseCase, removeMusicFromProjectUseCase, getMediaListFromProjectUseCase,
+            getMusicFromProjectUseCase, getPreferencesTransitionFromProjectUseCase);
   }
 
   @Provides @PerActivity
   EditPresenter provideEditPresenter(UserEventTracker userEventTracker,
                                      RemoveVideoFromProjectUseCase removeVideosFromProjectUseCase,
                                      ReorderMediaItemUseCase reorderMediaItemUseCase,
-                                     GetMusicFromProjectUseCase getMusicFromProjectUseCase) {
+                                     GetMusicFromProjectUseCase getMusicFromProjectUseCase,
+                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                     GetPreferencesTransitionFromProjectUseCase
+                                     getPreferencesTransitionFromProjectUseCase) {
     return new EditPresenter((EditActivity) activity, userEventTracker,
-        removeVideosFromProjectUseCase, reorderMediaItemUseCase, getMusicFromProjectUseCase);
+        removeVideosFromProjectUseCase, reorderMediaItemUseCase, getMusicFromProjectUseCase,
+        getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase);
+  }
+
+  @Provides @PerActivity
+  SoundPresenter provideSoundPresenter(GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                        GetPreferencesTransitionFromProjectUseCase
+                                            getPreferencesTransitionFromProjectUseCase) {
+    return new SoundPresenter((SoundActivity) activity, getMediaListFromProjectUseCase,
+        getPreferencesTransitionFromProjectUseCase);
+  }
+
+  @Provides @PerActivity
+  MusicListPresenter provideMusicListPresenter(GetMusicListUseCase getMusicListUseCase,
+                                               GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                               GetMusicFromProjectUseCase getMusicFromProjectUseCase,
+                                               GetPreferencesTransitionFromProjectUseCase
+                                                   getPreferencesTransitionFromProjectUseCase) {
+    return new MusicListPresenter((MusicListActivity) activity, getMusicListUseCase,
+        getMediaListFromProjectUseCase, getMusicFromProjectUseCase,
+        getPreferencesTransitionFromProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -249,4 +298,17 @@ public class ActivityPresentersModule {
   @Provides CheckIfProjectHasBeenExportedUseCase provideCheckIfProjectHasBeenExported(){
     return new CheckIfProjectHasBeenExportedUseCase();
   }
+
+  @Provides GetPreferencesTransitionFromProjectUseCase providePreferencesTransitionFromProjectUseCase(){
+    return new GetPreferencesTransitionFromProjectUseCase();
+  }
+
+  @Provides GetMusicListUseCase provideMusicListUseCase(){
+    return new GetMusicListUseCase();
+  }
+
+  @Provides MergeVoiceOverAudiosUseCase provideMergeVoiceOverUseCase(){
+    return new MergeVoiceOverAudiosUseCase();
+  }
+
 }

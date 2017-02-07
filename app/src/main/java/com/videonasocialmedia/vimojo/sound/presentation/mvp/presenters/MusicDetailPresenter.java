@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
+import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
@@ -30,6 +31,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
+    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     private MusicDetailView musicDetailView;
     public UserEventTracker userEventTracker;
     public Project currentProject;
@@ -39,14 +41,21 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     public MusicDetailPresenter(MusicDetailView musicDetailView,
                                 UserEventTracker userEventTracker,
                                 AddMusicToProjectUseCase addMusicToProjectUseCase,
-                                RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {
+                                RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase,
+                                GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                GetMusicFromProjectUseCase getMusicFromProjectUseCase,
+                                GetPreferencesTransitionFromProjectUseCase
+                                    getPreferencesTransitionFromProjectUseCase) {
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.addMusicToProjectUseCase = addMusicToProjectUseCase;
         this.removeMusicFromProjectUseCase = removeMusicFromProjectUseCase;
 
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
+        this.getPreferencesTransitionFromProjectUseCase =
+            getPreferencesTransitionFromProjectUseCase;
+
         // TODO(jliarte): 1/12/16 should it be a parameter of use case method?
         this.currentProject = loadCurrentProject();
         musicSelected = new Music("");
@@ -57,10 +66,17 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         return Project.getInstance(null, null, null);
     }
 
-    public void onResume(String musicPath) {
+    public void init(String musicPath) {
         musicSelected = retrieveLocalMusic(musicPath);
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
+        obtainMusicsAndVideos();
+        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+            musicDetailView.setVideoFadeTransitionAmongVideos();
+        }
+    }
+
+    private void obtainMusicsAndVideos() {
         getMusicFromProjectUseCase.getMusicFromProject(this);
+        getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 
     public void removeMusic(Music music) {

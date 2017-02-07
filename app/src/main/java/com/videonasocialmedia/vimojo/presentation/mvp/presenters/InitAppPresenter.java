@@ -13,6 +13,7 @@ public class InitAppPresenter {
   private final InitAppView view;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
 
+  @Inject
   public InitAppPresenter(InitAppView view,
                           CreateDefaultProjectUseCase createDefaultProjectUseCase) {
     this.view = view;

@@ -5,10 +5,16 @@ import com.videonasocialmedia.vimojo.sources.MusicSource;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  *
  */
 public class GetMusicListUseCase {
+    @Inject
+    public GetMusicListUseCase(){
+
+    }
 
     public List<Music> getAppMusic() {
         return new MusicSource().retrieveLocalMusic();

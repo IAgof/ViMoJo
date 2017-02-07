@@ -41,4 +41,5 @@ public class ApplicationModule {
                                                     Context context) {
     return new ProfileSharedPreferencesRepository(sharedPreferences, context);
   }
+
 }
