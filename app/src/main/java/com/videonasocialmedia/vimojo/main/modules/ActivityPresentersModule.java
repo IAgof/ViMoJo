@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
@@ -41,17 +42,18 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
-import com.videonasocialmedia.videonamediaframework.pipeline.AudioMixer;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.presenters.EditTextPreviewPresenter;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
-import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import dagger.Module;
@@ -79,18 +81,20 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  SoundVolumePresenter getSoundVolumePresenter(RemoveMusicFromProjectUseCase useCase,
-                                               AddVoiceOverToProjectUseCase addVoiceOverToProjectUseCase) {
+  SoundVolumePresenter
+  getSoundVolumePresenter(RemoveMusicFromProjectUseCase useCase,
+                          AddVoiceOverToProjectUseCase addVoiceOverToProjectUseCase) {
     return new SoundVolumePresenter((SoundVolumeView) activity, useCase,
             addVoiceOverToProjectUseCase);
   }
 
   @Provides @PerActivity
-  MusicDetailPresenter provideMusicDetailPresenter(UserEventTracker userEventTracker,
+  MusicDetailPresenter
+  provideMusicDetailPresenter(UserEventTracker userEventTracker,
                               AddMusicToProjectUseCase addMusicToProjectUseCase,
                               RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {
     return new MusicDetailPresenter((MusicDetailView) activity, userEventTracker,
-            addMusicToProjectUseCase, removeMusicFromProjectUseCase);
+            addMusicToProjectUseCase, removeMusicFromProjectUseCase, activity);
   }
 
   @Provides @PerActivity
@@ -176,6 +180,11 @@ public class ActivityPresentersModule {
       GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
     return new EditTextPreviewPresenter((VideoEditTextActivity) activity, userEventTracker,
         getMediaListFromProjectUseCase);
+  }
+
+  @Provides @PerActivity
+  MusicListPresenter provideMusicListPresenter() {
+    return new MusicListPresenter((MusicListView) activity, activity);
   }
 
   @Provides

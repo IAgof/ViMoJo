@@ -26,7 +26,7 @@ public class ApplicationModule {
 
   @Provides
   @Singleton
-  Context provideVimojoApplication() {
+  public Context provideVimojoApplication() {
     return vimojoApplication;
   }
 

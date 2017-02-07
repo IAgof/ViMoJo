@@ -1,11 +1,14 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+import android.content.Context;
+
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -14,7 +17,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
-import io.realm.Sort;
 import io.realm.internal.log.RealmLog;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -31,6 +33,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest({Realm.class, RealmLog.class, RealmQuery.class, RealmResults.class})
 public class RealmProjectRepositoryTest {
   private Realm mockedRealm;
+  @Mock private Context mockedContext;
 
   @Before
   public void injectDoubles() {
@@ -58,7 +61,7 @@ public class RealmProjectRepositoryTest {
   @Ignore
   @Test
   public void testGetCurrentProjectReturnsLastSavedProject() {
-    ProjectRealmRepository repo = new ProjectRealmRepository();
+    ProjectRealmRepository repo = new ProjectRealmRepository(mockedContext);
     RealmQuery<RealmProject> mockedRealmQuery = PowerMockito.mock(RealmQuery.class);
     when(mockedRealm.where(RealmProject.class)).thenReturn(mockedRealmQuery);
 
@@ -69,7 +72,7 @@ public class RealmProjectRepositoryTest {
 
   @Test
   public void testConstructorsSetsMappers() {
-    ProjectRealmRepository repo = new ProjectRealmRepository();
+    ProjectRealmRepository repo = new ProjectRealmRepository(mockedContext);
 
     assertThat(repo.toRealmProjectMapper, is(notNullValue()));
     assertThat(repo.toProjectMapper, is(notNullValue()));

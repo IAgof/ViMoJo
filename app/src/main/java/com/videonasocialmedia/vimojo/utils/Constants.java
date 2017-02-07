@@ -66,4 +66,10 @@ public class Constants {
     public static final float ALPHA_DISABLED_BOTTOM_BAR= 0.3f;
     public static final int DEFAULT_VIMOJO_BITRATE = 10*1000*1000;
     public static final int DEFAULT_VIMOJO_FRAME_RATE = 25;
+
+    final public static String FLAVOR_RTVE = "rtve";
+    final public static String FLAVOR_VIMOJO = "vimojo";
+    final public static String FLAVOR_HISPANOPOST = "hispanopost";
+    final public static String FLAVOR_20_MINUTOS = "veinteminutos";
+    final public static String FLAVOR_SHOULDERPOD = "shoulderpod";
 }
