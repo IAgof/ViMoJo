@@ -10,22 +10,16 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
-
-import javax.inject.Inject;
 
 /**
  *
  */
 public class ExportTempBroadcastReceveiver extends BroadcastReceiver {
-
     private static final int MAX_NUM_TRIES_TO_EXPORT_VIDEO = 4;
     private final View parent;
-    private ProjectRepository projectRepository = new ProjectRealmRepository();
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
 
     public ExportTempBroadcastReceveiver(View parent) {

@@ -3,6 +3,8 @@
     android:viewportHeight="64.0"
     android:viewportWidth="64.0"
     android:width="36dp"
+    android:tintMode="multiply"
+    android:tint="@color/button_color_toolbar"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <path
         android:fillColor="#FFFFFF"

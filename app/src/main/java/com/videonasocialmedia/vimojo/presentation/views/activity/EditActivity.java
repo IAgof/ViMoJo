@@ -34,6 +34,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -46,6 +47,7 @@ import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.videoTime
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
@@ -138,7 +140,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
             currentProjectTimePosition = savedInstanceState.getInt(CURRENT_TIME_POSITION, 0);
           }
-        bottomBar.selectTabWithId(R.id.tab_editactivity);
         setupBottomBar(bottomBar);
         setupFabMenu();
       }
@@ -149,7 +150,11 @@ public class EditActivity extends EditorActivity implements EditActivityView,
       public void onTabSelected(@IdRes int tabId) {
         switch (tabId){
           case(R.id.tab_sound):
-            navigateTo(SoundActivity.class);
+            if(BuildConfig.FEATURE_VOICE_OVER) {
+              navigateTo(SoundActivity.class);
+            } else {
+              navigateTo(MusicListActivity.class);
+            }
             break;
           case (R.id.tab_share):
             Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
@@ -216,6 +221,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         }
         videonaPlayer.onShown(this);
         editPresenter.loadProject();
+        bottomBar.selectTabWithId(R.id.tab_editactivity);
     }
 
     @Override

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="activity_music_title_going_higher">Epic rock music featuring electric guitars, drums, bass and strings</string>
+    <string name="activity_music_title_ukulele">Happy and light music featuring ukulele, finger snapping, pizzicato strings and drums</string>
+    <string name="activity_music_title_jazzy_frenchy">Jazz music featuring acoustic guitar, double bass, accordion and vibes</string>
+    <string name="activity_music_title_acoustic_breeze">Acoustic music with a soft and mellow mood featuring folk guitar and cello</string>
+</resources>

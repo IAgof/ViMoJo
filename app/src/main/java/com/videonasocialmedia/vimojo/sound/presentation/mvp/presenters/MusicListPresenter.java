@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
+import android.content.Context;
+
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
@@ -15,14 +17,15 @@ import java.util.List;
  * Created by ruth on 13/09/16.
  */
 public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback {
-
+    private final Context context;
     private List<Music> availableMusic;
     private MusicListView musicListView;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
 
-    public MusicListPresenter(MusicListView musicListView) {
-        GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase();
+    public MusicListPresenter(MusicListView musicListView, Context context) {
+        this.context = context;
+        GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase(this.context);
         availableMusic = getMusicListUseCase.getAppMusic();
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
