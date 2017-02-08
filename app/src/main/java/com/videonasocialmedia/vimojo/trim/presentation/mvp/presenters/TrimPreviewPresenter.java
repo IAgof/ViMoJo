@@ -16,10 +16,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
-import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
@@ -43,8 +40,6 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
      * Get media list from project use case
      */
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    ProjectRepository projectRepository = new ProjectRealmRepository();
-
 
     private TrimView trimView;
     public UserEventTracker userEventTracker;

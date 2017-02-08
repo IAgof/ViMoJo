@@ -12,6 +12,7 @@ package com.videonasocialmedia.vimojo.main;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
@@ -40,6 +41,7 @@ public class VimojoApplication extends Application {
 
     Tracker appTracker;
     private DataRepositoriesModule dataRepositoriesModule;
+    private ApplicationModule applicationModule;
 
     public static Context getAppContext() {
         return VimojoApplication.context;
@@ -69,11 +71,19 @@ public class VimojoApplication extends Application {
 
     void initSystemComponent() {
         this.systemComponent = DaggerSystemComponent.builder()
-                .applicationModule(new ApplicationModule(this))
+                .applicationModule(getApplicationModule())
                 .dataRepositoriesModule(getDataRepositoriesModule())
                 .trackerModule(getTrackerModule())
 //                .activityPresentersModule(getActivityPresentersModule())
                 .build();
+    }
+
+    @NonNull
+    public ApplicationModule getApplicationModule() {
+        if (applicationModule == null) {
+            applicationModule = new ApplicationModule(this);
+        }
+        return applicationModule;
     }
 
     private TrackerModule getTrackerModule() {
@@ -114,7 +124,7 @@ public class VimojoApplication extends Application {
     protected void setupDataBase() {
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
                 .name("vimojoDB")
-                .schemaVersion(3) // 20161213
+                .schemaVersion(4) // 20170207 - v0.4.19 (20170118)
                 .migration(new VimojoMigration())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);

@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
+import android.content.Context;
+
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
@@ -16,8 +18,8 @@ import dagger.Provides;
 @Module
 public class DataRepositoriesModule {
   @Provides @Singleton
-  ProjectRepository provideDefaultProjectRepository() {
-    return new ProjectRealmRepository();
+  ProjectRepository provideDefaultProjectRepository(Context context) {
+    return new ProjectRealmRepository(context);
   }
 
   @Provides @Singleton
