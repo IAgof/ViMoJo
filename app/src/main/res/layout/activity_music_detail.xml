@@ -46,6 +46,7 @@
                 android:id="@+id/detail_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="24dp"
                 android:padding="8dp"
                 >
 
@@ -54,9 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
-                    android:layout_centerVertical="true"
                     android:scaleType="centerCrop"
-                    android:paddingBottom="?attr/actionBarSize"
                     tools:src="@drawable/fragment_gallery_no_image"
                     />
 
@@ -67,7 +66,6 @@
                     android:layout_toRightOf="@+id/music_image"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="8dp"
-                    android:layout_centerVertical="true"
                     android:paddingBottom="?attr/actionBarSize"
                     android:orientation="vertical">
 
@@ -101,7 +99,55 @@
                     />
                 </LinearLayout>
 
-            <FrameLayout
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/linear_layout_seekBar_volume_sound"
+                    android:layout_below="@+id/music_image"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginLeft="8dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/activity_edit_sound_normal"
+                        android:layout_marginRight="4dp"
+                        android:layout_gravity="left"
+                        android:scaleType="fitXY"
+                        />
+
+                    <SeekBar
+                        android:id="@+id/seekBar_volume_sound"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="16dp"
+                        android:layout_weight="1"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginBottom="0dp"
+                        android:indeterminate="false"
+                        android:layout_gravity="center_horizontal"
+                        android:progressTint="@color/colorPrimary"
+                        android:progressBackgroundTint="@color/button_color"
+                        android:thumb="@drawable/ic_circular_thumb_seekbar"
+                        />
+
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/activity_edit_sound_music_normal"
+                        android:layout_marginLeft="4dp"
+                        android:layout_gravity="right"
+                        android:scaleType="fitXY"
+                        />
+
+                </LinearLayout>
+
+
+
+                <FrameLayout
                 android:id="@+id/scene_root"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"

@@ -84,7 +84,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         return result;
     }
 
-    public void addMusic(Music music) {
+    public void addMusic(Music music, float volume) {
+        music.setVolume(volume);
         addMusicToProjectUseCase.addMusicToTrack(music, 0, this);
     }
 
