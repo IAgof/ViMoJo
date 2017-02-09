@@ -43,6 +43,7 @@ import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.UpdateMusicVolumeProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
@@ -92,9 +93,11 @@ public class ActivityPresentersModule {
   MusicDetailPresenter
   provideMusicDetailPresenter(UserEventTracker userEventTracker,
                               AddMusicToProjectUseCase addMusicToProjectUseCase,
-                              RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {
+                              RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase,
+                              UpdateMusicVolumeProjectUseCase updateMusicVolumeProjectUseCase) {
     return new MusicDetailPresenter((MusicDetailView) activity, userEventTracker,
-            addMusicToProjectUseCase, removeMusicFromProjectUseCase, activity);
+            addMusicToProjectUseCase, removeMusicFromProjectUseCase,
+            updateMusicVolumeProjectUseCase, activity);
   }
 
   @Provides @PerActivity
@@ -257,5 +260,10 @@ public class ActivityPresentersModule {
 
   @Provides CheckIfProjectHasBeenExportedUseCase provideCheckIfProjectHasBeenExported(){
     return new CheckIfProjectHasBeenExportedUseCase();
+  }
+
+  @Provides UpdateMusicVolumeProjectUseCase provideUpdateMusicVolumeProject(ProjectRepository
+                                                                            projectRepository){
+    return new UpdateMusicVolumeProjectUseCase(projectRepository);
   }
 }

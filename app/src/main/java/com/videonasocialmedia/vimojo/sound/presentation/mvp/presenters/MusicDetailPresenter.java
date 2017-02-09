@@ -16,6 +16,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromPro
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
+import com.videonasocialmedia.vimojo.sound.domain.UpdateMusicVolumeProjectUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
+    private UpdateMusicVolumeProjectUseCase updateMusicVolumeProjectUseCase;
     private MusicDetailView musicDetailView;
     public UserEventTracker userEventTracker;
     public Project currentProject;
@@ -42,11 +44,13 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
                                 UserEventTracker userEventTracker,
                                 AddMusicToProjectUseCase addMusicToProjectUseCase,
                                 RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase,
+                                UpdateMusicVolumeProjectUseCase updateMusicVolumeProjectUseCase,
                                 Context context) {
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.addMusicToProjectUseCase = addMusicToProjectUseCase;
         this.removeMusicFromProjectUseCase = removeMusicFromProjectUseCase;
+        this.updateMusicVolumeProjectUseCase = updateMusicVolumeProjectUseCase;
         this.context = context;
 
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
@@ -118,5 +122,9 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     public void onAddMediaItemToTrackSuccess(Media media) {
         userEventTracker.trackMusicSet(currentProject);
         musicDetailView.goToEdit(media.getTitle());
+    }
+
+    public void setVolume(float volume) {
+        updateMusicVolumeProjectUseCase.setVolumeMusic(currentProject, volume);
     }
 }

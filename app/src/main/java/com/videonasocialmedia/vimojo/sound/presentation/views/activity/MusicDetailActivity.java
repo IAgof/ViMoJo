@@ -270,7 +270,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         videonaPlayer.setVolume(progress *0.01f);
         currentSoundVolumePosition = progress;
         if(music!=null)
-            music.setVolume(progress *0.01f);
+            presenter.setVolume(progress*0.01f);
     }
 
     @Override
