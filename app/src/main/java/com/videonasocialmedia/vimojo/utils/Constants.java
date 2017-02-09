@@ -72,4 +72,6 @@ public class Constants {
     final public static String FLAVOR_HISPANOPOST = "hispanopost";
     final public static String FLAVOR_20_MINUTOS = "veinteminutos";
     final public static String FLAVOR_SHOULDERPOD = "shoulderpod";
+
+    public static final String USER_THUMB = "userThumb.jpg";
 }

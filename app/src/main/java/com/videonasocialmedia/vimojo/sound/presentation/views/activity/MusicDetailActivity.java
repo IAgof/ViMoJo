@@ -210,6 +210,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         updateCoverInfo(music);
         seekBarVolume.setProgress((int)(music.getVolume()*100));
         this.music = music;
+        videonaPlayer.playPreview();
     }
 
     private void updateCoverInfo(Music music) {
