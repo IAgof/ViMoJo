@@ -66,7 +66,6 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         restoreState(savedInstanceState);
         videonaPlayer.setListener(this);
         getActivityPresentersComponent().inject(this);
-//        presenter = new MusicListPresenter(this, this);
         initVideoListRecycler();
     }
 
