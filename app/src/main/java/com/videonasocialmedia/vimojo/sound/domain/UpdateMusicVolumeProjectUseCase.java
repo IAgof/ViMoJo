@@ -17,8 +17,10 @@ public class UpdateMusicVolumeProjectUseCase {
   }
 
   public void setVolumeMusic(Project project, float volumeMusic){
-    Music music = project.getMusic();
-    music.setVolume(volumeMusic);
-    projectRepository.update(project);
+    if(project.hasMusic()) {
+      Music music = project.getMusic();
+      music.setVolume(volumeMusic);
+      projectRepository.update(project);
+    }
   }
 }
