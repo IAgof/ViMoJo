@@ -27,6 +27,6 @@ public class GetMusicFromProjectUseCase {
 
     public boolean hasBeenMusicSelected(){
       return (project.getVMComposition().hasMusic() &&
-          (project.getMusic().getTitle() != Constants.MUSIC_AUDIO_VOICEOVER_TITLE));
+          (project.getMusic().getMusicTitle().compareTo(Constants.MUSIC_AUDIO_VOICEOVER_TITLE) != 0));
     }
 }
