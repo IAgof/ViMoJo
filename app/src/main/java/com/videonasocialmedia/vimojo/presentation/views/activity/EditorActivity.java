@@ -75,35 +75,33 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   private void setUpAndCheckUserThumb() {
-
     imageUserThumb = (CircleImageView) navigationView.getHeaderView(0)
         .findViewById(R.id.image_drawer_user);
-
     imageUserThumb.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
         showDialogUserAddThumb();
       }
     });
-
     updateUserThumb(userThumbPath);
   }
 
-  private void updateUserThumb(String path){
+  private void updateUserThumb(String path) {
     File thumb = new File(path);
-    if(thumb.getName().compareTo(Constants.USER_THUMB) != 0){
+    if (thumb.getName().compareTo(Constants.USER_THUMB) != 0) {
       try {
         Utils.copyFile(path,userThumbPath);
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
-    if(thumb.exists())
+    if(thumb.exists()) {
       Glide.with(this)
-          .load(userThumbPath)
-          .diskCacheStrategy(DiskCacheStrategy.RESULT)
-          .signature(new StringSignature(String.valueOf(thumb.lastModified())))
-          .into(imageUserThumb);
+              .load(userThumbPath)
+              .diskCacheStrategy(DiskCacheStrategy.RESULT)
+              .signature(new StringSignature(String.valueOf(thumb.lastModified())))
+              .into(imageUserThumb);
+    }
   }
 
   @Override
@@ -132,7 +130,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       editorPresenter.getPreferenceUserName();
       editorPresenter.getPreferenceEmail();
     }
-
   }
 
   @Override
@@ -149,7 +146,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     // Handle action bar item clicks here. The action bar will
     // automatically handle clicks on the Home/Up button, so long
     // as you specify a parent activity in AndroidManifest.xml.
-
     switch (item.getItemId()) {
       case R.id.action_settings_edit_options:
         navigateTo(SettingsActivity.class);
@@ -161,7 +157,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
         drawerLayout.openDrawer(GravityCompat.START);
         return true;
       default:
-
     }
     return super.onOptionsItemSelected(item);
   }
@@ -172,12 +167,10 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   private void setupDrawerContent(NavigationView navigationView) {
-
     navigationView.setNavigationItemSelectedListener(
         new NavigationView.OnNavigationItemSelectedListener() {
           @Override
           public boolean onNavigationItemSelected(MenuItem menuItem) {
-
             switch (menuItem.getItemId()) {
               case R.id.menu_navview_gallery_projects:
                 drawerLayout.closeDrawers();
@@ -199,16 +192,13 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   private void createDialog(final int resourceItemMenuId) {
-
     AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaAlertDialog);
-
     if (resourceItemMenuId == R.id.menu_navview_delete_clip)
       builder.setMessage(getResources().getString(R.string.dialog_message_clean_project));
     if (resourceItemMenuId == R.id.menu_navview_mail)
       builder.setMessage(getResources().getString(R.string.dialog_change_email));
     if (resourceItemMenuId == R.id.menu_navview_username)
       builder.setMessage(getResources().getString(R.string.dialog_change_user_name));
-
 
     final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
       @Override
@@ -231,13 +221,13 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       }
     };
 
-    alertDialog=builder.setCancelable(true).
+    alertDialog = builder.setCancelable(true).
         setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
         .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
   }
 
-  public void navigateTo(Class cls){
-    Intent intent=new Intent(VimojoApplication.getAppContext(),cls);
+  public void navigateTo(Class cls) {
+    Intent intent = new Intent(VimojoApplication.getAppContext(),cls);
     startActivity(intent);
   }
 
@@ -276,51 +266,42 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     snackbar.show();
   }
 
-  public void showDialogUserAddThumb(){
+  public void showDialogUserAddThumb() {
       // dialog pick or take photo
     final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
-
         File file = new File(userThumbPath);
         Uri uri = Uri.fromFile(file);
 
+        Intent userThumbSetterIntent = null;
         switch (which) {
           case DialogInterface.BUTTON_POSITIVE:
-            //Take photo button clicked
-            Intent takePicIntent = new Intent("android.media.action.IMAGE_CAPTURE");
-
-            takePicIntent .putExtra("crop", "true");
-            takePicIntent .putExtra("outputX", 600);
-            takePicIntent .putExtra("outputY", 600);
-            takePicIntent .putExtra("aspectX", 1);
-            takePicIntent .putExtra("aspectY", 1);
-            takePicIntent .putExtra("scale", true);
-            takePicIntent .putExtra(MediaStore.EXTRA_OUTPUT, uri);
-            takePicIntent .putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-            startActivityForResult(takePicIntent , REQUEST_ICON_USER);
-
-
+            // Take photo button clicked
+            userThumbSetterIntent = new Intent("android.media.action.IMAGE_CAPTURE");
+            setIntentExtras(uri, userThumbSetterIntent);
+            startActivityForResult(userThumbSetterIntent, REQUEST_ICON_USER);
             break;
-
           case DialogInterface.BUTTON_NEGATIVE:
-            //Pick from gallery button clicked
-            Intent pickImageIntent = new Intent(Intent.ACTION_PICK,
+            // Pick from gallery button clicked
+            userThumbSetterIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-            pickImageIntent.setType("image/*");
-            pickImageIntent.putExtra("crop", "true");
-            pickImageIntent.putExtra("outputX", 600);
-            pickImageIntent.putExtra("outputY", 600);
-            pickImageIntent.putExtra("aspectX", 1);
-            pickImageIntent.putExtra("aspectY", 1);
-            pickImageIntent.putExtra("scale", true);
-            pickImageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-            pickImageIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-            startActivityForResult(pickImageIntent, REQUEST_ICON_USER);
-
+            userThumbSetterIntent.setType("image/*");
+            setIntentExtras(uri, userThumbSetterIntent);
+            startActivityForResult(userThumbSetterIntent, REQUEST_ICON_USER);
             break;
         }
+      }
+
+      private void setIntentExtras(Uri uri, Intent takePicIntent) {
+        takePicIntent.putExtra("crop", "true");
+        takePicIntent.putExtra("outputX", 600);
+        takePicIntent.putExtra("outputY", 600);
+        takePicIntent.putExtra("aspectX", 1);
+        takePicIntent.putExtra("aspectY", 1);
+        takePicIntent.putExtra("scale", true);
+        takePicIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        takePicIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
       }
     };
 
@@ -333,8 +314,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-    if (resultCode == RESULT_OK && requestCode == REQUEST_ICON_USER && data != null){
+    if (resultCode == RESULT_OK && requestCode == REQUEST_ICON_USER && data != null) {
       if(data.getData() != null) {
         final String inPath = Utils.getPath(this, data.getData());
         if (inPath != null)
