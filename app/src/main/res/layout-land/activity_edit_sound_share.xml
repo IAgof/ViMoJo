@@ -24,7 +24,6 @@
                 android:orientation="horizontal"
                 android:layout_gravity="right"
                 android:gravity="center"
-                app:edit_selected="true"
                 />
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>

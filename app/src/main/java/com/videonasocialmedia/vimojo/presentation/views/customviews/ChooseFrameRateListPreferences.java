@@ -20,6 +20,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoFrameRateToProjectUseCase;
 import com.videonasocialmedia.vimojo.main.DaggerVideoFormatPreferencesComponent;
 import com.videonasocialmedia.vimojo.main.VideoFormatPreferencesComponent;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.VideoFormatPreferencesModule;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -52,6 +53,8 @@ public class ChooseFrameRateListPreferences extends ListPreference {
         return DaggerVideoFormatPreferencesComponent.builder()
                 .videoFormatPreferencesModule(new VideoFormatPreferencesModule())
                 .dataRepositoriesModule(new DataRepositoriesModule())
+                .applicationModule(((VimojoApplication) getContext().getApplicationContext())
+                        .getApplicationModule())
                 .build();
     }
 

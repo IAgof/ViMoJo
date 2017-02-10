@@ -49,9 +49,9 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
 
     @Bind(R.id.music_list)
     RecyclerView soundList;
+
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-
     private SoundListAdapter soundAdapter;
     private BroadcastReceiver exportReceiver;
     private int currentProjectPosition;

@@ -58,7 +58,7 @@ public class Project {
   private VMComposition vmComposition;
 
   private String lastModification;
-
+  
   private String uuid = UUID.randomUUID().toString();
 
   private LastVideoExported lastVideoExported;

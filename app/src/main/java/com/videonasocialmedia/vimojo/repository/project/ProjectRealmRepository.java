@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+import android.content.Context;
+
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
@@ -18,11 +20,13 @@ import io.realm.Sort;
  */
 
 public class ProjectRealmRepository implements ProjectRepository {
+  private final Context context;
   protected Mapper<Project, RealmProject> toRealmProjectMapper;
   protected Mapper<RealmProject, Project> toProjectMapper;
 
-  public ProjectRealmRepository() {
-    this.toProjectMapper = new RealmProjectToProjectMapper();
+  public ProjectRealmRepository(Context context) {
+    this.context = context;
+    this.toProjectMapper = new RealmProjectToProjectMapper(this.context);
     this.toRealmProjectMapper = new ProjectToRealmProjectMapper();
   }
 

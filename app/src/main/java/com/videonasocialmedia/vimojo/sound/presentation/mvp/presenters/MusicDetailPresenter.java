@@ -1,6 +1,8 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import android.content.Context;
+
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
@@ -21,7 +23,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-
 /**
  *
  */
@@ -36,6 +37,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     public UserEventTracker userEventTracker;
     public Project currentProject;
     private Music musicSelected;
+    private Context context;
 
     @Inject
     public MusicDetailPresenter(MusicDetailView musicDetailView,
@@ -45,7 +47,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
                                 GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                 GetMusicFromProjectUseCase getMusicFromProjectUseCase,
                                 GetPreferencesTransitionFromProjectUseCase
-                                    getPreferencesTransitionFromProjectUseCase) {
+                                    getPreferencesTransitionFromProjectUseCase,
+                                Context context) {
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.addMusicToProjectUseCase = addMusicToProjectUseCase;
@@ -55,6 +58,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase =
             getPreferencesTransitionFromProjectUseCase;
+        this.context = context;
 
         // TODO(jliarte): 1/12/16 should it be a parameter of use case method?
         this.currentProject = loadCurrentProject();
@@ -86,7 +90,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     private Music retrieveLocalMusic(String musicPath) {
         Music result = null;
-        GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase();
+        GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase(context);
         List<Music> musicList = getMusicListUseCase.getAppMusic();
         for (Music music : musicList) {
             if (musicPath.compareTo(music.getMediaPath()) == 0) {

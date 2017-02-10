@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
@@ -225,6 +226,11 @@ public class ActivityPresentersModule {
       GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
     return new EditTextPreviewPresenter((VideoEditTextActivity) activity, userEventTracker,
         getMediaListFromProjectUseCase);
+  }
+
+  @Provides @PerActivity
+  MusicListPresenter provideMusicListPresenter() {
+    return new MusicListPresenter((MusicListView) activity, activity);
   }
 
   @Provides

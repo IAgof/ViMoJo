@@ -196,6 +196,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         videonaPlayer.setVolume(1f);
         updateCoverInfo(music);
         this.music = music;
+        videonaPlayer.playPreview();
     }
 
     private void updateCoverInfo(Music music) {
@@ -250,10 +251,9 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         finish();
     }
 
-    @Override
     @Nullable
     @OnClick(R.id.cancel_music)
-    public void onBackPressed() {
+    public void onCancelMusicClickListener() {
             goToMusicList();
     }
 

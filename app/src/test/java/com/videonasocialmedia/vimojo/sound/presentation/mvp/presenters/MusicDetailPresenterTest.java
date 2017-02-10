@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
+import android.content.Context;
+
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -40,6 +42,7 @@ public class MusicDetailPresenterTest {
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private RemoveMusicFromProjectUseCase mockedRemoveMusicUseCase;
     @Mock private AddMusicToProjectUseCase mockedAddMusicToProjectUseCase;
+    @Mock private Context mockedContext;
     @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock private GetMusicFromProjectUseCase mockedGetMusicFromProject;
     @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
