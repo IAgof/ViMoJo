@@ -62,10 +62,10 @@ public class MusicDetailPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         MusicDetailPresenter musicDetailPresenter =
-            new MusicDetailPresenter(musicDetailView, mockedUserEventTracker,
+            new MusicDetailPresenter(musicDetailView, userEventTracker,
                 mockedAddMusicToProjectUseCase, mockedRemoveMusicUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedGetMusicFromProject,
-                mockedGetPreferencesTransitionsFromProject);
+                mockedGetPreferencesTransitionsFromProject, mockedContext);
 
         assertThat(musicDetailPresenter.userEventTracker, is(userEventTracker));
     }
@@ -78,7 +78,7 @@ public class MusicDetailPresenterTest {
                 new MusicDetailPresenter(musicDetailView, mockedUserEventTracker,
                         mockedAddMusicToProjectUseCase, mockedRemoveMusicUseCase,
                     mockedGetMediaListFromProjectUseCase, mockedGetMusicFromProject,
-                    mockedGetPreferencesTransitionsFromProject);
+                    mockedGetPreferencesTransitionsFromProject, mockedContext);
 
         assertThat(musicDetailPresenter.currentProject, is(videonaProject));
     }
@@ -89,7 +89,7 @@ public class MusicDetailPresenterTest {
             new MusicDetailPresenter(musicDetailView, mockedUserEventTracker,
                 mockedAddMusicToProjectUseCase, mockedRemoveMusicUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedGetMusicFromProject,
-                mockedGetPreferencesTransitionsFromProject);
+                mockedGetPreferencesTransitionsFromProject, mockedContext);
         Project videonaProject = getAProject();
         Music music = new Music(1, "Music title", 2, 3, "Music Author", "3");
         musicDetailPresenter.onMusicRetrieved(music);
@@ -105,7 +105,7 @@ public class MusicDetailPresenterTest {
             new MusicDetailPresenter(musicDetailView, mockedUserEventTracker,
                 mockedAddMusicToProjectUseCase, mockedRemoveMusicUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedGetMusicFromProject,
-                mockedGetPreferencesTransitionsFromProject);
+                mockedGetPreferencesTransitionsFromProject, mockedContext);
         Project videonaProject = getAProject();
         Music music = new Music(1, "Music title", 2, 3, "Music Author", "3");
 //        musicDetailPresenter.removeMusicFromProjectUseCase = mockedRemoveMusicUseCase;

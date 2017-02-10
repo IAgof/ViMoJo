@@ -28,7 +28,8 @@ public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjec
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
 
     @Inject
-    public MusicListPresenter(MusicListView musicListView, GetMusicListUseCase getMusicListUseCase,
+    public MusicListPresenter(MusicListView musicListView, Context context,
+                              GetMusicListUseCase getMusicListUseCase,
                               GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                               GetMusicFromProjectUseCase getMusicFromProjectUseCase,
                               GetPreferencesTransitionFromProjectUseCase

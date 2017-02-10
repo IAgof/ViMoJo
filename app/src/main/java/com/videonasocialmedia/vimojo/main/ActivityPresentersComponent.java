@@ -13,7 +13,6 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundVolumeActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverActivity;

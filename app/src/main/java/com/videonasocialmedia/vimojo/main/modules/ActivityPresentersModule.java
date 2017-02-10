@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
@@ -45,7 +44,6 @@ import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFro
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.MergeVoiceOverAudiosUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.OnMergeVoiceOverAudiosListener;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
@@ -117,7 +115,7 @@ public class ActivityPresentersModule {
                                  getPreferencesTransitionFromProjectUseCase) {
     return new MusicDetailPresenter((MusicDetailView) activity, userEventTracker,
             addMusicToProjectUseCase, removeMusicFromProjectUseCase, getMediaListFromProjectUseCase,
-            getMusicFromProjectUseCase, getPreferencesTransitionFromProjectUseCase);
+            getMusicFromProjectUseCase, getPreferencesTransitionFromProjectUseCase, activity);
   }
 
   @Provides @PerActivity
@@ -147,7 +145,7 @@ public class ActivityPresentersModule {
                                                GetMusicFromProjectUseCase getMusicFromProjectUseCase,
                                                GetPreferencesTransitionFromProjectUseCase
                                                    getPreferencesTransitionFromProjectUseCase) {
-    return new MusicListPresenter((MusicListActivity) activity, getMusicListUseCase,
+    return new MusicListPresenter((MusicListActivity) activity, activity, getMusicListUseCase,
         getMediaListFromProjectUseCase, getMusicFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase);
   }
@@ -228,11 +226,6 @@ public class ActivityPresentersModule {
         getMediaListFromProjectUseCase);
   }
 
-  @Provides @PerActivity
-  MusicListPresenter provideMusicListPresenter() {
-    return new MusicListPresenter((MusicListView) activity, activity);
-  }
-
   @Provides
   RemoveMusicFromProjectUseCase provideMusicRemover(ProjectRepository projectRepository) {
     return new RemoveMusicFromProjectUseCase(projectRepository);
@@ -310,7 +303,7 @@ public class ActivityPresentersModule {
   }
 
   @Provides GetMusicListUseCase provideMusicListUseCase(){
-    return new GetMusicListUseCase();
+    return new GetMusicListUseCase(activity);
   }
 
   @Provides MergeVoiceOverAudiosUseCase provideMergeVoiceOverUseCase(){
