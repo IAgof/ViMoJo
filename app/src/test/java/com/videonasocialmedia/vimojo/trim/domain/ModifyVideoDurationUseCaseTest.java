@@ -39,10 +39,23 @@ public class ModifyVideoDurationUseCaseTest {
   @Mock TranscoderHelper mockedTranscoderHelper;
   @Mock VideoRepository mockedVideoRepository;
   @Mock Drawable mockDrawableFadeTransition;
+  @Mock String mockedIntermediatesTempAudioFadeDirectory;
   boolean isVideoFadeTransitionActivated;
+  boolean isAudioFadeTransitionActivated;
   @InjectMocks ModifyVideoDurationUseCase injectedUseCase;
   private final VideonaFormat videonaFormat = new VideonaFormat();
-  private final MediaTranscoderListener mediaTranscoderListener = getMediaTranscoderListener();
+  private final MediaTranscoderListener mediaTranscoderListener = new MediaTranscoderListener() {
+    @Override
+    public void onSuccessTranscoding(Video video) {
+
+    }
+
+    @Override
+    public void onErrorTranscoding(Video video, String message) {
+
+    }
+  };
+
 
   @Before
   public void injectDoubles() throws Exception {
@@ -58,12 +71,11 @@ public class ModifyVideoDurationUseCaseTest {
             mockedMediaTranscoder);
 
     injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
-        mediaTranscoderListener);
+        mockedIntermediatesTempAudioFadeDirectory);
 
     verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
         eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()),
-        eq(video.getTempPath()), eq(videonaFormat), eq(mediaTranscoderListener),
-            Matchers.any(Image.class), eq(0), eq(10));
+        eq(video.getTempPath()), eq(videonaFormat), Matchers.any(Image.class), eq(0), eq(10));
   }
 
   @Test
@@ -74,11 +86,11 @@ public class ModifyVideoDurationUseCaseTest {
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
-        mediaTranscoderListener);
+        mockedIntermediatesTempAudioFadeDirectory);
 
     verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(
-        mockDrawableFadeTransition, isVideoFadeTransitionActivated, video,videonaFormat,
-        mediaTranscoderListener);
+        mockDrawableFadeTransition, isVideoFadeTransitionActivated, isAudioFadeTransitionActivated,
+        video, videonaFormat, mockedIntermediatesTempAudioFadeDirectory, mediaTranscoderListener );
   }
 
   @Test
@@ -90,11 +102,11 @@ public class ModifyVideoDurationUseCaseTest {
             mockedMediaTranscoder);
 
     injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
-        mediaTranscoderListener);
+        mockedIntermediatesTempAudioFadeDirectory);
 
     verify(mockedMediaTranscoder).transcodeAndTrimVideo(eq(mockDrawableFadeTransition),
         eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()),eq(video.getTempPath()),
-        eq(videonaFormat), eq(mediaTranscoderListener), eq(0), eq(10));
+        eq(videonaFormat), eq(0), eq(10));
   }
 
   @Test
@@ -106,10 +118,11 @@ public class ModifyVideoDurationUseCaseTest {
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
-        mediaTranscoderListener);
+        mockedIntermediatesTempAudioFadeDirectory);
 
     verify(mockedTranscoderHelper).generateOutputVideoWithTrimming(mockDrawableFadeTransition,
-        isVideoFadeTransitionActivated, video, videonaFormat, mediaTranscoderListener);
+        isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, video, videonaFormat,
+        mockedIntermediatesTempAudioFadeDirectory, mediaTranscoderListener);
   }
 
   @Test
@@ -118,7 +131,7 @@ public class ModifyVideoDurationUseCaseTest {
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 2, 10,
-        mediaTranscoderListener);
+        mockedIntermediatesTempAudioFadeDirectory);
 
     verify(mockedVideoRepository).update(video);
     assertThat(video.getStartTime(), is(2));
@@ -136,28 +149,4 @@ public class ModifyVideoDurationUseCaseTest {
     return video;
   }
 
-  @NonNull
-  private MediaTranscoderListener getMediaTranscoderListener() {
-    return new MediaTranscoderListener() {
-      @Override
-      public void onTranscodeProgress(double v) {
-
-      }
-
-      @Override
-      public void onTranscodeCompleted() {
-
-      }
-
-      @Override
-      public void onTranscodeCanceled() {
-
-      }
-
-      @Override
-      public void onTranscodeFailed(Exception e) {
-
-      }
-    };
-  }
 }

@@ -13,7 +13,6 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
-import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.IOException;
 
@@ -22,7 +21,7 @@ import javax.inject.Inject;
 /**
  * Created by jca on 27/5/15.
  */
-public class ModifyVideoDurationUseCase {
+public class ModifyVideoDurationUseCase implements MediaTranscoderListener {
 
   private TextToDrawable drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
   private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
@@ -47,15 +46,16 @@ public class ModifyVideoDurationUseCase {
    * @param format
    * @param startTimeMs
    * @param finishTimeMs
-   * @param listener
    */
   public void trimVideo(Drawable drawableFadeTransition, Video videoToEdit, VideonaFormat format,
                         final int startTimeMs, final int finishTimeMs,
-                        MediaTranscoderListener listener) {
+                        String intermediatesTempAudioFadeDirectory) {
     try {
 
       boolean isVideoFadeTransitionActivated =
           getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
+      boolean isAudioFadeTransitionActivated =
+          getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
 
       videoToEdit.setStartTime(startTimeMs);
       videoToEdit.setStopTime(finishTimeMs);
@@ -66,16 +66,28 @@ public class ModifyVideoDurationUseCase {
 
       if (videoToEdit.hasText()) {
         transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(drawableFadeTransition,
-            isVideoFadeTransitionActivated, videoToEdit, format,
-                listener);
+            isVideoFadeTransitionActivated,isAudioFadeTransitionActivated, videoToEdit, format,
+            intermediatesTempAudioFadeDirectory, this);
       } else {
         transcoderHelper.generateOutputVideoWithTrimming(drawableFadeTransition,
-            isVideoFadeTransitionActivated, videoToEdit, format, listener);
+            isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit, format,
+            intermediatesTempAudioFadeDirectory, this);
       }
       videoRepository.update(videoToEdit);
     } catch (IOException exception) {
       exception.printStackTrace();
-      listener.onTranscodeFailed(exception);
+      onErrorTranscoding(videoToEdit, exception.getMessage());
     }
+  }
+
+  @Override
+  public void onSuccessTranscoding(Video video) {
+
+    videoRepository.update(video);
+  }
+
+  @Override
+  public void onErrorTranscoding(Video video, String message) {
+    // TODO:(alvaro.martinez) 15/02/17 Manage this error
   }
 }

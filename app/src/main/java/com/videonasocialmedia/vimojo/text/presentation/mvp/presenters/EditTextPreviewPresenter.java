@@ -5,16 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
+import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -31,6 +35,8 @@ import javax.inject.Inject;
 public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
     private final String LOG_TAG = getClass().getSimpleName();
+    private final Drawable drawableFadeTransitionVideo;
+    private final VideonaFormat videoFormat;
     TextToDrawable drawableGenerator;
 
     private Video videoToEdit;
@@ -47,7 +53,11 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
         this.currentProject = loadCurrentProject();
         // TODO:(alvaro.martinez) 23/11/16 Use Dagger for this injection
+        GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase =
+            new GetVideonaFormatFromCurrentProjectUseCase();
+        videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
         drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
+        drawableFadeTransitionVideo = VimojoApplication.getAppContext().getDrawable(R.drawable.alpha_transition_black);
     }
 
     private Project loadCurrentProject() {
@@ -83,7 +93,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
     public void setTextToVideo(String text, TextEffect.TextPosition textPositionSelected) {
 
-        Context appContext = VimojoApplication.getAppContext();
+       /* Context appContext = VimojoApplication.getAppContext();
         Intent textToVideoServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
         textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoToEdit.getUuid());
         textToVideoServiceIntent.putExtra(IntentConstants.IS_TEXT_ADDED, true);
@@ -93,7 +103,15 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
             currentProject.getProjectPathIntermediateFiles());
         textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY_FADE_AUDIO,
             currentProject.getProjectPathIntermediateFileAudioFade());
-        appContext.startService(textToVideoServiceIntent);
+        appContext.startService(textToVideoServiceIntent);*/
+
+        //Inject
+        ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase =
+            new ModifyVideoTextAndPositionUseCase(new VideoRealmRepository());
+
+        modifyVideoTextAndPositionUseCase.addTextToVideo(drawableFadeTransitionVideo, videoToEdit,
+            videoFormat, text, textPositionSelected.name(), currentProject.getProjectPathIntermediateFileAudioFade());
+
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
     }
 }

@@ -12,7 +12,6 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
-import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.IOException;
 
@@ -21,7 +20,7 @@ import javax.inject.Inject;
 /**
  * Created by alvaro on 1/09/16.
  */
-public class ModifyVideoTextAndPositionUseCase {
+public class ModifyVideoTextAndPositionUseCase implements MediaTranscoderListener {
 
     // TODO:(alvaro.martinez) 23/11/16 Use Dagger for this injection
     protected TextToDrawable drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
@@ -41,11 +40,15 @@ public class ModifyVideoTextAndPositionUseCase {
         getPreferencesTransitionFromProjectUseCase = new GetPreferencesTransitionFromProjectUseCase();
     }
 
-    public void addTextToVideo(Drawable drawableFadeTransition, Video videoToEdit, VideonaFormat format, String text, String textPosition,
-                               MediaTranscoderListener listener) {
+    public void addTextToVideo(Drawable drawableFadeTransition, Video videoToEdit,
+                               VideonaFormat format, String text, String textPosition,
+                               String intermediatesTempAudioFadeDirectory) {
         try {
 
-            boolean isVideoFadeTransitionActivated = getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
+          boolean isVideoFadeTransitionActivated =
+              getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
+          boolean isAudioFadeTransitionActivated =
+              getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
 
             videoToEdit.setClipText(text);
             videoToEdit.setClipTextPosition(textPosition);
@@ -58,16 +61,27 @@ public class ModifyVideoTextAndPositionUseCase {
             if(videoToEdit.isTrimmedVideo()) {
                 transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(
                     drawableFadeTransition, isVideoFadeTransitionActivated,
-                    videoToEdit, format, listener);
+                    isAudioFadeTransitionActivated, videoToEdit, format,
+                    intermediatesTempAudioFadeDirectory, this);
             } else {
                 transcoderHelper.generateOutputVideoWithOverlayImage(drawableFadeTransition,
-                    isVideoFadeTransitionActivated, videoToEdit, format, listener);
+                    isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
+                    format, intermediatesTempAudioFadeDirectory, this);
             }
             videoRepository.update(videoToEdit);
         } catch (IOException e) {
-            // TODO(javi.cabanas): 2/8/16 mangage io expception on external library and send onTranscodeFailed if neccessary
-            listener.onTranscodeFailed(e);
+            onErrorTranscoding(videoToEdit, e.getMessage());
         }
     }
+
+  @Override
+  public void onSuccessTranscoding(Video video) {
+    videoRepository.update(video);
+  }
+
+  @Override
+  public void onErrorTranscoding(Video video, String message) {
+// TODO:(alvaro.martinez) 15/02/17 Manage this error
+  }
 }
 
