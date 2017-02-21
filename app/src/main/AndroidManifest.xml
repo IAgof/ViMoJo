@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.videonasocialmedia.vimojo"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -13,10 +14,8 @@
         android:xlargeScreens="false"/>
 
     <permission
-        android:name="com.videonasocialmedia.vimojo.permission.C2D_MESSAGE"
-        android:protectionLevel="signature"/>
-
-    <uses-permission android:name="com.videonasocialmedia.vimojo.permission.C2D_MESSAGE"/>
+        android:name="${applicationId}.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
+    <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" tools:node="replace"/>
 
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -33,6 +32,9 @@
         android:label="@string/app_name"
 
         android:theme="@style/VideonaTheme">
+
+        <meta-data android:name="com.mixpanel.android.MPConfig.ResourcePackageName"
+                   android:value="com.videonasocialmedia.vimojo" />
 
         <meta-data
             android:name="com.mixpanel.android.MPConfig.AutoShowMixpanelUpdates"
