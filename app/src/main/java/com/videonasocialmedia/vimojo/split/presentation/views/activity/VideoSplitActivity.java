@@ -74,8 +74,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         ab.setDisplayHomeAsUpEnabled(true);
 
         getActivityPresentersComponent().inject(this);
-//        UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-//        presenter = new SplitPreviewPresenter(this, userEventTracker);
 
         splitSeekBar.setProgress(0);
         splitSeekBar.setOnSeekBarChangeListener(this);

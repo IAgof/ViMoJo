@@ -17,12 +17,14 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 
+import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -35,6 +37,7 @@ import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.OnRelaunchT
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +45,7 @@ import java.util.List;
  * This class is used to show the setting menu.
  */
 public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenceChangeListener,
-    OnRelaunchTemporalFileListener{
+    OnRelaunchTemporalFileListener, MediaTranscoderListener {
 
     private Context context;
     private SharedPreferences sharedPreferences;
@@ -63,6 +66,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         updateVideoTransitionPreferenceToProjectUseCase;
     private UpdateIntermediateTemporalFilesTransitionsUseCase
         updateIntermediateTemporalFilesTransitionsUseCase;
+    private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
 
     private final Drawable drawableFadeTransitionVideo;
     private final VideonaFormat videoFormat;
@@ -77,19 +81,20 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      * @param sharedPreferences
      */
     public PreferencesPresenter(PreferencesView preferencesView,
-        Context context, SharedPreferences sharedPreferences,
-        PreferenceCategory cameraSettingsPref,
-        ListPreference resolutionPref, ListPreference qualityPref,
-        ListPreference frameRatePref, Preference transitionVideoPref,
-        Preference transitionAudioPref, Preference emailPref,
-        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-        GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-        UpdateAudioTransitionPreferenceToProjectUseCase
-                                    updateAudioTransitionPreferenceToProjectUseCase,
-        UpdateVideoTransitionPreferenceToProjectUseCase
-                                    updateVideoTransitionPreferenceToProjectUseCase,
-        UpdateIntermediateTemporalFilesTransitionsUseCase
-                                    updateIntermediateTemporalFilesTransitionsUseCase) {
+            Context context, SharedPreferences sharedPreferences,
+            PreferenceCategory cameraSettingsPref,
+            ListPreference resolutionPref, ListPreference qualityPref,
+            ListPreference frameRatePref, Preference transitionVideoPref,
+            Preference transitionAudioPref, Preference emailPref,
+            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+            GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+            UpdateAudioTransitionPreferenceToProjectUseCase
+                                        updateAudioTransitionPreferenceToProjectUseCase,
+            UpdateVideoTransitionPreferenceToProjectUseCase
+                                        updateVideoTransitionPreferenceToProjectUseCase,
+            UpdateIntermediateTemporalFilesTransitionsUseCase
+                                        updateIntermediateTemporalFilesTransitionsUseCase,
+            UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase) {
         this.preferencesView = preferencesView;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
@@ -109,6 +114,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             updateVideoTransitionPreferenceToProjectUseCase;
         this.updateIntermediateTemporalFilesTransitionsUseCase =
             updateIntermediateTemporalFilesTransitionsUseCase;
+        this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase =
             new GetVideonaFormatFromCurrentProjectUseCase();
         videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
@@ -408,12 +414,15 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     @Override
     public void videoToRelaunch(String videoUuid, String intermediatesTempAudioFadeDirectory) {
-        //preferencesView.setRelaunchExportTempBackground(videoUuid, intermediatesTempAudioFadeDirectory);
         Project currentProject = Project.getInstance(null, null, null);
         final Video video = getVideo(videoUuid);
         RelaunchTranscoderTempBackgroundUseCase useCase = new RelaunchTranscoderTempBackgroundUseCase();
-        useCase.relaunchExport(drawableFadeTransitionVideo, video, videoFormat,
-            currentProject.getProjectPathIntermediateFileAudioFade() );
+        try {
+            useCase.relaunchExport(drawableFadeTransitionVideo, video, videoFormat,
+                currentProject.getProjectPathIntermediateFileAudioFade(), this );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private Video getVideo(String videoId) {
@@ -427,5 +436,15 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             }
         }
         return null;
+    }
+
+    @Override
+    public void onSuccessTranscoding(Video video) {
+        updateVideoRepositoryUseCase.updateVideo(video);
+    }
+
+    @Override
+    public void onErrorTranscoding(Video video, String message) {
+       // preferencesView.showError(message);
     }
 }

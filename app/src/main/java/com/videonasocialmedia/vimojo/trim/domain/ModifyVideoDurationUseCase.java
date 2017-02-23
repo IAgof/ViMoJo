@@ -2,17 +2,22 @@ package com.videonasocialmedia.vimojo.trim.domain;
 
 
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.IOException;
 
@@ -21,7 +26,9 @@ import javax.inject.Inject;
 /**
  * Created by jca on 27/5/15.
  */
-public class ModifyVideoDurationUseCase implements MediaTranscoderListener {
+public class ModifyVideoDurationUseCase{
+
+  private String TAG = "ModifyVideoDurationUseCase";
 
   private TextToDrawable drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
   private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
@@ -47,10 +54,10 @@ public class ModifyVideoDurationUseCase implements MediaTranscoderListener {
    * @param startTimeMs
    * @param finishTimeMs
    */
-  public void trimVideo(Drawable drawableFadeTransition, Video videoToEdit, VideonaFormat format,
+  public void trimVideo(final Drawable drawableFadeTransition, final Video videoToEdit, final VideonaFormat format,
                         final int startTimeMs, final int finishTimeMs,
-                        String intermediatesTempAudioFadeDirectory) {
-    try {
+                        final String intermediatesTempAudioFadeDirectory, final MediaTranscoderListener
+                        mediaTranscoderListener){
 
       boolean isVideoFadeTransitionActivated =
           getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
@@ -66,28 +73,14 @@ public class ModifyVideoDurationUseCase implements MediaTranscoderListener {
 
       if (videoToEdit.hasText()) {
         transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(drawableFadeTransition,
-            isVideoFadeTransitionActivated,isAudioFadeTransitionActivated, videoToEdit, format,
-            intermediatesTempAudioFadeDirectory, this);
+            isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit, format,
+            intermediatesTempAudioFadeDirectory, mediaTranscoderListener);
+
       } else {
         transcoderHelper.generateOutputVideoWithTrimming(drawableFadeTransition,
             isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit, format,
-            intermediatesTempAudioFadeDirectory, this);
+            intermediatesTempAudioFadeDirectory, mediaTranscoderListener);
       }
       videoRepository.update(videoToEdit);
-    } catch (IOException exception) {
-      exception.printStackTrace();
-      onErrorTranscoding(videoToEdit, exception.getMessage());
-    }
-  }
-
-  @Override
-  public void onSuccessTranscoding(Video video) {
-
-    videoRepository.update(video);
-  }
-
-  @Override
-  public void onErrorTranscoding(Video video, String message) {
-    // TODO:(alvaro.martinez) 15/02/17 Manage this error
   }
 }

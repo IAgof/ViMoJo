@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.MediaTranscoderOldListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
@@ -36,7 +37,7 @@ import javax.inject.Inject;
  */
 @Deprecated
 public class ExportTempBackgroundService extends Service
-        implements ApplyAudioFadeInFadeOutToVideo.OnApplyAudioFadeInFadeOutToVideoListener {
+        implements ApplyAudioFadeInFadeOutToVideo.OnApplyAudioFadeInFadeOutToVideoListener, MediaTranscoderListener {
 
     public static final String ACTION = "com.videonasocialmedia.vimojo.android.service.receiver";
     public static final int TIME_FADE_IN_MS = 2000;
@@ -178,19 +179,25 @@ public class ExportTempBackgroundService extends Service
     private void relaunchExportVideo(Video video, MediaTranscoderOldListener useCaseListener,
                                      VideonaFormat videoFormat) {
         RelaunchTranscoderTempBackgroundUseCase useCase = new RelaunchTranscoderTempBackgroundUseCase();
-        useCase.relaunchExport(drawableFadeTransitionVideo, video, videoFormat, intermediatesTempAudioFadeDirectory);
+        try {
+            useCase.relaunchExport(drawableFadeTransitionVideo, video, videoFormat,
+                intermediatesTempAudioFadeDirectory, this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void addTextToVideo(Video video, MediaTranscoderOldListener useCaseListener,
                                 VideonaFormat videoFormat, String text, String textPosition) {
+
         modifyVideoTextAndPositionUseCase.addTextToVideo(drawableFadeTransitionVideo, video,
-            videoFormat, text, textPosition, intermediatesTempAudioFadeDirectory);
+            videoFormat, text, textPosition, intermediatesTempAudioFadeDirectory, this);
     }
 
     private void trimVideo(Video video, MediaTranscoderOldListener useCaseListener,
                            VideonaFormat videoFormat, int startTimeMs, int finishTimeMs) {
         modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, video, videoFormat,
-            startTimeMs, finishTimeMs, intermediatesTempAudioFadeDirectory);
+            startTimeMs, finishTimeMs, intermediatesTempAudioFadeDirectory, this);
     }
 
     private void sendResultBroadcast(String videoId, boolean success) {
@@ -229,5 +236,15 @@ public class ExportTempBackgroundService extends Service
         video.setTempPathFinished(true);
         videoRepository.update(video);
         sendResultBroadcast(video.getUuid(), true);
+    }
+
+    @Override
+    public void onSuccessTranscoding(Video video) {
+
+    }
+
+    @Override
+    public void onErrorTranscoding(Video video, String message) {
+
     }
 }

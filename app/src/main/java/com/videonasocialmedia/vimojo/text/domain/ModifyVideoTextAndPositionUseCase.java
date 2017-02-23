@@ -20,7 +20,7 @@ import javax.inject.Inject;
 /**
  * Created by alvaro on 1/09/16.
  */
-public class ModifyVideoTextAndPositionUseCase implements MediaTranscoderListener {
+public class ModifyVideoTextAndPositionUseCase {
 
     // TODO:(alvaro.martinez) 23/11/16 Use Dagger for this injection
     protected TextToDrawable drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
@@ -42,8 +42,9 @@ public class ModifyVideoTextAndPositionUseCase implements MediaTranscoderListene
 
     public void addTextToVideo(Drawable drawableFadeTransition, Video videoToEdit,
                                VideonaFormat format, String text, String textPosition,
-                               String intermediatesTempAudioFadeDirectory) {
-        try {
+                               String intermediatesTempAudioFadeDirectory, MediaTranscoderListener
+                               mediaTranscoderListener) {
+
 
           boolean isVideoFadeTransitionActivated =
               getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
@@ -62,26 +63,13 @@ public class ModifyVideoTextAndPositionUseCase implements MediaTranscoderListene
                 transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(
                     drawableFadeTransition, isVideoFadeTransitionActivated,
                     isAudioFadeTransitionActivated, videoToEdit, format,
-                    intermediatesTempAudioFadeDirectory, this);
+                    intermediatesTempAudioFadeDirectory, mediaTranscoderListener);
             } else {
                 transcoderHelper.generateOutputVideoWithOverlayImage(drawableFadeTransition,
                     isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
-                    format, intermediatesTempAudioFadeDirectory, this);
+                    format, intermediatesTempAudioFadeDirectory, mediaTranscoderListener);
             }
             videoRepository.update(videoToEdit);
-        } catch (IOException e) {
-            onErrorTranscoding(videoToEdit, e.getMessage());
-        }
     }
-
-  @Override
-  public void onSuccessTranscoding(Video video) {
-    videoRepository.update(video);
-  }
-
-  @Override
-  public void onErrorTranscoding(Video video, String message) {
-// TODO:(alvaro.martinez) 15/02/17 Manage this error
-  }
 }
 

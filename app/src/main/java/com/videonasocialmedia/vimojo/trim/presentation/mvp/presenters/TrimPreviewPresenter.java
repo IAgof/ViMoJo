@@ -8,63 +8,69 @@
 package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 
+import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
-import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
-import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
-import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by vlf on 7/7/15.
  */
-public class TrimPreviewPresenter implements OnVideosRetrieved {
+public class TrimPreviewPresenter implements OnVideosRetrieved, MediaTranscoderListener {
 
     /**
      * LOG_TAG
      */
     private final String LOG_TAG = getClass().getSimpleName();
 
+
     private Video videoToEdit;
 
-    /**
-     * Get media list from project use case
-     */
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+    private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
+    private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
+    private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
 
     private TrimView trimView;
     public UserEventTracker userEventTracker;
     public Project currentProject;
 
-    private final Drawable drawableFadeTransitionVideo;
-    private final VideonaFormat videoFormat;
-    TextToDrawable drawableGenerator;
-
-    public TrimPreviewPresenter(TrimView trimView, UserEventTracker userEventTracker) {
+    @Inject
+    public TrimPreviewPresenter(TrimView trimView,
+                                UserEventTracker userEventTracker,
+                                GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                ModifyVideoDurationUseCase
+                                    modifyVideoDurationUseCase,
+                                GetVideonaFormatFromCurrentProjectUseCase
+                                    getVideonaFormatFromCurrentProjectUseCase,
+                                UpdateVideoRepositoryUseCase
+                                        updateVideoRepositoryUseCase) {
         this.trimView = trimView;
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
         this.currentProject = loadCurrentProject();
         this.userEventTracker = userEventTracker;
-        GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase =
-            new GetVideonaFormatFromCurrentProjectUseCase();
-        videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
-        drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
-        drawableFadeTransitionVideo = VimojoApplication.getAppContext().getDrawable(R.drawable.alpha_transition_black);
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
+        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
+        this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
     }
 
     private Project loadCurrentProject() {
@@ -102,21 +108,15 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
 
 
     public void setTrim(int startTimeMs, int finishTimeMs) {
-        /*Context appContext = VimojoApplication.getAppContext();
-        Intent trimServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-        trimServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoToEdit.getUuid());
-        trimServiceIntent.putExtra(IntentConstants.IS_VIDEO_TRIMMED, true);
-        trimServiceIntent.putExtra(IntentConstants.START_TIME_MS, startTimeMs);
-        trimServiceIntent.putExtra(IntentConstants.FINISH_TIME_MS, finishTimeMs);
-        trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY,
-            currentProject.getProjectPathIntermediateFiles());
-        trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY_FADE_AUDIO,
-            currentProject.getProjectPathIntermediateFileAudioFade());
-        appContext.startService(trimServiceIntent);*/
+        VideonaFormat videoFormat =
+            getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
 
-        ModifyVideoDurationUseCase modifyVideoDurationUseCase = new ModifyVideoDurationUseCase(new VideoRealmRepository());
+        // TODO:(alvaro.martinez) 22/02/17 This drawable saved in app or sdk?
+        Drawable drawableFadeTransitionVideo =
+            ContextCompat.getDrawable(VimojoApplication.getAppContext(), R.drawable.alpha_transition_black);
         modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, videoToEdit, videoFormat,
-            startTimeMs, finishTimeMs, currentProject.getProjectPathIntermediateFileAudioFade());
+                startTimeMs, finishTimeMs, currentProject.getProjectPathIntermediateFileAudioFade(),
+                this);
 
         trackVideoTrimmed();
     }
@@ -137,6 +137,16 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
             trimView.showTrimBar(startTimeMs, finishTimeMs, video.getDuration());
         }
 
+    }
+
+    @Override
+    public void onSuccessTranscoding(Video video) {
+        updateVideoRepositoryUseCase.updateVideo(video);
+    }
+
+    @Override
+    public void onErrorTranscoding(Video video, String message) {
+        trimView.showError(message);
     }
 }
 

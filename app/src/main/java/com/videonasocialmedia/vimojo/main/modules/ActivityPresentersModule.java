@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
@@ -11,6 +10,8 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DuplicateProjectUseCase;
@@ -48,12 +49,15 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicList
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
+import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.presenters.EditTextPreviewPresenter;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
+import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
+import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
+import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import dagger.Module;
@@ -128,9 +132,28 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   SplitPreviewPresenter provideSplitPresenter(UserEventTracker userEventTracker,
-                                          SplitVideoUseCase splitVideoUseCase) {
-    return new SplitPreviewPresenter((VideoSplitActivity) activity, userEventTracker,
-            splitVideoUseCase);
+                                              SplitVideoUseCase splitVideoUseCase,
+                                              GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                              ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+                                              GetVideonaFormatFromCurrentProjectUseCase
+                                          getVideonaFormatFromCurrentProjectUseCase,
+                                              UpdateVideoRepositoryUseCase
+                                                  updateVideoRepositoryUseCase) {
+    return new SplitPreviewPresenter((VideoSplitActivity) activity, userEventTracker, activity,
+            splitVideoUseCase, getMediaListFromProjectUseCase, modifyVideoDurationUseCase,
+        getVideonaFormatFromCurrentProjectUseCase, updateVideoRepositoryUseCase);
+  }
+
+  @Provides @PerActivity
+  TrimPreviewPresenter provideTrimPresenter(UserEventTracker userEventTracker,
+                                    GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                    ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+                                    GetVideonaFormatFromCurrentProjectUseCase
+                                        getVideonaFormatFromCurrentProjectUseCase,
+                                    UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase){
+    return new TrimPreviewPresenter((VideoTrimActivity) activity, userEventTracker,
+        getMediaListFromProjectUseCase, modifyVideoDurationUseCase,
+        getVideonaFormatFromCurrentProjectUseCase, updateVideoRepositoryUseCase);
   }
 
   @Provides @PerActivity
@@ -176,10 +199,15 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   EditTextPreviewPresenter provideEditTextPreviewPresenter(
-      UserEventTracker userEventTracker,
-      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
-    return new EditTextPreviewPresenter((VideoEditTextActivity) activity, userEventTracker,
-        getMediaListFromProjectUseCase);
+              UserEventTracker userEventTracker,
+              GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+              ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase,
+              GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+              UpdateVideoRepositoryUseCase
+                  updateVideoRepositoryUseCase) {
+    return new EditTextPreviewPresenter((VideoEditTextActivity) activity, activity, userEventTracker,
+        getMediaListFromProjectUseCase, modifyVideoTextAndPositionUseCase,
+        getVideonaFormatFromCurrentProjectUseCase, updateVideoRepositoryUseCase);
   }
 
   @Provides @PerActivity
@@ -257,5 +285,25 @@ public class ActivityPresentersModule {
 
   @Provides CheckIfProjectHasBeenExportedUseCase provideCheckIfProjectHasBeenExported(){
     return new CheckIfProjectHasBeenExportedUseCase();
+  }
+
+  @Provides ModifyVideoDurationUseCase provideModifyVideoDurationUseCase(VideoRepository
+                                                                             videoRepository){
+    return new ModifyVideoDurationUseCase(videoRepository);
+  }
+
+  @Provides ModifyVideoTextAndPositionUseCase provideModifyVideoTextAndPositionUseCase(
+      VideoRepository videoRepository) {
+    return new ModifyVideoTextAndPositionUseCase(videoRepository);
+  }
+
+  @Provides GetVideonaFormatFromCurrentProjectUseCase
+                                              provideGetVideonaFormatFromCurrentProjectUseCase(){
+    return new GetVideonaFormatFromCurrentProjectUseCase();
+  }
+
+  @Provides UpdateVideoRepositoryUseCase provideUpdateVideoRepositoryUseCase(VideoRepository
+                                                                             videoRepository){
+    return new UpdateVideoRepositoryUseCase(videoRepository);
   }
 }

@@ -21,8 +21,7 @@ import javax.inject.Inject;
  * Created by alvaro on 28/09/16.
  */
 
-public class RelaunchTranscoderTempBackgroundUseCase implements MediaTranscoderListener {
-  //protected TextToDrawable drawableGenerator = new TextToDrawable();
+public class RelaunchTranscoderTempBackgroundUseCase{
   @Inject
   protected TextToDrawable drawableGenerator;
   protected MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
@@ -44,36 +43,22 @@ public class RelaunchTranscoderTempBackgroundUseCase implements MediaTranscoderL
    * @param intermediatesTempAudioFadeDirectory
    */
   public void relaunchExport(Drawable drawableFadeTransition, Video videoToEdit,
-                             VideonaFormat videonaFormat, String intermediatesTempAudioFadeDirectory) {
-    videoToEdit.increaseNumTriesToExportVideo();
+                             VideonaFormat videonaFormat, String intermediatesTempAudioFadeDirectory,
+                             MediaTranscoderListener mediaTranscoderListener) throws IOException {
+
     boolean isVideoFadeTransitionActivated =
         getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
     boolean isAudioFadeTransitionActivated =
         getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
-    try {
       if (videoToEdit.hasText()) {
         transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(drawableFadeTransition,
             isVideoFadeTransitionActivated,isAudioFadeTransitionActivated, videoToEdit,
-            videonaFormat,intermediatesTempAudioFadeDirectory, this);
+            videonaFormat,intermediatesTempAudioFadeDirectory, mediaTranscoderListener);
       } else {
         transcoderHelper.generateOutputVideoWithTrimming(drawableFadeTransition,
             isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
-            videonaFormat, intermediatesTempAudioFadeDirectory, this);
+            videonaFormat, intermediatesTempAudioFadeDirectory, mediaTranscoderListener);
       }
-    } catch (IOException exception) {
-      exception.printStackTrace();
-      onErrorTranscoding(videoToEdit, exception.getMessage());
-    }
   }
 
-  @Override
-  public void onSuccessTranscoding(Video video) {
-    videoRepository.update(video);
-  }
-
-  @Override
-  public void onErrorTranscoding(Video video, String message) {
-// TODO:(alvaro.martinez) 15/02/17 Manage this error
-
-  }
 }

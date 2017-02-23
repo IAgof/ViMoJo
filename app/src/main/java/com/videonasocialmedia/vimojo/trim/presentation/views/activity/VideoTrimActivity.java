@@ -41,6 +41,8 @@ import org.florescu.android.rangeseekbar.RangeSeekBar;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -50,6 +52,9 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     public static final float MS_CORRECTION_FACTOR = 1000f;
     public static final float MIN_TRIM_OFFSET = 0.35f;
+
+    @Inject TrimPreviewPresenter presenter;
+
     @Bind(R.id.text_time_trim)
     TextView durationTag;
     @Bind(R.id.trim_rangeSeekBar)
@@ -58,7 +63,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     VideonaPlayerExo videonaPlayer;
 
     int videoIndexOnTrack;
-    private TrimPreviewPresenter presenter;
+
     private Video video;
     private int videoDuration = 1;
     private int startTimeMs = 0;
@@ -84,8 +89,8 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-        presenter = new TrimPreviewPresenter(this, userEventTracker);
+        this.getActivityPresentersComponent().inject(this);
+
         trimmingRangeSeekBar.setOnRangeSeekBarChangeListener(this);
         trimmingRangeSeekBar.setNotifyWhileDragging(true);
         videonaPlayer.setListener(this);
