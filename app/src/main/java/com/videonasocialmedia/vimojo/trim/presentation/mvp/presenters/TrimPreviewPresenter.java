@@ -7,7 +7,6 @@
 
 package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 
@@ -26,7 +25,6 @@ import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,7 +111,8 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, MediaTranscoderL
 
         // TODO:(alvaro.martinez) 22/02/17 This drawable saved in app or sdk?
         Drawable drawableFadeTransitionVideo =
-            ContextCompat.getDrawable(VimojoApplication.getAppContext(), R.drawable.alpha_transition_black);
+            ContextCompat.getDrawable(VimojoApplication.getAppContext(),
+                R.drawable.alpha_transition_black);
         modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, videoToEdit, videoFormat,
                 startTimeMs, finishTimeMs, currentProject.getProjectPathIntermediateFileAudioFade(),
                 this);
@@ -146,7 +145,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, MediaTranscoderL
 
     @Override
     public void onErrorTranscoding(Video video, String message) {
-        trimView.showError(message);
+        //trimView.showError(message);
     }
 }
 

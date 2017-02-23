@@ -66,7 +66,8 @@ public class FragmentPresentersModule {
   // For singleton objects, annotate with same scope as component, i.e. @PerFragment
   @Provides
   @PerFragment
-  public PreferencesPresenter providePreferencePresenter(SharedPreferences sharedPreferences,                                                        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+  public PreferencesPresenter providePreferencePresenter(SharedPreferences sharedPreferences,
+             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
              GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
              UpdateAudioTransitionPreferenceToProjectUseCase
               updateAudioTransitionPreferenceToProjectUseCase,

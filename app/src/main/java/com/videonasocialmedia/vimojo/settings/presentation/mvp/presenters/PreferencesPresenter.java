@@ -417,12 +417,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         Project currentProject = Project.getInstance(null, null, null);
         final Video video = getVideo(videoUuid);
         RelaunchTranscoderTempBackgroundUseCase useCase = new RelaunchTranscoderTempBackgroundUseCase();
-        try {
-            useCase.relaunchExport(drawableFadeTransitionVideo, video, videoFormat,
+        useCase.relaunchExport(drawableFadeTransitionVideo, video, videoFormat,
                 currentProject.getProjectPathIntermediateFileAudioFade(), this );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private Video getVideo(String videoId) {

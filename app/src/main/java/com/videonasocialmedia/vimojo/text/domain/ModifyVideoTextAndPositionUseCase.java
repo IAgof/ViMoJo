@@ -13,8 +13,6 @@ import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 
-import java.io.IOException;
-
 import javax.inject.Inject;
 
 /**
@@ -23,9 +21,11 @@ import javax.inject.Inject;
 public class ModifyVideoTextAndPositionUseCase {
 
     // TODO:(alvaro.martinez) 23/11/16 Use Dagger for this injection
-    protected TextToDrawable drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
+    protected TextToDrawable drawableGenerator =
+        new TextToDrawable(VimojoApplication.getAppContext());
     private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
-    protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator, mediaTranscoder);
+    protected TranscoderHelper transcoderHelper =
+        new TranscoderHelper(drawableGenerator, mediaTranscoder);
     protected VideoRepository videoRepository;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
 
@@ -37,7 +37,8 @@ public class ModifyVideoTextAndPositionUseCase {
    */
   @Inject public ModifyVideoTextAndPositionUseCase(VideoRepository videoRepository) {
         this.videoRepository = videoRepository;
-        getPreferencesTransitionFromProjectUseCase = new GetPreferencesTransitionFromProjectUseCase();
+        getPreferencesTransitionFromProjectUseCase =
+            new GetPreferencesTransitionFromProjectUseCase();
     }
 
     public void addTextToVideo(Drawable drawableFadeTransition, Video videoToEdit,

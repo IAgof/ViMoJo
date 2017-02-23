@@ -21,7 +21,6 @@ import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,7 +123,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, MediaTransco
 
     @Override
     public void onErrorTranscoding(Video video, String message) {
-        editTextView.showError(message);
+        //editTextView.showError(message);
     }
 }
 

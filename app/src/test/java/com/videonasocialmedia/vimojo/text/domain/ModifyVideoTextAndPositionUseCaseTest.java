@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
-import com.videonasocialmedia.transcoder.MediaTranscoderOldListener;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.transcoder.video.overlay.Image;
@@ -21,7 +20,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
@@ -156,28 +154,4 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     return video;
   }
 
-  @NonNull
-  private MediaTranscoderOldListener getMediaTranscoderListener() {
-    return new MediaTranscoderOldListener() {
-      @Override
-      public void onTranscodeProgress(double v) {
-
-      }
-
-      @Override
-      public void onTranscodeCompleted() {
-
-      }
-
-      @Override
-      public void onTranscodeCanceled() {
-
-      }
-
-      @Override
-      public void onTranscodeFailed(Exception e) {
-
-      }
-    };
-  }
 }

@@ -2,24 +2,17 @@ package com.videonasocialmedia.vimojo.trim.domain;
 
 
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
-import com.videonasocialmedia.vimojo.utils.Constants;
-
-import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -54,9 +47,11 @@ public class ModifyVideoDurationUseCase{
    * @param startTimeMs
    * @param finishTimeMs
    */
-  public void trimVideo(final Drawable drawableFadeTransition, final Video videoToEdit, final VideonaFormat format,
+  public void trimVideo(final Drawable drawableFadeTransition, final Video videoToEdit,
+                        final VideonaFormat format,
                         final int startTimeMs, final int finishTimeMs,
-                        final String intermediatesTempAudioFadeDirectory, final MediaTranscoderListener
+                        final String intermediatesTempAudioFadeDirectory,
+                        final MediaTranscoderListener
                         mediaTranscoderListener){
 
       boolean isVideoFadeTransitionActivated =

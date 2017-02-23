@@ -132,13 +132,13 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   SplitPreviewPresenter provideSplitPresenter(UserEventTracker userEventTracker,
-                                              SplitVideoUseCase splitVideoUseCase,
-                                              GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                                              ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-                                              GetVideonaFormatFromCurrentProjectUseCase
-                                          getVideonaFormatFromCurrentProjectUseCase,
-                                              UpdateVideoRepositoryUseCase
-                                                  updateVideoRepositoryUseCase) {
+                                      SplitVideoUseCase splitVideoUseCase,
+                                      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                      ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+                                      GetVideonaFormatFromCurrentProjectUseCase
+                                      getVideonaFormatFromCurrentProjectUseCase,
+                                          UpdateVideoRepositoryUseCase
+                                              updateVideoRepositoryUseCase) {
     return new SplitPreviewPresenter((VideoSplitActivity) activity, userEventTracker, activity,
             splitVideoUseCase, getMediaListFromProjectUseCase, modifyVideoDurationUseCase,
         getVideonaFormatFromCurrentProjectUseCase, updateVideoRepositoryUseCase);
@@ -168,7 +168,7 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  InitAppPresenter provideInitAppPresenter(CreateDefaultProjectUseCase createDefaultProjectUseCase) {
+  InitAppPresenter provideInitAppPresenter(CreateDefaultProjectUseCase createDefaultProjectUseCase){
     return new InitAppPresenter((InitAppActivity) activity, createDefaultProjectUseCase);
   }
 
@@ -193,7 +193,8 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  DetailProjectPresenter provideDetailProjectPresenter(UpdateTitleProjectUseCase updateTitleProjectUseCase){
+  DetailProjectPresenter provideDetailProjectPresenter(
+      UpdateTitleProjectUseCase updateTitleProjectUseCase){
     return new DetailProjectPresenter((DetailProjectActivity) activity, updateTitleProjectUseCase);
   }
 
@@ -205,8 +206,8 @@ public class ActivityPresentersModule {
               GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
               UpdateVideoRepositoryUseCase
                   updateVideoRepositoryUseCase) {
-    return new EditTextPreviewPresenter((VideoEditTextActivity) activity, activity, userEventTracker,
-        getMediaListFromProjectUseCase, modifyVideoTextAndPositionUseCase,
+    return new EditTextPreviewPresenter((VideoEditTextActivity) activity, activity,
+        userEventTracker, getMediaListFromProjectUseCase, modifyVideoTextAndPositionUseCase,
         getVideonaFormatFromCurrentProjectUseCase, updateVideoRepositoryUseCase);
   }
 
