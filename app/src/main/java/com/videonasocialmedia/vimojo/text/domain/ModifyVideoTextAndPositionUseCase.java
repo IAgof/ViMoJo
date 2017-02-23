@@ -3,10 +3,10 @@ package com.videonasocialmedia.vimojo.text.domain;
 import android.graphics.drawable.Drawable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
-import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
@@ -43,8 +43,8 @@ public class ModifyVideoTextAndPositionUseCase {
 
     public void addTextToVideo(Drawable drawableFadeTransition, Video videoToEdit,
                                VideonaFormat format, String text, String textPosition,
-                               String intermediatesTempAudioFadeDirectory, MediaTranscoderListener
-                               mediaTranscoderListener) {
+                               String intermediatesTempAudioFadeDirectory, TranscoderHelperListener
+                               listener) {
 
 
           boolean isVideoFadeTransitionActivated =
@@ -64,11 +64,11 @@ public class ModifyVideoTextAndPositionUseCase {
                 transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(
                     drawableFadeTransition, isVideoFadeTransitionActivated,
                     isAudioFadeTransitionActivated, videoToEdit, format,
-                    intermediatesTempAudioFadeDirectory, mediaTranscoderListener);
+                    intermediatesTempAudioFadeDirectory, listener);
             } else {
                 transcoderHelper.generateOutputVideoWithOverlayImage(drawableFadeTransition,
                     isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
-                    format, intermediatesTempAudioFadeDirectory, mediaTranscoderListener);
+                    format, intermediatesTempAudioFadeDirectory, listener);
             }
             videoRepository.update(videoToEdit);
     }

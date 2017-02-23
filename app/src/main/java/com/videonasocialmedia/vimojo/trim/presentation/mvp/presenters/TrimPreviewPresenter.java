@@ -9,9 +9,10 @@ package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
-import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
@@ -23,6 +24,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ import javax.inject.Inject;
 /**
  * Created by vlf on 7/7/15.
  */
-public class TrimPreviewPresenter implements OnVideosRetrieved, MediaTranscoderListener {
+public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelperListener {
 
     /**
      * LOG_TAG
@@ -145,7 +147,13 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, MediaTranscoderL
 
     @Override
     public void onErrorTranscoding(Video video, String message) {
-        //trimView.showError(message);
+        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
+        if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
+            video.increaseNumTriesToExportVideo();
+            setTrim(video.getStartTime(), video.getStopTime());
+        }else {
+            trimView.showError(message);
+        }
     }
 }
 

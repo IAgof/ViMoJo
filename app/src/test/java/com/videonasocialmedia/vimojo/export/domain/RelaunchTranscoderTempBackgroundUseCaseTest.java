@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
-import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.transcoder.video.overlay.Image;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -14,6 +13,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
@@ -50,24 +50,14 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
   @Mock MediaTranscoder mockedMediaTranscoder;
   @Mock TranscoderHelper mockedTranscoderHelper;
   @Mock Drawable mockDrawableFadeTransition;
-  @Mock MediaTranscoderListener mockedMediaTranscoderListener;
+  @Mock TranscoderHelperListener mockedTranscoderHelperListener;
   String intermediatesTempAudioFadeDirectory;
   boolean isVideoFadeTransitionActivated;
   boolean isAudioFadeTransitionActivated;
 
   @InjectMocks
   RelaunchTranscoderTempBackgroundUseCase injectedRelaunchTranscoderTempBackgroundUseCase;
-  private final MediaTranscoderListener mediaTranscoderListener = new MediaTranscoderListener() {
-    @Override
-    public void onSuccessTranscoding(Video video) {
 
-    }
-
-    @Override
-    public void onErrorTranscoding(Video video, String message) {
-
-    }
-  };
   private final VideonaFormat videonaFormat = new VideonaFormat();
 
   @Before
@@ -83,7 +73,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
 
     new RelaunchTranscoderTempBackgroundUseCase().relaunchExport(mockDrawableFadeTransition, video,
         videonaFormat, intermediatesTempAudioFadeDirectory,
-        mockedMediaTranscoderListener);
+        mockedTranscoderHelperListener);
   }
 
   @Ignore
@@ -100,7 +90,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
 
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
         videonaFormat, currentProject.getProjectPathIntermediateFileAudioFade(),
-        mockedMediaTranscoderListener);
+        mockedTranscoderHelperListener);
 
     verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
         eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()),
@@ -114,11 +104,11 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     Video video = getVideoWithText();
     assert video.hasText();
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition,
-        video, videonaFormat, intermediatesTempAudioFadeDirectory, mockedMediaTranscoderListener);
+        video, videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
 
     verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(
         mockDrawableFadeTransition, isVideoFadeTransitionActivated, isAudioFadeTransitionActivated,
-        video, videonaFormat, intermediatesTempAudioFadeDirectory, mockedMediaTranscoderListener);
+        video, videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
   }
 
   @Ignore
@@ -131,7 +121,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     Project currentProject = getAProject();
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
         videonaFormat, currentProject.getProjectPathIntermediateFileAudioFade(),
-        mockedMediaTranscoderListener);
+        mockedTranscoderHelperListener);
 
     verify(mockedMediaTranscoder).transcodeAndTrimVideo(eq(mockDrawableFadeTransition),
         eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()), eq(video.getTempPath()),
@@ -146,11 +136,11 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
 
 
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
-        videonaFormat, intermediatesTempAudioFadeDirectory, mockedMediaTranscoderListener);
+        videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
 
     verify(mockedTranscoderHelper).generateOutputVideoWithTrimming(mockDrawableFadeTransition,
         isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, video, videonaFormat,
-        intermediatesTempAudioFadeDirectory, mockedMediaTranscoderListener);
+        intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
   }
 
   @NonNull

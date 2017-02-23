@@ -11,8 +11,9 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 
-import com.videonasocialmedia.transcoder.MediaTranscoderListener;
+
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
@@ -37,7 +38,7 @@ import javax.inject.Inject;
  * Created by vlf on 7/7/15.
  */
 public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoListener,
-    MediaTranscoderListener {
+    TranscoderHelperListener {
 
     /**
      * LOG_TAG

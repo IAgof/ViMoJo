@@ -17,9 +17,9 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 
-import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -37,7 +37,6 @@ import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.OnRelaunchT
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +44,7 @@ import java.util.List;
  * This class is used to show the setting menu.
  */
 public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenceChangeListener,
-    OnRelaunchTemporalFileListener, MediaTranscoderListener {
+    OnRelaunchTemporalFileListener, TranscoderHelperListener {
 
     private Context context;
     private SharedPreferences sharedPreferences;

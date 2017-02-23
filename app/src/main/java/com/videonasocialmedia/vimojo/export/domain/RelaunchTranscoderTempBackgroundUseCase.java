@@ -3,10 +3,10 @@ package com.videonasocialmedia.vimojo.export.domain;
 import android.graphics.drawable.Drawable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
-import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
@@ -42,7 +42,7 @@ public class RelaunchTranscoderTempBackgroundUseCase{
    */
   public void relaunchExport(Drawable drawableFadeTransition, Video videoToEdit,
                              VideonaFormat videonaFormat,String intermediatesTempAudioFadeDirectory,
-                             MediaTranscoderListener mediaTranscoderListener) {
+                             TranscoderHelperListener transcoderHelperListener) {
 
     boolean isVideoFadeTransitionActivated =
         getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
@@ -51,11 +51,11 @@ public class RelaunchTranscoderTempBackgroundUseCase{
       if (videoToEdit.hasText()) {
         transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(drawableFadeTransition,
             isVideoFadeTransitionActivated,isAudioFadeTransitionActivated, videoToEdit,
-            videonaFormat,intermediatesTempAudioFadeDirectory, mediaTranscoderListener);
+            videonaFormat,intermediatesTempAudioFadeDirectory, transcoderHelperListener);
       } else {
         transcoderHelper.generateOutputVideoWithTrimming(drawableFadeTransition,
             isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
-            videonaFormat, intermediatesTempAudioFadeDirectory, mediaTranscoderListener);
+            videonaFormat, intermediatesTempAudioFadeDirectory, transcoderHelperListener);
       }
   }
 

@@ -5,9 +5,9 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 
-import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
@@ -30,7 +30,7 @@ import javax.inject.Inject;
  * Created by ruth on 1/09/16.
  */
 
-public class EditTextPreviewPresenter implements OnVideosRetrieved, MediaTranscoderListener {
+public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHelperListener {
 
     private final String LOG_TAG = getClass().getSimpleName();
 
