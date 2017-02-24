@@ -15,7 +15,6 @@
 package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -23,41 +22,44 @@ import android.view.MotionEvent;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
+import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
+import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToTranscoderUseCase;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
-import com.videonasocialmedia.vimojo.record.presentation.views.service.RecordBackgroundService;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
  *  Created by alvaro on 16/01/17.
  */
 
-public class RecordCamera2Presenter implements Camera2WrapperListener {
+public class RecordCamera2Presenter implements Camera2WrapperListener{
 
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private static final String LOG_TAG = "RecordPresenter";
-  private final Context context;
   private final boolean isRightControlsViewSelected;
   private final boolean isPrincipalViewSelected;
   private RecordCamera2View recordView;
   private AddVideoToProjectUseCase addVideoToProjectUseCase;
-  private int recordedVideosNumber;
+  private AdaptVideoRecordedToTranscoderUseCase adaptVideoRecordedToTranscoderUseCase;
+  private int recordedVideosNumber = 0;
   protected Project currentProject;
   private int height = 720;
   private boolean externalIntent;
   private Camera2Wrapper camera;
+  private String origVideoRecorded;
+  private String destVideoRecorded;
+  private int numVideoAdapting = 0;
+
 
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
                                 boolean isFrontCameraSelected, boolean isPrincipalViewSelected,
@@ -68,7 +70,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
                                 AddVideoToProjectUseCase addVideoToProjectUseCase) {
 
     this.recordView = recordView;
-    this.context = context;
     this.isPrincipalViewSelected = isPrincipalViewSelected;
     this.isRightControlsViewSelected = isRightControlsViewSelected;
     this.externalIntent = externalIntent;
@@ -80,6 +81,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
         getVideoFormatFromCurrentProjectUseCase.getVideoRecordedFormatFromCurrentProjectUseCase());
 
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
+    adaptVideoRecordedToTranscoderUseCase = new AdaptVideoRecordedToTranscoderUseCase();
 
   }
 
@@ -175,11 +177,45 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     File tempPath = new File(origPath);
     String finalPath = Constants.PATH_APP_MASTERS + File.separator + tempPath.getName();
 
-    Context appContext = VimojoApplication.getAppContext();
-    Intent textToVideoServiceIntent = new Intent(appContext, RecordBackgroundService.class);
-    textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_RECORDED_ORIG, origPath);
-    textToVideoServiceIntent.putExtra(IntentConstants.VIDEO_RECORDED_DEST, finalPath);
-    appContext.startService(textToVideoServiceIntent);
+    origVideoRecorded = origPath;
+    destVideoRecorded = finalPath;
+
+    numVideoAdapting++;
+    Log.d(LOG_TAG, "adaptVideo " + numVideoAdapting);
+
+
+     final MediaTranscoderListener mediaTranscoderListener = new MediaTranscoderListener() {
+      @Override
+      public void onTranscodeProgress(double progress) {
+
+      }
+
+      @Override
+      public void onTranscodeCompleted() {
+        addVideoToProjectUseCase.addVideoToTrackAtPosition(destVideoRecorded, recordedVideosNumber);
+        Utils.removeVideo(origVideoRecorded);
+        recordView.hideProgressAdaptingVideo();
+        numVideoAdapting--;
+        Log.d(LOG_TAG, "adaptVideo completed " + destVideoRecorded);
+      }
+
+      @Override
+      public void onTranscodeCanceled() {
+        recordView.hideProgressAdaptingVideo();
+        numVideoAdapting--;
+        Log.d(LOG_TAG, "adaptVideo canceled");
+      }
+
+      @Override
+      public void onTranscodeFailed(Exception exception) {
+        recordView.hideProgressAdaptingVideo();
+        numVideoAdapting--;
+        Log.d(LOG_TAG, "adaptVideo failed");
+      }
+    };
+
+    adaptVideoRecordedToTranscoderUseCase.adaptVideo(origVideoRecorded, destVideoRecorded,
+        mediaTranscoderListener);
 
   }
 
@@ -253,6 +289,21 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     int halfWidth = 100; //focusIcon.getIntrinsicWidth();
     focusIconBounds.set(x - halfWidth, y - halfHeight, x + halfWidth, y + halfHeight);
     return focusIconBounds;
+  }
+
+
+  public void navigateToEditOrGallery() {
+    setFlashOff();
+    if(recordedVideosNumber > 0){
+        if(numVideoAdapting > 0){
+          recordView.showProgressAdaptingVideo();
+        } else {
+          recordView.navigateTo(EditActivity.class);
+        }
+
+    } else {
+      recordView.navigateTo(GalleryActivity.class);
+    }
   }
 }
 

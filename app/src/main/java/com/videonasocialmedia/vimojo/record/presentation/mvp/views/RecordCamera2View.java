@@ -12,7 +12,10 @@
 package com.videonasocialmedia.vimojo.record.presentation.mvp.views;
 
 
+import android.app.Activity;
 import android.view.MotionEvent;
+
+import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 
 public interface RecordCamera2View {
 
@@ -82,4 +85,9 @@ public interface RecordCamera2View {
 
     void finishActivityForResult(String path);
 
+    void showProgressAdaptingVideo();
+
+    void hideProgressAdaptingVideo();
+
+    void navigateTo(Class cls);
 }

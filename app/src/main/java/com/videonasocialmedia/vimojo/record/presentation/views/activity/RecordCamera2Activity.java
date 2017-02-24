@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.record.presentation.views.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -115,7 +116,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private String resultVideoPath;
   private boolean externalIntent = false;
   private boolean isRecording = false;
-  private boolean isProjectHasVideo = false;
   private boolean buttonBackPressed = false;
 
   private boolean isFrontCameraSelected = false;
@@ -132,6 +132,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private OrientationHelper orientationHelper;
   private boolean isPrincipalViewsSelected = false;
   private boolean isControlsViewSelected = false;
+
+  private ProgressDialog progressDialog;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -156,6 +158,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
 
     this.getActivityPresentersComponent().inject(this);
+
+    progressDialog = new ProgressDialog(this);
+    progressDialog.setTitle("Adapting video");
+    progressDialog.setMessage("Loading...");
+    progressDialog.setIndeterminate(false);
   }
 
   @Override
@@ -370,6 +377,16 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
+  public void showProgressAdaptingVideo() {
+    progressDialog.show();
+  }
+
+  @Override
+  public void hideProgressAdaptingVideo() {
+    progressDialog.dismiss();
+  }
+
+  @Override
   public void hidePrincipalViews() {
     clearButton.setImageResource(R.drawable.record_activity_ic_shrink);
     clearButton.setAlpha(0.5f);
@@ -432,7 +449,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void showVideosRecordedNumber(int numberOfVideos) {
     numVideosRecordedTextView.setVisibility(View.VISIBLE);
     numVideosRecordedTextView.setText(String.valueOf(numberOfVideos));
-    isProjectHasVideo=true;
+
   }
 
   @Override
@@ -490,12 +507,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnClick (R.id.button_navigate_edit_or_gallery)
   public void navigateToEditOrGallery() {
     if (!isRecording && !externalIntent) {
-      presenter.setFlashOff();
-      if (isProjectHasVideo){
-        navigateTo(EditActivity.class);
-      }else {
-        navigateTo(GalleryActivity.class);
-      }
+      presenter.navigateToEditOrGallery();
     }
   }
 
@@ -577,6 +589,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
   }
 
+  @Override
   public void navigateTo(Class cls) {
     Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
     startActivity(intent);

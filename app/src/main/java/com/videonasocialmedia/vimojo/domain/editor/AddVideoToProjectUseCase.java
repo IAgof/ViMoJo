@@ -53,6 +53,11 @@ public class AddVideoToProjectUseCase {
         addVideoToTrack(videoToAdd);
     }
 
+    public void addVideoToTrackAtPosition(String videoPath, int position) {
+        Video videoToAdd = new Video(videoPath);
+        addVideoToProjectAtPosition(videoToAdd, position);
+    }
+
     public void addVideoToTrack(Video video) {
         try {
             Project currentProject = Project.getInstance(null, null, null);

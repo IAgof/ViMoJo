@@ -27,10 +27,18 @@ public class AdaptVideoRecordedToTranscoderUseCase {
   }
 
 
-  public void adaptVideo(String origVideoRecordedPath, MediaTranscoderListener listener,
-                         String destVideoPath) throws IOException {
-
-    transcoderHelper.adaptVideoToTranscoder(origVideoRecordedPath, videoFormat, listener, destVideoPath);
+  public void adaptVideo(final String origVideoRecordedPath, final String destVideoPath,
+                         final MediaTranscoderListener listener) {
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          transcoderHelper.adaptVideoToTranscoder(origVideoRecordedPath, videoFormat, listener, destVideoPath);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }).start();
 
   }
 }
