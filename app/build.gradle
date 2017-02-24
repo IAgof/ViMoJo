@@ -122,6 +122,31 @@ android {
             ext.fabricApiSecret = "b3bf19cf86f8075700885f47ec7cf2813b8d8b6832a78a008ed9b757e5a56d91"
             manifestPlaceholders = [appName: "Vimojo Rtve", fabricApiKey: "9600ab9fda1b0c0991396ffc882a957bbcca8678"]
         }
+        ochoaldia {
+            applicationId "com.videonasocialmedia.vimojo.ochoaldia"
+            versionCode 21 // 20170118
+            versionName "0.4.19" // 20170118
+            resValue "string", "app_out_of_date", "2017-02-31" // 20170118
+            resValue "string", "app_name", "8 al día"
+            buildConfigField "boolean", "FEATURE_FTP", "false"
+            buildConfigField "boolean", "FEATURE_VOICE_OVER", "false"
+            ext.fabricApiKey = "636f0d9539c15314d7f540afdd251bec68edeb01"
+            ext.fabricApiSecret = "13f8e6cd589173f4405844b46bc19b5d8acca736dc0c3d963ca8c16d48bc7137"
+            manifestPlaceholders = [appName: "8 al día", fabricApiKey: "636f0d9539c15314d7f540afdd251bec68edeb01"]
+        }
+        elpaisdigital {
+            applicationId "com.videonasocialmedia.vimojo.elpaisdigital"
+            versionCode 21 // 20170118
+            versionName "0.4.19" // 20170118
+            resValue "string", "app_out_of_date", "2017-02-31" // 20170118
+            resValue "string", "app_name", "El País Digital"
+            buildConfigField "boolean", "FEATURE_FTP", "false"
+            buildConfigField "boolean", "FEATURE_VOICE_OVER", "false"
+            ext.fabricApiKey = "9e2c54ec6e94c68364a80a8e511406d4b74285c8"
+            ext.fabricApiSecret = "08a85538f0c5c0811431392c62d603bb2d93bcf6102a3f85fe614decde8a03f2"
+            manifestPlaceholders = [appName: "El País Digital", fabricApiKey: "9e2c54ec6e94c68364a80a8e511406d4b74285c8"]
+        }
+
     }
 
     File fabricProperties = new File("${project.projectDir.absolutePath}/fabric.properties")
