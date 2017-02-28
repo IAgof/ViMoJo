@@ -8,6 +8,7 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 
 import java.io.IOException;
@@ -20,9 +21,9 @@ import javax.inject.Inject;
  */
 
 public class RelaunchExportTempBackgroundUseCase {
-  //protected TextToDrawable drawableGenerator = new TextToDrawable();
-  @Inject
-  protected TextToDrawable drawableGenerator;
+  protected TextToDrawable drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
+  //@Inject
+  //protected TextToDrawable drawableGenerator;
   protected MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator,
           mediaTranscoder);

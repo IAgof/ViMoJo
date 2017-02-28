@@ -58,6 +58,8 @@ android {
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
+    def FABRIC_VIDEONA_ORG_APIKEY = "eba78720f87307ca48dfa4200dd90914ff6653f2"
+    def FABRIC_VIDEONA_ORG_APISECRET = "1636d8a8a8c633c8ba87f5a67ca26a5cc354c414b108ef565df202f07f393ae9"
 
     productFlavors {
         vimojo {
@@ -128,8 +130,13 @@ android {
             def variantSuffix = variant.name.capitalize()
             def generatePropertiesTask = task("fabricGenerateProperties${variantSuffix}") << {
                 Properties properties = new Properties()
-                properties.put("apiKey", flavor.fabricApiKey)
-                properties.put("apiSecret", flavor.fabricApiSecret)
+                if (variantSuffix.endsWith("Debug")) {
+                    properties.put("apiKey", FABRIC_VIDEONA_ORG_APIKEY)
+                    properties.put("apiSecret", FABRIC_VIDEONA_ORG_APISECRET)
+                } else {
+                    properties.put("apiKey", flavor.fabricApiKey)
+                    properties.put("apiSecret", flavor.fabricApiSecret)
+                }
                 properties.store(new FileWriter(fabricProperties), "")
                 println "Generating fabric.properties for api key: ${flavor.fabricApiKey}"
             }
@@ -140,6 +147,8 @@ android {
 //                println "Removing fabric.properties"
 //                fabricProperties.delete()
 //            }
+            def crashlyticsUploadDistributionTask = project.tasks.getByName("crashlyticsUploadDistribution${variantSuffix}")
+            crashlyticsUploadDistributionTask.dependsOn generatePropertiesTask
         }
     }
 
@@ -154,9 +163,9 @@ android {
             ext.betaDistributionGroupAliases="videona-dev-team"
             ext.betaDistributionReleaseNotesFilePath="${project.rootDir}/RELEASE"
             buildConfigField "String", "MIXPANEL_TOKEN", "\"c6617213110cd2513dfc0ad97dbaee66\""
-            ext.fabricApiKey = "eba78720f87307ca48dfa4200dd90914ff6653f2"
-            ext.fabricApiSecret = "1636d8a8a8c633c8ba87f5a67ca26a5cc354c414b108ef565df202f07f393ae9"
-            manifestPlaceholders = [appName: "Vimojo", fabricApiKey: "eba78720f87307ca48dfa4200dd90914ff6653f2"]
+            ext.fabricApiKey = FABRIC_VIDEONA_ORG_APIKEY
+            ext.fabricApiSecret = FABRIC_VIDEONA_ORG_APISECRET
+            manifestPlaceholders = [appName: "Vimojo", fabricApiKey: FABRIC_VIDEONA_ORG_APIKEY]
         }
     }
     packagingOptions {
@@ -171,6 +180,7 @@ android {
     }
     testOptions {
         unitTests.all {
+            jvmArgs '-noverify' // workarround to fix VerifyError caused by proguard sdk minify
             systemProperty 'robolectric.offline', 'true'
             systemProperty 'robolectric.dependency.dir', "$System.env.ROBOLECTRIC_LIB_PATH"
         }
