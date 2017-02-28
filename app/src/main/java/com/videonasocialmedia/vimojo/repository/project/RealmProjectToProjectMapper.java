@@ -15,6 +15,7 @@ import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideoToVideoMapper;
 import com.videonasocialmedia.vimojo.sources.MusicSource;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 /**
  * Created by jliarte on 20/10/16.
@@ -52,7 +53,7 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
 
   @NonNull
   private Project mapProject(RealmProject realmProject){
-    Project currentProject = new Project(realmProject.title, realmProject.projectPath,
+    Project currentProject = new Project(realmProject.title, Constants.PATH_APP,
         mapProfile(realmProject));
     currentProject.setProjectPath(realmProject.projectPath);
     currentProject.setUuid(realmProject.uuid);
@@ -60,6 +61,7 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
     currentProject.setDuration(realmProject.duration);
     currentProject.setAudioFadeTransitionActivated(realmProject.isAudioFadeTransitionActivated);
     currentProject.setVideoFadeTransitionActivated(realmProject.isVideoFadeTransitionActivated);
+    currentProject.setWatermarkActivated(realmProject.isWatermarkActivated);
 
     return currentProject;
   }

@@ -11,9 +11,11 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.domain.GetWatermarkPreferenceFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.UpdateVideoTransitionPreferenceToProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.presentation.views.fragment.SettingsFragment;
 
@@ -31,6 +33,7 @@ public class FragmentPresentersModule {
   private ListPreference qualityPref;
   private SwitchPreference transitionAudioPref;
   private SwitchPreference transitionVideoPref;
+  private SwitchPreference watermarkPref;
   private ListPreference frameRatePref;
   private Preference emailPref;
   private ListPreference resolutionPref;
@@ -48,6 +51,7 @@ public class FragmentPresentersModule {
                                   ListPreference frameRatePref,
                                   SwitchPreference transitionsVideoPref,
                                   SwitchPreference transitionsAudioPref,
+                                  SwitchPreference watermarkPref,
                                   Preference emailPref) {
     this.settingsFragment = settingsFragment;
     this.context = context;
@@ -57,6 +61,7 @@ public class FragmentPresentersModule {
     this.frameRatePref = frameRatePref;
     this.transitionVideoPref = transitionsVideoPref;
     this.transitionAudioPref = transitionsAudioPref;
+    this.watermarkPref = watermarkPref;
     this.emailPref = emailPref;
 
   }
@@ -64,22 +69,27 @@ public class FragmentPresentersModule {
   // For singleton objects, annotate with same scope as component, i.e. @PerFragment
   @Provides
   @PerFragment
-  public PreferencesPresenter providePreferencePresenter(SharedPreferences sharedPreferences,                                                        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+  public PreferencesPresenter providePreferencePresenter(SharedPreferences sharedPreferences,
+             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
              GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
              UpdateAudioTransitionPreferenceToProjectUseCase
               updateAudioTransitionPreferenceToProjectUseCase,
              UpdateVideoTransitionPreferenceToProjectUseCase
               updateVideoTransitionPreferenceToProjectUseCase,
              UpdateIntermediateTemporalFilesTransitionsUseCase
-              updateIntermediateTemporalFilesTransitionsUseCase){
+              updateIntermediateTemporalFilesTransitionsUseCase,
+             GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
+             UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase){
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
         cameraSettingsPref, resolutionPref, qualityPref, frameRatePref, transitionVideoPref,
-        transitionAudioPref, emailPref, getMediaListFromProjectUseCase,
+        transitionAudioPref, watermarkPref, emailPref, getMediaListFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase,
         updateAudioTransitionPreferenceToProjectUseCase,
         updateVideoTransitionPreferenceToProjectUseCase,
-        updateIntermediateTemporalFilesTransitionsUseCase);
+        updateIntermediateTemporalFilesTransitionsUseCase,
+        getWatermarkPreferenceFromProjectUseCase,
+        updateWatermarkPreferenceToProjectUseCase);
   }
 
   @Provides
@@ -108,6 +118,17 @@ public class FragmentPresentersModule {
   UpdateIntermediateTemporalFilesTransitionsUseCase provideUpdateIntermediateTempFilesTransitions(
       GetMediaListFromProjectUseCase getMediaListFromProjectUseCase){
     return new UpdateIntermediateTemporalFilesTransitionsUseCase(getMediaListFromProjectUseCase);
+  }
+
+  @Provides
+  UpdateWatermarkPreferenceToProjectUseCase provideUpdateWatermarkPreference(ProjectRepository
+                                                                             projectRepository){
+    return new UpdateWatermarkPreferenceToProjectUseCase(projectRepository);
+  }
+
+  @Provides
+  GetWatermarkPreferenceFromProjectUseCase provideGetWatermarkPreference(){
+    return new GetWatermarkPreferenceFromProjectUseCase();
   }
 
 }

@@ -61,6 +61,8 @@ public class SettingsFragment extends PreferenceFragment implements
     protected Preference frameRatePrefNotAvailable;
     protected SwitchPreference transitionsVideoPref;
     protected SwitchPreference transitionsAudioPref;
+    protected SwitchPreference watermarkPref;
+    protected PreferenceCategory watermarkCategory;
     protected Context context;
     protected SharedPreferences sharedPreferences;
     protected SharedPreferences.Editor editor;
@@ -82,7 +84,7 @@ public class SettingsFragment extends PreferenceFragment implements
         return DaggerFragmentPresentersComponent.builder()
             .fragmentPresentersModule(new FragmentPresentersModule(this, context, cameraSettingsPref,
                 resolutionPref,qualityPref, frameRatePref, transitionsVideoPref,
-                transitionsAudioPref, emailPref))
+                transitionsAudioPref, watermarkPref, emailPref))
             .systemComponent(((VimojoApplication)getActivity().getApplication()).getSystemComponent())
             .build();
     }
@@ -98,6 +100,7 @@ public class SettingsFragment extends PreferenceFragment implements
 
         setupCameraSettings();
         setupTransitions();
+        setupWatermark();
         setupMailValid();
         setupAboutUs();
         setupPrivacyPolicy();
@@ -113,6 +116,10 @@ public class SettingsFragment extends PreferenceFragment implements
     private void setupTransitions(){
         transitionsVideoPref = (SwitchPreference) findPreference(ConfigPreferences.TRANSITION_VIDEO);
         transitionsAudioPref = (SwitchPreference) findPreference(ConfigPreferences.TRANSITION_AUDIO);
+    }
+
+    private void setupWatermark(){
+        watermarkPref = (SwitchPreference) findPreference(ConfigPreferences.WATERMARK);
     }
 
     private void setupCameraSettings() {
@@ -204,6 +211,11 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     @Override
+    public void setWatermarkPref(boolean value){
+        watermarkPref.setChecked(value);
+    }
+
+    @Override
     public void setRelaunchExportTempBackground(String videoUuid, String intermediatesTempAudioFadeDirectory) {
         Context appContext = VimojoApplication.getAppContext();
         Intent exportTempBackgroudnServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
@@ -238,9 +250,17 @@ public class SettingsFragment extends PreferenceFragment implements
     @Override
     public void hideFtpsViews() {
         ftp1Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP1_Section));
-        getPreferenceScreen().removePreference(ftp1Pref);
+        if(ftp1Pref!=null)
+            getPreferenceScreen().removePreference(ftp1Pref);
         ftp2Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP2_Section));
-        getPreferenceScreen().removePreference(ftp2Pref);
+        if(ftp2Pref!=null)
+            getPreferenceScreen().removePreference(ftp2Pref);
+    }
+
+    @Override
+    public void hideWatermark() {
+        watermarkCategory = (PreferenceCategory) findPreference(getString(R.string.title_watermark_section));
+        getPreferenceScreen().removePreference(watermarkCategory);
     }
 
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
@@ -259,7 +279,8 @@ public class SettingsFragment extends PreferenceFragment implements
                                           String key) {
         Preference connectionPref = findPreference(key);
         if(key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0 ||
-            key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0){
+            key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0
+            || key.compareTo(ConfigPreferences.WATERMARK) == 0 ){
             return;
         }
         if(!key.equals(ConfigPreferences.PASSWORD_FTP) && !key.equals(ConfigPreferences.PASSWORD_FTP2)){

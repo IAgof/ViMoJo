@@ -11,12 +11,16 @@
  */
 package com.videonasocialmedia.vimojo.model.entities.editor;
 
+import android.support.annotation.NonNull;
+
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.Watermark;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.vimojo.model.sources.WatermarkProvider;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
@@ -81,6 +85,8 @@ public class Project {
   private boolean isAudioFadeTransitionActivated;
   private boolean isVideoFadeTransitionActivated;
 
+  private String watermarkResource;
+
     /**
      * Constructor of minimum number of parameters. This is the Default constructor.
      *
@@ -90,7 +96,7 @@ public class Project {
      */
     public Project(String title, String rootPath, Profile profile) {
         this.title = title;
-        this.vmComposition = new VMComposition();
+        this.vmComposition = new VMComposition(getResourceWatermarkFilePath(rootPath), profile);
         this.profile = profile;
         this.duration = 0;
         this.isAudioFadeTransitionActivated = false;
@@ -100,6 +106,13 @@ public class Project {
             File.separator + uuid; //todo probablemente necesitemos un slugify de ese title.
       //  createProjectFolders();
     }
+
+  @NonNull
+  public String getResourceWatermarkFilePath(String rootPath) {
+
+    return rootPath + File.separator + Constants.FOLDER_NAME_VIMOJO_TEMP + File.separator +
+        Constants.RESOURCE_WATERMARK_NAME;
+  }
 
   public Project(Project project) throws IllegalItemOnTrack {
 
@@ -321,7 +334,13 @@ public class Project {
     return pathTempFilesAudioMixedVoiceOverRecord;
   }
 
+  public void setWatermarkActivated(boolean value){
+      this.vmComposition.setWatermarkActivated(value);
+  }
 
+  public boolean hasWatermark(){
+    return vmComposition.hasWatermark();
+  }
 
   private void createFolder(String projectPath) {
     FileUtils.createFolder(projectPath);
