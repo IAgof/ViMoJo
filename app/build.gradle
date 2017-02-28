@@ -131,7 +131,7 @@ android {
             applicationId "com.videonasocialmedia.vimojo.ochoaldia"
             versionCode 21 // 20170118
             versionName "0.4.19" // 20170118
-            resValue "string", "app_out_of_date", "2017-02-31" // 20170118
+            resValue "string", "app_out_of_date", "2017-04-01" // 20170118
             resValue "string", "app_name", "8 al día"
             buildConfigField "boolean", "FEATURE_FTP", "false"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "false"
@@ -144,8 +144,8 @@ android {
             applicationId "com.videonasocialmedia.vimojo.elpaisdigital"
             versionCode 21 // 20170118
             versionName "0.4.19" // 20170118
-            resValue "string", "app_out_of_date", "2017-02-31" // 20170118
-            resValue "string", "app_name", "El País Digital"
+            resValue "string", "app_out_of_date", "2017-04-01" // 20170118
+            resValue "string", "app_name", "El País D"
             buildConfigField "boolean", "FEATURE_FTP", "false"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "false"
             buildConfigField "boolean", "FEATURE_WATERMARK", "false"

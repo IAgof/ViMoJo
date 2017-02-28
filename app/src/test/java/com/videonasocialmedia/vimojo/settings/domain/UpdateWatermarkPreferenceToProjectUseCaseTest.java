@@ -14,20 +14,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
 /**
- * Created by alvaro on 10/01/17.
+ * Created by alvaro on 28/02/17.
  */
 
-public class UpdateVideoTransitionPreferenceToProjectUseCaseTest {
+public class UpdateWatermarkPreferenceToProjectUseCaseTest {
 
   @Mock
   ProjectRepository mockedProjectRepository;
   @InjectMocks
-  UpdateVideoTransitionPreferenceToProjectUseCase injectedUseCase;
+  UpdateWatermarkPreferenceToProjectUseCase injectedUseCase;
 
   @Before
   public void setup(){
@@ -35,31 +34,31 @@ public class UpdateVideoTransitionPreferenceToProjectUseCaseTest {
   }
 
   @Test
-  public void updateVideoTransitionPreferenceCallsUpdateRepository(){
+  public void updateWatermarkPreferenceCallsUpdateRepository(){
     Project currentProject = Project.getInstance(null, null, null);
-    injectedUseCase.setVideoFadeTransitionActivated(false);
+    injectedUseCase.setWatermarkActivated(true);
     verify(mockedProjectRepository).update(currentProject);
   }
 
   @Test
-  public void shouldUpdateVideoTransitionPreferenceProjectAfterUseCase(){
-    Project project = getAProject();
-    boolean videoTransitionActivated = true;
-    assertThat("project videoTransitionPreference false by default ",
-        project.isVideoFadeTransitionActivated(), CoreMatchers.is(false));
+  public void shouldUpdateWatermarkPreferenceAfterUseCase(){
+    Project currentProject = getAProject();
+    assertThat("Add watermark is false by default", currentProject.hasWatermark(),
+        CoreMatchers.is(false));
+    boolean activateWatermark = true;
 
-    injectedUseCase.setVideoFadeTransitionActivated(videoTransitionActivated);
+    injectedUseCase.setWatermarkActivated(activateWatermark);
 
-    project = Project.getInstance(null,null,null);
+    currentProject = Project.getInstance(null, null, null);
 
-    assertThat("project videoTransitionPreference is value injected",
-        project.isVideoFadeTransitionActivated(), CoreMatchers.is(videoTransitionActivated));
+    assertThat("UseCase update Watermark ", currentProject.hasWatermark(),
+        CoreMatchers.is(activateWatermark));
+
   }
-
-
 
   private Project getAProject() {
     return new Project("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
+
 }
