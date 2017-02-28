@@ -180,6 +180,7 @@ android {
     }
     testOptions {
         unitTests.all {
+            jvmArgs '-noverify' // workarround to fix VerifyError caused by proguard sdk minify
             systemProperty 'robolectric.offline', 'true'
             systemProperty 'robolectric.dependency.dir', "$System.env.ROBOLECTRIC_LIB_PATH"
         }
