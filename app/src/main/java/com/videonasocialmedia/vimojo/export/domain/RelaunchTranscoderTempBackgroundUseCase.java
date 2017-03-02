@@ -20,7 +20,7 @@ import javax.inject.Inject;
  * Created by alvaro on 28/09/16.
  */
 
-public class RelaunchExportTempBackgroundUseCase {
+public class RelaunchTranscoderTempBackgroundUseCase {
   protected TextToDrawable drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
   //@Inject
   //protected TextToDrawable drawableGenerator;
