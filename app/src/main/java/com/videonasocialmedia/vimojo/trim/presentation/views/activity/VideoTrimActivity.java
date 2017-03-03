@@ -161,7 +161,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
         startActivity(intent);
-        finish();
+      //  finish();
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 
+
 import javax.inject.Inject;
 
 /**
@@ -46,6 +47,7 @@ public class ModifyVideoDurationUseCase{
    * @param format
    * @param startTimeMs
    * @param finishTimeMs
+   * @param transcoderHelperListener
    */
   public void trimVideo(final Drawable drawableFadeTransition, final Video videoToEdit,
                         final VideonaFormat format,

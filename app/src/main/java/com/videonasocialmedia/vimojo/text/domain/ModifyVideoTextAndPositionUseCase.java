@@ -13,6 +13,7 @@ import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 
+
 import javax.inject.Inject;
 
 /**
@@ -43,8 +44,9 @@ public class ModifyVideoTextAndPositionUseCase {
 
     public void addTextToVideo(Drawable drawableFadeTransition, Video videoToEdit,
                                VideonaFormat format, String text, String textPosition,
-                               String intermediatesTempAudioFadeDirectory, TranscoderHelperListener
-                               listener) {
+                               String intermediatesTempAudioFadeDirectory,
+                               TranscoderHelperListener
+                                   listener){
 
 
           boolean isVideoFadeTransitionActivated =

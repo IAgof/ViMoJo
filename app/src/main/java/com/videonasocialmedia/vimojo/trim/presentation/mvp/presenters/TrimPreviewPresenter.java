@@ -50,6 +50,10 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
     private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
 
+    // View reference. We use as a WeakReference
+    // because the Activity could be destroyed at any time
+    // and we don't want to create a memory leak
+    //private WeakReference<TrimView> trimView;
     private TrimView trimView;
     public UserEventTracker userEventTracker;
     public Project currentProject;
@@ -64,6 +68,8 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
                                     getVideonaFormatFromCurrentProjectUseCase,
                                 UpdateVideoRepositoryUseCase
                                         updateVideoRepositoryUseCase) {
+
+        //this.trimView = new WeakReference<>(trimView);
         this.trimView = trimView;
         this.currentProject = loadCurrentProject();
         this.userEventTracker = userEventTracker;
@@ -115,9 +121,10 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
         Drawable drawableFadeTransitionVideo =
             ContextCompat.getDrawable(VimojoApplication.getAppContext(),
                 R.drawable.alpha_transition_black);
+
         modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, videoToEdit, videoFormat,
                 startTimeMs, finishTimeMs, currentProject.getProjectPathIntermediateFileAudioFade(),
-                this);
+            this);
 
         trackVideoTrimmed();
     }
@@ -137,7 +144,6 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
             Video video = v.get(0);
             trimView.showTrimBar(startTimeMs, finishTimeMs, video.getDuration());
         }
-
     }
 
     @Override
@@ -152,7 +158,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
             video.increaseNumTriesToExportVideo();
             setTrim(video.getStartTime(), video.getStopTime());
         }else {
-            trimView.showError(message);
+            //trimView.showError(message);
         }
     }
 }

@@ -156,7 +156,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         Intent intent = new Intent(this, cls);
         intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
         startActivity(intent);
-        finish();
+        //finish();
     }
 
     @OnClick(R.id.button_split_accept)

@@ -13,9 +13,6 @@ import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 
-import javax.inject.Inject;
-
-
 /**
  * Created by alvaro on 28/09/16.
  */
@@ -44,7 +41,8 @@ public class RelaunchTranscoderTempBackgroundUseCase {
    */
   public void relaunchExport(Drawable drawableFadeTransition, Video videoToEdit,
                              VideonaFormat videonaFormat,String intermediatesTempAudioFadeDirectory,
-                             TranscoderHelperListener transcoderHelperListener) {
+                             final TranscoderHelperListener
+                                 transcoderHelperListener){
 
     boolean isVideoFadeTransitionActivated =
         getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();

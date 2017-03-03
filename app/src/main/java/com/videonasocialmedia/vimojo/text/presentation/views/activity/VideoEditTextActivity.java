@@ -252,7 +252,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     public void onClickEditTextAccept() {
         presenter.setTextToVideo(getTextFromEditText(), getTextPositionSelected());
         navigateTo(EditActivity.class, videoIndexOnTrack);
-        finish();
+        //finish();
     }
 
     @OnClick(R.id.button_editText_cancel)
