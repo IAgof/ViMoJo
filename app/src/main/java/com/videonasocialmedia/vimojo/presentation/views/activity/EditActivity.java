@@ -455,7 +455,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         editTrimButton.setEnabled(false);
         editSplitButton.setEnabled(false);
         editDuplicateButton.setEnabled(false);
-        videonaPlayer.releaseView();
   }
 
   @Override
