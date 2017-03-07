@@ -45,8 +45,10 @@ import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
@@ -185,6 +187,13 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   MusicListPresenter provideMusicListPresenter() {
     return new MusicListPresenter((MusicListView) activity, activity);
+  }
+
+  @Provides @PerActivity
+  SoundPresenter provideoSoundPresenter(GetMediaListFromProjectUseCase
+            getMediaListFromProjectUseCase, GetMusicFromProjectUseCase getMusicFromProjectUseCase){
+    return new SoundPresenter((SoundView) activity, getMediaListFromProjectUseCase,
+        getMusicFromProjectUseCase);
   }
 
   @Provides

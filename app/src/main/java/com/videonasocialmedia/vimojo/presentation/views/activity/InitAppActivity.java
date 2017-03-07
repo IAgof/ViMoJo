@@ -749,7 +749,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         @Override
         public void onPermissionsChecked(MultiplePermissionsReport report) {
             if (report.areAllPermissionsGranted()) {
-                if(isBetaAppOutOfDate()) {
+                if(isBetaAppOutOfDate() && !BuildConfig.DEBUG) {
                     showDialogOutOfDate();
                 } else {
                     activity.startSplashThread();
