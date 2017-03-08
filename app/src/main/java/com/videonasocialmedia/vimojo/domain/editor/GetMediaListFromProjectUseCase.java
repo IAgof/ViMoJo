@@ -14,7 +14,14 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetriev
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class GetMediaListFromProjectUseCase {
+
+    @Inject
+    public GetMediaListFromProjectUseCase(){
+
+    }
 
     /**
      * @return

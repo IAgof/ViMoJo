@@ -394,6 +394,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     @Override
     public void videoToRelaunch(String videoUuid, String intermediatesTempAudioFadeDirectory) {
-        preferencesView.setRelaunchExportTempBackground(videoUuid, intermediatesTempAudioFadeDirectory);
+        preferencesView.setRelaunchExportTempBackground(videoUuid,
+            intermediatesTempAudioFadeDirectory);
     }
 }
