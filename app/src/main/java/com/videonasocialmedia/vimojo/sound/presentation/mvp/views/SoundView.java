@@ -9,5 +9,7 @@ import java.util.List;
  */
 public interface SoundView {
     void bindVideoList(List<Video> movieList);
+    void setVideoFadeTransitionAmongVideos();
+    void setAudioFadeTransitionAmongVideos();
     void resetPreview();
 }

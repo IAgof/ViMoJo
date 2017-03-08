@@ -12,6 +12,7 @@ import javax.inject.Inject;
 public class SplitVideoUseCase {
     private AddVideoToProjectUseCase addVideoToProjectUseCase;
 
+    @Inject
     public SplitVideoUseCase(AddVideoToProjectUseCase addVideoToProjectUseCase) {
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
     }

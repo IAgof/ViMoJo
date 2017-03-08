@@ -10,10 +10,11 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.muxer.Appender;
 import com.videonasocialmedia.videonamediaframework.pipeline.AudioCompositionExportSession;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 /**
  * Created by alvaro on 16/09/16.
@@ -21,16 +22,12 @@ import java.util.ArrayList;
 public class MergeVoiceOverAudiosUseCase {
 
     private static final String TAG = "MergeVoiceOverAudiosUC";
-    OnMergeVoiceOverAudiosListener listener;
-    // TODO(jliarte): 29/11/16 should inject this field?
-    private final Appender appender;
 
-    public MergeVoiceOverAudiosUseCase(OnMergeVoiceOverAudiosListener listener) {
-        this.listener = listener;
-        this.appender = new Appender();
+    @Inject
+    public MergeVoiceOverAudiosUseCase() {
     }
 
-    public void mergeAudio(String pathAudioMerge) {
+    public void mergeAudio(String pathAudioMerge, final OnMergeVoiceOverAudiosListener listener) {
         // TODO(jliarte): 30/11/16 make this in just one step and build AVComposition?
         //                Move this to presenter and pass composition as an argument?
         Project project = Project.getInstance(null,null,null);

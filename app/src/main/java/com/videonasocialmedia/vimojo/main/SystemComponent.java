@@ -26,6 +26,5 @@ public interface SystemComponent {
   UserEventTracker getUserEventTracker();
   SharedPreferences getSharedPreferences();
   ProfileRepository getSharedPreferencesProfileRepository();
-
   void inject(VimojoActivity activity);
 }
