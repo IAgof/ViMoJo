@@ -32,6 +32,8 @@ import com.videonasocialmedia.vimojo.utils.FabUtils;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -45,6 +47,8 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   private final int ID_BUTTON_FAB_TOP=1;
   private final int ID_BUTTON_FAB_BOTTOM=3;
 
+  @Inject SoundPresenter presenter;
+
   @Nullable @Bind(R.id.videona_player)
   VideonaPlayerExo videonaPlayer;
   @Nullable @Bind( R.id.bottomBar)
@@ -54,7 +58,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   @Bind(R.id.fab_edit_room)
   FloatingActionsMenu fabMenu;
   private BroadcastReceiver exportReceiver;
-  private SoundPresenter presenter;
   private int currentProjectPosition = 0;
 
   @Override
@@ -62,9 +65,9 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       super.onCreate(savedInstanceState);
       inflateLinearLayout(R.id.container_layout,R.layout.activity_sound);
       ButterKnife.bind(this);
+      getActivityPresentersComponent().inject(this);
       createExportReceiver();
       restoreState(savedInstanceState);
-      presenter=new SoundPresenter(this);
       videonaPlayer.setListener(this);
       bottomBar.selectTabWithId(R.id.tab_sound);
       setupBottomBar(bottomBar);
@@ -178,6 +181,16 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
       videonaPlayer.bindVideoList(movieList);
       videonaPlayer.seekTo(currentProjectPosition);
+  }
+
+  @Override
+  public void setVideoFadeTransitionAmongVideos() {
+    videonaPlayer.setVideoTransitionFade();
+  }
+
+  @Override
+  public void setAudioFadeTransitionAmongVideos() {
+    videonaPlayer.setAudioTransitionFade();
   }
 
   @Override

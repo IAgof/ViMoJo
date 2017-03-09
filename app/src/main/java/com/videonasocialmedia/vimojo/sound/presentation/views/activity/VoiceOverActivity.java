@@ -34,6 +34,8 @@ import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -48,6 +50,9 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
     private static final String VOICE_OVER_PROJECT_POSITION = "voice_over_project_position";
     private static final String TAG = "VoiceOverActivity";
     private static final String STATE_BUTTON_RECORD = "state_button_record";
+
+    @Inject
+    VoiceOverPresenter presenter;
 
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
@@ -67,7 +72,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
     ImageButton buttonRecordVoiceOver;
 
     int videoIndexOnTrack;
-    private VoiceOverPresenter presenter;
     private int currentVoiceOverPosition = 0;
     private int startTime = 0;
 
@@ -82,6 +86,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sound_voice_over);
         ButterKnife.bind(this);
+        getActivityPresentersComponent().inject(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -93,7 +98,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
 
         changeVisibilityAndResouceButton(buttonRecordIsInStop);
 
-        presenter = new VoiceOverPresenter(this);
         videonaPlayer.setSeekBarLayoutEnabled(false);
         videonaPlayer.setListener(this);
         buttonRecordVoiceOver.setOnTouchListener(this);
@@ -261,6 +265,16 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
     @Override
     public void showError(String errorMessage) {
         Snackbar.make(videonaPlayer, errorMessage, Snackbar.LENGTH_INDEFINITE).show();
+    }
+
+    @Override
+    public void setVideoFadeTransitionAmongVideos() {
+        videonaPlayer.setVideoTransitionFade();
+    }
+
+    @Override
+    public void setAudioFadeTransitionAmongVideos() {
+        videonaPlayer.setAudioTransitionFade();
     }
 
     @Override

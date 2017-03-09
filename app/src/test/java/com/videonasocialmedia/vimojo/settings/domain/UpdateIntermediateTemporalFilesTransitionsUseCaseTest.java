@@ -30,8 +30,10 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
   @Mock OnRelaunchTemporalFileListener mockedOnRelaunchTemporalFileListener;
 
   @Before
-  public void injectTestDoubles(){
+  public void init(){
     MockitoAnnotations.initMocks(this);
+    Project project = Project.getInstance(null, null, null);
+    project.clear();
   }
 
   @Test

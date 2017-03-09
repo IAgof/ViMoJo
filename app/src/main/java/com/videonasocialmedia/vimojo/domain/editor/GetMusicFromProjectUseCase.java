@@ -5,12 +5,15 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
+import javax.inject.Inject;
+
 /**
  * Created by jliarte on 31/05/16.
  */
 public class GetMusicFromProjectUseCase {
     public Project project;
 
+    @Inject
     public GetMusicFromProjectUseCase() {
         this.project = Project.getInstance(null, null, null);
     }

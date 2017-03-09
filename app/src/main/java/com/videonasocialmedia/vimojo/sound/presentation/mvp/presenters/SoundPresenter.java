@@ -12,20 +12,27 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by ruth on 13/09/16.
  */
 public class SoundPresenter implements OnVideosRetrieved {
 
     private final Project currentProject;
+    private final GetPreferencesTransitionFromProjectUseCase
+            getPreferencesTransitionFromProjectUseCase;
+    private final GetMusicFromProjectUseCase getMusicFromProjectUseCase;
     private SoundView soundView;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
-    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
 
-    public SoundPresenter(SoundView soundView) {
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
+    @Inject
+    public SoundPresenter(SoundView soundView, GetMediaListFromProjectUseCase
+        getMediaListFromProjectUseCase, GetPreferencesTransitionFromProjectUseCase
+        getPreferencesTransitionFromProjectUseCase) {
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
+        this.getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
         this.soundView = soundView;
         this.currentProject = loadCurrentProject();
     }
@@ -36,7 +43,19 @@ public class SoundPresenter implements OnVideosRetrieved {
     }
 
     public void init() {
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
+        obtainVideos();
+        retrieveCompositionMusic();
+        // TODO(jliarte): 9/03/17 should move this code fragments to VideonaPlayer to automatically set transitions form AVComposition info
+        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+            soundView.setVideoFadeTransitionAmongVideos();
+        }
+        if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
+            !currentProject.getVMComposition().hasMusic()){
+            soundView.setAudioFadeTransitionAmongVideos();
+        }
+    }
+
+    private void retrieveCompositionMusic() {
         if (currentProject.getVMComposition().hasMusic()) {
             getMusicFromProjectUseCase.getMusicFromProject(new GetMusicFromProjectCallback() {
                 @Override
@@ -45,6 +64,10 @@ public class SoundPresenter implements OnVideosRetrieved {
                 }
             });
         }
+    }
+
+    private void obtainVideos() {
+        getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 
     @Override

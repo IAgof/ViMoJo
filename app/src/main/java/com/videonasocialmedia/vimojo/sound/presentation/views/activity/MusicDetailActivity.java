@@ -13,8 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.transition.Scene;
 import android.transition.TransitionManager;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -27,8 +25,6 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
@@ -163,7 +159,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
             //TODO show snackbar with error message
         }
         registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
-        presenter.onResume(musicPath);
+        presenter.init(musicPath);
     }
 
     public void navigateTo(Class cls) {
@@ -229,6 +225,11 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         startActivity(i);
         finish();
 
+    }
+
+    @Override
+    public void setVideoFadeTransitionAmongVideos() {
+        videonaPlayer.setVideoTransitionFade();
     }
 
     @Nullable

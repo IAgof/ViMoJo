@@ -17,12 +17,12 @@ import java.util.List;
 /**
  *
  */
-public class ExportTempBroadcastReceveiver extends BroadcastReceiver {
+public class ExportTempBroadcastReceiver extends BroadcastReceiver {
     private static final int MAX_NUM_TRIES_TO_EXPORT_VIDEO = 4;
     private final View parent;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
 
-    public ExportTempBroadcastReceveiver(View parent) {
+    public ExportTempBroadcastReceiver(View parent) {
         this.parent = parent;
         getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
     }
