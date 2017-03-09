@@ -45,13 +45,14 @@ import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.MergeVoiceOverAudiosUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.UpdateMusicVolumeProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverActivity;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
@@ -86,19 +87,19 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  SoundVolumePresenter getSoundVolumePresenter(RemoveMusicFromProjectUseCase useCase,
+  SoundVolumePresenter getSoundVolumePresenter(RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase,
                                      AddVoiceOverToProjectUseCase addVoiceOverToProjectUseCase,
                                      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                      GetPreferencesTransitionFromProjectUseCase
                                          getPreferencesTransitionFromProjectUseCase) {
-    return new SoundVolumePresenter((SoundVolumeView) activity, useCase,
+    return new SoundVolumePresenter((SoundVolumeView) activity, removeMusicFromProjectUseCase,
         addVoiceOverToProjectUseCase, getMediaListFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase);
   }
 
   @Provides @PerActivity
   VoiceOverPresenter voiceOverPresenter(GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                                         GetPreferencesTransitionFromProjectUseCase
+                                        GetPreferencesTransitionFromProjectUseCase
                                              getPreferencesTransitionFromProjectUseCase,
                                         MergeVoiceOverAudiosUseCase mergeVoiceOverAudiosUseCase) {
     return new VoiceOverPresenter((VoiceOverActivity) activity, getMediaListFromProjectUseCase,
@@ -106,16 +107,19 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  MusicDetailPresenter provideMusicDetailPresenter(UserEventTracker userEventTracker,
+  MusicDetailPresenter
+  provideMusicDetailPresenter(UserEventTracker userEventTracker,
                               AddMusicToProjectUseCase addMusicToProjectUseCase,
                               RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase,
                               GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                               GetMusicFromProjectUseCase getMusicFromProjectUseCase,
                               GetPreferencesTransitionFromProjectUseCase
-                                 getPreferencesTransitionFromProjectUseCase) {
+                                      getPreferencesTransitionFromProjectUseCase,
+                              UpdateMusicVolumeProjectUseCase updateMusicVolumeProjectUseCase) {
     return new MusicDetailPresenter((MusicDetailView) activity, userEventTracker,
             addMusicToProjectUseCase, removeMusicFromProjectUseCase, getMediaListFromProjectUseCase,
-            getMusicFromProjectUseCase, getPreferencesTransitionFromProjectUseCase, activity);
+            getMusicFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
+            updateMusicVolumeProjectUseCase, activity);
   }
 
   @Provides @PerActivity
@@ -133,7 +137,7 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   SoundPresenter provideSoundPresenter(GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                                        GetPreferencesTransitionFromProjectUseCase
+                                       GetPreferencesTransitionFromProjectUseCase
                                             getPreferencesTransitionFromProjectUseCase) {
     return new SoundPresenter((SoundActivity) activity, getMediaListFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase);
@@ -145,7 +149,7 @@ public class ActivityPresentersModule {
                                                GetMusicFromProjectUseCase getMusicFromProjectUseCase,
                                                GetPreferencesTransitionFromProjectUseCase
                                                    getPreferencesTransitionFromProjectUseCase) {
-    return new MusicListPresenter((MusicListActivity) activity, activity, getMusicListUseCase,
+    return new MusicListPresenter((MusicListView) activity, activity, getMusicListUseCase,
         getMediaListFromProjectUseCase, getMusicFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase);
   }
@@ -214,7 +218,8 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  DetailProjectPresenter provideDetailProjectPresenter(UpdateTitleProjectUseCase updateTitleProjectUseCase){
+  DetailProjectPresenter provideDetailProjectPresenter (
+          UpdateTitleProjectUseCase updateTitleProjectUseCase) {
     return new DetailProjectPresenter((DetailProjectActivity) activity, updateTitleProjectUseCase);
   }
 
@@ -266,48 +271,45 @@ public class ActivityPresentersModule {
     return new GetMusicFromProjectUseCase();
   }
 
+  @Provides GetMusicListUseCase provideMusicListUseCase() {
+    return new GetMusicListUseCase(activity);
+  }
+
   @Provides GetMediaListFromProjectUseCase provideMediaListRetriever() {
     return new GetMediaListFromProjectUseCase();
   }
 
-  @Provides AddLastVideoExportedToProjectUseCase provideLastVideoExporterAdded(ProjectRepository
-                                                                               projectRepository) {
+  @Provides AddLastVideoExportedToProjectUseCase provideLastVideoExporterAdded(
+          ProjectRepository projectRepository) {
     return new AddLastVideoExportedToProjectUseCase(projectRepository);
   }
 
-  @Provides UpdateTitleProjectUseCase provideUpdateTitleProject(ProjectRepository
-                                                                    projectRepository){
+  @Provides
+  UpdateTitleProjectUseCase provideUpdateTitleProject(ProjectRepository projectRepository) {
     return new UpdateTitleProjectUseCase(projectRepository);
   }
 
-  @Provides UpdateCurrentProjectUseCase provideUpdateCurrentProject(ProjectRepository
-                                                                        projectRepository){
+  @Provides
+  UpdateCurrentProjectUseCase provideUpdateCurrentProject(ProjectRepository projectRepository) {
     return new UpdateCurrentProjectUseCase(projectRepository);
   }
 
-  @Provides DuplicateProjectUseCase provideDuplicateProject(ProjectRepository projectRepository){
+  @Provides DuplicateProjectUseCase provideDuplicateProject(ProjectRepository projectRepository) {
     return new DuplicateProjectUseCase(projectRepository);
   }
 
   @Provides DeleteProjectUseCase provideDeleteProject(ProjectRepository projectRepository,
-                                                      VideoRepository videoRepository){
+                                                      VideoRepository videoRepository) {
     return new DeleteProjectUseCase(projectRepository, videoRepository);
   }
 
-  @Provides CheckIfProjectHasBeenExportedUseCase provideCheckIfProjectHasBeenExported(){
+  @Provides CheckIfProjectHasBeenExportedUseCase provideCheckIfProjectHasBeenExported() {
     return new CheckIfProjectHasBeenExportedUseCase();
   }
 
-  @Provides GetPreferencesTransitionFromProjectUseCase providePreferencesTransitionFromProjectUseCase(){
-    return new GetPreferencesTransitionFromProjectUseCase();
-  }
-
-  @Provides GetMusicListUseCase provideMusicListUseCase(){
-    return new GetMusicListUseCase(activity);
-  }
-
-  @Provides MergeVoiceOverAudiosUseCase provideMergeVoiceOverUseCase(){
-    return new MergeVoiceOverAudiosUseCase();
+  @Provides UpdateMusicVolumeProjectUseCase provideUpdateMusicVolumeProject(
+          ProjectRepository projectRepository) {
+    return new UpdateMusicVolumeProjectUseCase(projectRepository);
   }
 
 }

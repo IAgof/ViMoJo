@@ -15,6 +15,7 @@ import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -44,9 +45,10 @@ import butterknife.OnClick;
 
 
 public class MusicDetailActivity extends VimojoActivity implements MusicDetailView,
-        VideonaPlayer.VideonaPlayerListener {
+    SeekBar.OnSeekBarChangeListener, VideonaPlayer.VideonaPlayerListener {
 
     private static final String MUSIC_DETAIL_PROJECT_POSITION = "music_detail_project_position";
+    private String MUSIC_DETAIL_POSITION_VOLUME = "sound_volume_position";
 
     @Bind(R.id.music_title)
     TextView musicTitle;
@@ -62,6 +64,8 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     FrameLayout sceneRoot;
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
+    @Bind (R.id.seekBar_volume_sound)
+    SeekBar seekBarVolume;
 
     @Inject MusicDetailPresenter presenter;
     private Scene acceptCancelScene;
@@ -70,6 +74,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     private String musicPath;
     private Music music;
     private int currentProjectPosition;
+    private int currentSoundVolumePosition =50;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,11 +88,14 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         restoreState(savedInstanceState);
         videonaPlayer.setListener(this);
         createExportReceiver();
+        seekBarVolume.setOnSeekBarChangeListener(this);
+        seekBarVolume.setProgress(currentSoundVolumePosition);
     }
 
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             currentProjectPosition = savedInstanceState.getInt(MUSIC_DETAIL_PROJECT_POSITION, 0);
+            currentSoundVolumePosition = savedInstanceState.getInt(MUSIC_DETAIL_POSITION_VOLUME, 0);
         }
     }
 
@@ -129,6 +137,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(MUSIC_DETAIL_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
+        outState.putInt(MUSIC_DETAIL_POSITION_VOLUME, seekBarVolume.getProgress());
         super.onSaveInstanceState(outState);
     }
 
@@ -193,8 +202,9 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     public void setMusic(Music music, boolean scene) {
         musicSelectedOptions(scene);
         videonaPlayer.setMusic(music);
-        videonaPlayer.setVolume(1f);
+        videonaPlayer.setVolume(music.getVolume());
         updateCoverInfo(music);
+        seekBarVolume.setProgress((int)(music.getVolume()*100));
         this.music = music;
         videonaPlayer.playPreview();
     }
@@ -225,15 +235,9 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @Nullable
     @OnClick(R.id.select_music)
     public void selectMusic() {
-
-        presenter.addMusic(music);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            TransitionManager.go(deleteSecene);
-        } else {
-            LayoutInflater inflater = this.getLayoutInflater();
-            inflater.inflate(R.layout.activity_music_detail_scene_delete, sceneRoot);
-        }
+        float volume = (float) (seekBarVolume.getProgress() * 0.01);
+        presenter.addMusic(music, volume);
+        TransitionManager.go(deleteSecene);
         ButterKnife.bind(this);
     }
 
@@ -260,6 +264,24 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
 
     @Override
     public void newClipPlayed(int currentClipIndex) {
+
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        videonaPlayer.setVolume(progress *0.01f);
+        currentSoundVolumePosition = progress;
+        if(music!=null)
+            presenter.setVolume(progress*0.01f);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
 
     }
 }

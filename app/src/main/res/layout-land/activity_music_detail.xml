@@ -111,11 +111,56 @@
 
                     </RelativeLayout>
 
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:layout_below="@+id/description_music"
+                        android:id="@+id/mix_music_and_video_sound">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginBottom="8dp"
+                            android:id="@+id/linear_layout_icons_mix_audio">
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/activity_edit_sound_normal"
+                                android:scaleType="fitXY"
+                                />
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/activity_edit_sound_music_normal"
+                                android:scaleType="fitXY"
+                                android:layout_alignParentRight="true"
+                                />
+                        </RelativeLayout>
+                        <SeekBar
+                            android:id="@+id/seekBar_volume_sound"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="16dp"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:indeterminate="false"
+                            android:secondaryProgressTint="@color/button_color"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_below="@+id/linear_layout_icons_mix_audio"
+                            android:progressTint="@color/colorPrimary"
+                            android:progressBackgroundTint="@color/button_color"
+                            android:thumb="@drawable/ic_circular_thumb_seekbar"/>
+
+                    </RelativeLayout>
+
                     <FrameLayout
                         android:id="@+id/scene_root"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/description_music"
+                        android:layout_below="@id/mix_music_and_video_sound"
                         android:layout_centerHorizontal="true"
                         tools:layout="@layout/activity_music_detail_scene_accept_cancel"
                         tools:layout_height="40dp"/>

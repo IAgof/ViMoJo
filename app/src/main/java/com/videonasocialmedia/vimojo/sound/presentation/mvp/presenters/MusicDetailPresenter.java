@@ -17,6 +17,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromPro
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
+import com.videonasocialmedia.vimojo.sound.domain.UpdateMusicVolumeProjectUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
+    private UpdateMusicVolumeProjectUseCase updateMusicVolumeProjectUseCase;
     private MusicDetailView musicDetailView;
     public UserEventTracker userEventTracker;
     public Project currentProject;
@@ -48,6 +50,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
                                 GetMusicFromProjectUseCase getMusicFromProjectUseCase,
                                 GetPreferencesTransitionFromProjectUseCase
                                     getPreferencesTransitionFromProjectUseCase,
+                                UpdateMusicVolumeProjectUseCase updateMusicVolumeProjectUseCase,
                                 Context context) {
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
@@ -58,6 +61,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase =
             getPreferencesTransitionFromProjectUseCase;
+        this.updateMusicVolumeProjectUseCase = updateMusicVolumeProjectUseCase;
         this.context = context;
 
         // TODO(jliarte): 1/12/16 should it be a parameter of use case method?
@@ -100,7 +104,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         return result;
     }
 
-    public void addMusic(Music music) {
+    public void addMusic(Music music, float volume) {
+        music.setVolume(volume);
         addMusicToProjectUseCase.addMusicToTrack(music, 0, this);
     }
 
@@ -133,5 +138,9 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     public void onAddMediaItemToTrackSuccess(Media media) {
         userEventTracker.trackMusicSet(currentProject);
         musicDetailView.goToEdit(media.getTitle());
+    }
+
+    public void setVolume(float volume) {
+        updateMusicVolumeProjectUseCase.setVolumeMusic(currentProject, volume);
     }
 }

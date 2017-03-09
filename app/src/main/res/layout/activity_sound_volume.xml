@@ -78,11 +78,10 @@
                     android:layout_marginBottom="0dp"
                     android:indeterminate="false"
                     android:layout_gravity="center_horizontal"
-                    android:progressTint="@color/colorSecondaryLight"
-                    android:progressBackgroundTintMode="src_over"
+                    android:progressTint="@color/colorPrimary"
+                    android:progressBackgroundTint="@color/button_color"
                     android:thumb="@drawable/ic_circular_thumb_seekbar"
                     />
-
 
                 <ImageView
                     android:layout_width="24dp"
