@@ -321,8 +321,6 @@ public class Project {
     return pathTempFilesAudioMixedVoiceOverRecord;
   }
 
-
-
   private void createFolder(String projectPath) {
     FileUtils.createFolder(projectPath);
   }

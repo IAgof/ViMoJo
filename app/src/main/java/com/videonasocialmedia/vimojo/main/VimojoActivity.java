@@ -129,7 +129,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     @Override
@@ -163,7 +162,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
 //        }
 //    }
 
-
     protected boolean isLandscapeOriented() {
         return getOrientation() == Configuration.ORIENTATION_LANDSCAPE;
     }
@@ -177,7 +175,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
     }
 
     class CustomPermissionListener extends EmptyMultiplePermissionsListener {
-
         private final Context context;
         private final String title;
         private final String message;
@@ -198,7 +195,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
         @Override
         public void onPermissionsChecked(MultiplePermissionsReport report) {
             super.onPermissionsChecked(report);
-
             if (!report.areAllPermissionsGranted()) {
                 showDialog();
             } else {

@@ -119,7 +119,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     }
 
     private boolean isBetaAppOutOfDate() {
-
         Calendar endOfBeta = Calendar.getInstance();
         Calendar today = Calendar.getInstance();
 
@@ -138,7 +137,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         if(today.after(endOfBeta) ){
             return true;
         }
-
         return false;
     }
 

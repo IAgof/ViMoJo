@@ -61,12 +61,11 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_list);
         ButterKnife.bind(this);
+        getActivityPresentersComponent().inject(this);
         setupToolbar();
         createExportReceiver();
         restoreState(savedInstanceState);
         videonaPlayer.setListener(this);
-        getActivityPresentersComponent().inject(this);
-//        presenter = new MusicListPresenter(this, this);
         initVideoListRecycler();
     }
 
@@ -137,7 +136,7 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
-        presenter.onResume();
+        presenter.init();
         registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
     }
 
@@ -166,6 +165,11 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
     @Override
     public void goToDetailActivity(String mediaPath) {
         navigateToMusicDetailActivity(mediaPath);
+    }
+
+    @Override
+    public void setVideoFadeTransitionAmongVideos() {
+        videonaPlayer.setVideoTransitionFade();
     }
 
     @Override

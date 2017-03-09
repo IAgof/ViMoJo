@@ -1,3 +1,7 @@
+v0.4.19.1
+- Added video and audio transitions to videona player preview
+- Improved player with prebuffering of next clip
+
 v0.4.19
 - Added audio (fade in/out) and video (fade to black) transitions for each clip
 - Added preferece to enable/disable audio, video transitions.

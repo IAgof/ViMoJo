@@ -5,6 +5,8 @@ import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateTitleProjectUs
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
 
+import javax.inject.Inject;
+
 /**
  * Created by alvaro on 19/12/16.
  */
@@ -15,6 +17,7 @@ public class DetailProjectPresenter {
   private Project currentProject;
   private UpdateTitleProjectUseCase updateTitleProjectUseCase;
 
+  @Inject
   public DetailProjectPresenter(DetailProjectView detailProjectView, UpdateTitleProjectUseCase
                                 updateTitleProjectUseCase){
     this.detailProjectView = detailProjectView;

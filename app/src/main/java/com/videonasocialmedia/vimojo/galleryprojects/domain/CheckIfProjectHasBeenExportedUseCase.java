@@ -3,11 +3,18 @@ package com.videonasocialmedia.vimojo.galleryprojects.domain;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.OnProjectExportedListener;
 
+import javax.inject.Inject;
+
 /**
  * Created by alvaro on 20/12/16.
  */
 
 public class CheckIfProjectHasBeenExportedUseCase {
+
+  @Inject
+  public CheckIfProjectHasBeenExportedUseCase(){
+
+  }
 
   public void compareDate(Project project, OnProjectExportedListener listener) {
     if (project.hasVideoExported()
