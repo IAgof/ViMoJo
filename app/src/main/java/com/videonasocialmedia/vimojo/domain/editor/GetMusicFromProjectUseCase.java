@@ -21,11 +21,23 @@ public class GetMusicFromProjectUseCase {
     public void getMusicFromProject(GetMusicFromProjectCallback listener) {
         Music music = null;
         try {
-            music = (Music) project.getAudioTracks().get(0).getItems().get(0);
+            music = (Music) project.getAudioTracks()
+                .get(project.getVMComposition().INDEX_AUDIO_TRACKS_MUSIC).getItems().get(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
           listener.onMusicRetrieved(music);
+    }
+
+    public void getVoiceOverFromProject(GetMusicFromProjectCallback listener) {
+        Music music = null;
+        try {
+            music = (Music) project.getAudioTracks()
+                .get(project.getVMComposition().INDEX_AUDIO_TRACKS_VOICE_OVER).getItems().get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        listener.onMusicRetrieved(music);
     }
 
     public boolean hasBeenMusicSelected(){

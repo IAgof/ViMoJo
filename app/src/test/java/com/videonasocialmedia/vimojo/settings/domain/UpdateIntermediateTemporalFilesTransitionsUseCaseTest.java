@@ -41,7 +41,7 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
     Project project = getAProject();
     AddVideoToProjectUseCase addVideoToProjectUseCase =
             new AddVideoToProjectUseCase(mockedProjectRepository);
-    Video videoAdded = new Video("somepath");
+    Video videoAdded = new Video("somepath", 1f);
     videoAdded.setTempPath("tempDirectory");
     addVideoToProjectUseCase.addVideoToProjectAtPosition(videoAdded, 0);
     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =

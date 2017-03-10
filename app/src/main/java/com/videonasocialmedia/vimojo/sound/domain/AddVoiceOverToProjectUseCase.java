@@ -38,16 +38,18 @@ public class AddVoiceOverToProjectUseCase {
 
     // TODO(jliarte): 23/12/16 maybe use a different track for voice over? a different
     //                VMComposition method or use case?
-    addMusicToProjectUseCase.addMusicToTrack(voiceOver, 0, new OnAddMediaFinishedListener() {
-      @Override
-      public void onAddMediaItemToTrackError() {
-        // TODO(jliarte): 23/12/16 handle errors and send back through a listener?
-      }
+    addMusicToProjectUseCase.addMusicToTrack(voiceOver,
+        project.getVMComposition().INDEX_AUDIO_TRACKS_VOICE_OVER,
+        new OnAddMediaFinishedListener() {
+          @Override
+          public void onAddMediaItemToTrackError() {
+            // TODO(jliarte): 23/12/16 handle errors and send back through a listener?
+          }
 
-      @Override
-      public void onAddMediaItemToTrackSuccess(Media media) {
+          @Override
+          public void onAddMediaItemToTrackSuccess(Media media) {
 
-      }
+          }
     });
     projectRepository.update(project);
   }

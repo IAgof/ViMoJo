@@ -36,7 +36,7 @@ public class SplitVideoUseCaseTest {
 
   @Test
   public void splitVideoCallsProjectRepositoryUpdateAsItCallsAddVideoToProjectAtPosition() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     OnSplitVideoListener listener = getOnSplitVideoListener();
 
     injectedUseCase.splitVideo(video, 0, 10, listener);

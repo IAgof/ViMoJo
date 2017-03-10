@@ -243,6 +243,11 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
         this.music = music;
     }
 
+    @Override
+    public void setVoiceOver(Music voiceOver) {
+
+    }
+
 
     @Override
     public void setVolume(float volume) {

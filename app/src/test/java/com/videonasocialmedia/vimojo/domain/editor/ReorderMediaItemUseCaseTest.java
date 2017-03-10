@@ -38,7 +38,7 @@ public class ReorderMediaItemUseCaseTest {
   public void testMoveMediaItemCallsUpdateProject() {
     Project currentProject = Project.getInstance(null, null, null);
     currentProject.setMediaTrack(mockedMediaTrack);
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     OnReorderMediaListener listener = getOnReorderMediaListener();
 
     injectedUseCase.moveMediaItem(video, 1, listener);

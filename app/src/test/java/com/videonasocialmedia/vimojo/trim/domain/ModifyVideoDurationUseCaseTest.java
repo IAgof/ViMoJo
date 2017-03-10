@@ -84,7 +84,7 @@ public class ModifyVideoDurationUseCaseTest {
   @Test
   public void testTrimVideoCallsTranscodeAndTrimVideoIfVideoHasntText()
           throws IOException {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     assert ! video.hasText();
     injectedUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
             mockedMediaTranscoder);
@@ -100,7 +100,7 @@ public class ModifyVideoDurationUseCaseTest {
   @Test
   public void testTrimVideoCallsGenerateOutputVideoWithTrimmingIfVideoHasntText()
           throws IOException {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     // TODO(jliarte): 19/10/16 should check if video is trimmed?
     assert ! video.hasText();
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
@@ -114,7 +114,7 @@ public class ModifyVideoDurationUseCaseTest {
 
   @Test
   public void trimVideoCallsVideoRepositoryUpdate() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 2, 10,
@@ -128,7 +128,7 @@ public class ModifyVideoDurationUseCaseTest {
 
   @NonNull
   private Video getVideoWithText() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     video.setClipText("text");
     video.setClipTextPosition(TextEffect.TextPosition.CENTER.name());
     // TODO(jliarte): 18/10/16 fix these methods

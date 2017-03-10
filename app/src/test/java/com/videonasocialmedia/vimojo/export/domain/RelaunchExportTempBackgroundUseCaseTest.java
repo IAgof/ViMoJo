@@ -57,7 +57,7 @@ public class RelaunchExportTempBackgroundUseCaseTest {
 
   @Test
   public void testBugRelaunchExportThrowsNPE_WhenVideoHasntText() throws Exception {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     assertThat(video.getClipText(), is(nullValue()));
 
     new RelaunchExportTempBackgroundUseCase().relaunchExport(mockDrawableFadeTransition, video,
@@ -99,7 +99,7 @@ public class RelaunchExportTempBackgroundUseCaseTest {
 
   @Test
   public void testRelaunchExportCallsTranscodeAndTrimVideoIfVideoHasntText() throws IOException {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     assert ! video.hasText();
     injectedRelaunchExportTempBackgroundUseCase.transcoderHelper =
             new TranscoderHelper(mockedDrawableGenerator, mockedMediaTranscoder);
@@ -116,7 +116,7 @@ public class RelaunchExportTempBackgroundUseCaseTest {
   @Test
   public void testRelaunchExportCallsGenerateOutputVideoWithTrimmingIfVideoHasntText()
           throws IOException {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     assert ! video.hasText();
 
     injectedRelaunchExportTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
@@ -128,7 +128,7 @@ public class RelaunchExportTempBackgroundUseCaseTest {
 
   @NonNull
   private Video getVideoWithText() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     video.setClipText("text");
     video.setClipTextPosition(TextEffect.TextPosition.CENTER.name());
     video.setTextToVideoAdded(true);

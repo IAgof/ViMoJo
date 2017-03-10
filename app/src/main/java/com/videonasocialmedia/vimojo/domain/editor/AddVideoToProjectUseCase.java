@@ -47,7 +47,7 @@ public class AddVideoToProjectUseCase {
      * @param videoPath
      */
     public void addVideoToTrack(String videoPath) {
-        Video videoToAdd = new Video(videoPath);
+        Video videoToAdd = new Video(videoPath, 1f);
         addVideoToTrack(videoToAdd);
     }
 

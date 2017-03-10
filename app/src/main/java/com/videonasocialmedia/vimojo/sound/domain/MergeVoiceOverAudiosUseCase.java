@@ -64,7 +64,7 @@ public class MergeVoiceOverAudiosUseCase {
             throws IllegalItemOnTrack {
         AudioTrack audioTrack = audioComposition.getAudioTracks().get(0);
         for (String audioPath: audioPathList) {
-            Audio itemToAdd = new Audio(audioPathList.indexOf(audioPath), audioPath, null);
+            Audio itemToAdd = new Audio(audioPathList.indexOf(audioPath), audioPath, 1f, null);
             audioTrack.insertItem(itemToAdd);
         }
     }

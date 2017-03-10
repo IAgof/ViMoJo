@@ -153,6 +153,22 @@ public class VimojoMigration implements RealmMigration {
       }
       oldVersion++;
     }
+
+    // Migrate from version 4 to version 5, now update RealmVideo, not RealmProject
+    if (oldVersion == 4) {
+      RealmObjectSchema realmProject = schema.get("RealmVideo");
+      if (!realmProject.hasField("volume")) {
+        realmProject.addField("volume", float.class)
+            .transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                obj.setFloat("volume", 1f);
+              }
+            });
+      }
+
+      oldVersion++;
+    }
   }
 
   private void updateRealmProjectPrimaryKeyToUuid(RealmObjectSchema realmProject) {

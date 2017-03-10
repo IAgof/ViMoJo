@@ -106,7 +106,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     public void addMusic(Music music, float volume) {
         music.setVolume(volume);
-        addMusicToProjectUseCase.addMusicToTrack(music, 0, this);
+        addMusicToProjectUseCase.addMusicToTrack(music,
+            currentProject.getVMComposition().INDEX_AUDIO_TRACKS_MUSIC, this);
     }
 
     @Override

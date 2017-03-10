@@ -53,7 +53,7 @@ public class AddVideoToProjectUseCaseTest {
   @Test
   public void testAddVideoToTrackCallsUpdateProject() {
     Project currentProject = Project.getInstance(null, null, null);
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
 
     injectedUseCase.addVideoToTrack(video);
 
@@ -63,7 +63,7 @@ public class AddVideoToProjectUseCaseTest {
   @Test
   public void testAddVideoToTrackWithListenerCallsUpdateProject() {
     Project currentProject = Project.getInstance(null, null, null);
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
 
     injectedUseCase.addVideoToTrack(video, listener);
@@ -74,7 +74,7 @@ public class AddVideoToProjectUseCaseTest {
   @Test
   public void testAddVideoToProjectAtPositionCallsUpdateProject() {
     Project currentProject = Project.getInstance(null, null, null);
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
 
     injectedUseCase.addVideoToProjectAtPosition(video, 0);
 
@@ -84,7 +84,7 @@ public class AddVideoToProjectUseCaseTest {
   @Test
   public void testAddVideoListToTrackCallsUpdateProject() {
     Project currentProject = Project.getInstance(null, null, null);
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
 

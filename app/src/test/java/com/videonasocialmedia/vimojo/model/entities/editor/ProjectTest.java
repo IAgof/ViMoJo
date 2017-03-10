@@ -64,8 +64,8 @@ public class ProjectTest {
         Project videonaProject = getAProject();
         MediaTrack mediaTrack = videonaProject.getMediaTrack();
         try {
-            mediaTrack.insertItemAt(0, new Video("/path1"));
-            mediaTrack.insertItemAt(1, new Video("/path2"));
+            mediaTrack.insertItemAt(0, new Video("/path1", 1f));
+            mediaTrack.insertItemAt(1, new Video("/path2", 1f));
 
             assertThat(videonaProject.numberOfClips(), is(2));
         } catch (IllegalItemOnTrack illegalItemOnTrack) {

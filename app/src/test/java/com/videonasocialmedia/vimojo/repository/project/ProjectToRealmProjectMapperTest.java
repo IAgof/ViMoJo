@@ -80,7 +80,7 @@ public class ProjectToRealmProjectMapperTest {
   @Test
   public void testMapSetsRealmProjectVideos() throws IllegalItemOnTrack {
     Project project = getAProject();
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     project.getMediaTrack().insertItem(video);
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
