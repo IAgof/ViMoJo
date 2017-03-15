@@ -202,7 +202,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     public void setMusic(Music music, boolean scene) {
         musicSelectedOptions(scene);
         videonaPlayer.setMusic(music);
-        videonaPlayer.setVolume(music.getVolume());
         updateCoverInfo(music);
         seekBarVolume.setProgress((int)(music.getVolume()*100));
         this.music = music;
@@ -269,7 +268,8 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        videonaPlayer.setVolume(progress *0.01f);
+        videonaPlayer.setMusicVolume(progress *0.01f);
+        videonaPlayer.setVideoVolume((1-(progress*0.01f)));
         currentSoundVolumePosition = progress;
         if(music!=null)
             presenter.setVolume(progress*0.01f);

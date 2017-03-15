@@ -201,6 +201,14 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 }
             });
         }
+        if (currentProject.getVMComposition().hasVoiceOver()) {
+            getMusicFromProjectUseCase.getVoiceOverFromProject(new GetMusicFromProjectCallback() {
+                @Override
+                public void onMusicRetrieved(Music voiceOver) {
+                    editActivityView.setVoiceOver(voiceOver);
+                }
+            });
+        }
         if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
             editActivityView.setVideoFadeTransitionAmongVideos();
         }

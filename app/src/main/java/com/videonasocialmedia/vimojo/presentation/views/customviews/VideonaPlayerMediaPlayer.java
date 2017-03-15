@@ -212,12 +212,12 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
     }
 
     @Override
-    public void seekClipTo(int seekTimeInMsec) {
+    public void seekClipToTime(int seekTimeInMsec) {
         // TODO(jliarte): 7/09/16 implement this method and set the other relative to whole time line
     }
 
     @Override
-    public void seekToClip(int position) {
+    public void seekToClipPosition(int position) {
         currentVideoListIndex = position;
 
         int progress = videoStartTimesInTimeList.get(currentVideoListIndex) -
@@ -248,13 +248,21 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
 
     }
 
+    @Override
+    public void setVideoVolume(float volume) {
+
+    }
 
     @Override
-    public void setVolume(float volume) {
-        if (musicPlayer != null) {
-            musicPlayer.setVolume(volume, volume);
-        }
+    public void setMusicVolume(float volume) {
+
     }
+
+    @Override
+    public void setVoiceOverVolume(float volume) {
+
+    }
+
 
     @Override
     public void setVideoTransitionFade() {

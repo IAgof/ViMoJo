@@ -180,7 +180,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
             currentSplitPosition = progress;
             //splitSeekBar.setProgress(progress);
             refreshTimeTag(currentSplitPosition);
-            videonaPlayer.seekClipTo(video.getStartTime() + progress);
+            videonaPlayer.seekToClipPosition(video.getStartTime() + progress);
             videonaPlayer.setSeekBarProgress(progress);
         }
     }

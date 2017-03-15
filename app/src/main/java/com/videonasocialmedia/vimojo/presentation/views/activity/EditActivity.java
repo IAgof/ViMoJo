@@ -320,7 +320,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     public void setSelectedClip(int position) {
         currentVideoIndex = position;
-        videonaPlayer.seekToClip(position);
+        videonaPlayer.seekToClipPosition(position);
         timeLineAdapter.updateSelection(position);
     }
 
@@ -364,14 +364,14 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     public void onClipMoved(int fromPosition, int toPosition) {
         currentVideoIndex = toPosition;
         editPresenter.moveItem(fromPosition, toPosition);
-        videonaPlayer.seekToClip(currentVideoIndex);
+        videonaPlayer.seekToClipPosition(currentVideoIndex);
     }
 
     @Override
     public void onClipReordered(int newPosition) {
         currentVideoIndex = newPosition;
         videonaPlayer.updatePreviewTimeLists();
-        videonaPlayer.seekToClip(currentVideoIndex);
+        videonaPlayer.seekToClipPosition(currentVideoIndex);
     }
 
     @Override
@@ -426,6 +426,11 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     @Override
     public void setMusic(Music music) {
         videonaPlayer.setMusic(music);
+    }
+
+    @Override
+    public void setVoiceOver(Music voiceOver) {
+      videonaPlayer.setVoiceOver(voiceOver);
     }
 
     @Override

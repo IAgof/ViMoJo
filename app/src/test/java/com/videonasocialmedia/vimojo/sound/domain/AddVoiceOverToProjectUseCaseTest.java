@@ -9,6 +9,7 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static com.videonasocialmedia.videonamediaframework.model.VMComposition.INDEX_AUDIO_TRACKS_VOICE_OVER;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.verify;
@@ -39,6 +41,7 @@ public class AddVoiceOverToProjectUseCaseTest {
     Project.INSTANCE.clear();
   }
 
+  @Ignore // Ignore until know what to do if composition have music and voice over
   @Test
   public void setVoiceOverSetsMusicToComposition() {
     Project project = getAProject();
@@ -55,6 +58,26 @@ public class AddVoiceOverToProjectUseCaseTest {
     assertThat(project.getVMComposition().hasMusic(), is(true));
     assertThat(project.getVMComposition().getMusic().getMediaPath(), is("voice/over/path"));
     assertThat(project.getVMComposition().getMusic().getVolume(), is(0.7f));
+  }
+
+  @Test
+  public void setVoiceOverAddAudioToComposition(){
+    Project project = getAProject();
+    assert ! project.getVMComposition().hasVoiceOver();
+    AddMusicToProjectUseCase addMusicToProjectUseCase =
+        new AddMusicToProjectUseCase(mockedProjectRepository);
+    RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase =
+        new RemoveMusicFromProjectUseCase(mockedProjectRepository);
+
+    AddVoiceOverToProjectUseCase useCase = new AddVoiceOverToProjectUseCase(mockedProjectRepository,
+        addMusicToProjectUseCase, removeMusicFromProjectUseCase);
+
+    useCase.setVoiceOver(project, "voice/over/path", 0.7f);
+
+    assertThat(project.getVMComposition().hasVoiceOver(), is(true));
+    assertThat(project.getVMComposition().getVoiceOver().getMediaPath(), is("voice/over/path"));
+    assertThat(project.getVMComposition().getVoiceOver().getVolume(), is(0.7f));
+
   }
 
   @Test

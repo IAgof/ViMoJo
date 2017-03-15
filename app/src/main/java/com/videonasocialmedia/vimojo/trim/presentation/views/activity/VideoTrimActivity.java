@@ -201,7 +201,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         trimmingRangeSeekBar.setRangeValues(0f, (float) videoDuration / MS_CORRECTION_FACTOR);
         trimmingRangeSeekBar.setSelectedMinValue(seekBarMinPosition);
         trimmingRangeSeekBar.setSelectedMaxValue(seekBarMaxPosition);
-        videonaPlayer.seekClipTo(startTimeMs);
+        videonaPlayer.seekClipToTime(startTimeMs);
     }
 
     @Override
@@ -229,7 +229,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void seekTo(int timeInMsec) {
-        videonaPlayer.seekClipTo(timeInMsec);
+        videonaPlayer.seekClipToTime(timeInMsec);
     }
 
     @Override
@@ -288,7 +288,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
                 video.setStopTime(finishTimeMs);
                 currentPosition = finishTimeMs;
             }
-            videonaPlayer.seekClipTo(currentPosition);
+            videonaPlayer.seekClipToTime(currentPosition);
             videonaPlayer.updatePreviewTimeLists();
             updateTrimmingTextTags();
         } catch (Exception e) {
@@ -303,7 +303,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             video.setStartTime(startTimeMs);
             video.setStopTime(finishTimeMs);
             videonaPlayer.updatePreviewTimeLists();
-            videonaPlayer.seekClipTo(currentPosition);
+            videonaPlayer.seekClipToTime(currentPosition);
         }
     }
 
