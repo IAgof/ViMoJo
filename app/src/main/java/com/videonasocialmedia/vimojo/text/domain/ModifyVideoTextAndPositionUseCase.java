@@ -59,7 +59,6 @@ public class ModifyVideoTextAndPositionUseCase {
             videoToEdit.setTempPathFinished(false);
             Project project = Project.getInstance(null, null, null);
             videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
-            videoToEdit.setTextToVideoAdded(true);
 
             // TODO(jliarte): 19/10/16 move this logic to TranscoderHelper?
             if(videoToEdit.isTrimmedVideo()) {

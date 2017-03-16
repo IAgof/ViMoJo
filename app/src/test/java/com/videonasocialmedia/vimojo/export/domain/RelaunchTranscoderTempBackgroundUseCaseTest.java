@@ -134,7 +134,6 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     Video video = new Video("media/path");
     assert ! video.hasText();
 
-
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
         videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
 
@@ -148,7 +147,6 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     Video video = new Video("media/path");
     video.setClipText("text");
     video.setClipTextPosition(TextEffect.TextPosition.CENTER.name());
-    video.setTextToVideoAdded(true);
     return video;
   }
 

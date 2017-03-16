@@ -140,8 +140,6 @@ public class ModifyVideoDurationUseCaseTest {
     Video video = new Video("media/path");
     video.setClipText("text");
     video.setClipTextPosition(TextEffect.TextPosition.CENTER.name());
-    // TODO(jliarte): 18/10/16 fix these methods
-    video.setTextToVideoAdded(true);
     return video;
   }
 

@@ -35,7 +35,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
 
     private final String LOG_TAG = getClass().getSimpleName();
 
-    TextToDrawable drawableGenerator;
+    private TextToDrawable drawableGenerator;
 
     private Video videoToEdit;
 
@@ -48,7 +48,6 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
     private Context context;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
-
 
     @Inject
     public EditTextPreviewPresenter(EditTextView editTextView, Context context,

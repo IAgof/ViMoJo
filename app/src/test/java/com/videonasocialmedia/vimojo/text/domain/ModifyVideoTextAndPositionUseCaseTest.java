@@ -110,7 +110,6 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     Video video = getVideoUntrimmedWithText();
     assert video.hasText();
     assert ! video.isTrimmedVideo();
-
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedUseCase.addTextToVideo(mockDrawableFadeTransition, video, videonaFormat,
@@ -141,7 +140,6 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     Video video = new Video("media/path");
     video.setClipText("text");
     video.setClipTextPosition(TextEffect.TextPosition.CENTER.name());
-    video.setTextToVideoAdded(true);
     return video;
   }
 
