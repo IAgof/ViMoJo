@@ -11,6 +11,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -40,6 +41,8 @@ public class SoundPresenterTest {
   GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock
   GetMusicFromProjectUseCase mockedGetMusicFromProjectUseCase;
+  @Mock
+  GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionFromProjectUseCase;
 
   @InjectMocks SoundPresenter injectedSoundPresenter;
 
@@ -93,7 +96,8 @@ public class SoundPresenterTest {
     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
         new GetMediaListFromProjectUseCase();
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
-        getMediaListFromProjectUseCase, mockedGetMusicFromProjectUseCase);
+        getMediaListFromProjectUseCase, mockedGetMusicFromProjectUseCase,
+        mockedGetPreferencesTransitionFromProjectUseCase);
     soundPresenter.getMediaListFromProject();
 
     Mockito.verify(mockedSoundView).bindVideoList(videoList);
@@ -108,7 +112,8 @@ public class SoundPresenterTest {
     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
         new GetMediaListFromProjectUseCase();
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
-        getMediaListFromProjectUseCase, mockedGetMusicFromProjectUseCase);
+        getMediaListFromProjectUseCase, mockedGetMusicFromProjectUseCase,
+        mockedGetPreferencesTransitionFromProjectUseCase);
     soundPresenter.getMediaListFromProject();
 
     Mockito.verify(mockedSoundView).resetPreview();
@@ -129,7 +134,8 @@ public class SoundPresenterTest {
     assertThat("Current project has music", currentProject.hasMusic(), is(true));
 
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
-        mockedGetMediaListFromProjectUseCase, getMusicFromProjectUseCase);
+        mockedGetMediaListFromProjectUseCase, getMusicFromProjectUseCase,
+        mockedGetPreferencesTransitionFromProjectUseCase);
     soundPresenter.getMediaListFromProject();
 
     Mockito.verify(mockedSoundView).bindMusicList(musicList);
@@ -154,7 +160,8 @@ public class SoundPresenterTest {
         is(Constants.MUSIC_AUDIO_VOICEOVER_TITLE));
 
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
-        mockedGetMediaListFromProjectUseCase, getMusicFromProjectUseCase);
+        mockedGetMediaListFromProjectUseCase, getMusicFromProjectUseCase,
+        mockedGetPreferencesTransitionFromProjectUseCase);
     soundPresenter.getMediaListFromProject();
 
     Mockito.verify(mockedSoundView).bindVoiceOverList(voiceOverList);
