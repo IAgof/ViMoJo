@@ -1,9 +1,13 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -36,6 +40,11 @@ public class TrimPreviewPresenterTest {
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
 
+    @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
+    @Mock ModifyVideoDurationUseCase mockedModifyVideoDurationUseCase;
+    @Mock GetVideonaFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
+    @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
+
     @Before
     public void injectMocks() {
         MockitoAnnotations.initMocks(this);
@@ -49,14 +58,20 @@ public class TrimPreviewPresenterTest {
     @Test
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
-        TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(trimView, userEventTracker);
+        TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(trimView,
+            userEventTracker, mockedGetMediaListFromProjectUseCase,
+            mockedModifyVideoDurationUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
+            mockedUpdateVideoRepositoryUseCase);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
 
     @Test
     public void constructorSetsCurrentProject() {
-        TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(trimView, mockedUserEventTracker);
+        TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(trimView,
+            mockedUserEventTracker, mockedGetMediaListFromProjectUseCase,
+            mockedModifyVideoDurationUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
+            mockedUpdateVideoRepositoryUseCase);
         Project videonaProject = getAProject();
 
         assertThat(trimPreviewPresenter.currentProject, is(videonaProject));
