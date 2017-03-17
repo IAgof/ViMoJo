@@ -15,6 +15,8 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by ruth on 13/09/16.
  */
@@ -29,6 +31,7 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCaseUseCase;
 
+  @Inject
   public GalleryProjectListPresenter(GalleryProjectListView galleryProjectListView,
                                      ProjectRepository projectRepository,
                                      CreateDefaultProjectUseCase createDefaultProjectUseCase,

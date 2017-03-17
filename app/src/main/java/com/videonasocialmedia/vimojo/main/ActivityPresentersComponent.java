@@ -13,9 +13,12 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundVolumeActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
+import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 
 import dagger.Component;
 
@@ -29,10 +32,14 @@ public interface ActivityPresentersComponent {
   void inject(VimojoActivity activity);
   void inject(MusicDetailActivity activity);
   void inject(EditActivity activity);
+  void inject(SoundActivity activity);
+  void inject(MusicListActivity activity);
+  void inject(VoiceOverActivity activity);
   void inject(VideoDuplicateActivity activity);
   void inject(GalleryActivity activity);
   void inject(RecordActivity activity);
   void inject(VideoSplitActivity activity);
+  void inject(VideoTrimActivity activity);
   void inject(ShareActivity activity);
   void inject(InitAppActivity activity);
   void inject(SoundVolumeActivity activity);
@@ -40,5 +47,4 @@ public interface ActivityPresentersComponent {
   void inject(GalleryProjectListActivity activity);
   void inject(DetailProjectActivity activity);
   void inject(VideoEditTextActivity activity);
-  void inject(MusicListActivity activity);
 }

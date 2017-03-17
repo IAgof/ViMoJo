@@ -11,7 +11,7 @@ public class VideoToRealmVideoMapper implements Mapper<Video,RealmVideo> {
   public RealmVideo map(Video video) {
     RealmVideo realmVideo = new RealmVideo(video.getUuid(), video.getPosition(),
             video.getMediaPath(), video.getTempPath(), video.outputVideoIsFinished(),
-            video.getClipText(), video.getClipTextPosition(), video.isTextToVideoAdded(),
+            video.getClipText(), video.getClipTextPosition(), video.hasText(),
             video.isTrimmedVideo(), video.getStartTime(), video.getStopTime());
     return realmVideo;
   }
