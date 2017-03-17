@@ -117,6 +117,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   private void setupFab() {
     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.activity_edit_sound_music_normal,R.color.colorWhite);
     addAndConfigurateFabButton(ID_BUTTON_FAB_BOTTOM, R.drawable.activity_edit_sound_voice_normal,R.color.colorWhite);
+    fabMenu.expand();
   }
   protected void addAndConfigurateFabButton(int id, int icon, int color) {
     FloatingActionButton newFab = FabUtils.createNewFabMini(id, icon, color);
@@ -193,7 +194,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   protected void onResume() {
       super.onResume();
       videonaPlayer.onShown(this);
-      presenter.getMediaListFromProject();
+      presenter.init();
       registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
 
   }
@@ -222,8 +223,23 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
   @Override
+  public void setVideoFadeTransitionAmongVideos() {
+    videonaPlayer.setVideoTransitionFade();
+  }
+
+  @Override
+  public void setAudioFadeTransitionAmongVideos() {
+    videonaPlayer.setAudioTransitionFade();
+  }
+
+  @Override
   public void resetPreview() {
       videonaPlayer.resetPreview();
+  }
+
+  @Override
+  public void setMusic(Music music) {
+    videonaPlayer.setMusic(music);
   }
 
   @Nullable @Override

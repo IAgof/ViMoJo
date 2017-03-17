@@ -3,6 +3,8 @@ package com.videonasocialmedia.vimojo.galleryprojects.domain;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
+import javax.inject.Inject;
+
 /**
  * Created by alvaro on 20/12/16.
  */
@@ -10,6 +12,7 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 public class UpdateTitleProjectUseCase {
   ProjectRepository projectRepository;
 
+  @Inject
   public UpdateTitleProjectUseCase(ProjectRepository projectRepository){
     this.projectRepository = projectRepository;
   }

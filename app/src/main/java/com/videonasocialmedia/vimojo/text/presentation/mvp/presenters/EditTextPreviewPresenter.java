@@ -39,6 +39,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
 
+    @Inject
     public EditTextPreviewPresenter(EditTextView editTextView, UserEventTracker userEventTracker,
                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
         this.editTextView = editTextView;

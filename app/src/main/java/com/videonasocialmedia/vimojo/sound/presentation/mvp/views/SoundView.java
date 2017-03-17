@@ -12,5 +12,7 @@ public interface SoundView {
     void bindVideoList(List<Video> movieList);
     void bindMusicList(List<Music> musicList);
     void bindVoiceOverList(List<Music> voiceOverList);
+    void setVideoFadeTransitionAmongVideos();
+    void setAudioFadeTransitionAmongVideos();
     void resetPreview();
 }

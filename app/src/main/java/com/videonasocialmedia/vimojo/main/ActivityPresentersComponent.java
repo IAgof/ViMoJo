@@ -15,6 +15,7 @@ import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDeta
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundVolumeActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 
@@ -30,6 +31,9 @@ public interface ActivityPresentersComponent {
   void inject(VimojoActivity activity);
   void inject(MusicDetailActivity activity);
   void inject(EditActivity activity);
+  void inject(SoundActivity activity);
+  void inject(MusicListActivity activity);
+  void inject(VoiceOverActivity activity);
   void inject(VideoDuplicateActivity activity);
   void inject(GalleryActivity activity);
   void inject(RecordActivity activity);
@@ -42,5 +46,4 @@ public interface ActivityPresentersComponent {
   void inject(DetailProjectActivity activity);
   void inject(VideoEditTextActivity activity);
   void inject(MusicListActivity activity);
-  void inject(SoundActivity activity);
 }

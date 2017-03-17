@@ -209,6 +209,16 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     }
 
     @Override
+    public void setVideoFadeTransitionAmongVideos() {
+        videonaPlayer.setVideoTransitionFade();
+    }
+
+    @Override
+    public void setAudioFadeTransitionAmongVideos() {
+        videonaPlayer.setAudioTransitionFade();
+    }
+
+    @Override
     public void newClipPlayed(int currentClipIndex) {
     }
 }

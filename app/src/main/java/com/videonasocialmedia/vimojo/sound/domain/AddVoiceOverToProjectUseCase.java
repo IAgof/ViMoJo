@@ -15,6 +15,8 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
+import javax.inject.Inject;
+
 /**
  * Created by alvaro on 7/12/16.
  */
@@ -24,6 +26,7 @@ public class AddVoiceOverToProjectUseCase {
   private AddMusicToProjectUseCase addMusicToProjectUseCase;
   private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
 
+  @Inject
   public AddVoiceOverToProjectUseCase(ProjectRepository projectRepository,
                                       AddMusicToProjectUseCase addMusicToProjectUseCase,
                                       RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase) {

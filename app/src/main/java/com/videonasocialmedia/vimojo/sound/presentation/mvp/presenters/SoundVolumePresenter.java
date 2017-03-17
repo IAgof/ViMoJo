@@ -5,6 +5,7 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
  * Created by ruth on 19/09/16.
  */
 public class SoundVolumePresenter implements OnVideosRetrieved {
+    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     private SoundVolumeView soundVolumeView;
     private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
@@ -29,12 +31,16 @@ public class SoundVolumePresenter implements OnVideosRetrieved {
     @Inject
     public SoundVolumePresenter(SoundVolumeView soundVolumeView,
                                 RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase,
-                                AddVoiceOverToProjectUseCase addVoiceOverToProject) {
+                                AddVoiceOverToProjectUseCase addVoiceOverToProject,
+                                GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                GetPreferencesTransitionFromProjectUseCase
+                                    getPreferencesTransitionFromProjectUseCase) {
         this.soundVolumeView = soundVolumeView;
         this.removeMusicFromProjectUseCase = removeMusicFromProjectUseCase;
         this.addVoiceOverToProject = addVoiceOverToProject;
-
-        this.getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.getPreferencesTransitionFromProjectUseCase =
+            getPreferencesTransitionFromProjectUseCase;
         this.currentProject = loadCurrentProject();
     }
 
@@ -43,6 +49,17 @@ public class SoundVolumePresenter implements OnVideosRetrieved {
     }
 
     public void init() {
+        obtainVideos();
+        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+            soundVolumeView.setVideoFadeTransitionAmongVideos();
+        }
+        if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
+            !currentProject.getVMComposition().hasMusic()){
+            soundVolumeView.setAudioFadeTransitionAmongVideos();
+        }
+    }
+
+    private void obtainVideos() {
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 
