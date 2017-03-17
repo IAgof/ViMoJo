@@ -30,49 +30,54 @@ public class ModifyVideoTextAndPositionUseCase {
     protected VideoRepository videoRepository;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
 
-
   /**
    * Default constructor with video repository.
    *
    * @param videoRepository the video repository.
    */
   @Inject public ModifyVideoTextAndPositionUseCase(VideoRepository videoRepository) {
-        this.videoRepository = videoRepository;
-        getPreferencesTransitionFromProjectUseCase =
+    this.videoRepository = videoRepository;
+    getPreferencesTransitionFromProjectUseCase =
             new GetPreferencesTransitionFromProjectUseCase();
     }
 
     public void addTextToVideo(Drawable drawableFadeTransition, Video videoToEdit,
                                VideonaFormat format, String text, String textPosition,
                                String intermediatesTempAudioFadeDirectory,
-                               TranscoderHelperListener
-                                   listener){
-
-
-          boolean isVideoFadeTransitionActivated =
+                               TranscoderHelperListener listener) {
+      boolean isVideoFadeTransitionActivated =
               getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
-          boolean isAudioFadeTransitionActivated =
+      boolean isAudioFadeTransitionActivated =
               getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
+      videoToEdit.setClipText(text);
+      videoToEdit.setClipTextPosition(textPosition);
+      videoToEdit.setTempPathFinished(false);
+      Project project = Project.getInstance(null, null, null);
+      videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
+      updateGeneratedVideo(drawableFadeTransition, videoToEdit, format,
+              intermediatesTempAudioFadeDirectory, listener, isVideoFadeTransitionActivated,
+              isAudioFadeTransitionActivated);
 
-            videoToEdit.setClipText(text);
-            videoToEdit.setClipTextPosition(textPosition);
-            videoToEdit.setTempPathFinished(false);
-            Project project = Project.getInstance(null, null, null);
-            videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
-            //videoToEdit.setTextToVideoAdded(true);
-
-            // TODO(jliarte): 19/10/16 move this logic to TranscoderHelper?
-            if(videoToEdit.isTrimmedVideo()) {
-                transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(
-                    drawableFadeTransition, isVideoFadeTransitionActivated,
-                    isAudioFadeTransitionActivated, videoToEdit, format,
-                    intermediatesTempAudioFadeDirectory, listener);
-            } else {
-                transcoderHelper.generateOutputVideoWithOverlayImage(drawableFadeTransition,
-                    isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
-                    format, intermediatesTempAudioFadeDirectory, listener);
-            }
-            videoRepository.update(videoToEdit);
+      videoRepository.update(videoToEdit);
     }
+
+  private void updateGeneratedVideo(Drawable drawableFadeTransition, Video videoToEdit,
+                                    VideonaFormat format,
+                                    String intermediatesTempAudioFadeDirectory,
+                                    TranscoderHelperListener listener,
+                                    boolean isVideoFadeTransitionActivated,
+                                    boolean isAudioFadeTransitionActivated) {
+    // TODO(jliarte): 19/10/16 move this logic to TranscoderHelper?
+    if (videoToEdit.isTrimmedVideo()) {
+      transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(
+              drawableFadeTransition, isVideoFadeTransitionActivated,
+              isAudioFadeTransitionActivated, videoToEdit, format,
+              intermediatesTempAudioFadeDirectory, listener);
+    } else {
+      transcoderHelper.generateOutputVideoWithOverlayImage(drawableFadeTransition,
+              isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
+              format, intermediatesTempAudioFadeDirectory, listener);
+    }
+  }
 }
 

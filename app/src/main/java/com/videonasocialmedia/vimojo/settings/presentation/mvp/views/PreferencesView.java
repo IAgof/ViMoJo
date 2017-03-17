@@ -60,8 +60,6 @@ public interface PreferencesView {
 
     void setTransitionsPref(String key, boolean value);
 
-    void setRelaunchExportTempBackground(String videoUuid, String intermediatesTempAudioFadeDirectory);
-
     void hideFtpsViews();
 
 }

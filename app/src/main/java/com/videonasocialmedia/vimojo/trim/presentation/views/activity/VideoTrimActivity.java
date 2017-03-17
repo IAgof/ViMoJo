@@ -15,31 +15,27 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
-import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.florescu.android.rangeseekbar.RangeSeekBar;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -50,6 +46,9 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     public static final float MS_CORRECTION_FACTOR = 1000f;
     public static final float MIN_TRIM_OFFSET = 0.35f;
+
+    @Inject TrimPreviewPresenter presenter;
+
     @Bind(R.id.text_time_trim)
     TextView durationTag;
     @Bind(R.id.trim_rangeSeekBar)
@@ -58,7 +57,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     VideonaPlayerExo videonaPlayer;
 
     int videoIndexOnTrack;
-    private TrimPreviewPresenter presenter;
+
     private Video video;
     private int videoDuration = 1;
     private int startTimeMs = 0;
@@ -84,8 +83,8 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-        presenter = new TrimPreviewPresenter(this, userEventTracker);
+        this.getActivityPresentersComponent().inject(this);
+
         trimmingRangeSeekBar.setOnRangeSeekBarChangeListener(this);
         trimmingRangeSeekBar.setNotifyWhileDragging(true);
         videonaPlayer.setListener(this);
@@ -162,7 +161,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
         startActivity(intent);
-        finish();
+      //  finish();
     }
 
     @Override
@@ -177,7 +176,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     public void onClickTrimAccept() {
         presenter.setTrim(startTimeMs, finishTimeMs);
         navigateTo(EditActivity.class, videoIndexOnTrack);
-
     }
 
     @OnClick(R.id.button_trim_cancel)
@@ -195,7 +193,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             startTimeMs = videoStartTime;
             finishTimeMs = videoStopTime;
         }
-
         seekBarMinPosition = (float) startTimeMs / MS_CORRECTION_FACTOR;
         seekBarMaxPosition = (float) finishTimeMs / MS_CORRECTION_FACTOR;
         trimmingRangeSeekBar.setRangeValues(0f, (float) videoDuration / MS_CORRECTION_FACTOR);
@@ -268,7 +265,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     public void onRangeSeekBarValuesChanged(RangeSeekBar bar, Object minValue, Object maxValue) {
 //        Log.d(TAG, " setRangeChangeListener " + minValue + " - " + maxValue);
         videonaPlayer.pausePreview();
-
         try {
             float minValueFloat = (float) minValue;
             float maxValueFloat = (float) maxValue;
