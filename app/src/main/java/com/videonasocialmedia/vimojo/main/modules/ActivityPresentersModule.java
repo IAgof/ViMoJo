@@ -137,11 +137,13 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  SoundPresenter provideSoundPresenter(GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+  SoundPresenter provideSoundPresenter(GetMediaListFromProjectUseCase
+                                           getMediaListFromProjectUseCase,
+                                       GetMusicFromProjectUseCase getMusicFromProjectUseCase,
                                        GetPreferencesTransitionFromProjectUseCase
                                             getPreferencesTransitionFromProjectUseCase) {
     return new SoundPresenter((SoundActivity) activity, getMediaListFromProjectUseCase,
-        getPreferencesTransitionFromProjectUseCase);
+        getMusicFromProjectUseCase, getPreferencesTransitionFromProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -230,18 +232,6 @@ public class ActivityPresentersModule {
       GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
     return new EditTextPreviewPresenter((VideoEditTextActivity) activity, userEventTracker,
         getMediaListFromProjectUseCase);
-  }
-
-  @Provides @PerActivity
-  MusicListPresenter provideMusicListPresenter() {
-    return new MusicListPresenter((MusicListView) activity, activity);
-  }
-
-  @Provides @PerActivity
-  SoundPresenter provideoSoundPresenter(GetMediaListFromProjectUseCase
-            getMediaListFromProjectUseCase, GetMusicFromProjectUseCase getMusicFromProjectUseCase){
-    return new SoundPresenter((SoundView) activity, getMediaListFromProjectUseCase,
-        getMusicFromProjectUseCase);
   }
 
   @Provides

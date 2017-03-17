@@ -56,9 +56,20 @@ public class AudioTimeLineAdapter extends RecyclerView.Adapter<AudioTimeLineAdap
     Video videoCurrent = audioList.get(position);
     drawVideoThumbnail(holder.audioThumb, videoCurrent);
     holder.audioThumb.setSelected(position == selectedVideoPosition);
-    String duration = TimeUtils.toFormattedTimeWithMinutesAndSeconds(videoCurrent.getStartTime()) + " - "
-        + TimeUtils.toFormattedTimeWithMinutesAndSeconds(videoCurrent.getStopTime());
+    String duration = getTimeForVideoInPosition(position);
     holder.textDurationClip.setText(duration);
+  }
+
+  private String getTimeForVideoInPosition(int position) {
+    int startTime = 0;
+    for(int i=0; i<position; i++){
+     startTime += audioList.get(i).getDuration();
+    }
+    int stopTime = startTime + audioList.get(position).getDuration();
+
+    return TimeUtils.toFormattedTimeWithMinutesAndSeconds(startTime) + " - "
+        + TimeUtils.toFormattedTimeWithMinutesAndSeconds(stopTime);
+
   }
 
   private void drawVideoThumbnail(ImageView thumbnailView, Video currentVideo) {

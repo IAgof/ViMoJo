@@ -45,5 +45,4 @@ public interface ActivityPresentersComponent {
   void inject(GalleryProjectListActivity activity);
   void inject(DetailProjectActivity activity);
   void inject(VideoEditTextActivity activity);
-  void inject(MusicListActivity activity);
 }

@@ -28,15 +28,18 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
     private SoundView soundView;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
+    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     private final Project currentProject;
 
    @Inject
     public SoundPresenter(SoundView soundView, GetMediaListFromProjectUseCase
-        getMediaListFromProjectUseCase, GetMusicFromProjectUseCase getMusicFromProjectUseCase) {
+        getMediaListFromProjectUseCase, GetMusicFromProjectUseCase getMusicFromProjectUseCase,
+        GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase) {
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
         this.soundView = soundView;
         this.currentProject = loadCurrentProject();
+        this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
     }
 
     public Project loadCurrentProject() {
