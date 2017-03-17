@@ -6,71 +6,50 @@
   -->
 
 <RelativeLayout android:id="@+id/container"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="80dp"
-    android:layout_height="80dp"
-    android:gravity="center">
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:paddingTop="4dp"
+                android:layout_marginRight="4dp"
+                android:gravity="center"
+                xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:id="@+id/timeline_audio_thumb"
+    <android.support.percent.PercentRelativeLayout
+        android:id="@+id/timeline_audio_thumb_percent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="false"
-        android:layout_centerVertical="true"
-        android:background="@drawable/timeline_video_selector"
-        android:padding="3dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/fragment_gallery_no_image"/>
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/timeline_audio_thumb"
+            app:layout_widthPercent="100%"
+            app:layout_aspectRatio="100%"
+            android:background="@drawable/timeline_video_selector"
+            android:padding="4dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/fragment_gallery_no_image"/>
+    </android.support.percent.PercentRelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/relative_audio_thumb"
-        android:layout_width="match_parent"
-        android:layout_height="24dp"
-        android:layout_marginLeft="5dp">
-
-        <TextView
-            android:id="@+id/text_clip_order"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/colorAccent"
-            tools:text="55"/>
-    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_margin="3dp"
+        android:gravity="center"
         android:background="#aa333333"
-        android:layout_alignBottom="@+id/timeline_audio_thumb"
-        android:layout_alignStart="@+id/timeline_audio_thumb">
+        android:layout_margin="4dp"
+        android:layout_alignBottom="@+id/timeline_audio_thumb_percent"
+        android:layout_alignStart="@+id/timeline_audio_thumb_percent">
 
         <TextView
             android:id="@+id/text_duration_clip"
-            android:layout_width="45dp"
+            android:layout_width="wrap_content"
             android:layout_height="18dp"
-            android:text="00:00"
+            tools:text="00:00 - 00:00"
             android:paddingRight="2dp"
-            android:gravity="end"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:textColor="@color/colorWhite"/>
-
-       <!-- <ImageButton
-            android:id="@+id/gallery_preview_button"
-            android:layout_centerInParent="true"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginLeft="2dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:background="@drawable/activity_gallery_icon_play_normal" />
-            -->
+            android:paddingLeft="2dp"
+            android:gravity="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="10sp"/>
     </RelativeLayout>
 
 

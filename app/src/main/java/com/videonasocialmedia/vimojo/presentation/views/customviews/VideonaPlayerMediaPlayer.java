@@ -252,9 +252,15 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
     }
 
     @Override
-    public void setTransitionFade() {
-        // do nothing, implemented only for VideonaPlayerExo
+    public void setVideoTransitionFade() {
+
     }
+
+    @Override
+    public void setAudioTransitionFade() {
+
+    }
+    
 
     @Override
     public void bindVideoList(List<Video> videoList) {

@@ -50,7 +50,7 @@ public class SoundVolumePresenterTest {
   @Test
   public void removeMusicFromProjectCallsRemoveMusicFromProject() throws IllegalItemOnTrack {
     Project currentProject = getCurrentProject();
-    Music music = new Music("media/path");
+    Music music = new Music("media/path", 0);
     currentProject.getAudioTracks().get(0).insertItemAt(0, music);
 
     injectedPresenter.removeMusicFromProject();
@@ -62,7 +62,7 @@ public class SoundVolumePresenterTest {
   public void setVoiceOverRemovesPreviousMusicAndSetsVoiceOverAsMusicInComposition()
           throws IllegalItemOnTrack {
     Project currentProject = getCurrentProject();
-    Music music = new Music("music/path");
+    Music music = new Music("music/path", 0);
     assert music.getVolume() == Music.DEFAULT_MUSIC_VOLUME;
     currentProject.getVMComposition().getAudioTracks().get(0).insertItemAt(0, music);
     RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase =

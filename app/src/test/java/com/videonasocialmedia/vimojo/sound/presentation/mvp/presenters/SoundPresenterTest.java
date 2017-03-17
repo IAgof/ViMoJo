@@ -66,7 +66,7 @@ public class SoundPresenterTest {
     Project project = getAProject();
     String musicPath = "music/path";
     float musicVolume = 0.6f;
-    Music music = new Music(musicPath, musicVolume);
+    Music music = new Music(musicPath, musicVolume, 0);
     List<Music> musicList = new ArrayList<>();
     musicList.add(music);
     project.getVMComposition().getAudioTracks().get(0).insertItem(music);
@@ -119,7 +119,7 @@ public class SoundPresenterTest {
     Project project = getAProject();
     String musicPath = "music/path";
     float musicVolume = 0.6f;
-    Music music = new Music(musicPath, musicVolume);
+    Music music = new Music(musicPath, musicVolume, 0);
     List<Music> musicList = new ArrayList<>();
     musicList.add(music);
     project.getVMComposition().getAudioTracks().get(0).insertItem(music);
@@ -141,7 +141,7 @@ public class SoundPresenterTest {
     Project project = getAProject();
     String musicPath = "voice/over/path";
     float musicVolume = 0.6f;
-    Music voiceOver = new Music(musicPath, musicVolume);
+    Music voiceOver = new Music(musicPath, musicVolume, 0);
     voiceOver.setMusicTitle(Constants.MUSIC_AUDIO_VOICEOVER_TITLE);
     List<Music> voiceOverList = new ArrayList<>();
     voiceOverList.add(voiceOver);

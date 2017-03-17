@@ -78,7 +78,7 @@ public class MusicDetailPresenterTest {
                 new MusicDetailPresenter(musicDetailView, mockedUserEventTracker,
                         mockedAddMusicToProjectUseCase, mockedRemoveMusicUseCase, mockedContext);
         Project videonaProject = getAProject();
-        Music music = new Music(1, "Music title", 2, 3, "Music Author", "3");
+        Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
         musicDetailPresenter.onMusicRetrieved(music);
 
         musicDetailPresenter.onAddMediaItemToTrackSuccess(music);
@@ -92,7 +92,7 @@ public class MusicDetailPresenterTest {
                 new MusicDetailPresenter(musicDetailView, mockedUserEventTracker,
                         mockedAddMusicToProjectUseCase, mockedRemoveMusicUseCase, mockedContext);
         Project videonaProject = getAProject();
-        Music music = new Music(1, "Music title", 2, 3, "Music Author", "3");
+        Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
 //        musicDetailPresenter.removeMusicFromProjectUseCase = mockedRemoveMusicUseCase;
 
         musicDetailPresenter.removeMusic(music);

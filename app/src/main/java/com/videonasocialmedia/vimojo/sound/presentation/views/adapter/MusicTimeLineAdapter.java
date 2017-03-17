@@ -5,13 +5,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.bumptech.glide.Glide;
+
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.ItemTouchHelperViewHolder;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.AudioTimeLineRecyclerViewClickListener;
+import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,7 @@ public class MusicTimeLineAdapter extends RecyclerView.Adapter<MusicTimeLineAdap
   private AudioTimeLineRecyclerViewClickListener audioTimeLineListener;
   private Context context;
   private List<Music> musicList;
+  private int selectedVideoPosition = 0;
 
   public MusicTimeLineAdapter(AudioTimeLineRecyclerViewClickListener audioTimeLineListener){
     this.audioTimeLineListener = audioTimeLineListener;
@@ -46,8 +50,25 @@ public class MusicTimeLineAdapter extends RecyclerView.Adapter<MusicTimeLineAdap
 
   @Override
   public void onBindViewHolder(AudioViewHolder holder, int position) {
+    Music musicCurrent = musicList.get(position);
+    if(musicCurrent.getMusicTitle().compareTo(com.videonasocialmedia.vimojo.utils.Constants.MUSIC_AUDIO_VOICEOVER_TITLE) == 0) {
+      //drawAudioThumb(holder.audioThumb, musicCurrent);
+      holder.audioThumb.setImageResource(R.drawable.fragment_gallery_no_image);
+    } else {
+      holder.audioThumb.setImageResource(musicCurrent.getIconResourceId());
+    }
+    holder.audioThumb.setSelected(position == selectedVideoPosition);
+    String duration = TimeUtils.toFormattedTimeWithMinutesAndSeconds(musicCurrent.getStartTime()) + " - "
+        + TimeUtils.toFormattedTimeWithMinutesAndSeconds(musicCurrent.getDuration());
+    holder.textDurationClip.setText(duration);
+  }
 
-    holder.thumbOrder.setText(String.valueOf(position + 1));
+  private void drawAudioThumb(ImageView audioThumb, Music musicCurrent) {
+    Glide.with(context)
+        .load(musicCurrent.getIconPath()) //getVideoPathLinkedToVoiceOver())
+        .centerCrop()
+        .error(R.drawable.fragment_gallery_no_image)
+        .into(audioThumb);
   }
 
   @Override
@@ -61,8 +82,10 @@ public class MusicTimeLineAdapter extends RecyclerView.Adapter<MusicTimeLineAdap
 
   class AudioViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
 
-    @Bind(R.id.text_clip_order)
-    TextView thumbOrder;
+    @Bind(R.id.text_duration_clip)
+    TextView textDurationClip;
+    @Bind(R.id.timeline_audio_thumb)
+    ImageView audioThumb;
 
     public AudioViewHolder(View itemView) {
       super(itemView);

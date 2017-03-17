@@ -74,7 +74,7 @@ public class MusicSourceTest {
     musicSource.populateLocalMusic();
     String mixedMusicPath = "somePath" + File.separator +
         Constants.AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME;
-    Music musicToFind = new Music(mixedMusicPath);
+    Music musicToFind = new Music(mixedMusicPath, 0);
     musicToFind.setMusicTitle(Constants.MUSIC_AUDIO_VOICEOVER_TITLE);
     Mockito.doNothing().when(musicSource).addPathToMusic(musicSource.localMusic);
 

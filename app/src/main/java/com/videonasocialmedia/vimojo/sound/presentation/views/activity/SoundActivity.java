@@ -80,6 +80,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   private AudioTimeLineAdapter audioTimeLineAdapter;
   private MusicTimeLineAdapter musicTimeLineAdapter;
   private MusicTimeLineAdapter voiceOverTimeLineAdapter;
+  private int currentAudioIndex = 0;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -194,12 +195,13 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       videonaPlayer.onShown(this);
       presenter.getMediaListFromProject();
       registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
+
   }
 
   @Override
   protected void onStart() {
-    super.onStart();
     initAudioBlockListRecycler();
+    super.onStart();
   }
 
   @Override
@@ -226,7 +228,9 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @Nullable @Override
   public void newClipPlayed(int currentClipIndex) {
-
+    currentAudioIndex = currentClipIndex;
+    audioTimeLineAdapter.updateSelection(currentClipIndex);
+    audioListRecyclerView.scrollToPosition(currentClipIndex);
   }
 
   private void initAudioBlockListRecycler() {
@@ -258,11 +262,11 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @Override
   public void onMusicClipClicked(int position) {
-    navigateTo(MusicListActivity.class);
+    //navigateTo(MusicListActivity.class);
   }
 
   @Override
   public void onVoiceOverClipClicked(int position) {
-    navigateTo(VoiceOverActivity.class);
+    //navigateTo(VoiceOverActivity.class);
   }
 }

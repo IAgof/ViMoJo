@@ -64,6 +64,7 @@ public class SoundVolumePresenter implements OnVideosRetrieved {
         soundVolumeView.goToEditActivity();
     }
 
+
     public void removeMusicFromProject() {
         if (currentProject.hasMusic()) {
             removeMusicFromProjectUseCase.removeMusicFromProject(currentProject.getMusic(), 0);
