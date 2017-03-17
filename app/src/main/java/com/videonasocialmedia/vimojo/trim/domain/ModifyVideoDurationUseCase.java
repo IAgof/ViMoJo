@@ -65,16 +65,23 @@ public class ModifyVideoDurationUseCase{
     Project project = Project.getInstance(null,null,null);
     videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
     videoToEdit.setTrimmedVideo(true);
-    updateGeneratedVideo(drawableFadeTransition, videoToEdit, format, intermediatesTempAudioFadeDirectory, transcoderHelperListener, isVideoFadeTransitionActivated, isAudioFadeTransitionActivated);
+    updateGeneratedVideo(drawableFadeTransition, videoToEdit, format,
+            intermediatesTempAudioFadeDirectory, transcoderHelperListener,
+            isVideoFadeTransitionActivated, isAudioFadeTransitionActivated);
     videoRepository.update(videoToEdit);
   }
 
-  private void updateGeneratedVideo(Drawable drawableFadeTransition, Video videoToEdit, VideonaFormat format, String intermediatesTempAudioFadeDirectory, TranscoderHelperListener transcoderHelperListener, boolean isVideoFadeTransitionActivated, boolean isAudioFadeTransitionActivated) {
+  private void updateGeneratedVideo(Drawable drawableFadeTransition, Video videoToEdit,
+                                    VideonaFormat format,
+                                    String intermediatesTempAudioFadeDirectory,
+                                    TranscoderHelperListener transcoderHelperListener,
+                                    boolean isVideoFadeTransitionActivated,
+                                    boolean isAudioFadeTransitionActivated) {
+    // TODO(jliarte): 17/03/17 move this logic to TranscoderHelper?
     if (videoToEdit.hasText()) {
       transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(drawableFadeTransition,
           isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit, format,
           intermediatesTempAudioFadeDirectory, transcoderHelperListener);
-
     } else {
       transcoderHelper.generateOutputVideoWithTrimming(drawableFadeTransition,
           isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit, format,

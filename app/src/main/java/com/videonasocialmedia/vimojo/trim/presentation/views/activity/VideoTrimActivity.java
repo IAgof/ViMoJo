@@ -176,7 +176,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     public void onClickTrimAccept() {
         presenter.setTrim(startTimeMs, finishTimeMs);
         navigateTo(EditActivity.class, videoIndexOnTrack);
-
     }
 
     @OnClick(R.id.button_trim_cancel)
@@ -194,7 +193,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             startTimeMs = videoStartTime;
             finishTimeMs = videoStopTime;
         }
-
         seekBarMinPosition = (float) startTimeMs / MS_CORRECTION_FACTOR;
         seekBarMaxPosition = (float) finishTimeMs / MS_CORRECTION_FACTOR;
         trimmingRangeSeekBar.setRangeValues(0f, (float) videoDuration / MS_CORRECTION_FACTOR);
@@ -267,7 +265,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     public void onRangeSeekBarValuesChanged(RangeSeekBar bar, Object minValue, Object maxValue) {
 //        Log.d(TAG, " setRangeChangeListener " + minValue + " - " + maxValue);
         videonaPlayer.pausePreview();
-
         try {
             float minValueFloat = (float) minValue;
             float maxValueFloat = (float) maxValue;

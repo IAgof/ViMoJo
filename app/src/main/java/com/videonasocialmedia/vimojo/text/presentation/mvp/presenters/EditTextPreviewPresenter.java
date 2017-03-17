@@ -94,7 +94,6 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
     }
 
     public void createDrawableWithText(String text, String position, int width, int height) {
-
         drawableGenerator = new TextToDrawable(context);
         Drawable drawable = drawableGenerator.createDrawableWithTextAndPosition(text, position,
             width, height);

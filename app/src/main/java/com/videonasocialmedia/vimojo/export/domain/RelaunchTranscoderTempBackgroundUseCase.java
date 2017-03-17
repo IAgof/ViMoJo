@@ -43,20 +43,31 @@ public class RelaunchTranscoderTempBackgroundUseCase {
                              VideonaFormat videonaFormat,String intermediatesTempAudioFadeDirectory,
                              final TranscoderHelperListener
                                  transcoderHelperListener){
-
     boolean isVideoFadeTransitionActivated =
         getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
     boolean isAudioFadeTransitionActivated =
         getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
-      if (videoToEdit.hasText()) {
-        transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(drawableFadeTransition,
-            isVideoFadeTransitionActivated,isAudioFadeTransitionActivated, videoToEdit,
-            videonaFormat,intermediatesTempAudioFadeDirectory, transcoderHelperListener);
-      } else {
-        transcoderHelper.generateOutputVideoWithTrimming(drawableFadeTransition,
-            isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
-            videonaFormat, intermediatesTempAudioFadeDirectory, transcoderHelperListener);
-      }
+    updateGeneratedVideo(drawableFadeTransition, videoToEdit, videonaFormat,
+            intermediatesTempAudioFadeDirectory, transcoderHelperListener,
+            isVideoFadeTransitionActivated, isAudioFadeTransitionActivated);
+  }
+
+  private void updateGeneratedVideo(Drawable drawableFadeTransition, Video videoToEdit,
+                                    VideonaFormat videonaFormat,
+                                    String intermediatesTempAudioFadeDirectory,
+                                    TranscoderHelperListener transcoderHelperListener,
+                                    boolean isVideoFadeTransitionActivated,
+                                    boolean isAudioFadeTransitionActivated) {
+    // TODO(jliarte): 17/03/17 move this logic to TranscoderHelper?
+    if (videoToEdit.hasText()) {
+      transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(drawableFadeTransition,
+              isVideoFadeTransitionActivated,isAudioFadeTransitionActivated, videoToEdit,
+              videonaFormat,intermediatesTempAudioFadeDirectory, transcoderHelperListener);
+    } else {
+      transcoderHelper.generateOutputVideoWithTrimming(drawableFadeTransition,
+              isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
+              videonaFormat, intermediatesTempAudioFadeDirectory, transcoderHelperListener);
+    }
   }
 
 }

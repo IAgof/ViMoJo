@@ -76,7 +76,6 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
         this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.currentProject = loadCurrentProject();
-
     }
 
     private Project loadCurrentProject() {
@@ -91,7 +90,6 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
             v.add(videoToEdit);
             onVideosRetrieved(v);
         }
-
     }
 
     @Override

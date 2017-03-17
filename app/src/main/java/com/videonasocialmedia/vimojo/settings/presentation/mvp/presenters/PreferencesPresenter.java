@@ -123,7 +123,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     /**
      * Checks the available preferences on the device
      */
-
     public void checkMailValid(){
         emailPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -174,7 +173,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     }
 
     private void checkCameraSettingsEnabled() {
-
         List<Media> media = getMediaListFromProjectUseCase.getMediaListFromProject();
         if(media.size()>0) {
             cameraSettingsPref.setEnabled(false);
@@ -395,7 +393,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        switch (key){
+        switch (key) {
             case ConfigPreferences.TRANSITION_AUDIO:
                 boolean dataTransitionAudio = sharedPreferences.getBoolean(key,false);
                 updateAudioTransitionPreferenceToProjectUseCase.setAudioFadeTransitionActivated(dataTransitionAudio);
@@ -409,7 +407,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             default:
         }
     }
-
 
     @Override
     public void videoToRelaunch(String videoUuid, String intermediatesTempAudioFadeDirectory) {

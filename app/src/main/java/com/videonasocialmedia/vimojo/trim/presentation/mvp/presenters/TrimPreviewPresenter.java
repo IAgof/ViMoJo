@@ -42,7 +42,6 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
      */
     private final String LOG_TAG = getClass().getSimpleName();
 
-
     private Video videoToEdit;
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
@@ -68,7 +67,6 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
                                     getVideonaFormatFromCurrentProjectUseCase,
                                 UpdateVideoRepositoryUseCase
                                         updateVideoRepositoryUseCase) {
-
         //this.trimView = new WeakReference<>(trimView);
         this.trimView = trimView;
         this.currentProject = loadCurrentProject();
@@ -111,7 +109,6 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
     public void onNoVideosRetrieved() {
         trimView.showError("No videos");
     }
-
 
     public void setTrim(int startTimeMs, int finishTimeMs) {
         VideonaFormat videoFormat =
@@ -157,7 +154,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
         if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
             video.increaseNumTriesToExportVideo();
             setTrim(video.getStartTime(), video.getStopTime());
-        }else {
+        } else {
             //trimView.showError(message);
         }
     }
