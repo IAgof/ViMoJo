@@ -194,7 +194,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   protected void onResume() {
       super.onResume();
       videonaPlayer.onShown(this);
-      presenter.init();
+      presenter.getMediaListFromProject();
       registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
 
   }
@@ -237,10 +237,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       videonaPlayer.resetPreview();
   }
 
-  @Override
-  public void setMusic(Music music) {
-    videonaPlayer.setMusic(music);
-  }
 
   @Nullable @Override
   public void newClipPlayed(int currentClipIndex) {
