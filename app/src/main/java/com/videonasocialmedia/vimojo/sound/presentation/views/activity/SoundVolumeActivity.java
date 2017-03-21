@@ -21,6 +21,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity
 import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -204,8 +205,8 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     }
 
     @Override
-    public void goToEditActivity() {
-        navigateTo(EditActivity.class);
+    public void goToSoundActivity() {
+        navigateTo(SoundActivity.class);
     }
 
     @Override

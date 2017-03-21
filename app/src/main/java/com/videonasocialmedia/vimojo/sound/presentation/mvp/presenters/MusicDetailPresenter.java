@@ -137,7 +137,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     @Override
     public void onAddMediaItemToTrackSuccess(Media media) {
         userEventTracker.trackMusicSet(currentProject);
-        musicDetailView.goToEdit(media.getTitle());
+        musicDetailView.goToSoundActivity();
     }
 
     public void setVolume(float volume) {

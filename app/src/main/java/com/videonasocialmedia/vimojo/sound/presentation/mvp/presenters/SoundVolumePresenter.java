@@ -78,7 +78,7 @@ public class SoundVolumePresenter implements OnVideosRetrieved {
         removeMusicFromProject();
 
         addVoiceOverToProject.setVoiceOver(currentProject, voiceOverPath, volume);
-        soundVolumeView.goToEditActivity();
+        soundVolumeView.goToSoundActivity();
     }
 
 

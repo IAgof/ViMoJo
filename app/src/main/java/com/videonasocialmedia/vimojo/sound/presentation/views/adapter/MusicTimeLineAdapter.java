@@ -52,8 +52,9 @@ public class MusicTimeLineAdapter extends RecyclerView.Adapter<MusicTimeLineAdap
   public void onBindViewHolder(AudioViewHolder holder, int position) {
     Music musicCurrent = musicList.get(position);
     if(musicCurrent.getMusicTitle().compareTo(com.videonasocialmedia.vimojo.utils.Constants.MUSIC_AUDIO_VOICEOVER_TITLE) == 0) {
+      // TODO:(alvaro.martinez) 21/03/17 Implements thumb voice over with respect Video in project
       //drawAudioThumb(holder.audioThumb, musicCurrent);
-      holder.audioThumb.setImageResource(R.drawable.fragment_gallery_no_image);
+      holder.audioThumb.setImageResource(R.drawable.activity_edit_audio_voice_over_icon);
     } else {
       holder.audioThumb.setImageResource(musicCurrent.getIconResourceId());
     }

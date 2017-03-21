@@ -18,15 +18,17 @@
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/timeline_audio_thumb_percent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        >
         <ImageView
             android:id="@+id/timeline_audio_thumb"
             app:layout_widthPercent="100%"
             app:layout_aspectRatio="100%"
-            android:background="@drawable/timeline_video_selector"
             android:padding="4dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/fragment_gallery_no_image"/>
+            android:cropToPadding="true"
+            android:background="@drawable/timeline_video_selector"
+            android:scaleType="center"
+            tools:src="@drawable/ic_galloping_a_stuart_roslyn_matt_foundling"/>
     </android.support.percent.PercentRelativeLayout>
 
 
