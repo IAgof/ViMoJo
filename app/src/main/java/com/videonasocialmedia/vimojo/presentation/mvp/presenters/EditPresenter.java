@@ -62,14 +62,17 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                          UserEventTracker userEventTracker,
                          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
                          ReorderMediaItemUseCase reorderMediaItemUseCase,
-                         GetMusicFromProjectUseCase getMusicFromProjectUseCase) {
+                         GetMusicFromProjectUseCase getMusicFromProjectUseCase,
+                         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                         GetPreferencesTransitionFromProjectUseCase
+                                 getPreferencesTransitionFromProjectUseCase) {
         this.editActivityView = editActivityView;
         this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
         this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
 
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        getPreferencesTransitionFromProjectUseCase = new GetPreferencesTransitionFromProjectUseCase();
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
         this.userEventTracker = userEventTracker;
 
         this.currentProject = loadCurrentProject();
@@ -188,7 +191,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 
-    public void loadProject() {
+    public void init() {
         obtainVideos();
         if (currentProject.getVMComposition().hasMusic()) {
             getMusicFromProjectUseCase.getMusicFromProject(new GetMusicFromProjectCallback() {

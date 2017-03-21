@@ -58,7 +58,7 @@ public class Project {
   private VMComposition vmComposition;
 
   private String lastModification;
-
+  
   private String uuid = UUID.randomUUID().toString();
 
   private LastVideoExported lastVideoExported;
@@ -320,8 +320,6 @@ public class Project {
     createFolder(pathTempFilesAudioMixedVoiceOverRecord);
     return pathTempFilesAudioMixedVoiceOverRecord;
   }
-
-
 
   private void createFolder(String projectPath) {
     FileUtils.createFolder(projectPath);

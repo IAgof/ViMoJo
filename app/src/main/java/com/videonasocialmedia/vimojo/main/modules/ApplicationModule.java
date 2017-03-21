@@ -26,7 +26,7 @@ public class ApplicationModule {
 
   @Provides
   @Singleton
-  Context provideVimojoApplication() {
+  public Context provideVimojoApplication() {
     return vimojoApplication;
   }
 
@@ -41,4 +41,5 @@ public class ApplicationModule {
                                                     Context context) {
     return new ProfileSharedPreferencesRepository(sharedPreferences, context);
   }
+
 }

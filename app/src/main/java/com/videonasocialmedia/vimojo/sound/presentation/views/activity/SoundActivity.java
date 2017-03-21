@@ -15,6 +15,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
@@ -31,6 +32,8 @@ import com.videonasocialmedia.vimojo.utils.FabUtils;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -44,6 +47,8 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   private final int ID_BUTTON_FAB_TOP=1;
   private final int ID_BUTTON_FAB_BOTTOM=3;
 
+  @Inject SoundPresenter presenter;
+
   @Nullable @Bind(R.id.videona_player)
   VideonaPlayerExo videonaPlayer;
   @Nullable @Bind( R.id.bottomBar)
@@ -53,7 +58,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   @Bind(R.id.fab_edit_room)
   FloatingActionsMenu fabMenu;
   private BroadcastReceiver exportReceiver;
-  private SoundPresenter presenter;
   private int currentProjectPosition = 0;
 
   @Override
@@ -61,9 +65,9 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       super.onCreate(savedInstanceState);
       inflateLinearLayout(R.id.container_layout,R.layout.activity_sound);
       ButterKnife.bind(this);
+      getActivityPresentersComponent().inject(this);
       createExportReceiver();
       restoreState(savedInstanceState);
-      presenter=new SoundPresenter(this);
       videonaPlayer.setListener(this);
       bottomBar.selectTabWithId(R.id.tab_sound);
       setupBottomBar(bottomBar);
@@ -91,6 +95,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   private void setupFab() {
     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.activity_edit_sound_music_normal,R.color.colorWhite);
     addAndConfigurateFabButton(ID_BUTTON_FAB_BOTTOM, R.drawable.activity_edit_sound_voice_normal,R.color.colorWhite);
+    fabMenu.expand();
   }
   protected void addAndConfigurateFabButton(int id, int icon, int color) {
     FloatingActionButton newFab = FabUtils.createNewFabMini(id, icon, color);
@@ -167,7 +172,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   protected void onResume() {
       super.onResume();
       videonaPlayer.onShown(this);
-      presenter.getMediaListFromProject();
+      presenter.init();
       registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
   }
 
@@ -179,8 +184,23 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
   @Override
+  public void setVideoFadeTransitionAmongVideos() {
+    videonaPlayer.setVideoTransitionFade();
+  }
+
+  @Override
+  public void setAudioFadeTransitionAmongVideos() {
+    videonaPlayer.setAudioTransitionFade();
+  }
+
+  @Override
   public void resetPreview() {
       videonaPlayer.resetPreview();
+  }
+
+  @Override
+  public void setMusic(Music music) {
+    videonaPlayer.setMusic(music);
   }
 
   @Nullable @Override

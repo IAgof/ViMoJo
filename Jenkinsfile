@@ -4,8 +4,15 @@ node {
   stage 'Stage Checkout'
 
   // Checkout code from repository and update any submodules
-  checkout scm
-  sh 'git submodule update --init'
+//  checkout scm
+//  sh 'git submodule update --init'
+  checkout([
+          $class: 'GitSCM',
+          branches: scm.branches,
+          doGenerateSubmoduleConfigurations: true,
+          extensions: scm.extensions + [[$class: 'SubmoduleOption', parentCredentials: true]],
+          userRemoteConfigs: scm.userRemoteConfigs
+  ])
 
   stage 'Stage Build'
 
@@ -53,6 +60,10 @@ stage 'Stage Upload To Fabric'
 node {
   if (env.BRANCH_NAME == 'develop') {
     sh "./gradlew crashlyticsUploadDistributionVimojoDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
+    sh "./gradlew crashlyticsUploadDistributionHispanopostDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
+    sh "./gradlew crashlyticsUploadDistributionShoulderpodDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
+    sh "./gradlew crashlyticsUploadDistributionVeinteminutosDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
+    sh "./gradlew crashlyticsUploadDistributionRtveDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
   }
 }
 

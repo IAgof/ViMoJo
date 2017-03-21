@@ -10,6 +10,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.MergeVoiceOverAudiosUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.OnMergeVoiceOverAudiosListener;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverView;
@@ -22,6 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 
 /**
@@ -33,7 +36,6 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
      * LOG_TAG
      */
     private final String LOG_TAG = getClass().getSimpleName();
-
     private SessionConfig sessionConfig;
     private AudioRecorder audioRecorder;
 
@@ -42,6 +44,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
      */
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private MergeVoiceOverAudiosUseCase mergeVoiceOverAudiosUseCase;
+    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
 
     private VoiceOverView voiceOverView;
     public UserEventTracker userEventTracker;
@@ -49,10 +52,17 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     private int numAudiosRecorded = 0;
     private boolean firstTimeRecording;
 
-    public VoiceOverPresenter(VoiceOverView voiceOverView) {
+    @Inject
+    public VoiceOverPresenter(VoiceOverView voiceOverView, GetMediaListFromProjectUseCase
+                              getMediaListFromProjectUseCase,
+                              GetPreferencesTransitionFromProjectUseCase
+                                  getPreferencesTransitionFromProjectUseCase,
+                              MergeVoiceOverAudiosUseCase mergeVoiceOverAudiosUseCase) {
         this.voiceOverView = voiceOverView;
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        mergeVoiceOverAudiosUseCase = new MergeVoiceOverAudiosUseCase(this);
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.getPreferencesTransitionFromProjectUseCase =
+            getPreferencesTransitionFromProjectUseCase;
+        this.mergeVoiceOverAudiosUseCase = mergeVoiceOverAudiosUseCase;
         this.currentProject = loadCurrentProject();
 
         initAudioRecorder();
@@ -70,9 +80,24 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     public void onResume(){
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
         EventBus.getDefault().register(this);
         audioRecorder.onHostActivityResumed();
+        init();
+    }
+
+    private void init() {
+        obtainVideos();
+        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+            voiceOverView.setVideoFadeTransitionAmongVideos();
+        }
+        if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
+            !currentProject.getVMComposition().hasMusic()){
+            voiceOverView.setAudioFadeTransitionAmongVideos();
+        }
+    }
+
+    private void obtainVideos() {
+        getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 
     public void onPause(){
@@ -119,7 +144,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     private void mergeAudio(String finalNamePathAudioMerge) {
         String path = currentProject.getProjectPathIntermediateFiles() + File.separator
             + finalNamePathAudioMerge;
-        mergeVoiceOverAudiosUseCase.mergeAudio(path);
+        mergeVoiceOverAudiosUseCase.mergeAudio(path, this);
     }
 
     public void trackVoiceOverVideo() {

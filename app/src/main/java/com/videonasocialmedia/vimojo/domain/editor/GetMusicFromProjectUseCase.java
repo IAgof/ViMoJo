@@ -3,6 +3,9 @@ package com.videonasocialmedia.vimojo.domain.editor;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
+import com.videonasocialmedia.vimojo.utils.Constants;
+
+import javax.inject.Inject;
 
 /**
  * Created by jliarte on 31/05/16.
@@ -10,6 +13,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromPro
 public class GetMusicFromProjectUseCase {
     public Project project;
 
+    @Inject
     public GetMusicFromProjectUseCase() {
         this.project = Project.getInstance(null, null, null);
     }
@@ -25,6 +29,7 @@ public class GetMusicFromProjectUseCase {
     }
 
     public boolean hasBeenMusicSelected(){
-      return (project.getVMComposition().hasMusic() && (project.getMusic().getVolume() >= 1f));
+      return (project.getVMComposition().hasMusic() &&
+          (project.getMusic().getMusicTitle().compareTo(Constants.MUSIC_AUDIO_VOICEOVER_TITLE) != 0));
     }
 }

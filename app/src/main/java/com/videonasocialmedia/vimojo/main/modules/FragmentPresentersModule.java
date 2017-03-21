@@ -8,8 +8,10 @@ import android.preference.PreferenceCategory;
 import android.preference.SwitchPreference;
 
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
@@ -64,14 +66,16 @@ public class FragmentPresentersModule {
   // For singleton objects, annotate with same scope as component, i.e. @PerFragment
   @Provides
   @PerFragment
-  public PreferencesPresenter providePreferencePresenter(SharedPreferences sharedPreferences,                                                        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+  public PreferencesPresenter providePreferencePresenter(SharedPreferences sharedPreferences,
+             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
              GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
              UpdateAudioTransitionPreferenceToProjectUseCase
               updateAudioTransitionPreferenceToProjectUseCase,
              UpdateVideoTransitionPreferenceToProjectUseCase
               updateVideoTransitionPreferenceToProjectUseCase,
              UpdateIntermediateTemporalFilesTransitionsUseCase
-              updateIntermediateTemporalFilesTransitionsUseCase){
+              updateIntermediateTemporalFilesTransitionsUseCase,
+             UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase){
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
         cameraSettingsPref, resolutionPref, qualityPref, frameRatePref, transitionVideoPref,
@@ -79,7 +83,8 @@ public class FragmentPresentersModule {
         getPreferencesTransitionFromProjectUseCase,
         updateAudioTransitionPreferenceToProjectUseCase,
         updateVideoTransitionPreferenceToProjectUseCase,
-        updateIntermediateTemporalFilesTransitionsUseCase);
+        updateIntermediateTemporalFilesTransitionsUseCase,
+        updateVideoRepositoryUseCase);
   }
 
   @Provides
@@ -108,6 +113,11 @@ public class FragmentPresentersModule {
   UpdateIntermediateTemporalFilesTransitionsUseCase provideUpdateIntermediateTempFilesTransitions(
       GetMediaListFromProjectUseCase getMediaListFromProjectUseCase){
     return new UpdateIntermediateTemporalFilesTransitionsUseCase(getMediaListFromProjectUseCase);
+  }
+
+  @Provides
+  UpdateVideoRepositoryUseCase provideUpdateVideoRepositoryUseCase(VideoRepository videoRepository){
+    return new UpdateVideoRepositoryUseCase(videoRepository);
   }
 
 }

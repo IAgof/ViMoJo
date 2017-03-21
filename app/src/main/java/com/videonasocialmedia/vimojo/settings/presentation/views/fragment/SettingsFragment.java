@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.main.DaggerFragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.FragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -34,8 +33,6 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceA
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
-import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.ArrayList;
 
@@ -50,6 +47,8 @@ public class SettingsFragment extends PreferenceFragment implements
     @Inject PreferencesPresenter preferencesPresenter;
 
     protected PreferenceCategory cameraSettingsPref;
+    protected PreferenceCategory ftp1Pref;
+    protected PreferenceCategory ftp2Pref;
     protected Preference emailPref;
     protected ListPreference resolutionPref;
     protected ListPreference qualityPref;
@@ -69,6 +68,7 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = VimojoApplication.getAppContext();
+
         initPreferences();
         FragmentPresentersComponent fragmentPresentersComponent = initComponent();
         fragmentPresentersComponent.inject(this);
@@ -201,17 +201,6 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     @Override
-    public void setRelaunchExportTempBackground(String videoUuid, String intermediatesTempAudioFadeDirectory) {
-        Context appContext = VimojoApplication.getAppContext();
-        Intent exportTempBackgroudnServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoUuid);
-        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.RELAUNCH_EXPORT_TEMP, true);
-        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY_FADE_AUDIO,
-            intermediatesTempAudioFadeDirectory);
-        appContext.startService(exportTempBackgroudnServiceIntent);
-    }
-
-    @Override
     public void setCameraSettingsAvailable(boolean isAvailable) {
         if(isAvailable){
             resolutionPrefNotAvailable = findPreference(context.getString(R.string.resolution));
@@ -230,6 +219,14 @@ public class SettingsFragment extends PreferenceFragment implements
         mixpanel.getPeople().set(property,value);
         if(property=="account_email")
             mixpanel.getPeople().setOnce("$email", value);
+    }
+
+    @Override
+    public void hideFtpsViews() {
+        ftp1Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP1_Section));
+        getPreferenceScreen().removePreference(ftp1Pref);
+        ftp2Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP2_Section));
+        getPreferenceScreen().removePreference(ftp2Pref);
     }
 
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
