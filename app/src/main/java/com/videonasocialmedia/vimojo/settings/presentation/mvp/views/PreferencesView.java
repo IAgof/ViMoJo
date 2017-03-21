@@ -62,8 +62,6 @@ public interface PreferencesView {
 
     void setWatermarkPref(boolean value);
 
-    void setRelaunchExportTempBackground(String videoUuid, String intermediatesTempAudioFadeDirectory);
-
     void hideFtpsViews();
 
     void hideWatermark();

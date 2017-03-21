@@ -15,4 +15,6 @@ public interface VoiceOverView {
     void pauseVideo();
     void navigateToSoundVolumeActivity(String voiceOverRecordedPath);
     void showError(String errorMessage);
+    void setVideoFadeTransitionAmongVideos();
+    void setAudioFadeTransitionAmongVideos();
 }

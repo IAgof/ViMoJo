@@ -13,4 +13,5 @@ public interface MusicListView {
     void bindVideoList(List<Video> movieList);
     void resetPreview();
     void goToDetailActivity(String mediaPath);
+    void setVideoFadeTransitionAmongVideos();
 }

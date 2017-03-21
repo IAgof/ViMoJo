@@ -8,8 +8,10 @@ import android.preference.PreferenceCategory;
 import android.preference.SwitchPreference;
 
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.GetWatermarkPreferenceFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
@@ -79,7 +81,8 @@ public class FragmentPresentersModule {
              UpdateIntermediateTemporalFilesTransitionsUseCase
               updateIntermediateTemporalFilesTransitionsUseCase,
              GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
-             UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase){
+             UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
+             UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase){
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
         cameraSettingsPref, resolutionPref, qualityPref, frameRatePref, transitionVideoPref,
@@ -89,7 +92,8 @@ public class FragmentPresentersModule {
         updateVideoTransitionPreferenceToProjectUseCase,
         updateIntermediateTemporalFilesTransitionsUseCase,
         getWatermarkPreferenceFromProjectUseCase,
-        updateWatermarkPreferenceToProjectUseCase);
+        updateWatermarkPreferenceToProjectUseCase,
+        updateVideoRepositoryUseCase);
   }
 
   @Provides
@@ -118,6 +122,11 @@ public class FragmentPresentersModule {
   UpdateIntermediateTemporalFilesTransitionsUseCase provideUpdateIntermediateTempFilesTransitions(
       GetMediaListFromProjectUseCase getMediaListFromProjectUseCase){
     return new UpdateIntermediateTemporalFilesTransitionsUseCase(getMediaListFromProjectUseCase);
+  }
+
+  @Provides
+  UpdateVideoRepositoryUseCase provideUpdateVideoRepositoryUseCase(VideoRepository videoRepository){
+    return new UpdateVideoRepositoryUseCase(videoRepository);
   }
 
   @Provides
