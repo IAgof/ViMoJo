@@ -113,7 +113,7 @@ android {
         rtve {
             applicationId "com.videonasocialmedia.vimojo.rtve"
             versionCode 2 // 20170309
-            versionName "0.4.20.fRtve.1" // 20170309
+            versionName "0.4.21.fRtve.1" // 20170309
             resValue "string", "app_out_of_date", "2017-12-31"
             resValue "string", "app_name", "Vimojo Rtve"
             buildConfigField "boolean", "FEATURE_FTP", "true"
