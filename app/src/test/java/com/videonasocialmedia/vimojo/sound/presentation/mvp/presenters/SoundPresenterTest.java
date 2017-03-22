@@ -58,7 +58,7 @@ public class SoundPresenterTest {
 
   @Test
   public void getMediaListCallsGetMediaListFromProjectUseCase(){
-    injectedSoundPresenter.getMediaListFromProject();
+    injectedSoundPresenter.init();
     Mockito.verify(mockedGetMediaListFromProjectUseCase)
         .getMediaListFromProject(injectedSoundPresenter);
   }
@@ -77,7 +77,7 @@ public class SoundPresenterTest {
     Project currentProject = Project.getInstance(null, null, null);
     assertThat("Current project has music", currentProject.hasMusic(), is(true));
 
-    injectedSoundPresenter.getMediaListFromProject();
+    injectedSoundPresenter.init();
 
     Mockito.verify(mockedGetMusicFromProjectUseCase).getMusicFromProject(injectedSoundPresenter);
   }
@@ -98,7 +98,7 @@ public class SoundPresenterTest {
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
         getMediaListFromProjectUseCase, mockedGetMusicFromProjectUseCase,
         mockedGetPreferencesTransitionFromProjectUseCase);
-    soundPresenter.getMediaListFromProject();
+    soundPresenter.init();
 
     Mockito.verify(mockedSoundView).bindVideoList(videoList);
 
@@ -114,7 +114,7 @@ public class SoundPresenterTest {
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
         getMediaListFromProjectUseCase, mockedGetMusicFromProjectUseCase,
         mockedGetPreferencesTransitionFromProjectUseCase);
-    soundPresenter.getMediaListFromProject();
+    soundPresenter.init();
 
     Mockito.verify(mockedSoundView).resetPreview();
   }
@@ -136,7 +136,7 @@ public class SoundPresenterTest {
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
         mockedGetMediaListFromProjectUseCase, getMusicFromProjectUseCase,
         mockedGetPreferencesTransitionFromProjectUseCase);
-    soundPresenter.getMediaListFromProject();
+    soundPresenter.init();
 
     Mockito.verify(mockedSoundView).bindMusicList(musicList);
   }
@@ -162,7 +162,7 @@ public class SoundPresenterTest {
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
         mockedGetMediaListFromProjectUseCase, getMusicFromProjectUseCase,
         mockedGetPreferencesTransitionFromProjectUseCase);
-    soundPresenter.getMediaListFromProject();
+    soundPresenter.init();
 
     Mockito.verify(mockedSoundView).bindVoiceOverList(voiceOverList);
   }

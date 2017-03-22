@@ -37,7 +37,6 @@ import com.videonasocialmedia.vimojo.sound.presentation.views.adapter.MusicTimeL
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.FabUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -194,7 +193,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   protected void onResume() {
       super.onResume();
       videonaPlayer.onShown(this);
-      presenter.getMediaListFromProject();
+      presenter.init();
       registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
 
   }

@@ -47,20 +47,32 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
         return Project.getInstance(null, null, null);
     }
 
-    public void getMediaListFromProject() {
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
-        if(currentProject.hasMusic()){
-            getMusicFromProjectUseCase.getMusicFromProject(this);
-        }
-      if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
-        soundView.setVideoFadeTransitionAmongVideos();
-      }
-      if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
-          !currentProject.getVMComposition().hasMusic()){
-        soundView.setAudioFadeTransitionAmongVideos();
+    public void init() {
+      obtainVideos();
+      retrieveCompositionMusic();
+      // TODO:(alvaro.martinez) 22/03/17 Player should be in charge of these checks from VMComposition 
+      checkAVTransitionsActivated();
+    }
+
+  private void checkAVTransitionsActivated() {
+    if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+      soundView.setVideoFadeTransitionAmongVideos();
+    }
+    if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
+        !currentProject.getVMComposition().hasMusic()){
+      soundView.setAudioFadeTransitionAmongVideos();
+    }
+  }
+
+  private void retrieveCompositionMusic() {
+      if(currentProject.hasMusic()){
+        getMusicFromProjectUseCase.getMusicFromProject(this);
       }
     }
 
+    private void obtainVideos() {
+        getMediaListFromProjectUseCase.getMediaListFromProject(this);
+    }
 
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
