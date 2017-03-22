@@ -66,10 +66,10 @@ android {
             applicationId "com.videonasocialmedia.vimojo.main"
             versionCode 23 // 20170317
             versionName "0.4.21" // 20170317
-            resValue "string", "app_out_of_date", "2017-04-01" // 20170118
+            resValue "string", "app_out_of_date", "2017-07-31" // 20170321
             resValue "string", "app_name", "Vimojo"
             buildConfigField "boolean", "FEATURE_FTP", "false"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "false"
+            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
             buildConfigField "boolean", "FEATURE_WATERMARK", "false"
             ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
             ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
@@ -117,8 +117,8 @@ android {
         rtve {
             applicationId "com.videonasocialmedia.vimojo.rtve"
             versionCode 2 // 20170309
-            versionName "0.4.20.fRtve.1" // 20170309
-            resValue "string", "app_out_of_date", "2017-12-31"
+            versionName "0.4.21.fRtve.1" // 20170309
+            resValue "string", "app_out_of_date", "2017-07-31" // 20170321
             resValue "string", "app_name", "Vimojo Rtve"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
