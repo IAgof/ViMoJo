@@ -169,15 +169,23 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   GalleryPagerPresenter provideGalleryPagerPresenter(
-          AddVideoToProjectUseCase addVideoToProjectUseCase) {
-    return new GalleryPagerPresenter((GalleryActivity) activity, addVideoToProjectUseCase);
+          AddVideoToProjectUseCase addVideoToProjectUseCase, UpdateVideoRepositoryUseCase
+          updateVideoRepositoryUseCase, GetVideonaFormatFromCurrentProjectUseCase
+          getVideonaFormatFromCurrentProjectUseCase) {
+    return new GalleryPagerPresenter((GalleryActivity) activity, addVideoToProjectUseCase,
+        updateVideoRepositoryUseCase, getVideonaFormatFromCurrentProjectUseCase, activity);
   }
 
   @Provides @PerActivity
-  RecordPresenter provideRecordPresenter(SharedPreferences sharedPreferences,
-                                         AddVideoToProjectUseCase addVideoToProjectUseCase) {
-    return new RecordPresenter(activity, (RecordActivity) activity, cameraView, sharedPreferences,
-            externalIntent, addVideoToProjectUseCase);
+  RecordPresenter provideRecordPresenter(UserEventTracker userEventTracker,
+                                         SharedPreferences sharedPreferences,
+                                         AddVideoToProjectUseCase addVideoToProjectUseCase,
+                                         UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
+                                         GetVideonaFormatFromCurrentProjectUseCase
+                                             getVideonaFormatFromCurrentProjectUseCase) {
+    return new RecordPresenter(activity, (RecordActivity) activity, userEventTracker, cameraView,
+        sharedPreferences, externalIntent, addVideoToProjectUseCase, updateVideoRepositoryUseCase,
+        getVideonaFormatFromCurrentProjectUseCase);
   }
 
   @Provides @PerActivity

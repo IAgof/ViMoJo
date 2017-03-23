@@ -22,13 +22,14 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCase {
   }
 
   public void execute(OnRelaunchTemporalFileListener listener) {
-    Project project = Project.getInstance(null,null,null);
+    Project project = Project.getInstance(null, null, null);
     List<Media> items = getMediaListFromProjectUseCase.getMediaListFromProject();
-    for(Media media: items){
-      Video video = (Video) media;
-      if(video.isEdited()) {
+    if (items.size() > 0)    {
+      for (Media media : items) {
+        Video video = (Video) media;
         video.setTempPathFinished(false);
-        listener.videoToRelaunch(video.getUuid(),project.getProjectPathIntermediateFileAudioFade());
+        video.setTempPath(project.getProjectPathIntermediateFiles());
+        listener.videoToRelaunch(video.getUuid(), project.getProjectPathIntermediateFileAudioFade());
       }
     }
   }

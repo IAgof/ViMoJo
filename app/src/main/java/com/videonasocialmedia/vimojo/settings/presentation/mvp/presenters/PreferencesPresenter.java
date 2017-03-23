@@ -117,7 +117,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase =
             new GetVideonaFormatFromCurrentProjectUseCase();
         videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
-        drawableFadeTransitionVideo = VimojoApplication.getAppContext().getDrawable(R.drawable.alpha_transition_black);
+        drawableFadeTransitionVideo = VimojoApplication.getAppContext().getDrawable(R.drawable.alpha_transition_white);
     }
 
     /**
