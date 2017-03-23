@@ -13,10 +13,10 @@
         android:xlargeScreens="false"/>
 
     <permission
-        android:name="com.videonasocialmedia.vimojo.permission.C2D_MESSAGE"
+        android:name="${applicationId}.C2D_MESSAGE"
         android:protectionLevel="signature"/>
 
-    <uses-permission android:name="com.videonasocialmedia.vimojo.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="${applicationId}.C2D_MESSAGE"/>
 
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
