@@ -171,7 +171,7 @@ public class RealmProjectToProjectMapperTest {
     RealmProject realmProject = getARealmProject();
     realmProject.musicTitle = "Sorrow and sadness";
   //  RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
-    Music music = new Music("music/path");
+    Music music = new Music("music/path", 0);
     music.setMusicTitle(realmProject.musicTitle);
     doReturn(music).when(mockedMusicSource).getMusicByTitle("somePath",realmProject.musicTitle);
 
@@ -187,7 +187,7 @@ public class RealmProjectToProjectMapperTest {
     RealmProject realmProject = getARealmProject();
     realmProject.musicTitle = Constants.MUSIC_AUDIO_VOICEOVER_TITLE;
     realmProject.musicVolume = 0.8f;
-    Music music = new Music("music/path");
+    Music music = new Music("music/path", 0);
     doReturn(music).when(mockedMusicSource).getMusicByTitle("somePath", realmProject.musicTitle);
 
     Project project = mockedMapper.map(realmProject);

@@ -76,7 +76,7 @@ public class ProjectTest {
     @Test
     public void getMusicReturnsMusicWhenMusicHasOneSet() throws IllegalItemOnTrack {
         Project videonaProject = getAProject();
-        Music music = new Music(1, "Music title", 2, 3, "Music Author","");
+        Music music = new Music(1, "Music title", 2, 3, "Music Author","", 0);
 
         videonaProject.getAudioTracks().get(0).insertItem(music);
 

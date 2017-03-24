@@ -16,7 +16,7 @@ public interface MusicDetailView {
 
     void setMusic(Music music, boolean scene);
 
-    void goToEdit(String musicTitle);
+    void goToSoundActivity();
     
     void setVideoFadeTransitionAmongVideos();
 }

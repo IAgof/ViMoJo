@@ -52,9 +52,10 @@ public class TimeUtils {
         int seconds = remainingTime / MilliSeconds.ONE_SECOND;
         remainingTime -= seconds * MilliSeconds.ONE_SECOND;
 
-        if(remainingTime > (MilliSeconds.ONE_SECOND/2)){
+        if(remainingTime > (MilliSeconds.ONE_SECOND/2) && seconds != 59){
             seconds++;
         }
+
 
         return  hours > 0 ? String.format("%02d:%02d:%02d",hours, minutes, seconds)
             : String.format("%02d:%02d", minutes, seconds);

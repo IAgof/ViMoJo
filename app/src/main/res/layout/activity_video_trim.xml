@@ -62,6 +62,7 @@
                 app:showLabels="false"
                 />
 
+
             <!--<TextView-->
                 <!--android:id="@+id/text_start_trim"-->
                 <!--android:layout_width="wrap_content"-->
