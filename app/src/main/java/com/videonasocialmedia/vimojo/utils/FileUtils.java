@@ -1,5 +1,8 @@
 package com.videonasocialmedia.vimojo.utils;
 
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -101,4 +104,19 @@ public class FileUtils {
       }
     }
   }
+
+  public static int getDuration(String path) {
+      MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+
+    int fileDuration;
+    try {
+      retriever.setDataSource(path);
+
+      fileDuration = Integer.parseInt(retriever.extractMetadata(
+          MediaMetadataRetriever.METADATA_KEY_DURATION));
+    } catch (Exception e) {
+      fileDuration = 0;
+    }
+      return fileDuration;
+    }
 }

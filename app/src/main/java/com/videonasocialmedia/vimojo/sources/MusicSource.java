@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.FileUtils;
 import com.videonasocialmedia.vimojo.utils.Utils;
 import com.videonasocialmedia.vimojo.model.sources.MusicProvider;
 
@@ -49,7 +50,7 @@ public class MusicSource {
         if (musicTitle.equals(Constants.MUSIC_AUDIO_VOICEOVER_TITLE)) {
             String musicPath = projectPathIntermediateFile + File.separator +
                     Constants.AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME;
-            Music music = new Music(musicPath);
+            Music music = new Music(musicPath, FileUtils.getDuration(musicPath));
             music.setMusicTitle(musicTitle);
             return music;
         }
