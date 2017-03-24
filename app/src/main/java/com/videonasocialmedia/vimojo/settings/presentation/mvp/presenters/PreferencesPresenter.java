@@ -16,6 +16,7 @@ import android.graphics.drawable.Drawable;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
+import android.util.Log;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -78,6 +79,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     private final Drawable drawableFadeTransitionVideo;
     private final VideonaFormat videoFormat;
+    private String TAG = "PreferencesPresenter";
 
     /**
      * Constructor
@@ -193,6 +195,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private void checkWatermark(){
         boolean data = getWatermarkPreferenceFromProjectUseCase.isWatermarkActivated();
         preferencesView.setWatermarkPref(data);
+        Log.d(TAG,"checkWatermark " + data);
     }
 
     private void checkCameraSettingsEnabled() {
