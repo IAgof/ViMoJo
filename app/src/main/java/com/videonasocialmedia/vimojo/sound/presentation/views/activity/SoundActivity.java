@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,7 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -70,6 +72,8 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   RecyclerView musicListRecyclerView;
   @Nullable @Bind(R.id.recyclerview_editor_timeline_voice_over_blocks)
   RecyclerView voiceOverListRecyclerView;
+  @Nullable @Bind(R.id.cardview_audio_blocks_voice_over)
+  CardView cardViewAudioBlocksVoiceOver;
 
   @Bind(R.id.fab_edit_room)
   FloatingActionsMenu fabMenu;
@@ -80,6 +84,8 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   private MusicTimeLineAdapter musicTimeLineAdapter;
   private MusicTimeLineAdapter voiceOverTimeLineAdapter;
   private int currentAudioIndex = 0;
+  private boolean voiceOverActivated;
+  private FloatingActionButton fabVoiceOver;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -115,13 +121,12 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   private void setupFab() {
     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.activity_edit_sound_music_normal,R.color.colorWhite);
-    addAndConfigurateFabButton(ID_BUTTON_FAB_BOTTOM, R.drawable.activity_edit_sound_voice_normal,R.color.colorWhite);
     fabMenu.expand();
   }
   protected void addAndConfigurateFabButton(int id, int icon, int color) {
-    FloatingActionButton newFab = FabUtils.createNewFabMini(id, icon, color);
-    onClickFabButton(newFab);
-    fabMenu.addButton(newFab);
+    FloatingActionButton newFabMini = FabUtils.createNewFabMini(id, icon, color);
+    onClickFabButton(newFabMini);
+    fabMenu.addButton(newFabMini);
   }
 
   protected void onClickFabButton(final FloatingActionButton fab) {
@@ -187,6 +192,13 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       super.onPause();
       videonaPlayer.onPause();
       unregisterReceiver(exportReceiver);
+      if(voiceOverActivated){
+        removeFabVoiceOver();
+      }
+  }
+
+  private void removeFabVoiceOver() {
+    fabMenu.removeButton(fabVoiceOver);
   }
 
   @Override
@@ -219,6 +231,20 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   @Override
   public void bindVoiceOverList(List<Music> voiceOverList) {
    voiceOverTimeLineAdapter.setMusicList(voiceOverList);
+  }
+
+  @Override
+  public void hideVoiceOverCardView() {
+    cardViewAudioBlocksVoiceOver.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void addVoiceOverOptionToFab() {
+    voiceOverActivated = true;
+    fabVoiceOver = FabUtils.createNewFabMini(ID_BUTTON_FAB_BOTTOM,
+        R.drawable.activity_edit_sound_voice_normal,R.color.colorWhite);
+    onClickFabButton(fabVoiceOver);
+    fabMenu.addButton(fabVoiceOver);
   }
 
   @Override
