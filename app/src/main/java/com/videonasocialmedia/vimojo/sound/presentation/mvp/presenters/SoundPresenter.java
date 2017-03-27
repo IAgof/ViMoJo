@@ -1,8 +1,7 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
-import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
@@ -14,8 +13,6 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.videonasocialmedia.videonamediaframework.model.Constants.*;
 
 import javax.inject.Inject;
 
@@ -48,6 +45,7 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
     }
 
     public void init() {
+      checkVoiceOverFeatureToggle(BuildConfig.FEATURE_VOICE_OVER);
       obtainVideos();
       retrieveCompositionMusic();
       // TODO:(alvaro.martinez) 22/03/17 Player should be in charge of these checks from VMComposition 
@@ -90,11 +88,24 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
         // TODO:(alvaro.martinez) 7/03/17 Get from project use case list<Music> instead music
         List<Music> musicList = new ArrayList<>();
         musicList.add(music);
-        if (music.getMusicTitle()
-            .compareTo(com.videonasocialmedia.vimojo.utils.Constants.MUSIC_AUDIO_VOICEOVER_TITLE) == 0) {
-            soundView.bindVoiceOverList(musicList);
+        if (isMusicAVoiceOver(music)) {
+          soundView.bindVoiceOverList(musicList);
         } else {
-            soundView.bindMusicList(musicList);
+          soundView.bindMusicList(musicList);
         }
     }
+
+  protected void checkVoiceOverFeatureToggle(boolean featureVoiceOver) {
+    if(featureVoiceOver){
+      soundView.addVoiceOverOptionToFab();
+    } else {
+      soundView.hideVoiceOverCardView();
+    }
+  }
+
+  private boolean isMusicAVoiceOver(Music music) {
+    return music.getMusicTitle()
+        .compareTo(com.videonasocialmedia.vimojo.utils.Constants.MUSIC_AUDIO_VOICEOVER_TITLE) == 0;
+  }
+
 }

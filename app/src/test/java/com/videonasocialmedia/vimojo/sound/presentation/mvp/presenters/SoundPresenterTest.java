@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
+import android.os.Build;
+
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -8,6 +10,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -18,10 +21,13 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +38,6 @@ import static org.junit.Assert.assertThat;
 /**
  * Created by alvaro on 8/03/17.
  */
-
 public class SoundPresenterTest {
 
   @Mock
@@ -141,6 +146,7 @@ public class SoundPresenterTest {
     Mockito.verify(mockedSoundView).bindMusicList(musicList);
   }
 
+
   @Test
   public void ifProjectHasVoiceOverCallsBindVoiceOverList() throws IllegalItemOnTrack {
 
@@ -163,8 +169,24 @@ public class SoundPresenterTest {
         mockedGetMediaListFromProjectUseCase, getMusicFromProjectUseCase,
         mockedGetPreferencesTransitionFromProjectUseCase);
     soundPresenter.init();
-
     Mockito.verify(mockedSoundView).bindVoiceOverList(voiceOverList);
+
+  }
+
+  @Test
+  public void ifProjectHasNotEnableVoiceOverCallsHideVoiceOverCardView(){
+    // TODO:(alvaro.martinez) 27/03/17 How to mock Build.Config values
+    boolean FEATURE_TOGGLE_VOICE_OVER = false;
+    injectedSoundPresenter.checkVoiceOverFeatureToggle(FEATURE_TOGGLE_VOICE_OVER);
+    Mockito.verify(mockedSoundView).hideVoiceOverCardView();
+  }
+
+  @Test
+  public void ifProjectHasEnableVoiceOverCallsAddVoiceOverToFabButton(){
+    // TODO:(alvaro.martinez) 27/03/17 How to mock Build.Config values
+    boolean FEATURE_TOGGLE_VOICE_OVER = true;
+    injectedSoundPresenter.checkVoiceOverFeatureToggle(FEATURE_TOGGLE_VOICE_OVER);
+    Mockito.verify(mockedSoundView).addVoiceOverOptionToFab();
   }
 
   public Project getAProject() {
