@@ -201,6 +201,10 @@
     <string name="title_video_fade_transition">Transición entre vídeos</string>
     <string name="title_audio_fade_transition">Transición entre audios</string>
 
+    <!-- Watermark Settings -->
+    <string name="title_watermark_section">Añadir marca de agua</string>
+    <string name="title_watermark_preference">Marca de agua</string>
+
     <!-- More info Settings -->
     <string name="aboutUsTitle">Sobre nosotros</string>
     <string name="moreInformation">Más información</string>

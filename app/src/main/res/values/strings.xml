@@ -223,6 +223,10 @@
     <string name="title_video_fade_transition">Video fade transition</string>
     <string name="title_audio_fade_transition">Audio fade transition</string>
 
+    <!-- Watermark Settings -->
+    <string name="title_watermark_section">Add watermark</string>
+    <string name="title_watermark_preference">Watermark</string>
+
     <!-- More info Settings -->
     <string name="aboutUsTitle">About us</string>
     <string name="moreInformation">More information</string>

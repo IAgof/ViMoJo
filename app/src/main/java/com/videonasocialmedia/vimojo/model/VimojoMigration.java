@@ -153,6 +153,21 @@ public class VimojoMigration implements RealmMigration {
       }
       oldVersion++;
     }
+
+    //// Migrate from version 4 to version 5,
+    if(oldVersion == 4){
+      RealmObjectSchema realmProject = schema.get("RealmProject");
+      if(!realmProject.hasField("isWatermarkActivated")){
+        realmProject.addField("isWatermarkActivated", boolean.class)
+            .transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                obj.setBoolean("isWatermarkActivated", false);
+              }
+            });
+      }
+      oldVersion++;
+    }
   }
 
   private void updateRealmProjectPrimaryKeyToUuid(RealmObjectSchema realmProject) {
