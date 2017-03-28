@@ -1,6 +1,3 @@
-v0.4.22
-- Added new audio tracks interface. Show audio, music and voice over clips info in separate tracks.
-
 v0.4.21
 - Improved Videona-SDK media framework intermediate files generation for better stability and improved performance
 
