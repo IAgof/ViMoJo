@@ -1,7 +1,5 @@
 package com.videonasocialmedia.vimojo.settings.domain;
 
-import android.util.Log;
-
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
@@ -23,7 +21,6 @@ public class UpdateWatermarkPreferenceToProjectUseCase {
   }
 
   public void setWatermarkActivated(boolean data) {
-    Log.d(TAG,"setWatermarkActivated " + data);
     currentProject.setWatermarkActivated(data);
     projectRepository.update(currentProject);
   }

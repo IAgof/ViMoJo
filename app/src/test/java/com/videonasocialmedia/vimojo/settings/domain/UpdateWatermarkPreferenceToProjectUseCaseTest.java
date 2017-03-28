@@ -35,7 +35,7 @@ public class UpdateWatermarkPreferenceToProjectUseCaseTest {
 
   @Test
   public void updateWatermarkPreferenceCallsUpdateRepository(){
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null,null, null);
     injectedUseCase.setWatermarkActivated(true);
     verify(mockedProjectRepository).update(currentProject);
   }

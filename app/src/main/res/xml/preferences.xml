@@ -72,7 +72,8 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/title_watermark_section">
+        android:title="@string/title_watermark_section"
+        android:key="@string/title_watermark_section">
         <SwitchPreference
             android:key="add_watermark"
             android:title="@string/title_watermark_preference"

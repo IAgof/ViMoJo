@@ -49,6 +49,7 @@ public class SettingsFragment extends PreferenceFragment implements
     protected PreferenceCategory cameraSettingsPref;
     protected PreferenceCategory ftp1Pref;
     protected PreferenceCategory ftp2Pref;
+    protected PreferenceCategory watermarkPrefCategory;
     protected Preference emailPref;
     protected ListPreference resolutionPref;
     protected ListPreference qualityPref;
@@ -58,8 +59,7 @@ public class SettingsFragment extends PreferenceFragment implements
     protected Preference frameRatePrefNotAvailable;
     protected SwitchPreference transitionsVideoPref;
     protected SwitchPreference transitionsAudioPref;
-    protected SwitchPreference watermarkPref;
-    protected PreferenceCategory watermarkCategory;
+    protected SwitchPreference watermarkSwitchPref;
     protected Context context;
     protected SharedPreferences sharedPreferences;
     protected SharedPreferences.Editor editor;
@@ -81,7 +81,7 @@ public class SettingsFragment extends PreferenceFragment implements
         return DaggerFragmentPresentersComponent.builder()
             .fragmentPresentersModule(new FragmentPresentersModule(this, context, cameraSettingsPref,
                 resolutionPref,qualityPref, frameRatePref, transitionsVideoPref,
-                transitionsAudioPref, watermarkPref, emailPref))
+                transitionsAudioPref, watermarkSwitchPref, emailPref))
             .systemComponent(((VimojoApplication)getActivity().getApplication()).getSystemComponent())
             .build();
     }
@@ -116,7 +116,7 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     private void setupWatermark(){
-        watermarkPref = (SwitchPreference) findPreference(ConfigPreferences.WATERMARK);
+        watermarkSwitchPref = (SwitchPreference) findPreference(ConfigPreferences.WATERMARK);
     }
 
     private void setupCameraSettings() {
@@ -208,8 +208,8 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     @Override
-    public void setWatermarkPref(boolean value){
-        watermarkPref.setChecked(value);
+    public void setWatermarkSwitchPref(boolean value){
+        watermarkSwitchPref.setChecked(value);
     }
 
     @Override
@@ -244,9 +244,10 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     @Override
-    public void hideWatermark() {
-        watermarkCategory = (PreferenceCategory) findPreference(getString(R.string.title_watermark_section));
-        getPreferenceScreen().removePreference(watermarkCategory);
+    public void hideWatermarkView() {
+        watermarkPrefCategory = (PreferenceCategory) findPreference(getString(R.string.title_watermark_section));
+        if(watermarkPrefCategory!=null)
+            getPreferenceScreen().removePreference(watermarkPrefCategory);
     }
 
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {

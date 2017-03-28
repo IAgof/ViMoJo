@@ -60,10 +60,10 @@ public interface PreferencesView {
 
     void setTransitionsPref(String key, boolean value);
 
-    void setWatermarkPref(boolean value);
+    void setWatermarkSwitchPref(boolean value);
 
     void hideFtpsViews();
 
-    void hideWatermark();
+    void hideWatermarkView();
 
 }

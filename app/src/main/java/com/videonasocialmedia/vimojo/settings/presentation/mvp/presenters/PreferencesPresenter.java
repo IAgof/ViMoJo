@@ -16,7 +16,6 @@ import android.graphics.drawable.Drawable;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
-import android.util.Log;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -30,7 +29,6 @@ import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentPr
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.GetWatermarkPreferenceFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
@@ -167,11 +165,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         checkAvailableQuality();
         checkAvailableFrameRate();
         checkTransitions();
-        if(BuildConfig.FEATURE_WATERMARK) {
-            checkWatermark();
-        } else {
-            preferencesView.hideWatermark();
-        }
+        checkWatermark(BuildConfig.FEATURE_WATERMARK);
     }
 
     private void checkTransitions() {
@@ -192,10 +186,13 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         }
     }
 
-    private void checkWatermark(){
-        boolean data = getWatermarkPreferenceFromProjectUseCase.isWatermarkActivated();
-        preferencesView.setWatermarkPref(data);
-        Log.d(TAG,"checkWatermark " + data);
+    private void checkWatermark(boolean isWatermarkActivated){
+        if(isWatermarkActivated) {
+            boolean data = getWatermarkPreferenceFromProjectUseCase.isWatermarkActivated();
+            preferencesView.setWatermarkSwitchPref(data);
+        } else {
+            preferencesView.hideWatermarkView();
+        }
     }
 
     private void checkCameraSettingsEnabled() {
@@ -437,7 +434,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                     copyWatermarkResourceToDevice();
                 }
                 updateWatermarkPreferenceToProjectUseCase.setWatermarkActivated(data);
-                preferencesView.setWatermarkPref(data);
+                preferencesView.setWatermarkSwitchPref(data);
             default:
         }
     }
