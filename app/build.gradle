@@ -134,7 +134,7 @@ android {
             resValue "string", "app_out_of_date", "2017-07-31"
             resValue "string", "app_name", "8 al día"
             buildConfigField "boolean", "FEATURE_FTP", "false"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "false"
+            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
             buildConfigField "boolean", "FEATURE_WATERMARK", "true"
             ext.fabricApiKey = "636f0d9539c15314d7f540afdd251bec68edeb01"
             ext.fabricApiSecret = "13f8e6cd589173f4405844b46bc19b5d8acca736dc0c3d963ca8c16d48bc7137"
