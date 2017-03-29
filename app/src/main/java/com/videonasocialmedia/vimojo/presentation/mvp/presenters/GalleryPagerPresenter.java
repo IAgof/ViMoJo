@@ -20,8 +20,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.export.domain.LaunchTranscoderAddAVTransitionsUseCase;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -51,6 +50,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     private Drawable drawableFadeTransitionVideo;
     private VideonaFormat videoFormat;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
+    private LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
 
     /**
      * Constructor.
@@ -60,11 +60,14 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
                                  UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
                                  GetVideonaFormatFromCurrentProjectUseCase
                                              getVideonaFormatFromCurrentProjectUseCase,
+                                 LaunchTranscoderAddAVTransitionsUseCase
+                                             launchTranscoderAddAVTransitionsUseCase,
                                  Context context) {
         this.galleryPagerView = galleryPagerView;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
+        this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionsUseCase;
         this.currentProject = loadCurrentProject();
         this.context = context;
     }
@@ -160,8 +163,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
         drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
 
-        LaunchTranscoderAddAVTransitionsUseCase useCase = new LaunchTranscoderAddAVTransitionsUseCase();
-        useCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
+        launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
             intermediatesTempAudioFadeDirectory, this);
     }
 }

@@ -140,6 +140,7 @@ public class AddVideoToProjectUseCaseTest {
 
   @Test
   public void ifAVTransitionNotActivatedAddVideoToProjectNotCallVideoToLaunchAVTransitionTempFile() {
+    getAProject().clear();
     Project project = getAProject();
     assertThat("Audio transition is not activated ", project.isAudioFadeTransitionActivated(), is(false));
     assertThat("Video transition is not activated ", project.isVideoFadeTransitionActivated(), is(false));

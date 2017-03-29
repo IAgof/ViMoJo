@@ -77,10 +77,10 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      * @param qualityPref
      * @param emailPref
      * @param context
-     * @param sharedPreferences
      */
     public PreferencesPresenter(PreferencesView preferencesView,
-            Context context, SharedPreferences sharedPreferences,
+            Context context,
+            SharedPreferences sharedPreferences,
             PreferenceCategory cameraSettingsPref,
             ListPreference resolutionPref, ListPreference qualityPref,
             ListPreference frameRatePref, Preference transitionVideoPref,

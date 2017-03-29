@@ -14,14 +14,15 @@ public class GetPreferencesTransitionFromProjectUseCase {
 
   @Inject
   public GetPreferencesTransitionFromProjectUseCase(){
-    currentProject = Project.getInstance(null, null, null);
   }
 
   public boolean isAudioFadeTransitionActivated() {
+    currentProject = Project.getInstance(null, null, null);
     return currentProject.isAudioFadeTransitionActivated();
   }
 
   public boolean isVideoFadeTransitionActivated() {
+    currentProject = Project.getInstance(null, null, null);
     return currentProject.isVideoFadeTransitionActivated();
   }
 }

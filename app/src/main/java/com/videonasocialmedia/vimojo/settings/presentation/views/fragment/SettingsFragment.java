@@ -77,8 +77,8 @@ public class SettingsFragment extends PreferenceFragment implements
 
     private FragmentPresentersComponent initComponent() {
         return DaggerFragmentPresentersComponent.builder()
-            .fragmentPresentersModule(new FragmentPresentersModule(this, context, cameraSettingsPref,
-                resolutionPref,qualityPref, frameRatePref, transitionsVideoPref,
+            .fragmentPresentersModule(new FragmentPresentersModule(this, context, sharedPreferences,
+                cameraSettingsPref, resolutionPref,qualityPref, frameRatePref, transitionsVideoPref,
                 transitionsAudioPref, emailPref))
             .systemComponent(((VimojoApplication)getActivity().getApplication()).getSystemComponent())
             .build();

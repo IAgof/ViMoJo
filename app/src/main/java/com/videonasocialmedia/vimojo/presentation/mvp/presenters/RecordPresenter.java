@@ -19,7 +19,6 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.avrecorder.AudioVideoRecorder;
 import com.videonasocialmedia.avrecorder.SessionConfig;
 import com.videonasocialmedia.avrecorder.VideoEncoderConfig;
@@ -29,15 +28,13 @@ import com.videonasocialmedia.avrecorder.event.MuxerFinishedEvent;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessEvent;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.export.domain.LaunchTranscoderAddAVTransitionsUseCase;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
@@ -92,6 +89,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
     private Drawable drawableFadeTransitionVideo;
     private VideonaFormat videoFormat;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
+    private LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
 
     @Inject
     public RecordPresenter(Context context, RecordView recordView, UserEventTracker userEventTracker,
@@ -100,7 +98,9 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
                            AddVideoToProjectUseCase addVideoToProjectUseCase,
                            UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
                            GetVideonaFormatFromCurrentProjectUseCase
-                                   getVideonaFormatFromCurrentProjectUseCase) {
+                                   getVideonaFormatFromCurrentProjectUseCase,
+                           LaunchTranscoderAddAVTransitionsUseCase
+                                   launchTranscoderAddAVTransitionsUseCase) {
         this.context = context;
         this.recordView = recordView;
         this.userEventTracker = userEventTracker;
@@ -110,6 +110,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
+        this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionsUseCase;
         this.currentProject = loadCurrentProject();
         preferencesEditor = sharedPreferences.edit();
         recordedVideosNumber = 0;
@@ -469,8 +470,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
         drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
 
-        LaunchTranscoderAddAVTransitionsUseCase useCase = new LaunchTranscoderAddAVTransitionsUseCase();
-        useCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
+        launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
             intermediatesTempAudioFadeDirectory, this);
     }
 

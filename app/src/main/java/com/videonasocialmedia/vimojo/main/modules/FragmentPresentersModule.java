@@ -39,11 +39,13 @@ public class FragmentPresentersModule {
   private PreferenceCategory cameraSettingsPref;
   private SettingsFragment settingsFragment;
   private Context context;
+  private SharedPreferences sharedPreferences;
 
   public FragmentPresentersModule() {
   }
 
   public FragmentPresentersModule(SettingsFragment settingsFragment, Context context,
+                                  SharedPreferences sharedPreferences,
                                   PreferenceCategory cameraSettingsPref,
                                   ListPreference resolutionPref,
                                   ListPreference qualityPref,
@@ -53,6 +55,7 @@ public class FragmentPresentersModule {
                                   Preference emailPref) {
     this.settingsFragment = settingsFragment;
     this.context = context;
+    this.sharedPreferences = sharedPreferences;
     this.cameraSettingsPref = cameraSettingsPref;
     this.resolutionPref = resolutionPref;
     this.qualityPref = qualityPref;
@@ -66,7 +69,7 @@ public class FragmentPresentersModule {
   // For singleton objects, annotate with same scope as component, i.e. @PerFragment
   @Provides
   @PerFragment
-  public PreferencesPresenter providePreferencePresenter(SharedPreferences sharedPreferences,
+  public PreferencesPresenter providePreferencePresenter(
              GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
              GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
              UpdateAudioTransitionPreferenceToProjectUseCase

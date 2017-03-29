@@ -1,17 +1,16 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 
@@ -37,6 +36,7 @@ public class GalleryPagerPresenterTest {
   @Mock GalleryPagerView mockedGalleryPagerView;
   @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
   @Mock GetVideonaFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
+  @Mock LaunchTranscoderAddAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionsUseCase;
   @Mock Context mockedContext;
 
   private GalleryPagerPresenter galleryPagerPresenter;
@@ -51,7 +51,8 @@ public class GalleryPagerPresenterTest {
 
     galleryPagerPresenter = new GalleryPagerPresenter(mockedGalleryPagerView,
         mockedAddVideoToProjectUseCase,mockedUpdateVideoRepositoryUseCase,
-        mockedGetVideonaFormatFromCurrentProjectUseCase, mockedContext);
+        mockedGetVideonaFormatFromCurrentProjectUseCase,
+        mockedLaunchTranscoderAddAVTransitionsUseCase, mockedContext);
     Project project = getAProject();
 
     assertThat(galleryPagerPresenter.currentProject, is(project));
@@ -62,11 +63,12 @@ public class GalleryPagerPresenterTest {
     Project project = getAProject();
     project.setAudioFadeTransitionActivated(true);
     String path = "media/path";
-    assertThat("Audio transition is activated ", project.isAudioFadeTransitionActivated(), is(true));
+    assertThat("Audio transition is activated", project.isAudioFadeTransitionActivated(), is(true));
 
     galleryPagerPresenter = new GalleryPagerPresenter(mockedGalleryPagerView,
         mockedAddVideoToProjectUseCase,mockedUpdateVideoRepositoryUseCase,
-        mockedGetVideonaFormatFromCurrentProjectUseCase, mockedContext);
+        mockedGetVideonaFormatFromCurrentProjectUseCase,
+        mockedLaunchTranscoderAddAVTransitionsUseCase, mockedContext);
 
     Video video = new Video(path);
     String tempPath = video.getTempPath();

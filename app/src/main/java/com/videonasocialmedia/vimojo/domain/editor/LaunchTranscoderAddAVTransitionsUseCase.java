@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.export.domain;
+package com.videonasocialmedia.vimojo.domain.editor;
 
 import android.graphics.drawable.Drawable;
 
@@ -9,7 +9,7 @@ import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 
@@ -24,21 +24,24 @@ public class LaunchTranscoderAddAVTransitionsUseCase {
       mediaTranscoder);
   protected VideoRepository videoRepository;
 
-  private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
+  private Project currentProject;
 
-  public LaunchTranscoderAddAVTransitionsUseCase(){
-    getPreferencesTransitionFromProjectUseCase = new GetPreferencesTransitionFromProjectUseCase();
-    videoRepository = new VideoRealmRepository();
+  public LaunchTranscoderAddAVTransitionsUseCase(VideoRepository videoRepository){
+    this.currentProject = loadCurrentProject();
+    this.videoRepository = videoRepository;
+  }
+
+
+  private Project loadCurrentProject() {
+    return Project.getInstance(null, null, null);
   }
 
   public void launchExportTempFile(Drawable drawableFadeTransition, Video videoToEdit,
                              VideonaFormat videonaFormat, String intermediatesTempAudioFadeDirectory,
                              final TranscoderHelperListener
                                  transcoderHelperListener){
-    boolean isVideoFadeTransitionActivated =
-        getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
-    boolean isAudioFadeTransitionActivated =
-        getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
+    boolean isVideoFadeTransitionActivated = currentProject.isVideoFadeTransitionActivated();
+    boolean isAudioFadeTransitionActivated = currentProject.isAudioFadeTransitionActivated();
     updateGeneratedVideo(drawableFadeTransition, isVideoFadeTransitionActivated,
         isAudioFadeTransitionActivated, videoToEdit, videonaFormat,
         intermediatesTempAudioFadeDirectory, transcoderHelperListener);
