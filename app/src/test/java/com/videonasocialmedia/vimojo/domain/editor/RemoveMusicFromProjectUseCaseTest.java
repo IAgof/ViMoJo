@@ -72,7 +72,7 @@ public class RemoveMusicFromProjectUseCaseTest {
         String rootPath = "projectRootPath";
         String title = "project title";
         Project project = Project.getInstance(title, rootPath, profile);
-        Music musicToAdd = new Music(42, "musicNameId", 3, 2, "","");
+        Music musicToAdd = new Music(42, "musicNameId", 3, 2, "","", 0);
         try {
             project.getAudioTracks().get(0).insertItemAt(0, musicToAdd);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {

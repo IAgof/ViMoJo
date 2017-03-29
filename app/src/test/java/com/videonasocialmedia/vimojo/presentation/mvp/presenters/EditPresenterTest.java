@@ -82,7 +82,7 @@ public class EditPresenterTest {
     Project project = getAProject();
     String musicPath = "voice/over/path";
     float musicVolume = 0.6f;
-    Music voiceOver = new Music(musicPath, musicVolume);
+    Music voiceOver = new Music(musicPath, musicVolume, 0);
     project.getVMComposition().getAudioTracks().get(0).insertItem(voiceOver);
     GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
     EditPresenter presenter = new EditPresenter(mockedEditorView, mockedUserEventTracker,

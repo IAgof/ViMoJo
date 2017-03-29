@@ -29,6 +29,8 @@ public class Constants {
     final public static String FOLDER_NAME_VIMOJO = "Vimojo";
     final public static String FOLDER_NAME_VIMOJO_TEMP = ".temporal";
     final public static String FOLDER_NAME_VIMOJO_PROJECTS = ".projects";
+
+    final public static String RESOURCE_WATERMARK_NAME = "watermark.png";
 //    final public static String FOLDER_NAME_VIMOJO_TEMP_AUDIO = ".tempAudio";
 
     final public static String PATH_APP = Environment.getExternalStoragePublicDirectory(

@@ -1,11 +1,19 @@
 package com.videonasocialmedia.vimojo.sound.domain;
 
+import android.graphics.drawable.Drawable;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import javax.inject.Inject;
 
@@ -28,7 +36,7 @@ public class AddVoiceOverToProjectUseCase {
   }
 
   public void setVoiceOver(final Project project, String voiceOverPath, float volume) {
-    Music voiceOver = new Music(voiceOverPath, volume);
+    Music voiceOver = new Music(voiceOverPath, volume, FileUtils.getDuration(voiceOverPath));
     voiceOver.setMusicTitle(Constants.MUSIC_AUDIO_VOICEOVER_TITLE);
 
     // if hasMusic, first removeFromTrack and then add VoiceOver as music
