@@ -77,6 +77,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      * @param qualityPref
      * @param emailPref
      * @param context
+     * @param sharedPreferences
      */
     public PreferencesPresenter(PreferencesView preferencesView,
             Context context,
@@ -103,6 +104,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.frameRatePref = frameRatePref;
         this.transitionVideoPref = transitionVideoPref;
         this.transitionAudioPref = transitionAudioPref;
+        this.watermarkPref = watermarkPref;
         this.emailPref = emailPref;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase =
@@ -113,6 +115,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             updateVideoTransitionPreferenceToProjectUseCase;
         this.updateIntermediateTemporalFilesTransitionsUseCase =
             updateIntermediateTemporalFilesTransitionsUseCase;
+        this.getWatermarkPreferenceFromProjectUseCase = getWatermarkPreferenceFromProjectUseCase;
+        this.updateWatermarkPreferenceToProjectUseCase = updateWatermarkPreferenceToProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase =
             new GetVideonaFormatFromCurrentProjectUseCase();
@@ -151,6 +155,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         checkAvailableQuality();
         checkAvailableFrameRate();
         checkTransitions();
+        checkWatermark(BuildConfig.FEATURE_WATERMARK);
     }
 
     private void checkTransitions() {
@@ -159,7 +164,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     }
 
     private void checkTransitionPreference(String key) {
-        // TODO:(alvaro.martinez) 9/01/17 Get this data from Project not preferences
         boolean data =false;
         if(key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0){
             data = getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
@@ -169,6 +173,15 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                 data = getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
                 preferencesView.setTransitionsPref(key, data);
             }
+        }
+    }
+
+    private void checkWatermark(boolean isWatermarkActivated){
+        if(isWatermarkActivated) {
+            boolean data = getWatermarkPreferenceFromProjectUseCase.isWatermarkActivated();
+            preferencesView.setWatermarkSwitchPref(data);
+        } else {
+            preferencesView.hideWatermarkView();
         }
     }
 
@@ -404,9 +417,27 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                 updateVideoTransitionPreferenceToProjectUseCase.setVideoFadeTransitionActivated(dataTransitionVideo);
                 updateIntermediateTemporalFilesTransitionsUseCase.execute(this);
                 break;
+            case ConfigPreferences.WATERMARK:
+                boolean data = sharedPreferences.getBoolean(key, false);
+                if(data && !updateWatermarkPreferenceToProjectUseCase.
+                    isWatermarkResourceDownloaded(Constants.PATH_APP)){
+                    copyWatermarkResourceToDevice();
+                }
+                updateWatermarkPreferenceToProjectUseCase.setWatermarkActivated(data);
+                preferencesView.setWatermarkSwitchPref(data);
             default:
         }
     }
+
+    private void copyWatermarkResourceToDevice() {
+        try {
+            Utils.copyResourceToTemp(VimojoApplication.getAppContext(),
+                "watermark", R.raw.watermark, ".png");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void videoToRelaunch(String videoUuid, String intermediatesTempAudioFadeDirectory) {

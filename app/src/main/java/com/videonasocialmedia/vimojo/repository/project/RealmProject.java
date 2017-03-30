@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 
@@ -26,6 +27,7 @@ public class RealmProject extends RealmObject {
   public float musicVolume = Music.DEFAULT_MUSIC_VOLUME;
   public boolean isAudioFadeTransitionActivated;
   public boolean isVideoFadeTransitionActivated;
+  public boolean isWatermarkActivated;
   public RealmList<RealmVideo> videos;
 
   public RealmProject() {
@@ -35,7 +37,7 @@ public class RealmProject extends RealmObject {
   public RealmProject(String uuid, String title, String lastModification, String projectPath,
                       String quality, String resolution, String frameRate, int duration,
                       boolean isAudioFadeTransitionActivated,
-                      boolean isVideoFadeTransitionActivated) {
+                      boolean isVideoFadeTransitionActivated, boolean isWatermarkActivated) {
     this.uuid = uuid;
     this.title = title;
     this.lastModification = lastModification;
@@ -47,5 +49,6 @@ public class RealmProject extends RealmObject {
     this.videos = new RealmList<RealmVideo>();
     this.isAudioFadeTransitionActivated = isAudioFadeTransitionActivated;
     this.isVideoFadeTransitionActivated = isVideoFadeTransitionActivated;
+    this.isWatermarkActivated = isWatermarkActivated;
   }
 }

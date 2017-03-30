@@ -62,12 +62,21 @@
         android:title="@string/title_fade_transition">
         <SwitchPreference
             android:key="video_fade_transition"
-            android:title="Video fade transition"
+            android:title="@string/title_video_fade_transition"
             android:defaultValue="false" />
 
         <SwitchPreference
             android:key="audio_fade_transition"
-            android:title="Audio fade transition"
+            android:title="@string/title_audio_fade_transition"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/title_watermark_section"
+        android:key="@string/title_watermark_section">
+        <SwitchPreference
+            android:key="add_watermark"
+            android:title="@string/title_watermark_preference"
             android:defaultValue="false" />
     </PreferenceCategory>
 

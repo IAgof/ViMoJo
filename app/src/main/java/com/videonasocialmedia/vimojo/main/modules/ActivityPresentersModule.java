@@ -55,6 +55,7 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPres
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverActivity;
@@ -143,11 +144,13 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  SoundPresenter provideSoundPresenter(GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+  SoundPresenter provideSoundPresenter(GetMediaListFromProjectUseCase
+                                           getMediaListFromProjectUseCase,
+                                       GetMusicFromProjectUseCase getMusicFromProjectUseCase,
                                        GetPreferencesTransitionFromProjectUseCase
                                             getPreferencesTransitionFromProjectUseCase) {
     return new SoundPresenter((SoundActivity) activity, getMediaListFromProjectUseCase,
-        getPreferencesTransitionFromProjectUseCase);
+        getMusicFromProjectUseCase, getPreferencesTransitionFromProjectUseCase);
   }
 
   @Provides @PerActivity
