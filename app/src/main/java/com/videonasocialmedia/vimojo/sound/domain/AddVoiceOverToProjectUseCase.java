@@ -17,6 +17,7 @@ import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import javax.inject.Inject;
 
+import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC;
 import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_VOICE_OVER;
 
 /**
@@ -42,13 +43,14 @@ public class AddVoiceOverToProjectUseCase {
     voiceOver.setMusicTitle(Constants.MUSIC_AUDIO_VOICEOVER_TITLE);
 
     // if hasMusic, first removeFromTrack and then add VoiceOver as music
+    // TODO:(alvaro.martinez) 30/03/17 UPDATE INDEX AUDIO TRACK TO VOICE OVER, MIX AUDIO MULTI TRACK
     if(project.getVMComposition().hasMusic()){
-      removeMusicFromProjectUseCase.removeMusicFromProject(project.getMusic(),0);
+      removeMusicFromProjectUseCase.removeMusicFromProject(project.getMusic(),INDEX_AUDIO_TRACKS_MUSIC);
     }
 
     // TODO(jliarte): 23/12/16 maybe use a different track for voice over? a different
     //                VMComposition method or use case?
-    addMusicToProjectUseCase.addMusicToTrack(voiceOver, INDEX_AUDIO_TRACKS_VOICE_OVER,
+    addMusicToProjectUseCase.addMusicToTrack(voiceOver, INDEX_AUDIO_TRACKS_MUSIC,
         new OnAddMediaFinishedListener() {
           @Override
           public void onAddMediaItemToTrackError() {

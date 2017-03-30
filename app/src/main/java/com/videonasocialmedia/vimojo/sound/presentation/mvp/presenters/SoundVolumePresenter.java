@@ -15,6 +15,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC;
+
 /**
  * Created by ruth on 19/09/16.
  */
@@ -84,7 +86,8 @@ public class SoundVolumePresenter implements OnVideosRetrieved {
 
     public void removeMusicFromProject() {
         if (currentProject.hasMusic()) {
-            removeMusicFromProjectUseCase.removeMusicFromProject(currentProject.getMusic(), 0);
+            removeMusicFromProjectUseCase.removeMusicFromProject(currentProject.getMusic(),
+                INDEX_AUDIO_TRACKS_MUSIC);
         }
     }
 }

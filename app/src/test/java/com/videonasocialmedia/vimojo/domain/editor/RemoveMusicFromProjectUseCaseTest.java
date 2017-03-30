@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.mockito.Mockito.verify;
@@ -51,7 +52,7 @@ public class RemoveMusicFromProjectUseCaseTest {
         Music music = project.getMusic();
         assertNotNull(music);
 
-        injectedUseCase.removeMusicFromProject(music, 0);
+        injectedUseCase.removeMusicFromProject(music, INDEX_AUDIO_TRACKS_MUSIC);
 
         assertNull(project.getMusic());
     }
@@ -61,7 +62,7 @@ public class RemoveMusicFromProjectUseCaseTest {
         Project currentProject = getAProjectWithMusicAdded();
         Music music = currentProject.getMusic();
 
-        injectedUseCase.removeMusicFromProject(music, 0);
+        injectedUseCase.removeMusicFromProject(music, INDEX_AUDIO_TRACKS_MUSIC);
 
         verify(mockedProjectRepository).update(currentProject);
     }

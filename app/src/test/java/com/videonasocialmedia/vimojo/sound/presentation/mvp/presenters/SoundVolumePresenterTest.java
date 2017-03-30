@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -57,11 +58,12 @@ public class SoundVolumePresenterTest {
   public void removeMusicFromProjectCallsRemoveMusicFromProject() throws IllegalItemOnTrack {
     Project currentProject = getCurrentProject();
     Music music = new Music("media/path", 0);
-    currentProject.getAudioTracks().get(0).insertItemAt(0, music);
+    currentProject.getAudioTracks().get(INDEX_AUDIO_TRACKS_MUSIC).insertItemAt(0, music);
 
     injectedPresenter.removeMusicFromProject();
 
-    Mockito.verify(mockedRemoveMusicFromProjectUseCase).removeMusicFromProject(music, 0);
+    Mockito.verify(mockedRemoveMusicFromProjectUseCase).removeMusicFromProject(music,
+        INDEX_AUDIO_TRACKS_MUSIC);
   }
 
   @Ignore // Ignore until know what to do if composition have music and voice over
@@ -71,7 +73,7 @@ public class SoundVolumePresenterTest {
     Project currentProject = getCurrentProject();
     Music music = new Music("music/path", 0);
     assert music.getVolume() == Music.DEFAULT_MUSIC_VOLUME;
-    currentProject.getVMComposition().getAudioTracks().get(0).insertItemAt(0, music);
+    currentProject.getVMComposition().getAudioTracks().get(INDEX_AUDIO_TRACKS_MUSIC).insertItemAt(0, music);
     RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase =
             new RemoveMusicFromProjectUseCase(mockedProjectRepository);
     AddMusicToProjectUseCase addMusicToProjectUseCase =
