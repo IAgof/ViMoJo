@@ -30,13 +30,18 @@ import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgro
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.domain.GetWatermarkPreferenceFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.UpdateVideoTransitionPreferenceToProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.OnRelaunchTemporalFileListener;
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +60,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private ListPreference frameRatePref;
     private Preference transitionVideoPref;
     private Preference transitionAudioPref;
+    private Preference watermarkPref;
     private Preference emailPref;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private boolean isPreferenceAvailable = false;
@@ -65,10 +71,13 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         updateVideoTransitionPreferenceToProjectUseCase;
     private UpdateIntermediateTemporalFilesTransitionsUseCase
         updateIntermediateTemporalFilesTransitionsUseCase;
+    private GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase;
+    private UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
 
     private final Drawable drawableFadeTransitionVideo;
     private final VideonaFormat videoFormat;
+    private String TAG = "PreferencesPresenter";
 
     /**
      * Constructor
@@ -85,7 +94,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             PreferenceCategory cameraSettingsPref,
             ListPreference resolutionPref, ListPreference qualityPref,
             ListPreference frameRatePref, Preference transitionVideoPref,
-            Preference transitionAudioPref, Preference emailPref,
+            Preference transitionAudioPref, Preference watermarkPref, Preference emailPref,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
             UpdateAudioTransitionPreferenceToProjectUseCase
@@ -94,6 +103,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                                         updateVideoTransitionPreferenceToProjectUseCase,
             UpdateIntermediateTemporalFilesTransitionsUseCase
                                         updateIntermediateTemporalFilesTransitionsUseCase,
+            GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
+            UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
             UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase) {
         this.preferencesView = preferencesView;
         this.context = context;
