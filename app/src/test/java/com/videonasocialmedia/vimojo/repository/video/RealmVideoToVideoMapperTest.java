@@ -42,7 +42,7 @@ public class RealmVideoToVideoMapperTest {
     assertThat(video.outputVideoIsFinished(), is(true));
     assertThat(video.getClipText(), is("text"));
     assertThat(video.getClipTextPosition(), is(TextEffect.TextPosition.CENTER.name()));
-    assertThat(video.isTextToVideoAdded(), is(true));
+    assertThat(video.hasText(), is(true));
     assertThat(video.isTrimmedVideo(), is(true));
     assertThat(video.getStartTime(), is(2));
     assertThat(video.getStopTime(), is(10));

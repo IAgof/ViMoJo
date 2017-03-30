@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static com.videonasocialmedia.videonamediaframework.model.VMComposition.INDEX_AUDIO_TRACKS_VOICE_OVER;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.verify;

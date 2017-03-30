@@ -1,9 +1,10 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
+import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
-import com.videonasocialmedia.vimojo.utils.Constants;
+
 
 import javax.inject.Inject;
 
@@ -22,7 +23,7 @@ public class GetMusicFromProjectUseCase {
         Music music = null;
         try {
             music = (Music) project.getAudioTracks()
-                .get(project.getVMComposition().INDEX_AUDIO_TRACKS_MUSIC).getItems().get(0);
+                .get(Constants.INDEX_AUDIO_TRACKS_MUSIC).getItems().get(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -33,7 +34,7 @@ public class GetMusicFromProjectUseCase {
         Music music = null;
         try {
             music = (Music) project.getAudioTracks()
-                .get(project.getVMComposition().INDEX_AUDIO_TRACKS_VOICE_OVER).getItems().get(0);
+                .get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER).getItems().get(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,7 +42,6 @@ public class GetMusicFromProjectUseCase {
     }
 
     public boolean hasBeenMusicSelected(){
-      return (project.getVMComposition().hasMusic() &&
-          (project.getMusic().getMusicTitle().compareTo(Constants.MUSIC_AUDIO_VOICEOVER_TITLE) != 0));
+      return (project.getVMComposition().hasMusic());
     }
 }

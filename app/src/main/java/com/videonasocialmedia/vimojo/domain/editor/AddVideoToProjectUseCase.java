@@ -14,11 +14,13 @@ import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessE
 import com.videonasocialmedia.vimojo.eventbus.events.project.UpdateProjectDurationEvent;
 import com.videonasocialmedia.vimojo.eventbus.events.video.NumVideosChangedEvent;
 import com.videonasocialmedia.vimojo.eventbus.events.video.VideoAddedToTrackEvent;
+import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnLaunchAVTransitionTempFileListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import java.util.List;
@@ -32,7 +34,9 @@ import de.greenrobot.event.EventBus;
  */
 // TODO(jliarte): 22/10/16 refactor this class to have a unique insert point. Get rid of event bus
 public class AddVideoToProjectUseCase {
+
     protected ProjectRepository projectRepository;
+    private Project currentProject;
 
     /**
      * Default Constructor with project repository argument.
@@ -43,12 +47,11 @@ public class AddVideoToProjectUseCase {
         this.projectRepository = projectRepository;
     }
 
-    /**
-     * @param videoPath
-     */
-    public void addVideoToTrack(String videoPath) {
+
+    public void addVideoToTrack(String videoPath, OnLaunchAVTransitionTempFileListener listener) {
         Video videoToAdd = new Video(videoPath, 1f);
         addVideoToTrack(videoToAdd);
+        checkIfVideoNeedAVTransitionTempFile(videoToAdd, listener);
     }
 
     public void addVideoToTrack(Video video) {
@@ -57,6 +60,7 @@ public class AddVideoToProjectUseCase {
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(video);
             projectRepository.update(currentProject);
+
             // TODO(jliarte): 22/10/16 should get rid of EventBus calls?
             EventBus.getDefault().post(new AddMediaItemToTrackSuccessEvent(video));
             EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
@@ -72,13 +76,15 @@ public class AddVideoToProjectUseCase {
      * @param listener
      * @deprecated use the one parameter version instead
      */
-    public void addVideoToTrack(Video video, OnAddMediaFinishedListener listener) {
+    public void addVideoToTrack(Video video, OnAddMediaFinishedListener listener,
+                                OnLaunchAVTransitionTempFileListener avtransitionsListener) {
         try {
             Project currentProject = Project.getInstance(null, null, null);
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(video);
             projectRepository.update(currentProject);
             listener.onAddMediaItemToTrackSuccess(video);
+            checkIfVideoNeedAVTransitionTempFile(video, avtransitionsListener);
             // TODO(jliarte): 22/10/16 should get rid of EventBus calls?
             EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
             EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumVideosInProject()));
@@ -99,12 +105,14 @@ public class AddVideoToProjectUseCase {
         }
     }
 
-    public void addVideoListToTrack(List<Video> videoList, OnAddMediaFinishedListener listener) {
+    public void addVideoListToTrack(List<Video> videoList, OnAddMediaFinishedListener listener,
+                                    OnLaunchAVTransitionTempFileListener avtransitionsListener) {
         try {
             Project currentProject = Project.getInstance(null, null, null);
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             for (Video video : videoList) {
                 mediaTrack.insertItem(video);
+                checkIfVideoNeedAVTransitionTempFile(video,avtransitionsListener);
             }
             projectRepository.update(currentProject);
             listener.onAddMediaItemToTrackSuccess(null);
@@ -115,5 +123,14 @@ public class AddVideoToProjectUseCase {
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             listener.onAddMediaItemToTrackError();
         }
+    }
+
+    private void checkIfVideoNeedAVTransitionTempFile(Video videoToAdd,
+                                                  OnLaunchAVTransitionTempFileListener listener) {
+        currentProject = Project.getInstance(null,null,null);
+        if(currentProject.isAudioFadeTransitionActivated()
+            || currentProject.isVideoFadeTransitionActivated())
+            listener.videoToLaunchAVTransitionTempFile(videoToAdd,
+                currentProject.getProjectPathIntermediateFileAudioFade());
     }
 }

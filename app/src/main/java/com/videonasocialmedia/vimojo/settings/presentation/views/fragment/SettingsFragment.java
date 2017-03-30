@@ -8,7 +8,6 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
@@ -20,11 +19,11 @@ import android.widget.TextView;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
 import com.videonasocialmedia.vimojo.main.DaggerFragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.FragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.FragmentPresentersModule;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.AboutActivity;
@@ -35,7 +34,6 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceA
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
-import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.ArrayList;
 
@@ -52,6 +50,7 @@ public class SettingsFragment extends PreferenceFragment implements
     protected PreferenceCategory cameraSettingsPref;
     protected PreferenceCategory ftp1Pref;
     protected PreferenceCategory ftp2Pref;
+    protected PreferenceCategory watermarkPrefCategory;
     protected Preference emailPref;
     protected ListPreference resolutionPref;
     protected ListPreference qualityPref;
@@ -61,6 +60,7 @@ public class SettingsFragment extends PreferenceFragment implements
     protected Preference frameRatePrefNotAvailable;
     protected SwitchPreference transitionsVideoPref;
     protected SwitchPreference transitionsAudioPref;
+    protected SwitchPreference watermarkSwitchPref;
     protected Context context;
     protected SharedPreferences sharedPreferences;
     protected SharedPreferences.Editor editor;
@@ -80,9 +80,9 @@ public class SettingsFragment extends PreferenceFragment implements
 
     private FragmentPresentersComponent initComponent() {
         return DaggerFragmentPresentersComponent.builder()
-            .fragmentPresentersModule(new FragmentPresentersModule(this, context, cameraSettingsPref,
-                resolutionPref,qualityPref, frameRatePref, transitionsVideoPref,
-                transitionsAudioPref, emailPref))
+            .fragmentPresentersModule(new FragmentPresentersModule(this, context, sharedPreferences,
+                cameraSettingsPref, resolutionPref,qualityPref, frameRatePref, transitionsVideoPref,
+                transitionsAudioPref,watermarkSwitchPref, emailPref))
             .systemComponent(((VimojoApplication)getActivity().getApplication()).getSystemComponent())
             .build();
     }
@@ -98,6 +98,7 @@ public class SettingsFragment extends PreferenceFragment implements
 
         setupCameraSettings();
         setupTransitions();
+        setupWatermark();
         setupMailValid();
         setupAboutUs();
         setupPrivacyPolicy();
@@ -113,6 +114,10 @@ public class SettingsFragment extends PreferenceFragment implements
     private void setupTransitions(){
         transitionsVideoPref = (SwitchPreference) findPreference(ConfigPreferences.TRANSITION_VIDEO);
         transitionsAudioPref = (SwitchPreference) findPreference(ConfigPreferences.TRANSITION_AUDIO);
+    }
+
+    private void setupWatermark(){
+        watermarkSwitchPref = (SwitchPreference) findPreference(ConfigPreferences.WATERMARK);
     }
 
     private void setupCameraSettings() {
@@ -204,14 +209,8 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     @Override
-    public void setRelaunchExportTempBackground(String videoUuid, String intermediatesTempAudioFadeDirectory) {
-        Context appContext = VimojoApplication.getAppContext();
-        Intent exportTempBackgroudnServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.VIDEO_ID, videoUuid);
-        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.RELAUNCH_EXPORT_TEMP, true);
-        exportTempBackgroudnServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY_FADE_AUDIO,
-            intermediatesTempAudioFadeDirectory);
-        appContext.startService(exportTempBackgroudnServiceIntent);
+    public void setWatermarkSwitchPref(boolean value){
+        watermarkSwitchPref.setChecked(value);
     }
 
     @Override
@@ -238,9 +237,18 @@ public class SettingsFragment extends PreferenceFragment implements
     @Override
     public void hideFtpsViews() {
         ftp1Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP1_Section));
-        getPreferenceScreen().removePreference(ftp1Pref);
+        if(ftp1Pref!=null)
+            getPreferenceScreen().removePreference(ftp1Pref);
         ftp2Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP2_Section));
-        getPreferenceScreen().removePreference(ftp2Pref);
+        if(ftp2Pref!=null)
+            getPreferenceScreen().removePreference(ftp2Pref);
+    }
+
+    @Override
+    public void hideWatermarkView() {
+        watermarkPrefCategory = (PreferenceCategory) findPreference(getString(R.string.title_watermark_section));
+        if(watermarkPrefCategory!=null)
+            getPreferenceScreen().removePreference(watermarkPrefCategory);
     }
 
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
@@ -259,7 +267,8 @@ public class SettingsFragment extends PreferenceFragment implements
                                           String key) {
         Preference connectionPref = findPreference(key);
         if(key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0 ||
-            key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0){
+            key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0
+            || key.compareTo(ConfigPreferences.WATERMARK) == 0 ){
             return;
         }
         if(!key.equals(ConfigPreferences.PASSWORD_FTP) && !key.equals(ConfigPreferences.PASSWORD_FTP2)){

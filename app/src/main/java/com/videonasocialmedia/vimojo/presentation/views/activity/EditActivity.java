@@ -150,11 +150,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
       public void onTabSelected(@IdRes int tabId) {
         switch (tabId){
           case(R.id.tab_sound):
-            if(BuildConfig.FEATURE_VOICE_OVER) {
-              navigateTo(SoundActivity.class);
-            } else {
-              navigateTo(MusicListActivity.class);
-            }
+            navigateTo(SoundActivity.class);
             break;
           case (R.id.tab_share):
             Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);

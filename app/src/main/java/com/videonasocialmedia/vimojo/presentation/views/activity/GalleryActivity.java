@@ -157,13 +157,6 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     }
 
-    private void shareVideo(Video selectedVideo) {
-        String videoPath = selectedVideo.getMediaPath();
-        Intent intent = new Intent(VimojoApplication.getAppContext(), ShareActivity.class);
-        intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoPath);
-        startActivity(intent);
-    }
-
     @OnClick(R.id.button_cancel_gallery)
     public void goBack() {
         this.finish();

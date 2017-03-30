@@ -294,11 +294,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         if(resourceButtonId == R.id.button_music_navigator)
-                            if(BuildConfig.FEATURE_VOICE_OVER) {
-                                navigateTo(SoundActivity.class);
-                            } else {
-                                navigateTo(MusicListActivity.class);
-                            }
+                            navigateTo(SoundActivity.class);
                         if(resourceButtonId == R.id.button_edit_navigator)
                             navigateTo(EditActivity.class);
                         break;

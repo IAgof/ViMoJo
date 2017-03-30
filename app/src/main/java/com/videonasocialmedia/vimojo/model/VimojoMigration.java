@@ -154,8 +154,23 @@ public class VimojoMigration implements RealmMigration {
       oldVersion++;
     }
 
-    // Migrate from version 4 to version 5, now update RealmVideo, not RealmProject
-    if (oldVersion == 4) {
+    //// Migrate from version 4 to version 5,
+    if(oldVersion == 4){
+      RealmObjectSchema realmProject = schema.get("RealmProject");
+      if(!realmProject.hasField("isWatermarkActivated")){
+        realmProject.addField("isWatermarkActivated", boolean.class)
+            .transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                obj.setBoolean("isWatermarkActivated", false);
+              }
+            });
+      }
+      oldVersion++;
+    }
+
+    // Migrate from version 5 to version 6, now update RealmVideo, not RealmProject
+    if (oldVersion == 5) {
       RealmObjectSchema realmProject = schema.get("RealmVideo");
       if (!realmProject.hasField("volume")) {
         realmProject.addField("volume", float.class)

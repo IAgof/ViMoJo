@@ -1,3 +1,3 @@
-v0.4.20
-- Added the possibility of mixing music with original video audio selecting volume between video and music resource.
-- Set default music volume to 50%.
+v0.4.23
+- Fixed problem in settings screen.
+- Updated video transition to white color. Adjust duration of audio, video transitions.

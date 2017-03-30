@@ -61,7 +61,7 @@ public class AddMusicToProjectUseCaseTest {
     @Test
     public void testAddMusicToTrackAddsMusicToProjectDefaultAudioTrack() throws Exception {
         Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
-        Music musicToAdd = new Music(42, "musicNameId", 3, 2, "author","2");
+        Music musicToAdd = new Music(42, "musicNameId", 3, 2, "author","2", 0);
 
         injectedUseCase.addMusicToTrack(musicToAdd, 0, mockedOnAddMediaFinishedListener);
         AudioTrack projectAudioTrack = videonaProject.getAudioTracks().get(0);
@@ -114,7 +114,7 @@ public class AddMusicToProjectUseCaseTest {
     @Test
     public void testAddMusicToTrackDoesntAddToNonExistentTrackIndex() throws Exception {
         Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
-        Music musicToAdd = new Music(42, "musicNameId", 3, 2, "","");
+        Music musicToAdd = new Music(42, "musicNameId", 3, 2, "","", 0);
 
         new AddMusicToProjectUseCase(mockedProjectRepository).addMusicToTrack(musicToAdd, 1, mockedOnAddMediaFinishedListener);
         AudioTrack projectAudioTrack = videonaProject.getAudioTracks().get(0);
@@ -125,7 +125,7 @@ public class AddMusicToProjectUseCaseTest {
     @Test
     public void testAddMusicToTrackCallsProjectRepositoryUpdate() {
         Project currentProject = getAProject();
-        Music musicToAdd = new Music("music/path");
+        Music musicToAdd = new Music("music/path", 0);
 
         injectedUseCase.addMusicToTrack(musicToAdd, 0, mockedOnAddMediaFinishedListener);
 

@@ -34,7 +34,6 @@ public class VideoToRealmVideoMapperTest {
     video.setTempPathFinished(true);
     video.setClipText("text");
     video.setClipTextPosition(TextEffect.TextPosition.CENTER.name());
-    video.setTextToVideoAdded(true);
     video.setTrimmedVideo(true);
     video.setStartTime(10);
     video.setStopTime(80);

@@ -56,6 +56,8 @@ public class UpdateVideoTransitionPreferenceToProjectUseCaseTest {
         project.isVideoFadeTransitionActivated(), CoreMatchers.is(videoTransitionActivated));
   }
 
+
+
   private Project getAProject() {
     return new Project("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));

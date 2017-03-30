@@ -24,6 +24,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC;
+
 /**
  *
  */
@@ -66,7 +68,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
         // TODO(jliarte): 1/12/16 should it be a parameter of use case method?
         this.currentProject = loadCurrentProject();
-        musicSelected = new Music("");
+        musicSelected = new Music("", 0);
     }
 
     private Project loadCurrentProject() {
@@ -106,8 +108,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     public void addMusic(Music music, float volume) {
         music.setVolume(volume);
-        addMusicToProjectUseCase.addMusicToTrack(music,
-            currentProject.getVMComposition().INDEX_AUDIO_TRACKS_MUSIC, this);
+        addMusicToProjectUseCase.addMusicToTrack(music,INDEX_AUDIO_TRACKS_MUSIC, this);
     }
 
     @Override
@@ -138,7 +139,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     @Override
     public void onAddMediaItemToTrackSuccess(Media media) {
         userEventTracker.trackMusicSet(currentProject);
-        musicDetailView.goToEdit(media.getTitle());
+        musicDetailView.goToSoundActivity();
     }
 
     public void setVolume(float volume) {

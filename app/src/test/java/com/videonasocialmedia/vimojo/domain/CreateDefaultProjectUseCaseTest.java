@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.domain;
 
+
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -18,7 +19,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.core.IsNot.not;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -30,13 +30,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CreateDefaultProjectUseCaseTest {
+
   @Mock ProjectRepository mockedProjectRepository;
   @Mock ProfileRepository mockedProfileRepository;
   @InjectMocks
   CreateDefaultProjectUseCase injectedUseCase;
 
   @Before
-  public void injectDoubles() {
+  public void injectDoubles(){
     MockitoAnnotations.initMocks(this);
   }
 

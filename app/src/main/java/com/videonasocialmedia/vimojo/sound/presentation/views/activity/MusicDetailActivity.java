@@ -218,12 +218,9 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     }
 
     @Override
-    public void goToEdit(String musicTitle) {
-        Intent i = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
-        i.putExtra(Constants.MUSIC_SELECTED_TITLE, musicTitle);
+    public void goToSoundActivity() {
+        Intent i = new Intent(VimojoApplication.getAppContext(), SoundActivity.class);
         startActivity(i);
-        finish();
-
     }
 
     @Override

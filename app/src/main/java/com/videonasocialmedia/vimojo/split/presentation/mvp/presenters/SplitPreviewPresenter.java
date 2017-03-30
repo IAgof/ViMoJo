@@ -8,11 +8,17 @@
 package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
+
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -21,7 +27,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetriev
 import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
-import com.videonasocialmedia.vimojo.utils.IntentConstants;
+import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -32,20 +38,22 @@ import javax.inject.Inject;
 /**
  * Created by vlf on 7/7/15.
  */
-public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoListener {
+public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoListener,
+    TranscoderHelperListener {
 
     /**
      * LOG_TAG
      */
     private final String LOG_TAG = getClass().getSimpleName();
+    private final Context context;
     private SplitVideoUseCase splitVideoUseCase;
 
     private Video videoToEdit;
 
-    /**
-     * Get media list from project use case
-     */
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+    private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
+    private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
+    private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
 
     private SplitView splitView;
     public UserEventTracker userEventTracker;
@@ -53,12 +61,20 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
 
     @Inject
     public SplitPreviewPresenter(SplitView splitView, UserEventTracker userEventTracker,
-                                 SplitVideoUseCase splitVideoUseCase) {
+                                 Context context, SplitVideoUseCase splitVideoUseCase,
+                                 GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                 ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+                                 GetVideonaFormatFromCurrentProjectUseCase
+                                         getVideonaFormatFromCurrentProjectUseCase,
+                                 UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase) {
         this.splitView = splitView;
         this.userEventTracker = userEventTracker;
+        this.context = context;
         this.splitVideoUseCase = splitVideoUseCase;
-
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
+        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
+        this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.currentProject = loadCurrentProject();
     }
 
@@ -74,7 +90,6 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
             v.add(videoToEdit);
             onVideosRetrieved(v);
         }
-
     }
 
     @Override
@@ -103,17 +118,26 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
 
     @Override
     public void trimVideo(Video video, int startTimeMs, int finishTimeMs) {
-        Context appContext = VimojoApplication.getAppContext();
-        Intent trimServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-        trimServiceIntent.putExtra(IntentConstants.VIDEO_ID, video.getUuid());
-        trimServiceIntent.putExtra(IntentConstants.IS_VIDEO_TRIMMED, true);
-        trimServiceIntent.putExtra(IntentConstants.START_TIME_MS, startTimeMs);
-        trimServiceIntent.putExtra(IntentConstants.FINISH_TIME_MS, finishTimeMs);
-        trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY,
-            currentProject.getProjectPathIntermediateFiles());
-        trimServiceIntent.putExtra(IntentConstants.VIDEO_TEMP_DIRECTORY_FADE_AUDIO,
-            currentProject.getProjectPathIntermediateFileAudioFade());
-        appContext.startService(trimServiceIntent);
+        VideonaFormat videoFormat =
+            getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
+        // TODO:(alvaro.martinez) 22/02/17 This drawable saved in app or sdk?
+        Drawable drawableFadeTransitionVideo =
+            ContextCompat.getDrawable(VimojoApplication.getAppContext(), R.drawable.alpha_transition_white);
+
+        modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, videoToEdit, videoFormat,
+            startTimeMs, finishTimeMs, currentProject.getProjectPathIntermediateFileAudioFade(),
+            this);
+    }
+
+    @Override
+    public void onSuccessTranscoding(Video video) {
+        // update videoRepository
+        updateVideoRepositoryUseCase.updateVideo(video);
+    }
+
+    @Override
+    public void onErrorTranscoding(Video video, String message) {
+        //splitView.showError(message);
     }
 }
 

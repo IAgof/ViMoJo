@@ -37,7 +37,7 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
   }
 
   @Test
-  public void ifProjectHasTempFileUseCaseCallsVideoToRelaunchListener(){
+  public void ifProjectHasVideosCallsVideoToRelaunchListener(){
     Project project = getAProject();
     AddVideoToProjectUseCase addVideoToProjectUseCase =
             new AddVideoToProjectUseCase(mockedProjectRepository);
