@@ -40,7 +40,6 @@ public class AddVoiceOverToProjectUseCaseTest {
     Project.INSTANCE.clear();
   }
 
-  @Ignore // Ignore until know what to do if composition have music and voice over
   @Test
   public void setVoiceOverSetsMusicToComposition() {
     Project project = getAProject();
@@ -59,6 +58,7 @@ public class AddVoiceOverToProjectUseCaseTest {
     assertThat(project.getVMComposition().getMusic().getVolume(), is(0.7f));
   }
 
+  @Ignore // Ignore until separate voice over and music tracks. Now same test that setVoiceOverSetsMusicToCompositon
   @Test
   public void setVoiceOverAddAudioToComposition(){
     Project project = getAProject();
