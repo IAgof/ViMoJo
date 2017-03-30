@@ -89,22 +89,23 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      * @param sharedPreferences
      */
     public PreferencesPresenter(PreferencesView preferencesView,
-        Context context, SharedPreferences sharedPreferences,
-        PreferenceCategory cameraSettingsPref,
-        ListPreference resolutionPref, ListPreference qualityPref,
-        ListPreference frameRatePref, Preference transitionVideoPref,
-        Preference transitionAudioPref, Preference watermarkPref, Preference emailPref,
-        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-        GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-        UpdateAudioTransitionPreferenceToProjectUseCase
-                                    updateAudioTransitionPreferenceToProjectUseCase,
-        UpdateVideoTransitionPreferenceToProjectUseCase
-                                    updateVideoTransitionPreferenceToProjectUseCase,
-        UpdateIntermediateTemporalFilesTransitionsUseCase
-                                    updateIntermediateTemporalFilesTransitionsUseCase,
-        GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
-        UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-        UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase) {
+            Context context,
+            SharedPreferences sharedPreferences,
+            PreferenceCategory cameraSettingsPref,
+            ListPreference resolutionPref, ListPreference qualityPref,
+            ListPreference frameRatePref, Preference transitionVideoPref,
+            Preference transitionAudioPref, Preference watermarkPref, Preference emailPref,
+            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+            GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+            UpdateAudioTransitionPreferenceToProjectUseCase
+                                        updateAudioTransitionPreferenceToProjectUseCase,
+            UpdateVideoTransitionPreferenceToProjectUseCase
+                                        updateVideoTransitionPreferenceToProjectUseCase,
+            UpdateIntermediateTemporalFilesTransitionsUseCase
+                                        updateIntermediateTemporalFilesTransitionsUseCase,
+            GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
+            UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
+            UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase) {
         this.preferencesView = preferencesView;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
@@ -131,7 +132,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase =
             new GetVideonaFormatFromCurrentProjectUseCase();
         videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
-        drawableFadeTransitionVideo = VimojoApplication.getAppContext().getDrawable(R.drawable.alpha_transition_black);
+        drawableFadeTransitionVideo = VimojoApplication.getAppContext().getDrawable(R.drawable.alpha_transition_white);
     }
 
     /**
