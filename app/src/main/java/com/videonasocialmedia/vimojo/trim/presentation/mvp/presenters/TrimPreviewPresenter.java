@@ -117,7 +117,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
         // TODO:(alvaro.martinez) 22/02/17 This drawable saved in app or sdk?
         Drawable drawableFadeTransitionVideo =
             ContextCompat.getDrawable(VimojoApplication.getAppContext(),
-                R.drawable.alpha_transition_black);
+                R.drawable.alpha_transition_white);
 
         modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, videoToEdit, videoFormat,
                 startTimeMs, finishTimeMs, currentProject.getProjectPathIntermediateFileAudioFade(),
