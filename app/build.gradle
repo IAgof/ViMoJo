@@ -143,7 +143,7 @@ android {
         elpaisdigital {
             applicationId "com.videonasocialmedia.vimojo.elpaisdigital"
             versionCode 2 // 20170324
-            versionName "0.4.22.1.fElPaisDigial.1" // 20170324
+            versionName "0.4.23.1.fElPaisDigial.1" // 20170324
             resValue "string", "app_out_of_date", "2017-07-31"
             resValue "string", "app_name", "El País Digital"
             buildConfigField "boolean", "FEATURE_FTP", "false"
