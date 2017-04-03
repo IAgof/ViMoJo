@@ -54,7 +54,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
   private int recordedVideosNumber = 0;
   protected Project currentProject;
   private int height = 720;
-  private boolean externalIntent;
   private Camera2Wrapper camera;
   private String origVideoRecorded;
   private String destVideoRecorded;
@@ -64,7 +63,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
                                 boolean isFrontCameraSelected, boolean isPrincipalViewSelected,
                                 boolean isRightControlsViewSelected, AutoFitTextureView textureView,
-                                boolean externalIntent, String directorySaveVideos,
+                                String directorySaveVideos,
                                 GetVideoFormatFromCurrentProjectUseCase
                                     getVideoFormatFromCurrentProjectUseCase,
                                 AddVideoToProjectUseCase addVideoToProjectUseCase) {
@@ -72,7 +71,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
     this.recordView = recordView;
     this.isPrincipalViewSelected = isPrincipalViewSelected;
     this.isRightControlsViewSelected = isRightControlsViewSelected;
-    this.externalIntent = externalIntent;
     int cameraId = 0;
     if(isFrontCameraSelected)
       cameraId = 1;
@@ -101,8 +99,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
   }
 
   public void onResume() {
-    if (!externalIntent)
-      showThumbAndNumber();
+    showThumbAndNumber();
     Log.d(LOG_TAG, "resume presenter");
     camera.onResume();
   }
@@ -158,18 +155,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
 
   @Override
   public void videoRecorded(String path) {
-    if (externalIntent) {
-      recordView.finishActivityForResult(path);
-    } else {
-      recordView.showRecordButton();
-      recordView.showNavigateToSettingsActivity();
-      recordView.stopChronometer();
-      recordView.hideChronometer();
-      recordView.showChangeCamera();
-      recordView.showRecordedVideoThumb(path);
-      recordView.showVideosRecordedNumber(++recordedVideosNumber);
-      moveAndAdaptVideoRecorded(path);
-    }
+    recordView.showRecordButton();
+    recordView.showNavigateToSettingsActivity();
+    recordView.stopChronometer();
+    recordView.hideChronometer();
+    recordView.showChangeCamera();
+    recordView.showRecordedVideoThumb(path);
+    recordView.showVideosRecordedNumber(++recordedVideosNumber);
+    moveAndAdaptVideoRecorded(path);
   }
 
   private void moveAndAdaptVideoRecorded(String origPath) {

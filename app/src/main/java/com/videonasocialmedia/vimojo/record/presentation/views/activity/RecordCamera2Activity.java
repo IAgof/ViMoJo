@@ -114,7 +114,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
    * if for result
    **/
   private String resultVideoPath;
-  private boolean externalIntent = false;
   private boolean isRecording = false;
   private boolean buttonBackPressed = false;
 
@@ -144,7 +143,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     keepScreenOn();
     ButterKnife.bind(this);
     setupActivityButtons();
-    checkAction();
     configChronometer();
     configShowThumbAndNumberClips();
     initOrientationHelper();
@@ -168,7 +166,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public ActivityPresentersModule getActivityPresentersModule() {
     return new ActivityPresentersModule(this, isFrontCameraSelected, isPrincipalViewsSelected,
-        isControlsViewSelected, Constants.PATH_APP_TEMP, textureView, externalIntent);
+        isControlsViewSelected, Constants.PATH_APP_TEMP, textureView);
   }
 
   private void keepScreenOn() {
@@ -194,19 +192,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(hideControlsViewButton, button_color);
     tintButton(navigateSettingsButtons, button_color);
     tintButton(settingsCameraButton, button_color);
-  }
-
-  private void checkAction() {
-    if (getIntent().getAction() != null) {
-      if (getIntent().getAction().equals(MediaStore.ACTION_VIDEO_CAPTURE)) {
-        if (getIntent().getClipData() != null) {
-          resultVideoPath = getIntent().getClipData().getItemAt(0).getUri().toString();
-          if (resultVideoPath.startsWith("file://"))
-            resultVideoPath = resultVideoPath.replace("file://", "");
-        }
-        externalIntent = true;
-      }
-    }
   }
 
   private void configChronometer() {
@@ -506,7 +491,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @OnClick (R.id.button_navigate_edit_or_gallery)
   public void navigateToEditOrGallery() {
-    if (!isRecording && !externalIntent) {
+    if (!isRecording) {
       presenter.navigateToEditOrGallery();
     }
   }
@@ -518,7 +503,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @OnClick(R.id.button_navigate_settings)
   public void navigateToSettings() {
-    if (!isRecording && !externalIntent) {
+    if (!isRecording) {
       navigateTo(SettingsActivity.class);
     }
   }

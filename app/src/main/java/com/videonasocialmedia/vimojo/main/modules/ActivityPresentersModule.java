@@ -90,14 +90,12 @@ public class ActivityPresentersModule {
                                   boolean isPrincipalViewSelected,
                                   boolean isRightControlsViewSelected,
                                   String directorySaveVideos,
-                                  AutoFitTextureView textureView,
-                                  boolean externalIntent) {
+                                  AutoFitTextureView textureView) {
     this.activity = activity;
     this.isFrontCameraSelected = isFrontCameraSelected;
     this.isPrincipalViewSelected = isPrincipalViewSelected;
     this.isRightControlsViewSelected = isRightControlsViewSelected;
     this.textureView = textureView;
-    this.externalIntent = externalIntent;
     this.directorySaveVideos = directorySaveVideos;
   }
 
@@ -152,7 +150,7 @@ public class ActivityPresentersModule {
 
     return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity,
         isFrontCameraSelected, isPrincipalViewSelected, isRightControlsViewSelected, textureView,
-        externalIntent, directorySaveVideos, getVideoFormatFromCurrentProjectUseCase,
+        directorySaveVideos, getVideoFormatFromCurrentProjectUseCase,
         addVideoToProjectUseCase);
   }
 

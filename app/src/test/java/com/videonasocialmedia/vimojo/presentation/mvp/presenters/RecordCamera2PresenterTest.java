@@ -31,7 +31,6 @@ public class RecordCamera2PresenterTest {
   boolean isPrincipalViewSelected = true;
   boolean isRightControlsViewSelected = true;
   @Mock AutoFitTextureView mockedTextureView;
-  boolean externalIntent;
   String directorySaveVideos;
   @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideoFormatFromCurrentProjectUseCase;
   @Mock AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
@@ -46,8 +45,8 @@ public class RecordCamera2PresenterTest {
 
     presenter = new RecordCamera2Presenter(mockedContext, mockedRecordView,
         isFrontCameraSelected, isPrincipalViewSelected,
-        isRightControlsViewSelected, mockedTextureView, externalIntent,
-        directorySaveVideos, mockedGetVideoFormatFromCurrentProjectUseCase,
+        isRightControlsViewSelected, mockedTextureView, directorySaveVideos,
+        mockedGetVideoFormatFromCurrentProjectUseCase,
         mockedAddVideoToProjectUseCase);
 
     presenter.initViews();
@@ -66,8 +65,8 @@ public class RecordCamera2PresenterTest {
 
     presenter = new RecordCamera2Presenter(mockedContext, mockedRecordView,
         isFrontCameraSelected, isPrincipalViewSelected,
-        isRightControlsViewSelected, mockedTextureView, externalIntent,
-        directorySaveVideos, mockedGetVideoFormatFromCurrentProjectUseCase,
+        isRightControlsViewSelected, mockedTextureView, directorySaveVideos,
+        mockedGetVideoFormatFromCurrentProjectUseCase,
         mockedAddVideoToProjectUseCase);
 
     presenter.initViews();
