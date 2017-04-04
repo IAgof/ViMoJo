@@ -19,10 +19,10 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
-import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -36,6 +36,7 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -48,6 +49,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
   private static final String LOG_TAG = "RecordPresenter";
   private final boolean isRightControlsViewSelected;
   private final boolean isPrincipalViewSelected;
+  private final GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
   private RecordCamera2View recordView;
   private AddVideoToProjectUseCase addVideoToProjectUseCase;
   private AdaptVideoRecordedToTranscoderUseCase adaptVideoRecordedToTranscoderUseCase;
@@ -64,13 +66,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
                                 boolean isFrontCameraSelected, boolean isPrincipalViewSelected,
                                 boolean isRightControlsViewSelected, AutoFitTextureView textureView,
                                 String directorySaveVideos,
-                                GetVideoFormatFromCurrentProjectUseCase
-                                    getVideoFormatFromCurrentProjectUseCase,
                                 AddVideoToProjectUseCase addVideoToProjectUseCase) {
 
     this.recordView = recordView;
     this.isPrincipalViewSelected = isPrincipalViewSelected;
     this.isRightControlsViewSelected = isRightControlsViewSelected;
+    getVideoFormatFromCurrentProjectUseCase = new GetVideoFormatFromCurrentProjectUseCase();
     int cameraId = 0;
     if(isFrontCameraSelected)
       cameraId = 1;
@@ -176,40 +177,33 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
     numVideoAdapting++;
     Log.d(LOG_TAG, "adaptVideo " + numVideoAdapting);
 
+    ListenableFuture transcodingJob = null;
+    try {
+      transcodingJob = adaptVideoRecordedToTranscoderUseCase.adaptVideo(origVideoRecorded, destVideoRecorded);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
-     final MediaTranscoderListener mediaTranscoderListener = new MediaTranscoderListener() {
-      @Override
-      public void onTranscodeProgress(double progress) {
+    waitTranscodingJobToFinish(transcodingJob);
+    videosRecordedAdapted();
 
+  }
+
+  private void videosRecordedAdapted() {
+    addVideoToProjectUseCase.addVideoToTrackAtPosition(destVideoRecorded, recordedVideosNumber);
+    Utils.removeVideo(origVideoRecorded);
+    recordView.hideProgressAdaptingVideo();
+    numVideoAdapting--;
+  }
+
+  private void waitTranscodingJobToFinish(ListenableFuture future) {
+    while(!future.isDone()){
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException exception) {
+        exception.printStackTrace();
       }
-
-      @Override
-      public void onTranscodeCompleted() {
-        addVideoToProjectUseCase.addVideoToTrackAtPosition(destVideoRecorded, recordedVideosNumber);
-        Utils.removeVideo(origVideoRecorded);
-        recordView.hideProgressAdaptingVideo();
-        numVideoAdapting--;
-        Log.d(LOG_TAG, "adaptVideo completed " + destVideoRecorded);
-      }
-
-      @Override
-      public void onTranscodeCanceled() {
-        recordView.hideProgressAdaptingVideo();
-        numVideoAdapting--;
-        Log.d(LOG_TAG, "adaptVideo canceled");
-      }
-
-      @Override
-      public void onTranscodeFailed(Exception exception) {
-        recordView.hideProgressAdaptingVideo();
-        numVideoAdapting--;
-        Log.d(LOG_TAG, "adaptVideo failed");
-      }
-    };
-
-    adaptVideoRecordedToTranscoderUseCase.adaptVideo(origVideoRecorded, destVideoRecorded,
-        mediaTranscoderListener);
-
+    }
   }
 
   @Override

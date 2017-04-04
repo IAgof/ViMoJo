@@ -3,7 +3,7 @@ package com.videonasocialmedia.vimojo.text.domain;
 import android.graphics.drawable.Drawable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
@@ -42,7 +42,7 @@ public class ModifyVideoTextAndPositionUseCase {
     }
 
     public void addTextToVideo(Drawable drawableFadeTransition, Video videoToEdit,
-                               VideonaFormat format, String text, String textPosition,
+                               VideoTranscoderFormat format, String text, String textPosition,
                                String intermediatesTempAudioFadeDirectory,
                                TranscoderHelperListener listener) {
       boolean isVideoFadeTransitionActivated =
@@ -62,7 +62,7 @@ public class ModifyVideoTextAndPositionUseCase {
     }
 
   private void updateGeneratedVideo(Drawable drawableFadeTransition, Video videoToEdit,
-                                    VideonaFormat format,
+                                    VideoTranscoderFormat format,
                                     String intermediatesTempAudioFadeDirectory,
                                     TranscoderHelperListener listener,
                                     boolean isVideoFadeTransitionActivated,

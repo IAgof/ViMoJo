@@ -83,7 +83,6 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         vpPager.setOnPageChangeListener(this);
 
         getActivityPresentersComponent().inject(this);
-//        galleryPagerPresenter = new GalleryPagerPresenter(this);
 
         PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_header);
         pagerTabStrip.setDrawFullUnderline(true);

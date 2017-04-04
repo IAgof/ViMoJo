@@ -302,4 +302,5 @@ dependencies {
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support:support-annotations:25.2.0'
 
+    compile project(path: ':camera')
 }

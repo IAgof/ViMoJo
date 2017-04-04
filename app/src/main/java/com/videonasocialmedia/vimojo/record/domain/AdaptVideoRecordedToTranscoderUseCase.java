@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.record.domain;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
-import com.videonasocialmedia.transcoder.MediaTranscoderListener;
 import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
@@ -22,23 +22,11 @@ public class AdaptVideoRecordedToTranscoderUseCase {
 
   public AdaptVideoRecordedToTranscoderUseCase(){
     getVideoFormatFromCurrentProjectUseCase = new GetVideoFormatFromCurrentProjectUseCase();
-    //videoFormat = getVideoFormatFromCurrentProjectUseCase.getVideoTranscodedFormatFromCurrentProject();
     videoFormat = new VideoTranscoderFormat(192*1000,1);
   }
 
 
-  public void adaptVideo(final String origVideoRecordedPath, final String destVideoPath,
-                         final MediaTranscoderListener listener) {
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          transcoderHelper.adaptVideoToTranscoder(origVideoRecordedPath, videoFormat, listener, destVideoPath);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }).start();
-
+  public ListenableFuture adaptVideo(final String origVideoRecordedPath, final String destVideoPath) throws IOException {
+    return transcoderHelper.adaptVideoToTranscoder(origVideoRecordedPath, videoFormat, destVideoPath);
   }
 }

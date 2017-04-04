@@ -18,7 +18,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
-import android.view.MotionEvent;
 
 import com.videonasocialmedia.avrecorder.AudioVideoRecorder;
 import com.videonasocialmedia.avrecorder.SessionConfig;
@@ -27,14 +26,14 @@ import com.videonasocialmedia.avrecorder.event.CameraEncoderResetEvent;
 import com.videonasocialmedia.avrecorder.event.CameraOpenedEvent;
 import com.videonasocialmedia.avrecorder.event.MuxerFinishedEvent;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessEvent;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -77,7 +76,6 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
     private RecordView recordView;
     private SessionConfig config;
     private AddVideoToProjectUseCase addVideoToProjectUseCase;
-    private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private AudioVideoRecorder recorder;
     private int recordedVideosNumber;
     private SharedPreferences sharedPreferences;
@@ -91,7 +89,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
     private boolean externalIntent;
 
     private Drawable drawableFadeTransitionVideo;
-    private VideonaFormat videoFormat;
+    private VideoTranscoderFormat videoFormat;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
     private LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
 
@@ -101,8 +99,6 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
                            boolean externalIntent,
                            AddVideoToProjectUseCase addVideoToProjectUseCase,
                            UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
-                           GetVideonaFormatFromCurrentProjectUseCase
-                                   getVideonaFormatFromCurrentProjectUseCase,
                            LaunchTranscoderAddAVTransitionsUseCase
                                    launchTranscoderAddAVTransitionsUseCase) {
         this.context = context;
@@ -113,7 +109,6 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         this.externalIntent = externalIntent;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
-        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionsUseCase;
         this.currentProject = loadCurrentProject();
         preferencesEditor = sharedPreferences.edit();
@@ -471,7 +466,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
 
         video.setTempPath(currentProject.getProjectPathIntermediateFiles());
 
-        videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
+        videoFormat = currentProject.getVMComposition().getVideoFormat();
         drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
 
         launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,

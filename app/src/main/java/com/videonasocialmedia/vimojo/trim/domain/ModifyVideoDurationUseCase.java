@@ -4,7 +4,7 @@ package com.videonasocialmedia.vimojo.trim.domain;
 import android.graphics.drawable.Drawable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
@@ -50,7 +50,7 @@ public class ModifyVideoDurationUseCase{
    * @param transcoderHelperListener
    */
   public void trimVideo(final Drawable drawableFadeTransition, final Video videoToEdit,
-                        final VideonaFormat format,
+                        final VideoTranscoderFormat format,
                         final int startTimeMs, final int finishTimeMs,
                         final String intermediatesTempAudioFadeDirectory,
                         final TranscoderHelperListener
@@ -72,7 +72,7 @@ public class ModifyVideoDurationUseCase{
   }
 
   private void updateGeneratedVideo(Drawable drawableFadeTransition, Video videoToEdit,
-                                    VideonaFormat format,
+                                    VideoTranscoderFormat format,
                                     String intermediatesTempAudioFadeDirectory,
                                     TranscoderHelperListener transcoderHelperListener,
                                     boolean isVideoFadeTransitionActivated,

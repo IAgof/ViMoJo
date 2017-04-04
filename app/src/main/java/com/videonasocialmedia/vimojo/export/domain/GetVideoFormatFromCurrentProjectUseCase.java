@@ -14,10 +14,12 @@ public class GetVideoFormatFromCurrentProjectUseCase {
     public Project project;
 
     public GetVideoFormatFromCurrentProjectUseCase() {
-        this.project = Project.getInstance(null, null, null);
     }
 
     public VideoTranscoderFormat getVideoTranscodedFormatFromCurrentProject(){
+
+        project = Project.getInstance(null, null, null);
+
         VideoTranscoderFormat videoTranscoderFormat;
 
         VideoResolution resolution = project.getProfile().getVideoResolution();
@@ -34,6 +36,8 @@ public class GetVideoFormatFromCurrentProjectUseCase {
     }
 
     public VideoCameraFormat getVideoRecordedFormatFromCurrentProjectUseCase() {
+
+        project = Project.getInstance(null, null, null);
 
         VideoCameraFormat videoCameraFormat;
 

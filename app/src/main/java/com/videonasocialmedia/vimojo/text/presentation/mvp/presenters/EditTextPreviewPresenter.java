@@ -5,12 +5,12 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -41,7 +41,6 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
-    private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
 
     private EditTextView editTextView;
@@ -55,15 +54,12 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                     ModifyVideoTextAndPositionUseCase
                                             modifyVideoTextAndPositionUseCase,
-                                    GetVideonaFormatFromCurrentProjectUseCase
-                                            getVideonaFormatFromCurrentProjectUseCase,
                                     UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase) {
         this.editTextView = editTextView;
         this.context = context;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
-        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.currentProject = loadCurrentProject();
     }
@@ -101,9 +97,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
     }
 
     public void setTextToVideo(String text, TextEffect.TextPosition textPositionSelected) {
-        VideonaFormat videoFormat =
-            getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
-
+        VideoTranscoderFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
         // TODO:(alvaro.martinez) 22/02/17 This drawable saved in app or sdk?
         Drawable drawableFadeTransitionVideo =
             ContextCompat.getDrawable(VimojoApplication.getAppContext(), R.drawable.alpha_transition_white);
