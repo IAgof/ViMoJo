@@ -16,17 +16,19 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCase {
 
   private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
 
-  public UpdateIntermediateTemporalFilesTransitionsUseCase(GetMediaListFromProjectUseCase getMediaListFromProjectUseCase){
+  public UpdateIntermediateTemporalFilesTransitionsUseCase(GetMediaListFromProjectUseCase
+                                                               getMediaListFromProjectUseCase){
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
   }
 
   public void execute(OnRelaunchTemporalFileListener listener) {
-    Project project = Project.getInstance(null,null,null);
+    Project project = Project.getInstance(null, null, null);
     List<Media> items = getMediaListFromProjectUseCase.getMediaListFromProject();
-    for(Media media: items){
-      Video video = (Video) media;
-      if(video.isEdited()) {
+    if (items.size() > 0)    {
+      for (Media media : items) {
+        Video video = (Video) media;
         video.setTempPathFinished(false);
+        video.setTempPath(project.getProjectPathIntermediateFiles());
         listener.videoToRelaunch(video.getUuid(), project.getProjectPathIntermediateFileAudioFade());
       }
     }

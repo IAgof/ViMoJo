@@ -16,10 +16,10 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.avrecorder.AudioVideoRecorder;
 import com.videonasocialmedia.avrecorder.SessionConfig;
 import com.videonasocialmedia.avrecorder.VideoEncoderConfig;
@@ -27,17 +27,22 @@ import com.videonasocialmedia.avrecorder.event.CameraEncoderResetEvent;
 import com.videonasocialmedia.avrecorder.event.CameraOpenedEvent;
 import com.videonasocialmedia.avrecorder.event.MuxerFinishedEvent;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
-import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessEvent;
+import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import org.json.JSONException;
@@ -56,23 +61,25 @@ import de.greenrobot.event.EventBus;
 /**
  * @author Juan Javier Cabanas
  */
-
 /**
- * @deprecated RecordPresenter use camera1, avrecorder. Not used, asynchronous video recorded.
+ * @deprecated RecordPresenter use camera1, avrecorder.
  */
-public class RecordPresenter {
+
+public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
+    TranscoderHelperListener {
 
     /**
      * LOG_TAG
      */
     private static final String LOG_TAG = "RecordPresenter";
+    private final UserEventTracker userEventTracker;
     private boolean firstTimeRecording;
     private RecordView recordView;
     private SessionConfig config;
     private AddVideoToProjectUseCase addVideoToProjectUseCase;
+    private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private AudioVideoRecorder recorder;
     private int recordedVideosNumber;
-    private MixpanelAPI mixpanel;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor preferencesEditor;
     private String resolution;
@@ -83,22 +90,35 @@ public class RecordPresenter {
 
     private boolean externalIntent;
 
+    private Drawable drawableFadeTransitionVideo;
+    private VideonaFormat videoFormat;
+    private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
+    private LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
+
     @Inject
-    public RecordPresenter(Context context, RecordView recordView,
+    public RecordPresenter(Context context, RecordView recordView, UserEventTracker userEventTracker,
                            GLCameraView cameraPreview, SharedPreferences sharedPreferences,
                            boolean externalIntent,
-                           AddVideoToProjectUseCase addVideoToProjectUseCase) {
+                           AddVideoToProjectUseCase addVideoToProjectUseCase,
+                           UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
+                           GetVideonaFormatFromCurrentProjectUseCase
+                                   getVideonaFormatFromCurrentProjectUseCase,
+                           LaunchTranscoderAddAVTransitionsUseCase
+                                   launchTranscoderAddAVTransitionsUseCase) {
         this.context = context;
         this.recordView = recordView;
+        this.userEventTracker = userEventTracker;
         this.cameraPreview = cameraPreview;
         this.sharedPreferences = sharedPreferences;
         this.externalIntent = externalIntent;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-
+        this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
+        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
+        this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionsUseCase;
         this.currentProject = loadCurrentProject();
         preferencesEditor = sharedPreferences.edit();
         recordedVideosNumber = 0;
-        mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_TOKEN);
+
     }
 
     public Project loadCurrentProject() {
@@ -221,7 +241,7 @@ public class RecordPresenter {
             userInteractionsProperties.put(AnalyticsConstants.RECORDING, recorder.isRecording());
             userInteractionsProperties.put(AnalyticsConstants.INTERACTION, interaction);
             userInteractionsProperties.put(AnalyticsConstants.RESULT, result);
-            mixpanel.track(AnalyticsConstants.USER_INTERACTED, userInteractionsProperties);
+            userEventTracker.mixpanel.track(AnalyticsConstants.USER_INTERACTED, userInteractionsProperties);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -258,7 +278,7 @@ public class RecordPresenter {
     }
 
     private void startRecord() {
-        mixpanel.timeEvent(AnalyticsConstants.VIDEO_RECORDED);
+        userEventTracker.mixpanel.timeEvent(AnalyticsConstants.VIDEO_RECORDED);
         trackUserInteracted(AnalyticsConstants.RECORD, AnalyticsConstants.START);
         recorder.startRecording();
         recordView.lockScreenRotation();
@@ -292,7 +312,7 @@ public class RecordPresenter {
         if (externalIntent) {
             recordView.finishActivityForResult(finalPath);
         } else {
-            addVideoToProjectUseCase.addVideoToTrack(finalPath);
+            addVideoToProjectUseCase.addVideoToTrack(finalPath, this);
         }
     }
 
@@ -330,14 +350,14 @@ public class RecordPresenter {
         int numPreviousVideosRecorded;
         try {
             numPreviousVideosRecorded =
-                    mixpanel.getSuperProperties().getInt(AnalyticsConstants.TOTAL_VIDEOS_RECORDED);
+                    userEventTracker.mixpanel.getSuperProperties().getInt(AnalyticsConstants.TOTAL_VIDEOS_RECORDED);
         } catch (JSONException e) {
             numPreviousVideosRecorded = 0;
         }
         try {
             totalVideoRecordedSuperProperty.put(AnalyticsConstants.TOTAL_VIDEOS_RECORDED,
                     ++numPreviousVideosRecorded);
-            mixpanel.registerSuperProperties(totalVideoRecordedSuperProperty);
+            userEventTracker.mixpanel.registerSuperProperties(totalVideoRecordedSuperProperty);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -352,7 +372,7 @@ public class RecordPresenter {
             videoRecordedProperties.put(AnalyticsConstants.RESOLUTION, resolution);
             videoRecordedProperties.put(AnalyticsConstants.TOTAL_VIDEOS_RECORDED,
                     totalVideosRecorded);
-            mixpanel.track(AnalyticsConstants.VIDEO_RECORDED, videoRecordedProperties);
+            userEventTracker.mixpanel.track(AnalyticsConstants.VIDEO_RECORDED, videoRecordedProperties);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -371,8 +391,8 @@ public class RecordPresenter {
         } catch (JSONException e) {
             e.printStackTrace();
         }*/
-        mixpanel.getPeople().increment(AnalyticsConstants.TOTAL_VIDEOS_RECORDED, 1);
-        mixpanel.getPeople().set(AnalyticsConstants.LAST_VIDEO_RECORDED,
+        userEventTracker.mixpanel.getPeople().increment(AnalyticsConstants.TOTAL_VIDEOS_RECORDED, 1);
+        userEventTracker.mixpanel.getPeople().set(AnalyticsConstants.LAST_VIDEO_RECORDED,
                 new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date()));
     }
 
@@ -443,6 +463,29 @@ public class RecordPresenter {
 
     public void rotateCamera(int rotation) {
         recorder.rotateCamera(rotation);
+    }
+
+
+    @Override
+    public void videoToLaunchAVTransitionTempFile(Video video, String intermediatesTempAudioFadeDirectory) {
+
+        video.setTempPath(currentProject.getProjectPathIntermediateFiles());
+
+        videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
+        drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
+
+        launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
+            intermediatesTempAudioFadeDirectory, this);
+    }
+
+    @Override
+    public void onSuccessTranscoding(Video video) {
+        updateVideoRepositoryUseCase.updateVideo(video);
+    }
+
+    @Override
+    public void onErrorTranscoding(Video video, String message) {
+
     }
 
 }

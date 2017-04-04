@@ -15,6 +15,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.After;
@@ -43,6 +44,7 @@ public class EditPresenterTest {
   @Mock private UserEventTracker mockedUserEventTracker;
   @Mock private RemoveVideoFromProjectUseCase mockedVideoRemover;
   @Mock private ReorderMediaItemUseCase mockedMediaItemReorderer;
+  @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
 
   @InjectMocks private EditPresenter injectedEditPresenter;
 
@@ -80,13 +82,14 @@ public class EditPresenterTest {
     Project project = getAProject();
     String musicPath = "voice/over/path";
     float musicVolume = 0.6f;
-    Music voiceOver = new Music(musicPath, musicVolume);
+    Music voiceOver = new Music(musicPath, musicVolume, 0);
     project.getVMComposition().getAudioTracks().get(0).insertItem(voiceOver);
     GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
     EditPresenter presenter = new EditPresenter(mockedEditorView, mockedUserEventTracker,
-        mockedVideoRemover, mockedMediaItemReorderer, getMusicFromProjectUseCase);
+        mockedVideoRemover, mockedMediaItemReorderer, getMusicFromProjectUseCase,
+        mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);
 
-    presenter.loadProject();
+    presenter.init();
 
     verify(mockedEditorView).setMusic(voiceOver);
   }

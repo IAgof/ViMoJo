@@ -1,10 +1,12 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
@@ -36,6 +38,9 @@ public class SoundVolumePresenterTest {
   @Mock private RemoveMusicFromProjectUseCase mockedRemoveMusicFromProjectUseCase;
   @InjectMocks SoundVolumePresenter injectedPresenter;
   @Mock private ProjectRepository mockedProjectRepository;
+  @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
+  @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
+
 
   @Before
   public void injectTestDoubles() {
@@ -50,7 +55,7 @@ public class SoundVolumePresenterTest {
   @Test
   public void removeMusicFromProjectCallsRemoveMusicFromProject() throws IllegalItemOnTrack {
     Project currentProject = getCurrentProject();
-    Music music = new Music("media/path");
+    Music music = new Music("media/path", 0);
     currentProject.getAudioTracks().get(0).insertItemAt(0, music);
 
     injectedPresenter.removeMusicFromProject();
@@ -62,7 +67,7 @@ public class SoundVolumePresenterTest {
   public void setVoiceOverRemovesPreviousMusicAndSetsVoiceOverAsMusicInComposition()
           throws IllegalItemOnTrack {
     Project currentProject = getCurrentProject();
-    Music music = new Music("music/path");
+    Music music = new Music("music/path", 0);
     assert music.getVolume() == Music.DEFAULT_MUSIC_VOLUME;
     currentProject.getVMComposition().getAudioTracks().get(0).insertItemAt(0, music);
     RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase =
@@ -72,7 +77,8 @@ public class SoundVolumePresenterTest {
     AddVoiceOverToProjectUseCase addVoiceOverToProjectUseCase = new AddVoiceOverToProjectUseCase(
             mockedProjectRepository, addMusicToProjectUseCase, removeMusicFromProjectUseCase);
     SoundVolumePresenter presenter = new SoundVolumePresenter(mockedSoundVolumeView,
-            removeMusicFromProjectUseCase, addVoiceOverToProjectUseCase);
+            removeMusicFromProjectUseCase, addVoiceOverToProjectUseCase,
+        mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionsFromProject);
 
     presenter.setVoiceOver("voice/over/path", 0.6f);
 

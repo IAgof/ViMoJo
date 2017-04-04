@@ -37,6 +37,9 @@
     <string name="other_options">Other options</string>
     <string name="record">Record</string>
     <string name="gallery">Gallery</string>
+    <string name="dialog_editor_user_thumb_message">Select user photo from</string>
+    <string name="dialog_editor_user_thumb_take_photo">Camera</string>
+    <string name="dialog_editor_user_thumb_pick_photo">Gallery</string>
 
 
     <!-- Edit Activity -->
@@ -219,6 +222,10 @@
     <string name="title_fade_transition">Transition</string>
     <string name="title_video_fade_transition">Video fade transition</string>
     <string name="title_audio_fade_transition">Audio fade transition</string>
+
+    <!-- Watermark Settings -->
+    <string name="title_watermark_section">Add watermark</string>
+    <string name="title_watermark_preference">Watermark</string>
 
     <!-- More info Settings -->
     <string name="aboutUsTitle">About us</string>

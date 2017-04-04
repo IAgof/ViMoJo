@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 
@@ -21,7 +22,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -45,6 +45,8 @@ public class RealmProjectToProjectMapperTest {
   @Mock Project mockedProject;
   @InjectMocks RealmProjectToProjectMapper mockedMapper;
   private File mockedStorageDir;
+  @Mock private Context mockedContext;
+
   @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
@@ -61,7 +63,7 @@ public class RealmProjectToProjectMapperTest {
   @Test
   public void testMapReturnsProjectInstance() {
     RealmProject realmProject = getARealmProject();
-    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
+    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper(mockedContext);
 
     Project project = mapper.map(realmProject);
 
@@ -76,7 +78,7 @@ public class RealmProjectToProjectMapperTest {
     realmProject.quality = VideoQuality.Quality.HIGH.name();
     realmProject.resolution = VideoResolution.Resolution.HD720.name();
     realmProject.frameRate = VideoFrameRate.FrameRate.FPS25.name();
-    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
+    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper(mockedContext);
 
     Project project = mapper.map(realmProject);
 
@@ -87,7 +89,7 @@ public class RealmProjectToProjectMapperTest {
   @Test
   public void testMapReturnsProjectWithProfile() {
     RealmProject realmProject = getARealmProject();
-    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
+    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper(mockedContext);
 
     Project project = mapper.map(realmProject);
     Profile profile = project.getProfile();
@@ -101,7 +103,7 @@ public class RealmProjectToProjectMapperTest {
   public void testMapReturnsNullIfEmptyQuality() {
     RealmProject realmProject = new RealmProject();
     realmProject.quality = VideoQuality.Quality.HIGH.name();
-    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
+    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper(mockedContext);
 
     Project project = mapper.map(realmProject);
 
@@ -112,7 +114,7 @@ public class RealmProjectToProjectMapperTest {
   public void testMapReturnsNullIfEmptyResolution() {
     RealmProject realmProject = new RealmProject();
     realmProject.resolution = VideoResolution.Resolution.HD720.name();
-    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
+    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper(mockedContext);
 
     Project project = mapper.map(realmProject);
 
@@ -123,7 +125,7 @@ public class RealmProjectToProjectMapperTest {
   public void testMapReturnsNullIfEmptyFrameRate() {
     RealmProject realmProject = new RealmProject();
     realmProject.frameRate = VideoFrameRate.FrameRate.FPS25.name();
-    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
+    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper(mockedContext);
 
     Project project = mapper.map(realmProject);
 
@@ -134,7 +136,7 @@ public class RealmProjectToProjectMapperTest {
   public void testMapReturnsNullIfInvalidQuality() {
     RealmProject realmProject = new RealmProject();
     realmProject.quality = "esto no vale";
-    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
+    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper(mockedContext);
 
     Project project = mapper.map(realmProject);
 
@@ -145,7 +147,7 @@ public class RealmProjectToProjectMapperTest {
   public void testMapReturnsNullIfInvalidResolution() {
     RealmProject realmProject = new RealmProject();
     realmProject.resolution = "esto no vale";
-    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
+    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper(mockedContext);
 
     Project project = mapper.map(realmProject);
 
@@ -156,7 +158,7 @@ public class RealmProjectToProjectMapperTest {
   public void testMapReturnsNullIfInvalidFrameRate() {
     RealmProject realmProject = new RealmProject();
     realmProject.frameRate = "esto no vale";
-    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
+    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper(mockedContext);
 
     Project project = mapper.map(realmProject);
 
@@ -169,7 +171,7 @@ public class RealmProjectToProjectMapperTest {
     RealmProject realmProject = getARealmProject();
     realmProject.musicTitle = "Sorrow and sadness";
   //  RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
-    Music music = new Music("music/path");
+    Music music = new Music("music/path", 0);
     music.setMusicTitle(realmProject.musicTitle);
     doReturn(music).when(mockedMusicSource).getMusicByTitle("somePath",realmProject.musicTitle);
 
@@ -185,7 +187,7 @@ public class RealmProjectToProjectMapperTest {
     RealmProject realmProject = getARealmProject();
     realmProject.musicTitle = Constants.MUSIC_AUDIO_VOICEOVER_TITLE;
     realmProject.musicVolume = 0.8f;
-    Music music = new Music("music/path");
+    Music music = new Music("music/path", 0);
     doReturn(music).when(mockedMusicSource).getMusicByTitle("somePath", realmProject.musicTitle);
 
     Project project = mockedMapper.map(realmProject);

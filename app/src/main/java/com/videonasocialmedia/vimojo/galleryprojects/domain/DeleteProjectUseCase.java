@@ -11,6 +11,8 @@ import com.videonasocialmedia.vimojo.utils.FileUtils;
 import java.io.File;
 import java.util.LinkedList;
 
+import javax.inject.Inject;
+
 /**
  * Created by alvaro on 14/12/16.
  */
@@ -20,6 +22,7 @@ public class DeleteProjectUseCase {
   protected ProjectRepository projectRepository;
   protected VideoRepository videoRepository;
 
+  @Inject
   public DeleteProjectUseCase(ProjectRepository projectRepository, VideoRepository videoRepository){
     this.projectRepository = projectRepository;
     this.videoRepository = videoRepository;

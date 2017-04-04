@@ -77,7 +77,7 @@ public class VimojoMigration implements RealmMigration {
           int startTime;
           int stopTime;
     ************************************************/
-    // Migrate from version 0 to version 1
+    // Migrate from version 1 to version 2
     if (oldVersion == 1) {
       schema.get("RealmProject").addField("frameRate", String.class)
               .transform(new RealmObjectSchema.Function() {
@@ -88,37 +88,39 @@ public class VimojoMigration implements RealmMigration {
               });
       oldVersion++;
     }
-    // Migrate from version 1 to version 2
+    // Migrate from version 2 to version 3
     if (oldVersion == 2) {
-      schema.get("RealmProject").addField("uuid", String.class)
+      RealmObjectSchema realmProject = schema.get("RealmProject");
+      realmProject.addField("uuid", String.class)
               .transform(new RealmObjectSchema.Function() {
                 @Override
                 public void apply(DynamicRealmObject obj) {
                   obj.setString("uuid", UUID.randomUUID().toString());
                 }
               });
-      schema.get("RealmProject").addField("lastModification", String.class)
+      updateRealmProjectPrimaryKeyToUuid(realmProject);
+      realmProject.addField("lastModification", String.class)
           .transform(new RealmObjectSchema.Function() {
             @Override
             public void apply(DynamicRealmObject obj) {
               obj.setString("lastModification", DateUtils.getDateRightNow());
             }
           });
-      schema.get("RealmProject").addField("duration", Integer.class)
+      realmProject.addField("duration", Integer.class)
           .transform(new RealmObjectSchema.Function() {
             @Override
             public void apply(DynamicRealmObject obj) {
               obj.setInt("duration", 0);
             }
           });
-      schema.get("RealmProject").addField("pathLastVideoExported", String.class)
+      realmProject.addField("pathLastVideoExported", String.class)
           .transform(new RealmObjectSchema.Function() {
             @Override
             public void apply(DynamicRealmObject obj) {
               obj.setString("pathLastVideoExported", "");
             }
           });
-      schema.get("RealmProject").addField("dateLastVideoExported", String.class)
+      realmProject.addField("dateLastVideoExported", String.class)
           .transform(new RealmObjectSchema.Function() {
             @Override
             public void apply(DynamicRealmObject obj) {
@@ -128,24 +130,50 @@ public class VimojoMigration implements RealmMigration {
       oldVersion++;
     }
 
-    // Migrate from version 2 to version 3,
+    // Migrate from version 3 to version 4,
     if (oldVersion == 3) {
-      schema.get("RealmProject").addField("isAudioFadeTransitionActivated", boolean.class)
-          .transform(new RealmObjectSchema.Function() {
-            @Override
-            public void apply(DynamicRealmObject obj) {
-              obj.setBoolean("isAudioFadeTransitionActivated", false);
-            }
-          });
-      schema.get("RealmProject").addField("isVideoFadeTransitionActivated", boolean.class)
-          .transform(new RealmObjectSchema.Function() {
-            @Override
-            public void apply(DynamicRealmObject obj) {
-              obj.setBoolean("isVideoFadeTransitionActivated", false);
-            }
-          });
+      RealmObjectSchema realmProject = schema.get("RealmProject");
+      if (!realmProject.hasField("isAudioFadeTransitionActivated")) {
+        realmProject.addField("isAudioFadeTransitionActivated", boolean.class)
+                .transform(new RealmObjectSchema.Function() {
+                  @Override
+                  public void apply(DynamicRealmObject obj) {
+                    obj.setBoolean("isAudioFadeTransitionActivated", false);
+                  }
+                });
+      }
+      if (!realmProject.hasField("isVideoFadeTransitionActivated")) {
+        realmProject.addField("isVideoFadeTransitionActivated", boolean.class)
+                .transform(new RealmObjectSchema.Function() {
+                  @Override
+                  public void apply(DynamicRealmObject obj) {
+                    obj.setBoolean("isVideoFadeTransitionActivated", false);
+                  }
+                });
+      }
       oldVersion++;
+    }
 
+    //// Migrate from version 4 to version 5,
+    if(oldVersion == 4){
+      RealmObjectSchema realmProject = schema.get("RealmProject");
+      if(!realmProject.hasField("isWatermarkActivated")){
+        realmProject.addField("isWatermarkActivated", boolean.class)
+            .transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                obj.setBoolean("isWatermarkActivated", false);
+              }
+            });
+      }
+      oldVersion++;
+    }
+  }
+
+  private void updateRealmProjectPrimaryKeyToUuid(RealmObjectSchema realmProject) {
+    if (!realmProject.getPrimaryKey().equals("uuid")) {
+      realmProject.removePrimaryKey();
+      realmProject.addPrimaryKey("uuid");
     }
   }
 }

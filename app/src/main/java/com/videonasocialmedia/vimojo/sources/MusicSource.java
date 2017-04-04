@@ -1,9 +1,12 @@
 package com.videonasocialmedia.vimojo.sources;
 
-import com.videonasocialmedia.vimojo.R;
+import android.content.Context;
+
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.FileUtils;
 import com.videonasocialmedia.vimojo.utils.Utils;
+import com.videonasocialmedia.vimojo.model.sources.MusicProvider;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,8 +16,12 @@ import java.util.List;
  *
  */
 public class MusicSource {
-
     protected List<Music> localMusic = new ArrayList();
+    private Context context;
+
+    public MusicSource(Context context) {
+        this.context = context;
+    }
 
     public List<Music> retrieveLocalMusic() {
         if (localMusic.size() == 0)
@@ -28,18 +35,14 @@ public class MusicSource {
             File musicFile = Utils.getMusicFileByName(music.getMusicTitle(),music.getMusicResourceId());
             music.setMediaPath(musicFile.getAbsolutePath());
         }
+        this.localMusic = localMusic;
     }
 
 
     protected void populateLocalMusic() {
-        localMusic.add(new Music(R.drawable.ic_free_the_cold_wind_george_stephenson_bradford_lawrence_ellis, "Free the cold wind",
-                R.raw.free_the_gold_wind, R.color.colorPrimary, "George Stephenson, Bradford Lawrence Ellis", "02:45"));
-        localMusic.add(new Music(R.drawable.ic_galloping_a_stuart_roslyn_matt_foundling, "Galloping",
-                R.raw.galloping, R.color.colorPrimary, "Stuart Roslyn, Matt Foundling", "02:01"));
-        localMusic.add(new Music(R.drawable.ic_sorrow_and_sadness_b_david_john_vanacore_ehren_ebbage, "Sorrow and sadness",
-                R.raw.sorrow_and_sadness_b, R.color.colorPrimary, "David Jhon, Vanacore Ehrenebbage", "01:33"));
-        localMusic.add(new Music(R.drawable.ic_we_beat_as_one_b_harlin_james_paul_lewis1, "We beat as one",
-                R.raw.we_beat_as_one_b, R.color.colorPrimary, "Harlin James, Paul Lewis", "03:30"));
+        for (Music music: new MusicProvider(context).getMusicAppsInstalled()) {
+            localMusic.add(music);
+        }
     }
 
     public Music getMusicByTitle(String projectPathIntermediateFile, String musicTitle) {
@@ -47,7 +50,7 @@ public class MusicSource {
         if (musicTitle.equals(Constants.MUSIC_AUDIO_VOICEOVER_TITLE)) {
             String musicPath = projectPathIntermediateFile + File.separator +
                     Constants.AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME;
-            Music music = new Music(musicPath);
+            Music music = new Music(musicPath, FileUtils.getDuration(musicPath));
             music.setMusicTitle(musicTitle);
             return music;
         }

@@ -34,6 +34,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -47,6 +48,7 @@ import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
@@ -139,7 +141,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
             currentProjectTimePosition = savedInstanceState.getInt(CURRENT_TIME_POSITION, 0);
           }
-        bottomBar.selectTabWithId(R.id.tab_editactivity);
         setupBottomBar(bottomBar);
         setupFabMenu();
       }
@@ -217,7 +218,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
             }
         }
         videonaPlayer.onShown(this);
-        editPresenter.loadProject();
+        editPresenter.init();
+        bottomBar.selectTabWithId(R.id.tab_editactivity);
     }
 
     @Override
@@ -426,21 +428,17 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void setVideoFadeTransitionAmongVideos(){
-        // TODO:(alvaro.martinez) 10/01/17 implement VideonaSDK videonaPlayer.setVideoTransitionFade(),
-        // Once implemented, update also VoiceOverActivity, SoundActivity, MusicListActivity
-        //videonaPlayer.setVideoTransitionFade();
+        videonaPlayer.setVideoTransitionFade();
     }
 
     @Override
     public void setAudioFadeTransitionAmongVideos(){
-        // TODO:(alvaro.martinez) 10/01/17 implement VideonaSDK videonaPlayer.setAudioTransitionFade(),
-        // Once implemented, update algo VoiceOverActivity, SoundActivity, MusicListActivity
-        //videonaPlayer.setAudioTransitionFade();
+        videonaPlayer.setAudioTransitionFade();
     }
 
     @Override
     public void updateProject() {
-        editPresenter.loadProject();
+        editPresenter.init();
     }
 
     @Override
@@ -455,7 +453,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         editTrimButton.setEnabled(false);
         editSplitButton.setEnabled(false);
         editDuplicateButton.setEnabled(false);
-        videonaPlayer.releaseView();
   }
 
   @Override
@@ -494,6 +491,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         });
         dialog.show();
     }
+
 
 
   @Override

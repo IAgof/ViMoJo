@@ -30,17 +30,18 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
   @Mock OnRelaunchTemporalFileListener mockedOnRelaunchTemporalFileListener;
 
   @Before
-  public void injectTestDoubles(){
+  public void init(){
     MockitoAnnotations.initMocks(this);
+    Project project = Project.getInstance(null, null, null);
+    project.clear();
   }
 
   @Test
-  public void ifProjectHasTempFileUseCaseCallsVideoToRelaunchListener(){
+  public void ifProjectHasVideosCallsVideoToRelaunchListener(){
     Project project = getAProject();
     AddVideoToProjectUseCase addVideoToProjectUseCase =
             new AddVideoToProjectUseCase(mockedProjectRepository);
     Video videoAdded = new Video("somepath");
-    videoAdded.setTempPath("tempDirectory");
     addVideoToProjectUseCase.addVideoToProjectAtPosition(videoAdded, 0);
     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
             new GetMediaListFromProjectUseCase();

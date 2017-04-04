@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -14,20 +15,23 @@ import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideoToVideoMapper;
 import com.videonasocialmedia.vimojo.sources.MusicSource;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 /**
  * Created by jliarte on 20/10/16.
  */
 
 public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project> {
-
-  private MusicSource musicSource = new MusicSource();
+  private Context context;
   private RealmVideoToVideoMapper toVideoMapper = new RealmVideoToVideoMapper();
+
+  public RealmProjectToProjectMapper(Context context) {
+    this.context = context;
+  }
 
   @Override
   public Project map(RealmProject realmProject) {
     try {
-
       Project project = mapProject(realmProject);
       setProjectMusic(project, realmProject);
       setProjectVideos(project, realmProject);
@@ -38,10 +42,8 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
     }
   }
 
-
   @NonNull
   private Profile mapProfile(RealmProject realmProject) {
-//    if (realmProject.)
     VideoResolution.Resolution resolution = VideoResolution.Resolution.valueOf(realmProject.resolution);
     VideoQuality.Quality quality = VideoQuality.Quality.valueOf(realmProject.quality);
     VideoFrameRate.FrameRate frameRate = VideoFrameRate.FrameRate.valueOf(realmProject.frameRate);
@@ -51,7 +53,7 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
 
   @NonNull
   private Project mapProject(RealmProject realmProject){
-    Project currentProject = new Project(realmProject.title, realmProject.projectPath,
+    Project currentProject = new Project(realmProject.title, Constants.PATH_APP,
         mapProfile(realmProject));
     currentProject.setProjectPath(realmProject.projectPath);
     currentProject.setUuid(realmProject.uuid);
@@ -59,14 +61,15 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
     currentProject.setDuration(realmProject.duration);
     currentProject.setAudioFadeTransitionActivated(realmProject.isAudioFadeTransitionActivated);
     currentProject.setVideoFadeTransitionActivated(realmProject.isVideoFadeTransitionActivated);
+    currentProject.setWatermarkActivated(realmProject.isWatermarkActivated);
 
     return currentProject;
   }
 
   private void setProjectMusic(Project project, RealmProject realmProject) {
     if (realmProject.musicTitle != null) {
-      Music music = new MusicSource().getMusicByTitle(project.getProjectPathIntermediateFiles(),
-          realmProject.musicTitle);
+      Music music = new MusicSource(context).getMusicByTitle(
+              project.getProjectPathIntermediateFiles(), realmProject.musicTitle);
       music.setVolume(realmProject.musicVolume);
       try {
         project.getAudioTracks().get(0).insertItemAt(0, music);
@@ -94,7 +97,5 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
           realmProject.pathLastVideoExported,realmProject.dateLastVideoExported);
       project.setLastVideoExported(lastVideoExported);
     }
-
   }
-
 }

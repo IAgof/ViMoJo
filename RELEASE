@@ -1,8 +1,3 @@
-v0.4.19
-- Added audio (fade in/out) and video (fade to black) transitions for each clip
-- Added preferece to enable/disable audio, video transitions.
-- Added new view to go to record or gallery every time new project is created.
-- bugs and ui improvements
-    * Resize icons accept/cancel, resize preview thumb project without videos
-    * Added icon user to drawer header
-    * Added navigation to music detail if music has been selected before
+v0.4.23
+- Fixed problem in settings screen.
+- Updated video transition to white color. Adjust duration of audio, video transitions.

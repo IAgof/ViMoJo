@@ -21,9 +21,11 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity
 import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.FileUtils;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
@@ -192,7 +194,8 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     public void bindVideoList(List<Video> movieList) {
         videonaPlayer.bindVideoList(movieList);
         videonaPlayer.seekTo(currentProjectPosition);
-        videonaPlayer.setMusic(new Music(soundVoiceOverPath));
+        videonaPlayer.setMusic(new Music(soundVoiceOverPath,
+            FileUtils.getDuration(soundVoiceOverPath)));
         videonaPlayer.setVolume(currentSoundVolumePosition*0.01f);
     }
 
@@ -202,8 +205,18 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     }
 
     @Override
-    public void goToEditActivity() {
-        navigateTo(EditActivity.class);
+    public void goToSoundActivity() {
+        navigateTo(SoundActivity.class);
+    }
+
+    @Override
+    public void setVideoFadeTransitionAmongVideos() {
+        videonaPlayer.setVideoTransitionFade();
+    }
+
+    @Override
+    public void setAudioFadeTransitionAmongVideos() {
+        videonaPlayer.setAudioTransitionFade();
     }
 
     @Override

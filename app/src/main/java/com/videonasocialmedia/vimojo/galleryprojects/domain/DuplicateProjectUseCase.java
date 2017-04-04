@@ -8,6 +8,8 @@ import com.videonasocialmedia.vimojo.utils.FileUtils;
 import java.io.File;
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 /**
  * Created by alvaro on 14/12/16.
  */
@@ -16,6 +18,7 @@ public class DuplicateProjectUseCase {
 
   protected ProjectRepository projectRepository;
 
+  @Inject
   public DuplicateProjectUseCase(ProjectRepository projectRepository){
     this.projectRepository = projectRepository;
   }
