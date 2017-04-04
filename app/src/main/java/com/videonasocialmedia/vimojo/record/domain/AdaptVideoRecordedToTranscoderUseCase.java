@@ -17,11 +17,9 @@ public class AdaptVideoRecordedToTranscoderUseCase {
   private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(mediaTranscoder);
 
-  GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
   private VideonaFormat videoFormat;
 
   public AdaptVideoRecordedToTranscoderUseCase(){
-    getVideoFormatFromCurrentProjectUseCase = new GetVideoFormatFromCurrentProjectUseCase();
     videoFormat = new VideonaFormat(192*1000,1);
   }
 
