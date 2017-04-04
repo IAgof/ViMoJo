@@ -59,6 +59,7 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
 
   @Test
   public void ifProjectHasVideoTransitionActivatedCallsGenerateOutputVideoWithAVTransitions() throws IllegalItemOnTrack {
+    //getAProject().clear();
     Project project = getAProject();
     project.setVideoFadeTransitionActivated(true);
     Video video = new Video("media/path");
