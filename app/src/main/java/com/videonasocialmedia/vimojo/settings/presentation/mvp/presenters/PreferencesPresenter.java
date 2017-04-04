@@ -17,7 +17,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 
-import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -74,8 +74,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
 
-    private final Drawable drawableFadeTransitionVideo;
-    private final VideoTranscoderFormat videoFormat;
+    private Drawable drawableFadeTransitionVideo;
+    private VideonaFormat videoFormat;
     private String TAG = "PreferencesPresenter";
 
     /**
@@ -92,7 +92,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             SharedPreferences sharedPreferences,
             PreferenceCategory cameraSettingsPref,
             ListPreference resolutionPref, ListPreference qualityPref,
-            ListPreference frameRatePref, Preference transitionVideoPref,
+            Preference transitionVideoPref,
             Preference transitionAudioPref, Preference watermarkPref, Preference emailPref,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
@@ -127,10 +127,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.getWatermarkPreferenceFromProjectUseCase = getWatermarkPreferenceFromProjectUseCase;
         this.updateWatermarkPreferenceToProjectUseCase = updateWatermarkPreferenceToProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
-      GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase =
-            new GetVideoFormatFromCurrentProjectUseCase();
-        videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideoTranscodedFormatFromCurrentProject();
-        drawableFadeTransitionVideo = VimojoApplication.getAppContext().getDrawable(R.drawable.alpha_transition_white);
     }
 
     /**
@@ -403,7 +399,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     public void videoToRelaunch(String videoUuid, String intermediatesTempAudioFadeDirectory) {
         Project currentProject = Project.getInstance(null, null, null);
         final Video video = getVideo(videoUuid);
-
+        videoFormat = currentProject.getVMComposition().getVideoFormat();
+        drawableFadeTransitionVideo = VimojoApplication.getAppContext().getDrawable(R.drawable.alpha_transition_white);
         RelaunchTranscoderTempBackgroundUseCase useCase = new RelaunchTranscoderTempBackgroundUseCase();
         useCase.relaunchExport(drawableFadeTransitionVideo, video, videoFormat,
                 currentProject.getProjectPathIntermediateFileAudioFade(), this);

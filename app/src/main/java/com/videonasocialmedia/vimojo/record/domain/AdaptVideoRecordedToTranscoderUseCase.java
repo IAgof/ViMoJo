@@ -2,7 +2,7 @@ package com.videonasocialmedia.vimojo.record.domain;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
-import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 
@@ -18,11 +18,11 @@ public class AdaptVideoRecordedToTranscoderUseCase {
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(mediaTranscoder);
 
   GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
-  private VideoTranscoderFormat videoFormat;
+  private VideonaFormat videoFormat;
 
   public AdaptVideoRecordedToTranscoderUseCase(){
     getVideoFormatFromCurrentProjectUseCase = new GetVideoFormatFromCurrentProjectUseCase();
-    videoFormat = new VideoTranscoderFormat(192*1000,1);
+    videoFormat = new VideonaFormat(192*1000,1);
   }
 
 

@@ -89,6 +89,7 @@ public class SoundPresenterTest {
 
   @Test
   public void ifProjectHasVideosCallsBindVideoList() throws IllegalItemOnTrack {
+    getAProject().clear();
     Project project = getAProject();
     Video video = new Video("video/path");
     List<Video> videoList = new ArrayList<>();

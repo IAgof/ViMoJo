@@ -49,7 +49,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
   private static final String LOG_TAG = "RecordPresenter";
   private final boolean isRightControlsViewSelected;
   private final boolean isPrincipalViewSelected;
-  private final GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
   private RecordCamera2View recordView;
   private AddVideoToProjectUseCase addVideoToProjectUseCase;
   private AdaptVideoRecordedToTranscoderUseCase adaptVideoRecordedToTranscoderUseCase;
@@ -66,12 +65,13 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
                                 boolean isFrontCameraSelected, boolean isPrincipalViewSelected,
                                 boolean isRightControlsViewSelected, AutoFitTextureView textureView,
                                 String directorySaveVideos,
+                                GetVideoFormatFromCurrentProjectUseCase
+                                    getVideoFormatFromCurrentProjectUseCase,
                                 AddVideoToProjectUseCase addVideoToProjectUseCase) {
 
     this.recordView = recordView;
     this.isPrincipalViewSelected = isPrincipalViewSelected;
     this.isRightControlsViewSelected = isRightControlsViewSelected;
-    getVideoFormatFromCurrentProjectUseCase = new GetVideoFormatFromCurrentProjectUseCase();
     int cameraId = 0;
     if(isFrontCameraSelected)
       cameraId = 1;

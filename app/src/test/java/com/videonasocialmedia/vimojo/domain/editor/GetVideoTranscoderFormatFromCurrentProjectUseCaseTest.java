@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
-import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
+import com.videonasocialmedia.camera.utils.VideoCameraFormat;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -47,9 +48,9 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
     currentProject.getProfile().setQuality(null);
     GetVideoFormatFromCurrentProjectUseCase useCase =
         new GetVideoFormatFromCurrentProjectUseCase();
-    VideoTranscoderFormat defaultVideoTranscoderFormat = new VideoTranscoderFormat();
+    VideonaFormat defaultVideoTranscoderFormat = new VideonaFormat();
 
-    VideoTranscoderFormat videoTranscoderFormat = useCase.getVideoTranscodedFormatFromCurrentProject();
+    VideoCameraFormat videoTranscoderFormat = useCase.getVideoRecordedFormatFromCurrentProjectUseCase();
 
     assertThat(videoTranscoderFormat.getVideoBitrate(), is(defaultVideoTranscoderFormat.getVideoBitrate()));
     assertThat(videoTranscoderFormat.getVideoHeight(), is(defaultVideoTranscoderFormat.getVideoHeight()));
@@ -58,11 +59,13 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
 
   @Test
   public void getVideoTranscoderFormatFromCurrentProjectReturnsFormatWithProfileValues() {
-    Project currentProject = getAProject();
+
+    getAProject();
+
     GetVideoFormatFromCurrentProjectUseCase useCase =
         new GetVideoFormatFromCurrentProjectUseCase();
 
-    VideoTranscoderFormat videoTranscoderFormat = useCase.getVideoTranscodedFormatFromCurrentProject();
+    VideoCameraFormat videoTranscoderFormat = useCase.getVideoRecordedFormatFromCurrentProjectUseCase();
 
     assertThat("videoBitRate", 10 * 1000 * 1000, is(videoTranscoderFormat.getVideoBitrate()));
     assertThat("videoWidth", 1280, is(videoTranscoderFormat.getVideoWidth()));

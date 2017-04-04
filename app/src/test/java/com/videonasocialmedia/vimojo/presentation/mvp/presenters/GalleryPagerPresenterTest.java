@@ -9,7 +9,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
@@ -35,7 +34,6 @@ public class GalleryPagerPresenterTest {
   @Mock Video mockedVideo;
   @Mock GalleryPagerView mockedGalleryPagerView;
   @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
-  @Mock GetVideonaFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
   @Mock LaunchTranscoderAddAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionsUseCase;
   @Mock Context mockedContext;
 
@@ -51,7 +49,6 @@ public class GalleryPagerPresenterTest {
 
     galleryPagerPresenter = new GalleryPagerPresenter(mockedGalleryPagerView,
         mockedAddVideoToProjectUseCase,mockedUpdateVideoRepositoryUseCase,
-        mockedGetVideonaFormatFromCurrentProjectUseCase,
         mockedLaunchTranscoderAddAVTransitionsUseCase, mockedContext);
     Project project = getAProject();
 
@@ -60,6 +57,7 @@ public class GalleryPagerPresenterTest {
 
   @Test
   public void videoToLaunchAVTransitionTempFileUpdateVideoTempPath(){
+    getAProject().clear();
     Project project = getAProject();
     project.setAudioFadeTransitionActivated(true);
     String path = "media/path";
@@ -67,7 +65,6 @@ public class GalleryPagerPresenterTest {
 
     galleryPagerPresenter = new GalleryPagerPresenter(mockedGalleryPagerView,
         mockedAddVideoToProjectUseCase,mockedUpdateVideoRepositoryUseCase,
-        mockedGetVideonaFormatFromCurrentProjectUseCase,
         mockedLaunchTranscoderAddAVTransitionsUseCase, mockedContext);
 
     Video video = new Video(path);

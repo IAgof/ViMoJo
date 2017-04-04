@@ -14,7 +14,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 
-import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
@@ -47,7 +47,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     private boolean differentVideoFormat;
 
     private Drawable drawableFadeTransitionVideo;
-    private VideoTranscoderFormat videoFormat;
+    private VideonaFormat videoFormat;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
     private LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
 

@@ -14,6 +14,7 @@ import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DuplicateProjectUseCase;
@@ -212,12 +213,14 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  RecordCamera2Presenter provideRecordCamera2Presenter(AddVideoToProjectUseCase
+  RecordCamera2Presenter provideRecordCamera2Presenter(GetVideoFormatFromCurrentProjectUseCase
+                                                           getVideoFormatFromCurrentProjectUseCase,
+                                                       AddVideoToProjectUseCase
                                                            addVideoToProjectUseCase){
 
     return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity,
         isFrontCameraSelected, isPrincipalViewSelected, isRightControlsViewSelected, textureView,
-        directorySaveVideos, addVideoToProjectUseCase);
+        directorySaveVideos, getVideoFormatFromCurrentProjectUseCase, addVideoToProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -395,6 +398,10 @@ public class ActivityPresentersModule {
   @Provides LaunchTranscoderAddAVTransitionsUseCase provideoLaunchTranscoderAddAVTransition(
       VideoRepository videoRepository){
    return  new LaunchTranscoderAddAVTransitionsUseCase(videoRepository);
+  }
+
+  @Provides GetVideoFormatFromCurrentProjectUseCase provideVideoFormatFromCurrentProjectUseCase(){
+    return new GetVideoFormatFromCurrentProjectUseCase();
   }
 
 }

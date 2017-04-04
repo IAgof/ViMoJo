@@ -3,7 +3,7 @@ package com.videonasocialmedia.vimojo.domain.editor;
 import android.graphics.drawable.Drawable;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
-import com.videonasocialmedia.transcoder.video.format.VideoTranscoderFormat;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
@@ -36,7 +36,7 @@ public class LaunchTranscoderAddAVTransitionsUseCase {
   }
 
   public void launchExportTempFile(Drawable drawableFadeTransition, Video videoToEdit,
-                                   VideoTranscoderFormat videoTranscoderFormat,
+                                   VideonaFormat videoTranscoderFormat,
                                    String intermediatesTempAudioFadeDirectory,
                                    final TranscoderHelperListener
                                  transcoderHelperListener){
@@ -51,7 +51,7 @@ public class LaunchTranscoderAddAVTransitionsUseCase {
                                     boolean isVideoFadeTransitionActivated,
                                     boolean isAudioFadeTransitionActivated,
                                     Video videoToEdit,
-                                    VideoTranscoderFormat videoTranscoderFormat,
+                                    VideonaFormat videoTranscoderFormat,
                                     String intermediatesTempAudioFadeDirectory,
                                     TranscoderHelperListener transcoderHelperListener) {
 
