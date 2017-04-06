@@ -19,31 +19,34 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToTranscoderUseCase;
+import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  *  Created by alvaro on 16/01/17.
  */
 
-public class RecordCamera2Presenter implements Camera2WrapperListener{
+public class RecordCamera2Presenter implements Camera2WrapperListener, TranscoderHelperListener {
 
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private static final String LOG_TAG = "RecordPresenter";
@@ -51,15 +54,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
   private final boolean isPrincipalViewSelected;
   private RecordCamera2View recordView;
   private AddVideoToProjectUseCase addVideoToProjectUseCase;
-  private AdaptVideoRecordedToTranscoderUseCase adaptVideoRecordedToTranscoderUseCase;
+  private AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase;
   private int recordedVideosNumber = 0;
   protected Project currentProject;
-  private int height = 720;
   private Camera2Wrapper camera;
-  private String origVideoRecorded;
-  private String destVideoRecorded;
-  private int numVideoAdapting = 0;
-
+  private List<VideoToAdapt> videoListToAdaptAndPosition = new ArrayList<>();
+  private List<Video> videoList = new ArrayList<>();
 
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
                                 boolean isFrontCameraSelected, boolean isPrincipalViewSelected,
@@ -80,12 +80,16 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
         getVideoFormatFromCurrentProjectUseCase.getVideoRecordedFormatFromCurrentProjectUseCase());
 
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-    adaptVideoRecordedToTranscoderUseCase = new AdaptVideoRecordedToTranscoderUseCase();
+    adaptVideoRecordedToVideoFormatUseCase = new AdaptVideoRecordedToVideoFormatUseCase();
+    this.currentProject = loadProject();
+  }
 
+  private Project loadProject() {
+    return Project.getInstance(null,null,null);
   }
 
   public void initViews() {
-    recordView.setResolutionSelected(height);
+    recordView.setResolutionSelected(getResolutionHeight(currentProject));
     recordView.hideChronometer();
     if(isPrincipalViewSelected) {
       recordView.showPrincipalViews();
@@ -97,6 +101,23 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
     }else {
       recordView.hideRightControlsView();
     }
+  }
+
+  private int getResolutionHeight(Project currentProject) {
+    VideoResolution.Resolution resolution = currentProject.getProfile().getResolution();
+    int height;
+    switch (resolution) {
+      case HD1080:
+        height = 1080;
+        break;
+      case HD4K:
+        height = 2160;
+        break;
+      case HD720:
+      default:
+        height = 720;
+    }
+    return height;
   }
 
   public void onResume() {
@@ -135,6 +156,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
     recordView.hideVideosRecordedNumber();
     recordView.hideRecordedVideoThumb();
     recordView.hideChangeCamera();
+
   }
 
   public void stopRecord() {
@@ -142,6 +164,11 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
     restartPreview();
   }
 
+
+  @Override
+  public void setFlash(boolean state) {
+    recordView.setFlash(state);
+  }
 
   @Override
   public void setFlashSupport() {
@@ -169,40 +196,29 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
   private void moveAndAdaptVideoRecorded(String origPath) {
 
     File tempPath = new File(origPath);
-    String finalPath = Constants.PATH_APP_MASTERS + File.separator + tempPath.getName();
+    String destVideoRecorded = Constants.PATH_APP_MASTERS + File.separator + tempPath.getName();
 
-    origVideoRecorded = origPath;
-    destVideoRecorded = finalPath;
+    final Video videoToAdapt = new Video(origPath);
+    videoListToAdaptAndPosition.add(new VideoToAdapt(videoToAdapt,recordedVideosNumber));
+    //videoList.add(new )
 
-    numVideoAdapting++;
-    Log.d(LOG_TAG, "adaptVideo " + numVideoAdapting);
+    VideonaFormat videoFormat = new VideonaFormat(Constants.DEFAULT_VIMOJO_AUDIO_BITRATE,
+        Constants.DEFAULT_VIMOJO_AUDIO_CHANNELS);
 
-    ListenableFuture transcodingJob = null;
     try {
-      transcodingJob = adaptVideoRecordedToTranscoderUseCase.adaptVideo(origVideoRecorded, destVideoRecorded);
+      adaptVideoRecordedToVideoFormatUseCase.adaptVideo(videoToAdapt, videoFormat, destVideoRecorded,
+          this);
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    waitTranscodingJobToFinish(transcodingJob);
-    videosRecordedAdapted();
-
   }
 
-  private void videosRecordedAdapted() {
-    addVideoToProjectUseCase.addVideoToTrackAtPosition(destVideoRecorded, recordedVideosNumber);
+  private void videoRecordedAdapted(String origVideoRecorded, String destVideoRecorded, int position) {
+    addVideoToProjectUseCase.addVideoToTrackAtPosition(destVideoRecorded, position);
     Utils.removeVideo(origVideoRecorded);
-    recordView.hideProgressAdaptingVideo();
-    numVideoAdapting--;
-  }
-
-  private void waitTranscodingJobToFinish(ListenableFuture future) {
-    while(!future.isDone()){
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException exception) {
-        exception.printStackTrace();
-      }
+    if(!areTherePendingTranscodingTask()) {
+      recordView.hideProgressAdaptingVideo();
     }
   }
 
@@ -219,7 +235,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
 
   public void setFlashOff() {
     camera.setFlashOff();
-    recordView.setFlash(false);
   }
 
   public void toggleFlash(boolean isSelected) {
@@ -229,7 +244,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
     } else {
       camera.setFlashOn();
     }
-    recordView.setFlash(!isSelected);
   }
 
   public void onTouchZoom(MotionEvent event) {
@@ -280,9 +294,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
 
 
   public void navigateToEditOrGallery() {
-    setFlashOff();
-    if(recordedVideosNumber > 0){
-        if(numVideoAdapting > 0){
+    if(areThereVideosInProject()){
+        if(areTherePendingTranscodingTask()){
           recordView.showProgressAdaptingVideo();
         } else {
           recordView.navigateTo(EditActivity.class);
@@ -290,6 +303,56 @@ public class RecordCamera2Presenter implements Camera2WrapperListener{
 
     } else {
       recordView.navigateTo(GalleryActivity.class);
+    }
+  }
+
+  private boolean areThereVideosInProject() {
+    return currentProject.getVMComposition().hasVideos();
+  }
+
+  private boolean areTherePendingTranscodingTask() {
+    for(VideoToAdapt video: videoListToAdaptAndPosition){
+      if(!video.getVideo().getTranscodingTask().isDone()){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public void onSuccessTranscoding(Video video) {
+    String destVideoRecorded = Constants.PATH_APP_MASTERS +
+        File.separator + new File(video.getMediaPath()).getName();
+    int position = recordedVideosNumber;
+    for(VideoToAdapt videoToAdapt: videoListToAdaptAndPosition){
+      if(videoToAdapt.getVideo().getUuid().compareTo(video.getUuid()) == 0){
+        position = videoToAdapt.getPosition() - 1;
+        Log.d(LOG_TAG, "onSuccessTranscoding position " + position);
+      }
+    }
+    videoRecordedAdapted(video.getMediaPath(), destVideoRecorded, position);
+  }
+
+  @Override
+  public void onErrorTranscoding(Video video, String message) {
+
+  }
+
+  private class VideoToAdapt {
+    private final int position;
+    private final Video video;
+
+    public VideoToAdapt(Video video, int position){
+      this.video = video;
+      this.position = position;
+    }
+
+    public int getPosition() {
+      return position;
+    }
+
+    public Video getVideo() {
+      return video;
     }
   }
 }

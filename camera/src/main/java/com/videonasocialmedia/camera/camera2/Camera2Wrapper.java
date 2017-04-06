@@ -24,8 +24,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Size;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
 import android.widget.Toast;
 
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
@@ -111,7 +113,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   // zoom, move to custom view
   public float finger_spacing = 0;
-  public int zoom_level = 1;
+  public double zoom_level = 1;
 
   /**
    * {@link CameraDevice.StateCallback} is called when {@link CameraDevice} changes its status.
@@ -489,6 +491,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     previewBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF);
     try {
       previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
+      listener.setFlash(false);
     } catch (CameraAccessException e) {
       e.printStackTrace();
     }
@@ -498,6 +501,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     previewBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
     try {
       previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
+      listener.setFlash(true);
     } catch (CameraAccessException e) {
       e.printStackTrace();
     }
@@ -520,7 +524,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       String cameraId = manager.getCameraIdList()[cameraIdSelected];
       CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
       float maxzoom =
-          (characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM))*10;
+          (characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM))*5;
+
+      Log.d(LOG_TAG, "onTouchZoom, maxzoom " + maxzoom);
 
       Rect m = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
 
@@ -545,6 +551,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         previewBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoom);
 
         listener.setZoom(zoom);
+
+        Log.d(LOG_TAG, "onTouchZoom, rectzoom " + zoom);
       }
       finger_spacing = current_finger_spacing;
 
@@ -567,7 +575,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
     return true;
   }
-
 
   public void setFocus(Rect rect, int focusArea) {
 

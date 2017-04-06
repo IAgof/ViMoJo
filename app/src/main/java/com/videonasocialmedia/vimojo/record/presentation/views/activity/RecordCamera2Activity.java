@@ -344,24 +344,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
-  public void finishActivityForResult(String originalVideoPath) {
-    try {
-      if (resultVideoPath != null) {
-        Utils.copyFile(originalVideoPath, resultVideoPath);
-        Utils.removeVideo(originalVideoPath);
-      } else
-        resultVideoPath = originalVideoPath;
-      Uri videoUri = Uri.fromFile(new File(resultVideoPath));
-      Intent returnIntent = new Intent();
-      returnIntent.setData(videoUri);
-      setResult(RESULT_OK, returnIntent);
-      finish();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  @Override
   public void showProgressAdaptingVideo() {
     progressDialog.show();
   }
@@ -492,6 +474,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnClick (R.id.button_navigate_edit_or_gallery)
   public void navigateToEditOrGallery() {
     if (!isRecording) {
+      presenter.setFlashOff();
       presenter.navigateToEditOrGallery();
     }
   }
