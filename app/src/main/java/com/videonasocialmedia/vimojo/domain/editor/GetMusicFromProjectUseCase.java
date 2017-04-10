@@ -16,12 +16,12 @@ public class GetMusicFromProjectUseCase {
 
     @Inject
     public GetMusicFromProjectUseCase() {
-        this.project = Project.getInstance(null, null, null);
     }
 
     public void getMusicFromProject(GetMusicFromProjectCallback listener) {
         Music music = null;
         try {
+            project = Project.getInstance(null, null, null);
             music = (Music) project.getAudioTracks()
                 .get(Constants.INDEX_AUDIO_TRACKS_MUSIC).getItems().get(0);
         } catch (Exception e) {
@@ -31,14 +31,15 @@ public class GetMusicFromProjectUseCase {
     }
 
     public void getVoiceOverFromProject(GetMusicFromProjectCallback listener) {
-        Music music = null;
+        Music voiceOver = null;
         try {
-            music = (Music) project.getAudioTracks()
+            project = Project.getInstance(null, null, null);
+            voiceOver = (Music) project.getAudioTracks()
                 .get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER).getItems().get(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        listener.onMusicRetrieved(music);
+        listener.onMusicRetrieved(voiceOver);
     }
 
     public boolean hasBeenMusicSelected(){

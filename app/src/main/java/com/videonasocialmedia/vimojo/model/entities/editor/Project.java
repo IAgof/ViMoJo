@@ -217,6 +217,14 @@ public class Project {
       return vmComposition.hasMusic();
     }
 
+    public Music getVoiceOver(){
+      return vmComposition.getVoiceOver();
+    }
+
+    public boolean hasVoiceOver(){
+      return vmComposition.hasVoiceOver();
+    }
+
     public void setMusicOnProject(boolean musicOnProject) {
         isMusicOnProject = musicOnProject;
     }

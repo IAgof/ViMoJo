@@ -59,13 +59,14 @@
                 android:layout_alignEnd="@+id/button_voice_over_accept"
                 android:weightSum="1">
 
-                <ImageView
+                <TextView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/activity_edit_sound_normal"
                     android:layout_marginRight="4dp"
                     android:layout_gravity="left"
                     android:scaleType="fitXY"
+                    android:text="@string/minVolume"
+                    android:gravity="center"
                     />
 
                 <SeekBar
@@ -83,13 +84,14 @@
                     android:thumb="@drawable/ic_circular_thumb_seekbar"
                     />
 
-                <ImageView
+                <TextView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/activity_sound_volume_ic_microphone"
                     android:layout_marginLeft="4dp"
                     android:layout_gravity="right"
                     android:scaleType="fitXY"
+                    android:text="@string/maxVolume"
+                    android:gravity="center"
                     />
 
             </LinearLayout>

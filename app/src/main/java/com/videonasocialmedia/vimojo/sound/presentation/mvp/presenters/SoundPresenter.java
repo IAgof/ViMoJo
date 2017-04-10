@@ -21,7 +21,6 @@ import javax.inject.Inject;
  */
 public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback {
 
-
     private SoundView soundView;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
@@ -66,6 +65,9 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
       if(currentProject.hasMusic()){
         getMusicFromProjectUseCase.getMusicFromProject(this);
       }
+      if(currentProject.hasVoiceOver()){
+        getMusicFromProjectUseCase.getVoiceOverFromProject(this);
+      }
     }
 
     private void obtainVideos() {
@@ -75,6 +77,8 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
         soundView.bindVideoList(videoList);
+        Video video = videoList.get(0);
+        soundView.bindVideoTrack(video.getVolume(), false, false);
     }
 
     @Override
@@ -90,8 +94,10 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
         musicList.add(music);
         if (isMusicAVoiceOver(music)) {
           soundView.bindVoiceOverList(musicList);
+          soundView.bindVoiceOverTrack(music.getVolume(), false, false);
         } else {
           soundView.bindMusicList(musicList);
+          soundView.bindMusicTrack(music.getVolume(), false, false);
         }
     }
 
