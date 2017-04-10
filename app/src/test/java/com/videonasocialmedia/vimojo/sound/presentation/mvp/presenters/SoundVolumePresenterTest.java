@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
@@ -72,7 +72,7 @@ public class SoundVolumePresenterTest {
           throws IllegalItemOnTrack {
     Project currentProject = getCurrentProject();
     Music music = new Music("music/path", 0);
-    assert music.getVolume() == Music.DEFAULT_MUSIC_VOLUME;
+    assert music.getVolume() == Audio.DEFAULT_VOLUME;
     currentProject.getVMComposition().getAudioTracks().get(INDEX_AUDIO_TRACKS_MUSIC).insertItemAt(0, music);
     RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase =
             new RemoveMusicFromProjectUseCase(mockedProjectRepository);
@@ -89,7 +89,7 @@ public class SoundVolumePresenterTest {
     assertThat(currentProject.getVMComposition().getMusic().getMediaPath(), not("music/path"));
     assertThat(currentProject.getVMComposition().getMusic().getMediaPath(), is("voice/over/path"));
     assertThat(currentProject.getVMComposition().getMusic().getVolume(),
-            not(Music.DEFAULT_MUSIC_VOLUME));
+            not(Audio.DEFAULT_VOLUME));
     assertThat(currentProject.getVMComposition().getMusic().getVolume(), is(0.6f));
   }
 

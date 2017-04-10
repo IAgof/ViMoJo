@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
 
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 
 import io.realm.RealmList;
@@ -24,7 +24,7 @@ public class RealmProject extends RealmObject {
   public String pathLastVideoExported;
   public String dateLastVideoExported;
   public String musicTitle;
-  public float musicVolume = Music.DEFAULT_MUSIC_VOLUME;
+  public float musicVolume = Audio.DEFAULT_VOLUME;
   public boolean isAudioFadeTransitionActivated;
   public boolean isVideoFadeTransitionActivated;
   public boolean isWatermarkActivated;

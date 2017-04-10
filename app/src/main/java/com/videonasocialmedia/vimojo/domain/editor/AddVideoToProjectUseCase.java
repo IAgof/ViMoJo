@@ -49,7 +49,7 @@ public class AddVideoToProjectUseCase {
 
 
     public void addVideoToTrack(String videoPath, OnLaunchAVTransitionTempFileListener listener) {
-        Video videoToAdd = new Video(videoPath, 1f);
+        Video videoToAdd = new Video(videoPath, Video.DEFAULT_VOLUME);
         addVideoToTrack(videoToAdd);
         checkIfVideoNeedAVTransitionTempFile(videoToAdd, listener);
     }

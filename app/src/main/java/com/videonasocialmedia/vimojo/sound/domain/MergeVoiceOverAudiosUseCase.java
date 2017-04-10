@@ -7,7 +7,6 @@ import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
-import com.videonasocialmedia.videonamediaframework.muxer.Appender;
 import com.videonasocialmedia.videonamediaframework.pipeline.AudioCompositionExportSession;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
@@ -64,7 +63,8 @@ public class MergeVoiceOverAudiosUseCase {
             throws IllegalItemOnTrack {
         AudioTrack audioTrack = audioComposition.getAudioTracks().get(0);
         for (String audioPath: audioPathList) {
-            Audio itemToAdd = new Audio(audioPathList.indexOf(audioPath), audioPath, 1f, null);
+            Audio itemToAdd = new Audio(audioPathList.indexOf(audioPath), audioPath,
+                    Audio.DEFAULT_VOLUME, null);
             audioTrack.insertItem(itemToAdd);
         }
     }
@@ -72,7 +72,7 @@ public class MergeVoiceOverAudiosUseCase {
     private ArrayList<String> createAudioPathList(String path) {
         // (jliarte): 29/11/16 this uses IO, so it should be in a background thread
         File directory = new File(path);
-        ArrayList<String> audiosList = new ArrayList<String>();;
+        ArrayList<String> audiosList = new ArrayList<String>();
         for(File audio: directory.listFiles()){
             audiosList.add(audio.getAbsolutePath());
         }
