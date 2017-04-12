@@ -68,20 +68,26 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
                                 GetVideoFormatFromCurrentProjectUseCase
                                     getVideoFormatFromCurrentProjectUseCase,
                                 AddVideoToProjectUseCase addVideoToProjectUseCase) {
-
     this.recordView = recordView;
     this.isPrincipalViewSelected = isPrincipalViewSelected;
     this.isRightControlsViewSelected = isRightControlsViewSelected;
+    this.addVideoToProjectUseCase = addVideoToProjectUseCase;
+    initCameraWrapper(context, isFrontCameraSelected, textureView, directorySaveVideos, getVideoFormatFromCurrentProjectUseCase);
+    this.adaptVideoRecordedToVideoFormatUseCase = new AdaptVideoRecordedToVideoFormatUseCase();
+    this.currentProject = loadProject();
+  }
+
+  private void initCameraWrapper(
+          Context context, boolean isFrontCameraSelected, AutoFitTextureView textureView,
+          String directorySaveVideos,
+          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase) {
     int cameraId = 0;
-    if(isFrontCameraSelected)
+    if (isFrontCameraSelected) {
       cameraId = 1;
+    }
     // TODO:(alvaro.martinez) 25/01/17 Support camera1, api <21 or combine both. Make Camera1Wrapper
     camera = new Camera2Wrapper(context, this, cameraId, textureView, directorySaveVideos,
         getVideoFormatFromCurrentProjectUseCase.getVideoRecordedFormatFromCurrentProjectUseCase());
-
-    this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-    adaptVideoRecordedToVideoFormatUseCase = new AdaptVideoRecordedToVideoFormatUseCase();
-    this.currentProject = loadProject();
   }
 
   private Project loadProject() {
@@ -91,14 +97,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
   public void initViews() {
     recordView.setResolutionSelected(getResolutionHeight(currentProject));
     recordView.hideChronometer();
-    if(isPrincipalViewSelected) {
+    if (isPrincipalViewSelected) {
       recordView.showPrincipalViews();
-    }else {
+    } else {
       recordView.hidePrincipalViews();
     }
-    if(isRightControlsViewSelected) {
+    if (isRightControlsViewSelected) {
       recordView.showRightControlsView();
-    }else {
+    } else {
       recordView.hideRightControlsView();
     }
   }
@@ -146,9 +152,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
   }
 
   public void startRecord() {
-
     camera.startRecordingVideo();
-
     recordView.showStopButton();
     recordView.startChronometer();
     recordView.showChronometer();
@@ -156,14 +160,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
     recordView.hideVideosRecordedNumber();
     recordView.hideRecordedVideoThumb();
     recordView.hideChangeCamera();
-
   }
 
   public void stopRecord() {
     camera.stopRecordVideo();
     restartPreview();
   }
-
 
   @Override
   public void setFlash(boolean state) {
@@ -190,34 +192,32 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
     recordView.showChangeCamera();
     recordView.showRecordedVideoThumb(path);
     recordView.showVideosRecordedNumber(++recordedVideosNumber);
-    moveAndAdaptVideoRecorded(path);
+    moveAndAdaptRecordedVideo(path);
   }
 
-  private void moveAndAdaptVideoRecorded(String origPath) {
-
+  private void moveAndAdaptRecordedVideo(String origPath) {
     File tempPath = new File(origPath);
     String destVideoRecorded = Constants.PATH_APP_MASTERS + File.separator + tempPath.getName();
 
     final Video videoToAdapt = new Video(origPath);
     videoListToAdaptAndPosition.add(new VideoToAdapt(videoToAdapt,recordedVideosNumber));
-    //videoList.add(new )
 
     VideonaFormat videoFormat = new VideonaFormat(Constants.DEFAULT_VIMOJO_AUDIO_BITRATE,
         Constants.DEFAULT_VIMOJO_AUDIO_CHANNELS);
 
     try {
-      adaptVideoRecordedToVideoFormatUseCase.adaptVideo(videoToAdapt, videoFormat, destVideoRecorded,
-          this);
+      adaptVideoRecordedToVideoFormatUseCase.adaptVideo(videoToAdapt, videoFormat,
+              destVideoRecorded, this);
     } catch (IOException e) {
       e.printStackTrace();
     }
-
   }
 
-  private void videoRecordedAdapted(String origVideoRecorded, String destVideoRecorded, int position) {
+  private void videoRecordedAdapted(String origVideoRecorded, String destVideoRecorded,
+                                    int position) {
     addVideoToProjectUseCase.addVideoToTrackAtPosition(destVideoRecorded, position);
     Utils.removeVideo(origVideoRecorded);
-    if(!areTherePendingTranscodingTask()) {
+    if (!areTherePendingTranscodingTask()) {
       recordView.hideProgressAdaptingVideo();
     }
   }
@@ -238,8 +238,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
   }
 
   public void toggleFlash(boolean isSelected) {
-
-    if(isSelected){
+    if (isSelected) {
       camera.setFlashOff();
     } else {
       camera.setFlashOn();
@@ -254,7 +253,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
   //Determine the space between the first two fingers
   @SuppressWarnings("deprecation")
   private float getFingerSpacing(MotionEvent event) {
-
     float x = event.getX(0) - event.getX(1);
     float y = event.getY(0) - event.getY(1);
     return (float) Math.sqrt(x * x + y * y);
@@ -292,15 +290,13 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
     return focusIconBounds;
   }
 
-
   public void navigateToEditOrGallery() {
-    if(areThereVideosInProject()){
-        if(areTherePendingTranscodingTask()){
-          recordView.showProgressAdaptingVideo();
-        } else {
-          recordView.navigateTo(EditActivity.class);
-        }
-
+    if (areThereVideosInProject()) {
+      if (areTherePendingTranscodingTask()) {
+        recordView.showProgressAdaptingVideo();
+      } else {
+         recordView.navigateTo(EditActivity.class);
+      }
     } else {
       recordView.navigateTo(GalleryActivity.class);
     }
@@ -311,8 +307,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
   }
 
   private boolean areTherePendingTranscodingTask() {
-    for(VideoToAdapt video: videoListToAdaptAndPosition){
-      if(!video.getVideo().getTranscodingTask().isDone()){
+    for (VideoToAdapt video : videoListToAdaptAndPosition) {
+      if (!video.getVideo().getTranscodingTask().isDone()) {
         return true;
       }
     }
@@ -335,14 +331,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
 
   @Override
   public void onErrorTranscoding(Video video, String message) {
-
+    // TODO(jliarte): 12/04/17 what should we do on error?
   }
 
   private class VideoToAdapt {
     private final int position;
     private final Video video;
 
-    public VideoToAdapt(Video video, int position){
+    public VideoToAdapt(Video video, int position) {
       this.video = video;
       this.position = position;
     }
@@ -355,5 +351,5 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
       return video;
     }
   }
-}
 
+}

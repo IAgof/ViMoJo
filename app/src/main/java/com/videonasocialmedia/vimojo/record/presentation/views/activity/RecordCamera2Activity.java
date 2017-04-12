@@ -4,15 +4,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Chronometer;
@@ -27,17 +24,11 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.Utils;
-
-import java.io.File;
-import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -113,7 +104,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   /**
    * if for result
    **/
-  private String resultVideoPath;
   private boolean isRecording = false;
   private boolean buttonBackPressed = false;
 
@@ -122,7 +112,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private String EXTRA_FRONT_CAMERA_SELECTED = "front_camera_selected";
   private String UI_PRINCIPAL_VIEW = "ui_principal_views";
   private String UI_RIGHT_CONTROLS_VIEW = "ui_right_controls_view";
-
 
   // TODO:(alvaro.martinez) 18/01/17 Move this values to Constants
   private final int RESOLUTION_SELECTED_HD720 = 720;
@@ -151,7 +140,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     isPrincipalViewsSelected = getIntent().getBooleanExtra(UI_PRINCIPAL_VIEW, false);
     int getControlsViewSelected = getIntent().getIntExtra(UI_RIGHT_CONTROLS_VIEW, View.INVISIBLE);
     isControlsViewSelected = false;
-    if(getControlsViewSelected == View.VISIBLE){
+    if (getControlsViewSelected == View.VISIBLE) {
       isControlsViewSelected = true;
     }
 
@@ -281,7 +270,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     recordingIndicator.setVisibility(View.VISIBLE);
   }
 
-
   @Override
   public void stopChronometer() {
     chronometer.stop();
@@ -301,7 +289,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private void hideRecordingIndicator() {
     recordingIndicator.setVisibility(View.INVISIBLE);
   }
-
 
   @Override
   public void setFlash(boolean on) {
@@ -416,7 +403,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void showVideosRecordedNumber(int numberOfVideos) {
     numVideosRecordedTextView.setVisibility(View.VISIBLE);
     numVideosRecordedTextView.setText(String.valueOf(numberOfVideos));
-
   }
 
   @Override
@@ -457,7 +443,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnClick(R.id.button_change_camera)
   public void changeCamera() {
 
-    if(!isFrontCameraSelected){
+    if (!isFrontCameraSelected) {
       isFrontCameraSelected = true;
     } else {
       isFrontCameraSelected = false;
@@ -524,8 +510,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnTouch(R.id.customManualFocusView)
-  boolean onTouchCustomManualFocusView(MotionEvent event){
-
+  boolean onTouchCustomManualFocusView(MotionEvent event) {
     if (event.getAction() == MotionEvent.ACTION_DOWN) {
       // TODO:(alvaro.martinez) 27/01/17 single touch logic
       //presenter.onTouchFocus(event);
@@ -536,12 +521,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       // zoom touch
       presenter.onTouchZoom(event);
     }
-
     return true;
   }
 
-
-    @Override
+  @Override
   public void onBackPressed() {
     if (buttonBackPressed) {
         buttonBackPressed = false;
