@@ -23,6 +23,6 @@ public class AdaptVideoRecordedToVideoFormatUseCase {
 
   public void adaptVideo(final Video videoToAdapt, final VideonaFormat videoFormat,
                          final String destVideoPath, TranscoderHelperListener listener) throws IOException {
-    transcoderHelper.adaptVideoToTranscoder(videoToAdapt, videoFormat, destVideoPath, listener);
+    transcoderHelper.adaptVideoToDefaultFormat(videoToAdapt, videoFormat, destVideoPath, listener);
   }
 }

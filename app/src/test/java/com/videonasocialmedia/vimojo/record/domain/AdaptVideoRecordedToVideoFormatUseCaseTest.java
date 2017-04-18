@@ -43,7 +43,7 @@ public class AdaptVideoRecordedToVideoFormatUseCaseTest {
     injectedAdaptVideoRecordedToVideoFormatUseCase.adaptVideo(mockedVideo, mockedVideoFormat,
         destVideoPath, mockedTranscoderHelperListener);
 
-    verify(mockedTranscoderHelper).adaptVideoToTranscoder(mockedVideo, mockedVideoFormat,
+    verify(mockedTranscoderHelper).adaptVideoToDefaultFormat(mockedVideo, mockedVideoFormat,
         destVideoPath, mockedTranscoderHelperListener);
   }
 }
