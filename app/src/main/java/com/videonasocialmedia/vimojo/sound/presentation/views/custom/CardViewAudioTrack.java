@@ -126,18 +126,18 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack {
     return new OnClickListener() {
       @Override
       public void onClick(View v) {
-        if(activatedUiAudioOptions) {
           if (relativeLayoutAudioVolume.getVisibility() == View.VISIBLE) {
             relativeLayoutAudioVolume.setVisibility(View.GONE);
+            activatedUiAudioOptions = false;
             listener.onClickImageIconTrack(id);
             return;
           }
           if (relativeLayoutAudioVolume.getVisibility() == View.GONE) {
             relativeLayoutAudioVolume.setVisibility(View.VISIBLE);
+            activatedUiAudioOptions = true;
             listener.onClickImageIconTrack(id);
             return;
           }
-        }
       }
     };
   }
@@ -169,8 +169,8 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack {
   }
 
   @Override
-  public void enableShowUiTrackAudioOptions() {
-    activatedUiAudioOptions = true;
+  public boolean isShowedAudioTrackOptions() {
+    return activatedUiAudioOptions;
   }
 
   @Override

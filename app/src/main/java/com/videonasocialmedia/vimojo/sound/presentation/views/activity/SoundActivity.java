@@ -119,7 +119,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   private void initTrackClips() {
     trackClipsVideo.setListener(this, ID_TRACK_CLIP_VIDEO);
     audioListRecyclerView = trackClipsVideo.getRecyclerView();
-    trackClipsVideo.setImageTrack(R.drawable.activity_edit_sound_normal);
+    trackClipsVideo.setImageTrack(R.drawable.activity_edit_sound_original_down);
     trackClipsVideo.setTitleTrack(getString(R.string.title_track_clip_video));
   }
 
@@ -132,8 +132,10 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
             navigateTo(EditActivity.class);
             break;
           case (R.id.tab_share):
-            Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
-            Snackbar.make(relativeLayoutActivitySound, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
+            Intent intent = new Intent(VimojoApplication.getAppContext(),
+                ExportProjectService.class);
+            Snackbar.make(relativeLayoutActivitySound, "Starting export",
+                Snackbar.LENGTH_INDEFINITE).show();
             VimojoApplication.getAppContext().startService(intent);
             break;
         }
@@ -142,7 +144,8 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
   private void setupFab() {
-    addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.activity_edit_sound_music_normal,R.color.colorWhite);
+    addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.activity_edit_sound_music_normal,
+        R.color.colorWhite);
   }
   protected void addAndConfigurateFabButton(int id, int icon, int color) {
     FloatingActionButton newFabMini = FabUtils.createNewFabMini(id, icon, color);
@@ -247,7 +250,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @Override
   public void bindVideoTrack(float volume, boolean muteAudio, boolean soloAudio) {
-    trackClipsVideo.enableShowUiTrackAudioOptions();
+    trackClipsVideo.isShowedAudioTrackOptions();
     trackClipsVideo.setSeekBar((int) (volume*100));
     trackClipsVideo.setSwitchMuteAudio(muteAudio);
     trackClipsVideo.setSwitchSoloAudio(soloAudio);
@@ -309,7 +312,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   private void initTrackClipAudioTrackFirst(float volume, boolean muteAudio, boolean soloAudio) {
     trackClipsAudioTrackFirst.setListener(this, ID_TRACK_CLIP_AUDIO_FIRST);
     trackClipsAudioTrackFirst.setVisibility(View.VISIBLE);
-    trackClipsAudioTrackFirst.enableShowUiTrackAudioOptions();
+    trackClipsAudioTrackFirst.isShowedAudioTrackOptions();
     trackClipsAudioTrackFirst.setSeekBar((int) (volume*100));
     trackClipsAudioTrackFirst.setSwitchMuteAudio(muteAudio);
     trackClipsAudioTrackFirst.setSwitchSoloAudio(soloAudio);
@@ -319,7 +322,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
     trackClipsAudioTrackSecond.setListener(this, ID_TRACK_CLIP_AUDIO_SECOND);
     trackClipsAudioTrackSecond.setVisibility(View.VISIBLE);
 
-    trackClipsAudioTrackSecond.enableShowUiTrackAudioOptions();
+    trackClipsAudioTrackSecond.isShowedAudioTrackOptions();
     trackClipsAudioTrackSecond.setSeekBar((int) (volume*100));
     trackClipsAudioTrackSecond.setSwitchMuteAudio(muteAudio);
     trackClipsAudioTrackSecond.setSwitchSoloAudio(soloAudio);
@@ -327,23 +330,23 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   private void initTitleAndIconAudioTrackFirstMusic() {
     positionAudioTrackMusic = 1;
-    trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_music_normal);
+    trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_music_down);
     trackClipsAudioTrackFirst.setTitleTrack(getString(R.string.title_track_clip_music));
   }
 
   private void initTitleAndIconAudioTrackSecondMusic() {
     positionAudioTrackMusic = 2;
-    trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_music_normal);
+    trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_music_down);
     trackClipsAudioTrackSecond.setTitleTrack(getString(R.string.title_track_clip_music));
   }
 
   private void initTitleAndIconAudioTrackFirstVoiceOver() {
-    trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_voice_normal);
+    trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_voice_over_down);
     trackClipsAudioTrackFirst.setTitleTrack(getString(R.string.title_track_clip_voice_over));
   }
 
   private void initTitleAndIconAudioTrackSecondVoiceOver() {
-    trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_voice_normal);
+    trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_voice_over_down);
     trackClipsAudioTrackSecond.setTitleTrack(getString(R.string.title_track_clip_voice_over));
   }
 
@@ -522,12 +525,43 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
     switch (id){
       case ID_TRACK_CLIP_VIDEO:
         focusOnView(trackClipsVideo);
+        if(trackClipsVideo.isShowedAudioTrackOptions()) {
+          trackClipsVideo.setImageTrack(R.drawable.activity_edit_sound_original_up);
+        } else {
+          trackClipsVideo.setImageTrack(R.drawable.activity_edit_sound_original_down);
+        }
         break;
       case ID_TRACK_CLIP_AUDIO_FIRST:
         focusOnView(trackClipsAudioTrackFirst);
+        if(trackClipsAudioTrackFirst.isShowedAudioTrackOptions()){
+          if(isMusicFirstTrack()){
+            trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_music_up);
+          } else {
+            trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_voice_over_up);
+          }
+        } else {
+          if(isMusicFirstTrack()){
+            trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_music_down);
+          } else {
+            trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_voice_over_down);
+          }
+        }
         break;
       case ID_TRACK_CLIP_AUDIO_SECOND:
         focusOnView(trackClipsAudioTrackSecond);
+        if(trackClipsAudioTrackSecond.isShowedAudioTrackOptions()){
+          if(isMusicFirstTrack()){
+            trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_music_up);
+          } else {
+            trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_voice_over_up);
+          }
+        } else {
+          if(isMusicFirstTrack()){
+            trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_music_down);
+          } else {
+            trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_voice_over_down);
+          }
+        }
         break;
       default:
         return;
