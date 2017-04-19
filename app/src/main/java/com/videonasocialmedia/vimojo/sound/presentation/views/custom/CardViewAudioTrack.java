@@ -33,6 +33,7 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack {
 
   private CardViewAudioTrackListener listener;
   private int id;
+  private boolean activatedUiAudioOptions = false;
 
   public CardViewAudioTrack(Context context){
     super(context);
@@ -125,13 +126,17 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack {
     return new OnClickListener() {
       @Override
       public void onClick(View v) {
-        if(relativeLayoutAudioVolume.getVisibility() == View.VISIBLE){
-          relativeLayoutAudioVolume.setVisibility(View.GONE);
-          return;
-        }
-        if(relativeLayoutAudioVolume.getVisibility() == View.GONE){
-          relativeLayoutAudioVolume.setVisibility(View.VISIBLE);
-          return;
+        if(activatedUiAudioOptions) {
+          if (relativeLayoutAudioVolume.getVisibility() == View.VISIBLE) {
+            relativeLayoutAudioVolume.setVisibility(View.GONE);
+            listener.onClickImageIconTrack(id);
+            return;
+          }
+          if (relativeLayoutAudioVolume.getVisibility() == View.GONE) {
+            relativeLayoutAudioVolume.setVisibility(View.VISIBLE);
+            listener.onClickImageIconTrack(id);
+            return;
+          }
         }
       }
     };
@@ -161,6 +166,11 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack {
   @Override
   public void setImageTrack(int resourceId) {
     imageAudioBlocks.setImageResource(resourceId);
+  }
+
+  @Override
+  public void enableShowUiTrackAudioOptions() {
+    activatedUiAudioOptions = true;
   }
 
   @Override

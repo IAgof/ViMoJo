@@ -9,6 +9,8 @@
  */
 package com.videonasocialmedia.vimojo.domain.editor;
 
+import com.google.android.exoplayer.C;
+import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
@@ -18,10 +20,13 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
+import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +49,7 @@ public class AddMusicToProjectUseCaseTest {
 
     @Mock OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
     @Mock ProjectRepository mockedProjectRepository;
+    @Mock MusicRepository mockedMusicRepository;
     @InjectMocks AddMusicToProjectUseCase injectedUseCase;
 
     @Before
@@ -68,6 +74,38 @@ public class AddMusicToProjectUseCaseTest {
 
         assertThat(projectAudioTrack.getItems().size(), is(1));
         assertThat(projectAudioTrack.getItems().get(0), is((Media)musicToAdd));
+    }
+
+    @Test
+    public void testAddMusicToTrackIndexMusicAddMusic(){
+
+        Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
+        Music musicToAdd = new Music("media/path", 0.5f, 65);
+
+        injectedUseCase.addMusicToTrack(musicToAdd, Constants.INDEX_AUDIO_TRACKS_MUSIC,
+            mockedOnAddMediaFinishedListener);
+
+        AudioTrack projectAudioTrack = videonaProject.getAudioTracks()
+            .get(Constants.INDEX_AUDIO_TRACKS_MUSIC);
+
+        Assert.assertThat(projectAudioTrack.getItems().get(0), CoreMatchers.<Media>is(musicToAdd));
+
+    }
+
+    @Test
+    public void testAddVoiceOverToTrackIndexVoiceOverAddVoiceOver(){
+
+        Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
+        Music voiceOverToAdd = new Music("media/path", 0.5f, 65);
+
+        injectedUseCase.addMusicToTrack(voiceOverToAdd, Constants.INDEX_AUDIO_TRACKS_VOICE_OVER,
+            mockedOnAddMediaFinishedListener);
+
+        AudioTrack projectAudioTrack = videonaProject.getAudioTracks()
+            .get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER);
+
+        Assert.assertThat(projectAudioTrack.getItems().get(0), CoreMatchers.<Media>is(voiceOverToAdd));
+
     }
 
 //    @Test public void testAddMusicToTrackSendsMusicAddedToProjectEventToBusOnSuccess() throws Exception {
@@ -116,20 +154,21 @@ public class AddMusicToProjectUseCaseTest {
         Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
         Music musicToAdd = new Music(42, "musicNameId", 3, 2, "","", 0);
 
-        new AddMusicToProjectUseCase(mockedProjectRepository).addMusicToTrack(musicToAdd, 1, mockedOnAddMediaFinishedListener);
+        new AddMusicToProjectUseCase(mockedMusicRepository).addMusicToTrack(musicToAdd, 33,
+            mockedOnAddMediaFinishedListener);
         AudioTrack projectAudioTrack = videonaProject.getAudioTracks().get(0);
 
         assertThat(projectAudioTrack.getItems().size(), is(0));
     }
 
     @Test
-    public void testAddMusicToTrackCallsProjectRepositoryUpdate() {
-        Project currentProject = getAProject();
+    public void testAddMusicToTrackCallsMusicRepositoryUpdate() {
+
         Music musicToAdd = new Music("music/path", 0);
 
         injectedUseCase.addMusicToTrack(musicToAdd, 0, mockedOnAddMediaFinishedListener);
 
-        verify(mockedProjectRepository).update(currentProject);
+        verify(mockedMusicRepository).update(musicToAdd);
     }
 
     private Project getAProject() {

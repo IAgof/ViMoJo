@@ -8,4 +8,5 @@ public interface CardViewAudioTrackListener {
   void setSeekBarProgress(int progress, int id);
   void setSwitchSoloAudio(boolean isChecked, int id);
   void setSwitchMuteAudio(boolean isChecked, int id);
+  void onClickImageIconTrack(int id);
 }

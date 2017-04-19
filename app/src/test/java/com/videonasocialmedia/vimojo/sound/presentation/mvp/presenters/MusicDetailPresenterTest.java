@@ -7,6 +7,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
+import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 
@@ -18,6 +19,7 @@ import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.UpdateAudioTrackProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.UpdateMusicVolumeProjectUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -32,6 +34,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.CoreMatchers.*;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by jliarte on 10/06/16.
@@ -49,6 +52,8 @@ public class MusicDetailPresenterTest {
     @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock private GetMusicFromProjectUseCase mockedGetMusicFromProject;
     @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
+    @Mock UpdateAudioTrackProjectUseCase mockedUpdateAudioTrackProjectUseCase;
+    @Mock UpdateCurrentProjectUseCase mockedUpdateCurrentProjectUseCase;
 
     @Before
     public void injectMocks() {
@@ -89,7 +94,7 @@ public class MusicDetailPresenterTest {
 
         musicDetailPresenter.onAddMediaItemToTrackSuccess(music);
 
-        Mockito.verify(mockedUserEventTracker).trackMusicSet(videonaProject);
+        verify(mockedUserEventTracker).trackMusicSet(videonaProject);
     }
 
     @Test
@@ -102,7 +107,19 @@ public class MusicDetailPresenterTest {
 
         musicDetailPresenter.removeMusic(music);
 
-        Mockito.verify(mockedUserEventTracker).trackMusicSet(videonaProject);
+        verify(mockedUserEventTracker).trackMusicSet(videonaProject);
+    }
+
+    @Test
+    public void removeMusicCallsGoToSoundActivity(){
+        MusicDetailPresenter musicDetailPresenter =
+            getMusicDetailPresenter(mockedUserEventTracker);
+        Project videonaProject = getAProject();
+        Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
+
+        musicDetailPresenter.removeMusic(music);
+
+        verify(musicDetailView).goToSoundActivity();
     }
 
     public Project getAProject() {
@@ -116,6 +133,7 @@ public class MusicDetailPresenterTest {
                 mockedAddMusicToProjectUseCase, mockedRemoveMusicUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedGetMusicFromProject,
                 mockedGetPreferencesTransitionsFromProject, mockedUpdateMusicVolumeProjectUseCase,
+                mockedUpdateAudioTrackProjectUseCase, mockedUpdateCurrentProjectUseCase,
                 mockedContext);
     }
 }

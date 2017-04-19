@@ -9,10 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DecodeFormat;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.resource.bitmap.FileDescriptorBitmapDecoder;
-import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.ItemTouchHelperViewHolder;
@@ -35,6 +31,7 @@ public class AudioTimeLineAdapter extends RecyclerView.Adapter<AudioTimeLineAdap
   private AudioTimeLineRecyclerViewClickListener audioTimeLineListener;
   private Context context;
   private List<Video> audioList;
+
   private int selectedVideoPosition = 0;
 
   public AudioTimeLineAdapter(AudioTimeLineRecyclerViewClickListener audioTimeLineListener){
@@ -86,6 +83,11 @@ public class AudioTimeLineAdapter extends RecyclerView.Adapter<AudioTimeLineAdap
     notifyItemChanged(selectedVideoPosition);
     selectedVideoPosition = positionSelected;
     notifyItemChanged(selectedVideoPosition);
+
+  }
+
+  public int getSelectedVideoPosition() {
+    return selectedVideoPosition;
   }
 
   @Override

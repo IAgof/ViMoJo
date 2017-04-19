@@ -1743,6 +1743,8 @@ and Conditions.\n\n
     <string name="title_track_clip_video">Audio track volume</string>
     <string name="title_track_clip_music">Music track volume</string>
     <string name="title_track_clip_voice_over">Voice over track volume</string>
+    <string name="mute">Mute</string>
+    <string name="solo">Solo</string>
 
 
 </resources>

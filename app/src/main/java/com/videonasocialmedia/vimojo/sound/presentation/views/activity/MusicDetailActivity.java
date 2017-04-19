@@ -241,7 +241,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @OnClick(R.id.delete_music)
     public void deleteMusic() {
         presenter.removeMusic(music);
-        goToMusicList();
     }
 
     private void goToMusicList() {

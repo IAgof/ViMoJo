@@ -12,6 +12,7 @@ interface CardViewTrack {
   void setSwitchSoloAudio(boolean state);
   void setTitleTrack(String title);
   void setImageTrack(int resourceId);
+  void enableShowUiTrackAudioOptions();
   RecyclerView getRecyclerView();
   void setListener(CardViewAudioTrackListener listener, int id);
 }

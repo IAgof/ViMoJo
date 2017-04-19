@@ -12,35 +12,40 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.repository.Mapper;
+import com.videonasocialmedia.vimojo.repository.music.RealmMusic;
+import com.videonasocialmedia.vimojo.repository.music.RealmMusicToMusicMapper;
+import com.videonasocialmedia.vimojo.repository.track.RealmTrack;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideoToVideoMapper;
 import com.videonasocialmedia.vimojo.sources.MusicSource;
 import com.videonasocialmedia.vimojo.utils.Constants;
+
 
 /**
  * Created by jliarte on 20/10/16.
  */
 
 public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project> {
-  private Context context;
   private RealmVideoToVideoMapper toVideoMapper = new RealmVideoToVideoMapper();
+  private RealmMusicToMusicMapper toMusicMapper = new RealmMusicToMusicMapper();
 
-  public RealmProjectToProjectMapper(Context context) {
-    this.context = context;
+  public RealmProjectToProjectMapper() {
   }
 
   @Override
   public Project map(RealmProject realmProject) {
     try {
       Project project = mapProject(realmProject);
-      setProjectMusic(project, realmProject);
       setProjectVideos(project, realmProject);
       setProjectLastVideoExported(project, realmProject);
+      setProjectTracks(project, realmProject);
+      setProjectMusic(project, realmProject);
       return project;
     } catch (Exception exception) {
       return null;
     }
   }
+
 
   @NonNull
   private Profile mapProfile(RealmProject realmProject) {
@@ -66,19 +71,6 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
     return currentProject;
   }
 
-  private void setProjectMusic(Project project, RealmProject realmProject) {
-    if (realmProject.musicTitle != null) {
-      Music music = new MusicSource(context).getMusicByTitle(
-              project.getProjectPathIntermediateFiles(), realmProject.musicTitle);
-      music.setVolume(realmProject.musicVolume);
-      try {
-        project.getAudioTracks().get(0).insertItemAt(0, music);
-      } catch (IllegalItemOnTrack illegalItemOnTrack) {
-        illegalItemOnTrack.printStackTrace();
-      }
-    }
-  }
-
   private void setProjectVideos(Project project, RealmProject realmProject) {
     // TODO(jliarte): 22/10/16 sort videos by order in project
 //    realmProject.videos.sort("")
@@ -97,5 +89,86 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
           realmProject.pathLastVideoExported,realmProject.dateLastVideoExported);
       project.setLastVideoExported(lastVideoExported);
     }
+  }
+
+  private void setProjectTracks(Project project, RealmProject realmProject) {
+
+    RealmTrack realmTrackVideo = null;
+    RealmTrack realmTrackMusic = null;
+    RealmTrack realmTrackVoiceOver = null;
+
+    for (RealmTrack realmTrack : realmProject.tracks) {
+      switch (realmTrack.id){
+        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_MEDIA_TRACKS:
+          realmTrackVideo = realmTrack;
+          break;
+        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC:
+          realmTrackMusic = realmTrack;
+          break;
+        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_VOICE_OVER:
+          realmTrackVoiceOver = realmTrack;
+          break;
+        default:
+      }
+    }
+
+    if(realmTrackVideo!=null) {
+      project.getMediaTrack().setVolume(realmTrackVideo.volume);
+      project.getMediaTrack().setSolo(realmTrackVideo.solo);
+      project.getMediaTrack().setMute(realmTrackVideo.mute);
+      project.getMediaTrack().setPosition(realmTrackVideo.position);
+    }
+
+    if(realmTrackMusic!=null) {
+      project.getAudioTracks()
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC)
+          .setVolume(realmTrackMusic.volume);
+      project.getAudioTracks()
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC)
+          .setSolo(realmTrackMusic.solo);
+      project.getAudioTracks()
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC)
+          .setMute(realmTrackMusic.mute);
+      project.getAudioTracks()
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC)
+          .setPosition(realmTrackMusic.position);
+    }
+
+    if(realmTrackVoiceOver!=null) {
+      project.getAudioTracks()
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_VOICE_OVER)
+          .setVolume(realmTrackVoiceOver.volume);
+      project.getAudioTracks()
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_VOICE_OVER)
+          .setSolo(realmTrackVoiceOver.solo);
+      project.getAudioTracks()
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_VOICE_OVER)
+          .setMute(realmTrackVoiceOver.mute);
+      project.getAudioTracks()
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_VOICE_OVER)
+          .setPosition(realmTrackVoiceOver.position);
+    }
+  }
+
+  private void setProjectMusic(Project project, RealmProject realmProject) {
+    for (RealmMusic realmMusic : realmProject.musics) {
+      try {
+        if(isAVoiceOver(realmMusic)){
+          project.getAudioTracks()
+              .get(com.videonasocialmedia.videonamediaframework.model
+                  .Constants.INDEX_AUDIO_TRACKS_VOICE_OVER).insertItem(toMusicMapper.map(realmMusic));
+        } else {
+          project.getAudioTracks()
+              .get(com.videonasocialmedia.videonamediaframework.model
+                  .Constants.INDEX_AUDIO_TRACKS_MUSIC).insertItem(toMusicMapper.map(realmMusic));
+        }
+      } catch (IllegalItemOnTrack illegalItemOnTrack) {
+        illegalItemOnTrack.printStackTrace();
+      }
+    }
+  }
+
+  private boolean isAVoiceOver(RealmMusic realmMusic) {
+    return realmMusic.title.compareTo(Constants.MUSIC_AUDIO_VOICEOVER_TITLE) == 0;
   }
 }

@@ -52,32 +52,6 @@ public class ProjectToRealmProjectMapperTest {
   }
 
   @Test
-  public void testMapSetsRealmProjectMusicTitle() throws IllegalItemOnTrack {
-    Project project = getAProject();
-    Music music = new Music("music/path", 0);
-    music.setMusicTitle("Music title");
-    project.getAudioTracks().get(0).insertItemAt(0, music);
-    ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
-
-    RealmProject realmProject = mapper.map(project);
-
-    assertThat(realmProject.musicTitle, is(music.getMusicTitle()));
-  }
-
-  @Test
-  public void testMapSetsRealmProjectMusicVolume() throws IllegalItemOnTrack {
-    Project project = getAProject();
-    Music music = new Music("music/path", 0.8f, 0);
-    music.setMusicTitle("Music title");
-    project.getAudioTracks().get(0).insertItemAt(0, music);
-    ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
-
-    RealmProject realmProject = mapper.map(project);
-
-    assertThat(realmProject.musicVolume, is(0.8f));
-  }
-
-  @Test
   public void testMapSetsRealmProjectVideos() throws IllegalItemOnTrack {
     Project project = getAProject();
     Video video = new Video("media/path", 1f);

@@ -1,7 +1,5 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
-import android.os.Build;
-
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -10,24 +8,23 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.project.GetTracksInProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.UpdateAudioTrackProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.UpdateVideoTrackProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +45,12 @@ public class SoundPresenterTest {
   GetMusicFromProjectUseCase mockedGetMusicFromProjectUseCase;
   @Mock
   GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionFromProjectUseCase;
+  @Mock
+  UpdateVideoTrackProjectUseCase mockedUpdateVideoTrackProjectUseCase;
+  @Mock
+  UpdateAudioTrackProjectUseCase mockedUpdateAudioTrackProjectUseCase;
+  @Mock
+  GetTracksInProjectUseCase mockedGetTracksInProjectUseCase;
 
   @InjectMocks SoundPresenter injectedSoundPresenter;
 
@@ -102,7 +105,8 @@ public class SoundPresenterTest {
         new GetMediaListFromProjectUseCase();
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
         getMediaListFromProjectUseCase, mockedGetMusicFromProjectUseCase,
-        mockedGetPreferencesTransitionFromProjectUseCase);
+        mockedGetPreferencesTransitionFromProjectUseCase, mockedUpdateVideoTrackProjectUseCase,
+        mockedUpdateAudioTrackProjectUseCase, mockedGetTracksInProjectUseCase);
     soundPresenter.init();
 
     Mockito.verify(mockedSoundView).bindVideoList(videoList);
@@ -118,7 +122,8 @@ public class SoundPresenterTest {
         new GetMediaListFromProjectUseCase();
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
         getMediaListFromProjectUseCase, mockedGetMusicFromProjectUseCase,
-        mockedGetPreferencesTransitionFromProjectUseCase);
+        mockedGetPreferencesTransitionFromProjectUseCase, mockedUpdateVideoTrackProjectUseCase,
+        mockedUpdateAudioTrackProjectUseCase, mockedGetTracksInProjectUseCase);
     soundPresenter.init();
 
     Mockito.verify(mockedSoundView).resetPreview();
@@ -140,7 +145,8 @@ public class SoundPresenterTest {
 
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
         mockedGetMediaListFromProjectUseCase, getMusicFromProjectUseCase,
-        mockedGetPreferencesTransitionFromProjectUseCase);
+        mockedGetPreferencesTransitionFromProjectUseCase, mockedUpdateVideoTrackProjectUseCase,
+        mockedUpdateAudioTrackProjectUseCase, mockedGetTracksInProjectUseCase);
     soundPresenter.init();
 
     Mockito.verify(mockedSoundView).bindMusicList(musicList);
@@ -167,7 +173,8 @@ public class SoundPresenterTest {
 
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
         mockedGetMediaListFromProjectUseCase, getMusicFromProjectUseCase,
-        mockedGetPreferencesTransitionFromProjectUseCase);
+        mockedGetPreferencesTransitionFromProjectUseCase, mockedUpdateVideoTrackProjectUseCase,
+        mockedUpdateAudioTrackProjectUseCase, mockedGetTracksInProjectUseCase);
     soundPresenter.init();
     Mockito.verify(mockedSoundView).bindVoiceOverList(voiceOverList);
 

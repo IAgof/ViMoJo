@@ -34,7 +34,6 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -47,7 +46,6 @@ import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.videoTime
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
@@ -316,7 +314,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     public void setSelectedClip(int position) {
         currentVideoIndex = position;
-        videonaPlayer.seekToClipPosition(position);
+        videonaPlayer.seekToClip(position);
         timeLineAdapter.updateSelection(position);
     }
 
@@ -360,14 +358,14 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     public void onClipMoved(int fromPosition, int toPosition) {
         currentVideoIndex = toPosition;
         editPresenter.moveItem(fromPosition, toPosition);
-        videonaPlayer.seekToClipPosition(currentVideoIndex);
+        videonaPlayer.seekToClip(currentVideoIndex);
     }
 
     @Override
     public void onClipReordered(int newPosition) {
         currentVideoIndex = newPosition;
         videonaPlayer.updatePreviewTimeLists();
-        videonaPlayer.seekToClipPosition(currentVideoIndex);
+        videonaPlayer.seekToClip(currentVideoIndex);
     }
 
     @Override

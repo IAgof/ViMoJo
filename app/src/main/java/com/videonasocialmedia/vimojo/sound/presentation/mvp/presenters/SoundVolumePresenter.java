@@ -1,13 +1,15 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 
+import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.UpdateAudioTrackProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -15,35 +17,37 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC;
-
 /**
  * Created by ruth on 19/09/16.
  */
 public class SoundVolumePresenter implements OnVideosRetrieved {
+
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     private SoundVolumeView soundVolumeView;
-    private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    private AddVoiceOverToProjectUseCase addVoiceOverToProject;
-
+    private AddVoiceOverToProjectUseCase addVoiceOverToProjectUseCase;
     public UserEventTracker userEventTracker;
     public Project currentProject;
+    private UpdateAudioTrackProjectUseCase updateAudioTrackProjectUseCase;
+    private UpdateCurrentProjectUseCase updateCurrentProjectUseCase;
 
     @Inject
     public SoundVolumePresenter(SoundVolumeView soundVolumeView,
-                                RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase,
-                                AddVoiceOverToProjectUseCase addVoiceOverToProject,
+                                AddVoiceOverToProjectUseCase addVoiceOverToProjectUseCase,
                                 GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                 GetPreferencesTransitionFromProjectUseCase
-                                    getPreferencesTransitionFromProjectUseCase) {
+                                    getPreferencesTransitionFromProjectUseCase,
+                                UpdateAudioTrackProjectUseCase updateAudioTrackProjectUseCase,
+                                UpdateCurrentProjectUseCase updateCurrentProjectUseCase) {
         this.soundVolumeView = soundVolumeView;
-        this.removeMusicFromProjectUseCase = removeMusicFromProjectUseCase;
-        this.addVoiceOverToProject = addVoiceOverToProject;
+        this.addVoiceOverToProjectUseCase = addVoiceOverToProjectUseCase;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase =
             getPreferencesTransitionFromProjectUseCase;
+        this.updateAudioTrackProjectUseCase = updateAudioTrackProjectUseCase;
+        this.updateCurrentProjectUseCase = updateCurrentProjectUseCase;
         this.currentProject = loadCurrentProject();
+
     }
 
     private Project loadCurrentProject() {
@@ -77,15 +81,12 @@ public class SoundVolumePresenter implements OnVideosRetrieved {
 
     public void setVoiceOver(String voiceOverPath, float volume) {
 
-        addVoiceOverToProject.setVoiceOver(currentProject, voiceOverPath, volume);
+        updateAudioTrackProjectUseCase.addedNewTrack(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER);
+        addVoiceOverToProjectUseCase.setVoiceOver(voiceOverPath, volume);
+        updateAudioTrackProjectUseCase.setAudioTrackVolume(currentProject.getAudioTracks()
+            .get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER), volume);
+        updateCurrentProjectUseCase.updateProject();
         soundVolumeView.goToSoundActivity();
     }
 
-
-    public void removeMusicFromProject() {
-        if (currentProject.hasMusic()) {
-            removeMusicFromProjectUseCase.removeMusicFromProject(currentProject.getMusic(),
-                INDEX_AUDIO_TRACKS_MUSIC);
-        }
-    }
 }

@@ -19,6 +19,7 @@
         app:aspect="sixteen_nine"/>
 
     <ScrollView
+        android:id="@+id/scrollview_timeline_audio_blocks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/videona_player"
@@ -37,16 +38,19 @@
                 android:layout_height="wrap_content">
             </com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack>
 
+
             <com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack
-                android:id="@+id/cardview_audio_blocks_clips_music"
+                android:id="@+id/cardview_audio_blocks_clips_audio_track_first"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
             </com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack>
 
             <com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack
-                android:id="@+id/cardview_audio_blocks_clips_voice_over"
+                android:id="@+id/cardview_audio_blocks_clips_audio_track_second"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
             </com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack>
 
         </LinearLayout>

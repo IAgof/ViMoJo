@@ -1,12 +1,15 @@
 package com.videonasocialmedia.vimojo.model;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.repository.track.RealmTrack;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
 import java.util.UUID;
 
 import io.realm.DynamicRealm;
 import io.realm.DynamicRealmObject;
+import io.realm.FieldAttribute;
+import io.realm.RealmList;
 import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
@@ -182,6 +185,32 @@ public class VimojoMigration implements RealmMigration {
             });
       }
 
+      oldVersion++;
+    }
+
+    //Migrate from verstion 6 to 7, added RealmTrack
+    if(oldVersion == 6) {
+      /*RealmObjectSchema trackSchema = schema.create("RealmTrack")
+          .addField("uuid", String.class, FieldAttribute.PRIMARY_KEY)
+          .addField("id", Integer.class, FieldAttribute.REQUIRED)
+          .addField("volume", Float.class, FieldAttribute.REQUIRED)
+          .addField("mute", Boolean.class, FieldAttribute.REQUIRED)
+          .addField("solo", Boolean.class, FieldAttribute.REQUIRED);*/
+      //RealmObjectSchema trackSchema = schema.get("RealmTrack");
+
+      RealmObjectSchema realmProject = schema.get("RealmProject");
+      if(!realmProject.hasField("realmTrack")){
+        realmProject.addRealmListField("realmTrack", schema.get("RealmTrack"));
+      }
+      if(!realmProject.hasField("realmMusic")){
+        realmProject.addRealmListField("realmMusic", schema.get("RealmMusic"));
+      }
+      if(realmProject.hasField("musicTitle")){
+        realmProject.removeField("musicTitle");
+      }
+      if(realmProject.hasField("musicVolume")){
+        realmProject.removeField("musicVolume");
+      }
       oldVersion++;
     }
   }

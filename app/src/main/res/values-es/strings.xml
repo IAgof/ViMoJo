@@ -630,9 +630,11 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="bottom_bar_sound">Audio</string>
     <string name="bottom_bar_share">Compartir</string>
 
-    <string name="title_track_clip_video">Volumen pista de audio</string>
+    <string name="title_track_clip_video">Volumen pista original</string>
     <string name="title_track_clip_music">Volumen pista de música</string>
-    <string name="title_track_clip_voice_over">Volumen pista de voz</string>
+    <string name="title_track_clip_voice_over">Volumen pista de locución</string>
+    <string name="mute">Mute</string>
+    <string name="solo">Solo</string>
 
 
 </resources>

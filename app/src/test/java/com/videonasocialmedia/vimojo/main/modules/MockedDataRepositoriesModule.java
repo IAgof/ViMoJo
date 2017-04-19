@@ -11,7 +11,7 @@ import static org.mockito.Mockito.mock;
  */
 public class MockedDataRepositoriesModule extends DataRepositoriesModule {
   @Override
-  ProjectRepository provideDefaultProjectRepository(Context context) {
+  ProjectRepository provideDefaultProjectRepository() {
     return mock(ProjectRepository.class);
   }
 }

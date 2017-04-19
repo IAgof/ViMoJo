@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.domain.editor;
 
 import android.support.annotation.NonNull;
 
+import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
@@ -55,7 +56,8 @@ public class GetMusicFromProjectUseCaseTest {
 
         GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
 
-        assertThat("Project field set after construction", getMusicFromProjectUseCase.project, is(videonaProject));
+        assertThat("Project field set after construction", getMusicFromProjectUseCase.project,
+            is(videonaProject));
     }
 
     @Test
@@ -88,7 +90,7 @@ public class GetMusicFromProjectUseCaseTest {
     @NonNull
     public ArrayList<AudioTrack> getAudioTracks(Music music) {
         ArrayList<AudioTrack> audioTracks = new ArrayList<AudioTrack>();
-        AudioTrack audioTrack = new AudioTrack();
+        AudioTrack audioTrack = new AudioTrack(Constants.INDEX_AUDIO_TRACKS_MUSIC);
         try {
             audioTrack.insertItem(music);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {

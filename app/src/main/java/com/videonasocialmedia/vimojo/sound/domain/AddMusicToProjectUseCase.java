@@ -16,7 +16,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 
 import javax.inject.Inject;
 
@@ -24,16 +24,16 @@ import javax.inject.Inject;
  * This class is used to add a new videos to the project.
  */
 public class AddMusicToProjectUseCase {
-    private Project currentProject = Project.getInstance(null, null, null);
-    protected ProjectRepository projectRepository;
+    private Project currentProject;
+    protected MusicRepository musicRepository;
 
     /**
      * Default constructor with project repository argument.
      *
-     * @param projectRepository the project repository
      */
-    @Inject public AddMusicToProjectUseCase(ProjectRepository projectRepository) {
-        this.projectRepository = projectRepository;
+    @Inject public AddMusicToProjectUseCase(MusicRepository musicRepository) {
+        this.musicRepository = musicRepository;
+        currentProject = Project.getInstance(null, null, null);
     }
 
     private AudioTrack obtainAudioTrack(int trackIndex) {
@@ -45,13 +45,11 @@ public class AddMusicToProjectUseCase {
         try {
             audioTrack = obtainAudioTrack(trackIndex);
             audioTrack.insertItemAt(0,music);
-            currentProject.setMusicOnProject(true);
-            projectRepository.update(currentProject);
+            musicRepository.update(music);
             listener.onAddMediaItemToTrackSuccess(music);
         } catch (IndexOutOfBoundsException | IllegalItemOnTrack exception) {
 //            exception.printStackTrace();
             listener.onAddMediaItemToTrackError();
         }
     }
-
 }

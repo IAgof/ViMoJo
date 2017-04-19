@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -176,7 +175,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
             currentSplitPosition = progress;
             //splitSeekBar.setProgress(progress);
             refreshTimeTag(currentSplitPosition);
-            videonaPlayer.seekToClipPosition(video.getStartTime() + progress);
+            videonaPlayer.seekToClip(video.getStartTime() + progress);
             videonaPlayer.setSeekBarProgress(progress);
         }
     }

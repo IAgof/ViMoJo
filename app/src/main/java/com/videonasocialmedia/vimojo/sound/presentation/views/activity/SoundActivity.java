@@ -8,18 +8,13 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
-import android.widget.Switch;
+import android.widget.ScrollView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -51,7 +46,6 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import static butterknife.ButterKnife.findById;
 
@@ -65,8 +59,8 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   private static final String SOUND_ACTIVITY_PROJECT_POSITION = "sound_activity_project_position";
   private static final String TAG = "SoundActivity";
   private static final int ID_TRACK_CLIP_VIDEO = 0;
-  private static final int ID_TRACK_CLIP_MUSIC = 1;
-  private static final int ID_TRACK_CLIP_VOICE_OVER = 2;
+  private static final int ID_TRACK_CLIP_AUDIO_FIRST = 1;
+  private static final int ID_TRACK_CLIP_AUDIO_SECOND = 2;
   private final int ID_BUTTON_FAB_TOP=1;
   private final int ID_BUTTON_FAB_BOTTOM=3;
 
@@ -81,10 +75,12 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @Nullable @Bind(R.id.cardview_audio_blocks_clips_video)
   CardViewAudioTrack trackClipsVideo;
-  @Nullable @Bind(R.id.cardview_audio_blocks_clips_music)
-  CardViewAudioTrack trackClipsMusic;
-  @Nullable @Bind(R.id.cardview_audio_blocks_clips_voice_over)
-  CardViewAudioTrack trackClipsVoiceOver;
+  @Nullable @Bind(R.id.cardview_audio_blocks_clips_audio_track_first)
+  CardViewAudioTrack trackClipsAudioTrackFirst;
+  @Nullable @Bind(R.id.cardview_audio_blocks_clips_audio_track_second)
+  CardViewAudioTrack trackClipsAudioTrackSecond;
+  @Nullable @Bind(R.id.scrollview_timeline_audio_blocks)
+  ScrollView scrollViewTimeLineAudioBlocks;
 
   @Bind(R.id.fab_edit_room)
   FloatingActionsMenu fabMenu;
@@ -99,6 +95,11 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   private MusicTimeLineAdapter voiceOverTimeLineAdapter;
   private boolean voiceOverActivated;
   private FloatingActionButton fabVoiceOver;
+
+  private int num_grid_columns = 1;
+  int orientation = LinearLayoutManager.HORIZONTAL;
+  private int positionAudioTrackMusic;
+  private RecyclerView.LayoutManager audioListLayoutManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -120,16 +121,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
     audioListRecyclerView = trackClipsVideo.getRecyclerView();
     trackClipsVideo.setImageTrack(R.drawable.activity_edit_sound_normal);
     trackClipsVideo.setTitleTrack(getString(R.string.title_track_clip_video));
-
-    trackClipsMusic.setListener(this, ID_TRACK_CLIP_MUSIC);
-    musicListRecyclerView = trackClipsMusic.getRecyclerView();
-    trackClipsMusic.setImageTrack(R.drawable.activity_edit_sound_music_normal);
-    trackClipsMusic.setTitleTrack(getString(R.string.title_track_clip_music));
-
-    trackClipsVoiceOver.setListener(this, ID_TRACK_CLIP_VOICE_OVER);
-    voiceOverListRecyclerView = trackClipsVoiceOver.getRecyclerView();
-    trackClipsVoiceOver.setImageTrack(R.drawable.activity_edit_sound_voice_normal);
-    trackClipsVoiceOver.setTitleTrack(getString(R.string.title_track_clip_voice_over));
   }
 
   private void setupBottomBar(BottomBar bottomBar) {
@@ -152,7 +143,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   private void setupFab() {
     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.activity_edit_sound_music_normal,R.color.colorWhite);
-    fabMenu.expand();
   }
   protected void addAndConfigurateFabButton(int id, int icon, int color) {
     FloatingActionButton newFabMini = FabUtils.createNewFabMini(id, icon, color);
@@ -257,6 +247,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @Override
   public void bindVideoTrack(float volume, boolean muteAudio, boolean soloAudio) {
+    trackClipsVideo.enableShowUiTrackAudioOptions();
     trackClipsVideo.setSeekBar((int) (volume*100));
     trackClipsVideo.setSwitchMuteAudio(muteAudio);
     trackClipsVideo.setSwitchSoloAudio(soloAudio);
@@ -269,10 +260,23 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
   @Override
-  public void bindMusicTrack(float volume, boolean muteAudio, boolean soloAudio) {
-    trackClipsMusic.setSeekBar((int) (volume*100));
-    trackClipsMusic.setSwitchMuteAudio(muteAudio);
-    trackClipsMusic.setSwitchSoloAudio(soloAudio);
+  public void bindMusicTrack(float volume, boolean muteAudio, boolean soloAudio, int position) {
+
+    if(position == 1) {
+      initTrackClipAudioTrackFirst(volume, muteAudio, soloAudio);
+      initTitleAndIconAudioTrackFirstMusic();
+      musicListRecyclerView = trackClipsAudioTrackFirst.getRecyclerView();
+    } else {
+      initTrackClipAudioTrackSecond(volume, muteAudio, soloAudio);
+      initTitleAndIconAudioTrackSecondMusic();
+      musicListRecyclerView = trackClipsAudioTrackSecond.getRecyclerView();
+    }
+
+    RecyclerView.LayoutManager layoutManager2 = new GridLayoutManager(this, num_grid_columns,
+        orientation, false);
+    musicTimeLineAdapter = new MusicTimeLineAdapter(this);
+    musicListRecyclerView.setLayoutManager(layoutManager2);
+    musicListRecyclerView.setAdapter(musicTimeLineAdapter);
   }
 
   @Override
@@ -282,15 +286,70 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
   @Override
-  public void bindVoiceOverTrack(float volume, boolean muteAudio, boolean soloAudio) {
-    trackClipsVoiceOver.setSeekBar((int) (volume*100));
-    trackClipsVoiceOver.setSwitchMuteAudio(muteAudio);
-    trackClipsVoiceOver.setSwitchSoloAudio(soloAudio);
+  public void bindVoiceOverTrack(float volume, boolean muteAudio, boolean soloAudio, int position) {
+
+    if(position == 1) {
+      initTrackClipAudioTrackFirst(volume, muteAudio, soloAudio);
+      initTitleAndIconAudioTrackFirstVoiceOver();
+      voiceOverListRecyclerView = trackClipsAudioTrackFirst.getRecyclerView();
+    } else {
+      initTrackClipAudioTrackSecond(volume, muteAudio, soloAudio);
+      initTitleAndIconAudioTrackSecondVoiceOver();
+      voiceOverListRecyclerView = trackClipsAudioTrackSecond.getRecyclerView();
+    }
+
+    RecyclerView.LayoutManager layoutManager3 = new GridLayoutManager(this, num_grid_columns,
+        orientation, false);
+    voiceOverTimeLineAdapter = new MusicTimeLineAdapter(this);
+    voiceOverListRecyclerView.setLayoutManager(layoutManager3);
+    voiceOverListRecyclerView.setAdapter(voiceOverTimeLineAdapter);
+  }
+
+
+  private void initTrackClipAudioTrackFirst(float volume, boolean muteAudio, boolean soloAudio) {
+    trackClipsAudioTrackFirst.setListener(this, ID_TRACK_CLIP_AUDIO_FIRST);
+    trackClipsAudioTrackFirst.setVisibility(View.VISIBLE);
+    trackClipsAudioTrackFirst.enableShowUiTrackAudioOptions();
+    trackClipsAudioTrackFirst.setSeekBar((int) (volume*100));
+    trackClipsAudioTrackFirst.setSwitchMuteAudio(muteAudio);
+    trackClipsAudioTrackFirst.setSwitchSoloAudio(soloAudio);
+  }
+
+  private void initTrackClipAudioTrackSecond(float volume, boolean muteAudio, boolean soloAudio) {
+    trackClipsAudioTrackSecond.setListener(this, ID_TRACK_CLIP_AUDIO_SECOND);
+    trackClipsAudioTrackSecond.setVisibility(View.VISIBLE);
+
+    trackClipsAudioTrackSecond.enableShowUiTrackAudioOptions();
+    trackClipsAudioTrackSecond.setSeekBar((int) (volume*100));
+    trackClipsAudioTrackSecond.setSwitchMuteAudio(muteAudio);
+    trackClipsAudioTrackSecond.setSwitchSoloAudio(soloAudio);
+  }
+
+  private void initTitleAndIconAudioTrackFirstMusic() {
+    positionAudioTrackMusic = 1;
+    trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_music_normal);
+    trackClipsAudioTrackFirst.setTitleTrack(getString(R.string.title_track_clip_music));
+  }
+
+  private void initTitleAndIconAudioTrackSecondMusic() {
+    positionAudioTrackMusic = 2;
+    trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_music_normal);
+    trackClipsAudioTrackSecond.setTitleTrack(getString(R.string.title_track_clip_music));
+  }
+
+  private void initTitleAndIconAudioTrackFirstVoiceOver() {
+    trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_voice_normal);
+    trackClipsAudioTrackFirst.setTitleTrack(getString(R.string.title_track_clip_voice_over));
+  }
+
+  private void initTitleAndIconAudioTrackSecondVoiceOver() {
+    trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_voice_normal);
+    trackClipsAudioTrackSecond.setTitleTrack(getString(R.string.title_track_clip_voice_over));
   }
 
   @Override
   public void hideVoiceOverCardView() {
-    trackClipsVoiceOver.setVisibility(View.GONE);
+    trackClipsAudioTrackSecond.setVisibility(View.GONE);
   }
 
   @Override
@@ -325,40 +384,40 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
   private void initAudioBlockListRecycler() {
-    int orientation = LinearLayoutManager.HORIZONTAL;
-    int num_grid_columns = 1;
-    RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, num_grid_columns,
+
+    audioListLayoutManager = new GridLayoutManager(this, num_grid_columns,
         orientation, false);
-    audioListRecyclerView.setLayoutManager(layoutManager);
+    audioListRecyclerView.setLayoutManager(audioListLayoutManager);
     audioTimeLineAdapter = new AudioTimeLineAdapter(this);
     audioListRecyclerView.setAdapter(audioTimeLineAdapter);
-
-    RecyclerView.LayoutManager layoutManager2 = new GridLayoutManager(this, num_grid_columns,
-        orientation, false);
-    musicTimeLineAdapter = new MusicTimeLineAdapter(this);
-    musicListRecyclerView.setLayoutManager(layoutManager2);
-    musicListRecyclerView.setAdapter(musicTimeLineAdapter);
-
-    RecyclerView.LayoutManager layoutManager3 = new GridLayoutManager(this, num_grid_columns,
-        orientation, false);
-    voiceOverTimeLineAdapter = new MusicTimeLineAdapter(this);
-    voiceOverListRecyclerView.setLayoutManager(layoutManager3);
-    voiceOverListRecyclerView.setAdapter(voiceOverTimeLineAdapter);
   }
 
   @Override
   public void onAudioClipClicked(int position) {
     Log.d(TAG, "onAudioClipClicked, position " + position);
+    videonaPlayer.seekToClip(position);
+    int lastPosition = audioTimeLineAdapter.getSelectedVideoPosition();
+    audioTimeLineAdapter.updateSelection(position);
+    //audioListLayoutManager.scrollToPosition(position + 2);
+    if(lastPosition > position && position > 0) {
+      audioListRecyclerView.smoothScrollToPosition(--position);
+    } else {
+      audioListRecyclerView.smoothScrollToPosition(++position);
+    }
   }
 
   @Override
   public void onMusicClipClicked(int position) {
-    //navigateTo(MusicListActivity.class);
+    videonaPlayer.seekTo(0);
+    audioTimeLineAdapter.updateSelection(0);
+    audioListRecyclerView.smoothScrollToPosition(0);
   }
 
   @Override
   public void onVoiceOverClipClicked(int position) {
-    //navigateTo(VoiceOverActivity.class);
+    videonaPlayer.seekTo(0);
+    audioTimeLineAdapter.updateSelection(0);
+    audioListRecyclerView.smoothScrollToPosition(0);
   }
 
   @Override
@@ -366,15 +425,25 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
     switch (id){
       case ID_TRACK_CLIP_VIDEO:
         videonaPlayer.setVideoVolume(progress);
-        //presenter.setVideoVolume(progress);
+        presenter.setVideoVolume(progress);
         break;
-      case ID_TRACK_CLIP_MUSIC:
-        videonaPlayer.setMusicVolume(progress);
-        //presenter.setMusicVolume(progress);
+      case ID_TRACK_CLIP_AUDIO_FIRST:
+        if(isMusicFirstTrack()) {
+          videonaPlayer.setMusicVolume(progress);
+          presenter.setMusicVolume(progress);
+        } else {
+          videonaPlayer.setVoiceOverVolume(progress);
+          presenter.setVoiceOverVolume(progress);
+        }
         break;
-      case ID_TRACK_CLIP_VOICE_OVER:
-        videonaPlayer.setVoiceOverVolume(progress);
-        //presenter.setVoiceOverVolume(progress);
+      case ID_TRACK_CLIP_AUDIO_SECOND:
+        if(isMusicSecondTrack()) {
+          videonaPlayer.setMusicVolume(progress);
+          presenter.setMusicVolume(progress);
+        } else {
+          videonaPlayer.setVoiceOverVolume(progress);
+          presenter.setVoiceOverVolume(progress);
+        }
       default:
         return;
     }
@@ -386,17 +455,29 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       case ID_TRACK_CLIP_VIDEO:
         if(isChecked)
           videonaPlayer.setVideoVolume(0f);
-        //presenter.soloVideo(isChecked);
+        presenter.soloVideo(isChecked);
         break;
-      case ID_TRACK_CLIP_MUSIC:
-        if(isChecked)
-          videonaPlayer.setMusicVolume(0f);
-        //presenter.soloMusic(isChecked);
+      case ID_TRACK_CLIP_AUDIO_FIRST:
+        if(isMusicFirstTrack()) {
+          if (isChecked)
+            videonaPlayer.setMusicVolume(0f);
+          presenter.soloMusic(isChecked);
+        } else {
+          if(isChecked)
+            videonaPlayer.setVoiceOverVolume(0f);
+          presenter.soloVoiceOver(isChecked);
+        }
         break;
-      case ID_TRACK_CLIP_VOICE_OVER:
-        if(isChecked)
-          videonaPlayer.setVoiceOverVolume(0f);
-        //presenter.soloVoiceOver(isChecked);
+      case ID_TRACK_CLIP_AUDIO_SECOND:
+        if(isMusicSecondTrack()) {
+          if (isChecked)
+            videonaPlayer.setMusicVolume(0f);
+          presenter.soloMusic(isChecked);
+        } else {
+          if (isChecked)
+            videonaPlayer.setVoiceOverVolume(0f);
+          presenter.soloVoiceOver(isChecked);
+        }
       default:
         return;
     }
@@ -408,19 +489,66 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       case ID_TRACK_CLIP_VIDEO:
         if(isChecked)
           videonaPlayer.setVideoVolume(0f);
-        //presenter.muteVoiceOver(isChecked);
+        presenter.muteVideo(isChecked);
         break;
-      case ID_TRACK_CLIP_MUSIC:
-        if(isChecked)
-          videonaPlayer.setMusicVolume(0f);
-        //presenter.muteVoiceOver(isChecked);
+      case ID_TRACK_CLIP_AUDIO_FIRST:
+        if(isMusicFirstTrack()) {
+          if (isChecked)
+            videonaPlayer.setMusicVolume(0f);
+          presenter.muteMusic(isChecked);
+        } else {
+          if(isChecked)
+            videonaPlayer.setVoiceOverVolume(0f);
+          presenter.muteVoiceOver(isChecked);
+        }
         break;
-      case ID_TRACK_CLIP_VOICE_OVER:
-        if(isChecked)
-          videonaPlayer.setVoiceOverVolume(0f);
-        //presenter.muteVoiceOver(isChecked);
+      case ID_TRACK_CLIP_AUDIO_SECOND:
+        if(isMusicSecondTrack()) {
+          if (isChecked)
+            videonaPlayer.setMusicVolume(0f);
+          presenter.muteMusic(isChecked);
+        } else {
+          if (isChecked)
+            videonaPlayer.setVoiceOverVolume(0f);
+          presenter.muteVoiceOver(isChecked);
+        }
       default:
         return;
     }
+  }
+
+  @Override
+  public void onClickImageIconTrack(int id) {
+    switch (id){
+      case ID_TRACK_CLIP_VIDEO:
+        focusOnView(trackClipsVideo);
+        break;
+      case ID_TRACK_CLIP_AUDIO_FIRST:
+        focusOnView(trackClipsAudioTrackFirst);
+        break;
+      case ID_TRACK_CLIP_AUDIO_SECOND:
+        focusOnView(trackClipsAudioTrackSecond);
+        break;
+      default:
+        return;
+    }
+  }
+
+  private final void focusOnView(final View view) {
+    scrollViewTimeLineAudioBlocks.post(new Runnable() {
+      @Override
+      public void run() {
+        scrollViewTimeLineAudioBlocks.scrollTo(0, view.getTop());
+      }
+    });
+  }
+
+
+  private boolean isMusicFirstTrack() {
+    return positionAudioTrackMusic == 1;
+  }
+
+  private boolean isMusicSecondTrack() {
+    return positionAudioTrackMusic == 2;
   }
 }
