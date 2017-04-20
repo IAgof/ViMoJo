@@ -550,13 +550,13 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       case ID_TRACK_CLIP_AUDIO_SECOND:
         focusOnView(trackClipsAudioTrackSecond);
         if(trackClipsAudioTrackSecond.isShowedAudioTrackOptions()){
-          if(isMusicFirstTrack()){
+          if(isMusicSecondTrack()){
             trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_music_up);
           } else {
             trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_voice_over_up);
           }
         } else {
-          if(isMusicFirstTrack()){
+          if(isMusicSecondTrack()){
             trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_music_down);
           } else {
             trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_voice_over_down);

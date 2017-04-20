@@ -145,6 +145,7 @@ public class UpdateAudioTrackProjectUseCaseTest {
 
   @Test
   public void addNewTrackUpdateTrackPositionToTwoIfThereIsOneAudioTrackAdded() throws IllegalItemOnTrack {
+    getAProject().clear();
     Project project = getAProject();
     Music voiceOver = new Music("media/path", 0.5f, 66);
     project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER).insertItem(voiceOver);
