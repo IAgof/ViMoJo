@@ -64,10 +64,10 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
 
     public void init() {
       checkVoiceOverFeatureToggle(BuildConfig.FEATURE_VOICE_OVER);
-      obtainVideos();
       // TODO:(alvaro.martinez) 22/03/17 Player should be in charge of these checks from VMComposition 
       checkAVTransitionsActivated();
       retrieveTracksInfo();
+      obtainVideos();
       retrieveCompositionMusic();
     }
 

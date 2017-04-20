@@ -110,17 +110,9 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       createExportReceiver();
       restoreState(savedInstanceState);
       videonaPlayer.setListener(this);
-      initTrackClips();
       bottomBar.selectTabWithId(R.id.tab_sound);
       setupBottomBar(bottomBar);
       setupFab();
-  }
-
-  private void initTrackClips() {
-    trackClipsVideo.setListener(this, ID_TRACK_CLIP_VIDEO);
-    audioListRecyclerView = trackClipsVideo.getRecyclerView();
-    trackClipsVideo.setImageTrack(R.drawable.activity_edit_sound_original_down);
-    trackClipsVideo.setTitleTrack(getString(R.string.title_track_clip_video));
   }
 
   private void setupBottomBar(BottomBar bottomBar) {
@@ -236,7 +228,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @Override
   protected void onStart() {
-    initAudioBlockListRecycler();
     super.onStart();
   }
 
@@ -250,10 +241,21 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @Override
   public void bindVideoTrack(float volume, boolean muteAudio, boolean soloAudio) {
-    trackClipsVideo.isShowedAudioTrackOptions();
+    trackClipsVideo.setListener(this, ID_TRACK_CLIP_VIDEO);
+    audioListRecyclerView = trackClipsVideo.getRecyclerView();
+
+    trackClipsVideo.setImageTrack(R.drawable.activity_edit_sound_original_down);
+    trackClipsVideo.setTitleTrack(getString(R.string.title_track_clip_video));
+
     trackClipsVideo.setSeekBar((int) (volume*100));
     trackClipsVideo.setSwitchMuteAudio(muteAudio);
     trackClipsVideo.setSwitchSoloAudio(soloAudio);
+
+    audioListLayoutManager = new GridLayoutManager(this, num_grid_columns,
+        orientation, false);
+    audioListRecyclerView.setLayoutManager(audioListLayoutManager);
+    audioTimeLineAdapter = new AudioTimeLineAdapter(this);
+    audioListRecyclerView.setAdapter(audioTimeLineAdapter);
   }
 
   @Override
@@ -384,15 +386,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   public void newClipPlayed(int currentClipIndex) {
     audioTimeLineAdapter.updateSelection(currentClipIndex);
     audioListRecyclerView.scrollToPosition(currentClipIndex);
-  }
-
-  private void initAudioBlockListRecycler() {
-
-    audioListLayoutManager = new GridLayoutManager(this, num_grid_columns,
-        orientation, false);
-    audioListRecyclerView.setLayoutManager(audioListLayoutManager);
-    audioTimeLineAdapter = new AudioTimeLineAdapter(this);
-    audioListRecyclerView.setAdapter(audioTimeLineAdapter);
   }
 
   @Override
