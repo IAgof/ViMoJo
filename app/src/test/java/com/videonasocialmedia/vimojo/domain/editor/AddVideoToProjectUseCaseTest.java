@@ -81,7 +81,6 @@ public class AddVideoToProjectUseCaseTest {
     verify(mockedProjectRepository).update(currentProject);
   }
 
-
   @Test
   public void testAddVideoToProjectAtPositionCallsUpdateProject() {
     Project currentProject = Project.getInstance(null, null, null);

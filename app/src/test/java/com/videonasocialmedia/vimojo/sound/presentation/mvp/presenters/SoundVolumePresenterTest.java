@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
