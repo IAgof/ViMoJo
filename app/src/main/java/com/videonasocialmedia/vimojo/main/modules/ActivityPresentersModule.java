@@ -41,6 +41,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity
 import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
+import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
@@ -216,11 +217,14 @@ public class ActivityPresentersModule {
   RecordCamera2Presenter provideRecordCamera2Presenter(GetVideoFormatFromCurrentProjectUseCase
                                                            getVideoFormatFromCurrentProjectUseCase,
                                                        AddVideoToProjectUseCase
-                                                           addVideoToProjectUseCase){
+                                                           addVideoToProjectUseCase,
+                                                       AdaptVideoRecordedToVideoFormatUseCase
+                                                       adaptVideoRecordedToVideoFormatUseCase){
 
     return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity,
         isFrontCameraSelected, isPrincipalViewSelected, isRightControlsViewSelected, textureView,
-        directorySaveVideos, getVideoFormatFromCurrentProjectUseCase, addVideoToProjectUseCase);
+        directorySaveVideos, getVideoFormatFromCurrentProjectUseCase, addVideoToProjectUseCase,
+        adaptVideoRecordedToVideoFormatUseCase);
   }
 
   @Provides @PerActivity
@@ -402,6 +406,10 @@ public class ActivityPresentersModule {
 
   @Provides GetVideoFormatFromCurrentProjectUseCase provideVideoFormatFromCurrentProjectUseCase(){
     return new GetVideoFormatFromCurrentProjectUseCase();
+  }
+
+  @Provides AdaptVideoRecordedToVideoFormatUseCase provideAdaptVideoRecordedToVideoFormatUseCase(){
+    return new AdaptVideoRecordedToVideoFormatUseCase();
   }
 
 }

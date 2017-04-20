@@ -24,10 +24,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Size;
-import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
-import android.view.View;
 import android.widget.Toast;
 
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
@@ -187,7 +185,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     isRecordingVideo = false;
     mediaRecorder.stop();
     mediaRecorder.reset();
-    listener.videoRecorded(videoPath);
+    listener.stopVideo(videoPath);
   }
 
   /**

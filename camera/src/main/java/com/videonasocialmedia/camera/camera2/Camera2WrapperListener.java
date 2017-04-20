@@ -12,7 +12,7 @@ public interface Camera2WrapperListener {
 
   void setFlashSupport();
 
-  void videoRecorded(String path);
+  void stopVideo(String path);
 
   void setZoom(Rect rectValue);
 

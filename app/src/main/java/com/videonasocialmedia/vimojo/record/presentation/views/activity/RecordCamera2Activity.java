@@ -437,7 +437,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @OnClick(R.id.button_toggle_flash)
   public void toggleFlash() {
-    presenter.toggleFlash(flashButton.isSelected());
+    presenter.isFlashEnabled(flashButton.isSelected());
   }
 
   @OnClick(R.id.button_change_camera)

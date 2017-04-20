@@ -67,13 +67,15 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
                                 String directorySaveVideos,
                                 GetVideoFormatFromCurrentProjectUseCase
                                     getVideoFormatFromCurrentProjectUseCase,
-                                AddVideoToProjectUseCase addVideoToProjectUseCase) {
+                                AddVideoToProjectUseCase addVideoToProjectUseCase,
+                                AdaptVideoRecordedToVideoFormatUseCase
+                                    adaptVideoRecordedToVideoFormatUseCase) {
     this.recordView = recordView;
     this.isPrincipalViewSelected = isPrincipalViewSelected;
     this.isRightControlsViewSelected = isRightControlsViewSelected;
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
     initCameraWrapper(context, isFrontCameraSelected, textureView, directorySaveVideos, getVideoFormatFromCurrentProjectUseCase);
-    this.adaptVideoRecordedToVideoFormatUseCase = new AdaptVideoRecordedToVideoFormatUseCase();
+    this.adaptVideoRecordedToVideoFormatUseCase = adaptVideoRecordedToVideoFormatUseCase;
     this.currentProject = loadProject();
   }
 
@@ -184,7 +186,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
   }
 
   @Override
-  public void videoRecorded(String path) {
+  public void stopVideo(String path) {
     recordView.showRecordButton();
     recordView.showNavigateToSettingsActivity();
     recordView.stopChronometer();
@@ -237,7 +239,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
     camera.setFlashOff();
   }
 
-  public void toggleFlash(boolean isSelected) {
+  public void isFlashEnabled(boolean isSelected) {
     if (isSelected) {
       camera.setFlashOff();
     } else {
