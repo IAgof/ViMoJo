@@ -72,4 +72,6 @@ public interface RecordView {
 
     void showResolutionSelected(int height);
 
+    void showGridLayout();
+
 }

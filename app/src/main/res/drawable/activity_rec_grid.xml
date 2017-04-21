@@ -1,0 +1,21 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="24dp"
+        android:height="24dp"
+        android:viewportWidth="1920.0"
+        android:viewportHeight="1080.0">
+    <path
+        android:fillColor="@color/button"
+        android:pathData="M635.9,0L635.9,1080"/>
+    <path
+        android:fillColor="@color/button"
+        android:pathData="M635.9,0L635.9,1080"/>
+    <path
+        android:fillColor="@color/button"
+        android:pathData="M1275.7,0L1275.7,1080"/>
+    <path
+        android:fillColor="@color/button"
+        android:pathData="M1,373.6L1920,373.6"/>
+    <path
+        android:fillColor="@color/button"
+        android:pathData="M0,742.6L1919,742.6"/>
+</vector>

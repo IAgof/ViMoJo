@@ -32,6 +32,7 @@ public class ConfigPreferences {
     public final static int FRONT_CAMERA = 1;
     public final static String CAMERA_ID = "camera_id";
     public final static String PRIVATE_PATH = "private_path";
+    public final static String KEY_CAMERA_PREFERENCES_GRID = "camera_grid";
     public final static String FRONT_CAMERA_FLASH_SUPPORTED = "front_camera_flash_supported";
     public final static String BACK_CAMERA_FLASH_SUPPORTED = "back_camera_flash_supported";
     public final static String FRONT_CAMERA_SUPPORTED = "front_camera_supported";

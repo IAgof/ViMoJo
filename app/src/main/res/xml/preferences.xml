@@ -27,6 +27,7 @@
         android:title="@string/title_camera_section"
         android:key="@string/title_camera_section"
         android:enabled="true">
+
         <com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseCameraResolutionListPreferences
             android:theme="@style/VideonaAlertDialog"
             android:dialogTitle="@string/resolution"
@@ -54,6 +55,16 @@
             android:key="list_preferences_frame_rate"
             android:summary="@string/good_frame_rate_name"
             android:title="@string/frame_rate"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/title_camera_options">
+
+        <SwitchPreference
+            android:key="camera_grid"
+            android:title="@string/grid"
+            android:defaultValue="false" />
 
     </PreferenceCategory>
 

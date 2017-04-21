@@ -123,6 +123,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ImageButton buttonToShowControls;
     @Bind(R.id.activity_record_icon_resolution)
     ImageView resolutionIndicator;
+    @Bind(R.id.image_view_grid)
+    ImageView imageViewGrid;
 
     private boolean buttonBackPressed;
     private boolean recording;
@@ -574,6 +576,11 @@ public class RecordActivity extends VimojoActivity implements RecordView {
                 resolutionIndicator.setImageResource(R.drawable.record_activity_ic_resolution_720);
                 break;
         }
+    }
+
+    @Override
+    public void showGridLayout() {
+        imageViewGrid.setVisibility(View.VISIBLE);
     }
 
     public void setupActivityButtons() {
