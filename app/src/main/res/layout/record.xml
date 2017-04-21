@@ -27,7 +27,8 @@
             android:id="@+id/image_view_grid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/activity_record_drawable_rec_progress"
+            android:scaleType="fitXY"
+            android:src="@drawable/activity_rec_grid"
             android:visibility="invisible"/>
 
         <ImageButton
