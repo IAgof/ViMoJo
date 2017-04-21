@@ -84,7 +84,7 @@ public class RecordCamera2PresenterTest {
         isFrontCameraSelected, isPrincipalViewSelected,
         isRightControlsViewSelected, mockedTextureView, directorySaveVideos,
         mockedGetVideoFormatFromCurrentProjectUseCase,
-        mockedAddVideoToProjectUseCase);
+        mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
 
     presenter.initViews();
 
@@ -104,7 +104,7 @@ public class RecordCamera2PresenterTest {
         isFrontCameraSelected, isPrincipalViewSelected,
         isRightControlsViewSelected, mockedTextureView, directorySaveVideos,
         mockedGetVideoFormatFromCurrentProjectUseCase,
-        mockedAddVideoToProjectUseCase);
+        mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
 
     presenter.initViews();
 
@@ -117,7 +117,7 @@ public class RecordCamera2PresenterTest {
 
   @Test
   public void navigateEditOrGalleryButtonCallsGalleryIfThereIsNotVideos(){
-
+    getAProject().clear();
     int numVideosInProject = getAProject().getVMComposition().getMediaTrack().getNumVideosInProject();
     assertThat("There is not videos in project ", numVideosInProject, is(0));
 
@@ -125,7 +125,7 @@ public class RecordCamera2PresenterTest {
         isFrontCameraSelected, isPrincipalViewSelected,
         isRightControlsViewSelected, mockedTextureView, directorySaveVideos,
         mockedGetVideoFormatFromCurrentProjectUseCase,
-        mockedAddVideoToProjectUseCase);
+        mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
 
     presenter.navigateToEditOrGallery();
 
@@ -151,7 +151,7 @@ public class RecordCamera2PresenterTest {
         isFrontCameraSelected, isPrincipalViewSelected,
         isRightControlsViewSelected, mockedTextureView, directorySaveVideos,
         mockedGetVideoFormatFromCurrentProjectUseCase,
-        mockedAddVideoToProjectUseCase);
+        mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
 
     presenter.navigateToEditOrGallery();
 
@@ -180,7 +180,7 @@ public class RecordCamera2PresenterTest {
         isFrontCameraSelected, isPrincipalViewSelected,
         isRightControlsViewSelected, mockedTextureView, directorySaveVideos,
         mockedGetVideoFormatFromCurrentProjectUseCase,
-        mockedAddVideoToProjectUseCase);
+        mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
 
     presenter.navigateToEditOrGallery();
 
