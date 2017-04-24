@@ -1,3 +1,7 @@
+v0.4.23
+- Fixed problem in settings screen.
+- Updated video transition to white color. Adjust duration of audio, video transitions.
+
 v0.4.22
 - Added new audio tracks interface. Show audio and music clips in separate tracks with blocks.
 
