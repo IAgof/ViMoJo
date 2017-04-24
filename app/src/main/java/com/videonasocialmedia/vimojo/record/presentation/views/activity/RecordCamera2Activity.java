@@ -93,6 +93,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   View settingsBarSubmenuView;
   @Bind(R.id.button_zoom)
   ImageButton zoomButton;
+  @Bind(R.id.button_white_balance)
+  ImageButton whiteBalanceButton;
   @Bind(R.id.button_resolution_indicator)
   ImageView resolutionIndicatorButton;
   @Bind(R.id.customManualFocusView)
@@ -183,6 +185,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(navigateSettingsButtons, button_color);
     tintButton(settingsCameraButton, button_color);
     tintButton(zoomButton, button_color);
+    tintButton(whiteBalanceButton, button_color);
   }
 
   private void configChronometer() {
@@ -389,7 +392,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void showBottomControlsView() {
-    settingsBarSubmenuView.setVisibility(View.VISIBLE);
+    settingsBarSubmenuView.setVisibility(View.INVISIBLE);
     settingsBarView.setVisibility(View.VISIBLE);
     settingsCameraButton.setSelected(true);
   }
@@ -480,7 +483,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @OnClick(R.id.button_settings_camera)
   public void showHideBottomSettingsCamera(){
-    presenter.bottomSettingsCamera(settingsCameraButton.isSelected());
+    presenter.buttonSettingsCamera(settingsCameraButton.isSelected());
   }
 
   @OnClick(R.id.button_navigate_settings)
@@ -517,8 +520,22 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     } else {
       zoomButton.setSelected(true);
       slideLeftSeekBarView.setVisibility(View.VISIBLE);
+      settingsBarSubmenuView.setVisibility(View.INVISIBLE);
     }
   }
+
+  @OnClick (R.id.button_white_balance)
+  public void onClickWhiteBalanceListener(){
+    if(whiteBalanceButton.isSelected()){
+      whiteBalanceButton.setSelected(false);
+      settingsBarSubmenuView.setVisibility(View.INVISIBLE);
+    } else{
+      whiteBalanceButton.setSelected(true);
+      settingsBarSubmenuView.setVisibility(View.VISIBLE);
+      slideLeftSeekBarView.setVisibility(View.INVISIBLE);
+    }
+  }
+
 
   @OnTouch(R.id.button_record)
   boolean onTouch(MotionEvent event) {

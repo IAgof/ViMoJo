@@ -268,7 +268,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
     recordView.hideRightControlsView();
   }
 
-  public void bottomSettingsCamera(boolean isSelected) {
+  public void buttonSettingsCamera(boolean isSelected) {
     if(isSelected) {
       recordView.hideBottomControlsView();
     } else {
