@@ -112,7 +112,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     View picometer;
     @Bind(R.id.controls)
     View controlsView;
-    @Bind(R.id.zoom_bar)
+    @Bind(R.id.slide_left_bar)
     View zommBarView;
     @Bind(R.id.settings_bar)
     View settingsBar;

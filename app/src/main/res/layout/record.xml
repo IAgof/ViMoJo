@@ -132,7 +132,7 @@
         <!-- Zoom -->
 
         <LinearLayout
-            android:id="@+id/zoom_bar"
+            android:id="@+id/slide_left_bar"
             android:orientation="vertical"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"

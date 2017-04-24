@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -82,12 +83,16 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   View controlsView;
   @Bind(R.id.picometer)
   View picometerView;
-  @Bind(R.id.zoom_bar)
-  View zommBarView;
+  @Bind(R.id.slide_left_bar)
+  View slideLeftSeekBarView;
+  @Bind(R.id.seekBar_slide_left)
+  SeekBar slideSeekBar;
   @Bind(R.id.settings_bar)
   View settingsBarView;
   @Bind(R.id.settings_bar_submenu)
   View settingsBarSubmenuView;
+  @Bind(R.id.button_zoom)
+  ImageButton zoomButton;
   @Bind(R.id.button_resolution_indicator)
   ImageView resolutionIndicatorButton;
   @Bind(R.id.customManualFocusView)
@@ -164,14 +169,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   public void setupActivityButtons() {
     // TODO:(alvaro.martinez) 7/11/16 implement this functionality, use case check support camera
-    settingsCameraButton.setEnabled(false);
     tintRecordButtons(R.color.button_color_record_activity);
 
     // Disable until implement camera pro
     picometerView.setVisibility(View.INVISIBLE);
-    zommBarView.setVisibility(View.INVISIBLE);
-    settingsBarSubmenuView.setVisibility(View.INVISIBLE);
-    settingsBarView.setVisibility(View.INVISIBLE);
   }
 
   private void tintRecordButtons(int button_color) {
@@ -181,6 +182,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(hideControlsViewButton, button_color);
     tintButton(navigateSettingsButtons, button_color);
     tintButton(settingsCameraButton, button_color);
+    tintButton(zoomButton, button_color);
   }
 
   private void configChronometer() {
@@ -310,6 +312,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void setZoom(float value){
     // TODO:(alvaro.martinez) 27/01/17 Implement zoom_bar_view
+    slideSeekBar.setProgress((int) (value * 100));
   }
 
   @Override
@@ -350,6 +353,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     controlsView.setVisibility(View.INVISIBLE);
     hideControlsViewButton.setVisibility(View.INVISIBLE);
     showControlsButton.setVisibility(View.INVISIBLE);
+    settingsBarSubmenuView.setVisibility(View.INVISIBLE);
+    settingsBarView.setVisibility(View.INVISIBLE);
+    slideLeftSeekBarView.setVisibility(View.INVISIBLE);
+    settingsCameraButton.setSelected(false);
   }
 
   @Override
@@ -374,17 +381,23 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     showControlsButton.setVisibility(View.INVISIBLE);
     hideControlsViewButton.setVisibility(View.VISIBLE);
     controlsView.setVisibility(View.VISIBLE);
+    if(settingsBarView.isSelected()){
+      settingsBarSubmenuView.setVisibility(View.VISIBLE);
+      settingsBarView.setVisibility(View.VISIBLE);
+    }
   }
 
   @Override
   public void showBottomControlsView() {
     settingsBarSubmenuView.setVisibility(View.VISIBLE);
+    settingsBarView.setVisibility(View.VISIBLE);
     settingsCameraButton.setSelected(true);
   }
 
   @Override
   public void hideBottomControlsView() {
-    settingsBarSubmenuView.setVisibility(View.GONE);
+    settingsBarSubmenuView.setVisibility(View.INVISIBLE);
+    settingsBarView.setVisibility(View.INVISIBLE);
     settingsCameraButton.setSelected(false);
   }
 
@@ -494,6 +507,17 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnClick(R.id.button_to_hide_controls)
   public void hideRightControls(){
     presenter.hideRightControls();
+  }
+
+  @OnClick (R.id.button_zoom)
+  public void onClickZoomListener(){
+    if(zoomButton.isSelected()){
+      slideLeftSeekBarView.setVisibility(View.INVISIBLE);
+      zoomButton.setSelected(false);
+    } else {
+      zoomButton.setSelected(true);
+      slideLeftSeekBarView.setVisibility(View.VISIBLE);
+    }
   }
 
   @OnTouch(R.id.button_record)

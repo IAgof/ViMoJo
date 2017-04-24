@@ -142,11 +142,11 @@
         <!-- Zoom -->
 
         <LinearLayout
-            android:id="@+id/zoom_bar"
+            android:id="@+id/slide_left_bar"
             android:orientation="vertical"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:background="@color/colorGreyTransparent"
             android:visibility="invisible"
             android:layout_marginLeft="16dp">
@@ -156,19 +156,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00ffffff"
-                android:scaleType="fitXY"
                 android:src="@drawable/ic_color_lens_white_48px"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@color/colorWhite" />
             <SeekBar
-                android:layout_width="24dp"
-                android:layout_height="200dp"
+                android:id="@+id/seekBar_slide_left"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="#00ffffff"
-                android:scaleType="fitXY"
                 android:src="@drawable/ic_brightness_5_white_48px"
-                android:layout_gravity="center_horizontal"
                 android:indeterminate="false"
-                android:visibility="invisible" />
+                android:rotation="270"
+                />
             <TextView
                 android:text="0%"
                 android:layout_width="wrap_content"
@@ -250,12 +249,12 @@
             android:visibility="visible">
 
             <ImageButton
+                android:id="@+id/button_zoom"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitXY"
                 android:src="@drawable/record_activity_ic_zoom"
-                android:id="@+id/zoom"
                 android:layout_marginLeft="16dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
