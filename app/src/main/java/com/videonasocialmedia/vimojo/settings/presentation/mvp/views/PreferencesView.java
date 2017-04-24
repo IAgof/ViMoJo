@@ -66,4 +66,6 @@ public interface PreferencesView {
 
     void hideWatermarkView();
 
+    void setCameraGridSwitchPref(boolean value);
+
 }

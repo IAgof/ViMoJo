@@ -23,6 +23,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/image_view_grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/activity_rec_grid"
+            android:visibility="invisible"/>
+
         <ImageButton
             android:id="@+id/clear_button"
             android:layout_width="48dp"
