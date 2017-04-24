@@ -3,12 +3,6 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_vote"
-        android:icon="@drawable/common_icon_star_border_white"
-        android:title="@string/title_vote_section"
-        app:showAsAction="ifRoom"/>
-
-    <item
         android:id="@+id/action_help"
         android:icon="@drawable/common_icon_help_white"
         android:title="@string/title_contact_section"

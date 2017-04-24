@@ -4,6 +4,7 @@
     android:id="@+id/editTextActivity_coordinator"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -16,7 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/VideonaTheme.PopupOverlay"/>
+            app:popupTheme="@style/VideonaTheme.PopupOverlay"
+            app:theme="@style/VideonaDrawerIconStyle"/>
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
@@ -31,7 +33,7 @@
             android:layout_margin="8dp"
             android:layout_weight="4">
 
-            <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
+            <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
                 android:id="@+id/videona_player"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

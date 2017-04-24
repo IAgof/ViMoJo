@@ -2,78 +2,119 @@ package com.videonasocialmedia.vimojo.sound.domain;
 
 import android.util.Log;
 
-import com.googlecode.mp4parser.authoring.Movie;
-import com.videonasocialmedia.muxer.Appender;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.Utils;
+import com.crashlytics.android.Crashlytics;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.videonamediaframework.model.media.Audio;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.muxer.Appender;
+import com.videonasocialmedia.videonamediaframework.pipeline.AudioCompositionExportSession;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+
+import javax.inject.Inject;
 
 /**
  * Created by alvaro on 16/09/16.
  */
 public class MergeVoiceOverAudiosUseCase {
 
-    OnMergeVoiceOverAudiosListener listener;
+    private static final String TAG = "MergeVoiceOverAudiosUC";
 
-    public MergeVoiceOverAudiosUseCase(OnMergeVoiceOverAudiosListener listener){
-
-        this.listener = listener;
+    @Inject
+    public MergeVoiceOverAudiosUseCase() {
     }
 
-    public void mergeAudio() {
+    public void mergeAudio(String pathAudioMerge, final OnMergeVoiceOverAudiosListener listener) {
+        // TODO(jliarte): 30/11/16 make this in just one step and build AVComposition?
+        //                Move this to presenter and pass composition as an argument?
+        Project project = Project.getInstance(null,null,null);
+        ArrayList<String> audioPathList =
+            createAudioPathList(project.getProjectPathIntermediateAudioFilesVoiceOverRecord());
+        final String pathAudioEdited = pathAudioMerge;
 
-        ArrayList<String> audioPaths = createAudioPathList();
+        VMComposition audioComposition = new VMComposition();
+        try {
+            addAudioTracksToComposition(audioPathList, audioComposition);
+        } catch (IllegalItemOnTrack illegalItemOnTrack) {
+            logErrorMessage("IllegalItemOnTrack adding audio tracks - "
+                    + String.valueOf(illegalItemOnTrack));
+        }
+        new AudioCompositionExportSession(audioComposition).exportAsyncronously(pathAudioEdited,
+                new AudioCompositionExportSession.ExportSessionListener() {
+            @Override
+            public void onSuccess() {
+                listener.onMergeVoiceOverAudioSuccess(pathAudioEdited);
+            }
 
-        Movie result = appendFiles(audioPaths);
-        if (result != null) {
-            saveFinalVideo(result);
+            @Override
+            public void onError(String errorMessage) {
+                logErrorMessage(errorMessage);
+                listener.onMergeVoiceOverAudioError(errorMessage);
+            }
+        });
+
+//        oldMergeCode(audioPathList, pathAudioEdited);
+    }
+
+    private void addAudioTracksToComposition(ArrayList<String> audioPathList,
+                                             VMComposition audioComposition)
+            throws IllegalItemOnTrack {
+        AudioTrack audioTrack = audioComposition.getAudioTracks().get(0);
+        for (String audioPath: audioPathList) {
+            Audio itemToAdd = new Audio(audioPathList.indexOf(audioPath), audioPath, null);
+            audioTrack.insertItem(itemToAdd);
         }
     }
 
-    private ArrayList<String> createAudioPathList() {
-        File directory = new File(Constants.PATH_APP_TEMP_AUDIO);
+    private ArrayList<String> createAudioPathList(String path) {
+        // (jliarte): 29/11/16 this uses IO, so it should be in a background thread
+        File directory = new File(path);
         ArrayList<String> audiosList = new ArrayList<String>();;
         for(File audio: directory.listFiles()){
             audiosList.add(audio.getAbsolutePath());
         }
-
         return audiosList;
     }
 
-    private Movie appendFiles(ArrayList<String> videoTranscoded) {
-        Movie result;
-         result = appendVideos(videoTranscoded, true);
-
-        return result;
+    private void logErrorMessage(String msg) {
+        Crashlytics.log(msg);
+        Log.d(TAG, msg+" - Error in export session: " + msg);
     }
 
-    private void saveFinalVideo(Movie result) {
-        try {
-            String pathAudioEdited = Constants.PATH_APP_TEMP + File.separator + "AUD_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".mp4";
-            com.videonasocialmedia.muxer.utils.Utils.createFile(result, pathAudioEdited);
-            listener.onMergeVoiceOverAudioSuccess(pathAudioEdited);
-        } catch (IOException | NullPointerException e) {
-            listener.onMergeVoiceOverAudioError(String.valueOf(e));
-        }
-    }
+//    private void logExceptionWithMessage(Exception e, String msg) {
+//        Crashlytics.log(msg);
+//        Crashlytics.logException(e);
+//        Log.d(TAG, msg+" - "+String.valueOf(e));
+//    }
 
-    private Movie appendVideos(ArrayList<String> videoTranscodedPaths, boolean addOriginalAudio) {
-        Appender appender = new Appender();
-        Movie merge;
-        try {
-            merge = appender.appendVideos(videoTranscodedPaths, addOriginalAudio);
-        } catch (Exception e) {
-            merge = null;
-            listener.onMergeVoiceOverAudioError(String.valueOf(e));
-        }
-        return merge;
-    }
+//    private void oldMergeCode(ArrayList<String> audioPathList, String pathAudioEdited) {
+//        Movie result = appendFiles(audioPathList, true);
+//        if (result != null) {
+//            try {
+//                createFile(result, pathAudioEdited);
+//                listener.onMergeVoiceOverAudioSuccess(pathAudioEdited);
+//            } catch (IOException | NullPointerException e) {
+//                listener.onMergeVoiceOverAudioError(String.valueOf(e));
+//            } catch (NoSuchElementException e) {
+//                logExceptionWithMessage(e, "saveFinalVideo: Exception caught in 20161011 debugging session w/ pablo");
+//                listener.onMergeVoiceOverAudioError(String.valueOf(e));
+//            }
+//        }
+//    }
+
+
+//    private Movie appendFiles(ArrayList<String> videoTranscodedPaths, boolean addOriginalAudio) {
+//        Movie merge;
+//        try {
+//            merge = appender.appendVideos(videoTranscodedPaths, addOriginalAudio);
+//        } catch (Exception e) {
+//            merge = null;
+//            listener.onMergeVoiceOverAudioError(String.valueOf(e));
+//        }
+//        return merge;
+//    }
 
 }

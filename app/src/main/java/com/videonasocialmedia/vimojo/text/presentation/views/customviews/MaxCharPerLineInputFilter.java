@@ -37,7 +37,7 @@ public class MaxCharPerLineInputFilter implements InputFilter {
             int remainingCharSize = maxCharsPerLine - charsWrittenInLastLine;
             stringBuilder.append(newTextWritten.subSequence(0, remainingCharSize) + "\n");
             if (newTextWritten.length() > remainingCharSize) {
-                stringBuilder.append(newTextWritten.subSequence(remainingCharSize + 1, newTextWritten.length()-1));
+                stringBuilder.append(newTextWritten.subSequence(remainingCharSize, newTextWritten.length()));
             }
             return stringBuilder;
         }

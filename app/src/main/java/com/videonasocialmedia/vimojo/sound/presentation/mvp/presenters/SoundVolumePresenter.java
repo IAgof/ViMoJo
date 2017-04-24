@@ -3,35 +3,44 @@ package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
-import com.videonasocialmedia.vimojo.sound.domain.MixAudioUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.OnMixAudioListener;
+import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
-import java.io.File;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by ruth on 19/09/16.
  */
-public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListener {
-
-    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    private MixAudioUseCase mixAudioUseCase;
+public class SoundVolumePresenter implements OnVideosRetrieved {
+    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     private SoundVolumeView soundVolumeView;
+    private RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
+    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+    private AddVoiceOverToProjectUseCase addVoiceOverToProject;
 
     public UserEventTracker userEventTracker;
     public Project currentProject;
 
-    private String voiceOverRecordedPath;
-    private String tempVideoProjectExportedPath;
-
-    public SoundVolumePresenter(SoundVolumeView soundVolumeView){
-        this.soundVolumeView=soundVolumeView;
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        mixAudioUseCase = new MixAudioUseCase(this);
+    @Inject
+    public SoundVolumePresenter(SoundVolumeView soundVolumeView,
+                                RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase,
+                                AddVoiceOverToProjectUseCase addVoiceOverToProject,
+                                GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                GetPreferencesTransitionFromProjectUseCase
+                                    getPreferencesTransitionFromProjectUseCase) {
+        this.soundVolumeView = soundVolumeView;
+        this.removeMusicFromProjectUseCase = removeMusicFromProjectUseCase;
+        this.addVoiceOverToProject = addVoiceOverToProject;
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.getPreferencesTransitionFromProjectUseCase =
+            getPreferencesTransitionFromProjectUseCase;
         this.currentProject = loadCurrentProject();
     }
 
@@ -40,6 +49,17 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
     }
 
     public void init() {
+        obtainVideos();
+        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+            soundVolumeView.setVideoFadeTransitionAmongVideos();
+        }
+        if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
+            !currentProject.getVMComposition().hasMusic()){
+            soundVolumeView.setAudioFadeTransitionAmongVideos();
+        }
+    }
+
+    private void obtainVideos() {
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 
@@ -53,36 +73,18 @@ public class SoundVolumePresenter implements OnVideosRetrieved, OnMixAudioListen
         soundVolumeView.resetPreview();
     }
 
-    public void setVolume(String voiceOverPath, String videoTemPathMixAudio, float volume){
-        currentProject.setMusicOnProject(false);
-        mixAudioUseCase.mixAudio(voiceOverPath, videoTemPathMixAudio,volume);
-        voiceOverRecordedPath = voiceOverPath;
-        tempVideoProjectExportedPath = videoTemPathMixAudio;
+    public void setVoiceOver(String voiceOverPath, float volume) {
+        // if music has been selected before, delete it
+        removeMusicFromProject();
+
+        addVoiceOverToProject.setVoiceOver(currentProject, voiceOverPath, volume);
+        soundVolumeView.goToSoundActivity();
     }
 
-    @Override
-    public void onMixAudioSuccess() {
-        cleanTempFiles();
-        currentProject.setMusicOnProject(true);
-        soundVolumeView.goToEditActivity();
-    }
 
-    @Override
-    public void onMixAudioError() {
-        cleanTempFiles();
-        currentProject.setMusicOnProject(false);
-    }
-
-    private void cleanTempFiles(){
-
-        File fVoiceOver = new File(voiceOverRecordedPath);
-        if(fVoiceOver.exists()){
-            fVoiceOver.delete();
-        }
-        File fTempVideoExported = new File(tempVideoProjectExportedPath);
-        if(fTempVideoExported.exists()){
-            fTempVideoExported.delete();
+    public void removeMusicFromProject() {
+        if (currentProject.hasMusic()) {
+            removeMusicFromProjectUseCase.removeMusicFromProject(currentProject.getMusic(), 0);
         }
     }
-
 }

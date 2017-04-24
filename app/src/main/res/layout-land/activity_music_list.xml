@@ -6,7 +6,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.views.activity.EditActivity">
+    android:fitsSystemWindows="true"
+    tools:context=".sound.presentation.views.activity.MusicListActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -15,18 +16,8 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
-
-            <com.videonasocialmedia.vimojo.presentation.views.customviews.ToolbarNavigator
-                android:id="@+id/navigator"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginEnd="50dp"
-                android:layout_marginStart="50dp"
-                android:gravity="center"
-                app:music_selected="true"
-                />
+            android:layout_height="?attr/actionBarSize"
+            app:theme="@style/VideonaDrawerIconStyle">
 
         </android.support.v7.widget.Toolbar>
 
@@ -36,15 +27,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
+        android:baselineAligned="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayer
-            android:id="@+id/videona_player"
+        <LinearLayout
             android:layout_width="0dp"
+            android:layout_weight="4"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:layout_weight="4"
-            app:aspect="sixteen_nine"/>
+            android:orientation="vertical">
+
+            <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
+                android:id="@+id/videona_player"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:aspect="sixteen_nine"/>
+
+        </LinearLayout>
+
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/music_list"
@@ -54,7 +55,9 @@
             android:layout_marginTop="8dp"
             android:layout_weight="3"
             android:scrollbars="horizontal"
-            tools:listitem="@layout/music_list_item_view_holder"/>
+            tools:listitem="@layout/sound_list_item_view_holder"/>
     </LinearLayout>
+
+
 
 </android.support.design.widget.CoordinatorLayout>

@@ -10,14 +10,16 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by vlf on 7/7/15.
@@ -31,23 +33,25 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
 
     private Video videoToEdit;
 
-    /**
-     * Get media list from project use case
-     */
-    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-
+    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
+            new GetMediaListFromProjectUseCase();
     private AddVideoToProjectUseCase addVideoToProjectUseCase;
 
     private DuplicateView duplicateView;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
 
-    public DuplicatePreviewPresenter(DuplicateView duplicateView, UserEventTracker userEventTracker) {
+    /**
+     * Get media list from project use case
+     */
+    @Inject public DuplicatePreviewPresenter(DuplicateView duplicateView,
+                                             UserEventTracker userEventTracker,
+                                             AddVideoToProjectUseCase addVideoToProjectUseCase) {
         this.duplicateView = duplicateView;
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        addVideoToProjectUseCase = new AddVideoToProjectUseCase();
-        this.currentProject = loadCurrentProject();
         this.userEventTracker = userEventTracker;
+        this.addVideoToProjectUseCase = addVideoToProjectUseCase;
+
+        this.currentProject = loadCurrentProject();
     }
 
     private Project loadCurrentProject() {

@@ -1,7 +1,6 @@
 package com.videonasocialmedia.vimojo.split.domain;
 
-import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 /**
  * Created by alvaro on 5/09/16.

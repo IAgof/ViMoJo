@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
     android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
@@ -15,8 +16,32 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/VideonaTheme.PopupOverlay"/>
+            app:popupTheme="@style/VideonaTheme.PopupOverlay"
+            app:theme="@style/VideonaDrawerIconStyle"/>
     </android.support.design.widget.AppBarLayout>
+
+    <ImageButton
+        android:id="@+id/button_split_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:layout_gravity="bottom|left"
+        android:layout_margin="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/activity_edit_common_icon_cancel"
+        />
+
+    <ImageButton
+        android:id="@+id/button_split_accept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/activity_edit_common_icon_accept"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,7 +49,7 @@
         android:baselineAligned="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.videonasocialmedia.vimojo.presentation.views.customviews.VideonaPlayerExo
+        <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
             android:id="@+id/videona_player"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -36,7 +61,7 @@
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
+            android:paddingTop="30dp"
             android:layout_weight="3">
 
             <SeekBar
@@ -46,11 +71,11 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:background="@null"
-                android:maxHeight="50dp"
+                android:maxHeight="2dp"
                 android:progressDrawable="@color/colorAccent"
                 android:layout_below="@id/text_info_split"
                 android:splitTrack="false"
-                android:thumb="@drawable/activity_edit_clip_divide_indicator_seekbar"
+                android:thumb="@drawable/ic_circular_thumb_seekbar"
                 />
 
 
@@ -85,28 +110,5 @@
 
         </RelativeLayout>
     </LinearLayout>
-
-    <ImageButton
-        android:id="@+id/button_split_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:layout_gravity="bottom|left"
-        android:layout_margin="8dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/activity_edit_common_icon_cancel"
-        />
-
-    <ImageButton
-        android:id="@+id/button_split_accept"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:layout_gravity="bottom|right"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/activity_edit_common_icon_accept"
-        />
 
 </android.support.design.widget.CoordinatorLayout>

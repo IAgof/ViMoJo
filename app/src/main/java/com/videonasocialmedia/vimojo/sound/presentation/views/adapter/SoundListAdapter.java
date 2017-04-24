@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundRecyclerViewClickListener;
 
 import java.util.List;
@@ -47,11 +47,11 @@ public class SoundListAdapter extends  RecyclerView.Adapter<SoundListAdapter.Sou
 
         Glide.with(context)
         .load(music.getIconResourceId())
-        .error(R.drawable.gatito_rules);
+        .error(R.drawable.fragment_gallery_no_image);
         holder.soundImage.setImageResource(music.getIconResourceId());
         holder.soundTitle.setText(music.getMusicTitle());
         holder.soundAuthor.setText(music.getAuthor());
-        holder.soundDuration.setText(music.getDurationMusic());
+        holder.soundDuration.setText(music.getMusicDuration());
         }
 
     @Override
@@ -89,7 +89,7 @@ public class SoundListAdapter extends  RecyclerView.Adapter<SoundListAdapter.Sou
 
          }
 
-        @OnClick({R.id.music_title, R.id.music_image, R.id.music_author})
+        @OnClick({R.id.music_title, R.id.music_image, R.id.music_author, R.id.music_duration})
         public void onClick() {
             Music music = musicList.get(getAdapterPosition());
             clickListener.onClick(music);

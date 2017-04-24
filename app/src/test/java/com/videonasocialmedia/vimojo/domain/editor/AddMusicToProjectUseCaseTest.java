@@ -9,26 +9,43 @@
  */
 package com.videonasocialmedia.vimojo.domain.editor;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
-import com.videonasocialmedia.vimojo.model.entities.editor.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
 
 
 @RunWith(PowerMockRunner.class)
 //@PowerMockRunnerDelegate(RobolectricTestRunner.class) // But when we finally successfully mock it it seems we can get rid of Robolectric here
 @PrepareForTest({AddMusicToProjectUseCase.class})
 public class AddMusicToProjectUseCaseTest {
+
+    @Mock OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
+    @Mock ProjectRepository mockedProjectRepository;
+    @InjectMocks AddMusicToProjectUseCase injectedUseCase;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -44,13 +61,13 @@ public class AddMusicToProjectUseCaseTest {
     @Test
     public void testAddMusicToTrackAddsMusicToProjectDefaultAudioTrack() throws Exception {
         Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
-        Music musicToAdd = new Music(42, "musicNameId", 3, 2, "author","2");
+        Music musicToAdd = new Music(42, "musicNameId", 3, 2, "author","2", 0);
 
-        new AddMusicToProjectUseCase().addMusicToTrack(musicToAdd, 0);
+        injectedUseCase.addMusicToTrack(musicToAdd, 0, mockedOnAddMediaFinishedListener);
         AudioTrack projectAudioTrack = videonaProject.getAudioTracks().get(0);
 
-        assert ( projectAudioTrack.getItems().size() == 1 );
-        assert ( projectAudioTrack.getItems().get(0).equals(musicToAdd) );
+        assertThat(projectAudioTrack.getItems().size(), is(1));
+        assertThat(projectAudioTrack.getItems().get(0), is((Media)musicToAdd));
     }
 
 //    @Test public void testAddMusicToTrackSendsMusicAddedToProjectEventToBusOnSuccess() throws Exception {
@@ -68,7 +85,7 @@ public class AddMusicToProjectUseCaseTest {
 //    FIXME: cannot reach catch as method signature only allows Music type
 //    @Ignore @Test public void testAddMusicToTrackDoesntAddToProjectDefaultTrackIfNotMusic() throws Exception {
 //        class NoAudio extends Media {
-//            public NoAudio(String identifier, String iconPath, String medokiaPath, int startTime, int duration, ArrayList<User> authors, License license) {
+//            public NoAudio(String identifier, String iconPath, String medokiaPath, int startTime, int duration, License license) {
 //                super(identifier, iconPath, mediaPath, startTime, duration, authors, license);
 //            }
 //        }
@@ -81,13 +98,6 @@ public class AddMusicToProjectUseCaseTest {
 //
 //        assert(project_audio_track.getItems().size() == 0);
 //    }
-
-    private Project getAProject() {
-        Profile profile = Profile.getInstance(Profile.ProfileType.free);
-        String rootPath = "projectRootPath";
-        String title = "project title";
-        return Project.getInstance(title, rootPath, profile);
-    }
 
 //    @Test public void testAddMusicToTrackSendsErrorEventToBusOnSuccess() throws Exception {
 //        Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
@@ -104,11 +114,30 @@ public class AddMusicToProjectUseCaseTest {
     @Test
     public void testAddMusicToTrackDoesntAddToNonExistentTrackIndex() throws Exception {
         Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
-        Music musicToAdd = new Music(42, "musicNameId", 3, 2, "","");
+        Music musicToAdd = new Music(42, "musicNameId", 3, 2, "","", 0);
 
-        new AddMusicToProjectUseCase().addMusicToTrack(musicToAdd, 1);
+        new AddMusicToProjectUseCase(mockedProjectRepository).addMusicToTrack(musicToAdd, 1, mockedOnAddMediaFinishedListener);
         AudioTrack projectAudioTrack = videonaProject.getAudioTracks().get(0);
 
-        assertEquals(projectAudioTrack.getItems().size(), 0);
+        assertThat(projectAudioTrack.getItems().size(), is(0));
     }
+
+    @Test
+    public void testAddMusicToTrackCallsProjectRepositoryUpdate() {
+        Project currentProject = getAProject();
+        Music musicToAdd = new Music("music/path", 0);
+
+        injectedUseCase.addMusicToTrack(musicToAdd, 0, mockedOnAddMediaFinishedListener);
+
+        verify(mockedProjectRepository).update(currentProject);
+    }
+
+    private Project getAProject() {
+        Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+        String rootPath = "projectRootPath";
+        String title = "project title";
+        return Project.getInstance(title, rootPath, profile);
+    }
+
 }

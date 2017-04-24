@@ -10,6 +10,8 @@
     <string name="permissions_denied_go_to_settings_button">Ir a ajustes</string>
     <string name="CloseBecauseOfPermissionsTitle">Permisos no aceptados</string>
 
+    <string name="app_out_of_date_message">Se ha expirado el tiempo de prueba de app</string>
+
     <!-- Record Activity -->
     <string name="chronometerDefault">00:00</string>
     <string name="toast_exit">Pulsa otra vez para salir</string>
@@ -30,6 +32,17 @@
     <string name="credentialFTPNull">Conexión a FTP no establecida. Por favor, configure los datos FTP en ajustes.</string>
 
     <!-- Editor Activity -->
+    <string name="new_project">New project</string>
+    <string name="clear_project">Clean project</string>
+    <string name="other_options">Otras opciones</string>
+    <string name="record">Grabar</string>
+    <string name="gallery">Galería</string>
+    <string name="dialog_editor_user_thumb_message">Añade foto de usuario</string>
+    <string name="dialog_editor_user_thumb_take_photo">Cámara</string>
+    <string name="dialog_editor_user_thumb_pick_photo">Galería</string>
+
+
+    <!-- Edit Activity -->
     <string name="edit_title_name">Sala de edición</string>
     <string name="edit_text_fx">Trabajando en los efectos</string>
     <string name="edit_text_look">Trabajando en la magia</string>
@@ -50,6 +63,8 @@
     <string name="videos_removed">Videos borrados del proyecto, grabe o añada nuevos videos</string>
     <string name="error">error</string>
     <string name="editTextActionLabel">Hecho</string>
+    <string name="titleVideosNotFound">Videos no encontrados en el teléfono</string>
+    <string name="messageVideosNotFound">Algunos vídeos no serán cargados en el proyecto</string>
 
     <!--VideoEditText activity-->
     <string name="error_videoEdit">El número máximo de líneas a dibujar son dos</string>
@@ -57,6 +72,7 @@
 
 
     <!-- Gallery activity -->
+    <string name="galleryProjectActivityTitle">Proyectos</string>
     <string name="confirmDeleteTitle">Eliminar</string>
     <string name="confirmDeleteTitle1">vídeo</string>
     <string name="confirmDeleteTitle2">vídeos</string>
@@ -67,6 +83,27 @@
     <string name="galleryActivityTitle">Galería</string>
     <string name="mastersFolderTitle">Originales</string>
     <string name="editedFolderTitle">Editados</string>
+    <string name="dialog_accept_delete_clip">Sí</string>
+    <string name="dialog_cancel_delete_clip">No</string>
+    <string name="error_video_format">Error, formato de vídeo diferente al del proyecto </string>
+
+    <!-- Gallery projects activity -->
+    <string name="dialog_project_remove_message">Borrar proyecto</string>
+    <string name="dialog_project_remove_accept">Sí</string>
+    <string name="dialog_project_remove_cancel">No</string>
+
+    <!-- Detail project activity -->
+    <string name="detail_project_hint_title">Introduzca nombre</string>
+    <string name="detail_project_info_duration">Duración</string>
+    <string name="detail_project_info_size">Tamaño</string>
+    <string name="detail_project_info_quality">Calidad</string>
+    <string name="detail_project_info_format">Formato</string>
+    <string name="detail_project_info_bitrate">Tasa de bits</string>
+    <string name="detail_project_info_framerate">Frame rate</string>
+
+    <string name="dialog_project_edit_title_message"> Título de proyecto</string>
+    <string name="dialog_project_edit_title_accept">Sí</string>
+    <string name="dialog_project_edit_title_cancel">No</string>
 
     <!--SoundVolumeActivity-->
     <string name="exitSoundVolumeActivity" >¿Desea descartar los cambios y volver a grabar de nuevo?</string>
@@ -133,38 +170,40 @@
     <string name="save">Guardar</string>
 
     <!--FTP Settings -->
-    <string name="title_FTP_Section">Datos FTP</string>
+    <string name="title_FTP1_Section">FTP</string>
+    <string name="title_FTP2_Section">Breaking news</string>
     <string name="host_FTP">Host</string>
     <string name="removeHost">Borrar host</string>
-    <string name="enterHost">Introduce host</string>
+    <string name="enterHost">Introduce tu dirección del servidor FTP</string>
     <string name="username_FTP">Nombre de usuario de FTP </string>
     <string name="enterUsername_FTP">Introduce un nombre de usuario</string>
     <string name="removeUsername_FTP">Borrar nombre de usuario</string>
     <string name="password_FTP">Contraseña de FTP</string>
-    <string name="enterPassword_FTP">Introduce tu contraseña</string>
+    <string name="enterPassword_FTP">Introduce tu contraseña de FTP</string>
     <string name="removePassword_FTP">Borrar contraseña</string>
     <string name="edited_video_destination">Destino de videos editados</string>
-    <string name="enterEditedVideoDestination_FTP">Introduce destino</string>
+    <string name="enterEditedVideoDestination_FTP">Introduce destino de videos editados</string>
     <string name="removeEditedVideoDestination_FTP">Borrar destino</string>
     <string name="unedited_video_destination">Destino de videos no editados</string>
-    <string name="enterUneditedVideoDestination_FTP">Introduce destino</string>
+    <string name="enterUneditedVideoDestination_FTP">Introduce destino de videos no editados</string>
     <string name="removeUneditedVideoDestination_FTP">Borrar destino</string>
     <string name="save_FTP">Save</string>
 
     <!-- Camera Settings -->
     <string name="title_camera_section">Cámara</string>
     <string name="resolution">Resolución</string>
-    <string name="low_resolution_name">Buena (720p)</string>
-    <string name="low_value">Buena</string>
-    <string name="good_resolution_name">Muy buena (1080p)</string>
-    <string name="good_value">Muy buena</string>
-    <string name="high_resolution_name">Excelente (4K)</string>
-    <string name="high_value">Excelente</string>
     <string name="quality">Calidad</string>
-    <string name="low_quality_name">Buena (2 Mbps)</string>
-    <string name="good_quality_name">Muy buena (5 Mbps)</string>
-    <string name="high_quality_name">Excelente (10 Mbps)</string>
     <string name="cancelSettingsCamera">Cancelar</string>
+    <string name="preference_not_available">Ajuste no disponible</string>
+
+    <!-- Transition Settings -->
+    <string name="title_fade_transition">Transiciones</string>
+    <string name="title_video_fade_transition">Transición entre vídeos</string>
+    <string name="title_audio_fade_transition">Transición entre audios</string>
+
+    <!-- Watermark Settings -->
+    <string name="title_watermark_section">Añadir marca de agua</string>
+    <string name="title_watermark_preference">Marca de agua</string>
 
     <!-- More info Settings -->
     <string name="aboutUsTitle">Sobre nosotros</string>
@@ -575,7 +614,21 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="dialog_edit_remove_accept">Si</string>
     <string name="dialog_edit_remove_cancel">No</string>
     <string name="trimError">El video no ha podido ser recortado</string>
+    <string name="title_dialog_sharedActivity">Añadir nombre al proyecto</string>
+    <string name="text_hint_dialog_shareActivity">Nombre del proyecto</string>
+    <string name="positiveButtonDialogShareActivity">Compartir</string>
+    <string name="negativeButtonDialogShareActivity">Cancelar</string>
+    <string name="dialog_message_clean_project">¿Quiere empezar un nuevo proyecto?</string>
+    <string name="dialog_accept_clean_project">Sí</string>
+    <string name="dialog_cancel_clean_project">No</string>
 
+    <string name="dialog_change_user_name">¿Quiere cambiar su nombre de usuario?</string>
+    <string name="dialog_change_email">¿Quiere cambiar su dirección de email?</string>
+    <string name="export">Starting export</string>
+
+    <string name="bottom_bar_edit">Editar</string>
+    <string name="bottom_bar_sound">Audio</string>
+    <string name="bottom_bar_share">Compartir</string>
 
 
 </resources>

@@ -21,7 +21,7 @@
         android:background="@drawable/timeline_video_selector"
         android:padding="3dp"
         android:scaleType="fitXY"
-        android:src="@drawable/common_icon_gallery_no_image"/>
+        android:src="@drawable/fragment_gallery_no_image"/>
 
     <RelativeLayout
         android:id="@+id/relative_video_thumb"
@@ -36,7 +36,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginTop="5dp"
-            android:textColor="@color/textColorChronometer"
+            android:textColor="@color/colorWhite"
             tools:text="55"/>
 
         <ImageView
@@ -71,9 +71,9 @@
             android:gravity="end"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:textColor="@color/textColorGalleryVideoDuration"/>
+            android:textColor="@color/colorWhite"/>
 
-        <ImageButton
+       <!-- <ImageButton
             android:id="@+id/gallery_preview_button"
             android:layout_centerInParent="true"
             android:layout_width="18dp"
@@ -82,6 +82,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:background="@drawable/activity_gallery_icon_play_normal" />
+            -->
     </RelativeLayout>
 
 

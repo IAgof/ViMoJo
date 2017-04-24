@@ -11,16 +11,21 @@
  */
 package com.videonasocialmedia.vimojo.model.entities.editor;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Audio;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Image;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-import com.videonasocialmedia.vimojo.model.entities.editor.track.AudioTrack;
-import com.videonasocialmedia.vimojo.model.entities.editor.track.MediaTrack;
+import android.support.annotation.NonNull;
+
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.DateUtils;
+import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Project representation that contains reference to media, audio, transitions and effects used in
@@ -30,13 +35,19 @@ import java.util.ArrayList;
  * one
  */
 public class Project {
-
-    private final String TAG = getClass().getCanonicalName();
+  public static final String INTERMEDIATE_FILES = "intermediate_files";
+  public static final String INTERMEDIATE_FILES_TEMP_AUDIO_FADE = "tempAudioFade";
+  // TODO:(alvaro.martinez) 23/12/16 Change VideonaSDK, receive path temo from app, folder name ".tempAudio";
+  public static final String TEMP_FILES_AUDIO_MIXED = "tempMixedAudio";
+  public static final String TEMP_FILES_AUDIO_MIXED_VOICE_OVER_RECORD = "voiceOverRecord";
+  private final String TAG = getClass().getCanonicalName();
     public static String VIDEONA_PATH = "";
     /**
      * There could be just one project open at a time. So this converts Project in a Singleton.
      */
-    private static Project INSTANCE;
+    // TODO(jliarte): 22/10/16 Would use project instance to store current project by now
+    @Deprecated
+    public static Project INSTANCE;
     /**
      * Project name. Also it will be the name of the exported video
      */
@@ -45,15 +56,16 @@ public class Project {
      * The folder where de temp files of the project are stored
      */
     private String projectPath;
-    /**
-     * Track of Video and Image objects
-     */
-    private MediaTrack mediaTrack;
-    /**
-     * Audio tracks to form the final audio track. One by default, could be maximum defined on
-     * project profile.
-     */
-    private ArrayList<AudioTrack> audioTracks;
+
+  private VMComposition vmComposition;
+
+  private String lastModification;
+  
+  private String uuid = UUID.randomUUID().toString();
+
+  private LastVideoExported lastVideoExported;
+
+
     /**
      * Project profile. Defines some limitations and characteristic of the project based on user
      * subscription.
@@ -63,9 +75,15 @@ public class Project {
      * Project duration. The duration of the project in milliseconds.
      */
     private int duration;
-    private Music music;
+
+    private String musicTitleIdentifier;
 
     private boolean isMusicOnProject = false;
+
+  private boolean isAudioFadeTransitionActivated;
+  private boolean isVideoFadeTransitionActivated;
+
+  private String watermarkResource;
 
     /**
      * Constructor of minimum number of parameters. This is the Default constructor.
@@ -74,46 +92,53 @@ public class Project {
      * @param rootPath - Path to root folder for the current project.
      * @param profile  - Define some characteristics and limitations of the current project.
      */
-    private Project(String title, String rootPath, Profile profile) {
+    public Project(String title, String rootPath, Profile profile) {
         this.title = title;
-        this.projectPath = rootPath + "/projects/" + title; //todo probablemente necesitemos un slugify de ese title.
-        this.checkPathSetup(rootPath);
-        this.mediaTrack = new MediaTrack();
-        this.audioTracks = new ArrayList<>();
-        audioTracks.add(new AudioTrack());
+        this.vmComposition = new VMComposition(getResourceWatermarkFilePath(rootPath), profile);
         this.profile = profile;
         this.duration = 0;
-
+        this.isAudioFadeTransitionActivated = false;
+        this.isVideoFadeTransitionActivated = false;
+        this.lastModification = DateUtils.getDateRightNow();
+        this.projectPath = rootPath + File.separator + Constants.FOLDER_NAME_VIMOJO_PROJECTS +
+            File.separator + uuid; //todo probablemente necesitemos un slugify de ese title.
+      //  createProjectFolders();
     }
 
-    /**
-     * @param rootPath
-     */
-    private void checkPathSetup(String rootPath) {
+  @NonNull
+  public String getResourceWatermarkFilePath(String rootPath) {
 
-        Project.VIDEONA_PATH = rootPath;
-        File projectPath = new File(this.projectPath);
-        projectPath.mkdirs();
+    return rootPath + File.separator + Constants.FOLDER_NAME_VIMOJO_TEMP + File.separator +
+        Constants.RESOURCE_WATERMARK_NAME;
+  }
 
-        Audio.AUDIO_PATH = rootPath + "/audios";
-        File audioPath = new File(Audio.AUDIO_PATH + "/thumbs");
-        audioPath.mkdirs();
+  public Project(Project project) throws IllegalItemOnTrack {
 
-        Image.IMAGE_PATH = rootPath + "/images";
-        File imagePath = new File(Image.IMAGE_PATH + "thumbs");
-        imagePath.mkdirs();
+    title = DateUtils.getDateRightNow();
+    vmComposition = new VMComposition(project.getVMComposition());
+    profile = new Profile(project.getProfile());
+    duration = project.getDuration();
+    isAudioFadeTransitionActivated = project.isAudioFadeTransitionActivated();
+    isVideoFadeTransitionActivated = project.isVideoFadeTransitionActivated();
+    lastModification = project.getLastModification();
+    projectPath = new File(project.getProjectPath()).getParent() + File.separator + uuid;
+    createFolder(projectPath);
+  }
 
-        Video.VIDEO_FOLDER_PATH = rootPath + "/videos";
-        File videoPath = new File(Video.VIDEO_FOLDER_PATH + "/thumbs");
-        videoPath.mkdirs();
 
-    }
+  public VMComposition getVMComposition() {
+    return vmComposition;
+  }
+
 
     /**
      * Project factory.
      *
+     * (jliarte): since 21/10/16 Project stops being a singleton :P
+     *
      * @return - Singleton instance of the current project.
      */
+    @Deprecated
     public static Project getInstance(String title, String rootPath, Profile profile) {
         if (INSTANCE == null) {
             INSTANCE = new Project(title, rootPath, profile);
@@ -130,28 +155,24 @@ public class Project {
         this.title = title;
     }
 
-    public String getProjectPath() {
-        return projectPath;
-    }
-
     public void setProjectPath(String projectPath) {
         this.projectPath = projectPath;
     }
 
     public MediaTrack getMediaTrack() {
-        return mediaTrack;
+        return vmComposition.getMediaTrack();
     }
 
     public void setMediaTrack(MediaTrack mediaTrack) {
-        this.mediaTrack = mediaTrack;
+        this.vmComposition.setMediaTrack(mediaTrack);
     }
 
     public ArrayList<AudioTrack> getAudioTracks() {
-        return audioTracks;
+        return vmComposition.getAudioTracks();
     }
 
     public void setAudioTracks(ArrayList<AudioTrack> audioTracks) {
-        this.audioTracks = audioTracks;
+        this.vmComposition.setAudioTracks(audioTracks);
     }
 
     public Profile getProfile() {
@@ -163,10 +184,7 @@ public class Project {
     }
 
     public int getDuration() {
-        duration = 0;
-        for (Media video : mediaTrack.getItems()) {
-            duration = duration + video.getDuration();
-        }
+        duration = vmComposition.getDuration();
         return duration;
     }
 
@@ -175,30 +193,155 @@ public class Project {
     }
 
     public void clear() {
-        INSTANCE = new Project(null, null, null);
+//        INSTANCE = new Project(null, null, null);
+        if (INSTANCE != null) {
+            Profile projectProfile = INSTANCE.getProfile();
+            if (projectProfile != null) {
+                projectProfile.clear();
+            }
+            INSTANCE = null;
+        }
     }
 
     public int numberOfClips() {
         return getMediaTrack().getItems().size();
     }
 
+  // TODO(jliarte): 18/11/16 get rid of this method?
     public Music getMusic() {
-        /**
-         * TODO(jliarte): review this method and matching use case
-         * @see com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase
-         */
-        Music result = null;
-        try {
-            result = (Music) getAudioTracks().get(0).getItems().get(0);
-        } catch (Exception e) { e.printStackTrace(); }
-        return result;
+        return vmComposition.getMusic();
     }
 
-    public boolean isMusicOnProject() {
-        return isMusicOnProject;
+  // TODO(jliarte): 18/11/16 get rid of this method?
+    public boolean hasMusic() {
+      return vmComposition.hasMusic();
     }
 
     public void setMusicOnProject(boolean musicOnProject) {
         isMusicOnProject = musicOnProject;
     }
+
+    public String getMusicTitleIdentifier() {
+        return musicTitleIdentifier;
+    }
+
+    public void setMusicTitleIdentifier(String musicTitleIdentifier) {
+        this.musicTitleIdentifier = musicTitleIdentifier;
+    }
+
+  public boolean isAudioFadeTransitionActivated() {
+    return isAudioFadeTransitionActivated;
+  }
+
+  public void setAudioFadeTransitionActivated(boolean audioFadeTransitionActivated) {
+    isAudioFadeTransitionActivated = audioFadeTransitionActivated;
+  }
+
+  public boolean isVideoFadeTransitionActivated() {
+    return isVideoFadeTransitionActivated;
+  }
+
+  public void setVideoFadeTransitionActivated(boolean videoFadeTransitionActivated) {
+    isVideoFadeTransitionActivated = videoFadeTransitionActivated;
+  }
+  public String getLastModification() {
+    return lastModification;
+  }
+
+  public void setLastModification(String lastModification) {
+    this.lastModification = lastModification;
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  //// TODO:(alvaro.martinez) 22/12/16 Move to composition last video exported
+  public void setLastVideoExported(LastVideoExported lastVideoExported) {
+    this.lastVideoExported = lastVideoExported;
+  }
+
+  public boolean hasVideoExported(){
+    if(lastVideoExported!=null)
+      return true;
+    return false;
+  }
+
+  public String getPathLastVideoExported(){
+    if(lastVideoExported!= null){
+      return lastVideoExported.getPathLastVideoExported();
+    }
+    return "";
+  }
+
+  public String getDateLastVideoExported(){
+    if(lastVideoExported!= null){
+      return lastVideoExported.getDateLastVideoExported();
+    }
+    return "";
+  }
+
+  public double getProjectSizeMbVideoToExport(){
+    float scaleToMb = 0.125f;
+    double durationSeconds =  getDuration()* 0.001;
+    double videoBitRateMb = getProfile().getVideoQuality().getVideoBitRate()*0.000001;
+    double sizeBytes = videoBitRateMb*durationSeconds;
+    return sizeBytes * scaleToMb;
+  }
+
+  public void createProjectFolders() {
+    createFolder(projectPath);
+    createFolder(projectPath + File.separator + INTERMEDIATE_FILES);
+    createFolder(projectPath + File.separator + TEMP_FILES_AUDIO_MIXED);
+    createFolder(projectPath + File.separator + INTERMEDIATE_FILES + File.separator
+        + INTERMEDIATE_FILES_TEMP_AUDIO_FADE);
+  }
+
+  public String getProjectPath() {
+    createFolder(projectPath);
+    return projectPath;
+  }
+
+  public String getProjectPathIntermediateFiles(){
+    String pathIntermediateFiles = getProjectPath() + File.separator + INTERMEDIATE_FILES;
+    createFolder(pathIntermediateFiles);
+    return pathIntermediateFiles;
+  }
+
+  public String getProjectPathIntermediateFileAudioFade(){
+    String pathIntermediateFilesTempAudioFade = projectPath + File.separator + INTERMEDIATE_FILES
+        + File.separator+ INTERMEDIATE_FILES_TEMP_AUDIO_FADE;
+    createFolder(pathIntermediateFilesTempAudioFade);
+    return pathIntermediateFilesTempAudioFade;
+  }
+
+  public String getProjectPathIntermediateAudioMixedFiles(){
+    String pathTempFilesAudioMixed = getProjectPath() + File.separator + TEMP_FILES_AUDIO_MIXED;
+    createFolder(pathTempFilesAudioMixed);
+    return pathTempFilesAudioMixed;
+  }
+
+  public String getProjectPathIntermediateAudioFilesVoiceOverRecord(){
+    String pathTempFilesAudioMixedVoiceOverRecord = getProjectPath() + File.separator
+        + TEMP_FILES_AUDIO_MIXED + File.separator + TEMP_FILES_AUDIO_MIXED_VOICE_OVER_RECORD;
+    createFolder(pathTempFilesAudioMixedVoiceOverRecord);
+    return pathTempFilesAudioMixedVoiceOverRecord;
+  }
+
+  public void setWatermarkActivated(boolean value){
+      this.vmComposition.setWatermarkActivated(value);
+  }
+
+  public boolean hasWatermark(){
+    return vmComposition.hasWatermark();
+  }
+
+  private void createFolder(String projectPath) {
+    FileUtils.createFolder(projectPath);
+  }
+
 }

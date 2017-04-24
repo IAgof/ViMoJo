@@ -10,60 +10,118 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.RemoveMusicFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
-import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.media.MediaMetadataRetriever;
 
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * This class is used for adding new videos to the project.
  */
 public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
-        OnRemoveMediaFinishedListener, OnExportFinishedListener {
+    OnRemoveMediaFinishedListener, OnLaunchAVTransitionTempFileListener, TranscoderHelperListener {
 
-    RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
-    RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase;
-    AddVideoToProjectUseCase addVideoToProjectUseCase;
+    private Context context;
+    private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
+    private AddVideoToProjectUseCase addVideoToProjectUseCase;
     GalleryPagerView galleryPagerView;
-    ExportProjectUseCase exportProjectUseCase;
-    private boolean exported = false;
+    protected Project currentProject;
+    ArrayList<Integer> listErrorVideoIds = new ArrayList<>();
+    private boolean differentVideoFormat;
+
+    private Drawable drawableFadeTransitionVideo;
+    private VideonaFormat videoFormat;
+    private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
+    private LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
 
     /**
      * Constructor.
      */
-    public GalleryPagerPresenter(GalleryPagerView galleryPagerView) {
+    @Inject public GalleryPagerPresenter(GalleryPagerView galleryPagerView,
+                                 AddVideoToProjectUseCase addVideoToProjectUseCase,
+                                 UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
+                                 GetVideonaFormatFromCurrentProjectUseCase
+                                             getVideonaFormatFromCurrentProjectUseCase,
+                                 LaunchTranscoderAddAVTransitionsUseCase
+                                             launchTranscoderAddAVTransitionsUseCase,
+                                 Context context) {
         this.galleryPagerView = galleryPagerView;
-        removeVideoFromProjectUseCase = new RemoveVideoFromProjectUseCase();
-        removeMusicFromProjectUseCase = new RemoveMusicFromProjectUseCase();
-        addVideoToProjectUseCase = new AddVideoToProjectUseCase();
+        this.addVideoToProjectUseCase = addVideoToProjectUseCase;
+        this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
+        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
+        this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionsUseCase;
+        this.currentProject = loadCurrentProject();
+        this.context = context;
     }
 
-    /**
-     * This method is used to add new videos to the actual track.
-     *
-     * @param video the path of the new video which user wants to add to the project
-     */
-    public void loadVideoToProject(Video video) {
-       // resetProject();
-        addVideoToProjectUseCase.addVideoToTrack(video, this);
+    public Project loadCurrentProject() {
+        // TODO(jliarte): this should make use of a repository or use case to load the Project
+        return Project.getInstance(null, null, null);
     }
 
     public void loadVideoListToProject(List<Video> videoList) {
-       // resetProject();
-        //exported= false;
-        addVideoToProjectUseCase.addVideoListToTrack(videoList, this);
+        List<Video> checkedVideoList = checkFormatVideoSelected(videoList);
+
+        if(listErrorVideoIds.size() > 0){
+            galleryPagerView.showDialogVideosNotAddedFromGallery(listErrorVideoIds);
+            differentVideoFormat = true;
+        }
+        addVideoToProject(checkedVideoList);
     }
 
+    private void addVideoToProject(List<Video> checkedVideoList) {
+        addVideoToProjectUseCase.addVideoListToTrack(checkedVideoList, this, this);
+    }
+
+    public List<Video> checkFormatVideoSelected(List<Video> videoList) {
+        List<Video> checkedFortmatVideoList = new ArrayList<>();
+        VideoResolution videoResolution = currentProject.getProfile().getVideoResolution();
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        for (int index = 0; index < videoList.size(); index++) {
+            Video video = videoList.get(index);
+            try {
+                retriever.setDataSource(video.getMediaPath());
+                String duration = retriever.extractMetadata(
+                        MediaMetadataRetriever.METADATA_KEY_DURATION);
+
+                int durationInt = Integer.parseInt(duration);
+                video.setDuration(durationInt);
+                video.setStopTime(durationInt);
+
+                String width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+                if(width.compareTo(String.valueOf(videoResolution.getWidth())) != 0){
+                    listErrorVideoIds.add(index + 1);
+                } else {
+                    checkedFortmatVideoList.add(video);
+                }
+            } catch (Exception e) {
+                video.setDuration(0);
+                e.printStackTrace();
+            }
+        }
+        return checkedFortmatVideoList;
+    }
 
     @Override
     public void onRemoveMediaItemFromTrackError() {
-
     }
 
     @Override
@@ -72,7 +130,6 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
 
     @Override
     public void onAddMediaItemToTrackError() {
-
     }
 
     /*
@@ -83,25 +140,30 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
 
     @Override
     public void onAddMediaItemToTrackSuccess(Media video) {
-        galleryPagerView.navigate();
-        /*
-        if (exported)
+        if(!differentVideoFormat)
             galleryPagerView.navigate();
-        else {
-            exportProjectUseCase = new ExportProjectUseCase(this);
-            exportProjectUseCase.export();
-        }
-        */
     }
 
     @Override
-    public void onExportError(String error) {
+    public void onSuccessTranscoding(Video video) {
+        updateVideoRepositoryUseCase.updateVideo(video);
+    }
+
+    @Override
+    public void onErrorTranscoding(Video video, String message) {
 
     }
 
     @Override
-    public void onExportSuccess(Video video) {
-        //exported=true;
-        loadVideoToProject(video);
+    public void videoToLaunchAVTransitionTempFile(Video video,
+                                                  String intermediatesTempAudioFadeDirectory) {
+
+        video.setTempPath(currentProject.getProjectPathIntermediateFiles());
+
+        videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
+        drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
+
+        launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
+            intermediatesTempAudioFadeDirectory, this);
     }
 }

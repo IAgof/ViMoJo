@@ -2,11 +2,14 @@ package com.videonasocialmedia.vimojo.domain.editor;
 
 import android.support.annotation.NonNull;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Music;
-import com.videonasocialmedia.vimojo.model.entities.editor.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -58,7 +61,7 @@ public class GetMusicFromProjectUseCaseTest {
     @Test
     public void getMusicFromProjectReturnsProjectMusic() {
         Project videonaProject = getAProject();
-        Music project_music = new Music(1, "resourceName", 2, 3, "music author","2");
+        Music project_music = new Music(1, "resourceName", 2, 3, "music author","2", 0);
         ArrayList<AudioTrack> audioTracks = getAudioTracks(project_music);
         videonaProject.setAudioTracks(audioTracks);
 
@@ -69,6 +72,7 @@ public class GetMusicFromProjectUseCaseTest {
         assertThat(retrievedMusic, is(project_music));
     }
 
+
     @Test
     public void getMusicFromProjectNotifiesWithNullIfNoMusic() {
         Project project = getAProject();
@@ -78,6 +82,8 @@ public class GetMusicFromProjectUseCaseTest {
         Mockito.verify(mockedListener).onMusicRetrieved(retrievedMusicCaptor.capture());
         assertThat("Music retrieved when no audio tracks", retrievedMusicCaptor.getValue(), CoreMatchers.<Music>nullValue());
     }
+
+
 
     @NonNull
     public ArrayList<AudioTrack> getAudioTracks(Music music) {
@@ -95,7 +101,8 @@ public class GetMusicFromProjectUseCaseTest {
     private Project getAProject() {
         String title = "project title";
         String rootPath = "project/root/path";
-        Profile profile = Profile.getInstance(Profile.ProfileType.free);
+        Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         return Project.getInstance(title, rootPath, profile);
     }
 }

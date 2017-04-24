@@ -12,9 +12,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
 
-import com.videonasocialmedia.vimojo.model.entities.editor.effects.Effect;
-
-import java.util.List;
+import com.videonasocialmedia.videonamediaframework.model.media.effects.Effect;
 
 public interface RecordView {
 
@@ -22,9 +20,9 @@ public interface RecordView {
 
     void showStopButton();
 
-    void showMenuOptions();
+    void showSettingsOptions();
 
-    void hideMenuOptions();
+    void hideSettingsOptions();
 
     void showChronometer();
 
@@ -39,10 +37,6 @@ public interface RecordView {
     void unlockScreenRotation();
 
     void reStartScreenRotation();
-
-    void lockNavigator(); //en VideonaView
-
-    void unLockNavigator(); //en VideonaView
 
     void showFlashOn(boolean on);
 
@@ -67,4 +61,15 @@ public interface RecordView {
     void hidePrincipalViews ();
 
     void showPrincipalViews ();
+
+    void showRecordedVideoThumb(String path);
+
+    void hideRecordedVideoThumb();
+
+    void showVideosRecordedNumber(int numberOfVideos);
+
+    void hideVideosRecordedNumber();
+
+    void showResolutionSelected(int height);
+
 }

@@ -7,67 +7,58 @@
 
 package com.videonasocialmedia.vimojo.export.domain;
 
+import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
+import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSessionImpl;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
-import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
+public class ExportProjectUseCase implements VMCompositionExportSession.OnExportEndedListener {
+  private OnExportFinishedListener onExportFinishedListener;
+  private VMCompositionExportSession VMCompositionExportSession;
+  private Project project;
 
-public class ExportProjectUseCase implements OnExportEndedListener {
+  /**
+   * Project VMCompositionExportSession use case.
+   *
+   * @param onExportFinishedListener listener for the use case to send callbacks
+   */
+  public ExportProjectUseCase(OnExportFinishedListener onExportFinishedListener) {
+    this.onExportFinishedListener = onExportFinishedListener;
+    project = Project.getInstance(null, null, null);
 
-    private OnExportFinishedListener onExportFinishedListener;
-    private Exporter exporter;
-    private Project project;
+    String tempPathIntermediateAudioFilesDirectory = project.getProjectPathIntermediateAudioMixedFiles();
+    String outputFilesDirectory = Constants.PATH_APP;
+    VMCompositionExportSession = new VMCompositionExportSessionImpl( project.getVMComposition(),
+        outputFilesDirectory, tempPathIntermediateAudioFilesDirectory, this);
+  }
 
-    private final int MAX_SECONDS_WAITING_FOR_TEMP_FILES = 20;
-
-    public ExportProjectUseCase(OnExportFinishedListener onExportFinishedListener) {
-        this.onExportFinishedListener = onExportFinishedListener;
-        project = Project.getInstance(null, null, null);
-        exporter = new ExporterImpl(project, this);
+  /**
+   * Main use case method.
+   */
+  public void export() {
+    try {
+      VMCompositionExportSession.export();
+    } catch (NoSuchElementException exception) {
+      onExportError(String.valueOf(exception));
     }
+  }
 
-    public void export() {
-        waitForOutputFilesFinished();
-        exporter.export();
-    }
+  @Override
+  public void onExportSuccess(Video video) {
+    onExportFinishedListener.onExportSuccess(video);
+  }
 
-    @Override
-    public void onExportError(String error) {
-        onExportFinishedListener.onExportError(error);
-    }
+  @Override
+  public void onExportProgress(String progressMsg) {
+    // TODO(jliarte): 23/12/16 process progress messages
+  }
 
-    @Override
-    public void onExportSuccess(Video video) {
-        onExportFinishedListener.onExportSuccess(video);
-
-    }
-
-    public void waitForOutputFilesFinished() {
-        LinkedList<Media> medias = getMediasFromProject();
-        int countWaiting = 0;
-        for (Media media:medias) {
-            Video video = (Video) media;
-            if (video.isEdited()) {
-                while (!video.outputVideoIsFinished()) {
-                    try {
-                        if(countWaiting > MAX_SECONDS_WAITING_FOR_TEMP_FILES){
-                            break;
-                        }
-                        countWaiting++;
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
-    private LinkedList<Media> getMediasFromProject() {
-        LinkedList<Media> medias = project.getMediaTrack().getItems();
-        return medias;
-    }
+  @Override
+  public void onExportError(String error) {
+    onExportFinishedListener.onExportError(error);
+  }
 }

@@ -178,7 +178,7 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
         prepareEncoder(mEglSaver.getSavedEGLContext(),
                 mSessionConfig.getVideoWidth(),
                 mSessionConfig.getVideoHeight(),
-                mSessionConfig.getVideoBitrate(),
+                mSessionConfig.getVideoBitRate(),
                 mSessionConfig.getMuxer());
         mReadyForFrames = true;
         mState = STATE.INITIALIZED;
@@ -213,9 +213,6 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
         mIncomingSizeUpdated = true;
     }
 
-    public SessionConfig getConfig() {
-        return mSessionConfig;
-    }
 
     /**
      * Request the device camera not currently selected
@@ -818,7 +815,7 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
                 prepareEncoder(mEglSaver.getSavedEGLContext(),
                         mSessionConfig.getVideoWidth(),
                         mSessionConfig.getVideoHeight(),
-                        mSessionConfig.getVideoBitrate(),
+                        mSessionConfig.getVideoBitRate(),
                         mSessionConfig.getMuxer());
                 mTextureId = textureId;
                 mSurfaceTexture = new SurfaceTexture(mTextureId);
@@ -928,19 +925,27 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
 
         parms.setRecordingHint(true);
 
+       // For set framerate, use deprecated getSupportedPreviewFrameRates instead of getSupportedPreviewFpsRange
+
         List<int[]> fpsRanges = parms.getSupportedPreviewFpsRange();
-        int[] maxFpsRange = null;
+       /* int[] maxFpsRange = null;
         // Get the maximum supported fps not to exceed 30
         for (int x = fpsRanges.size() - 1; x >= 0; x--) {
             maxFpsRange = fpsRanges.get(x);
-            if (maxFpsRange[1] / 1000.0 <= 30) break;
+            if (maxFpsRange[1] / 1000.0 <= 25) break;
         }
         if (maxFpsRange != null) {
             parms.setPreviewFpsRange(maxFpsRange[0], maxFpsRange[1]);
-        }
+        }*/
+
+        int frameRate = mSessionConfig.getVideoFrameRate();
+
+        if(frameRate != 0 && fpsRanges != null)
+            parms.setPreviewFpsRange(frameRate*1000, frameRate*1000);
+            //parms.setPreviewFrameRate(frameRate);
 
         choosePreviewSize(parms, desiredWidth, desiredHeight);
-        // leave the frame rate set to default
+
         mCamera.setParameters(parms);
 
         int[] fpsRange = new int[2];
@@ -955,6 +960,7 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
         if (VERBOSE) Log.i(TAG, "Camera preview set: " + previewFacts);
 
     }
+
 
     /**
      * Communicate camera-ready state to our display view.
@@ -1278,6 +1284,10 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
 
     public void setEventBus(EventBus eventBus) {
         mEventBus = eventBus;
+    }
+
+    public SessionConfig getConfig() {
+        return mSessionConfig;
     }
 
     private enum STATE {

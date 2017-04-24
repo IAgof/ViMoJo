@@ -5,21 +5,22 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
+
+import java.io.File;
 
 /**
  * Created by  on 26/05/16.
  */
 public class ExportProjectService extends IntentService implements OnExportFinishedListener {
-
     public static final String NOTIFICATION = Constants.NOTIFICATION_EXPORT_SERVICES_RECEIVER;
     public static final String FILEPATH = "filepath";
     public static final String RESULT = "result";
     private static final String TAG = "ExportProjectService";
-    ExportProjectUseCase exportUseCase;
+    private ExportProjectUseCase exportUseCase;
 
     //TODO Add persistence. Needed to navigate for ShareActivity if service has finished.
 
@@ -29,7 +30,6 @@ public class ExportProjectService extends IntentService implements OnExportFinis
     public ExportProjectService() {
         super("ExportProjectService");
     }
-
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -53,8 +53,10 @@ public class ExportProjectService extends IntentService implements OnExportFinis
 
     @Override
     public void onExportSuccess(Video video) {
-        Utils.addFileToVideoGallery(video.getMediaPath().toString());
-        publishResults(video.getMediaPath(), Activity.RESULT_OK);
+        File f = new File(video.getMediaPath());
+        String destPath = Constants.PATH_APP + File.separator + f.getName();
+        f.renameTo(new File(destPath));
+        Utils.addFileToVideoGallery(destPath.toString());
+        publishResults(destPath, Activity.RESULT_OK);
     }
-
 }

@@ -1,18 +1,22 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+
+import java.util.List;
+
 /**
  *
  */
 public interface MusicDetailView {
-    void showAuthor(String author);
 
-    void showTitle(String title);
+    void musicSelectedOptions(boolean isMusicInProject);
 
-    void showImage(String imagePath);
+    void bindVideoList(List<Video> movieList);
 
-    void showImage(int iconResourceId);
+    void setMusic(Music music, boolean scene);
 
-    void setupScene(boolean isMusicInProject);
-
-    void goToEdit(String musicTitle);
+    void goToSoundActivity();
+    
+    void setVideoFadeTransitionAmongVideos();
 }

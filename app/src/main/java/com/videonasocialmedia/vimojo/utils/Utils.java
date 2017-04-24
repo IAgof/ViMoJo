@@ -30,10 +30,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
 import com.coremedia.iso.IsoFile;
-import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -124,6 +129,15 @@ public class Utils {
         }
     }
 
+    public static void moveFile(String originalPath, String finalPath) throws IOException {
+
+        File originalFile = new File(originalPath);
+        File destinationFile = new File(finalPath);
+
+        originalFile.renameTo(destinationFile);
+
+    }
+
     public static Uri obtainUriToShare(Context context, String videoPath) {
         Uri uri;
         if (videoPath != null) {
@@ -173,26 +187,11 @@ public class Utils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
     }
 
-    public static void cleanDirectory(File directory) {
-        if (directory.exists()) {
-            File[] files = directory.listFiles();
-            if (files != null) { //some JVMs return null for empty dirs
-                for (File f : files) {
-                    if (f.isDirectory()) {
-                        cleanDirectory(f);
-                    } else {
-                        f.delete();
-                    }
-                }
-            }
-        }
-    }
-
     public static void removeVideo(String path) {
         File file = new File(path);
         if (file != null) {
             if (file.isDirectory()) {
-                cleanDirectory(file);
+                FileUtils.cleanDirectory(file);
             } else {
                 file.delete();
             }
@@ -252,7 +251,6 @@ public class Utils {
 
 
     public static String getDeviceInfo(){
-
         StringBuilder deviceInfo = new StringBuilder();
 
         deviceInfo.append(" ---------------------------------------------");
@@ -306,15 +304,10 @@ public class Utils {
 
     }
 
-
     public static void onActivityCreateSetTheme(Activity activity) {
-
         switch (sTheme) {
-
             default:
-
             case THEME_VIDEONA:
-
                 // Note, if theme == theme default do nothing, es quicker.
                 //activity.setTheme(R.style.VideonaTheme);
                 break;
@@ -324,7 +317,6 @@ public class Utils {
                 //activity.setTheme(R.style.VideonaTheme);
                 break;
         }
-
     }
 
     public static double getFileDuration(String filePath) throws IOException {
@@ -347,7 +339,6 @@ public class Utils {
 
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
                                                          int reqWidth, int reqHeight) {
-
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -369,7 +360,6 @@ public class Utils {
         int inSampleSize = 1;
 
         if (height > reqHeight || width > reqWidth) {
-
             final int halfHeight = height / 2;
             final int halfWidth = width / 2;
 
@@ -380,7 +370,197 @@ public class Utils {
                 inSampleSize *= 2;
             }
         }
-
         return inSampleSize;
     }
+
+    public static VideoFrameRate.FrameRate getFrameRateFromItemName(Context context,
+                                                                    String frameRate) {
+
+        if (frameRate.compareTo(context.getString(R.string.low_frame_rate_name)) == 0) {
+            return VideoFrameRate.FrameRate.FPS24;
+        }
+
+        if (frameRate.compareTo(context.getString(R.string.good_frame_rate_name)) == 0) {
+                return VideoFrameRate.FrameRate.FPS25;
+        }
+
+        if (frameRate.compareTo(context.getString(R.string.high_frame_rate_name)) == 0) {
+                return VideoFrameRate.FrameRate.FPS30;
+        }
+
+        // default
+        return VideoFrameRate.FrameRate.NOT_SUPPORTED;
+
+    }
+
+    public static VideoResolution.Resolution getResolutionFromItemName(Context context,
+                                                                      String resolution) {
+        if (resolution.compareTo(context.getString(R.string.low_resolution_name)) == 0) {
+                return VideoResolution.Resolution.HD720;
+            }
+
+        if (resolution.compareTo(context.getString(R.string.good_resolution_name)) == 0) {
+            return VideoResolution.Resolution.HD1080;
+        }
+
+        if (resolution.compareTo(context.getString(R.string.high_resolution_name)) == 0) {
+            return VideoResolution.Resolution.HD4K;
+        }
+
+        // default
+        return VideoResolution.Resolution.HD720;
+    }
+
+    public static VideoQuality.Quality getQualityFromItemName(Context context,
+                                                                       String quality) {
+
+        if (quality.compareTo(context.getString(R.string.low_quality_name)) == 0) {
+            return VideoQuality.Quality.LOW;
+        }
+
+        if (quality.compareTo(context.getString(R.string.good_quality_name)) == 0) {
+            return VideoQuality.Quality.GOOD;
+        }
+
+        if (quality.compareTo(context.getString(R.string.high_quality_name)) == 0) {
+            return VideoQuality.Quality.HIGH;
+        }
+
+        // default
+        return VideoQuality.Quality.HIGH;
+
+    }
+
+    /**
+     * Get a file path from a Uri. This will get the the path for Storage Access
+     * Framework Documents, as well as the _data field for the MediaStore and
+     * other file-based ContentProviders.
+     *
+     * @param context The context.
+     * @param uri The Uri to query.
+     * @author paulburke
+     */
+    public static String getPath(final Context context, final Uri uri) {
+
+        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+
+        // DocumentProvider
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+                // ExternalStorageProvider
+                if (isExternalStorageDocument(uri)) {
+                    final String docId = DocumentsContract.getDocumentId(uri);
+                    final String[] split = docId.split(":");
+                    final String type = split[0];
+
+                    if ("primary".equalsIgnoreCase(type)) {
+                        return Environment.getExternalStorageDirectory() + "/" + split[1];
+                    }
+
+                    // TODO handle non-primary volumes
+                }
+                // DownloadsProvider
+                else if (isDownloadsDocument(uri)) {
+
+                    final String id = DocumentsContract.getDocumentId(uri);
+                    final Uri contentUri = ContentUris.withAppendedId(
+                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+
+                    return getDataColumn(context, contentUri, null, null);
+                }
+                // MediaProvider
+                else if (isMediaDocument(uri)) {
+                    final String docId = DocumentsContract.getDocumentId(uri);
+                    final String[] split = docId.split(":");
+                    final String type = split[0];
+
+                    Uri contentUri = null;
+                    if ("image".equals(type)) {
+                        contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                    } else if ("video".equals(type)) {
+                        contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                    } else if ("audio".equals(type)) {
+                        contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                    }
+
+                    final String selection = "_id=?";
+                    final String[] selectionArgs = new String[] {
+                        split[1]
+                    };
+
+                    return getDataColumn(context, contentUri, selection, selectionArgs);
+                }
+            }
+            // MediaStore (and general)
+            else if ("content".equalsIgnoreCase(uri.getScheme())) {
+                return getDataColumn(context, uri, null, null);
+            }
+            // File
+            else if ("file".equalsIgnoreCase(uri.getScheme())) {
+                return uri.getPath();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the value of the data column for this Uri. This is useful for
+     * MediaStore Uris, and other file-based ContentProviders.
+     *
+     * @param context The context.
+     * @param uri The Uri to query.
+     * @param selection (Optional) Filter used in the query.
+     * @param selectionArgs (Optional) Selection arguments used in the query.
+     * @return The value of the _data column, which is typically a file path.
+     */
+    public static String getDataColumn(Context context, Uri uri, String selection,
+                                       String[] selectionArgs) {
+
+        Cursor cursor = null;
+        final String column = "_data";
+        final String[] projection = {
+            column
+        };
+
+        try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+                null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final int column_index = cursor.getColumnIndexOrThrow(column);
+                return cursor.getString(column_index);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return null;
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is ExternalStorageProvider.
+     */
+    public static boolean isExternalStorageDocument(Uri uri) {
+        return "com.android.externalstorage.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is DownloadsProvider.
+     */
+    public static boolean isDownloadsDocument(Uri uri) {
+        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is MediaProvider.
+     */
+    public static boolean isMediaDocument(Uri uri) {
+        return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
+
+
+
 }

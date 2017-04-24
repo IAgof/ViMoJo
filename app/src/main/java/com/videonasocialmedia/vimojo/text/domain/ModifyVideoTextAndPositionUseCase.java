@@ -1,73 +1,83 @@
 package com.videonasocialmedia.vimojo.text.domain;
 
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
-import com.videonasocialmedia.transcoder.MediaTranscoderListener;
-import com.videonasocialmedia.transcoder.format.VideonaFormat;
-import com.videonasocialmedia.transcoder.overlay.Image;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
-import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
-import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
+import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 
-import java.io.IOException;
+
+import javax.inject.Inject;
 
 /**
  * Created by alvaro on 1/09/16.
  */
 public class ModifyVideoTextAndPositionUseCase {
 
-    public void addTextToVideo(Video videoToEdit, VideonaFormat format, String text, String textPosition,
-                                MediaTranscoderListener listener) {
-        try {
+    // TODO:(alvaro.martinez) 23/11/16 Use Dagger for this injection
+    protected TextToDrawable drawableGenerator =
+        new TextToDrawable(VimojoApplication.getAppContext());
+    private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
+    protected TranscoderHelper transcoderHelper =
+        new TranscoderHelper(drawableGenerator, mediaTranscoder);
+    protected VideoRepository videoRepository;
+    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
 
-            videoToEdit.setTextToVideo(text);
-            videoToEdit.setTextPositionToVideo(textPosition);
-            videoToEdit.setTempPathFinished(false);
-            videoToEdit.setTempPath();
-            videoToEdit.setTextToVideoAdded(true);
-
-            if(videoToEdit.isTrimmedVideo()) {
-                transcodeTrimAndOverlayImageToVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
-                        format, listener, text, textPosition, videoToEdit.getStartTime(), videoToEdit.getStopTime());
-            } else {
-                transcodeTrimAndOverlayImageToVideo(videoToEdit.getMediaPath(), videoToEdit.getTempPath(),
-                        format, listener, text, textPosition);
-            }
-        } catch (IOException e) {
-            // TODO(javi.cabanas): 2/8/16 mangage io expception on external library and send onTranscodeFailed if neccessary
-            listener.onTranscodeFailed(e);
-        }
+  /**
+   * Default constructor with video repository.
+   *
+   * @param videoRepository the video repository.
+   */
+  @Inject public ModifyVideoTextAndPositionUseCase(VideoRepository videoRepository) {
+    this.videoRepository = videoRepository;
+    getPreferencesTransitionFromProjectUseCase =
+            new GetPreferencesTransitionFromProjectUseCase();
     }
 
-    private void transcodeTrimAndOverlayImageToVideo(String mediaPath, String tempPath, VideonaFormat format,
-                                                     MediaTranscoderListener listener, String text,
-                                                     String textPosition) throws IOException {
+    public void addTextToVideo(Drawable drawableFadeTransition, Video videoToEdit,
+                               VideonaFormat format, String text, String textPosition,
+                               String intermediatesTempAudioFadeDirectory,
+                               TranscoderHelperListener listener) {
+      boolean isVideoFadeTransitionActivated =
+              getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
+      boolean isAudioFadeTransitionActivated =
+              getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
+      videoToEdit.setClipText(text);
+      videoToEdit.setClipTextPosition(textPosition);
+      videoToEdit.setTempPathFinished(false);
+      Project project = Project.getInstance(null, null, null);
+      videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
+      updateGeneratedVideo(drawableFadeTransition, videoToEdit, format,
+              intermediatesTempAudioFadeDirectory, listener, isVideoFadeTransitionActivated,
+              isAudioFadeTransitionActivated);
 
-        Image imageText = getImageFromTextAndPosition(text, textPosition);
-
-        MediaTranscoder.getInstance().transcodeAndOverlayImageToVideo(mediaPath,
-                tempPath,format, listener, imageText);
+      videoRepository.update(videoToEdit);
     }
 
-    private void transcodeTrimAndOverlayImageToVideo(String mediaPath, String tempPath, VideonaFormat format,
-                                                     MediaTranscoderListener listener, String text,
-                                                     String textPosition, int startTime, int stopTime) throws IOException {
-
-        Image imageText = getImageFromTextAndPosition(text, textPosition);
-
-        MediaTranscoder.getInstance().transcodeTrimAndOverlayImageToVideo(mediaPath,
-                tempPath,format, listener, imageText, startTime, stopTime);
+  private void updateGeneratedVideo(Drawable drawableFadeTransition, Video videoToEdit,
+                                    VideonaFormat format,
+                                    String intermediatesTempAudioFadeDirectory,
+                                    TranscoderHelperListener listener,
+                                    boolean isVideoFadeTransitionActivated,
+                                    boolean isAudioFadeTransitionActivated) {
+    // TODO(jliarte): 19/10/16 move this logic to TranscoderHelper?
+    if (videoToEdit.isTrimmedVideo()) {
+      transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(
+              drawableFadeTransition, isVideoFadeTransitionActivated,
+              isAudioFadeTransitionActivated, videoToEdit, format,
+              intermediatesTempAudioFadeDirectory, listener);
+    } else {
+      transcoderHelper.generateOutputVideoWithOverlayImage(drawableFadeTransition,
+              isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
+              format, intermediatesTempAudioFadeDirectory, listener);
     }
-
-    @NonNull
-    public Image getImageFromTextAndPosition(String text, String textPosition) {
-        Drawable textDrawable = TextToDrawable.createDrawableWithTextAndPosition(text, textPosition, Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
-
-        return new Image(textDrawable, Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
-    }
-
-
+  }
 }
 

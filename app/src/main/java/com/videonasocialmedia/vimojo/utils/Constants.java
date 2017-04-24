@@ -25,23 +25,27 @@ public class Constants {
 
 
     // Folders
-    final public static String FOLDER_VIDEONA_MASTERS = "Vimojo_Masters";
-    final public static String FOLDER_VIDEONA = "Vimojo";
-    final public static String FOLDER_VIDEONA_TEMP = ".temporal";
-    final public static String FOLDER_VIDEONA_TEMP_AUDIO = ".temporalAudio";
+    final public static String FOLDER_NAME_VIMOJO_MASTERS = "Vimojo_Masters";
+    final public static String FOLDER_NAME_VIMOJO = "Vimojo";
+    final public static String FOLDER_NAME_VIMOJO_TEMP = ".temporal";
+    final public static String FOLDER_NAME_VIMOJO_PROJECTS = ".projects";
+
+    final public static String RESOURCE_WATERMARK_NAME = "watermark.png";
+//    final public static String FOLDER_NAME_VIMOJO_TEMP_AUDIO = ".tempAudio";
 
     final public static String PATH_APP = Environment.getExternalStoragePublicDirectory(
-            Environment.DIRECTORY_DCIM) + File.separator + FOLDER_VIDEONA;
-
+            Environment.DIRECTORY_DCIM) + File.separator + FOLDER_NAME_VIMOJO;
     final public static String PATH_APP_EDITED = PATH_APP;
-
     final public static String PATH_APP_MASTERS = Environment.getExternalStoragePublicDirectory(
-            Environment.DIRECTORY_DCIM) + File.separator + FOLDER_VIDEONA_MASTERS;
+            Environment.DIRECTORY_DCIM) + File.separator + FOLDER_NAME_VIMOJO_MASTERS;
 
-    final public static String PATH_APP_TEMP = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP;
+    final public static String PATH_APP_TEMP = PATH_APP + File.separator + FOLDER_NAME_VIMOJO_TEMP;
+    final public static String PATH_APP_PROJECTS = PATH_APP + File.separator
+        + FOLDER_NAME_VIMOJO_PROJECTS;
 
-    final public static String PATH_APP_TEMP_AUDIO = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP_AUDIO;
-   // final public static String VIDEO_MUSIC_TEMP_FILE = PATH_APP + File.separator + FOLDER_VIDEONA_TEMP + File.separator + "tempAV.mp4";
+    final public static String VIDEO_TEMP_RECORD_FILENAME = "VID_temp.mp4";
+    final public static String AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME = "AudioVoiceOver.mp4";
+    final public static String MUSIC_AUDIO_VOICEOVER_TITLE = "audio_voice_over_music";
 
     final public static String AUDIO_MUSIC_FILE_EXTENSION = ".m4a";
 
@@ -54,10 +58,24 @@ public class Constants {
     final public static String CURRENT_VIDEO_INDEX = "current_video_index";
     final public static String VIDEO_TO_SHARE_PATH = "video_to_share_path";
     final public static String MUSIC_SELECTED_TITLE = "music_selected";
+    final public static String OUTPUT_FILE_MIXED_AUDIO = PATH_APP_TEMP + File.separator + com.videonasocialmedia.videonamediaframework.model.Constants.MIXED_AUDIO_FILE_NAME;
 
 
     public static final String NOTIFICATION_EXPORT_SERVICES_RECEIVER = "com.videonasocialmedia.vimojo";
 
     public static final int DEFAULT_VIMOJO_WIDTH = 1280;
     public static final int DEFAULT_VIMOJO_HEIGHT = 720;
+    public static final float ALPHA_DISABLED_BOTTOM_BAR= 0.3f;
+    public static final int DEFAULT_VIMOJO_BITRATE = 10*1000*1000;
+    public static final int DEFAULT_VIMOJO_FRAME_RATE = 25;
+
+    final public static String FLAVOR_RTVE = "rtve";
+    final public static String FLAVOR_VIMOJO = "vimojo";
+    final public static String FLAVOR_HISPANOPOST = "hispanopost";
+    final public static String FLAVOR_20_MINUTOS = "veinteminutos";
+    final public static String FLAVOR_SHOULDERPOD = "shoulderpod";
+
+    public static final String USER_THUMB = "userThumb.jpg";
+
+    public static final int MAX_NUM_TRIES_TO_EXPORT_VIDEO = 4;
 }

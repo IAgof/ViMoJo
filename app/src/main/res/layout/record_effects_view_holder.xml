@@ -14,7 +14,7 @@
         android:id="@+id/effectImage"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        tools:src="@drawable/common_filter_color_ad1_aqua"
+        tools:src="@drawable/fragment_gallery_no_image"
         android:layout_marginTop="5dp"
         android:background="@null"
         android:scaleType="centerCrop"
@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="AD0"
-        android:textColor="@color/textColorFiltersRecord"
+        android:textColor="@color/colorWhite"
         android:background="@null"
         android:textSize="12sp"
         android:gravity="center_horizontal|top"/>

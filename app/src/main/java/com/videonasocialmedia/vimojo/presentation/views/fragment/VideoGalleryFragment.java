@@ -14,11 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.VimojoApplication;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoGalleryPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoGalleryView;
-import com.videonasocialmedia.vimojo.presentation.views.activity.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.VideoGalleryAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnSelectionModeListener;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnTransitionClickListener;
@@ -101,7 +100,8 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
         clickSupport.setOnItemClickListener(new ItemSelectionSupport.OnItemClickListener() {
             @Override
             public void onItemClick(RecyclerView parent, View view, int position, long id) {
-                if (selectionSupport.getChoiceMode() == MultiItemSelectionSupport.ChoiceMode.MULTIPLE)
+                if (selectionMode == SELECTION_MODE_MULTIPLE) {
+                    selectionSupport.setChoiceMode(MultiItemSelectionSupport.ChoiceMode.MULTIPLE);
                     if (selectionSupport.isItemChecked(position)) {
                         selectionSupport.setItemChecked(position, true);
                         onSelectionModeListener.onItemUnchecked();
@@ -109,19 +109,11 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
                         selectionSupport.setItemChecked(position, false);
                         onSelectionModeListener.onItemChecked();
                     }
-            }
-        });
-        clickSupport.setOnItemLongClickListener(new ItemSelectionSupport.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(RecyclerView parent, View view, int position, long id) {
-                if (selectionMode == SELECTION_MODE_MULTIPLE)
-                    selectionSupport.setChoiceMode(MultiItemSelectionSupport.ChoiceMode.MULTIPLE);
-                else
+                } else {
                     selectionSupport.setChoiceMode(MultiItemSelectionSupport.ChoiceMode.SINGLE);
-
-                selectionSupport.setItemChecked(position, true);
-                onSelectionModeListener.onItemChecked();
-                return true;
+                    selectionSupport.setItemChecked(position, true);
+                    onSelectionModeListener.onItemChecked();
+                }
             }
         });
         selectionSupport = MultiItemSelectionSupport.addTo(recyclerView);

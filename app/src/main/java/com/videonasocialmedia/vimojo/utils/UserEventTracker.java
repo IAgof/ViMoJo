@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.utils.VideoResolution;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -156,7 +156,7 @@ public class UserEventTracker {
         try {
             eventProperties.put(AnalyticsConstants.SOCIAL_NETWORK, socialNetworkId);
             eventProperties.put(AnalyticsConstants.VIDEO_LENGTH, project.getDuration());
-            VideoResolution videoResolution = new VideoResolution(project.getProfile().getResolution());
+            VideoResolution videoResolution = project.getProfile().getVideoResolution();
             eventProperties.put(AnalyticsConstants.RESOLUTION, videoResolution.getWidth() + "x" + videoResolution.getHeight());
             eventProperties.put(AnalyticsConstants.NUMBER_OF_CLIPS, project.numberOfClips());
             eventProperties.put(AnalyticsConstants.TOTAL_VIDEOS_SHARED, totalVideoShared);

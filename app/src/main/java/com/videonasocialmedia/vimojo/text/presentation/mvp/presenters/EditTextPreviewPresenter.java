@@ -2,55 +2,75 @@ package com.videonasocialmedia.vimojo.text.presentation.mvp.presenters;
 
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
+import android.support.v4.content.ContextCompat;
 
-import com.videonasocialmedia.vimojo.VimojoApplication;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
+import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Media;
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
-import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
-import com.videonasocialmedia.vimojo.text.util.TextToDrawable;
-import com.videonasocialmedia.vimojo.utils.ExportIntentConstants;
+import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by ruth on 1/09/16.
  */
-public class EditTextPreviewPresenter implements OnVideosRetrieved {
+
+public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHelperListener {
 
     private final String LOG_TAG = getClass().getSimpleName();
 
+    private TextToDrawable drawableGenerator;
+
     private Video videoToEdit;
+
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+    private ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
+    private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
+    private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
+
     private EditTextView editTextView;
+    private Context context;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
 
-    public EditTextPreviewPresenter(EditTextView editTextView, UserEventTracker userEventTracker) {
+    @Inject
+    public EditTextPreviewPresenter(EditTextView editTextView, Context context,
+                                    UserEventTracker userEventTracker,
+                                    GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                    ModifyVideoTextAndPositionUseCase
+                                            modifyVideoTextAndPositionUseCase,
+                                    GetVideonaFormatFromCurrentProjectUseCase
+                                            getVideonaFormatFromCurrentProjectUseCase,
+                                    UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase) {
         this.editTextView = editTextView;
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        this.currentProject = loadCurrentProject();
+        this.context = context;
         this.userEventTracker = userEventTracker;
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
+        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
+        this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
+        this.currentProject = loadCurrentProject();
     }
 
     private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null,null,null);
     }
 
     public void init(int videoToEditTextIndex) {
@@ -66,9 +86,6 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
         editTextView.showPreview(videoList);
-        Video video = videoList.get(0);
-        if(video.isTextToVideoAdded())
-            editTextView.initTextKeyboard(video.getTextToVideo(),video.getTextPositionToVideo());
     }
 
     @Override
@@ -77,21 +94,35 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
     }
 
     public void createDrawableWithText(String text, String position, int width, int height) {
-
-        Drawable drawable = TextToDrawable.createDrawableWithTextAndPosition(text, position, width, height);
+        drawableGenerator = new TextToDrawable(context);
+        Drawable drawable = drawableGenerator.createDrawableWithTextAndPosition(text, position,
+            width, height);
         editTextView.showText(drawable);
     }
 
-    public void setTextToVideo(String text, VideoEditTextActivity.TextPosition textPositionSelected) {
+    public void setTextToVideo(String text, TextEffect.TextPosition textPositionSelected) {
+        VideonaFormat videoFormat =
+            getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
 
-        Context appContext = VimojoApplication.getAppContext();
-        Intent textToVideoServiceIntent = new Intent(appContext, ExportTempBackgroundService.class);
-        textToVideoServiceIntent.putExtra(ExportIntentConstants.VIDEO_ID, videoToEdit.getIdentifier());
-        textToVideoServiceIntent.putExtra(ExportIntentConstants.IS_TEXT_ADDED, true);
-        textToVideoServiceIntent.putExtra(ExportIntentConstants.TEXT_TO_ADD, text);
-        textToVideoServiceIntent.putExtra(ExportIntentConstants.TEXT_POSITION, textPositionSelected.name());
-        appContext.startService(textToVideoServiceIntent);
+        // TODO:(alvaro.martinez) 22/02/17 This drawable saved in app or sdk?
+        Drawable drawableFadeTransitionVideo =
+            ContextCompat.getDrawable(VimojoApplication.getAppContext(), R.drawable.alpha_transition_white);
+
+        modifyVideoTextAndPositionUseCase.addTextToVideo(drawableFadeTransitionVideo, videoToEdit,
+            videoFormat, text, textPositionSelected.name(),
+            currentProject.getProjectPathIntermediateFileAudioFade(), this);
+
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
+    }
+
+    @Override
+    public void onSuccessTranscoding(Video video) {
+        updateVideoRepositoryUseCase.updateVideo(video);
+    }
+
+    @Override
+    public void onErrorTranscoding(Video video, String message) {
+        //editTextView.showError(message);
     }
 }
 

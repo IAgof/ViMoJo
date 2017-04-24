@@ -7,6 +7,9 @@
     <dimen name="button_margin">4dp</dimen>
     <dimen name="fab_compat_margin">0dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="videonaPlayerExo_marginTop">8dp</dimen>
     <dimen name="grid_layout_margin">3dp</dimen>
     <dimen name="defaultbarHeight">48dp</dimen>
+    <dimen name="header_left_padding">16dp</dimen>
+    <dimen name="header_height">192dp</dimen>
 </resources>

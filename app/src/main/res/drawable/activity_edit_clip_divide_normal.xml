@@ -1,0 +1,17 @@
+<vector
+    android:height="24dp"
+    android:viewportHeight="64.0"
+    android:viewportWidth="64.0"
+    android:width="24dp"
+    android:tintMode="multiply"
+    android:tint="@color/button_color_toolbar"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M57,4.2H34.5v1.9H39v9.3h-4.5v1.9h5.4H40h0.1h10.8h0.1H51h10.9v33.6H51h-0.1h-0.1H40.1H40h-0.1h-5.4v1.9H39v9.3h-4.5V64h5.4h0c0,0 0.1,0 0,0h17c3.8,0 6.9,-2.9 6.9,-6.4V10.6C63.9,7 60.8,4.2 57,4.2zM49.9,15.4h-9V6.1h9V15.4zM49.9,62.1h-9v-9.3h9V62.1zM61.9,57.6c0,2.4 -2.2,4.5 -4.9,4.5h-5.1v-9.3h10V57.6zM61.9,15.4h-10V6.1H57c2.7,0 4.9,2.1 4.9,4.5V15.4z"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M6.4,4.2h20.8v1.9h-4.2v9.3h4.2v1.9h-5h-0.1H22h-10H12h-0.1H1.8v33.6h10.1H12h0.1h10h0.1h0.1h5v1.9h-4.2v9.3h4.2V64h-5h0c0,0 -0.1,0 0,0H6.4C2.9,64 0,61.1 0,57.6V10.6C0,7 2.9,4.2 6.4,4.2zM12.9,15.4h8.3V6.1h-8.3V15.4zM12.9,62.1h8.3v-9.3h-8.3V62.1zM1.8,57.6c0,2.4 2,4.5 4.5,4.5h4.7v-9.3H1.8V57.6zM1.8,15.4h9.2V6.1H6.4c-2.5,0 -4.5,2.1 -4.5,4.5V15.4z"/>
+
+</vector>

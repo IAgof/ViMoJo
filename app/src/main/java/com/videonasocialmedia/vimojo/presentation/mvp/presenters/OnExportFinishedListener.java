@@ -7,12 +7,9 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 public interface OnExportFinishedListener {
-
     void onExportError(String error);
-
     void onExportSuccess(Video video);
-
 }
