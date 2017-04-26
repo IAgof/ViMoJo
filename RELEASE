@@ -1,2 +1,2 @@
-v0.4.24.2
-    - Fixed problem splitting videos.
+v0.4.24.3
+ - Improved stability exporting files. Better control in the process of trim, split, text and audio and video transitions.
