@@ -475,21 +475,32 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
 
         video.setTempPath(currentProject.getProjectPathIntermediateFiles());
 
-        videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
-        drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
-
-        launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
+        launchTranscoderAddAVTransitionUseCase.launchExportTempFile(context
+                .getDrawable(R.drawable.alpha_transition_white), video,
+            getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
             intermediatesTempAudioFadeDirectory, this);
     }
 
     @Override
     public void onSuccessTranscoding(Video video) {
-        updateVideoRepositoryUseCase.updateVideo(video);
+        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
+        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
     }
 
     @Override
     public void onErrorTranscoding(Video video, String message) {
-
+        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
+        if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
+            video.increaseNumTriesToExportVideo();
+            Project currentProject = Project.getInstance(null, null, null);
+            launchTranscoderAddAVTransitionUseCase.launchExportTempFile(context
+                    .getDrawable(R.drawable.alpha_transition_white), video,
+                getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
+                currentProject.getProjectPathIntermediateFileAudioFade(), this);
+        } else {
+            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
+                Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
+        }
     }
 
 }

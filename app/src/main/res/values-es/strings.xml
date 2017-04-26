@@ -630,5 +630,8 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="bottom_bar_sound">Audio</string>
     <string name="bottom_bar_share">Compartir</string>
 
+    <string name="dialog_title_warning_error_transcoding_file">Clip corrupto</string>
+    <string name="dialog_message_warning_error_transcoding_file">Revise los clips, el archivo no se podrá exportar correctamente</string>
+
 
 </resources>

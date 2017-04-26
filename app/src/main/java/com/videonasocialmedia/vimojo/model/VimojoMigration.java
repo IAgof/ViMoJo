@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.model;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
@@ -165,6 +166,32 @@ public class VimojoMigration implements RealmMigration {
                 obj.setBoolean("isWatermarkActivated", false);
               }
             });
+      }
+      oldVersion++;
+    }
+
+    if(oldVersion == 5){
+      RealmObjectSchema realmVideo = schema.get("RealmVideo");
+      if(!realmVideo.hasField("videoError")){
+        realmVideo.addField("videoError", String.class)
+            .transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                obj.setString("videoError", null);
+              }
+            });
+      }
+      if(!realmVideo.hasField("isTranscodingTempFileFinished")){
+        realmVideo.addField("isTranscodingTempFileFinished", boolean.class)
+            .transform(new RealmObjectSchema.Function() {
+          @Override
+          public void apply(DynamicRealmObject obj) {
+            obj.setBoolean("isTranscodingTempFileFinished", true);
+          }
+        });
+      }
+      if(!realmVideo.hasField("isTempPathFinished")){
+        realmVideo.removeField("isTempPathFinished");
       }
       oldVersion++;
     }

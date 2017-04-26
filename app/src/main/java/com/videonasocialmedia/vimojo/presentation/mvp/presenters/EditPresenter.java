@@ -13,9 +13,13 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
@@ -50,6 +54,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
+
     /**
      * Editor View
      */
@@ -67,14 +72,15 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                          GetPreferencesTransitionFromProjectUseCase
                                  getPreferencesTransitionFromProjectUseCase) {
         this.editActivityView = editActivityView;
+
         this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
         this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
-
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
-        this.userEventTracker = userEventTracker;
 
+
+        this.userEventTracker = userEventTracker;
         this.currentProject = loadCurrentProject();
     }
 
@@ -133,7 +139,10 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         editActivityView.enableBottomBar();
         editActivityView.enableFabText(true);
         editActivityView.bindVideoList(videoCopy);
+        checkWarningMessageVideosRetrieved(videoList);
     }
+
+
 
     private List<Video> checkMediaPathVideosExistOnDevice(List<Video> videoCopy) {
         List<Video> checkedVideoList = new ArrayList<>();
@@ -148,6 +157,24 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
             }
         }
         return checkedVideoList;
+    }
+
+    public void checkWarningMessageVideosRetrieved(List<Video> videoList) {
+        String message = "Video ";
+        boolean showWarning = false;
+        for(Video video: videoList){
+          ListenableFuture transcodingJob = video.getTranscodingTask();
+          if(transcodingJob!=null && transcodingJob.isCancelled()) {
+              showWarning = true;
+            if (video.getVideoError() != null) {
+              message = message + video.getVideoError();
+            }
+          }
+        }
+        if(showWarning){
+            editActivityView.showWarningTempFile();
+            editActivityView.setWarningMessageTempFile(message + " failed");
+        }
     }
 
     @Override

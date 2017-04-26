@@ -9,6 +9,8 @@ import android.preference.SwitchPreference;
 
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
@@ -88,7 +90,9 @@ public class FragmentPresentersModule {
               updateIntermediateTemporalFilesTransitionsUseCase,
              GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
              UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-             UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase){
+             UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
+             RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+             GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase){
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
         cameraSettingsPref, cameraGridPref, resolutionPref, qualityPref, frameRatePref, transitionVideoPref,
@@ -99,7 +103,9 @@ public class FragmentPresentersModule {
         updateIntermediateTemporalFilesTransitionsUseCase,
         getWatermarkPreferenceFromProjectUseCase,
         updateWatermarkPreferenceToProjectUseCase,
-        updateVideoRepositoryUseCase);
+        updateVideoRepositoryUseCase,
+        relaunchTranscoderTempBackgroundUseCase,
+        getVideonaFormatFromCurrentProjectUseCase);
   }
 
   @Provides
@@ -144,6 +150,16 @@ public class FragmentPresentersModule {
   @Provides
   GetWatermarkPreferenceFromProjectUseCase provideGetWatermarkPreference(){
     return new GetWatermarkPreferenceFromProjectUseCase();
+  }
+
+  @Provides
+  RelaunchTranscoderTempBackgroundUseCase provideGetRelaunchTranscoder(){
+    return new RelaunchTranscoderTempBackgroundUseCase();
+  }
+
+  @Provides
+  GetVideonaFormatFromCurrentProjectUseCase provideoGetVideonaFormat(){
+    return new GetVideonaFormatFromCurrentProjectUseCase();
   }
 
 }

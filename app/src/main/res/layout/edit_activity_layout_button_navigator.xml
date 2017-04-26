@@ -6,6 +6,17 @@
     android:orientation="horizontal">
 
     <ImageButton
+        android:id="@+id/button_edit_warning_transcoding_file"
+        style="@style/Widget.AppCompat.ActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:scaleType="fitCenter"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/stat_sys_warning"
+        android:visibility="invisible"
+        />
+
+    <ImageButton
         android:id="@+id/button_edit_duplicate"
         style="@style/Widget.AppCompat.ActionButton"
         android:layout_width="wrap_content"

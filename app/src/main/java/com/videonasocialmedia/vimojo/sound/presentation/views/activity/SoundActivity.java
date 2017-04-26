@@ -1,7 +1,9 @@
 package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -45,6 +48,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by ruth on 4/10/16.
@@ -74,6 +78,8 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   RecyclerView voiceOverListRecyclerView;
   @Nullable @Bind(R.id.cardview_audio_blocks_voice_over)
   CardView cardViewAudioBlocksVoiceOver;
+  @Nullable @Bind(R.id.button_sound_warning_transcoding_file)
+  ImageButton warningTranscodingFilesButton;
 
   @Bind(R.id.fab_edit_room)
   FloatingActionsMenu fabMenu;
@@ -86,11 +92,13 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   private int currentAudioIndex = 0;
   private boolean voiceOverActivated;
   private FloatingActionButton fabVoiceOver;
+  private String warningTranscodingFilesMessage;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       inflateLinearLayout(R.id.container_layout,R.layout.activity_sound);
+    inflateLinearLayout(R.id.container_navigator,R.layout.sound_activity_layout_button_navigator);
       ButterKnife.bind(this);
       getActivityPresentersComponent().inject(this);
       createExportReceiver();
@@ -207,7 +215,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       videonaPlayer.onShown(this);
       presenter.init();
       registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
-
   }
 
   @Override
@@ -262,6 +269,16 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       videonaPlayer.resetPreview();
   }
 
+  @Override
+  public void showWarningTempFile() {
+    warningTranscodingFilesButton.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void setWarningMessageTempFile(String messageTempFile) {
+    warningTranscodingFilesMessage = messageTempFile;
+  }
+
 
   @Nullable @Override
   public void newClipPlayed(int currentClipIndex) {
@@ -305,5 +322,19 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   @Override
   public void onVoiceOverClipClicked(int position) {
     //navigateTo(VoiceOverActivity.class);
+  }
+
+  @Nullable @OnClick(R.id.button_sound_warning_transcoding_file)
+  public void onClickWarningTranscodingFile(){
+    AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    dialog.setTitle(getString(R.string.dialog_title_warning_error_transcoding_file));
+    dialog.setMessage(getString(R.string.dialog_message_warning_error_transcoding_file));
+    dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+      }
+    });
+    dialog.show();
   }
 }
