@@ -34,7 +34,6 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -43,11 +42,10 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.VideoTimeLineAdapter;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.videoTimeLineTouchHelperCallback;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallback;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
@@ -67,7 +65,7 @@ import butterknife.OnClick;
 
 public class EditActivity extends EditorActivity implements EditActivityView,
     VideonaPlayer.VideonaPlayerListener, VideoTimeLineRecyclerViewClickListener {
-
+    private static String TAG = EditActivity.class.getCanonicalName();
     private static final String CURRENT_TIME_POSITION = "current_time_position";
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;
     private final int NUM_COLUMNS_GRID_TIMELINE_VERTICAL = 4;
@@ -250,7 +248,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         videoListRecyclerView.setLayoutManager(layoutManager);
         timeLineAdapter = new VideoTimeLineAdapter(this);
         videoListRecyclerView.setAdapter(timeLineAdapter);
-        videoTimeLineTouchHelperCallback callback = new videoTimeLineTouchHelperCallback(timeLineAdapter);
+
+      VideoTimeLineTouchHelperCallback callback =
+              new VideoTimeLineTouchHelperCallback(timeLineAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(videoListRecyclerView);
     }
@@ -334,7 +334,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         //Yes button clicked
-                        timeLineAdapter.remove(selectedVideoRemovePosition);
                         setSelectedClipIndex(Math.max(selectedVideoRemovePosition-1, 0));
                         editPresenter.removeVideoFromProject(selectedVideoRemovePosition);
                         break;
@@ -360,12 +359,10 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     public void onClipMoved(int fromPosition, int toPosition) {
         currentVideoIndex = toPosition;
         editPresenter.moveItem(fromPosition, toPosition);
-        videonaPlayer.seekToClip(currentVideoIndex);
     }
 
     @Override
     public void onClipReordered(int newPosition) {
-        currentVideoIndex = newPosition;
         videonaPlayer.updatePreviewTimeLists();
         videonaPlayer.seekToClip(currentVideoIndex);
     }
@@ -411,10 +408,10 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     @Override
     public void bindVideoList(List<Video> videoList) {
         this.videoList = videoList;
-        timeLineAdapter.setVideoList(videoList);
-        timeLineAdapter.updateSelection(currentVideoIndex); // TODO: check this flow and previous updateSelection(0); in setVideoList
+        timeLineAdapter.updateVideoList(videoList);
+        timeLineAdapter.updateSelection(currentVideoIndex); // TODO: check this flow and previous updateSelection(0); in updateVideoList
         videoListRecyclerView.scrollToPosition(currentVideoIndex);
-        timeLineAdapter.notifyDataSetChanged();
+//        timeLineAdapter.notifyDataSetChanged();
         videonaPlayer.bindVideoList(videoList);
         videonaPlayer.seekTo(currentProjectTimePosition);
     }

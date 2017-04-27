@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.main;
 
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
+import com.videonasocialmedia.vimojo.main.modules.MockedDataRepositoriesModule;
 
 /**
  * Created by jliarte on 23/10/16.
@@ -12,7 +13,7 @@ public class VimojoTestApplication extends VimojoApplication {
   @Override
   public DataRepositoriesModule getDataRepositoriesModule() {
     if (dataRepositoryModule == null) {
-      return super.getDataRepositoriesModule();
+      return new MockedDataRepositoriesModule();
     }
     return dataRepositoryModule;
   }

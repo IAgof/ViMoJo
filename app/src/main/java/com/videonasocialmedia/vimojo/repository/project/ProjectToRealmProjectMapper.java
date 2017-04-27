@@ -29,7 +29,7 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
       realmProject.musicTitle = project.getMusic().getMusicTitle();
       realmProject.musicVolume = project.getMusic().getVolume();
     }
-    if(project.hasVideoExported()){
+    if (project.hasVideoExported()) {
       realmProject.pathLastVideoExported = project.getPathLastVideoExported();
       realmProject.dateLastVideoExported = project.getDateLastVideoExported();
     }
