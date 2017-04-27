@@ -184,6 +184,13 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                 return false;
               case R.id.menu_navview_username:
                 createDialog(R.id.menu_navview_username);
+                return false;
+              case R.id.menu_navview_settings:
+                navigateTo(SettingsActivity.class);
+                return false;
+              case R.id.menu_navview_suggestions:
+                navigateToMail("mailto:info@videona.com");
+                return false;
               default:
                 return false;
             }
@@ -231,6 +238,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     startActivity(intent);
   }
 
+  private void navigateToMail(String url) {
+    Intent i = new Intent(Intent.ACTION_VIEW);
+    i.setData(Uri.parse(url));
+    startActivity(i);
+  }
+
   @Override
   public void showPreferenceUserName(String data) {
     Menu menu = navigationView.getMenu();
@@ -276,13 +289,13 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
         Intent userThumbSetterIntent = null;
         switch (which) {
-          case DialogInterface.BUTTON_POSITIVE:
+          /*case DialogInterface.BUTTON_POSITIVE:
             // Take photo button clicked
             userThumbSetterIntent = new Intent("android.media.action.IMAGE_CAPTURE");
             setIntentExtras(uri, userThumbSetterIntent);
             startActivityForResult(userThumbSetterIntent, REQUEST_ICON_USER);
-            break;
-          case DialogInterface.BUTTON_NEGATIVE:
+            break;*/
+          case DialogInterface.BUTTON_NEUTRAL:
             // Pick from gallery button clicked
             userThumbSetterIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -308,8 +321,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this,
         R.style.VideonaDialog);
     builder.setMessage(R.string.dialog_editor_user_thumb_message)
-        .setPositiveButton(R.string.dialog_editor_user_thumb_take_photo, dialogClickListener)
-        .setNegativeButton(R.string.dialog_editor_user_thumb_pick_photo, dialogClickListener).show();
+        .setNeutralButton(R.string.dialog_editor_user_thumb_pick_photo, dialogClickListener).show();
+    //.setPositiveButton(R.string.dialog_editor_user_thumb_take_photo, dialogClickListener)
   }
 
   @Override

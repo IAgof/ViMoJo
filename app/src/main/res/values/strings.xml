@@ -95,6 +95,8 @@
     <string name="dialog_project_remove_cancel">No</string>
 
     <!-- Detail project activity -->
+    <string name="projectTitleDurationMinSec">Duration:</string>
+    <string name="projectTitleSizeMb">Size:</string>
     <string name="detail_project_hint_title">Enter your name here</string>
     <string name="detail_project_info_duration">Duration</string>
     <string name="detail_project_info_size">Size</string>
@@ -165,10 +167,10 @@
     <string name="name">Name</string>
     <string name="enterName">Enter your name</string>
     <string name="removeName">Remove name</string>
-    <string name="username">Username</string>
+    <string name="username">User name</string>
     <string name="enterUsername">Enter a username</string>
     <string name="removeUsername">Remove username</string>
-    <string name="emailPreference">Email</string>
+    <string name="emailPreference">User email</string>
     <string name="save">Save</string>
 
     <!--FTP Settings -->
@@ -251,6 +253,12 @@
 
 
     <!-- End Settings Activity -->
+
+    <!-- DRAWER -->
+    <string name="drawerProjects">My projects</string>
+    <string name="drawerSettings">Settings</string>
+    <string name="drawerSuggestions">Suggestions</string>
+
 
     <!-- About Activity -->
 

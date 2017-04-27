@@ -50,6 +50,7 @@ public class SettingsFragment extends PreferenceFragment implements
     protected PreferenceCategory cameraSettingsPref;
     protected PreferenceCategory ftp1Pref;
     protected PreferenceCategory ftp2Pref;
+    protected PreferenceCategory transitionCategory;
     protected PreferenceCategory watermarkPrefCategory;
     protected Preference emailPref;
     protected SwitchPreference cameraGridPref;
@@ -107,6 +108,15 @@ public class SettingsFragment extends PreferenceFragment implements
         setupTermOfService();
         setupLicense();
         setupLegalNotice();
+
+        //Hot fix to hide transition. Enable after MoJoCon.
+        hideTransitions();
+    }
+
+    private void hideTransitions() {
+        transitionCategory = (PreferenceCategory) findPreference(getString(R.string.title_fade_transition));
+        if(transitionCategory!=null)
+            getPreferenceScreen().removePreference(transitionCategory);
     }
 
     private void setupCameraGrid() {

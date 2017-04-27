@@ -93,6 +93,8 @@
     <string name="dialog_project_remove_cancel">No</string>
 
     <!-- Detail project activity -->
+    <string name="projectTitleSizeMb">Tamaño:</string>
+    <string name="projectTitleDurationMinSec">Duración:</string>
     <string name="detail_project_hint_title">Introduzca nombre</string>
     <string name="detail_project_info_duration">Duración</string>
     <string name="detail_project_info_size">Tamaño</string>
@@ -227,6 +229,10 @@
 
     <!-- End Settings Activity -->
 
+    <!-- DRAWER -->
+    <string name="drawerProjects">Mis proyectos</string>
+    <string name="drawerSettings">Ajustes</string>
+    <string name="drawerSuggestions">Sugerencias</string>
 
     <!-- About Activity -->
 
