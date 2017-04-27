@@ -194,6 +194,14 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         if (!externalIntent)
             showThumbAndNumber();
         Log.d(LOG_TAG, "resume presenter");
+        checkCameraGrid();
+    }
+
+    private void checkCameraGrid() {
+        boolean gridSelected =
+            sharedPreferences.getBoolean(ConfigPreferences.KEY_CAMERA_PREFERENCES_GRID, false);
+        if(gridSelected)
+            recordView.showGridLayout();
     }
 
     private void showThumbAndNumber() {

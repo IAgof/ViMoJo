@@ -1,3 +1,12 @@
+v0.4.24.1
+    - Added option to enable a grid camera in settings screen.
+    - Update quality record video values to 16, 32, 50 Mbps.
+    - Update default project camera settings to 1080p, 32 Mbps.
+
+v0.4.23
+- Fixed problem in settings screen.
+- Updated video transition to white color. Adjust duration of audio, video transitions.
+
 v0.4.22
 - Added new audio tracks interface. Show audio and music clips in separate tracks with blocks.
 

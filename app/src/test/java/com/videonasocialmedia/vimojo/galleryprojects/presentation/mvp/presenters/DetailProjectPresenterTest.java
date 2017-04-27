@@ -68,7 +68,7 @@ public class DetailProjectPresenterTest {
     project.setProfile(profile);
     injectedPresenter.init();
     verify(mockedDetailProjectView).showTitleProject(null);
-    verify(mockedDetailProjectView).showDetailProjectInfo(0,0,1280,10,25);
+    verify(mockedDetailProjectView).showDetailProjectInfo(0,0,1280,50,25);
   }
 
   private Project getAProject() {
