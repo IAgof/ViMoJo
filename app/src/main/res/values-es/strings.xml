@@ -21,7 +21,7 @@
     <string name="giftOverlayDialogTitle">Tu regalo</string>
     <string name="giftOverlayDialogMessage">Disfruta de tu nuevo filtro de Bollywood</string>
     <string name="recordTextGallery">Galería</string>
-    <string name="recordTextEdit">Edición</string>
+    <string name="recordTextEdit">Editor</string>
 
     <!-- Share Activity -->
     <string name="shareError">Uy, no hemos podido compartir el vídeo.</string>
