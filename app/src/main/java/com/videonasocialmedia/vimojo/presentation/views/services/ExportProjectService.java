@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.presentation.views.services;
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -39,6 +40,7 @@ public class ExportProjectService extends IntentService implements OnExportFinis
 
     @Override
     public void onExportError(String error) {
+        Log.d(TAG, "exportError " + error);
         publishResults(error, Activity.RESULT_CANCELED);
     }
 
@@ -53,6 +55,7 @@ public class ExportProjectService extends IntentService implements OnExportFinis
 
     @Override
     public void onExportSuccess(Video video) {
+        Log.d(TAG, "exportSuccess ");
         File f = new File(video.getMediaPath());
         String destPath = Constants.PATH_APP + File.separator + f.getName();
         f.renameTo(new File(destPath));
