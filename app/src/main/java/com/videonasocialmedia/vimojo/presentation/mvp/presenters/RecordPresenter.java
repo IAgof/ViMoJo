@@ -194,14 +194,6 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         if (!externalIntent)
             showThumbAndNumber();
         Log.d(LOG_TAG, "resume presenter");
-        checkCameraGrid();
-    }
-
-    private void checkCameraGrid() {
-        boolean gridSelected =
-            sharedPreferences.getBoolean(ConfigPreferences.KEY_CAMERA_PREFERENCES_GRID, false);
-        if(gridSelected)
-            recordView.showGridLayout();
     }
 
     private void showThumbAndNumber() {
@@ -212,7 +204,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
             final Video lastItem = (Video) mediaInProject.get(lastItemIndex);
             this.recordedVideosNumber = mediaInProject.size();
             recordView.showVideosRecordedNumber(recordedVideosNumber);
-            recordView.showRecordedVideoThumb(lastItem.getMediaPath());
+            recordView.showRecordedVideoThumbWithText(lastItem.getMediaPath());
         } else {
             recordView.hideVideosRecordedNumber();
         }
@@ -291,7 +283,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         recordView.showChronometer();
         recordView.hideSettingsOptions();
         recordView.hideVideosRecordedNumber();
-        recordView.hideRecordedVideoThumb();
+        recordView.hideRecordedVideoThumbWithText();
         firstTimeRecording = false;
     }
 
@@ -407,7 +399,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         recordView.stopChronometer();
         recordView.hideChronometer();
         recordView.reStartScreenRotation();
-        recordView.showRecordedVideoThumb(path);
+        recordView.showRecordedVideoThumbWithText(path);
         recordView.showVideosRecordedNumber(++recordedVideosNumber);
     }
 

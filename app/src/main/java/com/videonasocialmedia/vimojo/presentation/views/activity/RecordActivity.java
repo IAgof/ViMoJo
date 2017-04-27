@@ -87,12 +87,14 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ImageButton rotateCameraButton;
     @Bind(R.id.button_navigate_settings)
     ImageButton buttonNavigateSettings;
-    @Bind(R.id.settings_camera_button)
-    ImageButton settingsCameraButton;
+    @Bind(R.id.button_grid)
+    ImageButton gridButton;
     @Bind(R.id.button_navigate_edit_or_gallery)
     CircleImageView buttonThumbClipRecorded;
     @Bind(R.id.text_view_num_videos)
     TextView numVideosRecorded;
+    @Bind(R.id.record_text_view_edit_or_gallery)
+    TextView editText;
     @Bind(R.id.imageRecPoint)
     ImageView recordingIndicator;
     @Bind(R.id.chronometer_record)
@@ -192,6 +194,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         buttonThumbClipRecorded.setBorderWidth(5);
         buttonThumbClipRecorded.setBorderColor(Color.WHITE);
         numVideosRecorded.setVisibility(View.GONE);
+        editText.setVisibility(View.VISIBLE);
     }
 
     private void keepScreenOn() {
@@ -515,12 +518,9 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     public void hidePrincipalViews() {
         clearButton.setImageResource(R.drawable.record_activity_ic_shrink);
         clearButton.setAlpha(0.5f);
-        clearButton.setBackground(null);
         clearButton.setActivated(true);
-        hud.setVisibility(View.INVISIBLE);
         controlsView.setVisibility(View.INVISIBLE);
         buttonToHideControlsView.setVisibility(View.INVISIBLE);
-        buttonToShowControls.setVisibility(View.INVISIBLE);
         picometer.setVisibility(View.INVISIBLE);
         zommBarView.setVisibility(View.INVISIBLE);
         settingsBarSubmenu.setVisibility(View.INVISIBLE);
@@ -538,20 +538,23 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     }
 
     @Override
-    public void showRecordedVideoThumb(String path) {
+    public void showRecordedVideoThumbWithText(String path) {
         buttonThumbClipRecorded.setVisibility(View.VISIBLE);
         Glide.with(this).load(path).into(buttonThumbClipRecorded);
+        editText.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void hideRecordedVideoThumb() {
+    public void hideRecordedVideoThumbWithText() {
         buttonThumbClipRecorded.setVisibility(View.INVISIBLE);
+        editText.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void showVideosRecordedNumber(int numberOfVideos) {
         numVideosRecorded.setVisibility(View.VISIBLE);
         numVideosRecorded.setText(String.valueOf(numberOfVideos));
+        editText.setText(getString(R.string.recordTextEdit));
         isProjectHasVideo=true;
     }
 
@@ -578,14 +581,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         }
     }
 
-    @Override
-    public void showGridLayout() {
-        imageViewGrid.setVisibility(View.VISIBLE);
-    }
-
     public void setupActivityButtons() {
         // TODO:(alvaro.martinez) 7/11/16 implement this functionality
-        settingsCameraButton.setEnabled(false);
         tintRecordButtons(R.color.button_color_record_activity);
     }
 
@@ -595,7 +592,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         tintButton(buttonToShowControls,button_color);
         tintButton(buttonToHideControlsView,button_color);
         tintButton(buttonNavigateSettings,button_color);
-        tintButton(settingsCameraButton, button_color);
+        tintButton(gridButton, button_color);
     }
 
     private void trackVideoExported() {
@@ -641,6 +638,17 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     @OnClick(R.id.button_toggle_flash)
     public void toggleFlash() {
         recordPresenter.toggleFlash();
+    }
+
+    @OnClick (R.id.button_grid)
+    public void onClickListenerGridButton(){
+        if(gridButton.isSelected()){
+            gridButton.setSelected(false);
+            imageViewGrid.setVisibility(View.INVISIBLE);
+        } else {
+            gridButton.setSelected(true);
+            imageViewGrid.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -702,6 +710,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         buttonToShowControls.setVisibility(View.INVISIBLE);
         buttonToHideControlsView.setVisibility(View.VISIBLE);
         controlsView.setVisibility(View.VISIBLE);
+        hud.setVisibility(View.VISIBLE);
     }
 
     @OnClick(R.id.button_to_hide_controls)
@@ -709,6 +718,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         buttonToHideControlsView.setVisibility(View.INVISIBLE);
         buttonToShowControls.setVisibility(View.VISIBLE);
         controlsView.setVisibility(View.INVISIBLE);
+        hud.setVisibility(View.INVISIBLE);
     }
 
     public void navigateTo(Class cls) {
