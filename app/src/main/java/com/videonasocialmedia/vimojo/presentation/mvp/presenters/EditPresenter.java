@@ -13,10 +13,14 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
@@ -152,13 +156,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         return checkedVideoList;
     }
 
-    public void removeVideoFromProject(int selectedVideoRemove) {
-        Video videoToRemove = this.videoList.get(selectedVideoRemove);
-        ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
-        mediaToDeleteFromProject.add(videoToRemove);
-        removeVideoFromProjectUseCase.removeMediaItemsFromProject(mediaToDeleteFromProject, this);
-    }
-
     public void obtainVideos() {
         editActivityView.showProgressDialog();
         getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
@@ -178,6 +175,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 editActivityView.enableFabText(true);
                 editActivityView.hideProgressDialog();
                 editActivityView.bindVideoList(videoCopy);
+                checkWarningMessageVideosRetrieved(videoList);
             }
 
             @Override
@@ -192,6 +190,32 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 editActivityView.resetPreview();
             }
         });
+    }
+
+    public void checkWarningMessageVideosRetrieved(List<Video> videoList) {
+        String message = "Video ";
+        boolean showWarning = false;
+        for(Video video: videoList){
+            ListenableFuture transcodingJob = video.getTranscodingTask();
+            if(transcodingJob!=null && transcodingJob.isCancelled()) {
+                showWarning = true;
+                if (video.getVideoError() != null) {
+                    message = message + video.getVideoError();
+                }
+            }
+        }
+        if(showWarning){
+            editActivityView.showWarningTempFile();
+            editActivityView.setWarningMessageTempFile(message + " failed");
+        }
+    }
+
+
+    public void removeVideoFromProject(int selectedVideoRemove) {
+        Video videoToRemove = this.videoList.get(selectedVideoRemove);
+        ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
+        mediaToDeleteFromProject.add(videoToRemove);
+        removeVideoFromProjectUseCase.removeMediaItemsFromProject(mediaToDeleteFromProject, this);
     }
 
     public void init() {

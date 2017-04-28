@@ -1740,6 +1740,7 @@ and Conditions.\n\n
     <string name="bottom_bar_sound">Sound</string>
     <string name="bottom_bar_share">Share</string>
 
-
+    <string name="dialog_title_warning_error_transcoding_file">Clip failed</string>
+    <string name="dialog_message_warning_error_transcoding_file">Review your clips, the file will not be exported properly</string>
 
 </resources>

@@ -4,6 +4,7 @@ package com.videonasocialmedia.vimojo.text.presentation.mvp.presenters;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
@@ -12,6 +13,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
@@ -20,6 +22,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetriev
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -43,6 +46,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
     private ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
     private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
+    private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
 
     private EditTextView editTextView;
     private Context context;
@@ -57,7 +61,9 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
                                             modifyVideoTextAndPositionUseCase,
                                     GetVideonaFormatFromCurrentProjectUseCase
                                             getVideonaFormatFromCurrentProjectUseCase,
-                                    UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase) {
+                                    UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
+                                    RelaunchTranscoderTempBackgroundUseCase
+                                            relaunchTranscoderTempBackgroundUseCase) {
         this.editTextView = editTextView;
         this.context = context;
         this.userEventTracker = userEventTracker;
@@ -65,6 +71,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
         this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
         this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
+        this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
         this.currentProject = loadCurrentProject();
     }
 
@@ -106,7 +113,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
 
         // TODO:(alvaro.martinez) 22/02/17 This drawable saved in app or sdk?
         Drawable drawableFadeTransitionVideo =
-            ContextCompat.getDrawable(VimojoApplication.getAppContext(), R.drawable.alpha_transition_white);
+            ContextCompat.getDrawable(context, R.drawable.alpha_transition_white);
 
         modifyVideoTextAndPositionUseCase.addTextToVideo(drawableFadeTransitionVideo, videoToEdit,
             videoFormat, text, textPositionSelected.name(),
@@ -117,12 +124,28 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
 
     @Override
     public void onSuccessTranscoding(Video video) {
-        updateVideoRepositoryUseCase.updateVideo(video);
+        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
+        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
     }
 
     @Override
     public void onErrorTranscoding(Video video, String message) {
-        //editTextView.showError(message);
+        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
+        if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
+            videoToEdit.increaseNumTriesToExportVideo();
+            Project currentProject = Project.getInstance(null, null, null);
+            VideonaFormat videoFormat = getVideonaFormatFromCurrentProjectUseCase
+                .getVideonaFormatFromCurrentProject();
+            Drawable drawableFadeTransitionVideo = VimojoApplication.getAppContext()
+                .getDrawable(R.drawable.alpha_transition_white);
+
+            relaunchTranscoderTempBackgroundUseCase.relaunchExport(drawableFadeTransitionVideo,
+                video, videoFormat, currentProject.getProjectPathIntermediateFileAudioFade(), this);
+        } else {
+
+            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
+                Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TEXT.name());
+        }
     }
 }
 

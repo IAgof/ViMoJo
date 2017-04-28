@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 import android.os.Build;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -34,22 +35,23 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by alvaro on 8/03/17.
  */
 public class SoundPresenterTest {
 
-  @Mock
-  SoundView mockedSoundView;
-  @Mock
-  GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
-  @Mock
-  GetMusicFromProjectUseCase mockedGetMusicFromProjectUseCase;
-  @Mock
-  GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionFromProjectUseCase;
+  @Mock SoundView mockedSoundView;
+  @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
+  @Mock GetMusicFromProjectUseCase mockedGetMusicFromProjectUseCase;
+  @Mock GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionFromProjectUseCase;
+  @Mock ListenableFuture<Void> mockedTranscodingTask;
 
   @InjectMocks SoundPresenter injectedSoundPresenter;
+
 
   @Before
   public void init() {
@@ -64,7 +66,7 @@ public class SoundPresenterTest {
   @Test
   public void getMediaListCallsGetMediaListFromProjectUseCase(){
     injectedSoundPresenter.init();
-    Mockito.verify(mockedGetMediaListFromProjectUseCase)
+    verify(mockedGetMediaListFromProjectUseCase)
         .getMediaListFromProject(injectedSoundPresenter);
   }
 
@@ -84,11 +86,12 @@ public class SoundPresenterTest {
 
     injectedSoundPresenter.init();
 
-    Mockito.verify(mockedGetMusicFromProjectUseCase).getMusicFromProject(injectedSoundPresenter);
+    verify(mockedGetMusicFromProjectUseCase).getMusicFromProject(injectedSoundPresenter);
   }
 
   @Test
   public void ifProjectHasVideosCallsBindVideoList() throws IllegalItemOnTrack {
+    getAProject().clear();
     Project project = getAProject();
     Video video = new Video("video/path");
     List<Video> videoList = new ArrayList<>();
@@ -105,7 +108,7 @@ public class SoundPresenterTest {
         mockedGetPreferencesTransitionFromProjectUseCase);
     soundPresenter.init();
 
-    Mockito.verify(mockedSoundView).bindVideoList(videoList);
+    verify(mockedSoundView).bindVideoList(videoList);
 
   }
 
@@ -121,7 +124,7 @@ public class SoundPresenterTest {
         mockedGetPreferencesTransitionFromProjectUseCase);
     soundPresenter.init();
 
-    Mockito.verify(mockedSoundView).resetPreview();
+    verify(mockedSoundView).resetPreview();
   }
 
   @Test
@@ -143,7 +146,7 @@ public class SoundPresenterTest {
         mockedGetPreferencesTransitionFromProjectUseCase);
     soundPresenter.init();
 
-    Mockito.verify(mockedSoundView).bindMusicList(musicList);
+    verify(mockedSoundView).bindMusicList(musicList);
   }
 
 
@@ -169,7 +172,7 @@ public class SoundPresenterTest {
         mockedGetMediaListFromProjectUseCase, getMusicFromProjectUseCase,
         mockedGetPreferencesTransitionFromProjectUseCase);
     soundPresenter.init();
-    Mockito.verify(mockedSoundView).bindVoiceOverList(voiceOverList);
+    verify(mockedSoundView).bindVoiceOverList(voiceOverList);
 
   }
 
@@ -178,7 +181,7 @@ public class SoundPresenterTest {
     // TODO:(alvaro.martinez) 27/03/17 How to mock Build.Config values
     boolean FEATURE_TOGGLE_VOICE_OVER = false;
     injectedSoundPresenter.checkVoiceOverFeatureToggle(FEATURE_TOGGLE_VOICE_OVER);
-    Mockito.verify(mockedSoundView).hideVoiceOverCardView();
+    verify(mockedSoundView).hideVoiceOverCardView();
   }
 
   @Test
@@ -186,7 +189,35 @@ public class SoundPresenterTest {
     // TODO:(alvaro.martinez) 27/03/17 How to mock Build.Config values
     boolean FEATURE_TOGGLE_VOICE_OVER = true;
     injectedSoundPresenter.checkVoiceOverFeatureToggle(FEATURE_TOGGLE_VOICE_OVER);
-    Mockito.verify(mockedSoundView).addVoiceOverOptionToFab();
+    verify(mockedSoundView).addVoiceOverOptionToFab();
+  }
+
+  @Test
+  public void ifProjectHasSomeVideoWithErrorsCallsShowWarningTempFile() throws IllegalItemOnTrack {
+
+    Video video1 = new Video("video/path");
+    Video video2 = new Video("video/path");
+    video2.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
+
+    assertThat("video1 has not error", video1.getVideoError() == null, is(true));
+    assertThat("video2 has error", video2.getVideoError() == null, is(false));
+
+    video1.setTranscodingTask(mockedTranscodingTask);
+    video2.setTranscodingTask(mockedTranscodingTask);
+
+    when(mockedTranscodingTask.isCancelled()).thenReturn(true);
+
+    List<Video> videoList = new ArrayList<>();
+    videoList.add(video1);
+    videoList.add(video2);
+
+    SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
+        mockedGetMediaListFromProjectUseCase, mockedGetMusicFromProjectUseCase,
+        mockedGetPreferencesTransitionFromProjectUseCase);
+    soundPresenter.checkWarningMessageVideosRetrieved(videoList);
+
+    verify(mockedSoundView).showWarningTempFile();
+
   }
 
   public Project getAProject() {

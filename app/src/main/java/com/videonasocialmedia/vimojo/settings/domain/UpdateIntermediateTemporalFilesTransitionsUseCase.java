@@ -27,7 +27,6 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCase {
     if (items.size() > 0)    {
       for (Media media : items) {
         Video video = (Video) media;
-        video.setTempPathFinished(false);
         video.setTempPath(project.getProjectPathIntermediateFiles());
         listener.videoToRelaunch(video.getUuid(), project.getProjectPathIntermediateFileAudioFade());
       }

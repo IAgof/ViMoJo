@@ -13,6 +13,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
+import android.util.Log;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
@@ -27,6 +28,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,8 @@ import javax.inject.Inject;
  */
 public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     OnRemoveMediaFinishedListener, OnLaunchAVTransitionTempFileListener, TranscoderHelperListener {
+
+    private String LOG_TAG = "GalleryPagerPresenter";
 
     private Context context;
     private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
@@ -146,12 +150,24 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
 
     @Override
     public void onSuccessTranscoding(Video video) {
-        updateVideoRepositoryUseCase.updateVideo(video);
+        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
+        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
     }
 
     @Override
     public void onErrorTranscoding(Video video, String message) {
-
+        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
+        if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
+            video.increaseNumTriesToExportVideo();
+            Project currentProject = Project.getInstance(null, null, null);
+            launchTranscoderAddAVTransitionUseCase.launchExportTempFile(context
+                    .getDrawable(R.drawable.alpha_transition_white), video,
+                getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
+                currentProject.getProjectPathIntermediateFileAudioFade(), this);
+        } else {
+            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
+                Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
+        }
     }
 
     @Override

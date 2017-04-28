@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -75,9 +76,29 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
         soundView.bindVideoList(videoList);
+        checkWarningMessageVideosRetrieved(videoList);
     }
 
-    @Override
+  public void checkWarningMessageVideosRetrieved(List<Video> videoList) {
+    String message = "Video ";
+    boolean showWarning = false;
+    for(Video video: videoList){
+      ListenableFuture transcodingJob = video.getTranscodingTask();
+      if(transcodingJob!=null && transcodingJob.isCancelled()) {
+        showWarning = true;
+        if (video.getVideoError() != null) {
+          message = message + video.getVideoError();
+        }
+      }
+    }
+
+    if(showWarning){
+      soundView.showWarningTempFile();
+      soundView.setWarningMessageTempFile(message + " failed");
+    }
+  }
+
+  @Override
     public void onNoVideosRetrieved() {
         //TODO Show error
         soundView.resetPreview();

@@ -93,6 +93,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     BottomBar bottomBar;
     @Nullable @Bind(R.id.relative_layout_activity_edit)
     RelativeLayout relativeLayoutActivityEdit;
+    @Nullable @Bind(R.id.button_edit_warning_transcoding_file)
+    ImageButton warningTranscodingFilesButton;
 
     private List<Video> videoList;
     private int currentVideoIndex = 0;
@@ -102,6 +104,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     private int selectedVideoRemovePosition;
     private FloatingActionButton newFab;
     private boolean isEnableFabText =false;
+
+    private String warningTranscodingFilesMessage;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -124,7 +128,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         }
     };
 
-    @Override
+
+
+  @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         inflateLinearLayout(R.id.container_layout,R.layout.activity_edit);
@@ -299,6 +305,20 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         if (!editSplitButton.isEnabled())
             return;
         navigateTo(VideoSplitActivity.class, currentVideoIndex);
+    }
+
+    @Nullable @OnClick(R.id.button_edit_warning_transcoding_file)
+    public void onClickWarningTranscodingFile(){
+      AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
+      dialog.setTitle(getString(R.string.dialog_title_warning_error_transcoding_file));
+      dialog.setMessage(getString(R.string.dialog_message_warning_error_transcoding_file));
+      dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+          dialog.dismiss();
+        }
+      });
+      dialog.show();
     }
 
     public void navigateTo(Class cls, String videoToSharePath) {
@@ -494,6 +514,15 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     isEnableFabText = enableFabText;
   }
 
+  @Override
+  public void showWarningTempFile() {
+    warningTranscodingFilesButton.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void setWarningMessageTempFile(String messageTempFile) {
+    warningTranscodingFilesMessage = messageTempFile;
+  }
 
 
   @Override

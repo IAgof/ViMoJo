@@ -1,8 +1,11 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -16,6 +19,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.After;
@@ -28,9 +33,15 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 31/05/16.
@@ -46,6 +57,8 @@ public class EditPresenterTest {
   @Mock private RemoveVideoFromProjectUseCase mockedVideoRemover;
   @Mock private ReorderMediaItemUseCase mockedMediaItemReorderer;
   @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
+  @Mock private GetMusicFromProjectUseCase mockedGetMusicFromProjectUseCase;
+  @Mock ListenableFuture<Void> mockedTranscodingTask;
 
   @InjectMocks private EditPresenter injectedEditPresenter;
 
@@ -95,6 +108,38 @@ public class EditPresenterTest {
     presenter.init();
 
     verify(mockedEditorView).setMusic(voiceOver);
+  }
+
+  @Test
+  public void ifProjectHasSomeVideoWithErrorsCallsShowWarningTempFile() throws IllegalItemOnTrack {
+    Project project = getAProject();
+    Video video1 = new Video("video/path");
+    Video video2 = new Video("video/path");
+    video2.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
+
+    assertThat("video1 has not error", video1.getVideoError() == null, is(true));
+    assertThat("video2 has error", video2.getVideoError() == null, is(false));
+
+
+    video1.setTranscodingTask(mockedTranscodingTask);
+    video2.setTranscodingTask(mockedTranscodingTask);
+
+    when(mockedTranscodingTask.isCancelled()).thenReturn(true);
+
+    List<Video> videoList = new ArrayList<>();
+    videoList.add(video1);
+    videoList.add(video2);
+    MediaTrack mediaTrack = project.getMediaTrack();
+    mediaTrack.insertItem(video1);
+
+    EditPresenter presenter = new EditPresenter(mockedEditorView, mockedUserEventTracker,
+        mockedVideoRemover, mockedMediaItemReorderer, mockedGetMusicFromProjectUseCase,
+        mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);
+
+    presenter.checkWarningMessageVideosRetrieved(videoList);
+
+    verify(mockedEditorView).showWarningTempFile();
+
   }
 
   public Project getAProject() {
