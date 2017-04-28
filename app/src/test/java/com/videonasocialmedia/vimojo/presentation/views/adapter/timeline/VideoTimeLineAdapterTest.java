@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.adapter;
+package com.videonasocialmedia.vimojo.presentation.views.adapter.timeline;
 
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -63,9 +63,9 @@ public class VideoTimeLineAdapterTest {
 
   @Test
   public void testOnBindViewHolderCallsViewHolderBindData() {
-    VideoTimeLineAdapter.TimeLineVideoViewHolder videoItemViewholder
+    TimeLineVideoViewHolder videoItemViewholder
             = getVideoViewHolder(videoTimeLineAdapter);
-    VideoTimeLineAdapter.TimeLineVideoViewHolder holderSpy = spy(videoItemViewholder);
+    TimeLineVideoViewHolder holderSpy = spy(videoItemViewholder);
     Video video = new Video("media/path");
     videoTimeLineAdapter.updateVideoList(Collections.singletonList(video));
 
@@ -212,10 +212,10 @@ public class VideoTimeLineAdapterTest {
   }
 
   @NonNull
-  private VideoTimeLineAdapter.TimeLineVideoViewHolder getVideoViewHolder(VideoTimeLineAdapter adapter) {
+  private TimeLineVideoViewHolder getVideoViewHolder(VideoTimeLineAdapter adapter) {
     View viewRoot = editActivity.findViewById(android.R.id.content);
     View videoItem = LayoutInflater.from(editActivity)
             .inflate(R.layout.edit_videotimeline_video_item, (ViewGroup) viewRoot);
-    return adapter.new TimeLineVideoViewHolder(videoItem, mockedListener);
+    return new TimeLineVideoViewHolder(adapter, videoItem, mockedListener);
   }
 }

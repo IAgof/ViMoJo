@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.adapter;
+package com.videonasocialmedia.vimojo.presentation.views.adapter.timeline;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,14 +55,14 @@ public class TimeLineVideoViewHolderTest {
 
   @Test
   public void testVideoViewHolderImplementsItemTouchHelperViewHolder() {
-    VideoTimeLineAdapter.TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
+    TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
 
     assertThat(timeLineVideoViewHolder, is(instanceOf(ItemTouchHelperViewHolder.class)));
   }
 
   @Test
   public void bindDataSetsOrderAndDurationTexts() {
-    VideoTimeLineAdapter.TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
+    TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
     Video video = new Video("media/path");
 
     timeLineVideoViewHolder.bindData(video, 0, 0);
@@ -74,8 +74,8 @@ public class TimeLineVideoViewHolderTest {
 
   @Test
   public void bindDataCallsDrawThumbnail() {
-    VideoTimeLineAdapter.TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
-    VideoTimeLineAdapter.TimeLineVideoViewHolder holderSpy = spy(timeLineVideoViewHolder);
+    TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
+    TimeLineVideoViewHolder holderSpy = spy(timeLineVideoViewHolder);
     Video video = new Video("media/path");
 
     holderSpy.bindData(video, 0, 0);
@@ -87,7 +87,7 @@ public class TimeLineVideoViewHolderTest {
 
   @Test
   public void testEnableDeleteIcon() {
-    VideoTimeLineAdapter.TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
+    TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
 
     timeLineVideoViewHolder.enableDeleteIcon();
 
@@ -97,7 +97,7 @@ public class TimeLineVideoViewHolderTest {
 
   @Test
   public void testDisableDeleteButton() {
-    VideoTimeLineAdapter.TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
+    TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
     timeLineVideoViewHolder.enableDeleteIcon();
 
     timeLineVideoViewHolder.disableDeleteIcon();
@@ -108,7 +108,7 @@ public class TimeLineVideoViewHolderTest {
 
   @Test
   public void clickItemSelectsItInAdapter() {
-    VideoTimeLineAdapter.TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
+    TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
 
     timeLineVideoViewHolder.onClipClick();
 
@@ -117,7 +117,7 @@ public class TimeLineVideoViewHolderTest {
 
   @Test
   public void clickItemEnablesDeleteIconJustInThisItem() {
-    VideoTimeLineAdapter.TimeLineVideoViewHolder timeLineVideoViewHolder = Mockito.spy(getVideoViewHolder());
+    TimeLineVideoViewHolder timeLineVideoViewHolder = Mockito.spy(getVideoViewHolder());
 
     timeLineVideoViewHolder.onClipClick();
 
@@ -127,7 +127,7 @@ public class TimeLineVideoViewHolderTest {
 
   @Test
   public void clickItemNotifiesListener() {
-    VideoTimeLineAdapter.TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
+    TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
 
     timeLineVideoViewHolder.onClipClick();
 
@@ -136,7 +136,7 @@ public class TimeLineVideoViewHolderTest {
 
   @Test
   public void deleteItem() {
-    VideoTimeLineAdapter.TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
+    TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
 
     timeLineVideoViewHolder.onDeleteIconClick();
 
@@ -145,7 +145,7 @@ public class TimeLineVideoViewHolderTest {
 
   @Test
   public void testOnItemClear() {
-    VideoTimeLineAdapter.TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
+    TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
 
     timeLineVideoViewHolder.onItemClear();
 
@@ -155,17 +155,17 @@ public class TimeLineVideoViewHolderTest {
 
   @Test
   public void onDeleteIconClickCallsAdapter() {
-    VideoTimeLineAdapter.TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
+    TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
 
     timeLineVideoViewHolder.onDeleteIconClick();
 
     verify(adapterSpy).remove(timeLineVideoViewHolder.getAdapterPosition());
   }
 
-  private VideoTimeLineAdapter.TimeLineVideoViewHolder getVideoViewHolder() {
+  private TimeLineVideoViewHolder getVideoViewHolder() {
     View viewRoot = editActivity.findViewById(android.R.id.content);
     View videoItem = LayoutInflater.from(editActivity)
             .inflate(R.layout.edit_videotimeline_video_item, (ViewGroup) viewRoot);
-    return adapterSpy.new TimeLineVideoViewHolder(videoItem, mockedListener);
+    return new TimeLineVideoViewHolder(adapterSpy, videoItem, mockedListener);
   }
 }

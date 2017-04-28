@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.adapter.helper;
+package com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -10,7 +10,9 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.VideoTimeLineAdapter;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallbackAdapter;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.TimeLineVideoViewHolder;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.VideoTimeLineAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 
@@ -94,8 +96,8 @@ public class VideoTimeLineTouchHelperCallbackTest {
     View viewRoot = editActivity.findViewById(android.R.id.content);
     View videoItem = LayoutInflater.from(editActivity)
             .inflate(R.layout.edit_videotimeline_video_item, (ViewGroup) viewRoot);;
-    VideoTimeLineAdapter.TimeLineVideoViewHolder viewHolder = videoTimeLineAdapter
-            .new TimeLineVideoViewHolder(videoItem, mockedListener);
+    TimeLineVideoViewHolder viewHolder =
+            new TimeLineVideoViewHolder(videoTimeLineAdapter, videoItem, mockedListener);
     VideoTimeLineTouchHelperCallback callback =
             new VideoTimeLineTouchHelperCallback(videoTimeLineAdapter);
 

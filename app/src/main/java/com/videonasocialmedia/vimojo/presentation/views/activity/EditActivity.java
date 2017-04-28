@@ -41,9 +41,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.VideoTimeLineAdapter;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.VideoTimeLineAdapter;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallback;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.VideoTimeLineTouchHelperCallback;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;

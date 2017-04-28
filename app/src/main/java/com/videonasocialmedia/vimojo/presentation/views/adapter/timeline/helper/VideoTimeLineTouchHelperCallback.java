@@ -1,7 +1,10 @@
-package com.videonasocialmedia.vimojo.presentation.views.adapter.helper;
+package com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+
+import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.ItemTouchHelperViewHolder;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallbackAdapter;
 
 /**
  * Created by jliarte on 24/04/17.
