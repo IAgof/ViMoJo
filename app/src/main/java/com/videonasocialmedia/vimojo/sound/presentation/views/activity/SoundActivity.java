@@ -110,9 +110,10 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
             navigateTo(EditActivity.class);
             break;
           case (R.id.tab_share):
-            Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
+            navigateTo(ShareActivity.class);
+            /*Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
             Snackbar.make(relativeLayoutActivitySound, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
-            VimojoApplication.getAppContext().startService(intent);
+            VimojoApplication.getAppContext().startService(intent);*/
             break;
         }
       }

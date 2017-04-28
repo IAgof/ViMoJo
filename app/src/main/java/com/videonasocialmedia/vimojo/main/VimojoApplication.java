@@ -54,7 +54,7 @@ public class VimojoApplication extends Application {
      * lazy initialization of state) since the time spent in this function
      * directly impacts the performance of starting the first activity,
      * service, or receiver in a process.
-     * If you override this method, be sure to call super.onCreate().
+     * If you override this method, be sure to call super.init().
      */
     @Override
     public void onCreate() {

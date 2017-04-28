@@ -67,7 +67,7 @@ public class ShareVideoPresenter {
         return Project.getInstance(null, null, null);
     }
 
-    public void onCreate() {
+    public void init() {
         obtainNetworksToShareUseCase = new ObtainNetworksToShareUseCase();
         getFtpListUseCase = new GetFtpListUseCase();
     }
@@ -77,6 +77,7 @@ public class ShareVideoPresenter {
         obtainListFtp();
         obtainListOptionsToShare(ftpList, socialNetworkList);
         shareVideoView.showOptionsShareList(optionToShareList);
+        //shareVideoView.startVideoExporting();
     }
 
     private void obtainListFtp() {

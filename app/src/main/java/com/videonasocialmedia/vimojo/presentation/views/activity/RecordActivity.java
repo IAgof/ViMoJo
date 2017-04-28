@@ -162,7 +162,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(LOG_TAG, "onCreate");
+        Log.d(LOG_TAG, "init");
         setContentView(R.layout.record);
         keepScreenOn();
         ButterKnife.bind(this);

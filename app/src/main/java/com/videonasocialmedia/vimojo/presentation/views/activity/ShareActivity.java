@@ -1,10 +1,17 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -19,10 +26,10 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.ShareVideoPresenter;
@@ -31,7 +38,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.OptionsToShareAdapter;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
+import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
@@ -72,6 +79,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     private OptionsToShareAdapter optionsShareAdapter;
     private int currentPosition;
 
+  private ProgressDialog barProgressDialog;
+  private BroadcastReceiver exportReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,16 +89,47 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
         inflateLinearLayout(R.id.container_layout, R.layout.activity_share);
         ButterKnife.bind(this);
         getActivityPresentersComponent().inject(this);
-        presenter.onCreate();
-        videoPath = getIntent().getStringExtra(Constants.VIDEO_TO_SHARE_PATH);
-        presenter.addVideoExportedToProject(videoPath);
-        initOptionsShareList();
+        createExportReceiver();
+        presenter.init();
         videonaPlayer.setListener(this);
+        initOptionsShareList();
         restoreState(savedInstanceState);
         bottomBar.selectTabWithId(R.id.tab_share);
         setupBottomBar(bottomBar);
         hideFab();
+        initBarProgressDialog();
     }
+
+    private void createExportReceiver() {
+      exportReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+          Bundle bundle = intent.getExtras();
+          if (bundle != null) {
+            String videoToSharePath = bundle.getString(ExportProjectService.FILEPATH);
+            int resultCode = bundle.getInt(ExportProjectService.RESULT);
+            if (resultCode == RESULT_OK) {
+              onSuccessVideoExported(videoToSharePath);
+            } else {
+              onErrorVideoExported();
+            }
+          }
+        }
+      };
+    }
+
+  private void initBarProgressDialog() {
+    barProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
+
+    barProgressDialog.setTitle(R.string.export);
+
+    barProgressDialog.setMessage(getString(R.string.export));
+    //barProgressDialog.setProgressStyle(barProgressDialog.STYLE_HORIZONTAL);
+    barProgressDialog.setProgressStyle(barProgressDialog.STYLE_SPINNER);
+    barProgressDialog.setIndeterminate(true);
+    barProgressDialog.setCanceledOnTouchOutside(false);
+  }
 
   private void hideFab() {
     fabMenu.setVisibility(View.GONE);
@@ -121,19 +162,35 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     });
   }
 
-
-  @Override
-    protected void onPause() {
-        super.onPause();
-        videonaPlayer.onPause();
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        videonaPlayer.onShown(this);
         presenter.onResume();
+      if(videoPath == null){
+        startVideoExporting();
+      } else {
+        videonaPlayer.onShown(this);
         showPreview();
+      }
+      registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
+    }
+
+    @Override
+    protected void onStart(){
+      super.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+      super.onPause();
+      videonaPlayer.onPause();
+      unregisterReceiver(exportReceiver);
+      barProgressDialog.dismiss();
+    }
+
+    @Override
+    protected void onDestroy(){
+      super.onDestroy();
     }
 
     private void initOptionsShareList() {
@@ -168,12 +225,14 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt("currentPosition", videonaPlayer.getCurrentPosition());
+        outState.putString("videoPath", videoPath);
         super.onSaveInstanceState(outState);
     }
 
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            currentPosition = savedInstanceState.getInt("currentPosition", 0);
+          currentPosition = savedInstanceState.getInt("currentPosition", 0);
+          videoPath = savedInstanceState.getString("videoPath");
         }
     }
 
@@ -312,4 +371,32 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     @Override
     public void newClipPlayed(int currentClipIndex) {
     }
+
+    public void startVideoExporting(){
+      barProgressDialog.show();
+      Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
+      startService(intent);
+    }
+
+
+    private void showMessage(String stringMessage) {
+      barProgressDialog.setMessage(stringMessage);
+    }
+
+
+
+    public void onSuccessVideoExported(String mediaPath) {
+      if(mediaPath!=null) {
+        videoPath = mediaPath;
+        presenter.addVideoExportedToProject(videoPath);
+        videonaPlayer.onShown(this);
+        showPreview();
+      }
+      barProgressDialog.dismiss();
+    }
+
+    public void onErrorVideoExported() {
+      barProgressDialog.dismiss();
+    }
+
 }

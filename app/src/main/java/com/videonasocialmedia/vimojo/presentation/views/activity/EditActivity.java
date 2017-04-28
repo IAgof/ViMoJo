@@ -153,9 +153,10 @@ public class EditActivity extends EditorActivity implements EditActivityView,
             navigateTo(SoundActivity.class);
             break;
           case (R.id.tab_share):
-            Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
+            navigateTo(ShareActivity.class);
+           /* Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
             Snackbar.make(relativeLayoutActivityEdit, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
-            VimojoApplication.getAppContext().startService(intent);
+            VimojoApplication.getAppContext().startService(intent);*/
             break;
         }
       }
