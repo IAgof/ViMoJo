@@ -122,10 +122,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
   private void initBarProgressDialog() {
     barProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
 
-    barProgressDialog.setTitle(R.string.export);
-
-    barProgressDialog.setMessage(getString(R.string.export));
-    //barProgressDialog.setProgressStyle(barProgressDialog.STYLE_HORIZONTAL);
+    barProgressDialog.setTitle(R.string.dialog_title_export_project);
+    barProgressDialog.setMessage(getString(R.string.dialog_message_export_project));
     barProgressDialog.setProgressStyle(barProgressDialog.STYLE_SPINNER);
     barProgressDialog.setIndeterminate(true);
     barProgressDialog.setCanceledOnTouchOutside(false);
@@ -397,6 +395,27 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
 
     public void onErrorVideoExported() {
       barProgressDialog.dismiss();
+      showDialogErrorExportingVideo();
     }
+
+  private void showDialogErrorExportingVideo(){
+    final DialogInterface.OnClickListener dialogClickListener = new
+        DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        switch (which) {
+          case DialogInterface.BUTTON_NEUTRAL:
+            navigateTo(EditActivity.class);
+            break;
+        }
+      }
+    };
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaAlertDialog);
+    AlertDialog alertDialogClearProject = builder.setCancelable(false)
+        .setTitle(R.string.dialog_title_export_error)
+        .setMessage(R.string.dialog_message_export_error)
+        .setNeutralButton(R.string.ok, dialogClickListener).show();
+  }
 
 }

@@ -1740,6 +1740,10 @@ and Conditions.\n\n
     <string name="bottom_bar_sound">Sound</string>
     <string name="bottom_bar_share">Share</string>
 
+    <string name="dialog_title_export_project">Exporting project</string>
+    <string name="dialog_message_export_project">Making magic in your video</string>
+    <string name="dialog_title_export_error">Exporting error</string>
+    <string name="dialog_message_export_error">An error ocurred while exporting and exporting could not be completed. Please try again.</string>
 
 
 </resources>
