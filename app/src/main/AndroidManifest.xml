@@ -150,6 +150,7 @@
         android:name=".presentation.views.activity.ShareActivity"
         android:label="@string/app_name"
         android:launchMode="singleTop"
+        android:screenOrientation="sensorPortrait"
         android:noHistory="true"
         android:parentActivityName=".presentation.views.activity.EditActivity"
         />
@@ -158,6 +159,7 @@
             android:name=".presentation.views.activity.GoToRecordOrGalleryActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
+            android:screenOrientation="sensorPortrait"
             android:noHistory="true"/>
 
         <activity
