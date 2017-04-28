@@ -1,3 +1,9 @@
+v0.4.24.3
+    - Fixed ui camera.
+
+v0.4.24.2
+    - Fixed problem splitting videos.
+
 v0.4.24.1
     - Added option to enable a grid camera in settings screen.
     - Update quality record video values to 16, 32, 50 Mbps.
