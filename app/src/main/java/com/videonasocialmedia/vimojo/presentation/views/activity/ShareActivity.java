@@ -2,16 +2,13 @@ package com.videonasocialmedia.vimojo.presentation.views.activity;
 
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -79,7 +76,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     private OptionsToShareAdapter optionsShareAdapter;
     private int currentPosition;
 
-  private ProgressDialog barProgressDialog;
+  private ProgressDialog exportProgressDialog;
   private BroadcastReceiver exportReceiver;
 
 
@@ -120,13 +117,14 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     }
 
   private void initBarProgressDialog() {
-    barProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
+    exportProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
 
-    barProgressDialog.setTitle(R.string.dialog_title_export_project);
-    barProgressDialog.setMessage(getString(R.string.dialog_message_export_project));
-    barProgressDialog.setProgressStyle(barProgressDialog.STYLE_SPINNER);
-    barProgressDialog.setIndeterminate(true);
-    barProgressDialog.setCanceledOnTouchOutside(false);
+    exportProgressDialog.setTitle(R.string.dialog_title_export_project);
+    exportProgressDialog.setMessage(getString(R.string.dialog_message_export_project));
+    exportProgressDialog.setProgressStyle(exportProgressDialog.STYLE_SPINNER);
+    exportProgressDialog.setIndeterminate(true);
+    exportProgressDialog.setCanceledOnTouchOutside(false);
+    exportProgressDialog.setCancelable(false);
   }
 
   private void hideFab() {
@@ -183,7 +181,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
       super.onPause();
       videonaPlayer.onPause();
       unregisterReceiver(exportReceiver);
-      barProgressDialog.dismiss();
+      exportProgressDialog.dismiss();
     }
 
     @Override
@@ -191,7 +189,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
       super.onDestroy();
     }
 
-    private void initOptionsShareList() {
+  private void initOptionsShareList() {
         optionsShareAdapter = new OptionsToShareAdapter(this);
         int orientation = LinearLayoutManager.VERTICAL;
         optionsToShareList.setLayoutManager(
@@ -371,14 +369,14 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     }
 
     public void startVideoExporting(){
-      barProgressDialog.show();
+      exportProgressDialog.show();
       Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
       startService(intent);
     }
 
 
     private void showMessage(String stringMessage) {
-      barProgressDialog.setMessage(stringMessage);
+      exportProgressDialog.setMessage(stringMessage);
     }
 
 
@@ -390,11 +388,11 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
         videonaPlayer.onShown(this);
         showPreview();
       }
-      barProgressDialog.dismiss();
+      exportProgressDialog.dismiss();
     }
 
     public void onErrorVideoExported() {
-      barProgressDialog.dismiss();
+      exportProgressDialog.dismiss();
       showDialogErrorExportingVideo();
     }
 
