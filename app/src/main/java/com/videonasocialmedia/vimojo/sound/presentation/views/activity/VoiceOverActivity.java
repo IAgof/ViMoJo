@@ -8,8 +8,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +20,6 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
@@ -230,7 +226,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
         videonaPlayer.bindVideoList(movieList);
         videonaPlayer.seekToClip(0);
         videonaPlayer.seekTo(currentVoiceOverPosition);
-        videonaPlayer.hidePlayButton();
+        videonaPlayer.showPauseButton();
         videonaPlayer.setVolume(1f);
         // Disable ontouch view playerExo. Now you can't play/pause video.
         enableDisableView(videonaPlayer,false);
@@ -244,14 +240,14 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
     @Override
     public void playVideo() {
         videonaPlayer.playPreview();
-        videonaPlayer.hidePlayButton();
+        videonaPlayer.showPauseButton();
         videonaPlayer.setVolume(1f);
     }
 
     @Override
     public void pauseVideo() {
         videonaPlayer.pausePreview();
-        videonaPlayer.hidePlayButton();
+        videonaPlayer.showPauseButton();
     }
 
     @Override

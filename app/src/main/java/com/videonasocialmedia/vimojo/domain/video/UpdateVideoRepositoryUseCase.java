@@ -18,4 +18,16 @@ public class UpdateVideoRepositoryUseCase {
   public void updateVideo(Video video){
     videoRepository.update(video);
   }
+
+  public void succesTranscodingVideo(Video video){
+    video.resetNumTriesToExportVideo();
+    video.setTranscodingTempFileFinished(true);
+    videoRepository.update(video);
+  }
+
+  public void errorTranscodingVideo(Video video, String message){
+    video.setVideoError(message);
+    video.setTranscodingTempFileFinished(true);
+    videoRepository.update(video);
+  }
 }

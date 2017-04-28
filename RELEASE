@@ -1,2 +1,4 @@
-v0.4.24.2
-    - Fixed problem splitting videos.
+v0.4.24.7
+- Improved ui drawer and gallery projects.
+- Changes all screens to work only in portrait mode.
+- Added feature toggle hide audio, video fade transitions.

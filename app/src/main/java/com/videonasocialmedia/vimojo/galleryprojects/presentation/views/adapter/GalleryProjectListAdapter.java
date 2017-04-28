@@ -58,9 +58,13 @@ public class GalleryProjectListAdapter extends
       holder.imagenProject.setImageResource(R.drawable.activity_gallery_project_no_preview);
     }
     holder.dateProject.setText(DateUtils.toFormatDateDayMonthYear(project.getLastModification()));
-    holder.durationProject.setText(
+    holder.durationProject.append(" " +
         TimeUtils.toFormattedTimeWithMinutesAndSeconds(project.getDuration()));
     holder.titleProject.setText(project.getTitle());
+
+    double projectSizeMb = project.getProjectSizeMbVideoToExport();
+    double formatProjectSizeMb = Math.round(projectSizeMb * 100.0) / 100.0;
+    holder.sizeMbProject.append(" " + formatProjectSizeMb + " Mb");
   }
 
   public void drawVideoThumbnail(ImageView thumbnailView, Project project) {
@@ -106,6 +110,8 @@ public class GalleryProjectListAdapter extends
     ImageView imagenProject;
     @Bind(R.id.project_title)
     TextView titleProject;
+    @Bind(R.id.project_size_mb)
+    TextView sizeMbProject;
 
 
     private List<Project> projectList;
@@ -138,7 +144,7 @@ public class GalleryProjectListAdapter extends
 
     @OnClick(R.id.project_button_edit)
     public void onClickGoToProjectDetail() {
-      clickListener.goToDetailActivity(projectList.get(getAdapterPosition()));
+      clickListener.goToEditActivity(projectList.get(getAdapterPosition()));
     }
 
     @OnClick(R.id.project_image)
@@ -149,6 +155,11 @@ public class GalleryProjectListAdapter extends
     @OnClick(R.id.project_button_share)
     public void onClickGoToShare() {
       clickListener.goToShareActivity(projectList.get(getAdapterPosition()));
+    }
+
+    @OnClick(R.id.project_title)
+    public void onClickProjectTitle(){
+      clickListener.goToDetailActivity(projectList.get(getAdapterPosition()));
     }
   }
 }

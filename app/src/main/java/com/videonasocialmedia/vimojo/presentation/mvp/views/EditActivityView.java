@@ -35,4 +35,6 @@ public interface EditActivityView {
     void resetPreview();
     void showDialogMediasNotFound();
     void enableFabText(boolean isEnable);
+    void showWarningTempFile();
+    void setWarningMessageTempFile(String messageTempFile);
 }
