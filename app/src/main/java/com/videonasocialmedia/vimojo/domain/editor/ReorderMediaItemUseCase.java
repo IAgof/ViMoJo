@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
+import android.util.Log;
+
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
@@ -14,6 +16,7 @@ import javax.inject.Inject;
  * Created by jca on 7/7/15.
  */
 public class ReorderMediaItemUseCase {
+    private final static String TAG = ReorderMediaItemUseCase.class.getCanonicalName();
     protected ProjectRepository projectRepository;
 
   /**
@@ -26,13 +29,16 @@ public class ReorderMediaItemUseCase {
     }
 
     public void moveMediaItem(Media media, int toPositon, OnReorderMediaListener listener){
-        Project project = Project.getInstance(null,null,null);
-        MediaTrack videoTrack = project.getMediaTrack();
+      Project project = getCurrentProject();
+      MediaTrack videoTrack = project.getMediaTrack();
         try {
-            videoTrack.moveItemTo(toPositon,media);
-            new ReorderProjectVideoListUseCase().reorderVideoList();
-            projectRepository.update(project);
-            listener.onMediaReordered(media, toPositon);
+          Log.d(TAG, "timeline: reorder media with position " + media.getPosition() + " to: " + toPositon);
+
+          videoTrack.moveItemTo(toPositon, media);
+          new ReorderProjectVideoListUseCase().reorderVideoList();
+          projectRepository.update(project);
+          logTrack(videoTrack);
+          listener.onMediaReordered(media, toPositon);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             illegalItemOnTrack.printStackTrace();
             listener.onErrorReorderingMedia();
@@ -41,4 +47,16 @@ public class ReorderMediaItemUseCase {
             listener.onErrorReorderingMedia();
         }
     }
+
+  private void logTrack(MediaTrack videoTrack) {
+    String logstr = "Video track order: ";
+    for (Media item: videoTrack.getItems()) {
+      logstr += item.getIdentifier() + " pos: " + item.getPosition() + ", ";
+    }
+    Log.d(TAG, "timeline: " + logstr);
+  }
+
+  private Project getCurrentProject() {
+    return Project.getInstance(null, null, null);
+  }
 }
