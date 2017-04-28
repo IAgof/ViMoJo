@@ -1,2 +1,2 @@
-v0.4.24.5
-    - Rewrited EditActivity time line and fixed clip reordering related bugs
+v0.4.24.6
+ - Improved stability exporting files. Better control in the process of trim, split, text and audio and video transitions.

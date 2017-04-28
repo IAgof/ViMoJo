@@ -190,7 +190,7 @@ public class VimojoMigration implements RealmMigration {
           }
         });
       }
-      if(!realmVideo.hasField("isTempPathFinished")){
+      if(realmVideo.hasField("isTempPathFinished")){
         realmVideo.removeField("isTempPathFinished");
       }
       oldVersion++;

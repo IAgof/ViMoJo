@@ -156,13 +156,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         return checkedVideoList;
     }
 
-    public void removeVideoFromProject(int selectedVideoRemove) {
-        Video videoToRemove = this.videoList.get(selectedVideoRemove);
-        ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
-        mediaToDeleteFromProject.add(videoToRemove);
-        removeVideoFromProjectUseCase.removeMediaItemsFromProject(mediaToDeleteFromProject, this);
-    }
-
     public void obtainVideos() {
         editActivityView.showProgressDialog();
         getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
@@ -197,17 +190,19 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 editActivityView.resetPreview();
             }
         });
+    }
+
     public void checkWarningMessageVideosRetrieved(List<Video> videoList) {
         String message = "Video ";
         boolean showWarning = false;
         for(Video video: videoList){
-          ListenableFuture transcodingJob = video.getTranscodingTask();
-          if(transcodingJob!=null && transcodingJob.isCancelled()) {
-              showWarning = true;
-            if (video.getVideoError() != null) {
-              message = message + video.getVideoError();
+            ListenableFuture transcodingJob = video.getTranscodingTask();
+            if(transcodingJob!=null && transcodingJob.isCancelled()) {
+                showWarning = true;
+                if (video.getVideoError() != null) {
+                    message = message + video.getVideoError();
+                }
             }
-          }
         }
         if(showWarning){
             editActivityView.showWarningTempFile();
@@ -215,17 +210,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         }
     }
 
-    @Override
-    public void onNoVideosRetrieved() {
-        editActivityView.disableEditActions();
-        editActivityView.disableBottomBar();
-        editActivityView.enableFabText(false);
-        editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
-        editActivityView.hideProgressDialog();
-        editActivityView.showMessage(R.string.add_videos_to_project);
-        editActivityView.expandFabMenu();
-        editActivityView.resetPreview();
-    }
 
     public void removeVideoFromProject(int selectedVideoRemove) {
         Video videoToRemove = this.videoList.get(selectedVideoRemove);
