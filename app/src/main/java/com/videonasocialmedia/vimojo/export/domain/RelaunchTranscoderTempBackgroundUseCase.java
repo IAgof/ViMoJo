@@ -47,9 +47,11 @@ public class RelaunchTranscoderTempBackgroundUseCase {
         getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
     boolean isAudioFadeTransitionActivated =
         getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
+    videoToEdit.setTranscodingTempFileFinished(false);
     updateGeneratedVideo(drawableFadeTransition, videoToEdit, videonaFormat,
             intermediatesTempAudioFadeDirectory, transcoderHelperListener,
             isVideoFadeTransitionActivated, isAudioFadeTransitionActivated);
+    videoRepository.update(videoToEdit);
   }
 
   private void updateGeneratedVideo(Drawable drawableFadeTransition, Video videoToEdit,

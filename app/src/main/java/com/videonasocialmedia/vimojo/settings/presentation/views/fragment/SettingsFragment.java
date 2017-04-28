@@ -23,7 +23,6 @@ import com.videonasocialmedia.vimojo.main.DaggerFragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.FragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.FragmentPresentersModule;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.AboutActivity;
@@ -53,7 +52,6 @@ public class SettingsFragment extends PreferenceFragment implements
     protected PreferenceCategory transitionCategory;
     protected PreferenceCategory watermarkPrefCategory;
     protected Preference emailPref;
-    protected SwitchPreference cameraGridPref;
     protected ListPreference resolutionPref;
     protected ListPreference qualityPref;
     protected ListPreference frameRatePref;
@@ -83,7 +81,7 @@ public class SettingsFragment extends PreferenceFragment implements
     private FragmentPresentersComponent initComponent() {
         return DaggerFragmentPresentersComponent.builder()
             .fragmentPresentersModule(new FragmentPresentersModule(this, context, sharedPreferences,
-                cameraSettingsPref, cameraGridPref, resolutionPref,qualityPref, frameRatePref, transitionsVideoPref,
+                cameraSettingsPref, resolutionPref,qualityPref, frameRatePref, transitionsVideoPref,
                 transitionsAudioPref,watermarkSwitchPref, emailPref))
             .systemComponent(((VimojoApplication)getActivity().getApplication()).getSystemComponent())
             .build();
@@ -99,7 +97,6 @@ public class SettingsFragment extends PreferenceFragment implements
         editor = sharedPreferences.edit();
 
         setupCameraSettings();
-        setupCameraGrid();
         setupTransitions();
         setupWatermark();
         setupMailValid();
@@ -117,10 +114,6 @@ public class SettingsFragment extends PreferenceFragment implements
         transitionCategory = (PreferenceCategory) findPreference(getString(R.string.title_fade_transition));
         if(transitionCategory!=null)
             getPreferenceScreen().removePreference(transitionCategory);
-    }
-
-    private void setupCameraGrid() {
-        cameraGridPref = (SwitchPreference) findPreference(ConfigPreferences.KEY_CAMERA_PREFERENCES_GRID);
     }
 
     private void setupMailValid() {
@@ -267,11 +260,6 @@ public class SettingsFragment extends PreferenceFragment implements
             getPreferenceScreen().removePreference(watermarkPrefCategory);
     }
 
-    @Override
-    public void setCameraGridSwitchPref(boolean value) {
-        cameraGridPref.setChecked(value);
-    }
-
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
         String property = null;
         if(key.equals(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION))
@@ -289,8 +277,7 @@ public class SettingsFragment extends PreferenceFragment implements
         Preference connectionPref = findPreference(key);
         if(key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0 ||
             key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0
-            || key.compareTo(ConfigPreferences.WATERMARK) == 0
-             || key.compareTo(ConfigPreferences.KEY_CAMERA_PREFERENCES_GRID) == 0){
+            || key.compareTo(ConfigPreferences.WATERMARK) == 0){
             return;
         }
         if(!key.equals(ConfigPreferences.PASSWORD_FTP) && !key.equals(ConfigPreferences.PASSWORD_FTP2)){

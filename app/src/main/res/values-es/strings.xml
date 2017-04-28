@@ -20,6 +20,8 @@
     <string name="recordError">Algo ha fallado. Imposible grabar el vídeo, pruebe otra vez</string>
     <string name="giftOverlayDialogTitle">Tu regalo</string>
     <string name="giftOverlayDialogMessage">Disfruta de tu nuevo filtro de Bollywood</string>
+    <string name="recordTextGallery">Galería</string>
+    <string name="recordTextEdit">Editor</string>
 
     <!-- Share Activity -->
     <string name="shareError">Uy, no hemos podido compartir el vídeo.</string>
@@ -635,6 +637,9 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="bottom_bar_edit">Editar</string>
     <string name="bottom_bar_sound">Audio</string>
     <string name="bottom_bar_share">Compartir</string>
+
+    <string name="dialog_title_warning_error_transcoding_file">Clip corrupto</string>
+    <string name="dialog_message_warning_error_transcoding_file">Revise los clips, el archivo no se podrá exportar correctamente</string>
 
 
 </resources>

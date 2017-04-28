@@ -130,6 +130,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       editorPresenter.getPreferenceUserName();
       editorPresenter.getPreferenceEmail();
     }
+    editorPresenter.init();
   }
 
   @Override

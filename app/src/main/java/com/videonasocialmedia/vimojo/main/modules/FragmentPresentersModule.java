@@ -9,6 +9,8 @@ import android.preference.SwitchPreference;
 
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
@@ -32,7 +34,6 @@ import dagger.Provides;
 @Module
 public class FragmentPresentersModule {
 
-  private SwitchPreference cameraGridPref;
   private ListPreference qualityPref;
   private SwitchPreference transitionAudioPref;
   private SwitchPreference transitionVideoPref;
@@ -51,7 +52,6 @@ public class FragmentPresentersModule {
   public FragmentPresentersModule(SettingsFragment settingsFragment, Context context,
                                   SharedPreferences sharedPreferences,
                                   PreferenceCategory cameraSettingsPref,
-                                  SwitchPreference cameraGridPref,
                                   ListPreference resolutionPref,
                                   ListPreference qualityPref,
                                   ListPreference frameRatePref,
@@ -63,7 +63,6 @@ public class FragmentPresentersModule {
     this.context = context;
     this.sharedPreferences = sharedPreferences;
     this.cameraSettingsPref = cameraSettingsPref;
-    this.cameraGridPref = cameraGridPref;
     this.resolutionPref = resolutionPref;
     this.qualityPref = qualityPref;
     this.frameRatePref = frameRatePref;
@@ -88,10 +87,12 @@ public class FragmentPresentersModule {
               updateIntermediateTemporalFilesTransitionsUseCase,
              GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
              UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-             UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase){
+             UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
+             RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+             GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase){
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
-        cameraSettingsPref, cameraGridPref, resolutionPref, qualityPref, frameRatePref, transitionVideoPref,
+        cameraSettingsPref, resolutionPref, qualityPref, frameRatePref, transitionVideoPref,
         transitionAudioPref, watermarkPref, emailPref, getMediaListFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase,
         updateAudioTransitionPreferenceToProjectUseCase,
@@ -99,7 +100,9 @@ public class FragmentPresentersModule {
         updateIntermediateTemporalFilesTransitionsUseCase,
         getWatermarkPreferenceFromProjectUseCase,
         updateWatermarkPreferenceToProjectUseCase,
-        updateVideoRepositoryUseCase);
+        updateVideoRepositoryUseCase,
+        relaunchTranscoderTempBackgroundUseCase,
+        getVideonaFormatFromCurrentProjectUseCase);
   }
 
   @Provides
@@ -144,6 +147,16 @@ public class FragmentPresentersModule {
   @Provides
   GetWatermarkPreferenceFromProjectUseCase provideGetWatermarkPreference(){
     return new GetWatermarkPreferenceFromProjectUseCase();
+  }
+
+  @Provides
+  RelaunchTranscoderTempBackgroundUseCase provideGetRelaunchTranscoder(){
+    return new RelaunchTranscoderTempBackgroundUseCase();
+  }
+
+  @Provides
+  GetVideonaFormatFromCurrentProjectUseCase provideoGetVideonaFormat(){
+    return new GetVideonaFormatFromCurrentProjectUseCase();
   }
 
 }

@@ -59,16 +59,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/title_camera_options">
-
-        <SwitchPreference
-            android:key="camera_grid"
-            android:title="@string/grid"
-            android:defaultValue="false" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
         android:title="@string/title_fade_transition"
         android:key="@string/title_fade_transition">
         <SwitchPreference

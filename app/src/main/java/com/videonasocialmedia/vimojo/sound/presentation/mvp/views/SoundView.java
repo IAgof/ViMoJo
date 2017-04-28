@@ -17,4 +17,6 @@ public interface SoundView {
     void setVideoFadeTransitionAmongVideos();
     void setAudioFadeTransitionAmongVideos();
     void resetPreview();
+    void showWarningTempFile();
+    void setWarningMessageTempFile(String messageTempFile);
 }

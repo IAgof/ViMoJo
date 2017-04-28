@@ -20,6 +20,8 @@
     <string name="recordError">Something bad happened. Impossible to record video, try again</string>
     <string name="giftOverlayDialogTitle">Your present</string>
     <string name="giftOverlayDialogMessage">Enjoy your new Bollywood filter</string>
+    <string name="recordTextGallery">Gallery</string>
+    <string name="recordTextEdit">Go to edit</string>
 
     <!-- Share Activity -->
     <string name="shareError">Ups, we couldn\'t share this video. Sorry</string>
@@ -195,8 +197,6 @@
 
 
     <!-- Camera Settings -->
-    <string name="title_camera_options">Camera grid</string>
-    <string name="grid">Grid</string>
     <string name="title_camera_section">Camera</string>
     <string name="resolution">Resolution</string>
     <string name="low_resolution_value">720</string>
@@ -1748,6 +1748,7 @@ and Conditions.\n\n
     <string name="bottom_bar_sound">Sound</string>
     <string name="bottom_bar_share">Share</string>
 
-
+    <string name="dialog_title_warning_error_transcoding_file">Clip failed</string>
+    <string name="dialog_message_warning_error_transcoding_file">Review your clips, the file will not be exported properly</string>
 
 </resources>
