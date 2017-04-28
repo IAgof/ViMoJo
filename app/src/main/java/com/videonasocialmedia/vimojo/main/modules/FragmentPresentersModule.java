@@ -34,7 +34,6 @@ import dagger.Provides;
 @Module
 public class FragmentPresentersModule {
 
-  private SwitchPreference cameraGridPref;
   private ListPreference qualityPref;
   private SwitchPreference transitionAudioPref;
   private SwitchPreference transitionVideoPref;
@@ -53,7 +52,6 @@ public class FragmentPresentersModule {
   public FragmentPresentersModule(SettingsFragment settingsFragment, Context context,
                                   SharedPreferences sharedPreferences,
                                   PreferenceCategory cameraSettingsPref,
-                                  SwitchPreference cameraGridPref,
                                   ListPreference resolutionPref,
                                   ListPreference qualityPref,
                                   ListPreference frameRatePref,
@@ -65,7 +63,6 @@ public class FragmentPresentersModule {
     this.context = context;
     this.sharedPreferences = sharedPreferences;
     this.cameraSettingsPref = cameraSettingsPref;
-    this.cameraGridPref = cameraGridPref;
     this.resolutionPref = resolutionPref;
     this.qualityPref = qualityPref;
     this.frameRatePref = frameRatePref;
@@ -95,7 +92,7 @@ public class FragmentPresentersModule {
              GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase){
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
-        cameraSettingsPref, cameraGridPref, resolutionPref, qualityPref, frameRatePref, transitionVideoPref,
+        cameraSettingsPref, resolutionPref, qualityPref, frameRatePref, transitionVideoPref,
         transitionAudioPref, watermarkPref, emailPref, getMediaListFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase,
         updateAudioTransitionPreferenceToProjectUseCase,
