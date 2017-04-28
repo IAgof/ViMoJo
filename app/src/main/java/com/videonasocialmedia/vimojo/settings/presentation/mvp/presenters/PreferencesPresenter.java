@@ -62,7 +62,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private Preference transitionVideoPref;
     private Preference transitionAudioPref;
     private Preference watermarkPref;
-    private Preference cameraGridPref;
     private Preference emailPref;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private boolean isPreferenceAvailable = false;
@@ -93,7 +92,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     public PreferencesPresenter(PreferencesView preferencesView,
             Context context,
             SharedPreferences sharedPreferences,
-            PreferenceCategory cameraSettingsPref, SwitchPreference cameraGridPref,
+            PreferenceCategory cameraSettingsPref,
             ListPreference resolutionPref, ListPreference qualityPref,
             ListPreference frameRatePref, Preference transitionVideoPref,
             Preference transitionAudioPref, Preference watermarkPref, Preference emailPref,
@@ -112,7 +111,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.context = context;
         this.sharedPreferences = sharedPreferences;
         this.cameraSettingsPref = cameraSettingsPref;
-        this.cameraGridPref = cameraGridPref;
         this.resolutionPref = resolutionPref;
         this.qualityPref = qualityPref;
         this.frameRatePref = frameRatePref;
@@ -165,18 +163,11 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             preferencesView.hideFtpsViews();
         }
         checkCameraSettingsEnabled();
-        checkCameraGridEnabled();
         checkAvailableResolution();
         checkAvailableQuality();
         checkAvailableFrameRate();
         checkTransitions();
         checkWatermark(BuildConfig.FEATURE_WATERMARK);
-    }
-
-    private void checkCameraGridEnabled() {
-        boolean data = sharedPreferences.getBoolean(ConfigPreferences.KEY_CAMERA_PREFERENCES_GRID,
-            false);
-        preferencesView.setCameraGridSwitchPref(data);
     }
 
     private void checkTransitions() {
