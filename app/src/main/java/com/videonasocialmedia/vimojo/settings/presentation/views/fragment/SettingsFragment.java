@@ -49,6 +49,7 @@ public class SettingsFragment extends PreferenceFragment implements
     protected PreferenceCategory cameraSettingsPref;
     protected PreferenceCategory ftp1Pref;
     protected PreferenceCategory ftp2Pref;
+    protected PreferenceCategory transitionCategory;
     protected PreferenceCategory watermarkPrefCategory;
     protected Preference emailPref;
     protected ListPreference resolutionPref;
@@ -96,7 +97,6 @@ public class SettingsFragment extends PreferenceFragment implements
         editor = sharedPreferences.edit();
 
         setupCameraSettings();
-        setupTransitions();
         setupWatermark();
         setupMailValid();
         setupAboutUs();
@@ -104,6 +104,7 @@ public class SettingsFragment extends PreferenceFragment implements
         setupTermOfService();
         setupLicense();
         setupLegalNotice();
+        setupTransitions();
     }
 
     private void setupMailValid() {
@@ -113,6 +114,19 @@ public class SettingsFragment extends PreferenceFragment implements
     private void setupTransitions(){
         transitionsVideoPref = (SwitchPreference) findPreference(ConfigPreferences.TRANSITION_VIDEO);
         transitionsAudioPref = (SwitchPreference) findPreference(ConfigPreferences.TRANSITION_AUDIO);
+        if(!BuildConfig.FEATURE_AVTRANSTITION){
+            hideTransitions();
+        }
+    }
+
+    private void hideTransitions() {
+        transitionCategory = (PreferenceCategory) findPreference(getString(R.string.title_fade_transition));
+        if(transitionCategory!=null)
+            getPreferenceScreen().removePreference(transitionCategory);
+    }
+
+    private void activeTransitions(){
+
     }
 
     private void setupWatermark(){

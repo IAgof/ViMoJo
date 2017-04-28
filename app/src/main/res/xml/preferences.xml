@@ -59,7 +59,8 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/title_fade_transition">
+        android:title="@string/title_fade_transition"
+        android:key="@string/title_fade_transition">
         <SwitchPreference
             android:key="video_fade_transition"
             android:title="@string/title_video_fade_transition"
