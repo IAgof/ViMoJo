@@ -34,8 +34,8 @@ public class ExportProjectService extends IntentService implements OnExportFinis
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        exportUseCase = new ExportProjectUseCase(this);
-        exportUseCase.export();
+        exportUseCase = new ExportProjectUseCase();
+        exportUseCase.export(this);
     }
 
     @Override
@@ -58,8 +58,14 @@ public class ExportProjectService extends IntentService implements OnExportFinis
         Log.d(TAG, "exportSuccess ");
         File f = new File(video.getMediaPath());
         String destPath = Constants.PATH_APP + File.separator + f.getName();
-        f.renameTo(new File(destPath));
+        File destFile = new File(destPath);
+        f.renameTo(destFile);
         Utils.addFileToVideoGallery(destPath.toString());
         publishResults(destPath, Activity.RESULT_OK);
+    }
+
+    @Override
+    public void onExportProgress(String progressMsg, int exportStage) {
+        // TODO(jliarte): 28/04/17  do nothing as we're removing this class?
     }
 }
