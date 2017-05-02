@@ -18,8 +18,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -36,10 +36,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -59,6 +58,7 @@ public class EditPresenterTest {
   @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
   @Mock private GetMusicFromProjectUseCase mockedGetMusicFromProjectUseCase;
   @Mock ListenableFuture<Void> mockedTranscodingTask;
+  @Mock private VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
 
   @InjectMocks private EditPresenter injectedEditPresenter;
 
@@ -101,9 +101,10 @@ public class EditPresenterTest {
     Music voiceOver = new Music(musicPath, musicVolume, 0);
     project.getVMComposition().getAudioTracks().get(0).insertItem(voiceOver);
     GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
-    EditPresenter presenter = new EditPresenter(mockedEditorView, mockedUserEventTracker,
-        mockedVideoRemover, mockedMediaItemReorderer, getMusicFromProjectUseCase,
-        mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);
+    EditPresenter presenter = new EditPresenter(mockedEditorView,
+            mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
+            mockedVideoRemover, mockedMediaItemReorderer, getMusicFromProjectUseCase,
+            mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);
 
     presenter.init();
 
@@ -132,14 +133,15 @@ public class EditPresenterTest {
     MediaTrack mediaTrack = project.getMediaTrack();
     mediaTrack.insertItem(video1);
 
-    EditPresenter presenter = new EditPresenter(mockedEditorView, mockedUserEventTracker,
-        mockedVideoRemover, mockedMediaItemReorderer, mockedGetMusicFromProjectUseCase,
-        mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);
+    EditPresenter presenter = new EditPresenter(mockedEditorView,
+            mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
+            mockedVideoRemover, mockedMediaItemReorderer, mockedGetMusicFromProjectUseCase,
+            mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);
 
-    presenter.checkWarningMessageVideosRetrieved(videoList);
+    presenter.videoListErrorCheckerDelegate
+            .checkWarningMessageVideosRetrieved(videoList, mockedVideoTranscodingErrorNotifier);
 
-    verify(mockedEditorView).showWarningTempFile();
-
+    verify(mockedVideoTranscodingErrorNotifier).showWarningTempFile();
   }
 
   public Project getAProject() {

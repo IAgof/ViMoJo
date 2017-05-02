@@ -41,6 +41,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.VideoTimeLineAdapter;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.VideoTimeLineTouchHelperCallback;
@@ -64,7 +65,8 @@ import butterknife.OnClick;
 
 
 public class EditActivity extends EditorActivity implements EditActivityView,
-    VideonaPlayer.VideonaPlayerListener, VideoTimeLineRecyclerViewClickListener {
+        VideoTranscodingErrorNotifier, VideonaPlayer.VideonaPlayerListener,
+        VideoTimeLineRecyclerViewClickListener {
     private static String TAG = EditActivity.class.getCanonicalName();
     private static final String CURRENT_TIME_POSITION = "current_time_position";
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;
@@ -157,9 +159,10 @@ public class EditActivity extends EditorActivity implements EditActivityView,
             navigateTo(SoundActivity.class);
             break;
           case (R.id.tab_share):
-            Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
+            navigateTo(ShareActivity.class);
+           /* Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
             Snackbar.make(relativeLayoutActivityEdit, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
-            VimojoApplication.getAppContext().startService(intent);
+            VimojoApplication.getAppContext().startService(intent);*/
             break;
         }
       }

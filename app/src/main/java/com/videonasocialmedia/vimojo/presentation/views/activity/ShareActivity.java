@@ -1,11 +1,13 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -14,12 +16,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -31,7 +33,6 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.OptionsToShareAdapter;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
@@ -50,8 +51,8 @@ import butterknife.OnClick;
 /**
  * Created by root on 31/05/16.
  */
-public class ShareActivity extends EditorActivity implements ShareVideoView, VideonaPlayer.VideonaPlayerListener,
-        OnOptionsToShareListClickListener {
+public class ShareActivity extends EditorActivity implements ShareVideoView,
+        VideonaPlayer.VideonaPlayerListener, OnOptionsToShareListClickListener {
     @Inject ShareVideoPresenter presenter;
     @Inject SharedPreferences sharedPreferences;
 
@@ -72,6 +73,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     private OptionsToShareAdapter optionsShareAdapter;
     private int currentPosition;
 
+  private ProgressDialog exportProgressDialog;
+//  private BroadcastReceiver exportReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,19 +82,74 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
         inflateLinearLayout(R.id.container_layout, R.layout.activity_share);
         ButterKnife.bind(this);
         getActivityPresentersComponent().inject(this);
-        presenter.onCreate();
-        videoPath = getIntent().getStringExtra(Constants.VIDEO_TO_SHARE_PATH);
-        presenter.addVideoExportedToProject(videoPath);
-        initOptionsShareList();
+//        createExportReceiver();
+        presenter.init();
         videonaPlayer.setListener(this);
+        initOptionsShareList();
         restoreState(savedInstanceState);
         bottomBar.selectTabWithId(R.id.tab_share);
         setupBottomBar(bottomBar);
         hideFab();
+        initBarProgressDialog();
     }
 
-  private void hideFab() {
-    fabMenu.setVisibility(View.GONE);
+  @Override
+  protected void onStart(){
+    super.onStart();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    presenter.onResume();
+    if (videoPath != null) {
+      loadExportedVideoPreview(videoPath);
+    }
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    videonaPlayer.onPause();
+//    unregisterReceiver(exportReceiver);
+    exportProgressDialog.dismiss();
+  }
+
+  @Override
+  protected void onDestroy(){
+    super.onDestroy();
+  }
+
+  // TODO(jliarte): 29/04/17 maybe we'll recover the receiver to allow user go to other app
+//    private void createExportReceiver() {
+//      exportReceiver = new BroadcastReceiver() {
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//          Bundle bundle = intent.getExtras();
+//          if (bundle != null) {
+//            String videoToSharePath = bundle.getString(ExportProjectService.FILEPATH);
+//            int resultCode = bundle.getInt(ExportProjectService.RESULT);
+//            if (resultCode == RESULT_OK) {
+//              loadExportedVideoPreview(videoToSharePath);
+//            } else {
+//              showVideoExportError();
+//            }
+//          }
+//        }
+//      };
+//    }
+
+  private void initBarProgressDialog() {
+    exportProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
+    exportProgressDialog.setTitle(R.string.dialog_title_export_project);
+    exportProgressDialog.setMessage(getString(R.string.dialog_message_export_project));
+    exportProgressDialog.setProgressStyle(exportProgressDialog.STYLE_HORIZONTAL);
+    exportProgressDialog.setIndeterminate(true);
+    exportProgressDialog.setProgressNumberFormat(null);
+    exportProgressDialog.setProgressPercentFormat(null);
+    exportProgressDialog.setCanceledOnTouchOutside(false);
+    exportProgressDialog.setCancelable(false);
   }
 
   private void setupBottomBar(BottomBar bottomBar) {
@@ -101,7 +159,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
         switch (tabId){
           case(R.id.tab_editactivity):
             showDialogNewProject(R.id.button_edit_navigator);
-
             break;
           case (R.id.tab_sound):
             showDialogNewProject(R.id.button_music_navigator);
@@ -111,38 +168,17 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     });
   }
 
-
-  private void onClickFabButton(final com.getbase.floatingactionbutton.FloatingActionButton fab) {
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-
-      }
-    });
+  private void initOptionsShareList() {
+    optionsShareAdapter = new OptionsToShareAdapter(this);
+    int orientation = LinearLayoutManager.VERTICAL;
+    optionsToShareList.setLayoutManager(
+            new LinearLayoutManager(this, orientation, false));
+    optionsToShareList.setAdapter(optionsShareAdapter);
   }
 
-
-  @Override
-    protected void onPause() {
-        super.onPause();
-        videonaPlayer.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        videonaPlayer.onShown(this);
-        presenter.onResume();
-        showPreview();
-    }
-
-    private void initOptionsShareList() {
-        optionsShareAdapter = new OptionsToShareAdapter(this);
-        int orientation = LinearLayoutManager.VERTICAL;
-        optionsToShareList.setLayoutManager(
-                new LinearLayoutManager(this, orientation, false));
-        optionsToShareList.setAdapter(optionsShareAdapter);
-    }
+  private void hideFab() {
+    fabMenu.setVisibility(View.GONE);
+  }
 
     @Override
     public void playPreview() {
@@ -154,7 +190,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
         videonaPlayer.pausePreview();
     }
 
-
     public void showPreview() {
         List<Video> shareVideoList = Collections.singletonList(new Video(videoPath));
         videonaPlayer.initPreviewLists(shareVideoList);
@@ -163,17 +198,20 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
 
     @Override
     public void showError(String message) {
+      Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt("currentPosition", videonaPlayer.getCurrentPosition());
+        outState.putString("videoPath", videoPath);
         super.onSaveInstanceState(outState);
     }
 
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            currentPosition = savedInstanceState.getInt("currentPosition", 0);
+          currentPosition = savedInstanceState.getInt("currentPosition", 0);
+          videoPath = savedInstanceState.getString("videoPath");
         }
     }
 
@@ -262,15 +300,15 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
                 .setNegativeButton(R.string.negativeButtonDialogShareActivity, dialogClickListener).show();
     }
 
-    public void renameFile(String videoFtpName){
+    public void renameFile(String videoFtpName) {
         File file = new File(videoPath);
         String fileName = videoFtpName + ".mp4";
         File destinationFile = new File(Constants.PATH_APP, fileName);
         file.renameTo(destinationFile);
-        videoPath=destinationFile.getPath();
+        videoPath = destinationFile.getPath();
     }
 
-    public void shareVideoWithFTP(FtpNetwork ftp){
+    public void shareVideoWithFTP(FtpNetwork ftp) {
         Intent intent = new Intent(this, FtpUploaderService.class);
         intent.putExtra("VIDEO_FOLDER_PATH", videoPath);
         intent.putExtra(IntentConstants.FTP_SELECTED, ftp.getIdFTP());
@@ -282,8 +320,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
         snackbar.show();
     }
 
-
-    private void showDialogNewProject(final int resourceButtonId){
+    private void showDialogNewProject(final int resourceButtonId) {
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -312,4 +349,99 @@ public class ShareActivity extends EditorActivity implements ShareVideoView, Vid
     @Override
     public void newClipPlayed(int currentClipIndex) {
     }
+
+    @Override
+    public void startVideoExport() {
+      if (videoPath == null) {
+        exportProgressDialog.show();
+        presenter.startExport();
+      }
+    }
+
+    @Override
+    public void loadExportedVideoPreview(String mediaPath) {
+      final String destPath = getDestPath(mediaPath);
+      final ShareActivity activity = this;
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          if (destPath != null) {
+            videoPath = destPath;
+            presenter.addVideoExportedToProject(videoPath);
+            videonaPlayer.onShown(activity);
+            showPreview();
+          }
+          exportProgressDialog.dismiss();
+        }
+      });
+    }
+
+  @NonNull
+  private String getDestPath(String mediaPath) {
+    // TODO(jliarte): 28/04/17 move to use case?
+    File f = new File(mediaPath);
+    String destPath = Constants.PATH_APP + File.separator + f.getName();
+    File destFile = new File(destPath);
+    f.renameTo(destFile);
+    Utils.addFileToVideoGallery(destPath);
+    return destPath;
+  }
+
+  @Override
+  public void showVideoExportError() {
+    exportProgressDialog.dismiss();
+    showVideoExportErrorDialog();
+  }
+
+  @Override
+  public void showExportProgress(final String progressMsg) {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        if (exportProgressDialog != null) {
+          exportProgressDialog.setMessage(progressMsg);
+        }
+      }
+    });
+  }
+
+  private void showVideoExportErrorDialog() {
+    final ShareActivity activity = this;
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        final DialogInterface.OnClickListener dialogClickListener = new
+                DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                      case DialogInterface.BUTTON_NEUTRAL:
+                        navigateTo(EditActivity.class);
+                        break;
+                    }
+                  }
+                };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.VideonaAlertDialog);
+        AlertDialog alertDialogClearProject = builder.setCancelable(false)
+                .setTitle(R.string.dialog_title_export_error)
+                .setMessage(R.string.dialog_message_export_error)
+                .setNeutralButton(R.string.ok, dialogClickListener).show();
+      }
+    });
+  }
+
+  // TODO(jliarte): 29/04/17 unused methods, delete them?
+  private void onClickFabButton(final com.getbase.floatingactionbutton.FloatingActionButton fab) {
+    fab.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+      }
+    });
+  }
+
+  private void showMessage(String stringMessage) {
+    exportProgressDialog.setMessage(stringMessage);
+  }
+
 }

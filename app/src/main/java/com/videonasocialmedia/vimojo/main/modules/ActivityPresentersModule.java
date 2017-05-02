@@ -12,6 +12,7 @@ import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
+import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
@@ -139,9 +140,10 @@ public class ActivityPresentersModule {
                                      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                      GetPreferencesTransitionFromProjectUseCase
                                      getPreferencesTransitionFromProjectUseCase) {
-    return new EditPresenter((EditActivity) activity, userEventTracker,
-        removeVideosFromProjectUseCase, reorderMediaItemUseCase, getMusicFromProjectUseCase,
-        getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase);
+    return new EditPresenter((EditActivity) activity, (EditActivity) activity,
+            userEventTracker, removeVideosFromProjectUseCase, reorderMediaItemUseCase,
+            getMusicFromProjectUseCase, getMediaListFromProjectUseCase,
+            getPreferencesTransitionFromProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -150,8 +152,9 @@ public class ActivityPresentersModule {
                                        GetMusicFromProjectUseCase getMusicFromProjectUseCase,
                                        GetPreferencesTransitionFromProjectUseCase
                                             getPreferencesTransitionFromProjectUseCase) {
-    return new SoundPresenter((SoundActivity) activity, getMediaListFromProjectUseCase,
-        getMusicFromProjectUseCase, getPreferencesTransitionFromProjectUseCase);
+    return new SoundPresenter((SoundActivity) activity, (SoundActivity) activity,
+            getMediaListFromProjectUseCase, getMusicFromProjectUseCase,
+            getPreferencesTransitionFromProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -229,9 +232,11 @@ public class ActivityPresentersModule {
                              SharedPreferences sharedPreferences,
                              CreateDefaultProjectUseCase createDefaultProjectUseCase,
                              AddLastVideoExportedToProjectUseCase
-                                 addLastVideoExportedProjectUseCase) {
+                                     addLastVideoExportedProjectUseCase,
+                             ExportProjectUseCase exportProjectUseCase) {
     return new ShareVideoPresenter((ShareActivity) activity, userEventTracker, sharedPreferences,
-            activity, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase);
+            activity, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
+            exportProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -398,4 +403,7 @@ public class ActivityPresentersModule {
     return new RelaunchTranscoderTempBackgroundUseCase();
   }
 
+  @Provides ExportProjectUseCase provideProjectExporter() {
+    return new ExportProjectUseCase();
+  }
 }

@@ -1,3 +1,8 @@
+v0.4.24.7
+- Improved ui drawer and gallery projects.
+- Changes all screens to work only in portrait mode.
+- Added feature toggle hide audio, video fade transitions.
+
 v0.4.24.6
  - Improved stability exporting files. Better control in the process of trim, split, text and audio and video transitions.
 

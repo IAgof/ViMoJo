@@ -13,14 +13,10 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 
-import com.google.common.util.concurrent.ListenableFuture;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
@@ -31,6 +27,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
+import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -46,6 +43,9 @@ import javax.inject.Inject;
 public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener {
     private final String LOG_TAG = getClass().getSimpleName();
     private final Project currentProject;
+    // TODO(jliarte): 2/05/17 inject delegate?
+    final VideoListErrorCheckerDelegate videoListErrorCheckerDelegate
+            = new VideoListErrorCheckerDelegate();
     /**
      * UseCases
      */
@@ -55,14 +55,16 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     /**
-     * Editor View
+     * EditActivity View
      */
     private EditActivityView editActivityView;
+    private final VideoTranscodingErrorNotifier videoTranscodingErrorNotifier;
     protected List<Video> videoList;
     protected UserEventTracker userEventTracker;
 
     @Inject
     public EditPresenter(EditActivityView editActivityView,
+                         VideoTranscodingErrorNotifier videoTranscodingErrorNotifier,
                          UserEventTracker userEventTracker,
                          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
                          ReorderMediaItemUseCase reorderMediaItemUseCase,
@@ -71,6 +73,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                          GetPreferencesTransitionFromProjectUseCase
                                  getPreferencesTransitionFromProjectUseCase) {
         this.editActivityView = editActivityView;
+        this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;
         this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
         this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
@@ -175,7 +178,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 editActivityView.enableFabText(true);
                 editActivityView.hideProgressDialog();
                 editActivityView.bindVideoList(videoCopy);
-                checkWarningMessageVideosRetrieved(videoList);
+                videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(videoList, videoTranscodingErrorNotifier);
             }
 
             @Override
@@ -191,25 +194,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
             }
         });
     }
-
-    public void checkWarningMessageVideosRetrieved(List<Video> videoList) {
-        String message = "Video ";
-        boolean showWarning = false;
-        for(Video video: videoList){
-            ListenableFuture transcodingJob = video.getTranscodingTask();
-            if(transcodingJob!=null && transcodingJob.isCancelled()) {
-                showWarning = true;
-                if (video.getVideoError() != null) {
-                    message = message + video.getVideoError();
-                }
-            }
-        }
-        if(showWarning){
-            editActivityView.showWarningTempFile();
-            editActivityView.setWarningMessageTempFile(message + " failed");
-        }
-    }
-
 
     public void removeVideoFromProject(int selectedVideoRemove) {
         Video videoToRemove = this.videoList.get(selectedVideoRemove);
