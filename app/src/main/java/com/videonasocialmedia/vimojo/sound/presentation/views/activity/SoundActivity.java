@@ -27,8 +27,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -54,9 +54,9 @@ import butterknife.OnClick;
  * Created by ruth on 4/10/16.
  */
 
-public class SoundActivity extends EditorActivity implements VideonaPlayer.VideonaPlayerListener,
-    SoundView, AudioTimeLineRecyclerViewClickListener {
-
+public class SoundActivity extends EditorActivity implements SoundView,
+        VideoTranscodingErrorNotifier, VideonaPlayer.VideonaPlayerListener,
+        AudioTimeLineRecyclerViewClickListener {
   private static final String SOUND_ACTIVITY_PROJECT_POSITION = "sound_activity_project_position";
   private static final String TAG = "SoundActivity";
   private final int ID_BUTTON_FAB_TOP=1;

@@ -140,9 +140,10 @@ public class ActivityPresentersModule {
                                      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                      GetPreferencesTransitionFromProjectUseCase
                                      getPreferencesTransitionFromProjectUseCase) {
-    return new EditPresenter((EditActivity) activity, userEventTracker,
-        removeVideosFromProjectUseCase, reorderMediaItemUseCase, getMusicFromProjectUseCase,
-        getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase);
+    return new EditPresenter((EditActivity) activity, (EditActivity) activity,
+            userEventTracker, removeVideosFromProjectUseCase, reorderMediaItemUseCase,
+            getMusicFromProjectUseCase, getMediaListFromProjectUseCase,
+            getPreferencesTransitionFromProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -151,8 +152,9 @@ public class ActivityPresentersModule {
                                        GetMusicFromProjectUseCase getMusicFromProjectUseCase,
                                        GetPreferencesTransitionFromProjectUseCase
                                             getPreferencesTransitionFromProjectUseCase) {
-    return new SoundPresenter((SoundActivity) activity, getMediaListFromProjectUseCase,
-        getMusicFromProjectUseCase, getPreferencesTransitionFromProjectUseCase);
+    return new SoundPresenter((SoundActivity) activity, (SoundActivity) activity,
+            getMediaListFromProjectUseCase, getMusicFromProjectUseCase,
+            getPreferencesTransitionFromProjectUseCase);
   }
 
   @Provides @PerActivity

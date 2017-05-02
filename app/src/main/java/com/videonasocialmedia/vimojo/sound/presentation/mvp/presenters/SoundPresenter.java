@@ -9,6 +9,8 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 
@@ -21,21 +23,27 @@ import javax.inject.Inject;
  * Created by ruth on 13/09/16.
  */
 public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback {
-
-
-    private SoundView soundView;
-    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+  private SoundView soundView;
+  private final VideoTranscodingErrorNotifier videoTranscodingErrorNotifier;
+  private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     private final Project currentProject;
+  // TODO(jliarte): 2/05/17 inject delegate?
+  final VideoListErrorCheckerDelegate videoListErrorCheckerDelegate
+          = new VideoListErrorCheckerDelegate();
 
-   @Inject
-    public SoundPresenter(SoundView soundView, GetMediaListFromProjectUseCase
-        getMediaListFromProjectUseCase, GetMusicFromProjectUseCase getMusicFromProjectUseCase,
-        GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase) {
-        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
-        this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
-        this.soundView = soundView;
+  @Inject
+    public SoundPresenter(SoundView soundView,
+                          VideoTranscodingErrorNotifier videoTranscodingErrorNotifier,
+                          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                          GetMusicFromProjectUseCase getMusicFromProjectUseCase,
+                          GetPreferencesTransitionFromProjectUseCase
+                                      getPreferencesTransitionFromProjectUseCase) {
+      this.soundView = soundView;
+      this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;
+      this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+      this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
         this.currentProject = loadCurrentProject();
         this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
     }
@@ -64,7 +72,7 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
   }
 
   private void retrieveCompositionMusic() {
-      if(currentProject.hasMusic()){
+    if (currentProject.hasMusic()) {
         getMusicFromProjectUseCase.getMusicFromProject(this);
       }
     }
@@ -76,27 +84,8 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
         soundView.bindVideoList(videoList);
-        checkWarningMessageVideosRetrieved(videoList);
+        videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(videoList, videoTranscodingErrorNotifier);
     }
-
-  public void checkWarningMessageVideosRetrieved(List<Video> videoList) {
-    String message = "Video ";
-    boolean showWarning = false;
-    for(Video video: videoList){
-      ListenableFuture transcodingJob = video.getTranscodingTask();
-      if(transcodingJob!=null && transcodingJob.isCancelled()) {
-        showWarning = true;
-        if (video.getVideoError() != null) {
-          message = message + video.getVideoError();
-        }
-      }
-    }
-
-    if(showWarning){
-      soundView.showWarningTempFile();
-      soundView.setWarningMessageTempFile(message + " failed");
-    }
-  }
 
   @Override
     public void onNoVideosRetrieved() {

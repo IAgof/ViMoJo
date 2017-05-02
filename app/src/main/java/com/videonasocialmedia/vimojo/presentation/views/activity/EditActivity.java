@@ -41,6 +41,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.VideoTimeLineAdapter;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.VideoTimeLineTouchHelperCallback;
@@ -64,7 +65,8 @@ import butterknife.OnClick;
 
 
 public class EditActivity extends EditorActivity implements EditActivityView,
-    VideonaPlayer.VideonaPlayerListener, VideoTimeLineRecyclerViewClickListener {
+        VideoTranscodingErrorNotifier, VideonaPlayer.VideonaPlayerListener,
+        VideoTimeLineRecyclerViewClickListener {
     private static String TAG = EditActivity.class.getCanonicalName();
     private static final String CURRENT_TIME_POSITION = "current_time_position";
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;

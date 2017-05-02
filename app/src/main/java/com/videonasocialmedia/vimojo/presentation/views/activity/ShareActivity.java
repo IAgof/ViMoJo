@@ -102,6 +102,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   protected void onResume() {
     super.onResume();
     presenter.onResume();
+    if (videoPath != null) {
+      loadExportedVideoPreview(videoPath);
+    }
   }
 
   @Override
@@ -302,7 +305,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         String fileName = videoFtpName + ".mp4";
         File destinationFile = new File(Constants.PATH_APP, fileName);
         file.renameTo(destinationFile);
-        videoPath=destinationFile.getPath();
+        videoPath = destinationFile.getPath();
     }
 
     public void shareVideoWithFTP(FtpNetwork ftp) {
@@ -349,8 +352,10 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
     @Override
     public void startVideoExport() {
-      exportProgressDialog.show();
-      presenter.startExport();
+      if (videoPath == null) {
+        exportProgressDialog.show();
+        presenter.startExport();
+      }
     }
 
     @Override
@@ -401,23 +406,29 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   private void showVideoExportErrorDialog() {
-    final DialogInterface.OnClickListener dialogClickListener = new
-        DialogInterface.OnClickListener() {
+    final ShareActivity activity = this;
+    runOnUiThread(new Runnable() {
       @Override
-      public void onClick(DialogInterface dialog, int which) {
-        switch (which) {
-          case DialogInterface.BUTTON_NEUTRAL:
-            navigateTo(EditActivity.class);
-            break;
-        }
-      }
-    };
+      public void run() {
+        final DialogInterface.OnClickListener dialogClickListener = new
+                DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                      case DialogInterface.BUTTON_NEUTRAL:
+                        navigateTo(EditActivity.class);
+                        break;
+                    }
+                  }
+                };
 
-    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaAlertDialog);
-    AlertDialog alertDialogClearProject = builder.setCancelable(false)
-        .setTitle(R.string.dialog_title_export_error)
-        .setMessage(R.string.dialog_message_export_error)
-        .setNeutralButton(R.string.ok, dialogClickListener).show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.VideonaAlertDialog);
+        AlertDialog alertDialogClearProject = builder.setCancelable(false)
+                .setTitle(R.string.dialog_title_export_error)
+                .setMessage(R.string.dialog_message_export_error)
+                .setNeutralButton(R.string.ok, dialogClickListener).show();
+      }
+    });
   }
 
   // TODO(jliarte): 29/04/17 unused methods, delete them?
