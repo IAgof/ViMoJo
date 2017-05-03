@@ -1,3 +1,7 @@
+v0.4.24.8
+- Moved export project to ShareActivity. Show dialog exporting project.
+- Review export project process.
+
 v0.4.24.7
 - Improved ui drawer and gallery projects.
 - Changes all screens to work only in portrait mode.

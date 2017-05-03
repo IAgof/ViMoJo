@@ -31,5 +31,8 @@
 
     <color name="textColorTitle">@color/textColorPrimary</color>
 
+    <!-- for gallery loading animation -->
+    <color name="book_loading_background">#00ffffff</color>
+    <color name="book_loading_book">@color/colorAccent</color>
 
 </resources>
