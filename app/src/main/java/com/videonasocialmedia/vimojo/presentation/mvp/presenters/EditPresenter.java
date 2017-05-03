@@ -36,6 +36,7 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -191,6 +192,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 editActivityView.showMessage(R.string.add_videos_to_project);
                 editActivityView.expandFabMenu();
                 editActivityView.resetPreview();
+                editActivityView.bindVideoList(Collections.<Video>emptyList());
             }
         });
     }
