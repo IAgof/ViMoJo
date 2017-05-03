@@ -1,2 +1,2 @@
-v0.4.24.9
-- Made gallery video loading async to improve user experience
+v0.4.24.10
+- Automatically updating project resolution and setting when a user imports videos from gallery into an empty project.
