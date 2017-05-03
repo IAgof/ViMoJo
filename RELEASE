@@ -1,2 +1,3 @@
 v0.4.24.10
 - Automatically updating project resolution and setting when a user imports videos from gallery into an empty project.
+- Deleted Contacts permission
