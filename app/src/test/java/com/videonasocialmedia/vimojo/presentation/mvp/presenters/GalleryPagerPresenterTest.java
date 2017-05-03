@@ -32,7 +32,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.util.Collections;
@@ -42,6 +41,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -130,6 +130,34 @@ public class GalleryPagerPresenterTest {
     verify(mockedPreferencesEditor).putString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
             preferenceResolutionString);
   }
+
+  @Test
+  public void updateProfileForEmptyProjectDoesNothingIfUnknownResolution() {
+    GalleryPagerPresenter galleryPagerPresenter = getGalleryPresenter();
+    galleryPagerPresenter.metadataRetriever = mockedMetadataRetriever;
+    Profile profile = new Profile(VideoResolution.Resolution.HD1080, VideoQuality.Quality.GOOD,
+            VideoFrameRate.FrameRate.FPS30);
+    Project project = new Project("newproject", "root/path", profile);
+    Video video1 = new Video("video/1");
+    List<Video> videoList = Collections.singletonList(video1);
+    assertThat(project.getVMComposition().getMediaTrack().getItems().size(), is(0));
+    doReturn(String.valueOf("124"))
+            .when(mockedMetadataRetriever)
+            .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+    doReturn(mockedPreferencesEditor).when(mockedSharedPreferences).edit();
+    String preferenceResolutionString = "720p";
+    doReturn(preferenceResolutionString).when(mockedContext)
+            .getString(R.string.low_resolution_name);
+
+    galleryPagerPresenter.updateProfileForEmptyProject(project, videoList);
+
+    verify(mockedUpdateProjectResolution, never())
+            .updateResolution(Mockito.any(VideoResolution.Resolution.class));
+    verify(mockedPreferencesEditor, never())
+            .putString(eq(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION),
+            Mockito.anyString());
+  }
+
 
   @Test
   public void updateProfileForEmptyProjectDoesNothingIfVideosInProject() throws IllegalItemOnTrack {

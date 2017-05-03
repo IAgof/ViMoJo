@@ -145,11 +145,13 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
                     metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
             VideoResolution.Resolution resolutionForWidth = getResolutionForWidth(videoWidth);
 
-            updateVideoResolutionToProjectUseCase.updateResolution(resolutionForWidth);
-            SharedPreferences.Editor preferencesEditor = preferences.edit();
-            preferencesEditor.putString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
-                    getPreferenceResolutionForWidth(videoWidth));
-            preferencesEditor.commit();
+            if (resolutionForWidth != null) {
+                updateVideoResolutionToProjectUseCase.updateResolution(resolutionForWidth);
+                SharedPreferences.Editor preferencesEditor = preferences.edit();
+                preferencesEditor.putString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
+                        getPreferenceResolutionForWidth(videoWidth));
+                preferencesEditor.commit();
+            }
         }
     }
 
@@ -157,6 +159,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         // TODO(jliarte): 3/05/17 move to a use case or somewhere else?
         switch (videoWidth) {
             case "4096":
+            case "3840": // TODO(jliarte): 3/05/17 BQx5 4K resolution!!!
                 return context.getString(R.string.high_resolution_name);
             case "1920":
                 return context.getString(R.string.good_resolution_name);
@@ -171,6 +174,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         // TODO(jliarte): 3/05/17 move this logic to Resolution class in SDK?
         switch (videoWidth) {
             case "4096":
+            case "3840": // TODO(jliarte): 3/05/17 BQx5 4K resolution!!!
                 return VideoResolution.Resolution.HD4K;
             case "1920":
                 return VideoResolution.Resolution.HD1080;
