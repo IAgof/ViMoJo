@@ -8,8 +8,6 @@ import java.util.List;
  * Created by jca on 14/5/15.
  */
 public interface VideoGalleryView {
-
-
     void showLoading();
 
     void hideLoading();
