@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
@@ -57,7 +58,6 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPres
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverActivity;
@@ -177,13 +177,16 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   GalleryPagerPresenter provideGalleryPagerPresenter(
-      AddVideoToProjectUseCase addVideoToProjectUseCase, UpdateVideoRepositoryUseCase
-          updateVideoRepositoryUseCase, GetVideonaFormatFromCurrentProjectUseCase
-          getVideonaFormatFromCurrentProjectUseCase, LaunchTranscoderAddAVTransitionsUseCase
-      launchTranscoderAddAVTransitionsUseCase) {
-    return new GalleryPagerPresenter((GalleryActivity) activity, addVideoToProjectUseCase,
-        updateVideoRepositoryUseCase, getVideonaFormatFromCurrentProjectUseCase,
-        launchTranscoderAddAVTransitionsUseCase, activity);
+          AddVideoToProjectUseCase addVideoToProjectUseCase,
+          UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
+          GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+          LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionsUseCase,
+          UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase,
+          SharedPreferences sharedPreferences) {
+    return new GalleryPagerPresenter((GalleryActivity) activity, activity, addVideoToProjectUseCase,
+            updateVideoRepositoryUseCase, getVideonaFormatFromCurrentProjectUseCase,
+            launchTranscoderAddAVTransitionsUseCase, updateVideoResolutionToProjectUseCase,
+            sharedPreferences);
   }
 
   @Provides @PerActivity

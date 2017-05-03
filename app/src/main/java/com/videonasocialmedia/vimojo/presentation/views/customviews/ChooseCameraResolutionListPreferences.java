@@ -165,10 +165,8 @@ public class ChooseCameraResolutionListPreferences extends ListPreference {
     }
 
     private void updateProfileProject(String item) {
-
         VideoResolution.Resolution resolution = Utils.getResolutionFromItemName(mContext,item);
         updateVideoResolutionToProjectUseCase.updateResolution(resolution);
-
     }
 
     @Override

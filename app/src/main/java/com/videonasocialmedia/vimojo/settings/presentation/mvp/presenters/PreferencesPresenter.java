@@ -263,11 +263,11 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      */
     private void checkAvailableResolution() {
         ArrayList<String> resolutionNames = new ArrayList<>();
-        ArrayList<String> resolutionValues =  new ArrayList<>();
+        ArrayList<String> resolutionValues = new ArrayList<>();
         String defaultResolution = null;
         String key = ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION; //"list_preference_resolution";
 
-        if(!isPreferenceAvailable){
+        if (!isPreferenceAvailable) {
             resolutionPref.setTitle(R.string.resolution);
             resolutionPref.setSummary(R.string.preference_not_available);
             return;
