@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.victor.loading.book.BookLoading;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoGalleryPresenter;
@@ -36,7 +37,6 @@ import butterknife.ButterKnife;
  */
 public class VideoGalleryFragment extends VideonaFragment implements VideoGalleryView,
         RecyclerViewClickListener, OnTransitionClickListener {
-
     public static final int SELECTION_MODE_SINGLE = 0;
     public static final int SELECTION_MODE_MULTIPLE = 1;
     public static final int GALLERY_COLS_LANDSCAPE = 6;
@@ -50,6 +50,8 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
     protected ItemSelectionSupport clickSupport;
     protected MultiItemSelectionSupport selectionSupport;
     protected int selectionMode;
+    @Bind(R.id.bookloading_view)
+    BookLoading loadingView;
     @Bind(R.id.catalog_recycler)
     RecyclerView recyclerView;
 
@@ -151,10 +153,14 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
 
     @Override
     public void showLoading() {
+        loadingView.setVisibility(View.VISIBLE);
+        loadingView.start();
     }
 
     @Override
     public void hideLoading() {
+        loadingView.setVisibility(View.GONE);
+        loadingView.stop();
     }
 
     @Override

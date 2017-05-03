@@ -16,6 +16,8 @@ import android.graphics.drawable.Drawable;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
+import android.preference.SwitchPreference;
+import android.util.Log;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -51,6 +53,7 @@ import java.util.List;
 public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenceChangeListener,
     OnRelaunchTemporalFileListener, TranscoderHelperListener {
 
+    private static final String LOG_TAG = "PreferencesPresenter";
     private Context context;
     private SharedPreferences sharedPreferences;
     private PreferencesView preferencesView;
@@ -74,9 +77,9 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase;
     private UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
+    private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
+    private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
 
-    private final Drawable drawableFadeTransitionVideo;
-    private final VideonaFormat videoFormat;
     private String TAG = "PreferencesPresenter";
 
     /**
@@ -105,7 +108,10 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                                         updateIntermediateTemporalFilesTransitionsUseCase,
             GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
             UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-            UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase) {
+            UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
+            RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+            GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase) {
+
         this.preferencesView = preferencesView;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
@@ -129,10 +135,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.getWatermarkPreferenceFromProjectUseCase = getWatermarkPreferenceFromProjectUseCase;
         this.updateWatermarkPreferenceToProjectUseCase = updateWatermarkPreferenceToProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
-        GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase =
-            new GetVideonaFormatFromCurrentProjectUseCase();
-        videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
-        drawableFadeTransitionVideo = VimojoApplication.getAppContext().getDrawable(R.drawable.alpha_transition_white);
+        this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
+        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
     }
 
     /**
@@ -259,28 +263,28 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      */
     private void checkAvailableResolution() {
         ArrayList<String> resolutionNames = new ArrayList<>();
-        ArrayList<String> resolutionValues =  new ArrayList<>();
+        ArrayList<String> resolutionValues = new ArrayList<>();
         String defaultResolution = null;
         String key = ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION; //"list_preference_resolution";
 
-        if(!isPreferenceAvailable){
+        if (!isPreferenceAvailable) {
             resolutionPref.setTitle(R.string.resolution);
             resolutionPref.setSummary(R.string.preference_not_available);
             return;
         }
 
-        if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false)) {
-            resolutionNames.add(context.getResources().getString(R.string.low_resolution_name));
-            resolutionValues.add(context.getResources().getString(R.string.low_resolution_value));
-            if (defaultResolution == null) {
-                defaultResolution = context.getResources().getString(R.string.low_resolution_name);
-            }
-        }
         if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, false)) {
             resolutionNames.add(context.getResources().getString(R.string.good_resolution_name));
             resolutionValues.add(context.getResources().getString(R.string.good_resolution_value));
             if (defaultResolution == null) {
                 defaultResolution = context.getResources().getString(R.string.good_resolution_name);
+            }
+        }
+        if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false)) {
+            resolutionNames.add(context.getResources().getString(R.string.low_resolution_name));
+            resolutionValues.add(context.getResources().getString(R.string.low_resolution_value));
+            if (defaultResolution == null) {
+                defaultResolution = context.getResources().getString(R.string.low_resolution_name);
             }
         }
         if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, false)) {
@@ -298,8 +302,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                 preferencesView.setPreference(resolutionPref, sharedPreferences.getString(key, ""));
             }
         } else {
-            resolutionNames.add(context.getResources().getString(R.string.low_resolution_name));
-            resolutionValues.add(context.getResources().getString(R.string.low_resolution_value));
+            resolutionNames.add(context.getResources().getString(R.string.good_resolution_name));
+            resolutionValues.add(context.getResources().getString(R.string.good_resolution_value));
             preferencesView.setAvailablePreferences(resolutionPref, resolutionNames, resolutionValues);
         }
     }
@@ -319,6 +323,12 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             return;
         }
 
+        qualityNames.add(context.getResources().getString(R.string.good_quality_name));
+        qualityValues.add(context.getResources().getString(R.string.good_quality_value));
+        if (defaultQuality == null) {
+            defaultQuality = context.getResources().getString(R.string.good_quality_name);
+        }
+
         qualityNames.add(context.getResources().getString(R.string.high_quality_name));
         qualityValues.add(context.getResources().getString(R.string.high_quality_value));
         if (defaultQuality == null) {
@@ -331,12 +341,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             defaultQuality = context.getResources().getString(R.string.low_quality_name);
         }
 
-        qualityNames.add(context.getResources().getString(R.string.good_quality_name));
-        qualityValues.add(context.getResources().getString(R.string.good_quality_value));
-        if (defaultQuality == null) {
-            defaultQuality = context.getResources().getString(R.string.good_quality_name);
-        }
-
         if (qualityNames.size() > 0 && defaultQuality != null) {
             preferencesView.setAvailablePreferences(qualityPref, qualityNames, qualityValues);
             if (updateDefaultPreference(key, qualityNames)) {
@@ -345,7 +349,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                 preferencesView.setPreference(qualityPref, sharedPreferences.getString(key, ""));
             }
         } else {
-            qualityNames.add(context.getResources().getString(R.string.high_quality_name));
+            qualityNames.add(context.getResources().getString(R.string.good_quality_name));
             preferencesView.setAvailablePreferences(qualityPref, qualityNames, qualityValues);
         }
     }
@@ -452,12 +456,11 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     @Override
     public void videoToRelaunch(String videoUuid, String intermediatesTempAudioFadeDirectory) {
-        Project currentProject = Project.getInstance(null, null, null);
         final Video video = getVideo(videoUuid);
-
-        RelaunchTranscoderTempBackgroundUseCase useCase = new RelaunchTranscoderTempBackgroundUseCase();
-        useCase.relaunchExport(drawableFadeTransitionVideo, video, videoFormat,
-                currentProject.getProjectPathIntermediateFileAudioFade(), this);
+        relaunchTranscoderTempBackgroundUseCase.relaunchExport(context
+                .getDrawable(R.drawable.alpha_transition_white), video,
+            getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
+            intermediatesTempAudioFadeDirectory, this);
     }
 
     private Video getVideo(String videoId) {
@@ -475,11 +478,23 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     @Override
     public void onSuccessTranscoding(Video video) {
-        updateVideoRepositoryUseCase.updateVideo(video);
+        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
+        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
     }
 
     @Override
     public void onErrorTranscoding(Video video, String message) {
-       // preferencesView.showError(message);
+        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
+       if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
+            video.increaseNumTriesToExportVideo();
+            Project currentProject = Project.getInstance(null, null, null);
+            relaunchTranscoderTempBackgroundUseCase.relaunchExport(context
+                    .getDrawable(R.drawable.alpha_transition_white), video,
+                getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
+                currentProject.getProjectPathIntermediateFileAudioFade(), this);
+        } else {
+            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
+                Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
+        }
     }
 }

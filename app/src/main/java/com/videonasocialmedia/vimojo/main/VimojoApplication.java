@@ -54,7 +54,7 @@ public class VimojoApplication extends Application {
      * lazy initialization of state) since the time spent in this function
      * directly impacts the performance of starting the first activity,
      * service, or receiver in a process.
-     * If you override this method, be sure to call super.onCreate().
+     * If you override this method, be sure to call super.init().
      */
     @Override
     public void onCreate() {
@@ -124,7 +124,7 @@ public class VimojoApplication extends Application {
     protected void setupDataBase() {
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
                 .name("vimojoDB")
-                .schemaVersion(5) // 21070227  - v0.4.19 (20170207)
+                .schemaVersion(6) // 25042017 - v0.4.23 21070227
                 .migration(new VimojoMigration())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);

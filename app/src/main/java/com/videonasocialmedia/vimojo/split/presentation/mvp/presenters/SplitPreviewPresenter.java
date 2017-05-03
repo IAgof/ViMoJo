@@ -10,6 +10,7 @@ package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
@@ -28,6 +29,7 @@ import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -124,7 +126,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
         Drawable drawableFadeTransitionVideo =
             ContextCompat.getDrawable(VimojoApplication.getAppContext(), R.drawable.alpha_transition_white);
 
-        modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, videoToEdit, videoFormat,
+        modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, video, videoFormat,
             startTimeMs, finishTimeMs, currentProject.getProjectPathIntermediateFileAudioFade(),
             this);
     }
@@ -132,12 +134,21 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     @Override
     public void onSuccessTranscoding(Video video) {
         // update videoRepository
-        updateVideoRepositoryUseCase.updateVideo(video);
+        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
+        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
     }
 
     @Override
     public void onErrorTranscoding(Video video, String message) {
         //splitView.showError(message);
+        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
+        if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
+            video.increaseNumTriesToExportVideo();
+            trimVideo(video, video.getStartTime(), video.getStopTime());
+        } else {
+            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
+                Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.SPLIT.name());
+        }
     }
 }
 

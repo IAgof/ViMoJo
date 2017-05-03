@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.presentation.views.services;
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -33,12 +34,13 @@ public class ExportProjectService extends IntentService implements OnExportFinis
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        exportUseCase = new ExportProjectUseCase(this);
-        exportUseCase.export();
+        exportUseCase = new ExportProjectUseCase();
+        exportUseCase.export(this);
     }
 
     @Override
     public void onExportError(String error) {
+        Log.d(TAG, "exportError " + error);
         publishResults(error, Activity.RESULT_CANCELED);
     }
 
@@ -53,10 +55,17 @@ public class ExportProjectService extends IntentService implements OnExportFinis
 
     @Override
     public void onExportSuccess(Video video) {
+        Log.d(TAG, "exportSuccess ");
         File f = new File(video.getMediaPath());
         String destPath = Constants.PATH_APP + File.separator + f.getName();
-        f.renameTo(new File(destPath));
+        File destFile = new File(destPath);
+        f.renameTo(destFile);
         Utils.addFileToVideoGallery(destPath.toString());
         publishResults(destPath, Activity.RESULT_OK);
+    }
+
+    @Override
+    public void onExportProgress(String progressMsg, int exportStage) {
+        // TODO(jliarte): 28/04/17  do nothing as we're removing this class?
     }
 }

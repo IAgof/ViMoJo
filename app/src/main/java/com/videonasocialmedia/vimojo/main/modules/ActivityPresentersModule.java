@@ -10,10 +10,13 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
+import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DuplicateProjectUseCase;
@@ -55,7 +58,6 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPres
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverActivity;
@@ -138,9 +140,10 @@ public class ActivityPresentersModule {
                                      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                      GetPreferencesTransitionFromProjectUseCase
                                      getPreferencesTransitionFromProjectUseCase) {
-    return new EditPresenter((EditActivity) activity, userEventTracker,
-        removeVideosFromProjectUseCase, reorderMediaItemUseCase, getMusicFromProjectUseCase,
-        getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase);
+    return new EditPresenter((EditActivity) activity, (EditActivity) activity,
+            userEventTracker, removeVideosFromProjectUseCase, reorderMediaItemUseCase,
+            getMusicFromProjectUseCase, getMediaListFromProjectUseCase,
+            getPreferencesTransitionFromProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -149,8 +152,9 @@ public class ActivityPresentersModule {
                                        GetMusicFromProjectUseCase getMusicFromProjectUseCase,
                                        GetPreferencesTransitionFromProjectUseCase
                                             getPreferencesTransitionFromProjectUseCase) {
-    return new SoundPresenter((SoundActivity) activity, getMediaListFromProjectUseCase,
-        getMusicFromProjectUseCase, getPreferencesTransitionFromProjectUseCase);
+    return new SoundPresenter((SoundActivity) activity, (SoundActivity) activity,
+            getMediaListFromProjectUseCase, getMusicFromProjectUseCase,
+            getPreferencesTransitionFromProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -173,13 +177,16 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   GalleryPagerPresenter provideGalleryPagerPresenter(
-      AddVideoToProjectUseCase addVideoToProjectUseCase, UpdateVideoRepositoryUseCase
-          updateVideoRepositoryUseCase, GetVideonaFormatFromCurrentProjectUseCase
-          getVideonaFormatFromCurrentProjectUseCase, LaunchTranscoderAddAVTransitionsUseCase
-      launchTranscoderAddAVTransitionsUseCase) {
-    return new GalleryPagerPresenter((GalleryActivity) activity, addVideoToProjectUseCase,
-        updateVideoRepositoryUseCase, getVideonaFormatFromCurrentProjectUseCase,
-        launchTranscoderAddAVTransitionsUseCase, activity);
+          AddVideoToProjectUseCase addVideoToProjectUseCase,
+          UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
+          GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+          LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionsUseCase,
+          UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase,
+          SharedPreferences sharedPreferences) {
+    return new GalleryPagerPresenter((GalleryActivity) activity, activity, addVideoToProjectUseCase,
+            updateVideoRepositoryUseCase, getVideonaFormatFromCurrentProjectUseCase,
+            launchTranscoderAddAVTransitionsUseCase, updateVideoResolutionToProjectUseCase,
+            sharedPreferences);
   }
 
   @Provides @PerActivity
@@ -228,9 +235,11 @@ public class ActivityPresentersModule {
                              SharedPreferences sharedPreferences,
                              CreateDefaultProjectUseCase createDefaultProjectUseCase,
                              AddLastVideoExportedToProjectUseCase
-                                 addLastVideoExportedProjectUseCase) {
+                                     addLastVideoExportedProjectUseCase,
+                             ExportProjectUseCase exportProjectUseCase) {
     return new ShareVideoPresenter((ShareActivity) activity, userEventTracker, sharedPreferences,
-            activity, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase);
+            activity, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
+            exportProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -240,9 +249,17 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   EditorPresenter provideEditorPresenter(SharedPreferences sharedPreferences,
-                                         CreateDefaultProjectUseCase createDefaultProjectUseCase) {
+                                         CreateDefaultProjectUseCase createDefaultProjectUseCase,
+                                         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                         GetVideonaFormatFromCurrentProjectUseCase
+                                             getVideonaFormatFromCurrentProjectUseCase,
+                                         RelaunchTranscoderTempBackgroundUseCase
+                                             relaunchTranscoderTempBackgroundUseCase,
+                                         UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase) {
     return new EditorPresenter((EditorActivity) activity, sharedPreferences, activity,
-        createDefaultProjectUseCase);
+        createDefaultProjectUseCase, getMediaListFromProjectUseCase,
+        getVideonaFormatFromCurrentProjectUseCase, relaunchTranscoderTempBackgroundUseCase,
+        updateVideoRepositoryUseCase);
   }
 
   @Provides @PerActivity
@@ -271,10 +288,12 @@ public class ActivityPresentersModule {
               ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase,
               GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
               UpdateVideoRepositoryUseCase
-                  updateVideoRepositoryUseCase) {
+                  updateVideoRepositoryUseCase,
+              RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase) {
     return new EditTextPreviewPresenter((VideoEditTextActivity) activity, activity,
         userEventTracker, getMediaListFromProjectUseCase, modifyVideoTextAndPositionUseCase,
-        getVideonaFormatFromCurrentProjectUseCase, updateVideoRepositoryUseCase);
+        getVideonaFormatFromCurrentProjectUseCase, updateVideoRepositoryUseCase,
+        relaunchTranscoderTempBackgroundUseCase);
   }
 
   @Provides
@@ -378,9 +397,16 @@ public class ActivityPresentersModule {
     return new UpdateMusicVolumeProjectUseCase(projectRepository);
   }
 
-  @Provides LaunchTranscoderAddAVTransitionsUseCase provideoLaunchTranscoderAddAVTransition(
+  @Provides LaunchTranscoderAddAVTransitionsUseCase provideLaunchTranscoderAddAVTransition(
       VideoRepository videoRepository){
    return  new LaunchTranscoderAddAVTransitionsUseCase(videoRepository);
   }
 
+  @Provides RelaunchTranscoderTempBackgroundUseCase provideRelaunchTranscoderTempBackgroundUseCase(){
+    return new RelaunchTranscoderTempBackgroundUseCase();
+  }
+
+  @Provides ExportProjectUseCase provideProjectExporter() {
+    return new ExportProjectUseCase();
+  }
 }
