@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import android.app.Activity;
+
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoGalleryView;
@@ -17,6 +19,7 @@ public class VideoGalleryPresenter implements OnVideosRetrieved {
 
     private VideoGalleryView galleryView;
     private ObtainLocalVideosUseCase obtainLocalVideosUseCase;
+    private Activity activity;
 
     public VideoGalleryPresenter(VideoGalleryView galleryView) {
         this.galleryView = galleryView;
@@ -25,13 +28,16 @@ public class VideoGalleryPresenter implements OnVideosRetrieved {
 
     @Override
     public void onVideosRetrieved(final List<Video> videoList) {
-        ((VideoGalleryFragment)galleryView).getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                galleryView.hideLoading();
-                galleryView.showVideos(videoList);
-            }
-        });
+        activity = ((VideoGalleryFragment) galleryView).getActivity();
+        if (activity != null) {
+            ((VideoGalleryFragment)galleryView).getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    galleryView.hideLoading();
+                    galleryView.showVideos(videoList);
+                }
+            });
+        }
     }
 
     @Override
