@@ -114,8 +114,8 @@ public class EditPresenterTest {
   @Test
   public void ifProjectHasSomeVideoWithErrorsCallsShowWarningTempFile() throws IllegalItemOnTrack {
     Project project = getAProject();
-    Video video1 = new Video("video/path");
-    Video video2 = new Video("video/path");
+    Video video1 = new Video("video/path", Video.DEFAULT_VOLUME);
+    Video video2 = new Video("video/path", Video.DEFAULT_VOLUME);
     video2.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
 
     assertThat("video1 has not error", video1.getVideoError() == null, is(true));

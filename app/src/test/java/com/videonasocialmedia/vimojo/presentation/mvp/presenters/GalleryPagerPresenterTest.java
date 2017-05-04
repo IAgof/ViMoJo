@@ -108,7 +108,7 @@ public class GalleryPagerPresenterTest {
     Profile profile = new Profile(VideoResolution.Resolution.HD1080, VideoQuality.Quality.GOOD,
             VideoFrameRate.FrameRate.FPS30);
     Project project = new Project("newproject", "root/path", profile);
-    Video video1 = new Video("video/1");
+    Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
     List<Video> videoList = Collections.singletonList(video1);
     assertThat(project.getVMComposition().getMediaTrack().getItems().size(), is(0));
     doReturn(String.valueOf(videoResolution720.getWidth()))
@@ -138,7 +138,7 @@ public class GalleryPagerPresenterTest {
     Profile profile = new Profile(VideoResolution.Resolution.HD1080, VideoQuality.Quality.GOOD,
             VideoFrameRate.FrameRate.FPS30);
     Project project = new Project("newproject", "root/path", profile);
-    Video video1 = new Video("video/1");
+    Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
     List<Video> videoList = Collections.singletonList(video1);
     assertThat(project.getVMComposition().getMediaTrack().getItems().size(), is(0));
     doReturn(String.valueOf("124"))
@@ -168,8 +168,8 @@ public class GalleryPagerPresenterTest {
             .when(mockedMetadataRetriever)
             .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
     Project project = getAProject();
-    Video video1 = new Video("video1");
-    Video video2 = new Video("video2");
+    Video video1 = new Video("video1", Video.DEFAULT_VOLUME);
+    Video video2 = new Video("video2", Video.DEFAULT_VOLUME);
     project.getVMComposition().getMediaTrack().insertItem(video1);
     assertThat(project.getVMComposition().getMediaTrack().getItems().size(), not(0));
     List<Video> videoList = Collections.singletonList(video2);

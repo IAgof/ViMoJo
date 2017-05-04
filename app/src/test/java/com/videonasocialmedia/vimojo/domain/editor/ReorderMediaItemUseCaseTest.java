@@ -61,9 +61,9 @@ public class ReorderMediaItemUseCaseTest {
 
   @Test
   public void testSwap2Items() throws IllegalItemOnTrack {
-    Video video0 = new Video("video/0");
+    Video video0 = new Video("video/0", Video.DEFAULT_VOLUME);
     video0.setPosition(0);
-    Video video1 = new Video("video/1");
+    Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
     video1.setPosition(1);
     currentProject.getVMComposition().getMediaTrack().insertItemAt(0, video0);
     currentProject.getVMComposition().getMediaTrack().insertItemAt(1, video1);
@@ -79,13 +79,13 @@ public class ReorderMediaItemUseCaseTest {
 
   @Test
   public void testReorder4Items() throws IllegalItemOnTrack {
-    Video video0 = new Video("video/0");
+    Video video0 = new Video("video/0", Video.DEFAULT_VOLUME);
     video0.setPosition(0);
-    Video video1 = new Video("video/1");
+    Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
     video1.setPosition(1);
-    Video video2 = new Video("video/2");
+    Video video2 = new Video("video/2", Video.DEFAULT_VOLUME);
     video1.setPosition(2);
-    Video video3 = new Video("video/3");
+    Video video3 = new Video("video/3", Video.DEFAULT_VOLUME);
     video1.setPosition(1);
     currentProject.getVMComposition().getMediaTrack().insertItemAt(0, video0);
     currentProject.getVMComposition().getMediaTrack().insertItemAt(1, video1);
@@ -118,13 +118,13 @@ public class ReorderMediaItemUseCaseTest {
 
   @Test
   public void testReorder4ItemsTwice() throws IllegalItemOnTrack {
-    Video video0 = new Video("video/0");
+    Video video0 = new Video("video/0", Video.DEFAULT_VOLUME);
     video0.setPosition(0);
-    Video video1 = new Video("video/1");
+    Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
     video1.setPosition(1);
-    Video video2 = new Video("video/2");
+    Video video2 = new Video("video/2", Video.DEFAULT_VOLUME);
     video1.setPosition(2);
-    Video video3 = new Video("video/3");
+    Video video3 = new Video("video/3", Video.DEFAULT_VOLUME);
     video1.setPosition(1);
     currentProject.getVMComposition().getMediaTrack().insertItemAt(0, video0);
     currentProject.getVMComposition().getMediaTrack().insertItemAt(1, video1);

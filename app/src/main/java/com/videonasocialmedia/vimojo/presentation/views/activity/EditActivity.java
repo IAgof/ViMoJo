@@ -523,6 +523,21 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   }
 
   @Override
+  public void setVideoVolume(float volume) {
+    videonaPlayer.setVideoVolume(volume);
+  }
+
+  @Override
+  public void setVoiceOverVolume(float volume) {
+    videonaPlayer.setVoiceOverVolume(volume);
+  }
+
+  @Override
+  public void setMusicVolume(float volume) {
+    videonaPlayer.setMusicVolume(volume);
+  }
+
+  @Override
   public void showWarningTempFile() {
     warningTranscodingFilesButton.setVisibility(View.VISIBLE);
   }

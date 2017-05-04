@@ -33,7 +33,7 @@ import javax.inject.Inject;
 public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback,
     GetTracksInProjectCallback{
 
-    private SoundView soundView;
+  private SoundView soundView;
     private final VideoTranscodingErrorNotifier videoTranscodingErrorNotifier;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
@@ -46,6 +46,8 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
           = new VideoListErrorCheckerDelegate();
 
   private GetTracksInProjectUseCase getTracksInProjectUseCase;
+
+  public static final float VOLUME_MUTE = 0f;
 
    @Inject
     public SoundPresenter(SoundView soundView,
@@ -80,7 +82,33 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
       retrieveTracksInfo();
       obtainVideos();
       retrieveCompositionMusic();
+      checkMuteOnTracks();
     }
+
+  private void checkMuteOnTracks() {
+    if (currentProject.getVMComposition().hasMusic()) {
+      AudioTrack musicTrack = currentProject.getAudioTracks()
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC);
+      if(musicTrack.isMute()){
+        soundView.setMusicVolume(VOLUME_MUTE);
+      }
+    }
+
+    if(currentProject.getVMComposition().hasVoiceOver()){
+      AudioTrack voiceOverTrack = currentProject.getAudioTracks()
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_VOICE_OVER);
+      if(voiceOverTrack.isMute()){
+        soundView.setVoiceOverVolume(VOLUME_MUTE);
+      }
+    }
+
+    if(currentProject.getVMComposition().hasVideos()){
+      MediaTrack mediaTrack = currentProject.getMediaTrack();
+      if(mediaTrack.isMute()){
+        soundView.setVideoVolume(VOLUME_MUTE);
+      }
+    }
+  }
 
   private void retrieveTracksInfo() {
     getTracksInProjectUseCase.getTracksInProject(this);
@@ -146,20 +174,20 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
         .compareTo(com.videonasocialmedia.vimojo.utils.Constants.MUSIC_AUDIO_VOICEOVER_TITLE) == 0;
   }
 
-  public void setVideoVolume(int videoVolume) {
+  public void setVideoVolume(float videoVolume) {
     MediaTrack mediaTrack = currentProject.getMediaTrack();
-    updateVideoTrackProjectUseCase.setVideoTrackVolume(mediaTrack, (float) (videoVolume*0.01));
+    updateVideoTrackProjectUseCase.setVideoTrackVolume(mediaTrack, videoVolume);
   }
 
 
-  public void setMusicVolume(int musicVolume) {
+  public void setMusicVolume(float musicVolume) {
     AudioTrack track = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_MUSIC);
-    updateAudioTrackProjectUseCase.setAudioTrackVolume(track, (float) (musicVolume*0.01));
+    updateAudioTrackProjectUseCase.setAudioTrackVolume(track, musicVolume);
   }
 
-  public void setVoiceOverVolume(int voiceOverVolume) {
+  public void setVoiceOverVolume(float voiceOverVolume) {
     AudioTrack track = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER);
-    updateAudioTrackProjectUseCase.setAudioTrackVolume(track, (float) (voiceOverVolume*0.01));
+    updateAudioTrackProjectUseCase.setAudioTrackVolume(track, voiceOverVolume);
   }
 
 
@@ -181,16 +209,31 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
   public void muteVideo(boolean isChecked) {
     MediaTrack mediaTrack = currentProject.getMediaTrack();
     updateVideoTrackProjectUseCase.setVideoTrackMute(mediaTrack, isChecked);
+    if(isChecked){
+      soundView.setVideoVolume(VOLUME_MUTE);
+    } else {
+      soundView.setVideoVolume(mediaTrack.getVolume());
+    }
   }
 
   public void muteMusic(boolean isChecked) {
     AudioTrack track = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_MUSIC);
     updateAudioTrackProjectUseCase.setAudioTrackMute(track, isChecked);
+    if(isChecked){
+      soundView.setMusicVolume(VOLUME_MUTE);
+    } else {
+      soundView.setMusicVolume(track.getVolume());
+    }
   }
 
   public void muteVoiceOver(boolean isChecked) {
     AudioTrack track = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER);
     updateAudioTrackProjectUseCase.setAudioTrackMute(track, isChecked);
+    if(isChecked){
+      soundView.setVoiceOverVolume(VOLUME_MUTE);
+    } else {
+      soundView.setVoiceOverVolume(track.getVolume());
+    }
   }
 
   @Override
@@ -200,17 +243,26 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
     for(Track track: trackList){
       switch (track.getId()){
         case Constants.INDEX_MEDIA_TRACKS:
-          if(currentProject.getVMComposition().hasVideos())
+          if(currentProject.getVMComposition().hasVideos()) {
             soundView.bindVideoTrack(track.getVolume(), track.isMute(), track.isSolo());
+            if(track.isMute())
+              soundView.setVideoVolume(VOLUME_MUTE);
+          }
           break;
         case Constants.INDEX_AUDIO_TRACKS_MUSIC:
-          if(currentProject.hasMusic())
+          if(currentProject.hasMusic()) {
             musicTrack = track;
-
+            if(musicTrack.isMute()){
+              soundView.setMusicVolume(VOLUME_MUTE);
+            }
+          }
           break;
         case Constants.INDEX_AUDIO_TRACKS_VOICE_OVER:
-          if(currentProject.hasVoiceOver())
+          if(currentProject.hasVoiceOver()) {
             voiceOverTrack = track;
+            if(voiceOverTrack.isMute())
+              soundView.setVoiceOverVolume(VOLUME_MUTE);
+          }
           break;
         default:
       }

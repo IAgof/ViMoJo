@@ -48,7 +48,6 @@ public class VideoToRealmVideoMapperTest {
 //    assertThat(realmVideo.fileDuration, is(90));
     assertThat(realmVideo.tempPath, is("tmp/path"));
     assertThat(realmVideo.volume, is(1f));
-    assertThat(realmVideo.isTempPathFinished, is(true));
     assertThat(realmVideo.clipText, is("text"));
     assertThat(realmVideo.clipTextPosition, is(TextEffect.TextPosition.CENTER.name()));
     assertThat(realmVideo.isTextToVideoAdded, is(true));

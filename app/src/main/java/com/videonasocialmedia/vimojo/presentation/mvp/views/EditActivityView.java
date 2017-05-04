@@ -36,4 +36,7 @@ public interface EditActivityView {
     void resetPreview();
     void showDialogMediasNotFound();
     void enableFabText(boolean isEnable);
+    void setVideoVolume(float volume);
+    void setVoiceOverVolume(float volume);
+    void setMusicVolume(float volume);
 }

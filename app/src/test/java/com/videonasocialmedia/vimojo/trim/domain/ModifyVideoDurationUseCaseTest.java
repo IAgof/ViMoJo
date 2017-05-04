@@ -92,7 +92,7 @@ public class ModifyVideoDurationUseCaseTest {
   @Test
   public void testTrimVideoCallsTranscodeAndTrimVideoIfVideoHasntText()
           throws IOException {
-    Video video = new Video("media/path", 1f);
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assert ! video.hasText();
     injectedUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
             mockedMediaTranscoder);
@@ -108,7 +108,7 @@ public class ModifyVideoDurationUseCaseTest {
   @Test
   public void testTrimVideoCallsGenerateOutputVideoWithTrimmingIfVideoHasntText()
           throws IOException {
-    Video video = new Video("media/path", 1f);
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     // TODO(jliarte): 19/10/16 should check if video is trimmed?
     assert ! video.hasText();
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
@@ -123,7 +123,7 @@ public class ModifyVideoDurationUseCaseTest {
 
   @Test
   public void trimVideoCallsVideoRepositoryUpdate() {
-    Video video = new Video("media/path", 1f);
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
       injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 2, 10,
@@ -134,7 +134,7 @@ public class ModifyVideoDurationUseCaseTest {
 
   @Test
   public void trimVideoCallsUpdateVideoParams() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assert video.isTranscodingTempFileFinished();
 
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
@@ -150,7 +150,7 @@ public class ModifyVideoDurationUseCaseTest {
 
   @NonNull
   private Video getVideoWithText() {
-    Video video = new Video("media/path", 1f);
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     video.setClipText("text");
     video.setClipTextPosition(TextEffect.TextPosition.CENTER.name());
     return video;

@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="8dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/activity_edit_sound_original_down"/>
 
     <android.support.v7.widget.RecyclerView

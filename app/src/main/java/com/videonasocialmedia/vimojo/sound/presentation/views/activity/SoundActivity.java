@@ -86,6 +86,8 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   CardViewAudioTrack trackClipsAudioTrackSecond;
   @Nullable @Bind(R.id.scrollview_timeline_audio_blocks)
   ScrollView scrollViewTimeLineAudioBlocks;
+  @Nullable @Bind(R.id.button_sound_warning_transcoding_file)
+  ImageButton warningTranscodingFilesButton;
 
   @Bind(R.id.fab_edit_room)
   FloatingActionsMenu fabMenu;
@@ -387,6 +389,21 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
   @Override
+  public void setVideoVolume(float volume) {
+    videonaPlayer.setVideoVolume(volume);
+  }
+
+  @Override
+  public void setVoiceOverVolume(float volume) {
+    videonaPlayer.setVoiceOverVolume(volume);
+  }
+
+  @Override
+  public void setMusicVolume(float volume) {
+    videonaPlayer.setMusicVolume(volume);
+  }
+
+  @Override
   public void showWarningTempFile() {
     warningTranscodingFilesButton.setVisibility(View.VISIBLE);
   }
@@ -432,7 +449,10 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
   @Override
-  public void setSeekBarProgress(int progress, int id) {
+  public void setSeekBarProgress(int seekBarProgress, int id) {
+
+    float progress = (float) (seekBarProgress * 0.01);
+
     switch (id){
       case ID_TRACK_CLIP_VIDEO:
         videonaPlayer.setVideoVolume(progress);
@@ -498,29 +518,19 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   public void setSwitchMuteAudio(boolean isChecked, int id) {
     switch (id){
       case ID_TRACK_CLIP_VIDEO:
-        if(isChecked)
-          videonaPlayer.setVideoVolume(0f);
         presenter.muteVideo(isChecked);
         break;
       case ID_TRACK_CLIP_AUDIO_FIRST:
         if(isMusicFirstTrack()) {
-          if (isChecked)
-            videonaPlayer.setMusicVolume(0f);
           presenter.muteMusic(isChecked);
         } else {
-          if(isChecked)
-            videonaPlayer.setVoiceOverVolume(0f);
           presenter.muteVoiceOver(isChecked);
         }
         break;
       case ID_TRACK_CLIP_AUDIO_SECOND:
         if(isMusicSecondTrack()) {
-          if (isChecked)
-            videonaPlayer.setMusicVolume(0f);
           presenter.muteMusic(isChecked);
         } else {
-          if (isChecked)
-            videonaPlayer.setVoiceOverVolume(0f);
           presenter.muteVoiceOver(isChecked);
         }
       default:

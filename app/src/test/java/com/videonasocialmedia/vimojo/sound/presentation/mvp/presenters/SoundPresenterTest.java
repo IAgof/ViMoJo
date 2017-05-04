@@ -219,11 +219,14 @@ public class SoundPresenterTest {
 
   @Test
   public void ifProjectHasSomeVideoWithErrorsCallsShowWarningTempFile() throws IllegalItemOnTrack {
+
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
-            mockedVideoTranscodingErrorNotifier, mockedGetMediaListFromProjectUseCase,
-            mockedGetMusicFromProjectUseCase, mockedGetPreferencesTransitionFromProjectUseCase);
-    Video video1 = new Video("video/path");
-    Video video2 = new Video("video/path");
+        mockedVideoTranscodingErrorNotifier,
+        mockedGetMediaListFromProjectUseCase, mockedGetMusicFromProjectUseCase,
+        mockedGetPreferencesTransitionFromProjectUseCase, mockedUpdateVideoTrackProjectUseCase,
+        mockedUpdateAudioTrackProjectUseCase, mockedGetTracksInProjectUseCase);
+    Video video1 = new Video("video/path", Video.DEFAULT_VOLUME);
+    Video video2 = new Video("video/path", Video.DEFAULT_VOLUME);
     List<Video> videoList = new ArrayList<>();
     videoList.add(video1);
     videoList.add(video2);

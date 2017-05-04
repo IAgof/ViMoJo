@@ -16,6 +16,8 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -42,6 +44,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener {
+    public static final float VOLUME_MUTE = 0f;
     private final String LOG_TAG = getClass().getSimpleName();
     private final Project currentProject;
     // TODO(jliarte): 2/05/17 inject delegate?
@@ -206,6 +209,47 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     public void init() {
         obtainVideos();
+        retrieveMusic();
+        retrieveTransitions();
+        checkMuteOnTracks();
+    }
+
+    private void checkMuteOnTracks() {
+        if (currentProject.getVMComposition().hasMusic()) {
+            AudioTrack musicTrack = currentProject.getAudioTracks()
+                .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC);
+            if(musicTrack.isMute()){
+                editActivityView.setMusicVolume(VOLUME_MUTE);
+            }
+        }
+
+        if(currentProject.getVMComposition().hasVoiceOver()){
+            AudioTrack voiceOverTrack = currentProject.getAudioTracks()
+                .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_VOICE_OVER);
+            if(voiceOverTrack.isMute()){
+                editActivityView.setVoiceOverVolume(VOLUME_MUTE);
+            }
+        }
+
+        if(currentProject.getVMComposition().hasVideos()){
+            MediaTrack mediaTrack = currentProject.getMediaTrack();
+            if(mediaTrack.isMute()){
+                editActivityView.setVideoVolume(VOLUME_MUTE);
+            }
+        }
+    }
+
+    private void retrieveTransitions() {
+        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+            editActivityView.setVideoFadeTransitionAmongVideos();
+        }
+        if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
+            !currentProject.getVMComposition().hasMusic()){
+            editActivityView.setAudioFadeTransitionAmongVideos();
+        }
+    }
+
+    private void retrieveMusic() {
         if (currentProject.getVMComposition().hasMusic()) {
             getMusicFromProjectUseCase.getMusicFromProject(new GetMusicFromProjectCallback() {
                 @Override
@@ -221,13 +265,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                     editActivityView.setVoiceOver(voiceOver);
                 }
             });
-        }
-        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
-            editActivityView.setVideoFadeTransitionAmongVideos();
-        }
-        if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
-            !currentProject.getVMComposition().hasMusic()){
-            editActivityView.setAudioFadeTransitionAmongVideos();
         }
     }
 }
