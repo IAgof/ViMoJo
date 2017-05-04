@@ -8,11 +8,25 @@ import java.util.List;
  * Created by jca on 11/12/15.
  */
 public interface ShareVideoView {
-    void playPreview();
-    void pausePreview();
-    void showError(String message);
-    void showOptionsShareList(List<OptionsToShareList> optionsShareList);
-    void hideShareNetworks();
-    void showMoreNetworks(List<SocialNetwork> networks);
-    void hideExtraNetworks();
+  void playPreview();
+
+  void pausePreview();
+
+  void showError(String message);
+
+  void showOptionsShareList(List<OptionsToShareList> optionsShareList);
+
+  void hideShareNetworks();
+
+  void showMoreNetworks(List<SocialNetwork> networks);
+
+  void hideExtraNetworks();
+
+  void loadExportedVideoPreview(String mediaPath);
+
+  void showVideoExportError();
+
+  void showExportProgress(String progressMsg);
+
+  void startVideoExport();
 }

@@ -41,9 +41,10 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.VideoTimeLineAdapter;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.videoTimeLineTouchHelperCallback;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.VideoTimeLineAdapter;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.VideoTimeLineTouchHelperCallback;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
@@ -64,8 +65,9 @@ import butterknife.OnClick;
 
 
 public class EditActivity extends EditorActivity implements EditActivityView,
-    VideonaPlayer.VideonaPlayerListener, VideoTimeLineRecyclerViewClickListener {
-
+        VideoTranscodingErrorNotifier, VideonaPlayer.VideonaPlayerListener,
+        VideoTimeLineRecyclerViewClickListener {
+    private static String TAG = EditActivity.class.getCanonicalName();
     private static final String CURRENT_TIME_POSITION = "current_time_position";
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;
     private final int NUM_COLUMNS_GRID_TIMELINE_VERTICAL = 4;
@@ -93,6 +95,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     BottomBar bottomBar;
     @Nullable @Bind(R.id.relative_layout_activity_edit)
     RelativeLayout relativeLayoutActivityEdit;
+    @Nullable @Bind(R.id.button_edit_warning_transcoding_file)
+    ImageButton warningTranscodingFilesButton;
 
     private List<Video> videoList;
     private int currentVideoIndex = 0;
@@ -102,6 +106,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     private int selectedVideoRemovePosition;
     private FloatingActionButton newFab;
     private boolean isEnableFabText =false;
+
+    private String warningTranscodingFilesMessage;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -124,7 +130,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         }
     };
 
-    @Override
+
+
+  @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         inflateLinearLayout(R.id.container_layout,R.layout.activity_edit);
@@ -151,9 +159,10 @@ public class EditActivity extends EditorActivity implements EditActivityView,
             navigateTo(SoundActivity.class);
             break;
           case (R.id.tab_share):
-            Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
+            navigateTo(ShareActivity.class);
+           /* Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
             Snackbar.make(relativeLayoutActivityEdit, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
-            VimojoApplication.getAppContext().startService(intent);
+            VimojoApplication.getAppContext().startService(intent);*/
             break;
         }
       }
@@ -248,7 +257,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         videoListRecyclerView.setLayoutManager(layoutManager);
         timeLineAdapter = new VideoTimeLineAdapter(this);
         videoListRecyclerView.setAdapter(timeLineAdapter);
-        videoTimeLineTouchHelperCallback callback = new videoTimeLineTouchHelperCallback(timeLineAdapter);
+
+      VideoTimeLineTouchHelperCallback callback =
+              new VideoTimeLineTouchHelperCallback(timeLineAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(videoListRecyclerView);
     }
@@ -299,6 +310,20 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         navigateTo(VideoSplitActivity.class, currentVideoIndex);
     }
 
+    @Nullable @OnClick(R.id.button_edit_warning_transcoding_file)
+    public void onClickWarningTranscodingFile(){
+      AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
+      dialog.setTitle(getString(R.string.dialog_title_warning_error_transcoding_file));
+      dialog.setMessage(getString(R.string.dialog_message_warning_error_transcoding_file));
+      dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+          dialog.dismiss();
+        }
+      });
+      dialog.show();
+    }
+
     public void navigateTo(Class cls, String videoToSharePath) {
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoToSharePath);
@@ -332,7 +357,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         //Yes button clicked
-                        timeLineAdapter.remove(selectedVideoRemovePosition);
                         setSelectedClipIndex(Math.max(selectedVideoRemovePosition-1, 0));
                         editPresenter.removeVideoFromProject(selectedVideoRemovePosition);
                         break;
@@ -358,12 +382,10 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     public void onClipMoved(int fromPosition, int toPosition) {
         currentVideoIndex = toPosition;
         editPresenter.moveItem(fromPosition, toPosition);
-        videonaPlayer.seekToClip(currentVideoIndex);
     }
 
     @Override
     public void onClipReordered(int newPosition) {
-        currentVideoIndex = newPosition;
         videonaPlayer.updatePreviewTimeLists();
         videonaPlayer.seekToClip(currentVideoIndex);
     }
@@ -409,10 +431,10 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     @Override
     public void bindVideoList(List<Video> videoList) {
         this.videoList = videoList;
-        timeLineAdapter.setVideoList(videoList);
-        timeLineAdapter.updateSelection(currentVideoIndex); // TODO: check this flow and previous updateSelection(0); in setVideoList
+        timeLineAdapter.updateVideoList(videoList);
+        timeLineAdapter.updateSelection(currentVideoIndex); // TODO: check this flow and previous updateSelection(0); in updateVideoList
         videoListRecyclerView.scrollToPosition(currentVideoIndex);
-        timeLineAdapter.notifyDataSetChanged();
+//        timeLineAdapter.notifyDataSetChanged();
         videonaPlayer.bindVideoList(videoList);
         videonaPlayer.seekTo(currentProjectTimePosition);
     }
@@ -500,6 +522,15 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     isEnableFabText = enableFabText;
   }
 
+  @Override
+  public void showWarningTempFile() {
+    warningTranscodingFilesButton.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void setWarningMessageTempFile(String messageTempFile) {
+    warningTranscodingFilesMessage = messageTempFile;
+  }
 
 
   @Override

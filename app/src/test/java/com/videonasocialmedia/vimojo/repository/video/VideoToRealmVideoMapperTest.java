@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.repository.video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,12 +32,12 @@ public class VideoToRealmVideoMapperTest {
     Video video = new Video("media/path", 1f);
 //    video.fileDuration = 90;
     video.tempPath = "tmp/path";
-    video.setTempPathFinished(true);
     video.setClipText("text");
     video.setClipTextPosition(TextEffect.TextPosition.CENTER.name());
     video.setTrimmedVideo(true);
     video.setStartTime(10);
     video.setStopTime(80);
+    video.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
 //    public RealmProject project;
     VideoToRealmVideoMapper mapper = new VideoToRealmVideoMapper();
 
@@ -54,5 +55,6 @@ public class VideoToRealmVideoMapperTest {
     assertThat(realmVideo.isTrimmedVideo, is(true));
     assertThat(realmVideo.startTime, is(10));
     assertThat(realmVideo.stopTime, is(80));
+    assertThat(realmVideo.videoError, is(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name()));
   }
 }

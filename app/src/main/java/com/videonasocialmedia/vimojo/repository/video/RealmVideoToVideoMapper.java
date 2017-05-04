@@ -13,13 +13,14 @@ public class RealmVideoToVideoMapper implements Mapper<RealmVideo,Video> {
         Video video = new Video(realmVideo.mediaPath, realmVideo.volume);
         video.setUuid(realmVideo.uuid);
         video.tempPath = realmVideo.tempPath;
-        video.setTempPathFinished(realmVideo.isTempPathFinished);
         video.setPosition(realmVideo.position);
         video.setClipText(realmVideo.clipText);
         video.setClipTextPosition(realmVideo.clipTextPosition);
         video.setTrimmedVideo(realmVideo.isTrimmedVideo);
         video.setStartTime(realmVideo.startTime);
         video.setStopTime(realmVideo.stopTime);
+        video.setVideoError(realmVideo.videoError);
+        video.setTranscodingTempFileFinished(realmVideo.isTranscodingTempFileFinished);
         return video;
     }
 }

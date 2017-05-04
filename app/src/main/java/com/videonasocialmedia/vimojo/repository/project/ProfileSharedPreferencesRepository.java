@@ -38,7 +38,7 @@ public class ProfileSharedPreferencesRepository implements ProfileRepository {
 
   private VideoResolution.Resolution getResolutionFromPreferencesSetting() {
     String resolution = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
-        context.getString(R.string.low_resolution_name));
+        context.getString(R.string.good_resolution_name));
     if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false)) {
       if (resolution.compareTo(context.getString(R.string.low_resolution_name)) == 0) {
         return VideoResolution.Resolution.HD720;
@@ -55,12 +55,12 @@ public class ProfileSharedPreferencesRepository implements ProfileRepository {
       }
     }
     // default
-    return VideoResolution.Resolution.HD720;
+    return VideoResolution.Resolution.HD1080;
   }
 
   private VideoQuality.Quality getQualityFromPreferenceSettings() {
     String quality = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY,
-        context.getString(R.string.high_quality_name));
+        context.getString(R.string.good_quality_name));
     if (quality.compareTo(context.getString(R.string.low_quality_name)) == 0) {
       return VideoQuality.Quality.LOW;
     }
@@ -71,7 +71,7 @@ public class ProfileSharedPreferencesRepository implements ProfileRepository {
       return VideoQuality.Quality.HIGH;
     }
     // default
-    return VideoQuality.Quality.HIGH;
+    return VideoQuality.Quality.GOOD;
   }
 
   private VideoFrameRate.FrameRate getFrameRateFromPreferenceSettings() {

@@ -20,6 +20,8 @@
     <string name="recordError">Algo ha fallado. Imposible grabar el vídeo, pruebe otra vez</string>
     <string name="giftOverlayDialogTitle">Tu regalo</string>
     <string name="giftOverlayDialogMessage">Disfruta de tu nuevo filtro de Bollywood</string>
+    <string name="recordTextGallery">Galería</string>
+    <string name="recordTextEdit">Editor</string>
 
     <!-- Share Activity -->
     <string name="shareError">Uy, no hemos podido compartir el vídeo.</string>
@@ -93,6 +95,8 @@
     <string name="dialog_project_remove_cancel">No</string>
 
     <!-- Detail project activity -->
+    <string name="projectTitleSizeMb">Tamaño:</string>
+    <string name="projectTitleDurationMinSec">Duración:</string>
     <string name="detail_project_hint_title">Introduzca nombre</string>
     <string name="detail_project_info_duration">Duración</string>
     <string name="detail_project_info_size">Tamaño</string>
@@ -227,6 +231,10 @@
 
     <!-- End Settings Activity -->
 
+    <!-- DRAWER -->
+    <string name="drawerProjects">Mis proyectos</string>
+    <string name="drawerSettings">Ajustes</string>
+    <string name="drawerSuggestions">Sugerencias</string>
 
     <!-- About Activity -->
 
@@ -636,5 +644,14 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="mute">Mute</string>
     <string name="solo">Solo</string>
 
+    <string name="dialog_title_warning_error_transcoding_file">Clip corrupto</string>
+    <string name="dialog_message_warning_error_transcoding_file">Revise los clips, el archivo no se podrá exportar correctamente</string>
+
+    <string name="dialog_title_export_project">Exportando proyecto</string>
+    <string name="dialog_message_export_project">Haciendo magia en tu vídeo</string>
+
+    <string name="dialog_title_export_error">Error exportando</string>
+    <string name="dialog_message_export_error">Ha ocurrido un error durante la exportación y tu
+        proyecto no podrá ser exportado correctamente. Por favor, inténtalo otra vez</string>
 
 </resources>

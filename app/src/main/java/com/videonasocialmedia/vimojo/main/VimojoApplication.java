@@ -124,7 +124,7 @@ public class VimojoApplication extends Application {
     protected void setupDataBase() {
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
                 .name("vimojoDB")
-                .schemaVersion(6) // 20170411  - v0.4.23 (20170330)
+                .schemaVersion(7) // 03052017 - v0.4.23 21070227
                 .migration(new VimojoMigration())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);

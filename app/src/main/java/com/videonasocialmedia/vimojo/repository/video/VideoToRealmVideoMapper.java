@@ -10,9 +10,10 @@ public class VideoToRealmVideoMapper implements Mapper<Video,RealmVideo> {
   @Override
   public RealmVideo map(Video video) {
     RealmVideo realmVideo = new RealmVideo(video.getUuid(), video.getPosition(),
-            video.getMediaPath(),video.getVolume(), video.getTempPath(), video.outputVideoIsFinished(),
-            video.getClipText(), video.getClipTextPosition(), video.hasText(),
-            video.isTrimmedVideo(), video.getStartTime(), video.getStopTime());
+            video.getMediaPath(),video.getVolume(), video.getTempPath(), video.getClipText(),
+        video.getClipTextPosition(), video.hasText(), video.isTrimmedVideo(),
+        video.getStartTime(), video.getStopTime(), video.getVideoError(),
+        video.isTranscodingTempFileFinished());
     return realmVideo;
   }
 }

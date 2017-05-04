@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -134,9 +135,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     public void navigateTo(Class cls) {
-        Intent intent = new Intent(getApplicationContext(), cls);
-        startActivity(intent);
-        finish();
+        startActivity(new Intent(VimojoApplication.getAppContext(), cls));
     }
 
     @Override
@@ -152,7 +151,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     private void navigateTo(Class cls, int currentVideoIndex) {
-        Intent intent = new Intent(this, cls);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
         startActivity(intent);
         //finish();

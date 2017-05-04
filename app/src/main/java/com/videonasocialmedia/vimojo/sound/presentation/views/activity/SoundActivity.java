@@ -1,7 +1,9 @@
 package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
@@ -23,8 +26,8 @@ import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -46,6 +49,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static butterknife.ButterKnife.findById;
 
@@ -54,7 +58,8 @@ import static butterknife.ButterKnife.findById;
  */
 
 public class SoundActivity extends EditorActivity implements VideonaPlayer.VideonaPlayerListener,
-    SoundView, AudioTimeLineRecyclerViewClickListener, CardViewAudioTrackListener {
+    SoundView, VideoTranscodingErrorNotifier, AudioTimeLineRecyclerViewClickListener,
+    CardViewAudioTrackListener{
 
   private static final String SOUND_ACTIVITY_PROJECT_POSITION = "sound_activity_project_position";
   private static final String TAG = "SoundActivity";
@@ -95,6 +100,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   private MusicTimeLineAdapter voiceOverTimeLineAdapter;
   private boolean voiceOverActivated;
   private FloatingActionButton fabVoiceOver;
+  private String warningTranscodingFilesMessage;
 
   private int num_grid_columns = 1;
   int orientation = LinearLayoutManager.HORIZONTAL;
@@ -105,6 +111,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       inflateLinearLayout(R.id.container_layout,R.layout.activity_sound);
+    inflateLinearLayout(R.id.container_navigator,R.layout.sound_activity_layout_button_navigator);
       ButterKnife.bind(this);
       getActivityPresentersComponent().inject(this);
       createExportReceiver();
@@ -124,11 +131,10 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
             navigateTo(EditActivity.class);
             break;
           case (R.id.tab_share):
-            Intent intent = new Intent(VimojoApplication.getAppContext(),
-                ExportProjectService.class);
-            Snackbar.make(relativeLayoutActivitySound, "Starting export",
-                Snackbar.LENGTH_INDEFINITE).show();
-            VimojoApplication.getAppContext().startService(intent);
+            navigateTo(ShareActivity.class);
+            /*Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
+            Snackbar.make(relativeLayoutActivitySound, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
+            VimojoApplication.getAppContext().startService(intent);*/
             break;
         }
       }
@@ -223,7 +229,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       videonaPlayer.onShown(this);
       presenter.init();
       registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
-
   }
 
   @Override
@@ -379,6 +384,16 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   @Override
   public void resetPreview() {
       videonaPlayer.resetPreview();
+  }
+
+  @Override
+  public void showWarningTempFile() {
+    warningTranscodingFilesButton.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void setWarningMessageTempFile(String messageTempFile) {
+    warningTranscodingFilesMessage = messageTempFile;
   }
 
 
@@ -577,5 +592,19 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   private boolean isMusicSecondTrack() {
     return positionAudioTrackMusic == 2;
+  }
+
+  @Nullable @OnClick(R.id.button_sound_warning_transcoding_file)
+  public void onClickWarningTranscodingFile(){
+    AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    dialog.setTitle(getString(R.string.dialog_title_warning_error_transcoding_file));
+    dialog.setMessage(getString(R.string.dialog_message_warning_error_transcoding_file));
+    dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+      }
+    });
+    dialog.show();
   }
 }

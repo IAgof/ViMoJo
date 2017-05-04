@@ -172,8 +172,34 @@ public class VimojoMigration implements RealmMigration {
       oldVersion++;
     }
 
-    // Migrate from version 5 to version 6, now update RealmVideo, not RealmProject
-    if (oldVersion == 5) {
+    if(oldVersion == 5){
+      RealmObjectSchema realmVideo = schema.get("RealmVideo");
+      if(!realmVideo.hasField("videoError")){
+        realmVideo.addField("videoError", String.class)
+            .transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                obj.setString("videoError", null);
+              }
+            });
+      }
+      if(!realmVideo.hasField("isTranscodingTempFileFinished")){
+        realmVideo.addField("isTranscodingTempFileFinished", boolean.class)
+            .transform(new RealmObjectSchema.Function() {
+          @Override
+          public void apply(DynamicRealmObject obj) {
+            obj.setBoolean("isTranscodingTempFileFinished", true);
+          }
+        });
+      }
+      if(realmVideo.hasField("isTempPathFinished")){
+        realmVideo.removeField("isTempPathFinished");
+      }
+      oldVersion++;
+    }
+
+    // Migrate from version 6 to version 7, now update RealmVideo, not RealmProject
+    if (oldVersion == 6) {
       RealmObjectSchema realmProject = schema.get("RealmVideo");
       if (!realmProject.hasField("volume")) {
         realmProject.addField("volume", float.class)
@@ -188,8 +214,8 @@ public class VimojoMigration implements RealmMigration {
       oldVersion++;
     }
 
-    //Migrate from verstion 6 to 7, added RealmTrack
-    if(oldVersion == 6) {
+    //Migrate from verstion 7 to 8, added RealmTrack
+    if(oldVersion == 7) {
       /*RealmObjectSchema trackSchema = schema.create("RealmTrack")
           .addField("uuid", String.class, FieldAttribute.PRIMARY_KEY)
           .addField("id", Integer.class, FieldAttribute.REQUIRED)

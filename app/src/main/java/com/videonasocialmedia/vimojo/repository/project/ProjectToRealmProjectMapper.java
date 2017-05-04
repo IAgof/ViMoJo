@@ -31,7 +31,7 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
             project.isAudioFadeTransitionActivated(), project.isVideoFadeTransitionActivated(),
             project.hasWatermark());
 
-    if(project.hasVideoExported()){
+    if (project.hasVideoExported()) {
       realmProject.pathLastVideoExported = project.getPathLastVideoExported();
       realmProject.dateLastVideoExported = project.getDateLastVideoExported();
     }

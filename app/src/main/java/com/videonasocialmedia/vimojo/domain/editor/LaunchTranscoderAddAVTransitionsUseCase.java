@@ -42,9 +42,11 @@ public class LaunchTranscoderAddAVTransitionsUseCase {
                                  transcoderHelperListener){
     boolean isVideoFadeTransitionActivated = currentProject.isVideoFadeTransitionActivated();
     boolean isAudioFadeTransitionActivated = currentProject.isAudioFadeTransitionActivated();
+    videoToEdit.setTranscodingTempFileFinished(false);
     updateGeneratedVideo(drawableFadeTransition, isVideoFadeTransitionActivated,
         isAudioFadeTransitionActivated, videoToEdit, videonaFormat,
         intermediatesTempAudioFadeDirectory, transcoderHelperListener);
+    videoRepository.update(videoToEdit);
   }
 
   private void updateGeneratedVideo(Drawable drawableFadeTransition,

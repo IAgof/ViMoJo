@@ -97,7 +97,7 @@ public class ProjectTest {
         VideoQuality quality = videonaProject.getProfile().getVideoQuality();
         VideoFrameRate frameRate = videonaProject.getProfile().getVideoFrameRate();
 
-        assertThat("videoBitRate", 10*1000*1000, CoreMatchers.is(quality.getVideoBitRate()));
+        assertThat("videoBitRate", 50*1000*1000, CoreMatchers.is(quality.getVideoBitRate()));
         assertThat("videoWidth", 1280, CoreMatchers.is(resolution.getWidth()));
         assertThat("videoHeight", 720, CoreMatchers.is(resolution.getHeight()));
         assertThat("frameRate", 25, CoreMatchers.is(frameRate.getFrameRate()));
