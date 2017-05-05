@@ -39,9 +39,9 @@ public interface RecordCamera2View {
 
     void hideChangeCamera();
 
-    void showRecordedVideoThumb(String path);
+    void showRecordedVideoThumbWithText(String path);
 
-    void hideRecordedVideoThumb();
+    void hideRecordedVideoThumbWithText();
 
     void showVideosRecordedNumber(int numberOfVideos);
 

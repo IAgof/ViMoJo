@@ -147,7 +147,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
       final Video lastItem = (Video) mediaInProject.get(lastItemIndex);
       this.recordedVideosNumber = mediaInProject.size();
       recordView.showVideosRecordedNumber(recordedVideosNumber);
-      recordView.showRecordedVideoThumb(lastItem.getMediaPath());
+      recordView.showRecordedVideoThumbWithText(lastItem.getMediaPath());
     } else {
       recordView.hideVideosRecordedNumber();
     }
@@ -160,7 +160,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
     recordView.showChronometer();
     recordView.hideNavigateToSettingsActivity();
     recordView.hideVideosRecordedNumber();
-    recordView.hideRecordedVideoThumb();
+    recordView.hideRecordedVideoThumbWithText();
     recordView.hideChangeCamera();
   }
 
@@ -192,7 +192,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
     recordView.stopChronometer();
     recordView.hideChronometer();
     recordView.showChangeCamera();
-    recordView.showRecordedVideoThumb(path);
+    recordView.showRecordedVideoThumbWithText(path);
     recordView.showVideosRecordedNumber(++recordedVideosNumber);
     moveAndAdaptRecordedVideo(path);
   }

@@ -57,6 +57,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton flashButton;
   @Bind(R.id.button_change_camera)
   ImageButton changeCameraButton;
+  @Bind(R.id.button_grid)
+  ImageButton gridButton;
   @Bind(R.id.button_to_show_controls_right)
   ImageButton showControlsButton;
   @Bind(R.id.button_to_hide_controls)
@@ -67,6 +69,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   Chronometer chronometer;
   @Bind(R.id.text_view_num_videos)
   TextView numVideosRecordedTextView;
+  @Bind(R.id.record_text_view_edit_or_gallery)
+  TextView editText;
   @Bind(R.id.button_navigate_edit_or_gallery)
   CircleImageView thumbClipRecordedButton;
   @Bind(R.id.button_record)
@@ -101,6 +105,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   CustomManualFocusView customManualFocusView;
   @Bind(R.id.rotateDeviceHint)
   ImageView rotateDeviceHint;
+  @Bind(R.id.image_view_grid)
+  ImageView imageViewGrid;
 
   /**
    * An {@link AutoFitTextureView} for camera preview.
@@ -129,6 +135,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private boolean isControlsViewSelected = false;
 
   private ProgressDialog progressDialog;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -186,6 +193,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(settingsCameraButton, button_color);
     tintButton(zoomButton, button_color);
     tintButton(whiteBalanceButton, button_color);
+    tintButton(gridButton, button_color);
   }
 
   private void configChronometer() {
@@ -405,20 +413,23 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
-  public void showRecordedVideoThumb(String path) {
+  public void showRecordedVideoThumbWithText(String path) {
     thumbClipRecordedButton.setVisibility(View.VISIBLE);
     Glide.with(this).load(path).into(thumbClipRecordedButton);
+    editText.setVisibility(View.VISIBLE);
   }
 
   @Override
-  public void hideRecordedVideoThumb() {
+  public void hideRecordedVideoThumbWithText() {
     thumbClipRecordedButton.setVisibility(View.INVISIBLE);
+    editText.setVisibility(View.INVISIBLE);
   }
 
   @Override
   public void showVideosRecordedNumber(int numberOfVideos) {
     numVideosRecordedTextView.setVisibility(View.VISIBLE);
     numVideosRecordedTextView.setText(String.valueOf(numberOfVideos));
+    editText.setText(getString(R.string.recordTextEdit));
   }
 
   @Override
@@ -479,6 +490,17 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       presenter.setFlashOff();
       presenter.navigateToEditOrGallery();
     }
+  }
+
+  @OnClick (R.id.button_grid)
+  public void onClickListenerGridButton(){
+    if(gridButton.isSelected()){
+          gridButton.setSelected(false);
+          imageViewGrid.setVisibility(View.INVISIBLE);
+      } else {
+          gridButton.setSelected(true);
+          imageViewGrid.setVisibility(View.VISIBLE);
+      }
   }
 
   @OnClick(R.id.button_settings_camera)
