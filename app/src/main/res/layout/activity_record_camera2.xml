@@ -157,6 +157,7 @@
             android:layout_height="200dp"
             android:background="@color/colorGreyTransparent"
             android:visibility="invisible"
+            android:padding="2dp"
             android:layout_marginLeft="16dp">
 
             <TextView
@@ -167,15 +168,18 @@
                 android:src="@drawable/ic_color_lens_white_48px"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@color/colorWhite" />
-            <SeekBar
-                android:id="@+id/seekBar_slide_left"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#00ffffff"
-                android:src="@drawable/ic_brightness_5_white_48px"
-                android:indeterminate="false"
-                android:rotation="270"
-                />
+
+            <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal">
+                <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
+                    android:id="@+id/seekBar_slide_left"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:splitTrack="false"
+                    app:seekBarRotation="CW270" /> <!-- Rotation: CW90 or CW270 -->
+            </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
             <TextView
                 android:text="0%"
                 android:layout_width="wrap_content"
@@ -308,13 +312,24 @@
                 android:layout_marginLeft="24dp" />
 
             <ImageButton
+                android:id="@+id/measurement_mode"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
                 android:src="@drawable/record_activity_ic_metering_evaluative"
-                android:id="@+id/measurement_mode"
+                android:layout_marginLeft="24dp"
+                />
+
+            <ImageButton
+                android:id="@+id/button_camera_auto"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitXY"
+                android:layout_gravity="center"
+                android:src="@drawable/record_activity_ic_metering_evaluative"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="16dp" />
 

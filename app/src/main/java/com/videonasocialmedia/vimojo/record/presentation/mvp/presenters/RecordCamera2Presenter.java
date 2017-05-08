@@ -225,9 +225,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
   }
 
   @Override
-  public void setZoom(Rect rectValue) {
+  public void setZoom(float zoomValue) {
     // TODO:(alvaro.martinez) 27/01/17 Convert zoom from 0 to 1 and show on RecordView
-    //recordView.setZoom(0.5f);
+    recordView.setZoom(zoomValue);
   }
 
   public void restartPreview(){
@@ -248,8 +248,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
   }
 
   public void onTouchZoom(MotionEvent event) {
-    camera.onTouchZoom(getFingerSpacing(event));
-    // RecordView show slide zoom, from 0 to 1
+    float fingerSpacing = getFingerSpacing(event);
+    camera.onTouchZoom(fingerSpacing);
+
   }
 
   //Determine the space between the first two fingers
@@ -334,6 +335,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
   @Override
   public void onErrorTranscoding(Video video, String message) {
     // TODO(jliarte): 12/04/17 what should we do on error?
+  }
+
+  public void onSeekBarZoom(float zoomValue) {
+    camera.seekBarZoom(zoomValue);
   }
 
   private class VideoToAdapt {

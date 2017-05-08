@@ -44,7 +44,7 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
  * Created by alvaro on 16/01/17.
  */
 
-public class RecordCamera2Activity extends VimojoActivity implements RecordCamera2View {
+public class RecordCamera2Activity extends VimojoActivity implements RecordCamera2View, SeekBar.OnSeekBarChangeListener {
 
   private final String LOG_TAG = getClass().getSimpleName();
 
@@ -164,6 +164,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     progressDialog.setTitle("Adapting video");
     progressDialog.setMessage("Loading...");
     progressDialog.setIndeterminate(false);
+
+    slideSeekBar.setOnSeekBarChangeListener(this);
   }
 
   @Override
@@ -322,7 +324,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void setZoom(float value){
-    // TODO:(alvaro.martinez) 27/01/17 Implement zoom_bar_view
     slideSeekBar.setProgress((int) (value * 100));
   }
 
@@ -613,6 +614,21 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     //// TODO:(alvaro.martinez) 18/01/17 test snackBar, toast, alert dialog ...
     Snackbar snackbar = Snackbar.make(chronometerAndRecPointView, stringResourceId, Snackbar.LENGTH_SHORT);
     snackbar.show();
+  }
+
+  @Override
+  public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    presenter.onSeekBarZoom((float) (progress * 0.01));
+  }
+
+  @Override
+  public void onStartTrackingTouch(SeekBar seekBar) {
+
+  }
+
+  @Override
+  public void onStopTrackingTouch(SeekBar seekBar) {
+
   }
 
   private class OrientationHelper extends OrientationEventListener {

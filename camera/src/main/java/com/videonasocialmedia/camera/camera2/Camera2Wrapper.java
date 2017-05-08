@@ -515,65 +515,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     return videoPath;
   }
 
-
-  public boolean onTouchZoom(float current_finger_spacing) {
-    try {
-
-      String cameraId = manager.getCameraIdList()[cameraIdSelected];
-      CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-      float maxzoom =
-          (characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM))*5;
-
-      Log.d(LOG_TAG, "onTouchZoom, maxzoom " + maxzoom);
-
-      Rect m = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
-
-      if(finger_spacing != 0){
-        if(current_finger_spacing > finger_spacing && maxzoom > zoom_level){
-          zoom_level++;
-
-        }
-        else if (current_finger_spacing < finger_spacing && zoom_level > 1){
-          zoom_level--;
-
-        }
-        int minW = (int) (m.width() / maxzoom);
-        int minH = (int) (m.height() / maxzoom);
-        int difW = m.width() - minW;
-        int difH = m.height() - minH;
-        int cropW = difW /100 *(int)zoom_level;
-        int cropH = difH /100 *(int)zoom_level;
-        cropW -= cropW & 3;
-        cropH -= cropH & 3;
-        Rect zoom = new Rect(cropW, cropH, m.width() - cropW, m.height() - cropH);
-        previewBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoom);
-
-        listener.setZoom(zoom);
-
-        Log.d(LOG_TAG, "onTouchZoom, rectzoom " + zoom);
-      }
-      finger_spacing = current_finger_spacing;
-
-      try {
-        previewSession.setRepeatingRequest(previewBuilder.build(), null,
-            null);
-      }
-      catch (CameraAccessException e) {
-        e.printStackTrace();
-      }
-      catch (NullPointerException ex)
-      {
-        ex.printStackTrace();
-      }
-    }
-    catch (CameraAccessException e)
-    {
-      throw new RuntimeException("can not access camera.", e);
-    }
-
-    return true;
-  }
-
   public void setFocus(Rect rect, int focusArea) {
 
     MeteringRectangle meteringRectangle = new MeteringRectangle(rect, focusArea); // MeteringRectangle.METERING_WEIGHT_DONT_CARE);
@@ -590,5 +531,75 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public String getVideoPath() {
     return videoPath;
+  }
+
+  public boolean onTouchZoom(float current_finger_spacing) {
+    try {
+      String cameraId = manager.getCameraIdList()[cameraIdSelected];
+      CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+      float maxzoom =
+          (characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM)) * 5;
+
+      if (finger_spacing != 0) {
+        if (current_finger_spacing > finger_spacing && maxzoom > zoom_level) {
+          zoom_level++;
+
+        } else if (current_finger_spacing < finger_spacing && zoom_level > 1) {
+          zoom_level--;
+
+        }
+      }
+      finger_spacing = current_finger_spacing;
+
+      applyZoom(characteristics, maxzoom);
+
+      listener.setZoom((float) (zoom_level/maxzoom));
+
+    } catch (CameraAccessException e) {
+      e.printStackTrace();
+    }
+
+    return true;
+  }
+
+  public void seekBarZoom(float zoomValue) {
+    try {
+
+      String cameraId = manager.getCameraIdList()[cameraIdSelected];
+
+      CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+
+      float maxzoom =
+          (characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM))*5;
+
+      zoom_level = zoomValue * maxzoom;
+
+      applyZoom(characteristics, maxzoom);
+
+    } catch (CameraAccessException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void applyZoom(CameraCharacteristics characteristics, float maxzoom) {
+
+      Rect m = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+      int minW = (int) (m.width() / maxzoom);
+      int minH = (int) (m.height() / maxzoom);
+      int difW = m.width() - minW;
+      int difH = m.height() - minH;
+      int cropW = difW /100 *(int) this.zoom_level;
+      int cropH = difH /100 *(int) this.zoom_level;
+      cropW -= cropW & 3;
+      cropH -= cropH & 3;
+      Rect zoom = new Rect(cropW, cropH, m.width() - cropW, m.height() - cropH);
+      previewBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoom);
+    
+    try {
+      previewSession.setRepeatingRequest(previewBuilder.build(), null,
+          null);
+    } catch (CameraAccessException e) {
+      e.printStackTrace();
+    }
   }
 }
