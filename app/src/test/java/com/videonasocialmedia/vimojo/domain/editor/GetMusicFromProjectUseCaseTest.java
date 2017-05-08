@@ -61,7 +61,7 @@ public class GetMusicFromProjectUseCaseTest {
     @Test
     public void getMusicFromProjectReturnsProjectMusic() {
         Project videonaProject = getAProject();
-        Music project_music = new Music(1, "resourceName", 2, 3, "music author","2");
+        Music project_music = new Music(1, "resourceName", 2, 3, "music author","2", 0);
         ArrayList<AudioTrack> audioTracks = getAudioTracks(project_music);
         videonaProject.setAudioTracks(audioTracks);
 
@@ -82,6 +82,8 @@ public class GetMusicFromProjectUseCaseTest {
         Mockito.verify(mockedListener).onMusicRetrieved(retrievedMusicCaptor.capture());
         assertThat("Music retrieved when no audio tracks", retrievedMusicCaptor.getValue(), CoreMatchers.<Music>nullValue());
     }
+
+
 
     @NonNull
     public ArrayList<AudioTrack> getAudioTracks(Music music) {

@@ -12,13 +12,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -34,8 +34,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.export.ExportTempBackgroundService;
-import com.videonasocialmedia.vimojo.export.ExportTempBroadCastReceveiver;
+import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
@@ -59,7 +58,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
     protected Tracker tracker;
     protected boolean criticalPermissionDenied = false;
     protected MultiplePermissionsListener dialogMultiplePermissionsListener;
-    private ExportTempBroadCastReceveiver exportTempBroadCastReceveiver;
     @Inject protected LoadCurrentProjectUseCase loadCurrentProjectUseCase;
     @Inject ProjectRepository projectRepository;
 
@@ -78,9 +76,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
         configPermissions();
         trackerDelegate.onCreate();
 
-//        View root = ( (ViewGroup) findViewById(android.R.id.content) ).getChildAt(0);
         View root = findViewById(android.R.id.content);
-        exportTempBroadCastReceveiver = new ExportTempBroadCastReceveiver(root);
     }
 
     private void configPermissions() {
@@ -91,10 +87,26 @@ public abstract class VimojoActivity extends AppCompatActivity {
                     .withMessage("Both camera and audio permission are needed to take awsome videos with Videona")
                     .withButtonText(android.R.string.ok)
                     .build();
-//            new CustomPermissionListener(this, "titulo", "mensaje", "ok", null);
             Dexter.continuePendingRequestsIfPossible(dialogMultiplePermissionsListener);
         }
     }
+
+    protected ActivityPresentersComponent getActivityPresentersComponent() {
+        return DaggerActivityPresentersComponent.builder()
+                .activityPresentersModule(getActivityPresentersModule())
+                .systemComponent(((VimojoApplication)getApplication()).getSystemComponent())
+                .build();
+    }
+
+    @NonNull
+    public ActivityPresentersModule getActivityPresentersModule() {
+        return new ActivityPresentersModule(this);
+    }
+
+//    protected UserEventTracker getUserEventTracker() {
+//        return UserEventTracker.getInstance(MixpanelAPI
+//                .getInstance(this, BuildConfig.MIXPANEL_TOKEN));
+//    }
 
     @Override
     protected void onDestroy() {
@@ -106,7 +118,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         JSONObject activityProperties = new JSONObject();
-        unregisterReceiver(exportTempBroadCastReceveiver);
         try {
             activityProperties.put(AnalyticsConstants.ACTIVITY, getClass().getSimpleName());
             mixpanel.track(AnalyticsConstants.TIME_IN_ACTIVITY, activityProperties);
@@ -117,10 +128,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        registerReceiver(exportTempBroadCastReceveiver, new IntentFilter(
-                ExportTempBackgroundService.ACTION));
         super.onResume();
-
     }
 
     @Override
@@ -154,7 +162,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
 //        }
 //    }
 
-
     protected boolean isLandscapeOriented() {
         return getOrientation() == Configuration.ORIENTATION_LANDSCAPE;
     }
@@ -168,7 +175,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
     }
 
     class CustomPermissionListener extends EmptyMultiplePermissionsListener {
-
         private final Context context;
         private final String title;
         private final String message;
@@ -189,7 +195,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
         @Override
         public void onPermissionsChecked(MultiplePermissionsReport report) {
             super.onPermissionsChecked(report);
-
             if (!report.areAllPermissionsGranted()) {
                 showDialog();
             } else {

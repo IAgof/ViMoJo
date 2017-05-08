@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.presentation.views.services;
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -10,16 +11,17 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishe
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.io.File;
+
 /**
  * Created by  on 26/05/16.
  */
 public class ExportProjectService extends IntentService implements OnExportFinishedListener {
-
     public static final String NOTIFICATION = Constants.NOTIFICATION_EXPORT_SERVICES_RECEIVER;
     public static final String FILEPATH = "filepath";
     public static final String RESULT = "result";
     private static final String TAG = "ExportProjectService";
-    ExportProjectUseCase exportUseCase;
+    private ExportProjectUseCase exportUseCase;
 
     //TODO Add persistence. Needed to navigate for ShareActivity if service has finished.
 
@@ -32,12 +34,13 @@ public class ExportProjectService extends IntentService implements OnExportFinis
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        exportUseCase = new ExportProjectUseCase(this);
-        exportUseCase.export();
+        exportUseCase = new ExportProjectUseCase();
+        exportUseCase.export(this);
     }
 
     @Override
     public void onExportError(String error) {
+        Log.d(TAG, "exportError " + error);
         publishResults(error, Activity.RESULT_CANCELED);
     }
 
@@ -52,8 +55,17 @@ public class ExportProjectService extends IntentService implements OnExportFinis
 
     @Override
     public void onExportSuccess(Video video) {
-        Utils.addFileToVideoGallery(video.getMediaPath().toString());
-        publishResults(video.getMediaPath(), Activity.RESULT_OK);
+        Log.d(TAG, "exportSuccess ");
+        File f = new File(video.getMediaPath());
+        String destPath = Constants.PATH_APP + File.separator + f.getName();
+        File destFile = new File(destPath);
+        f.renameTo(destFile);
+        Utils.addFileToVideoGallery(destPath.toString());
+        publishResults(destPath, Activity.RESULT_OK);
     }
 
+    @Override
+    public void onExportProgress(String progressMsg, int exportStage) {
+        // TODO(jliarte): 28/04/17  do nothing as we're removing this class?
+    }
 }

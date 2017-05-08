@@ -6,10 +6,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
+import com.crashlytics.android.Crashlytics;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.domain.ClearProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.social.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.domain.social.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -17,25 +21,24 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
-import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by jca on 11/12/15.
  */
 public class ShareVideoPresenter {
-
     private final Context context;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetFtpListUseCase getFtpListUseCase;
-    private ClearProjectUseCase clearProjectUseCase;
-    protected CreateDefaultProjectUseCase createDefaultProjectUseCase;
+    private CreateDefaultProjectUseCase createDefaultProjectUseCase;
     private ShareVideoView shareVideoView;
     protected Project currentProject;
     protected UserEventTracker userEventTracker;
@@ -44,26 +47,35 @@ public class ShareVideoPresenter {
     private List<SocialNetwork> socialNetworkList;
     private List optionToShareList;
     private SharedPreferences.Editor preferencesEditor;
-    private ProfileRepository profileRepository;
 
+    private AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase;
+    private ExportProjectUseCase exportUseCase;
+
+    @Inject
     public ShareVideoPresenter(ShareVideoView shareVideoView, UserEventTracker userEventTracker,
-                               SharedPreferences sharedPreferences, Context context) {
+                               SharedPreferences sharedPreferences, Context context,
+                               CreateDefaultProjectUseCase createDefaultProjectUseCase,
+                               AddLastVideoExportedToProjectUseCase
+                                       addLastVideoExportedProjectUseCase,
+                               ExportProjectUseCase exportProjectUseCase) {
         this.shareVideoView = shareVideoView;
         this.userEventTracker = userEventTracker;
         this.sharedPreferences = sharedPreferences;
-        currentProject = loadCurrentProject();
         this.context = context;
+        this.createDefaultProjectUseCase = createDefaultProjectUseCase;
+        this.addLastVideoExportedProjectUseCase = addLastVideoExportedProjectUseCase;
+        this.exportUseCase = exportProjectUseCase;
+
+        currentProject = loadCurrentProject();
     }
 
     private Project loadCurrentProject() {
         return Project.getInstance(null, null, null);
     }
 
-    public void onCreate() {
+    public void init() {
         obtainNetworksToShareUseCase = new ObtainNetworksToShareUseCase();
         getFtpListUseCase = new GetFtpListUseCase();
-        clearProjectUseCase = new ClearProjectUseCase();
-        createDefaultProjectUseCase = new CreateDefaultProjectUseCase();
     }
 
     public void onResume() {
@@ -71,6 +83,7 @@ public class ShareVideoPresenter {
         obtainListFtp();
         obtainListOptionsToShare(ftpList, socialNetworkList);
         shareVideoView.showOptionsShareList(optionToShareList);
+        shareVideoView.startVideoExport();
     }
 
     private void obtainListFtp() {
@@ -81,9 +94,11 @@ public class ShareVideoPresenter {
        socialNetworkList = obtainNetworksToShareUseCase.obtainMainNetworks();
     }
 
-    private void obtainListOptionsToShare(List<FtpNetwork> ftpList, List<SocialNetwork> socialNetworkList) {
+    private void obtainListOptionsToShare(List<FtpNetwork> ftpList,
+                                          List<SocialNetwork> socialNetworkList) {
         optionToShareList = new ArrayList();
-        optionToShareList.addAll(ftpList);
+        if(BuildConfig.FEATURE_FTP)
+            optionToShareList.addAll(ftpList);
         optionToShareList.addAll(socialNetworkList);
     }
 
@@ -106,6 +121,7 @@ public class ShareVideoPresenter {
         ctx.startActivity(intent);
     }
 
+    // TODO(jliarte): 15/12/16 safe delete this method - old way to show networks?
     public void obtainExtraAppsToShare() {
         List networks = obtainNetworksToShareUseCase.obtainSecondaryNetworks();
         shareVideoView.hideShareNetworks();
@@ -129,19 +145,18 @@ public class ShareVideoPresenter {
     }
 
     public void trackVideoShared(String socialNetwork) {
-
         userEventTracker.trackVideoSharedSuperProperties();
         userEventTracker.trackVideoShared(socialNetwork, currentProject, getNumTotalVideosShared());
         userEventTracker.trackVideoSharedUserTraits();
     }
-    public void resetProject(String rootPath) {
+
+    public void newDefaultProject(String rootPath){
         clearProjectDataFromSharedPreferences();
-        clearProjectUseCase.clearProject(currentProject);
-        profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, context);
-        createDefaultProjectUseCase.loadOrCreateProject(rootPath, profileRepository.getCurrentProfile());
+        createDefaultProjectUseCase.createProject(rootPath);
     }
 
-    // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer?
+    // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?
+    // TODO:(alvaro.martinez) 4/01/17 these data will no be saved in SharedPreferences, rewrite mixpanel tracking and delete.
     private void clearProjectDataFromSharedPreferences() {
         sharedPreferences = VimojoApplication.getAppContext().getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
@@ -149,5 +164,30 @@ public class ShareVideoPresenter {
         preferencesEditor = sharedPreferences.edit();
         preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION, 0);
         preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS, 0);
+    }
+
+    public void addVideoExportedToProject(String videoPath) {
+        addLastVideoExportedProjectUseCase.addLastVideoExportedToProject(videoPath,
+            DateUtils.getDateRightNow());
+    }
+
+    public void startExport() {
+        exportUseCase.export(new OnExportFinishedListener() {
+            @Override
+            public void onExportError(String error) {
+                Crashlytics.log("Error exportando: " + error);
+                // TODO(jliarte): 28/04/17 pass the string?
+                shareVideoView.showVideoExportError();
+            }
+            @Override
+            public void onExportSuccess(Video video) {
+                shareVideoView.loadExportedVideoPreview(video.getMediaPath());
+            }
+
+            @Override
+            public void onExportProgress(String progressMsg, int exportStage) {
+                shareVideoView.showExportProgress(progressMsg);
+            }
+        });
     }
 }

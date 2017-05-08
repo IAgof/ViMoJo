@@ -27,6 +27,7 @@
         android:title="@string/title_camera_section"
         android:key="@string/title_camera_section"
         android:enabled="true">
+
         <com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseCameraResolutionListPreferences
             android:theme="@style/VideonaAlertDialog"
             android:dialogTitle="@string/resolution"
@@ -46,7 +47,7 @@
             android:summary="@string/good_quality_name"
             android:title="@string/quality"/>
 
-        <com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseFrameRateRateListPreferences
+        <com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseFrameRateListPreferences
             android:theme="@style/VideonaAlertDialog"
             android:dialogTitle="@string/frame_rate"
             android:entries="@array/camera_frame_rate_names"
@@ -54,10 +55,35 @@
             android:key="list_preferences_frame_rate"
             android:summary="@string/good_frame_rate_name"
             android:title="@string/frame_rate"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/title_FTP1_Section">
+        android:title="@string/title_fade_transition"
+        android:key="@string/title_fade_transition">
+        <SwitchPreference
+            android:key="video_fade_transition"
+            android:title="@string/title_video_fade_transition"
+            android:defaultValue="false" />
+
+        <SwitchPreference
+            android:key="audio_fade_transition"
+            android:title="@string/title_audio_fade_transition"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/title_watermark_section"
+        android:key="@string/title_watermark_section">
+        <SwitchPreference
+            android:key="add_watermark"
+            android:title="@string/title_watermark_preference"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/title_FTP1_Section"
+        android:key="@string/title_FTP1_Section">
 
         <EditTextPreference
             android:key="host"
@@ -96,7 +122,8 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/title_FTP2_Section">
+        android:title="@string/title_FTP2_Section"
+        android:key="@string/title_FTP2_Section">
 
         <EditTextPreference
             android:key="host_FTP2"

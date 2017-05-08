@@ -49,6 +49,9 @@ public class ConfigPreferences {
     public final static String CAMERA_FRAME_RATE_25FPS_SUPPORTED = "frame_rate_25fps_supported";
     public final static String CAMERA_FRAME_RATE_30FPS_SUPPORTED = "frame_rate_30fps_supported";
     public final static String CAMERA_FRAME_RATE_SUPPORTED = "camera_frame_rate_supported";
+    public final static String TRANSITION_VIDEO = "video_fade_transition";
+    public final static String TRANSITION_AUDIO = "audio_fade_transition";
+    public final static String WATERMARK = "add_watermark";
     public final static String EMAIL_BETA_DONE = "email_beta_done";
     public final static String EMAIL_BETA_FORTNIGHT = "email_beta_fortnight";
     public final static String VIDEO_DURATION = "video_duration";

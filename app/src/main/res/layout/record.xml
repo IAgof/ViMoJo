@@ -23,6 +23,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/image_view_grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/activity_rec_grid"
+            android:visibility="invisible"/>
+
         <ImageButton
             android:id="@+id/clear_button"
             android:layout_width="48dp"
@@ -30,6 +38,7 @@
             android:src="@drawable/record_activity_ic_expand"
             android:background="@drawable/circle_background"
             android:scaleType="fitCenter"
+            android:visibility="invisible"
             android:layout_marginBottom="16dp"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="16dp"
@@ -76,10 +85,11 @@
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
                     app:srcCompat="@drawable/record_activity_ic_battery_charged"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp" />
+                    android:layout_marginBottom="4dp"
+                    />
 
                 <ImageView
                     android:id="@+id/activity_record_icon_memory"
@@ -87,7 +97,7 @@
                     android:layout_height="24dp"
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:srcCompat="@drawable/record_activity_ic_memory_card"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"/>
@@ -361,6 +371,18 @@
                 android:layout_centerHorizontal="true" />
 
             <TextView
+                android:id="@+id/record_text_view_edit_or_gallery"
+                android:padding="2dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/button_navigate_edit_or_gallery"
+                android:layout_centerInParent="true"
+                android:text="@string/recordTextGallery"
+                android:textSize="12sp"
+                android:textColor="@android:color/white"
+                />
+
+            <TextView
                 android:id="@+id/text_view_num_videos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -380,46 +402,47 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="visible"
+                android:padding="2dp"
                 android:background="@color/colorGreyTransparent"
                 android:layout_above="@+id/button_record"
                 android:layout_marginBottom="12dp"
                 android:layout_centerHorizontal="true">
 
                 <ImageButton
-                    android:id="@+id/button_toggle_flash"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:background="@null"
-                    android:layout_gravity="center"
-                    android:scaleType="fitCenter"
-                    android:layout_margin="4dp"
-                    app:srcCompat="@drawable/record_activity_ic_flash"/>
-
-                <ImageButton
                     android:id="@+id/button_change_camera"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:layout_margin="4dp"
+                    android:layout_margin="6dp"
                     android:background="@null"
                     android:scaleType="fitCenter"
                     android:src="@drawable/record_activity_ic_rotate"/>
 
                 <ImageButton
-                    android:id="@+id/settings_camera_button"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_margin="10dp"
+                    android:id="@+id/button_toggle_flash"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@null"
+                    android:layout_gravity="center"
+                    android:scaleType="fitCenter"
+                    android:layout_margin="6dp"
+                    app:srcCompat="@drawable/record_activity_ic_flash"/>
+
+                <ImageButton
+                    android:id="@+id/button_grid"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="6dp"
                     android:background="@null"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/record_activity_ic_controls"/>
+                    android:src="@drawable/record_activity_ic_grid"/>
 
                 <ImageButton
                     android:id="@+id/button_navigate_settings"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:layout_margin="4dp"
+                    android:layout_margin="6dp"
                     android:background="@null"
                     android:scaleType="fitCenter"
                     android:src="@drawable/record_activity_ic_settings"

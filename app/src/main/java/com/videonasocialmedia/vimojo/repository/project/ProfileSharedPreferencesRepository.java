@@ -38,7 +38,7 @@ public class ProfileSharedPreferencesRepository implements ProfileRepository {
 
   private VideoResolution.Resolution getResolutionFromPreferencesSetting() {
     String resolution = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
-        context.getString(R.string.low_resolution_name));
+        context.getString(R.string.good_resolution_name));
     if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false)) {
       if (resolution.compareTo(context.getString(R.string.low_resolution_name)) == 0) {
         return VideoResolution.Resolution.HD720;
@@ -55,12 +55,12 @@ public class ProfileSharedPreferencesRepository implements ProfileRepository {
       }
     }
     // default
-    return VideoResolution.Resolution.HD720;
+    return VideoResolution.Resolution.HD1080;
   }
 
   private VideoQuality.Quality getQualityFromPreferenceSettings() {
     String quality = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY,
-        context.getString(R.string.high_quality_name));
+        context.getString(R.string.good_quality_name));
     if (quality.compareTo(context.getString(R.string.low_quality_name)) == 0) {
       return VideoQuality.Quality.LOW;
     }
@@ -71,12 +71,12 @@ public class ProfileSharedPreferencesRepository implements ProfileRepository {
       return VideoQuality.Quality.HIGH;
     }
     // default
-    return VideoQuality.Quality.HIGH;
+    return VideoQuality.Quality.GOOD;
   }
 
   private VideoFrameRate.FrameRate getFrameRateFromPreferenceSettings() {
     String frameRate = sharedPreferences.getString(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE,
-        "0");
+        context.getString(R.string.high_frame_rate_name));
     if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false)) {
       if (frameRate.compareTo(context.getString(R.string.low_frame_rate_name)) == 0) {
         return VideoFrameRate.FrameRate.FPS24;
@@ -92,8 +92,8 @@ public class ProfileSharedPreferencesRepository implements ProfileRepository {
         return VideoFrameRate.FrameRate.FPS30;
       }
     }
-    // default
-    return VideoFrameRate.FrameRate.NOT_SUPPORTED;
+    // default 30 fps, standard
+    return VideoFrameRate.FrameRate.FPS30;
   }
 
 }

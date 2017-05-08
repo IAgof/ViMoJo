@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 
@@ -12,25 +13,42 @@ import io.realm.annotations.PrimaryKey;
  */
 public class RealmProject extends RealmObject {
   @PrimaryKey
+  public String uuid;
   public String title;
+  public String lastModification;
   public String projectPath;
   public String quality;
   public String resolution;
   public String frameRate;
+  public int duration;
+  public String pathLastVideoExported;
+  public String dateLastVideoExported;
   public String musicTitle;
   public float musicVolume = Music.DEFAULT_MUSIC_VOLUME;
+  public boolean isAudioFadeTransitionActivated;
+  public boolean isVideoFadeTransitionActivated;
+  public boolean isWatermarkActivated;
   public RealmList<RealmVideo> videos;
 
   public RealmProject() {
     this.videos = new RealmList<RealmVideo>();
   }
 
-  public RealmProject(String title, String projectPath, String quality, String resolution, String frameRate) {
+  public RealmProject(String uuid, String title, String lastModification, String projectPath,
+                      String quality, String resolution, String frameRate, int duration,
+                      boolean isAudioFadeTransitionActivated,
+                      boolean isVideoFadeTransitionActivated, boolean isWatermarkActivated) {
+    this.uuid = uuid;
     this.title = title;
+    this.lastModification = lastModification;
     this.projectPath = projectPath;
     this.quality = quality;
     this.resolution = resolution;
     this.frameRate = frameRate;
+    this.duration = duration;
     this.videos = new RealmList<RealmVideo>();
+    this.isAudioFadeTransitionActivated = isAudioFadeTransitionActivated;
+    this.isVideoFadeTransitionActivated = isVideoFadeTransitionActivated;
+    this.isWatermarkActivated = isWatermarkActivated;
   }
 }

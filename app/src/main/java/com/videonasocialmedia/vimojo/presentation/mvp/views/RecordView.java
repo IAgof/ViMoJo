@@ -62,14 +62,13 @@ public interface RecordView {
 
     void showPrincipalViews ();
 
-    void showRecordedVideoThumb(String path);
+    void showRecordedVideoThumbWithText(String path);
 
-    void hideRecordedVideoThumb();
+    void hideRecordedVideoThumbWithText();
 
     void showVideosRecordedNumber(int numberOfVideos);
 
     void hideVideosRecordedNumber();
 
     void showResolutionSelected(int height);
-
 }

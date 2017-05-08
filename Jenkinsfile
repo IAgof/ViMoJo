@@ -4,8 +4,15 @@ node {
   stage 'Stage Checkout'
 
   // Checkout code from repository and update any submodules
-  checkout scm
-  sh 'git submodule update --init'
+//  checkout scm
+//  sh 'git submodule update --init'
+  checkout([
+          $class: 'GitSCM',
+          branches: scm.branches,
+          doGenerateSubmoduleConfigurations: true,
+          extensions: scm.extensions + [[$class: 'SubmoduleOption', parentCredentials: true]],
+          userRemoteConfigs: scm.userRemoteConfigs
+  ])
 
   stage 'Stage Build'
 
@@ -14,14 +21,14 @@ node {
 
   // runs all the tests
   try {
-    sh "./gradlew cleanTest test"
+    sh "./gradlew cleanTest test --no-daemon"
   } catch (err) {
     currentBuild.result = 'UNSTABLE'
   }
   stash includes: '**/test-results/**/*.xml', name: 'junit-reports'
 
   // run checkstyle
-  sh "./gradlew checkstyle"
+  sh "./gradlew checkstyle --no-daemon"
   stash includes: '**/reports/checkstyle/*.xml', name: 'checkstyle-reports'
 
 
@@ -30,7 +37,7 @@ node {
 //
 //  //build your gradle flavor, passes the current build number as a parameter to gradle
 //  sh "./gradlew clean assemble${flavor}Debug -PBUILD_NUMBER=${env.BUILD_NUMBER}"
-  sh "./gradlew clean assembleDebug -PBUILD_NUMBER=${env.BUILD_NUMBER}"
+  sh "./gradlew clean assembleDebug -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
 }
 
 stage 'Report'
@@ -52,7 +59,14 @@ node {
 stage 'Stage Upload To Fabric'
 node {
   if (env.BRANCH_NAME == 'develop') {
-    sh "./gradlew crashlyticsUploadDistributionDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER}"
+    sh "./gradlew crashlyticsUploadDistributionVimojoDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
+    sh "./gradlew crashlyticsUploadDistributionHispanopostDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
+    sh "./gradlew crashlyticsUploadDistributionShoulderpodDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
+    sh "./gradlew crashlyticsUploadDistributionVeinteminutosDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
+    sh "./gradlew crashlyticsUploadDistributionRtveDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
+    sh "./gradlew crashlyticsUploadDistributionOchoaldiaDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
+    sh "./gradlew crashlyticsUploadDistributionElpaisdigitalDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
+
   }
 }
 

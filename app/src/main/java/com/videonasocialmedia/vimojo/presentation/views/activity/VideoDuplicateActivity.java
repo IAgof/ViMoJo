@@ -28,9 +28,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.FileDescriptorBitmapDecoder;
 import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -39,10 +37,12 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePrevie
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 
+import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -52,8 +52,12 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoDuplicateActivity extends VimojoActivity implements DuplicateView,
         VideonaPlayer.VideonaPlayerListener {
-
     private static final String DUPLICATE_VIDEO_POSITION = "duplicate_video_position";
+    private static final String NUM_DUPLICATE_VIDEOS = "num_duplicate_videos";
+    private static final String TAG = "VideoDuplicateActivity";
+
+    @Inject DuplicatePreviewPresenter presenter;
+
     @Bind(R.id.image_thumb_duplicate_video_left)
     ImageView imageThumbLeft;
     @Bind(R.id.image_thumb_duplicate_video_right)
@@ -71,12 +75,9 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
     int videoIndexOnTrack;
-    private DuplicatePreviewPresenter presenter;
     private Video video;
-    private String TAG = "VideoDuplicateActivity";
     private int currentPosition = 0;
     private int numDuplicateVideos = 2;
-    private String NUM_DUPLICATE_VIDEOS = "num_duplicate_videos";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +92,7 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN));
-        presenter = new DuplicatePreviewPresenter(this, userEventTracker);
+        this.getActivityPresentersComponent().inject(this);
 
         videonaPlayer.setListener(this);
 
@@ -151,27 +151,15 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit_activity, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-
         switch (item.getItemId()) {
-            case R.id.action_settings_edit_options:
-                navigateTo(SettingsActivity.class);
-                return true;
-            case R.id.action_settings_edit_gallery:
-                navigateTo(GalleryActivity.class);
+            case android.R.id.home:
+              onBackPressed();
                 return true;
             default:
-
         }
         return super.onOptionsItemSelected(item);
     }

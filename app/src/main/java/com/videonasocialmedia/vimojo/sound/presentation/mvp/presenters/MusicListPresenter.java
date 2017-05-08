@@ -1,50 +1,82 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
+import android.content.Context;
+
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by ruth on 13/09/16.
  */
-public class MusicListPresenter implements OnVideosRetrieved {
-
+public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback {
+    private final Context context;
     private List<Music> availableMusic;
-    private MusicListView soundListView;
+    private MusicListView musicListView;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+    private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
+    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
 
-    public MusicListPresenter(MusicListView soundListView) {
-        GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase();
+    @Inject
+    public MusicListPresenter(MusicListView musicListView, Context context,
+                              GetMusicListUseCase getMusicListUseCase,
+                              GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                              GetMusicFromProjectUseCase getMusicFromProjectUseCase,
+                              GetPreferencesTransitionFromProjectUseCase
+                                  getPreferencesTransitionFromProjectUseCase) {
+        this.context = context;
         availableMusic = getMusicListUseCase.getAppMusic();
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        this.soundListView = soundListView;
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
+        this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
+        this.musicListView = musicListView;
     }
 
-    public void onResume() {
+    public void init() {
+        obtainMusicsAndVideos();
+        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+            musicListView.setVideoFadeTransitionAmongVideos();
+        }
+    }
+
+    private void obtainMusicsAndVideos() {
+        getMusicFromProjectUseCase.getMusicFromProject(this);
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 
     public void onStart() {
-        soundListView.showVideoList(availableMusic);
+        musicListView.showVideoList(availableMusic);
     }
 
     public void getAvailableMusic() {
-        soundListView.showVideoList(availableMusic);
+        musicListView.showVideoList(availableMusic);
     }
 
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
-        soundListView.bindVideoList(videoList);
+        musicListView.bindVideoList(videoList);
     }
 
     @Override
     public void onNoVideosRetrieved() {
         //TODO Show error
-        soundListView.resetPreview();
+        musicListView.resetPreview();
+    }
+
+    @Override
+    public void onMusicRetrieved(Music music) {
+        if(getMusicFromProjectUseCase.hasBeenMusicSelected()){
+            musicListView.goToDetailActivity(music.getMediaPath());
+        }
     }
 }

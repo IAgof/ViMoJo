@@ -12,6 +12,7 @@ package com.videonasocialmedia.vimojo.main;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
@@ -24,7 +25,10 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
+import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
+import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
@@ -36,6 +40,8 @@ public class VimojoApplication extends Application {
     private static Context context;
 
     Tracker appTracker;
+    private DataRepositoriesModule dataRepositoriesModule;
+    private ApplicationModule applicationModule;
 
     public static Context getAppContext() {
         return VimojoApplication.context;
@@ -48,7 +54,7 @@ public class VimojoApplication extends Application {
      * lazy initialization of state) since the time spent in this function
      * directly impacts the performance of starting the first activity,
      * service, or receiver in a process.
-     * If you override this method, be sure to call super.onCreate().
+     * If you override this method, be sure to call super.init().
      */
     @Override
     public void onCreate() {
@@ -65,9 +71,27 @@ public class VimojoApplication extends Application {
 
     void initSystemComponent() {
         this.systemComponent = DaggerSystemComponent.builder()
-                .applicationModule(new ApplicationModule(this))
+                .applicationModule(getApplicationModule())
                 .dataRepositoriesModule(getDataRepositoriesModule())
+                .trackerModule(getTrackerModule())
+//                .activityPresentersModule(getActivityPresentersModule())
                 .build();
+    }
+
+    @NonNull
+    public ApplicationModule getApplicationModule() {
+        if (applicationModule == null) {
+            applicationModule = new ApplicationModule(this);
+        }
+        return applicationModule;
+    }
+
+    private TrackerModule getTrackerModule() {
+        return new TrackerModule(this);
+    }
+
+    private ActivityPresentersModule getActivityPresentersModule() {
+        return new ActivityPresentersModule(null);
     }
 
     public SystemComponent getSystemComponent() {
@@ -75,7 +99,10 @@ public class VimojoApplication extends Application {
     }
 
     public DataRepositoriesModule getDataRepositoriesModule() {
-        return new DataRepositoriesModule();
+        if (dataRepositoriesModule == null) {
+            dataRepositoriesModule = new DataRepositoriesModule();
+        }
+        return dataRepositoriesModule;
     }
 
 
@@ -97,7 +124,7 @@ public class VimojoApplication extends Application {
     protected void setupDataBase() {
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
                 .name("vimojoDB")
-                .schemaVersion(2) // 20161024
+                .schemaVersion(6) // 25042017 - v0.4.23 21070227
                 .migration(new VimojoMigration())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);

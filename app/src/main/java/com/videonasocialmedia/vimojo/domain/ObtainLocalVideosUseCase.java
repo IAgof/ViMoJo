@@ -17,47 +17,63 @@ public class ObtainLocalVideosUseCase {
 
     private final String LOG_TAG = "ObtainLocalVideos";
 
-    public void obtainEditedVideos(OnVideosRetrieved listener) {
-        ArrayList<Video> videos = obtainVideosFromPath(Constants.PATH_APP_EDITED);
-        if (videos == null) {
-            listener.onNoVideosRetrieved();
-        } else {
-            listener.onVideosRetrieved(videos);
-        }
+    public void obtainEditedVideos(final OnVideosRetrieved listener) {
+        obtainVideosFromPathAsync(Constants.PATH_APP_EDITED, new VideoRetrieverListener() {
+                    @Override
+                    public void onVideosRetrieved(ArrayList<Video> videoList) {
+                        if (videoList == null) {
+                            listener.onNoVideosRetrieved();
+                        } else {
+                            listener.onVideosRetrieved(videoList);
+                        }
+                    }
+                });
     }
 
-    public void obtainRawVideos(OnVideosRetrieved listener) {
-        ArrayList<Video> videos = obtainVideosFromPath(Constants.PATH_APP_MASTERS);
-        if (videos == null) {
-            listener.onNoVideosRetrieved();
-        } else {
-            listener.onVideosRetrieved(videos);
-        }
-    }
-
-    private ArrayList<Video> obtainVideosFromPath(String path) {
-        ArrayList<Video> videos = null;
-        File directory = new File(path);
-        File[] files = directory.listFiles();
-
-        if (files != null && files.length > 0) {
-            videos = new ArrayList<>();
-
-            Collections.sort(Arrays.asList(files), new Comparator<File>() {
-                public int compare(File f1, File f2) {
-                    long d1 = f1.lastModified();
-                    long d2 = f2.lastModified();
-                    return d1 > d2 ? 1 : d1 < d2 ? -1 : 0;
+    public void obtainRawVideos(final OnVideosRetrieved listener) {
+        obtainVideosFromPathAsync(Constants.PATH_APP_MASTERS, new VideoRetrieverListener() {
+            @Override
+            public void onVideosRetrieved(ArrayList<Video> videoList) {
+                if (videoList == null) {
+                    listener.onNoVideosRetrieved();
+                } else {
+                    listener.onVideosRetrieved(videoList);
                 }
-            });
-            for (int i = files.length - 1; i >= 0; i--) {
-                if (files[i].getName().endsWith(".mp4") && files[i].isFile())
-                    videos.add(new Video(path + File.separator + files[i].getName()));
             }
-
-        }
-
-        return videos;
+        });
     }
 
+    private void obtainVideosFromPathAsync(final String path, final VideoRetrieverListener listener) {
+        new Thread() {
+            @Override
+            public void run() {
+                ArrayList<Video> videos = null;
+                File directory = new File(path);
+                File[] files = directory.listFiles();
+
+                if (files != null && files.length > 0) {
+                    videos = new ArrayList<>();
+
+                    Collections.sort(Arrays.asList(files), new Comparator<File>() {
+                        public int compare(File f1, File f2) {
+                            long d1 = f1.lastModified();
+                            long d2 = f2.lastModified();
+                            return d1 > d2 ? 1 : d1 < d2 ? -1 : 0;
+                        }
+                    });
+                    for (int i = files.length - 1; i >= 0; i--) {
+                        if (files[i].getName().endsWith(".mp4") && files[i].isFile())
+                            videos.add(new Video(path + File.separator + files[i].getName()));
+                    }
+
+                }
+
+                listener.onVideosRetrieved(videos);
+            }
+        }.start();
+    }
+
+    public interface VideoRetrieverListener {
+        void onVideosRetrieved(ArrayList<Video> videoList);
+    }
 }

@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.repository.video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,8 +29,9 @@ public class RealmVideoToVideoMapperTest {
 
   @Test
   public void testMapReturnsVideoWithFieldsMapped() {
-    RealmVideo realmVideo = new RealmVideo("randomUUID", 0, "media/path", "temp/path", true, "text",
-            TextEffect.TextPosition.CENTER.name(), true, true, 2, 10);
+    RealmVideo realmVideo = new RealmVideo("randomUUID", 0, "media/path", "temp/path", "text",
+            TextEffect.TextPosition.CENTER.name(), true, true, 2, 10,
+        Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name(), true);
     RealmVideoToVideoMapper mapper = new RealmVideoToVideoMapper();
 
     Video video = mapper.map(realmVideo);
@@ -38,12 +40,12 @@ public class RealmVideoToVideoMapperTest {
     assertThat(video.getPosition(), is(0));
     assertThat(video.getMediaPath(), is("media/path"));
     assertThat(video.getTempPath(), is("temp/path"));
-    assertThat(video.outputVideoIsFinished(), is(true));
     assertThat(video.getClipText(), is("text"));
     assertThat(video.getClipTextPosition(), is(TextEffect.TextPosition.CENTER.name()));
-    assertThat(video.isTextToVideoAdded(), is(true));
+    assertThat(video.hasText(), is(true));
     assertThat(video.isTrimmedVideo(), is(true));
     assertThat(video.getStartTime(), is(2));
     assertThat(video.getStopTime(), is(10));
+    assertThat(video.getVideoError(), is(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name()));
   }
 }

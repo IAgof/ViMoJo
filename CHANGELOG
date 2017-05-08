@@ -1,3 +1,75 @@
+v0.4.24.10
+- Automatically updating project resolution and setting when a user imports videos from gallery into an empty project.
+- Deleted Contacts permission
+
+v0.4.24.9
+- Made gallery video loading async to improve user experience
+
+v0.4.24.8
+- Moved export project to ShareActivity. Show dialog exporting project.
+- Review export project process.
+
+v0.4.24.7
+- Improved ui drawer and gallery projects.
+- Changes all screens to work only in portrait mode.
+- Added feature toggle hide audio, video fade transitions.
+
+v0.4.24.6
+ - Improved stability exporting files. Better control in the process of trim, split, text and audio and video transitions.
+
+v0.4.24.5
+    - Rewrited EditActivity time line and fixed clip reordering related bugs
+
+v0.4.24.4
+    - Update media player buttons, new icons, adjust margins and padding.
+    - EditActivity adjust margin.
+
+v0.4.24.3
+    - Fixed ui camera.
+
+v0.4.24.2
+    - Fixed problem splitting videos.
+
+v0.4.24.1
+    - Added option to enable a grid camera in settings screen.
+    - Update quality record video values to 16, 32, 50 Mbps.
+    - Update default project camera settings to 1080p, 32 Mbps.
+
+v0.4.23
+- Fixed problem in settings screen.
+- Updated video transition to white color. Adjust duration of audio, video transitions.
+
+v0.4.22
+- Added new audio tracks interface. Show audio and music clips in separate tracks with blocks.
+
+v0.4.21
+- Improved Videona-SDK media framework intermediate files generation for better stability and improved performance
+
+v0.4.20
+- Added the possibility of mixing music with original video audio selecting volume between video and music resource.
+- Set default music volume to 50%.
+
+v0.4.19.1
+- Added video and audio transitions to videona player preview
+- Improved player with prebuffering of next clip
+
+v0.4.19
+- Added audio (fade in/out) and video (fade to black) transitions for each clip
+- Added preferece to enable/disable audio, video transitions.
+- Added new view to go to record or gallery every time new project is created.
+- bugs and ui improvements
+    * Resize icons accept/cancel, resize preview thumb project without videos
+    * Added icon user to drawer header
+    * Added navigation to music detail if music has been selected before
+
+v0.4.18
+- Multiproject support, now the user can save and restore multiple projects to work on
+- Edit views redesign according to material design guides
+
+v0.4.17
+- Moved voice over mixing to final share step
+- Bug fixing and improved overall media backend performance.
+
 v0.4.16
 - Update record screen, new design.
 - Update application colors.

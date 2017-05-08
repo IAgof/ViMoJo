@@ -40,8 +40,6 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnInitAppEventListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
-import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.AppStart;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -60,6 +58,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -77,6 +77,10 @@ import butterknife.ButterKnife;
 
 public class InitAppActivity extends VimojoActivity implements InitAppView, OnInitAppEventListener {
     private final String LOG_TAG = this.getClass().getSimpleName();
+    private long MINIMUN_WAIT_TIME = 900;
+
+    @Inject InitAppPresenter presenter;
+
     protected Handler handler = new Handler();
     @Bind(R.id.videona_version)
     TextView versionName;
@@ -84,7 +88,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     ViewGroup initRootView;
     @Bind(R.id.splash_screen)
     ImageView splashScreen;
-    private long MINIMUN_WAIT_TIME = 900;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private Camera camera;
@@ -93,13 +96,13 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private String androidId = null;
     private String initState;
     private CompositeMultiplePermissionsListener compositePermissionsListener;
-    private InitAppPresenter presenter = new InitAppPresenter(this);
-    private ProfileRepository profileRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+
+        getActivityPresentersComponent().inject(this);
 
         //remove title, mode fullscreen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -116,7 +119,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     }
 
     private boolean isBetaAppOutOfDate() {
-
         Calendar endOfBeta = Calendar.getInstance();
         Calendar today = Calendar.getInstance();
 
@@ -135,7 +137,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         if(today.after(endOfBeta) ){
             return true;
         }
-
         return false;
     }
 
@@ -156,7 +157,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private void requestPermissionsAndPerformSetup() {
         Dexter.checkPermissions(compositePermissionsListener, Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.GET_ACCOUNTS,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
@@ -315,8 +315,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private void initPaths() throws IOException {
         checkAndInitPath(Constants.PATH_APP);
         checkAndInitPath(Constants.PATH_APP_TEMP);
-        checkAndInitPath(Constants.PATH_APP_TEMP_INTERMEDIATE_FILES);
-        checkAndInitPath(Constants.PATH_APP_TEMP_AUDIO);
+        checkAndInitPath(Constants.PATH_APP_PROJECTS);
         checkAndInitPath(Constants.PATH_APP_MASTERS);
 
         File privateDataFolderModel = getDir(Constants.FOLDER_VIDEONA_PRIVATE_MODEL, Context.MODE_PRIVATE);
@@ -354,6 +353,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
      * Checks the available cameras on the device (back/front), supported flash mode and the
      * supported resolutions
      */
+
     private void setupCameraSettings() {
         checkAvailableCameras();
         checkFlashMode();
@@ -596,9 +596,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     @Override
     public void onCheckPathsAppSuccess() {
-        //TODO Define path project. By default, path app. Path .temp, private data
-        profileRepository = new ProfileSharedPreferencesRepository(sharedPreferences, this);
-        presenter.startLoadingProject(sharedPreferences.getString(ConfigPreferences.PRIVATE_PATH, ""), profileRepository.getCurrentProfile());
+        presenter.startLoadingProject(Constants.PATH_APP);
         moveVideonaVideosToDcim();
     }
 
@@ -748,7 +746,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         @Override
         public void onPermissionsChecked(MultiplePermissionsReport report) {
             if (report.areAllPermissionsGranted()) {
-                if(isBetaAppOutOfDate()) {
+                if(isBetaAppOutOfDate() && !BuildConfig.DEBUG) {
                     showDialogOutOfDate();
                 } else {
                     activity.startSplashThread();

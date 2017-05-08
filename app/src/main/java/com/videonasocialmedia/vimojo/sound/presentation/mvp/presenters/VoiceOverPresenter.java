@@ -8,10 +8,10 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.MergeVoiceOverAudiosUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.OnMergeVoiceOverAudiosListener;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverView;
-import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
@@ -31,7 +33,6 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
      * LOG_TAG
      */
     private final String LOG_TAG = getClass().getSimpleName();
-
     private SessionConfig sessionConfig;
     private AudioRecorder audioRecorder;
 
@@ -40,6 +41,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
      */
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private MergeVoiceOverAudiosUseCase mergeVoiceOverAudiosUseCase;
+    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
 
     private VoiceOverView voiceOverView;
     public UserEventTracker userEventTracker;
@@ -47,10 +49,17 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     private int numAudiosRecorded = 0;
     private boolean firstTimeRecording;
 
-    public VoiceOverPresenter(VoiceOverView voiceOverView) {
+    @Inject
+    public VoiceOverPresenter(VoiceOverView voiceOverView, GetMediaListFromProjectUseCase
+                              getMediaListFromProjectUseCase,
+                              GetPreferencesTransitionFromProjectUseCase
+                                  getPreferencesTransitionFromProjectUseCase,
+                              MergeVoiceOverAudiosUseCase mergeVoiceOverAudiosUseCase) {
         this.voiceOverView = voiceOverView;
-        getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
-        mergeVoiceOverAudiosUseCase = new MergeVoiceOverAudiosUseCase(this);
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.getPreferencesTransitionFromProjectUseCase =
+            getPreferencesTransitionFromProjectUseCase;
+        this.mergeVoiceOverAudiosUseCase = mergeVoiceOverAudiosUseCase;
         this.currentProject = loadCurrentProject();
 
         initAudioRecorder();
@@ -58,7 +67,8 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
 
     public void initAudioRecorder() {
         try {
-            sessionConfig = new SessionConfig(Constants.PATH_APP_TEMP_AUDIO, 1);
+            sessionConfig = new
+                SessionConfig(currentProject.getProjectPathIntermediateAudioFilesVoiceOverRecord(), 1);
             audioRecorder = new AudioRecorder(sessionConfig);
             firstTimeRecording = true;
         } catch (IOException e) {
@@ -67,9 +77,24 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     public void onResume(){
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
         EventBus.getDefault().register(this);
         audioRecorder.onHostActivityResumed();
+        init();
+    }
+
+    private void init() {
+        obtainVideos();
+        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+            voiceOverView.setVideoFadeTransitionAmongVideos();
+        }
+        if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
+            !currentProject.getVMComposition().hasMusic()){
+            voiceOverView.setAudioFadeTransitionAmongVideos();
+        }
+    }
+
+    private void obtainVideos() {
+        getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 
     public void onPause(){
@@ -79,7 +104,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null,null, null);
     }
 
     public void loadProjectVideo(int videoToTrimIndex) {
@@ -101,20 +126,26 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
         voiceOverView.resetPreview();
     }
 
-    public void addVoiceOver() {
-        mergeAudio();
-        cleanDirectory();
+    public void addVoiceOver(String finalNamePathAudioMerge) {
+        mergeAudio(finalNamePathAudioMerge);
+        // (jliarte): 1/12/16 merge audio finally makes an async call, so files are deleted before
+        //            it completes
+//        cleanDirectory();
     }
 
     public void cleanDirectory() {
-       FileUtils.cleanDirectory(new File(Constants.PATH_APP_TEMP_AUDIO));
+       FileUtils.cleanDirectory(new
+           File(currentProject.getProjectPathIntermediateAudioFilesVoiceOverRecord()));
     }
 
-    private void mergeAudio() {
-        mergeVoiceOverAudiosUseCase.mergeAudio();
+    private void mergeAudio(String finalNamePathAudioMerge) {
+        String path = currentProject.getProjectPathIntermediateFiles() + File.separator
+            + finalNamePathAudioMerge;
+        mergeVoiceOverAudiosUseCase.mergeAudio(path, this);
     }
 
     public void trackVoiceOverVideo() {
+        // TODO(jliarte): 29/11/16 user event tracker implementation
     }
 
     public void requestRecord() {
@@ -132,7 +163,8 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     private void resetAudioRecorder() throws IOException {
-        sessionConfig = new SessionConfig(Constants.PATH_APP_TEMP_AUDIO, 1);
+        sessionConfig = new
+            SessionConfig(currentProject.getProjectPathIntermediateAudioFilesVoiceOverRecord(), 1);
         audioRecorder.reset(sessionConfig);
 
         startRecording();
@@ -158,12 +190,14 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     private void renameAudioRecorded(int numAudiosRecorded) {
         File originalFile = new File(sessionConfig.getOutputPath());
         String fileName = "AUD_" + numAudiosRecorded + ".mp4";
-        File destinationFile = new File(Constants.PATH_APP_TEMP_AUDIO, fileName);
+        File destinationFile = new
+            File(currentProject.getProjectPathIntermediateAudioFilesVoiceOverRecord(), fileName);
         originalFile.renameTo(destinationFile);
     }
 
     @Override
     public void onMergeVoiceOverAudioSuccess(String voiceOverRecordedPath) {
+        cleanDirectory();
         voiceOverView.navigateToSoundVolumeActivity(voiceOverRecordedPath);
     }
 

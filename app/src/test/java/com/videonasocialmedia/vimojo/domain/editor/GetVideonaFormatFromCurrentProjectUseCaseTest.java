@@ -64,7 +64,7 @@ public class GetVideonaFormatFromCurrentProjectUseCaseTest {
 
     VideonaFormat videonaFormat = useCase.getVideonaFormatFromCurrentProject();
 
-    assertThat("videoBitRate", 10 * 1000 * 1000, is(videonaFormat.getVideoBitrate()));
+    assertThat("videoBitRate", 50 * 1000 * 1000, is(videonaFormat.getVideoBitrate()));
     assertThat("videoWidth", 1280, is(videonaFormat.getVideoWidth()));
     assertThat("videoHeight", 720, is(videonaFormat.getVideoHeight()));
 

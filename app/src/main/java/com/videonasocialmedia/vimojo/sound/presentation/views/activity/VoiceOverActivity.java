@@ -8,8 +8,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +20,6 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
@@ -33,6 +29,8 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -48,6 +46,9 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
     private static final String VOICE_OVER_PROJECT_POSITION = "voice_over_project_position";
     private static final String TAG = "VoiceOverActivity";
     private static final String STATE_BUTTON_RECORD = "state_button_record";
+
+    @Inject
+    VoiceOverPresenter presenter;
 
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
@@ -67,7 +68,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
     ImageButton buttonRecordVoiceOver;
 
     int videoIndexOnTrack;
-    private VoiceOverPresenter presenter;
     private int currentVoiceOverPosition = 0;
     private int startTime = 0;
 
@@ -82,6 +82,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sound_voice_over);
         ButterKnife.bind(this);
+        getActivityPresentersComponent().inject(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -93,7 +94,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
 
         changeVisibilityAndResouceButton(buttonRecordIsInStop);
 
-        presenter = new VoiceOverPresenter(this);
         videonaPlayer.setSeekBarLayoutEnabled(false);
         videonaPlayer.setListener(this);
         buttonRecordVoiceOver.setOnTouchListener(this);
@@ -138,32 +138,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
         super.onStop();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit_activity, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        switch (item.getItemId()) {
-            case R.id.action_settings_edit_options:
-                navigateTo(SettingsActivity.class);
-                return true;
-            case R.id.action_settings_edit_gallery:
-                navigateTo(GalleryActivity.class);
-                return true;
-            default:
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     public void navigateTo(Class cls) {
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         startActivity(intent);
@@ -191,7 +165,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
 
     @OnClick(R.id.button_voice_over_accept)
     public void onClickVoiceOverAccept() {
-        presenter.addVoiceOver();
+        presenter.addVoiceOver(Constants.AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME);
     }
 
     @OnClick(R.id.button_voice_over_cancel)
@@ -252,7 +226,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
         videonaPlayer.bindVideoList(movieList);
         videonaPlayer.seekToClip(0);
         videonaPlayer.seekTo(currentVoiceOverPosition);
-        videonaPlayer.hidePlayButton();
+        videonaPlayer.showPauseButton();
         videonaPlayer.setVolume(1f);
         // Disable ontouch view playerExo. Now you can't play/pause video.
         enableDisableView(videonaPlayer,false);
@@ -266,14 +240,14 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
     @Override
     public void playVideo() {
         videonaPlayer.playPreview();
-        videonaPlayer.hidePlayButton();
+        videonaPlayer.showPauseButton();
         videonaPlayer.setVolume(1f);
     }
 
     @Override
     public void pauseVideo() {
         videonaPlayer.pausePreview();
-        videonaPlayer.hidePlayButton();
+        videonaPlayer.showPauseButton();
     }
 
     @Override
@@ -287,6 +261,16 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
     @Override
     public void showError(String errorMessage) {
         Snackbar.make(videonaPlayer, errorMessage, Snackbar.LENGTH_INDEFINITE).show();
+    }
+
+    @Override
+    public void setVideoFadeTransitionAmongVideos() {
+        videonaPlayer.setVideoTransitionFade();
+    }
+
+    @Override
+    public void setAudioFadeTransitionAmongVideos() {
+        videonaPlayer.setAudioTransitionFade();
     }
 
     @Override

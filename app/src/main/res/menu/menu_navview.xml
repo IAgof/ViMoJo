@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_navview_username"
+            android:icon="@drawable/activity_edit_ic_person"
+            android:title="@string/username"/>
+        <item
+            android:id="@+id/menu_navview_mail"
+            android:icon="@drawable/activity_edit_ic_mail"
+            android:title="@string/emailPreference"/>
+    </group>
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_navview_gallery_projects"
+            android:icon="@drawable/activity_editor_drawer_projects"
+            android:title="@string/drawerProjects"/>
+
+        <item
+            android:id="@+id/menu_navview_delete_clip"
+            android:icon="@drawable/activity_editor_drawer_new_project"
+            android:title="@string/new_project"/>
+    </group>
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_navview_settings"
+            android:icon="@drawable/menu_settings"
+            android:title="@string/drawerSettings"/>
+
+        <item
+            android:id="@+id/menu_navview_suggestions"
+            android:icon="@drawable/editor_activity_drawer_ic_mail"
+            android:title="@string/drawerSuggestions"/>
+    </group>
+
+
+</menu>

@@ -61,7 +61,7 @@ public class AddMusicToProjectUseCaseTest {
     @Test
     public void testAddMusicToTrackAddsMusicToProjectDefaultAudioTrack() throws Exception {
         Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
-        Music musicToAdd = new Music(42, "musicNameId", 3, 2, "author","2");
+        Music musicToAdd = new Music(42, "musicNameId", 3, 2, "author","2", 0);
 
         injectedUseCase.addMusicToTrack(musicToAdd, 0, mockedOnAddMediaFinishedListener);
         AudioTrack projectAudioTrack = videonaProject.getAudioTracks().get(0);
@@ -99,14 +99,6 @@ public class AddMusicToProjectUseCaseTest {
 //        assert(project_audio_track.getItems().size() == 0);
 //    }
 
-    private Project getAProject() {
-        Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720,
-                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-        String rootPath = "projectRootPath";
-        String title = "project title";
-        return Project.getInstance(title, rootPath, profile);
-    }
-
 //    @Test public void testAddMusicToTrackSendsErrorEventToBusOnSuccess() throws Exception {
 //        Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
 //        Music musicToAdd = new Music(42, "musicNameId", 3, 2);
@@ -122,9 +114,9 @@ public class AddMusicToProjectUseCaseTest {
     @Test
     public void testAddMusicToTrackDoesntAddToNonExistentTrackIndex() throws Exception {
         Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
-        Music musicToAdd = new Music(42, "musicNameId", 3, 2, "","");
+        Music musicToAdd = new Music(42, "musicNameId", 3, 2, "","", 0);
 
-        new AddMusicToProjectUseCase().addMusicToTrack(musicToAdd, 1, mockedOnAddMediaFinishedListener);
+        new AddMusicToProjectUseCase(mockedProjectRepository).addMusicToTrack(musicToAdd, 1, mockedOnAddMediaFinishedListener);
         AudioTrack projectAudioTrack = videonaProject.getAudioTracks().get(0);
 
         assertThat(projectAudioTrack.getItems().size(), is(0));
@@ -133,12 +125,19 @@ public class AddMusicToProjectUseCaseTest {
     @Test
     public void testAddMusicToTrackCallsProjectRepositoryUpdate() {
         Project currentProject = getAProject();
-        Music musicToAdd = new Music("music/path");
+        Music musicToAdd = new Music("music/path", 0);
 
         injectedUseCase.addMusicToTrack(musicToAdd, 0, mockedOnAddMediaFinishedListener);
 
         verify(mockedProjectRepository).update(currentProject);
     }
 
+    private Project getAProject() {
+        Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+        String rootPath = "projectRootPath";
+        String title = "project title";
+        return Project.getInstance(title, rootPath, profile);
+    }
 
 }

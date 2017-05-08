@@ -14,16 +14,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
@@ -37,6 +33,8 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -47,13 +45,14 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         SoundRecyclerViewClickListener, VideonaPlayer.VideonaPlayerListener {
     private static final String MUSIC_LIST_PROJECT_POSITION = "music_list_project_position";
 
+    @Inject MusicListPresenter presenter;
+
     @Bind(R.id.music_list)
     RecyclerView soundList;
+
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-
     private SoundListAdapter soundAdapter;
-    private MusicListPresenter presenter;
     private BroadcastReceiver exportReceiver;
     private int currentProjectPosition;
 
@@ -62,11 +61,11 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_list);
         ButterKnife.bind(this);
+        getActivityPresentersComponent().inject(this);
         setupToolbar();
         createExportReceiver();
         restoreState(savedInstanceState);
         videonaPlayer.setListener(this);
-        presenter = new MusicListPresenter(this);
         initVideoListRecycler();
     }
 
@@ -137,34 +136,8 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
-        presenter.onResume();
+        presenter.init();
         registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit_activity, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        switch (item.getItemId()) {
-            case R.id.action_settings_edit_options:
-                navigateTo(SettingsActivity.class);
-                return true;
-            case R.id.action_settings_edit_gallery:
-                navigateTo(GalleryActivity.class);
-                return true;
-            default:
-
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     public void navigateTo(Class cls) {
@@ -190,9 +163,23 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
     }
 
     @Override
+    public void goToDetailActivity(String mediaPath) {
+        navigateToMusicDetailActivity(mediaPath);
+    }
+
+    @Override
+    public void setVideoFadeTransitionAmongVideos() {
+        videonaPlayer.setVideoTransitionFade();
+    }
+
+    @Override
     public void onClick(Music music) {
+        navigateToMusicDetailActivity(music.getMediaPath());
+    }
+
+    private void navigateToMusicDetailActivity(String mediaPath) {
         Intent i = new Intent(VimojoApplication.getAppContext(), MusicDetailActivity.class);
-        i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, music.getMediaPath());
+        i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, mediaPath);
         startActivity(i);
         finish();
     }

@@ -1,6 +1,9 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
+import android.content.Context;
+
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import static org.mockito.Mockito.mock;
 
@@ -9,7 +12,12 @@ import static org.mockito.Mockito.mock;
  */
 public class MockedDataRepositoriesModule extends DataRepositoriesModule {
   @Override
-  ProjectRepository provideDefaultProjectRepository() {
+  ProjectRepository provideDefaultProjectRepository(Context context) {
     return mock(ProjectRepository.class);
+  }
+
+  @Override
+  VideoRepository provideDefaultVideoRepository() {
+    return mock(VideoRepository.class);
   }
 }
