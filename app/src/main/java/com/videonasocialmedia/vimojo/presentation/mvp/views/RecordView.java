@@ -71,4 +71,6 @@ public interface RecordView {
     void hideVideosRecordedNumber();
 
     void showResolutionSelected(int height);
+
+    void showBatteryStatusCharging(int statusBattery);
 }

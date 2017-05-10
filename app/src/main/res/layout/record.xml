@@ -85,7 +85,7 @@
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
                     app:srcCompat="@drawable/record_activity_ic_battery_charged"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="4dp"

@@ -17,6 +17,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -127,6 +128,9 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ImageView resolutionIndicator;
     @Bind(R.id.image_view_grid)
     ImageView imageViewGrid;
+    @Bind(R.id.activity_record_icon_battery)
+    ImageView battery;
+
 
     private boolean buttonBackPressed;
     private boolean recording;
@@ -269,9 +273,17 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         super.onResume();
         Log.d(LOG_TAG, "init");
         registerReceiver(receiver, new IntentFilter(ExportProjectService.NOTIFICATION));
+        determineCurrentChargingState();
         recordPresenter.onResume();
         recording = false;
         hideSystemUi();
+
+    }
+
+    private void determineCurrentChargingState() {
+        Intent batteryStatus = registerReceiver(null,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        recordPresenter.getStatusBattery(batteryStatus);
+
     }
 
     @Override
@@ -579,6 +591,18 @@ public class RecordActivity extends VimojoActivity implements RecordView {
                 resolutionIndicator.setImageResource(R.drawable.record_activity_ic_resolution_720);
                 break;
         }
+    }
+
+    @Override
+    public void showBatteryStatusCharging(int statusBattery) {
+         switch (statusBattery){
+             case (BatteryManager.BATTERY_STATUS_CHARGING):
+                 battery.setImageResource(R.drawable.record_activity_ic_resolution_4k);
+                 break;
+             default:
+                 battery.setImageResource(R.drawable.record_activity_ic_resolution_720);
+         }
+
     }
 
     public void setupActivityButtons() {

@@ -15,8 +15,10 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.BatteryManager;
 import android.util.Log;
 
 import com.videonasocialmedia.avrecorder.AudioVideoRecorder;
@@ -83,8 +85,10 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
     private GLCameraView cameraPreview;
     protected Project currentProject;
     private int height;
+    private int statusBattery;
 
     private boolean externalIntent;
+    private boolean isCharging;
 
     private Drawable drawableFadeTransitionVideo;
     private VideonaFormat videoFormat;
@@ -493,6 +497,11 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
             updateVideoRepositoryUseCase.errorTranscodingVideo(video,
                 Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
         }
+    }
+
+    public void getStatusBattery(Intent batteryStatus) {
+        statusBattery= batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        recordView.showBatteryStatusCharging(statusBattery);
     }
 
 }
