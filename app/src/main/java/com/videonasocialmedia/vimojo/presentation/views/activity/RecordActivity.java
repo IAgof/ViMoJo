@@ -112,11 +112,11 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     View picometer;
     @Bind(R.id.controls)
     View controlsView;
-    @Bind(R.id.slide_left_bar)
+    @Bind(R.id.zoom_submenu)
     View zommBarView;
     @Bind(R.id.settings_bar)
     View settingsBar;
-    @Bind(R.id.settings_bar_submenu)
+    @Bind(R.id.white_balance_submenu)
     View settingsBarSubmenu;
     @Bind(R.id.button_to_hide_controls)
     ImageButton buttonToHideControlsView;
@@ -328,7 +328,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void showRecordButton() {
-        recButton.setImageResource(R.drawable.record_activity_ic_rec);
+        recButton.setImageResource(R.drawable.activity_record_ic_rec);
         recording = false;
     }
 
@@ -512,7 +512,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void hidePrincipalViews() {
-        clearButton.setImageResource(R.drawable.record_activity_ic_shrink);
+        clearButton.setImageResource(R.drawable.activity_record_ic_shrink);
         clearButton.setAlpha(0.5f);
         clearButton.setBackground(null);
         clearButton.setActivated(true);
@@ -528,7 +528,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
     @Override
     public void showPrincipalViews() {
-        clearButton.setImageResource(R.drawable.record_activity_ic_expand);
+        clearButton.setImageResource(R.drawable.activity_record_ic_expand);
         clearButton.setBackground(getResources().getDrawable(R.drawable.circle_background));
         clearButton.setAlpha(1f);
         clearButton.setActivated(false);
@@ -563,16 +563,16 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     public void showResolutionSelected(int resolutionSelected) {
         switch (resolutionSelected){
             case (RESOLUTION_SELECTED_HD720):
-              resolutionIndicator.setImageResource(R.drawable.record_activity_ic_resolution_720);
+              resolutionIndicator.setImageResource(R.drawable.activity_record_ic_resolution_720);
                 break;
             case(RESOLUTION_SELECTED_HD1080):
-                resolutionIndicator.setImageResource(R.drawable.record_activity_ic_resolution_1080);
+                resolutionIndicator.setImageResource(R.drawable.activity_record_ic_resolution_1080);
                 break;
             case (RESOLUTION_SELECTED_HD4K):
-                resolutionIndicator.setImageResource(R.drawable.record_activity_ic_resolution_4k);
+                resolutionIndicator.setImageResource(R.drawable.activity_record_ic_resolution_4k);
                 break;
             default:
-                resolutionIndicator.setImageResource(R.drawable.record_activity_ic_resolution_720);
+                resolutionIndicator.setImageResource(R.drawable.activity_record_ic_resolution_720);
                 break;
         }
     }

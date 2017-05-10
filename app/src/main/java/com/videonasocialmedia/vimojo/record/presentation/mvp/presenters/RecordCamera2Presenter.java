@@ -50,8 +50,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
 
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private static final String LOG_TAG = "RecordPresenter";
-  private final boolean isRightControlsViewSelected;
-  private final boolean isPrincipalViewSelected;
   private RecordCamera2View recordView;
   private AddVideoToProjectUseCase addVideoToProjectUseCase;
   private AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase;
@@ -62,8 +60,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
   private List<Video> videoList = new ArrayList<>();
 
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
-                                boolean isFrontCameraSelected, boolean isPrincipalViewSelected,
-                                boolean isRightControlsViewSelected, AutoFitTextureView textureView,
+                                boolean isFrontCameraSelected, AutoFitTextureView textureView,
                                 String directorySaveVideos,
                                 GetVideoFormatFromCurrentProjectUseCase
                                     getVideoFormatFromCurrentProjectUseCase,
@@ -71,8 +68,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
                                 AdaptVideoRecordedToVideoFormatUseCase
                                     adaptVideoRecordedToVideoFormatUseCase) {
     this.recordView = recordView;
-    this.isPrincipalViewSelected = isPrincipalViewSelected;
-    this.isRightControlsViewSelected = isRightControlsViewSelected;
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
     initCameraWrapper(context, isFrontCameraSelected, textureView, directorySaveVideos, getVideoFormatFromCurrentProjectUseCase);
     this.adaptVideoRecordedToVideoFormatUseCase = adaptVideoRecordedToVideoFormatUseCase;
@@ -96,18 +91,29 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
     return Project.getInstance(null,null,null);
   }
 
-  public void initViews() {
+  public void initViews(boolean isPrincipalViewsSelected, boolean isControlsViewSelected,
+                        boolean isGridSelected, boolean isSettingsCameraSelected) {
     recordView.setResolutionSelected(getResolutionHeight(currentProject));
     recordView.hideChronometer();
-    if (isPrincipalViewSelected) {
+    if (isPrincipalViewsSelected) {
       recordView.showPrincipalViews();
     } else {
       recordView.hidePrincipalViews();
     }
-    if (isRightControlsViewSelected) {
+    if (isControlsViewSelected) {
       recordView.showRightControlsView();
     } else {
       recordView.hideRightControlsView();
+    }
+
+    if(isGridSelected){
+      recordView.setCameraGrid();
+    }
+
+    if(isSettingsCameraSelected){
+      recordView.showSettingsCameraView();
+    } else {
+      recordView.hideSettingsCameraView();
     }
   }
 
@@ -226,7 +232,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
 
   @Override
   public void setZoom(float zoomValue) {
-    // TODO:(alvaro.martinez) 27/01/17 Convert zoom from 0 to 1 and show on RecordView
     recordView.setZoom(zoomValue);
   }
 
@@ -271,9 +276,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
 
   public void buttonSettingsCamera(boolean isSelected) {
     if(isSelected) {
-      recordView.hideBottomControlsView();
+      recordView.hideSettingsCameraView();
     } else {
-      recordView.showBottomControlsView();
+      recordView.showSettingsCameraView();
     }
   }
 

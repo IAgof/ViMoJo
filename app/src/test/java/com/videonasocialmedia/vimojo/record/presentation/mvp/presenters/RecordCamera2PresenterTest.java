@@ -1,12 +1,9 @@
 package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 
 import android.content.Context;
-import android.hardware.camera2.CaptureRequest;
 
-import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
-import com.videonasocialmedia.camera.utils.VideoCameraFormat;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -20,10 +17,8 @@ import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
-import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 
 import org.junit.After;
@@ -31,14 +26,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
-
-import dagger.Provides;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -86,7 +78,7 @@ public class RecordCamera2PresenterTest {
         mockedGetVideoFormatFromCurrentProjectUseCase,
         mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
 
-    presenter.initViews();
+    presenter.initViews(isFrontCameraSelected, isControlsViewSelected, isGridSelected, isSettingsCameraSelected);
 
     verify(mockedRecordView).hideChronometer();
     verify(mockedRecordView).setResolutionSelected(720);
@@ -106,7 +98,7 @@ public class RecordCamera2PresenterTest {
         mockedGetVideoFormatFromCurrentProjectUseCase,
         mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
 
-    presenter.initViews();
+    presenter.initViews(isFrontCameraSelected, isControlsViewSelected, isGridSelected, isSettingsCameraSelected);
 
     verify(mockedRecordView).hideChronometer();
     verify(mockedRecordView).setResolutionSelected(720);

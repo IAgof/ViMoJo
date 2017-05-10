@@ -83,8 +83,6 @@ import dagger.Provides;
 @Module
 public class ActivityPresentersModule {
   private final VimojoActivity activity;
-  private boolean isRightControlsViewSelected;
-  private boolean isPrincipalViewSelected;
   private boolean isFrontCameraSelected;
   private AutoFitTextureView textureView;
   private GLCameraView cameraView = null;
@@ -103,14 +101,10 @@ public class ActivityPresentersModule {
   }
 
   public ActivityPresentersModule(RecordCamera2Activity activity, boolean isFrontCameraSelected,
-                                  boolean isPrincipalViewSelected,
-                                  boolean isRightControlsViewSelected,
                                   String directorySaveVideos,
                                   AutoFitTextureView textureView) {
     this.activity = activity;
     this.isFrontCameraSelected = isFrontCameraSelected;
-    this.isPrincipalViewSelected = isPrincipalViewSelected;
-    this.isRightControlsViewSelected = isRightControlsViewSelected;
     this.textureView = textureView;
     this.directorySaveVideos = directorySaveVideos;
   }
@@ -222,7 +216,7 @@ public class ActivityPresentersModule {
                                                        adaptVideoRecordedToVideoFormatUseCase){
 
     return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity,
-        isFrontCameraSelected, isPrincipalViewSelected, isRightControlsViewSelected, textureView,
+        isFrontCameraSelected, textureView,
         directorySaveVideos, getVideoFormatFromCurrentProjectUseCase, addVideoToProjectUseCase,
         adaptVideoRecordedToVideoFormatUseCase);
   }

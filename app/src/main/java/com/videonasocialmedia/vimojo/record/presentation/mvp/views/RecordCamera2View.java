@@ -58,9 +58,11 @@ public interface RecordCamera2View {
 
     void showRightControlsView();
 
-    void showBottomControlsView();
+    void showSettingsCameraView();
 
-    void hideBottomControlsView();
+    void hideSettingsCameraView();
+
+    void setCameraGrid();
 
 
     // Setters camera

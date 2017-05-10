@@ -276,7 +276,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
 
       mediaRecorder = new MediaRecorderWrapper(new MediaRecorder(), cameraIdSelected,
-          sensorOrientation, rotation, getVideoFilePath(), videoCameraFormat);
+          sensorOrientation, rotation, createNewVideoPath(), videoCameraFormat);
      if (ActivityCompat.checkSelfPermission(context,
           android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
         // TODO: Consider calling
@@ -505,8 +505,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
-  private String getVideoFilePath() {
-
+  private String createNewVideoPath() {
     // TODO:(alvaro.martinez) 19/01/17 Get pattern VID_ from where?
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
     String fileName = "VID_" + timeStamp + ".mp4";
@@ -515,8 +514,12 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     return videoPath;
   }
 
-  public void setFocus(Rect rect, int focusArea) {
+  public String getVideoPath() {
+    return videoPath;
+  }
 
+  public void setFocus(Rect rect, int focusArea) {
+    // FIXME: 9/05/17 this is not working, so this camera should not go to develop yet!!!
     MeteringRectangle meteringRectangle = new MeteringRectangle(rect, focusArea); // MeteringRectangle.METERING_WEIGHT_DONT_CARE);
     MeteringRectangle[] areas = previewBuilder.get(CaptureRequest.CONTROL_AF_REGIONS);
 
@@ -527,10 +530,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     } catch (CameraAccessException e) {
       e.printStackTrace();
     }
-  }
-
-  public String getVideoPath() {
-    return videoPath;
   }
 
   public boolean onTouchZoom(float current_finger_spacing) {
@@ -594,7 +593,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       cropH -= cropH & 3;
       Rect zoom = new Rect(cropW, cropH, m.width() - cropW, m.height() - cropH);
       previewBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoom);
-    
+
     try {
       previewSession.setRepeatingRequest(previewBuilder.build(), null,
           null);
