@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:layout_margin="4dp"
     android:padding="4dp"
     app:cardCornerRadius="4dp"
     app:cardElevation="4dp">
@@ -36,7 +36,7 @@
             android:scaleType="fitXY"
             android:layout_centerVertical="true"
             android:layout_marginRight="8dp"
-            android:padding="16dp"
+            android:padding="4dp"
             tools:src="@drawable/fragment_gallery_no_image"/>
 
         <LinearLayout
@@ -53,6 +53,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="2"
+                android:layout_marginTop="12dp"
                 android:textColor="@color/textColorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -66,7 +67,20 @@
                 android:maxLines="1"
                 android:textColor="@color/colorSecondaryLight"
                 android:textSize="12sp"
+                android:visibility="gone"
                 tools:text="20-10-2016"/>
+
+
+            <TextView
+                android:id="@+id/project_size_mb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/colorSecondaryLight"
+                android:textSize="12sp"
+                android:text="@string/projectTitleSizeMb"/>
 
             <TextView
                 android:id="@+id/project_duration"
@@ -74,10 +88,10 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="2dp"
                 android:textColor="@color/colorSecondaryLight"
-                android:textSize="14sp"
-                tools:text="15:00 min"/>
+                android:textSize="12sp"
+                android:text="@string/projectTitleDurationMinSec"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

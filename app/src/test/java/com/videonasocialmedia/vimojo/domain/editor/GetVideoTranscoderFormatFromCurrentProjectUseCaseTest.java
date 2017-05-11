@@ -60,16 +60,15 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
   @Test
   public void getVideoTranscoderFormatFromCurrentProjectReturnsFormatWithProfileValues() {
 
-    getAProject();
+    Project currentProject = getAProject();
+    GetVideonaFormatFromCurrentProjectUseCase useCase =
+        new GetVideonaFormatFromCurrentProjectUseCase();
 
-    GetVideoFormatFromCurrentProjectUseCase useCase =
-        new GetVideoFormatFromCurrentProjectUseCase();
+    VideonaFormat videonaFormat = useCase.getVideonaFormatFromCurrentProject();
 
-    VideoCameraFormat videoTranscoderFormat = useCase.getVideoRecordedFormatFromCurrentProjectUseCase();
-
-    assertThat("videoBitRate", 10 * 1000 * 1000, is(videoTranscoderFormat.getVideoBitrate()));
-    assertThat("videoWidth", 1280, is(videoTranscoderFormat.getVideoWidth()));
-    assertThat("videoHeight", 720, is(videoTranscoderFormat.getVideoHeight()));
+    assertThat("videoBitRate", 50 * 1000 * 1000, is(videonaFormat.getVideoBitrate()));
+    assertThat("videoWidth", 1280, is(videonaFormat.getVideoWidth()));
+    assertThat("videoHeight", 720, is(videonaFormat.getVideoHeight()));
 
   }
 

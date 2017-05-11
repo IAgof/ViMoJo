@@ -16,6 +16,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -51,6 +52,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
   @Mock TranscoderHelper mockedTranscoderHelper;
   @Mock Drawable mockDrawableFadeTransition;
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
+  @Mock VideoRepository mockedVideoRepository;
   String intermediatesTempAudioFadeDirectory;
   boolean isVideoFadeTransitionActivated;
   boolean isAudioFadeTransitionActivated;
@@ -140,6 +142,27 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     verify(mockedTranscoderHelper).generateOutputVideoWithTrimming(mockDrawableFadeTransition,
         isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, video, videonaFormat,
         intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+  }
+
+  @Test
+  public void relaunchExportCallsVideoRepositoryUpdate() {
+    Video video = new Video("media/path");
+
+    injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
+        videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+
+    verify(mockedVideoRepository).update(video);
+  }
+
+  @Test
+  public void relaunchExportUpdateIsTranscodingTempFileFinished() {
+    Video video = new Video("media/path");
+    assert video.isTranscodingTempFileFinished();
+
+    injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
+        videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+
+    assertThat(video.isTranscodingTempFileFinished(), is(false));
   }
 
   @NonNull

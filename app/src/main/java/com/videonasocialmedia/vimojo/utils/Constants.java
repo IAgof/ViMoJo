@@ -80,4 +80,6 @@ public class Constants {
     public static final String USER_THUMB = "userThumb.jpg";
 
     public static final int MAX_NUM_TRIES_TO_EXPORT_VIDEO = 4;
+
+    public enum ERROR_TRANSCODING_TEMP_FILE_TYPE {SPLIT, TRIM, TEXT, AVTRANSITION, APP_CRASH}
 }

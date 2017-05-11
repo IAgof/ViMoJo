@@ -61,10 +61,10 @@ public class ModifyVideoDurationUseCase{
             getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
     videoToEdit.setStartTime(startTimeMs);
     videoToEdit.setStopTime(finishTimeMs);
-    videoToEdit.setTempPathFinished(false);
     Project project = Project.getInstance(null,null,null);
     videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
     videoToEdit.setTrimmedVideo(true);
+    videoToEdit.setTranscodingTempFileFinished(false);
     updateGeneratedVideo(drawableFadeTransition, videoToEdit, format,
             intermediatesTempAudioFadeDirectory, transcoderHelperListener,
             isVideoFadeTransitionActivated, isAudioFadeTransitionActivated);

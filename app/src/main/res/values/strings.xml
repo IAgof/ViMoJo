@@ -20,6 +20,8 @@
     <string name="recordError">Something bad happened. Impossible to record video, try again</string>
     <string name="giftOverlayDialogTitle">Your present</string>
     <string name="giftOverlayDialogMessage">Enjoy your new Bollywood filter</string>
+    <string name="recordTextGallery">Gallery</string>
+    <string name="recordTextEdit">Go to edit</string>
 
     <!-- Share Activity -->
     <string name="shareError">Ups, we couldn\'t share this video. Sorry</string>
@@ -95,6 +97,8 @@
     <string name="dialog_project_remove_cancel">No</string>
 
     <!-- Detail project activity -->
+    <string name="projectTitleDurationMinSec">Duration:</string>
+    <string name="projectTitleSizeMb">Size:</string>
     <string name="detail_project_hint_title">Enter your name here</string>
     <string name="detail_project_info_duration">Duration</string>
     <string name="detail_project_info_size">Size</string>
@@ -165,10 +169,10 @@
     <string name="name">Name</string>
     <string name="enterName">Enter your name</string>
     <string name="removeName">Remove name</string>
-    <string name="username">Username</string>
+    <string name="username">User name</string>
     <string name="enterUsername">Enter a username</string>
     <string name="removeUsername">Remove username</string>
-    <string name="emailPreference">Email</string>
+    <string name="emailPreference">User email</string>
     <string name="save">Save</string>
 
     <!--FTP Settings -->
@@ -202,12 +206,12 @@
     <string name="good_resolution_name">1080p</string>
     <string name="high_resolution_name">4K</string>
     <string name="quality">Quality</string>
-    <string name="low_quality_value">5000000</string>
-    <string name="good_quality_value">8000000</string>
-    <string name="high_quality_value">10000000</string>
-    <string name="low_quality_name">5 Mbps</string>
-    <string name="good_quality_name">8 Mbps</string>
-    <string name="high_quality_name">10 Mbps</string>
+    <string name="low_quality_value">16000000</string>
+    <string name="good_quality_value">32000000</string>
+    <string name="high_quality_value">50000000</string>
+    <string name="low_quality_name">16 Mbps</string>
+    <string name="good_quality_name">32 Mbps</string>
+    <string name="high_quality_name">50 Mbps</string>
     <string name="frame_rate">Frame rate</string>
     <string name="low_frame_rate_value">24</string>
     <string name="good_frame_rate_value">25</string>
@@ -249,6 +253,12 @@
 
 
     <!-- End Settings Activity -->
+
+    <!-- DRAWER -->
+    <string name="drawerProjects">My projects</string>
+    <string name="drawerSettings">Settings</string>
+    <string name="drawerSuggestions">Suggestions</string>
+
 
     <!-- About Activity -->
 
@@ -1737,6 +1747,13 @@ and Conditions.\n\n
     <string name="bottom_bar_edit">Edit</string>
     <string name="bottom_bar_sound">Sound</string>
     <string name="bottom_bar_share">Share</string>
+
+    <string name="dialog_title_warning_error_transcoding_file">Clip failed</string>
+    <string name="dialog_message_warning_error_transcoding_file">Review your clips, the file will not be exported properly</string>
+    <string name="dialog_title_export_project">Exporting project</string>
+    <string name="dialog_message_export_project">Making magic in your video</string>
+    <string name="dialog_title_export_error">Exporting error</string>
+    <string name="dialog_message_export_error">An error ocurred while exporting and exporting could not be completed. Please try again.</string>
 
 
 </resources>
