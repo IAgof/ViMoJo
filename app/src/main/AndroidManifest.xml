@@ -88,6 +88,13 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name="com.videonasocialmedia.vimojo.presentation.views.broadcastreceiver.PowerConnectionReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".presentation.views.activity.InitAppActivity"
             android:configChanges="orientation|screenSize"
