@@ -513,7 +513,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   boolean onTouchCustomManualFocusView(MotionEvent event) {
     if (event.getAction() == MotionEvent.ACTION_DOWN) {
       // TODO:(alvaro.martinez) 27/01/17 single touch logic
-      //presenter.onTouchFocus(event);
+      presenter.onTouchFocus(event);
       return true;
     }
 

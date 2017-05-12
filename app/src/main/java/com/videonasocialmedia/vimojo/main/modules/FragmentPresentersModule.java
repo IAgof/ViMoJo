@@ -9,7 +9,7 @@ import android.preference.SwitchPreference;
 
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -87,7 +87,7 @@ public class FragmentPresentersModule {
              UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
              UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
              RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-             GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase){
+             GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase){
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
         cameraSettingsPref, resolutionPref, qualityPref, transitionVideoPref,
@@ -153,8 +153,8 @@ public class FragmentPresentersModule {
   }
 
   @Provides
-  GetVideonaFormatFromCurrentProjectUseCase provideoGetVideonaFormat(){
-    return new GetVideonaFormatFromCurrentProjectUseCase();
+  GetVideoFormatFromCurrentProjectUseCase provideoGetVideonaFormat(){
+    return new GetVideoFormatFromCurrentProjectUseCase();
   }
 
 }

@@ -16,6 +16,8 @@ package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.hardware.camera2.CameraAccessException;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -26,10 +28,14 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnLaunchAVTransitionTempFileListener;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
@@ -46,33 +52,48 @@ import java.util.List;
  *  Created by alvaro on 16/01/17.
  */
 
-public class RecordCamera2Presenter implements Camera2WrapperListener, TranscoderHelperListener {
+public class RecordCamera2Presenter implements Camera2WrapperListener,
+    OnLaunchAVTransitionTempFileListener, TranscoderHelperListener {
 
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private static final String LOG_TAG = "RecordPresenter";
   private final boolean isRightControlsViewSelected;
   private final boolean isPrincipalViewSelected;
+  private final Context context;
   private RecordCamera2View recordView;
   private AddVideoToProjectUseCase addVideoToProjectUseCase;
   private AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase;
+  private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
+  private LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
+  private GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
   private int recordedVideosNumber = 0;
   protected Project currentProject;
   private Camera2Wrapper camera;
   private List<VideoToAdapt> videoListToAdaptAndPosition = new ArrayList<>();
   private List<Video> videoList = new ArrayList<>();
 
+  private Drawable drawableFadeTransitionVideo;
+  private VideonaFormat videoFormat;
+
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
                                 boolean isFrontCameraSelected, boolean isPrincipalViewSelected,
                                 boolean isRightControlsViewSelected, AutoFitTextureView textureView,
                                 String directorySaveVideos,
+                                UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
+                                LaunchTranscoderAddAVTransitionsUseCase
+                                    launchTranscoderAddAVTransitionUseCase,
                                 GetVideoFormatFromCurrentProjectUseCase
                                     getVideoFormatFromCurrentProjectUseCase,
                                 AddVideoToProjectUseCase addVideoToProjectUseCase,
                                 AdaptVideoRecordedToVideoFormatUseCase
                                     adaptVideoRecordedToVideoFormatUseCase) {
+    this.context = context;
     this.recordView = recordView;
     this.isPrincipalViewSelected = isPrincipalViewSelected;
     this.isRightControlsViewSelected = isRightControlsViewSelected;
+    this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
+    this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;
+    this.getVideonaFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
     initCameraWrapper(context, isFrontCameraSelected, textureView, directorySaveVideos, getVideoFormatFromCurrentProjectUseCase);
     this.adaptVideoRecordedToVideoFormatUseCase = adaptVideoRecordedToVideoFormatUseCase;
@@ -204,11 +225,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
     final Video videoToAdapt = new Video(origPath);
     videoListToAdaptAndPosition.add(new VideoToAdapt(videoToAdapt,recordedVideosNumber));
 
-    VideonaFormat videoFormat = new VideonaFormat(Constants.DEFAULT_VIMOJO_AUDIO_BITRATE,
-        Constants.DEFAULT_VIMOJO_AUDIO_CHANNELS);
-
     try {
-      adaptVideoRecordedToVideoFormatUseCase.adaptVideo(videoToAdapt, videoFormat,
+      adaptVideoRecordedToVideoFormatUseCase.adaptVideo(videoToAdapt,
+          getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
               destVideoRecorded, this);
     } catch (IOException e) {
       e.printStackTrace();
@@ -249,7 +268,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
 
   public void onTouchZoom(MotionEvent event) {
     camera.onTouchZoom(getFingerSpacing(event));
-    // RecordView show slide zoom, from 0 to 1
   }
 
   //Determine the space between the first two fingers
@@ -279,7 +297,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
   public void onTouchFocus(MotionEvent event) {
     int x = Math.round(event.getX());
     int y = Math.round(event.getY());
-    camera.setFocus(calculateBounds(x, y), 100);
+    //camera.setFocus(calculateBounds(x, y), 100);
+    try {
+      camera.setFocus(x, y);
+    } catch (CameraAccessException e) {
+      e.printStackTrace();
+    }
     recordView.setFocus(event);
   }
 
@@ -329,11 +352,38 @@ public class RecordCamera2Presenter implements Camera2WrapperListener, Transcode
       }
     }
     videoRecordedAdapted(video.getMediaPath(), destVideoRecorded, position);
+    Log.d(LOG_TAG, "onSuccessTranscoding adapting video to format" + video.getTempPath());
+    updateVideoRepositoryUseCase.succesTranscodingVideo(video);
   }
 
   @Override
   public void onErrorTranscoding(Video video, String message) {
-    // TODO(jliarte): 12/04/17 what should we do on error?
+    Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
+    if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
+      video.increaseNumTriesToExportVideo();
+      Project currentProject = Project.getInstance(null, null, null);
+      launchTranscoderAddAVTransitionUseCase.launchExportTempFile(context
+              .getDrawable(R.drawable.alpha_transition_white), video,
+          getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
+          currentProject.getProjectPathIntermediateFileAudioFade(), this);
+    } else {
+      updateVideoRepositoryUseCase.errorTranscodingVideo(video,
+          Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
+    }
+  }
+
+  @Override
+  public void videoToLaunchAVTransitionTempFile(Video video,
+                                                String intermediatesTempAudioFadeDirectory) {
+
+    video.setTempPath(currentProject.getProjectPathIntermediateFiles());
+
+    videoFormat = currentProject.getVMComposition().getVideoFormat();
+    drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
+
+    launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
+        intermediatesTempAudioFadeDirectory, this);
+
   }
 
   private class VideoToAdapt {

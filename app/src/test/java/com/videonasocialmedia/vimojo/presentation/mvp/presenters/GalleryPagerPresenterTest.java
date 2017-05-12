@@ -16,6 +16,7 @@ import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
@@ -58,6 +59,7 @@ public class GalleryPagerPresenterTest {
   @Mock GalleryPagerView mockedGalleryPagerView;
   @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
   @Mock LaunchTranscoderAddAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionsUseCase;
+  @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
   @Mock private MediaMetadataRetriever mockedMetadataRetriever;
   @Mock private UpdateVideoResolutionToProjectUseCase mockedUpdateProjectResolution;
   @Mock Context mockedContext;

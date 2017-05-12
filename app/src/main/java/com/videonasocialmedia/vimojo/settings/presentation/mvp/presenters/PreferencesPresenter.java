@@ -77,7 +77,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
     private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
-    private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
+    private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
 
     private Drawable drawableFadeTransitionVideo;
     private VideonaFormat videoFormat;
@@ -111,7 +111,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
             UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
             RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-            GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase) {
+            GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase) {
 
         this.preferencesView = preferencesView;
         this.context = context;
@@ -136,7 +136,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.updateWatermarkPreferenceToProjectUseCase = updateWatermarkPreferenceToProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
-        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
+        this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     }
 
     /**
@@ -408,12 +408,10 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     @Override
     public void videoToRelaunch(String videoUuid, String intermediatesTempAudioFadeDirectory) {
         final Video video = getVideo(videoUuid);
-        videoFormat = currentProject.getVMComposition().getVideoFormat();
-        drawableFadeTransitionVideo = VimojoApplication.getAppContext().getDrawable(R.drawable.alpha_transition_white);
 
         relaunchTranscoderTempBackgroundUseCase.relaunchExport(context
                 .getDrawable(R.drawable.alpha_transition_white), video,
-            getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
+            getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
             intermediatesTempAudioFadeDirectory, this);
     }
 
@@ -444,7 +442,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             Project currentProject = Project.getInstance(null, null, null);
             relaunchTranscoderTempBackgroundUseCase.relaunchExport(context
                     .getDrawable(R.drawable.alpha_transition_white), video,
-                getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
+                getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
                 currentProject.getProjectPathIntermediateFileAudioFade(), this);
         } else {
             updateVideoRepositoryUseCase.errorTranscodingVideo(video,

@@ -47,7 +47,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
 
     private Context context;
     private final SharedPreferences preferences;
-    private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
+    private GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private AddVideoToProjectUseCase addVideoToProjectUseCase;
     GalleryPagerView galleryPagerView;
     protected Project currentProject;
@@ -69,13 +69,14 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
             GalleryPagerView galleryPagerView, Context context,
             AddVideoToProjectUseCase addVideoToProjectUseCase,
             UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
-            GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+            GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
             LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionsUseCase,
             UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase,
             SharedPreferences preferences) {
         this.galleryPagerView = galleryPagerView;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
+        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionsUseCase;
         this.currentProject = loadCurrentProject();
         this.context = context;

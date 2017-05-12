@@ -61,8 +61,8 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
   public void getVideoTranscoderFormatFromCurrentProjectReturnsFormatWithProfileValues() {
 
     Project currentProject = getAProject();
-    GetVideonaFormatFromCurrentProjectUseCase useCase =
-        new GetVideonaFormatFromCurrentProjectUseCase();
+    GetVideoFormatFromCurrentProjectUseCase useCase =
+        new GetVideoFormatFromCurrentProjectUseCase();
 
     VideonaFormat videonaFormat = useCase.getVideonaFormatFromCurrentProject();
 

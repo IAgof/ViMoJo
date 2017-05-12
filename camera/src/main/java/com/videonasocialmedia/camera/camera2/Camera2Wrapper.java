@@ -14,7 +14,9 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaRecorder;
@@ -42,6 +44,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -586,6 +590,73 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     } catch (CameraAccessException e) {
       e.printStackTrace();
     }
+  }
+
+  public void setFocus(int x, int y) throws CameraAccessException {
+
+    String cameraId = manager.getCameraIdList()[cameraIdSelected];
+    CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+
+    final Rect sensorArraySize = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+
+    //TODO: here I just flip x,y, but this needs to correspond with the sensor orientation (via SENSOR_ORIENTATION)
+   // final int y = (int)((motionEvent.getX() / (float)view.getWidth())  * (float)sensorArraySize.height());
+    //final int x = (int)((motionEvent.getY() / (float)view.getHeight()) * (float)sensorArraySize.width());
+    final int halfTouchWidth  = 150; //(int)motionEvent.getTouchMajor(); //TODO: this doesn't represent actual touch size in pixel. Values range in [3, 10]...
+    final int halfTouchHeight = 150; //(int)motionEvent.getTouchMinor();
+    MeteringRectangle focusAreaTouch = new MeteringRectangle(Math.max(x - halfTouchWidth,  0),
+        Math.max(y - halfTouchHeight, 0),
+        halfTouchWidth  * 2,
+        halfTouchHeight * 2,
+        MeteringRectangle.METERING_WEIGHT_MAX - 1);
+
+    CameraCaptureSession.CaptureCallback captureCallbackHandler = new CameraCaptureSession.CaptureCallback() {
+      @Override
+      public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+        super.onCaptureCompleted(session, request, result);
+
+        if (request.getTag() == "FOCUS_TAG") {
+          //the focus trigger is complete -
+          //resume repeating (preview surface will get frames), clear AF trigger
+          previewBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, null);
+          try {
+            previewSession.setRepeatingRequest(previewBuilder.build(), null, null);
+          } catch (CameraAccessException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+
+      @Override
+      public void onCaptureFailed(CameraCaptureSession session, CaptureRequest request, CaptureFailure failure) {
+        super.onCaptureFailed(session, request, failure);
+        Log.e(TAG, "Manual AF failure: " + failure);
+      }
+    };
+
+    //first stop the existing repeating request
+    previewSession.stopRepeating();
+
+    //cancel any existing AF trigger (repeated touches, etc.)
+    previewBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
+    previewBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
+    previewSession.capture(previewBuilder.build(), captureCallbackHandler, backgroundHandler);
+
+    //Now add a new AF trigger with focus region
+    if (isMeteringAreaAFSupported()) {
+      previewBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[]{focusAreaTouch});
+    }
+    previewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+    previewBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
+    previewBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
+    previewBuilder.setTag("FOCUS_TAG"); //we'll capture this later for resuming the preview
+
+    //then we ask for a single request (not repeating!)
+    previewSession.capture(previewBuilder.build(), captureCallbackHandler, backgroundHandler);
+  }
+
+  private boolean isMeteringAreaAFSupported() {
+    return characteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF) >= 1;
   }
 
   public String getVideoPath() {

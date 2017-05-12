@@ -34,6 +34,7 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessEvent;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
@@ -91,6 +92,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
     private VideonaFormat videoFormat;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
     private LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
+    private GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
 
     @Inject
     public RecordPresenter(Context context, RecordView recordView, UserEventTracker userEventTracker,
@@ -99,7 +101,9 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
                            AddVideoToProjectUseCase addVideoToProjectUseCase,
                            UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
                            LaunchTranscoderAddAVTransitionsUseCase
-                                   launchTranscoderAddAVTransitionsUseCase) {
+                                   launchTranscoderAddAVTransitionsUseCase,
+                           GetVideoFormatFromCurrentProjectUseCase
+                                   getVideonaFormatFromCurrentProjectUseCase) {
         this.context = context;
         this.recordView = recordView;
         this.userEventTracker = userEventTracker;
@@ -109,6 +113,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionsUseCase;
+        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.currentProject = loadCurrentProject();
         preferencesEditor = sharedPreferences.edit();
         recordedVideosNumber = 0;

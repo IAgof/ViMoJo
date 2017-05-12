@@ -12,6 +12,7 @@ import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperLis
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -43,13 +44,16 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
+    private GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
     private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
+
 
     private EditTextView editTextView;
     private Context context;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
+
 
     @Inject
     public EditTextPreviewPresenter(EditTextView editTextView, Context context,
@@ -57,7 +61,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                     ModifyVideoTextAndPositionUseCase
                                             modifyVideoTextAndPositionUseCase,
-                                    GetVideonaFormatFromCurrentProjectUseCase
+                                    GetVideoFormatFromCurrentProjectUseCase
                                             getVideonaFormatFromCurrentProjectUseCase,
                                     UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
                                     RelaunchTranscoderTempBackgroundUseCase
@@ -67,6 +71,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
+        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
         this.currentProject = loadCurrentProject();
@@ -129,8 +134,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
         if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
             videoToEdit.increaseNumTriesToExportVideo();
             Project currentProject = Project.getInstance(null, null, null);
-            VideonaFormat videoFormat = getVideonaFormatFromCurrentProjectUseCase
-                .getVideonaFormatFromCurrentProject();
+            VideonaFormat videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
             Drawable drawableFadeTransitionVideo = VimojoApplication.getAppContext()
                 .getDrawable(R.drawable.alpha_transition_white);
 
