@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
@@ -47,8 +48,6 @@ public class RecordCamera2PresenterTest {
   @Mock RecordCamera2View mockedRecordView;
   @Mock Context mockedContext;
   boolean isFrontCameraSelected = true;
-  boolean isPrincipalViewSelected = true;
-  boolean isRightControlsViewSelected = true;
   @Mock AutoFitTextureView mockedTextureView;
   String directorySaveVideos;
   @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideoFormatFromCurrentProjectUseCase;
@@ -57,6 +56,11 @@ public class RecordCamera2PresenterTest {
   @Mock VideonaFormat mockedVideoFormat;
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
   @Mock Camera2WrapperListener mockedCamera2WrapperListener;
+
+  private boolean isControlsViewSelected;
+  private boolean isGridSelected;
+  private boolean isSettingsCameraSelected;
+
 
   @Before
   public void injectMocks() {
@@ -70,15 +74,15 @@ public class RecordCamera2PresenterTest {
   }
 
   @Test
-  public void initViewsWithPrincipalAndRightControlsViewSelectedCallsCorrectRecordView(){
+  public void initViewsWithControlsViewAndSettingsCameraViewSelectedCallsCorrectRecordView(){
 
-    presenter = new RecordCamera2Presenter(mockedContext, mockedRecordView,
-        isFrontCameraSelected, isPrincipalViewSelected,
-        isRightControlsViewSelected, mockedTextureView, directorySaveVideos,
-        mockedGetVideoFormatFromCurrentProjectUseCase,
-        mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
+    isControlsViewSelected = true;
+    isSettingsCameraSelected = true;
 
-    presenter.initViews(isFrontCameraSelected, isControlsViewSelected, isGridSelected, isSettingsCameraSelected);
+    presenter = getRecordCamera2Presenter();
+
+    presenter.initViews(isFrontCameraSelected, isControlsViewSelected, isGridSelected,
+        isSettingsCameraSelected);
 
     verify(mockedRecordView).hideChronometer();
     verify(mockedRecordView).setResolutionSelected(720);
@@ -89,21 +93,18 @@ public class RecordCamera2PresenterTest {
 
   @Test
   public void initViewsDefaultInitializationCallsCorrectRecordView(){
-    isPrincipalViewSelected = false;
-    isRightControlsViewSelected = false;
 
-    presenter = new RecordCamera2Presenter(mockedContext, mockedRecordView,
-        isFrontCameraSelected, isPrincipalViewSelected,
-        isRightControlsViewSelected, mockedTextureView, directorySaveVideos,
-        mockedGetVideoFormatFromCurrentProjectUseCase,
-        mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
+    isControlsViewSelected = false;
+    isSettingsCameraSelected = false;
+
+    presenter = getRecordCamera2Presenter();
 
     presenter.initViews(isFrontCameraSelected, isControlsViewSelected, isGridSelected, isSettingsCameraSelected);
 
     verify(mockedRecordView).hideChronometer();
     verify(mockedRecordView).setResolutionSelected(720);
 
-    verify(mockedRecordView).hidePrincipalViews();
+    verify(mockedRecordView).showPrincipalViews();
     verify(mockedRecordView).hideRightControlsView();
   }
 
@@ -113,11 +114,7 @@ public class RecordCamera2PresenterTest {
     int numVideosInProject = getAProject().getVMComposition().getMediaTrack().getNumVideosInProject();
     assertThat("There is not videos in project ", numVideosInProject, is(0));
 
-    presenter = new RecordCamera2Presenter(mockedContext, mockedRecordView,
-        isFrontCameraSelected, isPrincipalViewSelected,
-        isRightControlsViewSelected, mockedTextureView, directorySaveVideos,
-        mockedGetVideoFormatFromCurrentProjectUseCase,
-        mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
+    presenter = getRecordCamera2Presenter();
 
     presenter.navigateToEditOrGallery();
 
@@ -139,11 +136,7 @@ public class RecordCamera2PresenterTest {
 
     // TODO:(alvaro.martinez) 6/04/17 Assert also there are not videos pending to adapt, transcoding
 
-    presenter = new RecordCamera2Presenter(mockedContext, mockedRecordView,
-        isFrontCameraSelected, isPrincipalViewSelected,
-        isRightControlsViewSelected, mockedTextureView, directorySaveVideos,
-        mockedGetVideoFormatFromCurrentProjectUseCase,
-        mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
+    presenter = getRecordCamera2Presenter();
 
     presenter.navigateToEditOrGallery();
 
@@ -168,21 +161,25 @@ public class RecordCamera2PresenterTest {
     mockedAdaptVideoRecordedToVideoFormatUseCase.adaptVideo(video, mockedVideoFormat,
         directorySaveVideos, mockedTranscoderHelperListener);
 
-    presenter = new RecordCamera2Presenter(mockedContext, mockedRecordView,
-        isFrontCameraSelected, isPrincipalViewSelected,
-        isRightControlsViewSelected, mockedTextureView, directorySaveVideos,
-        mockedGetVideoFormatFromCurrentProjectUseCase,
-        mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
+    presenter = getRecordCamera2Presenter();
 
     presenter.navigateToEditOrGallery();
 
     verify(mockedRecordView).showProgressAdaptingVideo();
   }
 
-
   public Project getAProject() {
     return Project.getInstance("title", "/path",
         Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25));
   }
+
+  @NonNull
+  private RecordCamera2Presenter getRecordCamera2Presenter() {
+    return new RecordCamera2Presenter(mockedContext, mockedRecordView,
+        isFrontCameraSelected, mockedTextureView, directorySaveVideos,
+        mockedGetVideoFormatFromCurrentProjectUseCase,
+        mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
+  }
+
 }
