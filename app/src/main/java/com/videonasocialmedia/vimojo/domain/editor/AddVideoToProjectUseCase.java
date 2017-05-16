@@ -14,7 +14,6 @@ import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessE
 import com.videonasocialmedia.vimojo.eventbus.events.project.UpdateProjectDurationEvent;
 import com.videonasocialmedia.vimojo.eventbus.events.video.NumVideosChangedEvent;
 import com.videonasocialmedia.vimojo.eventbus.events.video.VideoAddedToTrackEvent;
-import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -22,9 +21,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnLaunchAVTransitionTempFileListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -56,11 +53,6 @@ public class AddVideoToProjectUseCase {
         checkIfVideoNeedAVTransitionTempFile(videoToAdd, listener);
     }
 
-    public void addVideoToTrackAtPosition(String videoPath, int position) {
-        Video videoToAdd = new Video(videoPath);
-        addVideoToProjectAtPosition(videoToAdd, position);
-    }
-
     public void addVideoToTrack(Video video) {
         try {
             Project currentProject = Project.getInstance(null, null, null);
@@ -69,10 +61,10 @@ public class AddVideoToProjectUseCase {
             projectRepository.update(currentProject);
 
             // TODO(jliarte): 22/10/16 should get rid of EventBus calls?
-          /*  EventBus.getDefault().post(new AddMediaItemToTrackSuccessEvent(video));
+            EventBus.getDefault().post(new AddMediaItemToTrackSuccessEvent(video));
             EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
             EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumVideosInProject()));
-            EventBus.getDefault().post(new VideoAddedToTrackEvent());*/
+            EventBus.getDefault().post(new VideoAddedToTrackEvent());
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             //TODO manejar error
         }
@@ -102,14 +94,16 @@ public class AddVideoToProjectUseCase {
         }
     }
 
-    public void addVideoToProjectAtPosition(Video video, int position) {
+    public void addVideoToProjectAtPosition(Video video, int position,
+                                            OnAddMediaFinishedListener listener) {
         try {
             Project currentProject = Project.getInstance(null, null, null);
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItemAt(position, video);
             projectRepository.update(currentProject);
+            listener.onAddMediaItemToTrackSuccess(video);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
-            // TODO(jliarte): 22/10/16 error management?
+            listener.onAddMediaItemToTrackError();
         }
     }
 

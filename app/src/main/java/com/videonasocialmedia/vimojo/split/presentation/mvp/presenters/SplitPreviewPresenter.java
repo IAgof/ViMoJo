@@ -100,7 +100,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
 
     @Override
     public void onNoVideosRetrieved() {
-        splitView.showError("No videos");
+        splitView.showError(R.string.onNoVideosRetrieved);
     }
 
 
@@ -123,6 +123,11 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
         modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, video, videoFormat,
             startTimeMs, finishTimeMs, currentProject.getProjectPathIntermediateFileAudioFade(),
             this);
+    }
+
+    @Override
+    public void showErrorSplittingVideo() {
+        splitView.showError(R.string.addMediaItemToTrackError);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 /**
  * Created by alvaro on 2/09/16.
@@ -14,7 +15,7 @@ public class GetVideoFormatFromCurrentProjectUseCase {
     public Project project;
 
     public GetVideoFormatFromCurrentProjectUseCase() {
-        project = Project.getInstance(null, null, null);
+        this.project = Project.getInstance(null, null, null);
     }
 
     public VideoCameraFormat getVideoRecordedFormatFromCurrentProjectUseCase() {
@@ -28,7 +29,6 @@ public class GetVideoFormatFromCurrentProjectUseCase {
 
     public VideonaFormat getVideonaFormatFromCurrentProject(){
         VideonaFormat videonaFormat;
-
         VideoResolution resolution = project.getProfile().getVideoResolution();
         VideoQuality quality = project.getProfile().getVideoQuality();
 
@@ -40,5 +40,10 @@ public class GetVideoFormatFromCurrentProjectUseCase {
         }
 
         return videonaFormat;
+    }
+
+    public VideonaFormat getVideonaFormatToAdaptVideo(){
+        return new VideonaFormat(Constants.DEFAULT_VIMOJO_AUDIO_BITRATE,
+            Constants.DEFAULT_VIMOJO_AUDIO_CHANNELS);
     }
 }

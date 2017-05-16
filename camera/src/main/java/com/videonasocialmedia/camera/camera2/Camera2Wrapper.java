@@ -189,7 +189,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     isRecordingVideo = false;
     mediaRecorder.stop();
     mediaRecorder.reset();
-    listener.stopVideo(videoPath);
   }
 
   /**
@@ -280,7 +279,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
 
       mediaRecorder = new MediaRecorderWrapper(new MediaRecorder(), cameraIdSelected,
-          sensorOrientation, rotation, getVideoFilePath(), videoCameraFormat);
+          sensorOrientation, rotation, createVideoFilePath(), videoCameraFormat);
      if (ActivityCompat.checkSelfPermission(context,
           android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
         // TODO: Consider calling
@@ -493,7 +492,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     previewBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF);
     try {
       previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
-      listener.setFlash(false);
     } catch (CameraAccessException e) {
       e.printStackTrace();
     }
@@ -503,13 +501,12 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     previewBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
     try {
       previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
-      listener.setFlash(true);
     } catch (CameraAccessException e) {
       e.printStackTrace();
     }
   }
 
-  private String getVideoFilePath() {
+  private String createVideoFilePath() {
 
     // TODO:(alvaro.martinez) 19/01/17 Get pattern VID_ from where?
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -519,6 +516,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     return videoPath;
   }
 
+  public String getVideoPath() {
+    return videoPath;
+  }
 
   public boolean onTouchZoom(float current_finger_spacing) {
     try {
@@ -657,9 +657,5 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   private boolean isMeteringAreaAFSupported() {
     return characteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF) >= 1;
-  }
-
-  public String getVideoPath() {
-    return videoPath;
   }
 }

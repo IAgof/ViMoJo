@@ -17,12 +17,12 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
  */
 public interface OnAddMediaFinishedListener {
     /**
-     * This method is used when fails to add a new item to the track.
-     */
-    void onAddMediaItemToTrackError();
-
-    /**
      * This method is used when new items have been added to the track.
      */
     void onAddMediaItemToTrackSuccess(Media media);
+
+    /**
+     * This method is used when fails to add a new item to the track.
+     */
+    void onAddMediaItemToTrackError();
 }
