@@ -90,7 +90,7 @@ public class GetMusicFromProjectUseCaseTest {
     @NonNull
     public ArrayList<AudioTrack> getAudioTracks(Music music) {
         ArrayList<AudioTrack> audioTracks = new ArrayList<AudioTrack>();
-        AudioTrack audioTrack = new AudioTrack(Constants.INDEX_AUDIO_TRACKS_MUSIC);
+        AudioTrack audioTrack = new AudioTrack(Constants.INDEX_AUDIO_TRACK_MUSIC);
         try {
             audioTrack.insertItem(music);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {

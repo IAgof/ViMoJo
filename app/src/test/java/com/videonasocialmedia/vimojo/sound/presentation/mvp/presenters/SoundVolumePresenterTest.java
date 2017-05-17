@@ -1,15 +1,10 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.UpdateAudioTrackProjectUseCase;
@@ -17,16 +12,13 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeVie
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -65,12 +57,12 @@ public class SoundVolumePresenterTest {
   public void removeMusicFromProjectCallsRemoveMusicFromProject() throws IllegalItemOnTrack {
     Project currentProject = getCurrentProject();
     Music music = new Music("media/path", 0);
-    currentProject.getAudioTracks().get(INDEX_AUDIO_TRACKS_MUSIC).insertItemAt(0, music);
+    currentProject.getAudioTracks().get(INDEX_AUDIO_TRACK_MUSIC).insertItemAt(0, music);
 
     injectedPresenter.removeMusicFromProject();
 
     Mockito.verify(mockedRemoveMusicFromProjectUseCase).removeMusicFromProject(music,
-        INDEX_AUDIO_TRACKS_MUSIC);
+        INDEX_AUDIO_TRACK_MUSIC);
   }**/
 
   @Test

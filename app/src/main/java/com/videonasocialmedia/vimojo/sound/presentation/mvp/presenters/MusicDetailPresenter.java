@@ -27,7 +27,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC;
+import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC;
 
 /**
  *
@@ -90,7 +90,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         musicSelected = retrieveLocalMusic(musicPath);
         // TODO:(alvaro.martinez) 12/04/17 Delete this force of volume when Vimojo support more than one music, at this moment, music track same as music volume
         musicSelected.setVolume(currentProject.getAudioTracks()
-            .get(Constants.INDEX_AUDIO_TRACKS_MUSIC).getVolume());
+            .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume());
         obtainMusicsAndVideos();
         if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
             musicDetailView.setVideoFadeTransitionAmongVideos();
@@ -103,8 +103,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     }
 
     public void removeMusic(Music music) {
-        removeMusicFromProjectUseCase.removeMusicFromProject(music, INDEX_AUDIO_TRACKS_MUSIC);
-        updateAudioTrackProjectUseCase.removedTrack(INDEX_AUDIO_TRACKS_MUSIC);
+        removeMusicFromProjectUseCase.removeMusicFromProject(music, INDEX_AUDIO_TRACK_MUSIC);
+        updateAudioTrackProjectUseCase.removedTrack(INDEX_AUDIO_TRACK_MUSIC);
         updateCurrentProjectUseCase.updateProject();
         userEventTracker.trackMusicSet(currentProject);
         musicDetailView.goToSoundActivity();
@@ -124,10 +124,10 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     public void addMusic(Music music, float volume) {
         music.setVolume(volume);
-        updateAudioTrackProjectUseCase.addedNewTrack(Constants.INDEX_AUDIO_TRACKS_MUSIC);
-        addMusicToProjectUseCase.addMusicToTrack(music,INDEX_AUDIO_TRACKS_MUSIC, this);
+        updateAudioTrackProjectUseCase.addedNewTrack(Constants.INDEX_AUDIO_TRACK_MUSIC);
+        addMusicToProjectUseCase.addMusicToTrack(music, INDEX_AUDIO_TRACK_MUSIC, this);
         updateAudioTrackProjectUseCase.setAudioTrackVolume(currentProject.getAudioTracks()
-            .get(Constants.INDEX_AUDIO_TRACKS_MUSIC), volume);
+            .get(Constants.INDEX_AUDIO_TRACK_MUSIC), volume);
         updateCurrentProjectUseCase.updateProject();
     }
 
@@ -148,7 +148,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
                 .compareTo(musicSelected.getMediaPath()) == 0) {
             // TODO:(alvaro.martinez) 12/04/17 Delete this force of volume when Vimojo support more than one music, at this moment, music track same as music volume
             musicOnProject.setVolume(currentProject.getAudioTracks()
-                .get(Constants.INDEX_AUDIO_TRACKS_MUSIC).getVolume());
+                .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume());
             musicDetailView.setMusic(musicOnProject, true);
         } else {
             musicDetailView.setMusic(musicSelected, false);
@@ -171,6 +171,6 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         // Now setVolume update MusicTrackVolume until Vimojo support setVolume by clip.
         //updateMusicVolumeProjectUseCase.setVolumeMusic(currentProject, volume);
         updateAudioTrackProjectUseCase.setAudioTrackVolume(currentProject.getAudioTracks()
-            .get(Constants.INDEX_AUDIO_TRACKS_MUSIC), volume);
+            .get(Constants.INDEX_AUDIO_TRACK_MUSIC), volume);
     }
 }

@@ -23,7 +23,7 @@ public class GetMusicFromProjectUseCase {
         Music music = null;
         try {
             music = (Music) project.getAudioTracks()
-                .get(Constants.INDEX_AUDIO_TRACKS_MUSIC).getItems().get(0);
+                .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getItems().get(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -34,7 +34,7 @@ public class GetMusicFromProjectUseCase {
         Music voiceOver = null;
         try {
             voiceOver = (Music) project.getAudioTracks()
-                .get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER).getItems().get(0);
+                .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getItems().get(0);
         } catch (Exception e) {
             e.printStackTrace();
         }

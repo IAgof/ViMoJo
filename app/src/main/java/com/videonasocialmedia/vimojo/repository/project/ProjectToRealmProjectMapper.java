@@ -40,20 +40,20 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
       realmProject.videos.add(toRealmVideoMapper.map((Video) video));
     }
 
-    for(Media music: project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_MUSIC).getItems()){
+    for(Media music: project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC).getItems()){
       realmProject.musics.add(toReamMusicMapper.map((Music) music));
     }
 
-    for(Media music: project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER)
+    for(Media music: project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
         .getItems()){
       realmProject.musics.add(toReamMusicMapper.map((Music) music));
     }
 
     realmProject.tracks.add(toRealmTrackMapper.map(project.getMediaTrack()));
     realmProject.tracks.add(toRealmTrackMapper.map(project.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC)));
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC)));
     realmProject.tracks.add(toRealmTrackMapper.map(project.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER)));
+        .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER)));
 
      return realmProject;
   }

@@ -217,7 +217,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     private void checkMuteOnTracks() {
         if (currentProject.getVMComposition().hasMusic()) {
             AudioTrack musicTrack = currentProject.getAudioTracks()
-                .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC);
+                .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC);
             if(musicTrack.isMute()){
                 editActivityView.setMusicVolume(VOLUME_MUTE);
             }
@@ -225,7 +225,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
         if(currentProject.getVMComposition().hasVoiceOver()){
             AudioTrack voiceOverTrack = currentProject.getAudioTracks()
-                .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_VOICE_OVER);
+                .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
             if(voiceOverTrack.isMute()){
                 editActivityView.setVoiceOverVolume(VOLUME_MUTE);
             }

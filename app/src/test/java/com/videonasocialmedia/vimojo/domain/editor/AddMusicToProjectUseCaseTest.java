@@ -9,7 +9,6 @@
  */
 package com.videonasocialmedia.vimojo.domain.editor;
 
-import com.google.android.exoplayer.C;
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -82,11 +81,11 @@ public class AddMusicToProjectUseCaseTest {
         Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
         Music musicToAdd = new Music("media/path", 0.5f, 65);
 
-        injectedUseCase.addMusicToTrack(musicToAdd, Constants.INDEX_AUDIO_TRACKS_MUSIC,
+        injectedUseCase.addMusicToTrack(musicToAdd, Constants.INDEX_AUDIO_TRACK_MUSIC,
             mockedOnAddMediaFinishedListener);
 
         AudioTrack projectAudioTrack = videonaProject.getAudioTracks()
-            .get(Constants.INDEX_AUDIO_TRACKS_MUSIC);
+            .get(Constants.INDEX_AUDIO_TRACK_MUSIC);
 
         Assert.assertThat(projectAudioTrack.getItems().get(0), CoreMatchers.<Media>is(musicToAdd));
 
@@ -98,11 +97,11 @@ public class AddMusicToProjectUseCaseTest {
         Project videonaProject = getAProject(); // TODO: inject as a dependence in Use Case constructor
         Music voiceOverToAdd = new Music("media/path", 0.5f, 65);
 
-        injectedUseCase.addMusicToTrack(voiceOverToAdd, Constants.INDEX_AUDIO_TRACKS_VOICE_OVER,
+        injectedUseCase.addMusicToTrack(voiceOverToAdd, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
             mockedOnAddMediaFinishedListener);
 
         AudioTrack projectAudioTrack = videonaProject.getAudioTracks()
-            .get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER);
+            .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
 
         Assert.assertThat(projectAudioTrack.getItems().get(0), CoreMatchers.<Media>is(voiceOverToAdd));
 

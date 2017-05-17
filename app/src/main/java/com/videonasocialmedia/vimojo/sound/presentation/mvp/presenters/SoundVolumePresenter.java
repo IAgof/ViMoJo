@@ -81,10 +81,10 @@ public class SoundVolumePresenter implements OnVideosRetrieved {
 
     public void setVoiceOver(String voiceOverPath, float volume) {
 
-        updateAudioTrackProjectUseCase.addedNewTrack(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER);
+        updateAudioTrackProjectUseCase.addedNewTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
         addVoiceOverToProjectUseCase.setVoiceOver(voiceOverPath, volume);
         updateAudioTrackProjectUseCase.setAudioTrackVolume(currentProject.getAudioTracks()
-            .get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER), volume);
+            .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER), volume);
         updateCurrentProjectUseCase.updateProject();
         soundVolumeView.goToSoundActivity();
     }

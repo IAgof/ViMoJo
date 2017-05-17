@@ -49,11 +49,11 @@ public class UpdateAudioTrackProjectUseCase {
 
   public void removedTrack(int trackIndex) {
     if(areThereAnyAudioTrackAdded()){
-      if(trackIndex == Constants.INDEX_AUDIO_TRACKS_MUSIC){
-        updatePositionOtherAudioTrackAdded(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER);
+      if(trackIndex == Constants.INDEX_AUDIO_TRACK_MUSIC){
+        updatePositionOtherAudioTrackAdded(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
       } else {
-        if(trackIndex == Constants.INDEX_AUDIO_TRACKS_VOICE_OVER){
-          updatePositionOtherAudioTrackAdded(Constants.INDEX_AUDIO_TRACKS_MUSIC);
+        if(trackIndex == Constants.INDEX_AUDIO_TRACK_VOICE_OVER){
+          updatePositionOtherAudioTrackAdded(Constants.INDEX_AUDIO_TRACK_MUSIC);
         }
       }
     }

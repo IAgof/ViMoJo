@@ -44,17 +44,17 @@ public class UpdateAudioTrackProjectUseCaseTest {
     getAProject().clear();
     Project project = getAProject();
     assertThat("Default volume is 0.5f", project.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC).getVolume(), is(0.5f));
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume(), is(0.5f));
 
     float volume = 0.8f;
     updateAudioTrackProjectUseCase = new UpdateAudioTrackProjectUseCase(mockedTrackRepository);
     updateAudioTrackProjectUseCase.setAudioTrackVolume(project.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC), volume);
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC), volume);
 
     Project currentProject = Project.getInstance(null,null,null);
 
     assertThat("Update volume", currentProject.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC).getVolume(), is(volume));
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume(), is(volume));
   }
 
   @Test
@@ -62,17 +62,17 @@ public class UpdateAudioTrackProjectUseCaseTest {
     getAProject().clear();
     Project project = getAProject();
     assertThat("Default solo is false", project.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC).isSolo(), is(false));
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC).isSolo(), is(false));
 
     boolean solo = true;
     updateAudioTrackProjectUseCase = new UpdateAudioTrackProjectUseCase(mockedTrackRepository);
     updateAudioTrackProjectUseCase.setAudioTrackSolo(project.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC), solo);
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC), solo);
 
     Project currentProject = Project.getInstance(null,null,null);
 
     assertThat("Update volume", currentProject.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC).isSolo(), is(solo));
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC).isSolo(), is(solo));
   }
 
   @Test
@@ -80,24 +80,24 @@ public class UpdateAudioTrackProjectUseCaseTest {
     getAProject().clear();
     Project project = getAProject();
     assertThat("Default mute is false", project.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC).isMute(), is(false));
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC).isMute(), is(false));
 
     boolean mute = true;
     updateAudioTrackProjectUseCase = new UpdateAudioTrackProjectUseCase(mockedTrackRepository);
     updateAudioTrackProjectUseCase.setAudioTrackMute(project.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC), mute);
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC), mute);
 
     Project currentProject = Project.getInstance(null,null,null);
 
     assertThat("Update volume", currentProject.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC).isMute(), is(mute));
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC).isMute(), is(mute));
   }
 
   @Test
   public void setAudioTrackVolumeUpdateTrackRepository(){
     Project project = getAProject();
     AudioTrack audioTrack = project.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC);
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC);
 
     injectedUseCase.setAudioTrackVolume(audioTrack, 0.8f);
 
@@ -108,7 +108,7 @@ public class UpdateAudioTrackProjectUseCaseTest {
   public void setAudioTrackSoloUpdateTrackRepository(){
     Project project = getAProject();
     AudioTrack audioTrack = project.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC);
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC);
 
     injectedUseCase.setAudioTrackSolo(audioTrack, true);
 
@@ -119,7 +119,7 @@ public class UpdateAudioTrackProjectUseCaseTest {
   public void setAudioTrackMuteUpdateTrackRepository(){
     Project project = getAProject();
     AudioTrack audioTrack = project.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC);
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC);
 
     injectedUseCase.setAudioTrackMute(audioTrack, true);
 
@@ -133,13 +133,13 @@ public class UpdateAudioTrackProjectUseCaseTest {
     assert !project.hasMusic();
 
     updateAudioTrackProjectUseCase = new UpdateAudioTrackProjectUseCase(mockedTrackRepository);
-    updateAudioTrackProjectUseCase.addedNewTrack(Constants.INDEX_AUDIO_TRACKS_MUSIC);
+    updateAudioTrackProjectUseCase.addedNewTrack(Constants.INDEX_AUDIO_TRACK_MUSIC);
 
     int positionFirst = 1;
     Project currentProject = Project.getInstance(null,null,null);
 
     assertThat("Music track position is 1 ", currentProject.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC).getPosition(), is(positionFirst));
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getPosition(), is(positionFirst));
 
   }
 
@@ -148,17 +148,17 @@ public class UpdateAudioTrackProjectUseCaseTest {
     getAProject().clear();
     Project project = getAProject();
     Music voiceOver = new Music("media/path", 0.5f, 66);
-    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER).insertItem(voiceOver);
+    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(voiceOver);
     assert project.hasVoiceOver();
     assert !project.hasMusic();
 
     updateAudioTrackProjectUseCase = new UpdateAudioTrackProjectUseCase(mockedTrackRepository);
-    updateAudioTrackProjectUseCase.addedNewTrack(Constants.INDEX_AUDIO_TRACKS_MUSIC);
+    updateAudioTrackProjectUseCase.addedNewTrack(Constants.INDEX_AUDIO_TRACK_MUSIC);
 
     Project currentProject = Project.getInstance(null,null,null);
 
     assertThat("Music track position is 2 ", currentProject.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC).getPosition(), is(2));
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getPosition(), is(2));
 
   }
 
@@ -167,19 +167,19 @@ public class UpdateAudioTrackProjectUseCaseTest {
 
     Project project = getAProject();
     Music voiceOver = new Music("media/path", 0.5f, 66);
-    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER).insertItem(voiceOver);
+    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(voiceOver);
     Music music = new Music("media/path", 0.5f, 66);
-    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_MUSIC).insertItem(music);
+    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
     assert project.hasVoiceOver();
     assert project.hasMusic();
 
     updateAudioTrackProjectUseCase = new UpdateAudioTrackProjectUseCase(mockedTrackRepository);
-    updateAudioTrackProjectUseCase.removedTrack(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER);
+    updateAudioTrackProjectUseCase.removedTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
 
     Project currentProject = Project.getInstance(null,null,null);
 
     assertThat("Music track position is 1 ", currentProject.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC).getPosition(), is(1));
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getPosition(), is(1));
   }
 
   private Project getAProject() {

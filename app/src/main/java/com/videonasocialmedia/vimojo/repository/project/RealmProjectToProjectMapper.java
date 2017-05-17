@@ -1,13 +1,11 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.LastVideoExported;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -17,7 +15,6 @@ import com.videonasocialmedia.vimojo.repository.music.RealmMusicToMusicMapper;
 import com.videonasocialmedia.vimojo.repository.track.RealmTrack;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideoToVideoMapper;
-import com.videonasocialmedia.vimojo.sources.MusicSource;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 
@@ -99,13 +96,13 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
 
     for (RealmTrack realmTrack : realmProject.tracks) {
       switch (realmTrack.id){
-        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_MEDIA_TRACKS:
+        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_MEDIA_TRACK:
           realmTrackVideo = realmTrack;
           break;
-        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC:
+        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC:
           realmTrackMusic = realmTrack;
           break;
-        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_VOICE_OVER:
+        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
           realmTrackVoiceOver = realmTrack;
           break;
         default:
@@ -121,31 +118,31 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
 
     if(realmTrackMusic!=null) {
       project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC)
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC)
           .setVolume(realmTrackMusic.volume);
       project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC)
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC)
           .setSolo(realmTrackMusic.solo);
       project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC)
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC)
           .setMute(realmTrackMusic.mute);
       project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_MUSIC)
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC)
           .setPosition(realmTrackMusic.position);
     }
 
     if(realmTrackVoiceOver!=null) {
       project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_VOICE_OVER)
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
           .setVolume(realmTrackVoiceOver.volume);
       project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_VOICE_OVER)
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
           .setSolo(realmTrackVoiceOver.solo);
       project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_VOICE_OVER)
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
           .setMute(realmTrackVoiceOver.mute);
       project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACKS_VOICE_OVER)
+          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
           .setPosition(realmTrackVoiceOver.position);
     }
   }
@@ -156,11 +153,11 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
         if(isAVoiceOver(realmMusic)){
           project.getAudioTracks()
               .get(com.videonasocialmedia.videonamediaframework.model
-                  .Constants.INDEX_AUDIO_TRACKS_VOICE_OVER).insertItem(toMusicMapper.map(realmMusic));
+                  .Constants.INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(toMusicMapper.map(realmMusic));
         } else {
           project.getAudioTracks()
               .get(com.videonasocialmedia.videonamediaframework.model
-                  .Constants.INDEX_AUDIO_TRACKS_MUSIC).insertItem(toMusicMapper.map(realmMusic));
+                  .Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(toMusicMapper.map(realmMusic));
         }
       } catch (IllegalItemOnTrack illegalItemOnTrack) {
         illegalItemOnTrack.printStackTrace();

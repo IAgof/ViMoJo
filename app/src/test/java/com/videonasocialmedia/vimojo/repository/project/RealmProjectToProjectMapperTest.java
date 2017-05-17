@@ -194,7 +194,7 @@ public class RealmProjectToProjectMapperTest {
 
     Project project = mockedMapper.map(realmProject);
 
-    Music music = (Music) project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_MUSIC)
+    Music music = (Music) project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC)
         .getItems().get(0);
     assertThat(music.getMediaPath(), is("media/path"));
     assertThat(music.getVolume(), is(0.55f));
@@ -205,7 +205,7 @@ public class RealmProjectToProjectMapperTest {
   public void testMapSetsProjectTracks() {
     RealmProject realmProject = getARealmProject();
     RealmTrack realmTrack = new RealmTrack();
-    realmTrack.id = Constants.INDEX_AUDIO_TRACKS_MUSIC;
+    realmTrack.id = Constants.INDEX_AUDIO_TRACK_MUSIC;
     realmTrack.volume = 0.5f;
     realmTrack.mute = true;
     realmTrack.solo = false;
@@ -214,7 +214,7 @@ public class RealmProjectToProjectMapperTest {
 
     Project project = mockedMapper.map(realmProject);
 
-    Track track = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_MUSIC);
+    Track track = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     assertThat(track.getVolume(), is(0.5f));
     assertThat(track.isMute(), is(true));
     assertThat(track.isSolo(), is(false));
