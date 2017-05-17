@@ -31,7 +31,7 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
             project.isAudioFadeTransitionActivated(), project.isVideoFadeTransitionActivated(),
             project.hasWatermark());
 
-    if(project.hasVideoExported()){
+    if (project.hasVideoExported()) {
       realmProject.pathLastVideoExported = project.getPathLastVideoExported();
       realmProject.dateLastVideoExported = project.getDateLastVideoExported();
     }
@@ -40,12 +40,12 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
       realmProject.videos.add(toRealmVideoMapper.map((Video) video));
     }
 
-    for(Media music: project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_MUSIC).getItems()){
+    for (Media music : project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_MUSIC).getItems()) {
       realmProject.musics.add(toReamMusicMapper.map((Music) music));
     }
 
-    for(Media music: project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER)
-        .getItems()){
+    for (Media music : project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER)
+        .getItems()) {
       realmProject.musics.add(toReamMusicMapper.map((Music) music));
     }
 
