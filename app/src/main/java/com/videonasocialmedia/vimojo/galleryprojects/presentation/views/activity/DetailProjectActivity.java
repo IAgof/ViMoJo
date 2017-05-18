@@ -54,6 +54,7 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   ImageView imageViewThumb;
 
   private boolean isTitleSelected = false;
+  private String titleProject;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +86,7 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
     LayoutInflater inflater = LayoutInflater.from(VimojoApplication.getAppContext());
     View subView = inflater.inflate(R.layout.dialog_editable_text,null);
     final EditText editText = (EditText) subView.findViewById(R.id.detail_project_title_dialog);
+    editText.setText(titleProject);
 
     final DialogInterface.OnClickListener dialogClickListener
         = new DialogInterface.OnClickListener() {
@@ -141,6 +143,8 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   @Override
   public void showTitleProject(String title) {
     textViewTitle.setText(title);
+    titleProject = title;
+    onClickProjectTitle();
   }
 
   @Override

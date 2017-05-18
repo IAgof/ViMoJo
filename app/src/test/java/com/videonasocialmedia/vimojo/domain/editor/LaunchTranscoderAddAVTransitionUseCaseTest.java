@@ -51,6 +51,7 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
   @Mock
   VideoRepository mockVideoRepository;
   @Mock Video mockedVideo;
+  @Mock Project mockedProject;
 
   @Before
   public void injectDoubles() throws Exception {
@@ -113,6 +114,32 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
     verify(mockedTranscoderHelper).generateOutputVideoWithAudioTransition(video,
         project.getProjectPathIntermediateFileAudioFade(), mockedTranscoderHelperListener);
 
+  }
+
+  @Test
+  public void launchExportTempFileCallsVideoRepositoryUpdate() {
+    Video video = new Video("media/path");
+
+    injectedLaunchTranscoderAddAVTransitionsUseCase.transcoderHelper = mockedTranscoderHelper;
+    injectedLaunchTranscoderAddAVTransitionsUseCase.launchExportTempFile(mockedDrawableFadeTransition,
+        video, videonaFormat, mockedProject.getProjectPathIntermediateFileAudioFade(),
+        mockedTranscoderHelperListener);
+
+    verify(mockVideoRepository).update(video);
+  }
+
+  @Test
+  public void launchExportTempFileUpdateIsTranscodingTempFileFinished() {
+    Video video = new Video("media/path");
+    assert video.isTranscodingTempFileFinished();
+
+    injectedLaunchTranscoderAddAVTransitionsUseCase.transcoderHelper = mockedTranscoderHelper;
+
+    injectedLaunchTranscoderAddAVTransitionsUseCase.launchExportTempFile(mockedDrawableFadeTransition,
+        video, videonaFormat, mockedProject.getProjectPathIntermediateFileAudioFade(),
+        mockedTranscoderHelperListener);
+
+    assertThat(video.isTranscodingTempFileFinished(), is(false));
   }
 
   public Project getAProject() {

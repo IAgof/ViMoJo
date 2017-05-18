@@ -8,8 +8,6 @@ import android.graphics.Rect;
 
 public interface Camera2WrapperListener {
 
-  void setFlash(boolean state);
-
   void setFlashSupport();
 
   void stopVideo(String path);

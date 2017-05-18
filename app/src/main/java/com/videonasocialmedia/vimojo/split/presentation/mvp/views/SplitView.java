@@ -17,7 +17,7 @@ public interface SplitView {
 
     void showPreview(List<Video> movieList);
 
-    void showError(String message);
+    void showError(int stringResourceId);
 
     void showText(String text, String position);
 }

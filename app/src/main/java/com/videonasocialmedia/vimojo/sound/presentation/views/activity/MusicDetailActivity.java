@@ -193,7 +193,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
 
     @Override
     public void bindVideoList(List<Video> movieList) {
-
         videonaPlayer.bindVideoList(movieList);
         videonaPlayer.seekTo(currentProjectPosition);
     }
@@ -215,7 +214,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         musicDuration.setText(music.getMusicDuration());
         Glide.with(VimojoApplication.getAppContext()).load(music.getIconResourceId()).error(R.drawable.fragment_gallery_no_image);
         musicImage.setImageResource(music.getIconResourceId());
-        //
     }
 
     @Override

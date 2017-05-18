@@ -12,6 +12,8 @@ package com.videonasocialmedia.vimojo.split.presentation.views.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -52,6 +55,8 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     TextView timeTag;
     @Bind(R.id.seekBar_split)
     SeekBar splitSeekBar;
+    @Bind(R.id.coordinator_layout_video_split)
+    CoordinatorLayout coordinatorLayout;
 
     int videoIndexOnTrack;
     private Video video;
@@ -135,9 +140,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     public void navigateTo(Class cls) {
-        Intent intent = new Intent(getApplicationContext(), cls);
-        startActivity(intent);
-        finish();
+        startActivity(new Intent(VimojoApplication.getAppContext(), cls));
     }
 
     @Override
@@ -153,7 +156,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     private void navigateTo(Class cls, int currentVideoIndex) {
-        Intent intent = new Intent(this, cls);
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
         startActivity(intent);
         //finish();
@@ -219,7 +222,9 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     @Override
-    public void showError(String message) {
+    public void showError(int stringResourceId) {
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, stringResourceId, Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 
     @Override

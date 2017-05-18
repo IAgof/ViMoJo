@@ -11,7 +11,6 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,8 +26,6 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.presentation.views.fragment.VideoGalleryFragment;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnSelectionModeListener;
 
-import com.videonasocialmedia.vimojo.utils.Constants;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,17 +36,14 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
-
 /**
  * Created by jca on 20/5/15.
  */
 public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageChangeListener,
-        GalleryPagerView, OnSelectionModeListener{
-
+        GalleryPagerView, OnSelectionModeListener {
+    public final String TAG = getClass().getCanonicalName();
     private final String MASTERS_FRAGMENT_TAG="MASTERS";
     private final String EDITED_FRAGMENT_TAG="EDITED";
-    private final int REQUEST_CODE_REMOVE_VIDEOS_FROM_GALLERY = 1;
 
     @Inject GalleryPagerPresenter galleryPagerPresenter;
 
@@ -69,28 +63,26 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
         ButterKnife.bind(this);
-
-        Log.d("GALLERY ACTIVITY", "Creating Activity");
-
-        ViewPager vpPager = (ViewPager) findViewById(R.id.vpPager);
-        adapterViewPager = new MyPagerAdapter(getFragmentManager(), savedInstanceState);
-        vpPager.setAdapter(adapterViewPager);
-        vpPager.setOnPageChangeListener(this);
-
         getActivityPresentersComponent().inject(this);
 
         PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_header);
         pagerTabStrip.setDrawFullUnderline(true);
         pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorSecondary));
         pagerTabStrip.setTextColor(getResources().getColor(R.color.colorSecondary));
+        Log.d(TAG, "Creating Activity");
+        setupViewPager(savedInstanceState);
+        setupPagerTabStrip();
+        Log.d(TAG, "....done!!");
     }
 
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 
     @Override
     public void onPause() {
@@ -98,9 +90,18 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         countVideosSelected = getSelectedVideos().size();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void setupPagerTabStrip() {
+        PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_header);
+        pagerTabStrip.setDrawFullUnderline(true);
+        pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorSecondary));
+        pagerTabStrip.setTextColor(getResources().getColor(R.color.colorSecondary));
+    }
+
+    private void setupViewPager(Bundle savedInstanceState) {
+        ViewPager vpPager = (ViewPager) findViewById(R.id.vpPager);
+        adapterViewPager = new MyPagerAdapter(getFragmentManager(), savedInstanceState);
+        vpPager.setAdapter(adapterViewPager);
+        vpPager.setOnPageChangeListener(this);
     }
 
     private List<Video> getSelectedVideos() {
@@ -123,7 +124,6 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
     }
 
     @Override
@@ -133,28 +133,27 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Override
     public void onPageScrollStateChanged(int state) {
-
-    }
-
-    private List<Video> getSelectedVideosFromFragment(int selectedFragmentId) {
-        VideoGalleryFragment selectedFragment = adapterViewPager.getItem(selectedFragmentId);
-        return selectedFragment.getSelectedVideoList();
-
     }
 
     @OnClick(R.id.button_ok_gallery)
     public void onClick() {
         List<Video> videoList;
-            videoList = getSelectedVideos();
-            if (videoList.size() > 0)
-                galleryPagerPresenter.loadVideoListToProject(videoList);
+        videoList = getSelectedVideos();
+        if (videoList.size() > 0) {
+            galleryPagerPresenter.loadVideoListToProject(videoList);
+        }
     }
 
-    private List<Video> getSelectedVideosFromCurrentFragment() {
-        VideoGalleryFragment selectedFragment = adapterViewPager.getItem(selectedPage);
-        return selectedFragment.getSelectedVideoList();
-
-    }
+//    private List<Video> getSelectedVideosFromFragment(int selectedFragmentId) {
+//        VideoGalleryFragment selectedFragment = adapterViewPager.getItem(selectedFragmentId);
+//        return selectedFragment.getSelectedVideoList();
+//
+//    }
+//
+//    private List<Video> getSelectedVideosFromCurrentFragment() {
+//        VideoGalleryFragment selectedFragment = adapterViewPager.getItem(selectedPage);
+//        return selectedFragment.getSelectedVideoList();
+//    }
 
     @OnClick(R.id.button_cancel_gallery)
     public void goBack() {
@@ -208,17 +207,17 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
                 .setMessage(getString(R.string.confirmDeleteMessage))
                 .setPositiveButton(R.string.dialog_accept_delete_clip, dialogClickListener)
                 .setNegativeButton(R.string.dialog_cancel_delete_clip, dialogClickListener).show();
-
-
         }
     }
 
     private void updateCounter() {
-        if (selectionMode.getVisibility() != View.VISIBLE)
+        if (selectionMode.getVisibility() != View.VISIBLE) {
             selectionMode.setVisibility(View.VISIBLE);
-            videoCounter.setText(Integer.toString(countVideosSelected));
-            if (countVideosSelected == 0)
-                selectionMode.setVisibility(View.GONE);
+        }
+        videoCounter.setText(Integer.toString(countVideosSelected));
+        if (countVideosSelected == 0) {
+            selectionMode.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -276,12 +275,10 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Override
     public void onExitSelection() {
-
     }
 
     @Override
     public void onConfirmSelection() {
-
     }
 
     class MyPagerAdapter extends FragmentPagerAdapter {
@@ -294,7 +291,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
             super(fragmentManager);
             if (savedStateInstance==null) {
                 createFragments();
-            }else{
+            } else {
                 restoreFragments(fragmentManager, savedStateInstance);
             }
         }

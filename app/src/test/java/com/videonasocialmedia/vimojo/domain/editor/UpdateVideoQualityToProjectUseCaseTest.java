@@ -47,12 +47,12 @@ public class UpdateVideoQualityToProjectUseCaseTest {
   public void updateQualitySetProjectProfileQuality(){
 
     VideoQuality videoQuality = currentProject.getProfile().getVideoQuality();
-    assertThat("bitRate", 10 * 1000 * 1000, is(videoQuality.getVideoBitRate()));
+    assertThat("bitRate", 50 * 1000 * 1000, is(videoQuality.getVideoBitRate()));
 
     injectedUseCase.updateQuality(VideoQuality.Quality.LOW);
 
     VideoQuality updatedVideoQuality = currentProject.getProfile().getVideoQuality();
-    assertThat("updated bitRate", 5 * 1000 * 1000, is(updatedVideoQuality.getVideoBitRate()));
+    assertThat("updated bitRate", 16 * 1000 * 1000, is(updatedVideoQuality.getVideoBitRate()));
 
   }
 

@@ -2,8 +2,10 @@ package com.videonasocialmedia.vimojo.split.domain;
 
 import android.support.annotation.NonNull;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.junit.Before;
@@ -17,6 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
@@ -35,7 +38,7 @@ public class SplitVideoUseCaseTest {
   }
 
   @Test
-  public void splitVideoCallsProjectRepositoryUpdateAsItCallsAddVideoToProjectAtPosition() {
+  public void splitVideoCallsAddVideoToProjectAtPosition() {
     Video video = new Video("media/path");
     OnSplitVideoListener listener = getOnSplitVideoListener();
 
@@ -43,7 +46,7 @@ public class SplitVideoUseCaseTest {
 
     ArgumentCaptor<Video> videoCaptor = ArgumentCaptor.forClass(Video.class);
     verify(mockedAddVideoToProjectUseCase).addVideoToProjectAtPosition(videoCaptor.capture(),
-            eq(1));
+        eq(1), any(OnAddMediaFinishedListener.class));
     assertThat(videoCaptor.getValue().getMediaPath(), is(video.getMediaPath()));
   }
 
@@ -54,6 +57,12 @@ public class SplitVideoUseCaseTest {
       public void trimVideo(Video video, int startTimeMs, int finishTimeMs) {
 
       }
+
+      @Override
+      public void showErrorSplittingVideo() {
+
+      }
     };
   }
+
 }

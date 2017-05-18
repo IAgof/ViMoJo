@@ -13,6 +13,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 
 import com.videonasocialmedia.vimojo.R;
@@ -26,6 +27,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
+import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -34,14 +36,17 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
-public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener,
-        OnVideosRetrieved, OnReorderMediaListener {
+public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener {
     private final String LOG_TAG = getClass().getSimpleName();
     private final Project currentProject;
+    // TODO(jliarte): 2/05/17 inject delegate?
+    final VideoListErrorCheckerDelegate videoListErrorCheckerDelegate
+            = new VideoListErrorCheckerDelegate();
     /**
      * UseCases
      */
@@ -51,14 +56,16 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     /**
-     * Editor View
+     * EditActivity View
      */
     private EditActivityView editActivityView;
-    private List<Video> videoList;
+    private final VideoTranscodingErrorNotifier videoTranscodingErrorNotifier;
+    protected List<Video> videoList;
     protected UserEventTracker userEventTracker;
 
     @Inject
     public EditPresenter(EditActivityView editActivityView,
+                         VideoTranscodingErrorNotifier videoTranscodingErrorNotifier,
                          UserEventTracker userEventTracker,
                          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
                          ReorderMediaItemUseCase reorderMediaItemUseCase,
@@ -67,6 +74,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                          GetPreferencesTransitionFromProjectUseCase
                                  getPreferencesTransitionFromProjectUseCase) {
         this.editActivityView = editActivityView;
+        this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;
         this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
         this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
@@ -94,7 +102,24 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     }
 
     public void moveItem(int fromPosition, int toPositon) {
-        reorderMediaItemUseCase.moveMediaItem(videoList.get(fromPosition), toPositon, this);
+//        Video mediaToMove = videoList.get(fromPosition);
+        Video mediaToMove = (Video) currentProject.getMediaTrack().getItems().get(fromPosition);
+        reorderMediaItemUseCase.moveMediaItem(mediaToMove, toPositon,
+                new OnReorderMediaListener() {
+            @Override
+            public void onMediaReordered(Media media, int newPosition) {
+                // If everything was right the UI is already updated since the user did the
+                // reordering over the "model view"
+                userEventTracker.trackClipsReordered(currentProject);
+            }
+
+            @Override
+            public void onErrorReorderingMedia() {
+                //The reordering went wrong so we ask the project for the actual video list
+                Log.d(LOG_TAG, "timeline:  error reordering!!");
+                obtainVideos();
+            }
+        });
     }
 
     @Override
@@ -118,28 +143,13 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         editActivityView.updateProject();
     }
 
-    @Override
-    public void onVideosRetrieved(List<Video> videoList) {
-        int sizeOriginalVideoList = videoList.size();
-        List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videoList);
-        this.videoList = checkedVideoList;
 
-        List<Video> videoCopy = new ArrayList<>(checkedVideoList);
-
-        if(sizeOriginalVideoList > checkedVideoList.size()){
-            editActivityView.showDialogMediasNotFound();
-        }
-        editActivityView.enableEditActions();
-        editActivityView.enableBottomBar();
-        editActivityView.enableFabText(true);
-        editActivityView.bindVideoList(videoCopy);
-    }
-
-    private List<Video> checkMediaPathVideosExistOnDevice(List<Video> videoCopy) {
+    private List<Video> checkMediaPathVideosExistOnDevice(List<Video> videoList) {
         List<Video> checkedVideoList = new ArrayList<>();
-        for (int index = 0; index < videoCopy.size(); index++) {
-            Video video = videoCopy.get(index);
-            if(!new File(video.getMediaPath()).exists()){
+        for (int index = 0; index < videoList.size(); index++) {
+            Video video = videoList.get(index);
+            if (!new File(video.getMediaPath()).exists()) {
+                // TODO(jliarte): 26/04/17 notify the user we are deleting items from project!!! FIXME
                 ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
                 mediaToDeleteFromProject.add(video);
                 removeVideoFromProjectUseCase.removeMediaItemsFromProject(mediaToDeleteFromProject, this);
@@ -150,16 +160,41 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         return checkedVideoList;
     }
 
-    @Override
-    public void onNoVideosRetrieved() {
-        editActivityView.disableEditActions();
-        editActivityView.disableBottomBar();
-        editActivityView.enableFabText(false);
-        editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
-        editActivityView.hideProgressDialog();
-        editActivityView.showMessage(R.string.add_videos_to_project);
-        editActivityView.expandFabMenu();
-        editActivityView.resetPreview();
+    public void obtainVideos() {
+        editActivityView.showProgressDialog();
+        getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
+            @Override
+            public void onVideosRetrieved(List<Video> videosRetrieved) {
+                int sizeOriginalVideoList = videosRetrieved.size();
+                List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
+                videoList = checkedVideoList;
+
+                List<Video> videoCopy = new ArrayList<>(checkedVideoList);
+
+                if (sizeOriginalVideoList > checkedVideoList.size()) {
+                    editActivityView.showDialogMediasNotFound();
+                }
+                editActivityView.enableEditActions();
+                editActivityView.enableBottomBar();
+                editActivityView.enableFabText(true);
+                editActivityView.hideProgressDialog();
+                editActivityView.bindVideoList(videoCopy);
+                videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(videoList, videoTranscodingErrorNotifier);
+            }
+
+            @Override
+            public void onNoVideosRetrieved() {
+                editActivityView.disableEditActions();
+                editActivityView.disableBottomBar();
+                editActivityView.enableFabText(false);
+                editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
+                editActivityView.hideProgressDialog();
+                editActivityView.showMessage(R.string.add_videos_to_project);
+                editActivityView.expandFabMenu();
+                editActivityView.resetPreview();
+                editActivityView.bindVideoList(Collections.<Video>emptyList());
+            }
+        });
     }
 
     public void removeVideoFromProject(int selectedVideoRemove) {
@@ -167,28 +202,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
         mediaToDeleteFromProject.add(videoToRemove);
         removeVideoFromProjectUseCase.removeMediaItemsFromProject(mediaToDeleteFromProject, this);
-    }
-
-    @Override
-    public void onMediaReordered(Media media, int newPosition) {
-        //If everything was right the UI is already updated since the user did the reordering
-       // userEventTracker.trackClipsReordered(loadCurrentProjectUseCase.loadCurrentProject());
-        userEventTracker.trackClipsReordered(currentProject);
-        // (jliarte): 24/08/16 probando fix del reorder. Si actualizamos el proyecto al
-        //          reordenar, como se reordena en cada cambio de celda, no sólo al final,
-        //          generamos overhead innecesario en la actividad y además de esto, se para el
-        //          preview y se corta el movimiento que estemos haciendo de reordenado
-//        editActivityView.updateProject();
-    }
-
-    @Override
-    public void onErrorReorderingMedia() {
-        //The reordering went wrong so we ask the project for the actual video list
-        obtainVideos();
-    }
-
-    public void obtainVideos() {
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 
     public void init() {
