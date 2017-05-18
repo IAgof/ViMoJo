@@ -59,8 +59,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private static final String LOG_TAG = "RecordCamera2Presenter";
-  private final boolean isRightControlsViewSelected;
-  private final boolean isPrincipalViewSelected;
   private final Context context;
   private RecordCamera2View recordView;
   private AddVideoToProjectUseCase addVideoToProjectUseCase;
@@ -89,8 +87,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
                                     adaptVideoRecordedToVideoFormatUseCase) {
     this.context = context;
     this.recordView = recordView;
-    this.isPrincipalViewSelected = isPrincipalViewSelected;
-    this.isRightControlsViewSelected = isRightControlsViewSelected;
     this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
     this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;
     this.getVideonaFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;

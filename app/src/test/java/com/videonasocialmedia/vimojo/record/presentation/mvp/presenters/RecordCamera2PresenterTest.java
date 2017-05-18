@@ -182,6 +182,7 @@ public class RecordCamera2PresenterTest {
   private RecordCamera2Presenter getRecordCamera2Presenter() {
     return new RecordCamera2Presenter(mockedContext, mockedRecordView,
         isFrontCameraSelected, mockedTextureView, directorySaveVideos,
+        mockedUpdateVideoRepositoryUseCase, mockedLaunchTranscoderAddAVTransitionUseCase,
         mockedGetVideoFormatFromCurrentProjectUseCase,
         mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
   }

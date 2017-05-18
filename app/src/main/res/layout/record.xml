@@ -426,7 +426,7 @@
                     android:layout_gravity="center"
                     android:scaleType="fitCenter"
                     android:layout_margin="6dp"
-                    app:srcCompat="@drawable/record_activity_ic_flash"/>
+                    app:srcCompat="@drawable/activity_record_ic_flash"/>
 
                 <ImageButton
                     android:id="@+id/button_grid"
