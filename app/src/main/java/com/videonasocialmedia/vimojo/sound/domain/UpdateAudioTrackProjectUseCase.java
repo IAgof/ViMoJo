@@ -47,7 +47,7 @@ public class UpdateAudioTrackProjectUseCase {
     return currentProject.hasMusic() || currentProject.hasVoiceOver();
   }
 
-  public void removedTrack(int trackIndex) {
+  public void removeTrack(int trackIndex) {
     if(areThereAnyAudioTrackAdded()){
       if(trackIndex == Constants.INDEX_AUDIO_TRACK_MUSIC){
         updatePositionOtherAudioTrackAdded(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);

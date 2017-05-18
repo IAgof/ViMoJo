@@ -174,7 +174,7 @@ public class UpdateAudioTrackProjectUseCaseTest {
     assert project.hasMusic();
 
     updateAudioTrackProjectUseCase = new UpdateAudioTrackProjectUseCase(mockedTrackRepository);
-    updateAudioTrackProjectUseCase.removedTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    updateAudioTrackProjectUseCase.removeTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
 
     Project currentProject = Project.getInstance(null,null,null);
 

@@ -104,7 +104,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     public void removeMusic(Music music) {
         removeMusicFromProjectUseCase.removeMusicFromProject(music, INDEX_AUDIO_TRACK_MUSIC);
-        updateAudioTrackProjectUseCase.removedTrack(INDEX_AUDIO_TRACK_MUSIC);
+        updateAudioTrackProjectUseCase.removeTrack(INDEX_AUDIO_TRACK_MUSIC);
         updateCurrentProjectUseCase.updateProject();
         userEventTracker.trackMusicSet(currentProject);
         musicDetailView.goToSoundActivity();
