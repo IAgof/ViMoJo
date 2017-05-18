@@ -188,8 +188,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   public void stopRecord() {
     camera.stopRecordVideo();
-    restartPreview();
     stopVideo(camera.getVideoPath());
+    restartPreview();
   }
 
   @Override
