@@ -46,4 +46,14 @@ public class IntentConstants {
      *
      */
     public static final String FTP_SELECTED = "ftp_selected";
+
+    /**
+     * Record Activity
+     */
+
+    public static final String BATTERY_NOTIFICATION = "battery_notifications";
+
+    public static final String BATTERY_STATUS = "battery_status";
+    public static final String BATTERY_LEVEL = "battery_level";
+    public static final String BATTERY_SCALE = "battery_scale" ;
 }

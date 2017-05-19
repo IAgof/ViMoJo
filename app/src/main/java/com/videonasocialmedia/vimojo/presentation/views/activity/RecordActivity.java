@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
@@ -31,6 +32,7 @@ import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,12 +44,14 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.RecordPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
+import com.videonasocialmedia.vimojo.presentation.views.broadcastreceiver.BatteryReceiver;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import org.json.JSONException;
@@ -153,14 +157,29 @@ public class RecordActivity extends VimojoActivity implements RecordView {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
                 String videoToSharePath = bundle.getString(ExportProjectService.FILEPATH);
-                int resultCode = bundle.getInt(ExportProjectService.RESULT);
-                if (resultCode == RESULT_OK) {
+                if (videoToSharePath!=null) {
+                  int resultCode = bundle.getInt(ExportProjectService.RESULT);
+                  if (resultCode == RESULT_OK) {
                     hideProgressDialog();
                     goToShare(videoToSharePath);
-                } else {
+                  } else {
                     hideProgressDialog();
                     showError(R.string.addMediaItemToTrackError);
+                  }
                 }
+            }
+        }
+    };
+    private BatteryReceiver batteryReceiver = new BatteryReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent){
+            Bundle bundle = intent.getExtras();
+            if (bundle != null) {
+                int batteryStatus = bundle.getInt(IntentConstants.BATTERY_STATUS);
+                int batteryLevel = bundle.getInt(IntentConstants.BATTERY_LEVEL);
+                int batteryScale = bundle.getInt(IntentConstants.BATTERY_SCALE);
+
+                    recordPresenter.updateBatteryStatus(batteryStatus, batteryLevel, batteryScale);
             }
         }
     };
@@ -262,6 +281,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         if(recording)
             recordPresenter.stopRecord();
         unregisterReceiver(receiver);
+        unregisterReceiver(batteryReceiver);
         orientationHelper.stopMonitoringOrientation();
         recordPresenter.onPause();
         super.onPause();
@@ -272,18 +292,17 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     protected void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "init");
-        registerReceiver(receiver, new IntentFilter(ExportProjectService.NOTIFICATION));
-        determineCurrentChargingState();
+        checkReceiver();
+        updateBatteryStatus();
         recordPresenter.onResume();
         recording = false;
         hideSystemUi();
 
     }
 
-    private void determineCurrentChargingState() {
-        Intent batteryStatus = registerReceiver(null,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        recordPresenter.getStatusBattery(batteryStatus);
-
+    private void checkReceiver() {
+        registerReceiver(receiver, new IntentFilter(ExportProjectService.NOTIFICATION));
+        registerReceiver(batteryReceiver,new IntentFilter(IntentConstants.BATTERY_NOTIFICATION));
     }
 
     @Override
@@ -337,9 +356,20 @@ public class RecordActivity extends VimojoActivity implements RecordView {
                 recordPresenter.requestRecord();
             } else {
                 recordPresenter.stopRecord();
+                updateBatteryStatus();
+
+
             }
         }
         return true;
+    }
+
+    public void updateBatteryStatus() {
+        Intent batteryStatus = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        recordPresenter.updateBatteryStatus(status, level, scale);
     }
 
     @Override
@@ -594,13 +624,22 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     }
 
     @Override
-    public void showBatteryStatusCharging(int statusBattery) {
-         switch (statusBattery){
-             case (BatteryManager.BATTERY_STATUS_CHARGING):
+    public void showBatteryStatus(Constants.BATTERY_STATUS_ENUM batteryStatus) {
+        switch (batteryStatus){
+             case CHARGING:
                  battery.setImageResource(R.drawable.record_activity_ic_resolution_4k);
                  break;
+            case FULL:
+                battery.setImageResource(R.drawable.record_activity_ic_battery_charged);
+                break;
+            case MEDIUM:
+                battery.setImageResource(R.drawable.record_activity_ic_resolution_720);
+                break;
+            case LOW:
+                battery.setImageResource(R.drawable.record_activity_ic_flash);
+                break;
              default:
-                 battery.setImageResource(R.drawable.record_activity_ic_resolution_720);
+                 battery.setImageResource(R.drawable.record_activity_ic_resolution_4k);
          }
 
     }

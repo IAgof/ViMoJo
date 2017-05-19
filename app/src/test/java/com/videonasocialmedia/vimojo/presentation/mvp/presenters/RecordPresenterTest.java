@@ -15,6 +15,7 @@ import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentPr
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.Before;
@@ -25,6 +26,7 @@ import org.mockito.MockitoAnnotations;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by alvaro on 22/03/17.
@@ -97,5 +99,50 @@ public class RecordPresenterTest {
 
     assertNotEquals("Update tempPath ", tempPath, video.getTempPath());
   }
+
+  @Test
+  public void updateStatusBatteryCallsRecordViewShowBatteryStatus(){
+    int statusBattery= 2;
+    int levelBattery=20;
+    recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
+        mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
+        mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
+        mockedLaunchTranscoderAddAVTransitionsUseCase);
+
+    recordPresenter.updateBatteryStatus(statusBattery, levelBattery);
+
+    verify(mockedRecordView).showBatteryStatus(Constants.BATTERY_STATUS_ENUM.CHARGING);
+  }
+
+  @Test
+  public void getBatteryStatusreturnLowStatusIfLevelIsLessThan15(){
+    int levelBattery=10;
+    int statusBattery= 1;
+    Constants.BATTERY_STATUS_ENUM status;
+    recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
+        mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
+        mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
+        mockedLaunchTranscoderAddAVTransitionsUseCase);
+
+   status = recordPresenter.getBatteryStatus(statusBattery, levelBattery);
+
+    assertThat("Level will be low", status, is(Constants.BATTERY_STATUS_ENUM.LOW));
+  }
+
+  @Test
+  public void getBatteryStatusreturnChargingIfStatusIs2(){
+    int levelBattery=10;
+    int statusBattery= 2; // BatteryManager.BATTERY_STATUS_CHARGING
+    Constants.BATTERY_STATUS_ENUM status;
+    recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
+        mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
+        mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
+        mockedLaunchTranscoderAddAVTransitionsUseCase);
+
+    status = recordPresenter.getBatteryStatus(statusBattery, levelBattery);
+
+    assertThat("Status is charging", status, is(Constants.BATTERY_STATUS_ENUM.CHARGING));
+  }
+
 
 }

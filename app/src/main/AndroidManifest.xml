@@ -88,10 +88,11 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.videonasocialmedia.vimojo.presentation.views.broadcastreceiver.PowerConnectionReceiver">
+        <receiver android:name="com.videonasocialmedia.vimojo.presentation.views.broadcastreceiver.BatteryReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+                <action android:name="android.intent.action.ACTION_BATTERY_LOW"/>
             </intent-filter>
         </receiver>
 

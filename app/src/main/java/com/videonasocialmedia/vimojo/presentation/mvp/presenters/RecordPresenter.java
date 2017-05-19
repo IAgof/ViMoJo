@@ -15,7 +15,6 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.BatteryManager;
@@ -70,6 +69,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
      * LOG_TAG
      */
     private static final String LOG_TAG = "RecordPresenter";
+    public enum BatteryLevelType { BATTERY_LOW, BATTERY_MEDIUM, BATTERY_FULL};
     private final UserEventTracker userEventTracker;
     private boolean firstTimeRecording;
     private RecordView recordView;
@@ -225,6 +225,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         if (recorder.isRecording()) {
             trackUserInteracted(AnalyticsConstants.RECORD, AnalyticsConstants.STOP);
             recorder.stopRecording();
+
         }
     }
 
@@ -499,9 +500,39 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         }
     }
 
-    public void getStatusBattery(Intent batteryStatus) {
-        statusBattery= batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-        recordView.showBatteryStatusCharging(statusBattery);
+    public void updateBatteryStatus(int batteryStatus, int batteryLevel, int batteryScale) {
+        float batteryPercent= getPercentLevel(batteryLevel, batteryScale);
+        recordView.showBatteryStatus(getBatteryStatus(batteryStatus, batteryPercent));
+      }
+
+
+      public float getPercentLevel(int batteryLevel, int batteryScale) {
+      float batteryPercent = batteryLevel / (float) batteryScale *100;
+      return batteryPercent;
+
+
+  }
+
+  public Constants.BATTERY_STATUS_ENUM getBatteryStatus(int batteryStatus, float batteryPercent) {
+        Constants.BATTERY_STATUS_ENUM status;
+        if(batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING)
+            status = Constants.BATTERY_STATUS_ENUM.CHARGING;
+        else
+            status = getLevelBattery(batteryPercent);
+        return status;
     }
+
+    public Constants.BATTERY_STATUS_ENUM getLevelBattery(float batteryLevel) {
+    Constants.BATTERY_STATUS_ENUM status=
+        Constants.BATTERY_STATUS_ENUM.UNKNOW;
+        if (batteryLevel <= 15.00)
+          status = Constants.BATTERY_STATUS_ENUM.LOW;
+        else if (batteryLevel<=75.00 && batteryLevel>15.00)
+          status = Constants.BATTERY_STATUS_ENUM.MEDIUM;
+        else if (batteryLevel>75.00 && batteryLevel<=100.00)
+          status = Constants.BATTERY_STATUS_ENUM.FULL;
+    return status;
+  }
+
 
 }

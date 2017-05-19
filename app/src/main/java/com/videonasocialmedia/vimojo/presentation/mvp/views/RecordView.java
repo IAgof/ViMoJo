@@ -12,7 +12,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
 
-import com.videonasocialmedia.videonamediaframework.model.media.effects.Effect;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 public interface RecordView {
 
@@ -72,5 +72,5 @@ public interface RecordView {
 
     void showResolutionSelected(int height);
 
-    void showBatteryStatusCharging(int statusBattery);
+    void showBatteryStatus(Constants.BATTERY_STATUS_ENUM statusBattery);
 }
