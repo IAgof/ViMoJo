@@ -165,9 +165,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00ffffff"
-                android:src="@drawable/ic_color_lens_white_48px"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/colorWhite" />
+                android:layout_gravity="center"
+                android:textColor="@color/colorWhite"
+                android:layout_marginTop="4dp"/>
 
             <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
                 android:layout_width="wrap_content"
@@ -185,8 +185,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00ffffff"
-                android:src="@drawable/ic_brightness_5_white_48px"
-                android:layout_gravity="center_horizontal"
+                android:layout_gravity="center"
                 android:textColor="@color/colorWhite" />
         </LinearLayout>
 
@@ -260,7 +259,7 @@
                 android:layout_gravity="center"
                 android:text="Max"
                 android:textColor="@color/colorWhite"
-                android:layout_marginRight="8dp"
+                android:layout_marginRight="16dp"
                 android:layout_marginLeft="16dp"/>
 
         </LinearLayout>
@@ -302,7 +301,9 @@
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_focus_touch"
-                android:layout_marginLeft="16dp" />
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                />
 
         </LinearLayout>
 
@@ -370,7 +371,7 @@
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_white_balance_tungsten"
-                android:layout_marginRight="8dp"
+                android:layout_marginRight="16dp"
                 android:layout_marginLeft="16dp"/>
 
         </LinearLayout>
@@ -422,7 +423,9 @@
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_brightness_manual"
-                android:layout_marginLeft="16dp" />
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                />
 
         </LinearLayout>
 

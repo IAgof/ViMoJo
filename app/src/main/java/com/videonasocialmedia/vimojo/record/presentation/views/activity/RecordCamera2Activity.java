@@ -268,8 +268,16 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void hideSystemUi() {
-    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+   // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+     //   WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    getWindow().getDecorView().setSystemUiVisibility(
+        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+    );
   }
 
   @Override
@@ -391,7 +399,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void hidePrincipalViews() {
     clearButton.setImageResource(R.drawable.activity_record_ic_expand);
-    clearButton.setAlpha(0.5f);
     clearButton.setActivated(true);
     hudView.setVisibility(View.INVISIBLE);
     controlsView.setVisibility(View.INVISIBLE);
@@ -422,6 +429,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     showControlsButton.setVisibility(View.VISIBLE);
     controlsView.setVisibility(View.INVISIBLE);
     settingsCameraBarView.setVisibility(View.INVISIBLE);
+
+    settingsCameraBarView.setVisibility(View.INVISIBLE);
+    zoomSubmenuView.setVisibility(View.INVISIBLE);
+    isoSubmenuView.setVisibility(View.INVISIBLE);
+    afSelectionSubmenuView.setVisibility(View.INVISIBLE);
+    whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+    measurementModeSubmenuView.setVisibility(View.INVISIBLE);
   }
 
   @Override
@@ -431,6 +445,26 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     controlsView.setVisibility(View.VISIBLE);
     if(settingsCameraButton.isSelected()){
       settingsCameraBarView.setVisibility(View.VISIBLE);
+    }
+    if(zoomButton.isSelected()){
+      zoomSubmenuView.setVisibility(View.VISIBLE);
+      return;
+    }
+    if(isoButton.isSelected()){
+      isoSubmenuView.setVisibility(View.VISIBLE);
+      return;
+    }
+    if(afSelectionButton.isSelected()){
+      afSelectionSubmenuView.setVisibility(View.VISIBLE);
+      return;
+    }
+    if(whiteBalanceButton.isSelected()){
+      whiteBalanceSubmenuView.setVisibility(View.VISIBLE);
+      return;
+    }
+    if(measurementModeButton.isSelected()){
+      measurementModeSubmenuView.setVisibility(View.VISIBLE);
+      return;
     }
   }
 
