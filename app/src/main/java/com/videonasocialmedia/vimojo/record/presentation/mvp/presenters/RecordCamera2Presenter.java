@@ -158,6 +158,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   public void onPause() {
     camera.onPause();
+    recordView.stopMonitoringRotation();
   }
 
   private void showThumbAndNumber() {
@@ -269,8 +270,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   public void restartPreview(){
-    camera.onPause();
-    camera.onResume();
+    if(!camera.isRecordingVideo()) {
+      camera.onPause();
+      camera.onResume();
+    }
   }
 
   public void setFlashOff() {

@@ -520,6 +520,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     return videoPath;
   }
 
+  public boolean isRecordingVideo() {
+    return isRecordingVideo;
+  }
+
   public boolean onTouchZoom(float current_finger_spacing) {
     try {
 

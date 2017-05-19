@@ -23,6 +23,9 @@
     <string name="recordTextGallery">Galería</string>
     <string name="recordTextEdit">Editor</string>
 
+    <string name="dialog_title_record_adapting_video">Adaptando video</string>
+    <string name="dialog_message_record_adapting_video">Trabajando ...</string>
+
     <!-- Share Activity -->
     <string name="shareError">Uy, no hemos podido compartir el vídeo.</string>
     <string name="share_using">Compartir vídeo con</string>
