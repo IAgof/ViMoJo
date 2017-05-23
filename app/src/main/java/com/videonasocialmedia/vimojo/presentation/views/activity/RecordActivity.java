@@ -12,10 +12,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -35,7 +38,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.vimojo.R;
@@ -133,13 +135,18 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     @Bind(R.id.image_view_grid)
     ImageView imageViewGrid;
     @Bind(R.id.activity_record_icon_battery)
-    ImageView battery;
+    ImageButton battery;
+    @Nullable @Bind(R.id.progressBar_level_battery)
+    ProgressBar progressBarBattery;
+    @Nullable @Bind(R.id.text_progress_level_battery)
+    TextView percentBattery;
 
 
     private boolean buttonBackPressed;
     private boolean recording;
     private OrientationHelper orientationHelper;
     private AlertDialog progressDialog;
+    private AlertDialog progressDialogBattery;
     private boolean mUseImmersiveMode = true;
 //    private SharedPreferences sharedPreferences;
 //    private SharedPreferences.Editor editor;
@@ -175,11 +182,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         public void onReceive(Context context, Intent intent){
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                int batteryStatus = bundle.getInt(IntentConstants.BATTERY_STATUS);
-                int batteryLevel = bundle.getInt(IntentConstants.BATTERY_LEVEL);
-                int batteryScale = bundle.getInt(IntentConstants.BATTERY_SCALE);
-
-                    recordPresenter.updateBatteryStatus(batteryStatus, batteryLevel, batteryScale);
+                updateBatteryStatus();
             }
         }
     };
@@ -205,6 +208,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         configChronometer();
         initOrientationHelper();
         createProgressDialog();
+        createProgressDialogBattery();
         configShowThumbAndNumberClips();
     }
 
@@ -266,6 +270,22 @@ public class RecordActivity extends VimojoActivity implements RecordView {
                 .setView(dialogView)
                 .create();
     }
+
+  private void createProgressDialogBattery() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
+    View dialogView = getLayoutInflater().inflate(R.layout.dialog_level_battery, null);
+    progressBarBattery = (ProgressBar) dialogView.findViewById(R.id.progressBar_level_battery);
+    percentBattery = (TextView) dialogView.findViewById(R.id.text_progress_level_battery);
+    progressDialogBattery = builder.setCancelable(true)
+        .setView(dialogView)
+        .setTitle(R.string.battery)
+        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+          }
+        })
+        .create();
+  }
 
     @Override
     protected void onDestroy() {
@@ -357,8 +377,6 @@ public class RecordActivity extends VimojoActivity implements RecordView {
             } else {
                 recordPresenter.stopRecord();
                 updateBatteryStatus();
-
-
             }
         }
         return true;
@@ -624,24 +642,66 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     }
 
     @Override
-    public void showBatteryStatus(Constants.BATTERY_STATUS_ENUM batteryStatus) {
+    public void showBatteryStatus(Constants.BATTERY_STATUS_ENUM batteryStatus, int batteryPercent) {
         switch (batteryStatus){
              case CHARGING:
-                 battery.setImageResource(R.drawable.record_activity_ic_resolution_4k);
+                 battery.setImageResource(R.drawable.record_activity_ic_battery_charging);
                  break;
             case FULL:
-                battery.setImageResource(R.drawable.record_activity_ic_battery_charged);
+                battery.setImageResource(R.drawable.record_activity_ic_battery_full);
                 break;
             case MEDIUM:
-                battery.setImageResource(R.drawable.record_activity_ic_resolution_720);
+                battery.setImageResource(R.drawable.record_activity_ic_battery_medium);
                 break;
             case LOW:
-                battery.setImageResource(R.drawable.record_activity_ic_flash);
+                battery.setImageResource(R.drawable.record_activity_ic_battery_low);
+                break;
+            case CRITICAL:
+                battery.setImageResource(R.drawable.record_activity_ic_battery_alert);
                 break;
              default:
-                 battery.setImageResource(R.drawable.record_activity_ic_resolution_4k);
+               battery.setImageResource(R.drawable.record_activity_ic_battery_full);
          }
+         if(progressDialogBattery.isShowing()){
+           updateProgressBarBattery(batteryStatus, batteryPercent);
+           updatePercentBattery(batteryPercent);
+         }
+    }
 
+    private void updatePercentBattery(int batteryPercent) {
+      percentBattery.setText(batteryPercent + " %");
+    }
+
+  private void updateProgressBarBattery(Constants.BATTERY_STATUS_ENUM batteryStatus, int batteryPercent) {
+    progressBarBattery.setProgress(batteryPercent);
+    setColorProgressBarBattery(batteryStatus);
+  }
+
+    private void setColorProgressBarBattery(Constants.BATTERY_STATUS_ENUM batteryStatus) {
+
+      LayerDrawable drawableProgressBar = (LayerDrawable) progressBarBattery.getProgressDrawable();
+      GradientDrawable itemProgressBar = (GradientDrawable) drawableProgressBar
+          .findDrawableByLayerId(R.id.progressbar_dialog_battery_progress);
+
+      switch (batteryStatus) {
+        case CHARGING:
+          itemProgressBar.setColor(Color.GREEN);
+          break;
+        case FULL:
+          itemProgressBar.setColor(Color.GREEN);
+          break;
+        case MEDIUM:
+          itemProgressBar.setColor(Color.YELLOW);
+          break;
+        case LOW:
+          itemProgressBar.setColor(Color.RED);
+          break;
+        case CRITICAL:
+          itemProgressBar.setColor(Color.RED);
+          break;
+        default:
+          itemProgressBar.setColor(Color.RED);
+      }
     }
 
     public void setupActivityButtons() {
@@ -784,12 +844,24 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         hud.setVisibility(View.INVISIBLE);
     }
 
-    public void navigateTo(Class cls) {
+    @OnClick(R.id.activity_record_icon_battery)
+    public void showDialogWithLevelBattery(){
+      if(!progressDialogBattery.isShowing()) {
+        showDialogBattery();
+        updateBatteryStatus();
+      }
+    }
+
+  public void navigateTo(Class cls) {
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         startActivity(intent);
     }
 
-    private class OrientationHelper extends OrientationEventListener {
+  private void showDialogBattery() {
+    progressDialogBattery.show();
+  }
+
+  private class OrientationHelper extends OrientationEventListener {
         Context context;
         private int rotationView;
         private boolean orientationHaveChanged = false;

@@ -69,7 +69,6 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
      * LOG_TAG
      */
     private static final String LOG_TAG = "RecordPresenter";
-    public enum BatteryLevelType { BATTERY_LOW, BATTERY_MEDIUM, BATTERY_FULL};
     private final UserEventTracker userEventTracker;
     private boolean firstTimeRecording;
     private RecordView recordView;
@@ -85,10 +84,8 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
     private GLCameraView cameraPreview;
     protected Project currentProject;
     private int height;
-    private int statusBattery;
-
+    private int batteryPercent;
     private boolean externalIntent;
-    private boolean isCharging;
 
     private Drawable drawableFadeTransitionVideo;
     private VideonaFormat videoFormat;
@@ -501,37 +498,36 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
     }
 
     public void updateBatteryStatus(int batteryStatus, int batteryLevel, int batteryScale) {
-        float batteryPercent= getPercentLevel(batteryLevel, batteryScale);
-        recordView.showBatteryStatus(getBatteryStatus(batteryStatus, batteryPercent));
+        int batteryPercent= getPercentLevel(batteryLevel, batteryScale);
+        recordView.showBatteryStatus(getBatteryStatus(batteryStatus, batteryPercent),batteryPercent);
       }
 
 
-      public float getPercentLevel(int batteryLevel, int batteryScale) {
-      float batteryPercent = batteryLevel / (float) batteryScale *100;
-      return batteryPercent;
-
-
+  public int getPercentLevel(int batteryLevel, int batteryScale) {
+        float level = batteryLevel / (float) batteryScale *100;
+        return batteryPercent= Math.round(level);
   }
 
-  public Constants.BATTERY_STATUS_ENUM getBatteryStatus(int batteryStatus, float batteryPercent) {
+  public Constants.BATTERY_STATUS_ENUM getBatteryStatus(int batteryStatus, int batteryPercent) {
         Constants.BATTERY_STATUS_ENUM status;
         if(batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING)
             status = Constants.BATTERY_STATUS_ENUM.CHARGING;
         else
-            status = getLevelBattery(batteryPercent);
+            status = getStatusNotCharging(batteryPercent);
         return status;
     }
 
-    public Constants.BATTERY_STATUS_ENUM getLevelBattery(float batteryLevel) {
-    Constants.BATTERY_STATUS_ENUM status=
-        Constants.BATTERY_STATUS_ENUM.UNKNOW;
-        if (batteryLevel <= 15.00)
-          status = Constants.BATTERY_STATUS_ENUM.LOW;
-        else if (batteryLevel<=75.00 && batteryLevel>15.00)
-          status = Constants.BATTERY_STATUS_ENUM.MEDIUM;
-        else if (batteryLevel>75.00 && batteryLevel<=100.00)
-          status = Constants.BATTERY_STATUS_ENUM.FULL;
-    return status;
+    public Constants.BATTERY_STATUS_ENUM getStatusNotCharging(int batteryPercent) {
+        Constants.BATTERY_STATUS_ENUM status=
+            Constants.BATTERY_STATUS_ENUM.UNKNOW;
+          if (batteryPercent < 15)
+              status = Constants.BATTERY_STATUS_ENUM.CRITICAL;
+          else if (batteryPercent>=15 && batteryPercent<25)
+              status = Constants.BATTERY_STATUS_ENUM.LOW;
+          else if (batteryPercent>=25 && batteryPercent<75)
+              status = Constants.BATTERY_STATUS_ENUM.MEDIUM;
+          else status= Constants.BATTERY_STATUS_ENUM.FULL;
+        return status;
   }
 
 

@@ -9,15 +9,11 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 public class BatteryReceiver extends BroadcastReceiver {
   private int status;
-  private int level;
-  private int scale;
 
   @Override
   public void onReceive(Context context, Intent intent) {
-    level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-    scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
     status= getStatusBattery(intent);
-    sendParametersBattery(context, level, scale, status);
+    sendStatusBattery(context, status);
   }
 
   private int getStatusBattery(Intent intent) {
@@ -30,11 +26,9 @@ public class BatteryReceiver extends BroadcastReceiver {
     return status;
   }
 
-  private void sendParametersBattery(Context context, int level, int scale, int status) {
+  private void sendStatusBattery(Context context, int status) {
     Intent statusBatteryIntent= new Intent(IntentConstants.BATTERY_NOTIFICATION);
     statusBatteryIntent.putExtra(IntentConstants.BATTERY_STATUS,status);
-    statusBatteryIntent.putExtra(IntentConstants.BATTERY_LEVEL, level);
-    statusBatteryIntent.putExtra(IntentConstants.BATTERY_SCALE, scale);
     context.sendBroadcast(statusBatteryIntent);
   }
 }

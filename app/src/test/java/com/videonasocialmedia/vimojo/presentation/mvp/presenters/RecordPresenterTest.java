@@ -101,48 +101,81 @@ public class RecordPresenterTest {
   }
 
   @Test
-  public void updateStatusBatteryCallsRecordViewShowBatteryStatus(){
-    int statusBattery= 2;
-    int levelBattery=20;
+  public void updateStatusBatteryCallsRecordViewShowBatteryStatus() {
+    int statusBattery = 2;
+    int levelBattery = 20;
+    int scaleBattery = 100;
     recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
         mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
         mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
         mockedLaunchTranscoderAddAVTransitionsUseCase);
 
-    recordPresenter.updateBatteryStatus(statusBattery, levelBattery);
+    recordPresenter.updateBatteryStatus(statusBattery, levelBattery, scaleBattery);
 
-    verify(mockedRecordView).showBatteryStatus(Constants.BATTERY_STATUS_ENUM.CHARGING);
+    verify(mockedRecordView).showBatteryStatus(Constants.BATTERY_STATUS_ENUM.CHARGING, 20);
   }
 
   @Test
-  public void getBatteryStatusreturnLowStatusIfLevelIsLessThan15(){
-    int levelBattery=10;
-    int statusBattery= 1;
+  public void getPercentBateryIfLevelBatteryIs2AndScaleBatteryIs10() {
+    int levelBattery = 2;
+    int scaleBattery = 10;
+    int percentBattery;
+    recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
+        mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
+        mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
+        mockedLaunchTranscoderAddAVTransitionsUseCase);
+
+    percentBattery = recordPresenter.getPercentLevel(levelBattery, scaleBattery);
+
+    assertThat("percentLevel will be 20", percentBattery, is(20));
+
+  }
+
+  @Test
+  public void getBatteryStatusreturnNoChargingIfStatusIsNot2() {
+    int percentBattery = 20;
+    int statusBattery = 3; // BatteryManager.BATTERY_STATUS_CHARGING
     Constants.BATTERY_STATUS_ENUM status;
     recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
         mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
         mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
         mockedLaunchTranscoderAddAVTransitionsUseCase);
 
-   status = recordPresenter.getBatteryStatus(statusBattery, levelBattery);
+    status = recordPresenter.getBatteryStatus(statusBattery, percentBattery);
 
-    assertThat("Level will be low", status, is(Constants.BATTERY_STATUS_ENUM.LOW));
+    assertNotEquals("Status is not charging", status, is(Constants.BATTERY_STATUS_ENUM.CHARGING));
   }
 
   @Test
-  public void getBatteryStatusreturnChargingIfStatusIs2(){
-    int levelBattery=10;
-    int statusBattery= 2; // BatteryManager.BATTERY_STATUS_CHARGING
+  public void getBatteryStatusreturnChargingIfStatusIs2() {
+    int percentBattery = 20;
+    int statusBattery = 2; // BatteryManager.BATTERY_STATUS_CHARGING
     Constants.BATTERY_STATUS_ENUM status;
     recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
         mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
         mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
         mockedLaunchTranscoderAddAVTransitionsUseCase);
 
-    status = recordPresenter.getBatteryStatus(statusBattery, levelBattery);
+    status = recordPresenter.getBatteryStatus(statusBattery, percentBattery);
 
     assertThat("Status is charging", status, is(Constants.BATTERY_STATUS_ENUM.CHARGING));
   }
+
+
+  @Test
+  public void getBatteryStatusreturnLowStatusIfLevelIsLessThan10AndStatusIsNotCharging() {
+    int percentBattery = 10;
+    Constants.BATTERY_STATUS_ENUM status;
+    recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
+        mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
+        mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
+        mockedLaunchTranscoderAddAVTransitionsUseCase);
+
+    status = recordPresenter.getStatusNotCharging(percentBattery);
+
+    assertThat("Level will be CRITICAL", status, is(Constants.BATTERY_STATUS_ENUM.CRITICAL));
+  }
+
 
 
 }

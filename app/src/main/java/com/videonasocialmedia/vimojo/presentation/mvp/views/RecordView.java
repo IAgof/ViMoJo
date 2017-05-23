@@ -72,5 +72,5 @@ public interface RecordView {
 
     void showResolutionSelected(int height);
 
-    void showBatteryStatus(Constants.BATTERY_STATUS_ENUM statusBattery);
+    void showBatteryStatus(Constants.BATTERY_STATUS_ENUM statusBattery, int batteryPercent);
 }
