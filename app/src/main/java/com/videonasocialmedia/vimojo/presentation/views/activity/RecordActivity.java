@@ -16,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
@@ -23,6 +24,8 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StatFs;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -136,6 +139,9 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ImageView imageViewGrid;
     @Bind(R.id.activity_record_icon_battery)
     ImageButton battery;
+    @Bind(R.id.activity_record_icon_memory)
+    ImageButton memory;
+
     @Nullable @Bind(R.id.progressBar_level_battery)
     ProgressBar progressBarBattery;
     @Nullable @Bind(R.id.text_progress_level_battery)
@@ -314,13 +320,16 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         Log.d(LOG_TAG, "init");
         checkReceiver();
         updateBatteryStatus();
+        updatePercentFreeMemory();
         recordPresenter.onResume();
         recording = false;
         hideSystemUi();
 
     }
 
-    private void checkReceiver() {
+
+
+  private void checkReceiver() {
         registerReceiver(receiver, new IntentFilter(ExportProjectService.NOTIFICATION));
         registerReceiver(batteryReceiver,new IntentFilter(IntentConstants.BATTERY_NOTIFICATION));
     }
@@ -377,6 +386,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
             } else {
                 recordPresenter.stopRecord();
                 updateBatteryStatus();
+                updatePercentFreeMemory();
             }
         }
         return true;
@@ -390,7 +400,24 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         recordPresenter.updateBatteryStatus(status, level, scale);
     }
 
-    @Override
+    private void updatePercentFreeMemory() {
+      StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
+      long totalMemory= getTotalMemory(statFs);
+      long freeMemory= getFreeMemory(statFs);
+      recordPresenter.updatePercentFreeMemory(totalMemory,freeMemory);
+    }
+
+    private long getTotalMemory(StatFs statFs) {
+      long   totalMemory  = (statFs.getBlockCountLong() *  statFs.getBlockSizeLong());
+      return totalMemory;
+    }
+    private long getFreeMemory(StatFs statFs) {
+
+      long   freeMemory   = (statFs.getAvailableBlocksLong() * statFs.getBlockSizeLong());
+      return freeMemory;
+    }
+
+  @Override
     public void showRecordButton() {
         recButton.setImageResource(R.drawable.record_activity_ic_rec);
         recording = false;
@@ -668,7 +695,24 @@ public class RecordActivity extends VimojoActivity implements RecordView {
          }
     }
 
-    private void updatePercentBattery(int batteryPercent) {
+  @Override
+  public void showFreeSpaceMemory(Constants.MEMORY_STATUS memoryStatus) {
+    switch (memoryStatus) {
+      case MEDIUM:
+        memory.setImageTintList(ColorStateList.valueOf(Color.YELLOW));
+        break;
+      case CRITICAL:
+        memory.setImageTintList(ColorStateList.valueOf(Color.RED));
+        break;
+      case OKAY:
+        memory.setImageTintList(ColorStateList.valueOf(Color.GREEN));
+        break;
+      default:
+        memory.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+    }
+  }
+
+  private void updatePercentBattery(int batteryPercent) {
       percentBattery.setText(batteryPercent + " %");
     }
 

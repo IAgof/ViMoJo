@@ -85,6 +85,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
     protected Project currentProject;
     private int height;
     private int batteryPercent;
+    private int memoryPercent;
     private boolean externalIntent;
 
     private Drawable drawableFadeTransitionVideo;
@@ -517,18 +518,40 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         return status;
     }
 
-    public Constants.BATTERY_STATUS_ENUM getStatusNotCharging(int batteryPercent) {
-        Constants.BATTERY_STATUS_ENUM status=
-            Constants.BATTERY_STATUS_ENUM.UNKNOW;
-          if (batteryPercent < 15)
-              status = Constants.BATTERY_STATUS_ENUM.CRITICAL;
-          else if (batteryPercent>=15 && batteryPercent<25)
-              status = Constants.BATTERY_STATUS_ENUM.LOW;
-          else if (batteryPercent>=25 && batteryPercent<75)
-              status = Constants.BATTERY_STATUS_ENUM.MEDIUM;
-          else status= Constants.BATTERY_STATUS_ENUM.FULL;
-        return status;
+  public Constants.BATTERY_STATUS_ENUM getStatusNotCharging(int batteryPercent) {
+    Constants.BATTERY_STATUS_ENUM status=
+        Constants.BATTERY_STATUS_ENUM.UNKNOW;
+    if (batteryPercent < 15)
+      status = Constants.BATTERY_STATUS_ENUM.CRITICAL;
+    else if (batteryPercent>=15 && batteryPercent<25)
+      status = Constants.BATTERY_STATUS_ENUM.LOW;
+    else if (batteryPercent>=25 && batteryPercent<75)
+      status = Constants.BATTERY_STATUS_ENUM.MEDIUM;
+    else status= Constants.BATTERY_STATUS_ENUM.FULL;
+    return status;
   }
+
+  public void updatePercentFreeMemory(long totalMemory, long freeMemory) {
+    int memoryFreePercent= getPercentFreeBatery(totalMemory, freeMemory);
+    Constants.MEMORY_STATUS memoryStatus= getMemoryStatus(memoryFreePercent);
+    recordView.showFreeSpaceMemory(memoryStatus);
+  }
+
+  private int getPercentFreeBatery(long totalMemory, long freeMemory) {
+    return memoryPercent= Math.round(freeMemory / (float) totalMemory *100);
+  }
+
+  private Constants.MEMORY_STATUS getMemoryStatus(int freeMemoryPercent) {
+    Constants.MEMORY_STATUS memoryStatus= Constants.MEMORY_STATUS.OKAY;
+    if (freeMemoryPercent<25)
+      memoryStatus= Constants.MEMORY_STATUS.CRITICAL;
+    else if (freeMemoryPercent>=25 && freeMemoryPercent<75)
+      memoryStatus= Constants.MEMORY_STATUS.MEDIUM;
+    else  memoryStatus= Constants.MEMORY_STATUS.OKAY;
+    return memoryStatus;
+  }
+
+
 
 
 }

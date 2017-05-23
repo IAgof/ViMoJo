@@ -92,13 +92,14 @@
                     android:layout_marginBottom="4dp"
                     />
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/activity_record_icon_memory"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
-                    android:visibility="gone"
+                    android:visibility="visible"
+                    android:background="@null"
                     app:srcCompat="@drawable/record_activity_ic_memory_card"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"/>
