@@ -109,11 +109,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private boolean isFrontCameraSelected = false;
 
-  private String EXTRA_FRONT_CAMERA_SELECTED = "front_camera_selected";
-  private String UI_PRINCIPAL_VIEW = "ui_principal_views";
-  private String UI_RIGHT_CONTROLS_VIEW = "ui_right_controls_view";
-
-  // TODO:(alvaro.martinez) 18/01/17 Move this values to Constants
   private final int RESOLUTION_SELECTED_HD720 = 720;
   private final int RESOLUTION_SELECTED_HD1080 = 1080;
   private final int RESOLUTION_SELECTED_HD4K = 2160;
@@ -136,20 +131,19 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     configShowThumbAndNumberClips();
     //initOrientationHelper();
 
-    isFrontCameraSelected = getIntent().getBooleanExtra(EXTRA_FRONT_CAMERA_SELECTED, false);
-    isPrincipalViewsSelected = getIntent().getBooleanExtra(UI_PRINCIPAL_VIEW, false);
-    int getControlsViewSelected = getIntent().getIntExtra(UI_RIGHT_CONTROLS_VIEW, View.INVISIBLE);
-    isControlsViewSelected = false;
-    if (getControlsViewSelected == View.VISIBLE) {
-      isControlsViewSelected = true;
-    }
 
     this.getActivityPresentersComponent().inject(this);
 
+    createProgressDialog();
+  }
+
+  private void createProgressDialog() {
     progressDialog = new ProgressDialog(this);
     progressDialog.setTitle(getString(R.string.dialog_title_record_adapting_video));
     progressDialog.setMessage(getString(R.string.dialog_message_record_adapting_video));
     progressDialog.setIndeterminate(false);
+    progressDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
   }
 
   @Override
@@ -333,7 +327,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void showError(int stringResourceId) {
-    // TODO:(alvaro.martinez) 18/01/17 test snack bar in record activity
     showMessage(stringResourceId);
   }
 
@@ -461,12 +454,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       isFrontCameraSelected = false;
     }
 
-    Intent intent = new Intent(RecordCamera2Activity.this, RecordCamera2Activity.class);
-    intent.putExtra(EXTRA_FRONT_CAMERA_SELECTED, isFrontCameraSelected);
-    intent.putExtra(UI_PRINCIPAL_VIEW, !clearButton.isActivated());
-    intent.putExtra(UI_RIGHT_CONTROLS_VIEW, controlsView.getVisibility());
-    startActivity(intent);
-    overridePendingTransition(R.anim.from_middle, R.anim.to_middle);
+   presenter.switchCamera(isFrontCameraSelected);
   }
 
   @OnClick (R.id.button_navigate_edit_or_gallery)
@@ -559,7 +547,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void showMessage(int stringResourceId) {
-    //// TODO:(alvaro.martinez) 18/01/17 test snackBar, toast, alert dialog ...
     Snackbar snackbar = Snackbar.make(chronometerAndRecPointView, stringResourceId, Snackbar.LENGTH_SHORT);
     snackbar.show();
   }
@@ -618,9 +605,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       }
     }
 
-    private class NoOrientationSupportException extends Exception {
-
-    }
   }
 
 }

@@ -232,8 +232,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     private void setup() throws CameraAccessException {
         androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        setupPathsApp(this);
         setupStartApp();
+        setupPathsApp(this);
         trackUserProfileGeneralTraits();
     }
 

@@ -75,6 +75,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   private Drawable drawableFadeTransitionVideo;
   private VideonaFormat videoFormat;
+  private int numTriesAdaptingVideo = 0;
+  private final int maxNumTriesAdaptingVideo = 3;
+  private boolean isClickedNavigateToEditOrGallery = false;
 
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
                                 boolean isFrontCameraSelected, boolean isPrincipalViewSelected,
@@ -96,7 +99,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;
     this.getVideonaFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-    initCameraWrapper(context, isFrontCameraSelected, textureView, directorySaveVideos, getVideoFormatFromCurrentProjectUseCase);
+    initCameraWrapper(context, isFrontCameraSelected, textureView, directorySaveVideos,
+        getVideoFormatFromCurrentProjectUseCase);
     this.adaptVideoRecordedToVideoFormatUseCase = adaptVideoRecordedToVideoFormatUseCase;
     this.currentProject = loadProject();
   }
@@ -204,7 +208,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     }
   }
 
-
   private void stopVideo(String path) {
     recordView.showRecordButton();
     recordView.showNavigateToSettingsActivity();
@@ -223,14 +226,19 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     final Video videoToAdapt = new Video(origPath);
     videoListToAdaptAndPosition.add(new VideoToAdapt(videoToAdapt,recordedVideosNumber));
 
-    VideonaFormat videonaFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatToAdaptVideo();
-
+    // FIXME: 23/05/17 if rotation == 0, should be use getVideonaFormatToAdaptVideoRecordedAudio, more efficient.
+    // Fix problems with profile MotoG, LG_pablo, ...
+    VideonaFormat videonaFormat = getVideonaFormatFromCurrentProjectUseCase
+        .getVideonaFormatToAdaptVideoRecordedAudioAndVideo();
+    // FIXME: 24/05/17 AdaptVideo not need fadeTransition or isTransitionActivated, refactor SDK
+    Drawable fadeTransition = context.getDrawable(R.drawable.alpha_transition_white);
     try {
       adaptVideoRecordedToVideoFormatUseCase.adaptVideo(videoToAdapt, videonaFormat,
-          destVideoRecorded, this);
+          destVideoRecorded, camera.getRotation(),fadeTransition, false,this);
     } catch (IOException e) {
       e.printStackTrace();
       onErrorTranscoding(videoToAdapt, "adaptVideoRecordedToVideoFormatUseCase");
+      recordView.hideProgressAdaptingVideo();
     }
   }
 
@@ -249,6 +257,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
         Utils.removeVideo(origVideoRecorded);
         if (!areTherePendingTranscodingTask() || videoListToAdaptAndPosition.size() == 0) {
           recordView.hideProgressAdaptingVideo();
+          if(isClickedNavigateToEditOrGallery){
+            navigateToEditOrGallery();
+          }
         }
         checkIfVideoAddedNeedLaunchAVTransitionJob((Video) media);
       }
@@ -271,8 +282,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   public void restartPreview(){
     if(!camera.isRecordingVideo()) {
-      camera.onPause();
-      camera.onResume();
+      camera.reStartPreview();
     }
   }
 
@@ -344,6 +354,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
     if(areTherePendingTranscodingTask()){
       recordView.showProgressAdaptingVideo();
+      isClickedNavigateToEditOrGallery = true;
       Log.d(LOG_TAG, "showProgressAdaptingVideo");
     } else {
       if(areThereVideosInProject()){
@@ -369,26 +380,30 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   @Override
   public void onSuccessTranscoding(Video video) {
-    if(haveJustBeenVideoAdapted(video)) {
-      String destVideoRecorded = Constants.PATH_APP_MASTERS +
-          File.separator + new File(video.getMediaPath()).getName();
-      int position = recordedVideosNumber;
-      for (VideoToAdapt videoToAdapt : videoListToAdaptAndPosition) {
-        if (videoToAdapt.getVideo().getUuid().compareTo(video.getUuid()) == 0) {
-          videoListToAdaptAndPosition.remove(videoToAdapt);
-          position = videoToAdapt.getPosition() - 1;
-          Log.d(LOG_TAG, "onSuccessTranscoding position " + position);
-        }
-      }
-      videoRecordedAdapted(video.getMediaPath(), destVideoRecorded, position);
-
+    if(isAVideoAdaptedToFormat(video)) {
+      Log.d(LOG_TAG, "onSuccessTranscoding adapting video " + video.getMediaPath());
+      addVideoRecordedToProject(video);
     } else {
-      Log.d(LOG_TAG, "onSuccessTranscoding adapting video to format" + video.getTempPath());
+      Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
       updateVideoRepositoryUseCase.succesTranscodingVideo(video);
     }
   }
 
-  private boolean haveJustBeenVideoAdapted(Video video) {
+  private void addVideoRecordedToProject(Video video) {
+    String destVideoRecorded = Constants.PATH_APP_MASTERS +
+        File.separator + new File(video.getMediaPath()).getName();
+    int position = recordedVideosNumber;
+    for (VideoToAdapt videoToAdapt : videoListToAdaptAndPosition) {
+      if (videoToAdapt.getVideo().getUuid().compareTo(video.getUuid()) == 0) {
+        videoListToAdaptAndPosition.remove(videoToAdapt);
+        position = videoToAdapt.getPosition() - 1;
+        Log.d(LOG_TAG, "onSuccessTranscoding position " + position);
+      }
+    }
+    videoRecordedAdapted(video.getMediaPath(), destVideoRecorded, position);
+  }
+
+  private boolean isAVideoAdaptedToFormat(Video video) {
     String pathVideo = new File(video.getMediaPath()).getParent();
     if(pathVideo.compareTo(Constants.PATH_APP_TEMP) == 0){
       return true;
@@ -399,8 +414,15 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   @Override
   public void onErrorTranscoding(Video video, String message) {
 
-    if(haveJustBeenVideoAdapted(video)) {
+    if(isAVideoAdaptedToFormat(video)) {
       Log.d(LOG_TAG, "onErrorTranscoding adapting video " + video.getMediaPath() + " - " + message);
+      if(numTriesAdaptingVideo < maxNumTriesAdaptingVideo) {
+        moveAndAdaptRecordedVideo(video.getMediaPath());
+        numTriesAdaptingVideo++;
+      } else {
+        // TODO:(alvaro.martinez) 24/05/17 How to manage this error adapting video ¿?
+        addVideoRecordedToProject(video);
+      }
     } else {
       Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
       if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
@@ -426,9 +448,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     videoFormat = currentProject.getVMComposition().getVideoFormat();
     drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
 
-    launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
-        intermediatesTempAudioFadeDirectory, this);
+    launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video,
+        videoFormat, intermediatesTempAudioFadeDirectory, this);
+  }
 
+  public void switchCamera(boolean isFrontCameraSelected) {
+    camera.switchCamera(isFrontCameraSelected);
   }
 
   private class VideoToAdapt {
