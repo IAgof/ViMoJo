@@ -534,7 +534,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
   public void updatePercentFreeMemory(long totalMemory, long freeMemory) {
     int memoryFreePercent= getPercentFreeBatery(totalMemory, freeMemory);
     Constants.MEMORY_STATUS memoryStatus= getMemoryStatus(memoryFreePercent);
-    recordView.showFreeSpaceMemory(memoryStatus);
+    recordView.showFreeSpaceMemory(memoryStatus, memoryFreePercent);
   }
 
   private int getPercentFreeBatery(long totalMemory, long freeMemory) {

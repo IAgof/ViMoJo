@@ -10,7 +10,7 @@
             <solid android:color="@color/colorDivider"/>
         </shape>
     </item>
-    <item android:id="@+id/progressbar_dialog_battery_progress">
+    <item android:id="@+id/progressbar_dialog_battery_and_memory_progress">
 
             <shape
                 android:innerRadiusRatio="3"
