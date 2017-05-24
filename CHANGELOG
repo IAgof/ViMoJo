@@ -1,3 +1,19 @@
+v0.4.25
+* New Features
+    - Now user can track progress of final export process.
+    - Review export project process.
+    - Added option to enable a grid for video recording.
+    - Increased video recording quality.
+    - Now default recording settings are set to 1080p, 32 Mbps.
+* Improved experience and bug fixes
+    - Improved User drawer and Project Gallery.
+    - New Editor video time line with improved experience and bug fixes.
+    - Automatically updating project resolution when importing videos from gallery into a new project.
+    - Improved gallery video loading.
+    - Improved stability exporting files for trim, split, text and audio and video transitions processes.
+    - Improved media player user interface and experience.
+    - Fixed several existing bugs.
+
 v0.4.24.10
 - Automatically updating project resolution and setting when a user imports videos from gallery into an empty project.
 - Deleted Contacts permission
