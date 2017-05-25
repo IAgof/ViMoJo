@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:id="@+id/container"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:background="#000"
-             tools:context=".record.presentation.views.activity.RecordCamera2Activity" />-->
 <android.support.design.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
                                                  android:id="@+id/coordinatorLayout"
                                                  xmlns:android="http://schemas.android.com/apk/res/android"
@@ -471,7 +464,8 @@
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_iso"
-                android:layout_marginLeft="24dp" />
+                android:layout_marginLeft="24dp"
+                android:visibility="gone"/>
 
             <ImageButton
                 android:id="@+id/button_af_selection"
@@ -481,7 +475,8 @@
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_focus"
-                android:layout_marginLeft="24dp" />
+                android:layout_marginLeft="24dp"
+                android:visibility="gone"/>
 
             <ImageButton
                 android:id="@+id/button_white_balance"
@@ -491,7 +486,8 @@
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_white_balance"
-                android:layout_marginLeft="24dp" />
+                android:layout_marginLeft="24dp"
+                android:visibility="gone"/>
 
             <ImageButton
                 android:id="@+id/button_measurement_mode"
@@ -502,6 +498,7 @@
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_metering_evaluative"
                 android:layout_marginLeft="24dp"
+                android:visibility="gone"
                 />
 
             <ImageButton
@@ -513,7 +510,8 @@
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_settings_auto"
                 android:layout_marginLeft="24dp"
-                android:layout_marginRight="16dp" />
+                android:layout_marginRight="16dp"
+                android:visibility="gone"/>
 
         </LinearLayout>
 

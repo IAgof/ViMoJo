@@ -50,7 +50,6 @@ public class RecordCamera2PresenterTest {
 
   @Mock RecordCamera2View mockedRecordView;
   @Mock Context mockedContext;
-  boolean isFrontCameraSelected = true;
   @Mock AutoFitTextureView mockedTextureView;
   String directorySaveVideos;
   @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
@@ -89,8 +88,7 @@ public class RecordCamera2PresenterTest {
 
     presenter = getRecordCamera2Presenter();
 
-    presenter.initViews(isFrontCameraSelected, isControlsViewSelected, isGridSelected,
-        isSettingsCameraSelected);
+    presenter.initViews();
 
     verify(mockedRecordView).hideChronometer();
     verify(mockedRecordView).setResolutionSelected(720);
@@ -107,7 +105,7 @@ public class RecordCamera2PresenterTest {
 
     presenter = getRecordCamera2Presenter();
 
-    presenter.initViews(isFrontCameraSelected, isControlsViewSelected, isGridSelected, isSettingsCameraSelected);
+    presenter.initViews();
 
     verify(mockedRecordView).hideChronometer();
     verify(mockedRecordView).setResolutionSelected(720);
@@ -186,7 +184,7 @@ public class RecordCamera2PresenterTest {
   @NonNull
   private RecordCamera2Presenter getRecordCamera2Presenter() {
     return new RecordCamera2Presenter(mockedContext, mockedRecordView,
-        isFrontCameraSelected, mockedTextureView, directorySaveVideos,
+        mockedTextureView, directorySaveVideos,
         mockedUpdateVideoRepositoryUseCase, mockedLaunchTranscoderAddAVTransitionUseCase,
         mockedGetVideoFormatFromCurrentProjectUseCase,
         mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);

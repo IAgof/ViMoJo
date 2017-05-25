@@ -76,9 +76,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   private int numTriesAdaptingVideo = 0;
   private final int maxNumTriesAdaptingVideo = 3;
   private boolean isClickedNavigateToEditOrGallery = false;
+  private boolean isFrontCameraSelected = false;
 
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
-                                boolean isFrontCameraSelected, AutoFitTextureView textureView,
+                                AutoFitTextureView textureView,
                                 String directorySaveVideos,
                                 UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
                                 LaunchTranscoderAddAVTransitionsUseCase
@@ -117,30 +118,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     return Project.getInstance(null,null,null);
   }
 
-  public void initViews(boolean isPrincipalViewsSelected, boolean isControlsViewSelected,
-                        boolean isGridSelected, boolean isSettingsCameraSelected) {
+  public void initViews() {
     recordView.setResolutionSelected(getResolutionHeight(currentProject));
     recordView.hideChronometer();
-    if (isPrincipalViewsSelected) {
-      recordView.showPrincipalViews();
-    } else {
-      recordView.hidePrincipalViews();
-    }
-    if (isControlsViewSelected) {
-      recordView.showRightControlsView();
-    } else {
-      recordView.hideRightControlsView();
-    }
-
-    if(isGridSelected){
-      recordView.setCameraGrid();
-    }
-
-    if(isSettingsCameraSelected){
-      recordView.showSettingsCameraView();
-    } else {
-      recordView.hideSettingsCameraView();
-    }
+    recordView.showPrincipalViews();
+    recordView.showRightControlsView();
+    recordView.showSettingsCameraView();
   }
 
   private int getResolutionHeight(Project currentProject) {
@@ -457,7 +440,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
         videoFormat, intermediatesTempAudioFadeDirectory, this);
   }
 
-  public void switchCamera(boolean isFrontCameraSelected) {
+  public void switchCamera() {
+    if (!isFrontCameraSelected) {
+      isFrontCameraSelected = true;
+    } else {
+      isFrontCameraSelected = false;
+    }
     camera.switchCamera(isFrontCameraSelected);
   }
 

@@ -44,7 +44,8 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
  * Created by alvaro on 16/01/17.
  */
 
-public class RecordCamera2Activity extends VimojoActivity implements RecordCamera2View, SeekBar.OnSeekBarChangeListener {
+public class RecordCamera2Activity extends VimojoActivity implements RecordCamera2View,
+    SeekBar.OnSeekBarChangeListener {
 
   private final String LOG_TAG = getClass().getSimpleName();
 
@@ -134,23 +135,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private boolean isRecording = false;
   private boolean buttonBackPressed = false;
 
-  private boolean isFrontCameraSelected = false;
-
-  private String EXTRA_FRONT_CAMERA_SELECTED = "front_camera_selected";
-  private String UI_PRINCIPAL_VIEW = "ui_principal_views";
-  private String UI_RIGHT_CONTROLS_VIEW = "ui_righ_controls_view";
-  private String UI_SETTINGS_CAMERA_SELECTED = "ui_settings_camera_selected";
-  private String UI_GRID_CAMERA_SELECTED = "ui_grid_camera_selected";
-
   // TODO:(alvaro.martinez) 18/01/17 Move this values to Constants
   private final int RESOLUTION_SELECTED_HD720 = 720;
   private final int RESOLUTION_SELECTED_HD1080 = 1080;
   private final int RESOLUTION_SELECTED_HD4K = 2160;
   private OrientationHelper orientationHelper;
-  private boolean isPrincipalViewsSelected = false;
-  private boolean isControlsViewSelected = false;
-  private boolean isSettingsCameraSelected = false;
-  private boolean isGridSelected = false;
 
   private ProgressDialog progressDialog;
 
@@ -166,18 +155,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     setupActivityButtons();
     configChronometer();
     configShowThumbAndNumberClips();
-    //initOrientationHelper();
-
-    isFrontCameraSelected = getIntent().getBooleanExtra(EXTRA_FRONT_CAMERA_SELECTED, false);
-    isPrincipalViewsSelected = getIntent().getBooleanExtra(UI_PRINCIPAL_VIEW, true);
-    isSettingsCameraSelected = getIntent().getBooleanExtra(UI_SETTINGS_CAMERA_SELECTED, false);
-    isGridSelected = getIntent().getBooleanExtra(UI_GRID_CAMERA_SELECTED, false);
-
-    int getControlsViewSelected = getIntent().getIntExtra(UI_RIGHT_CONTROLS_VIEW, View.INVISIBLE);
-    isControlsViewSelected = false;
-    if (getControlsViewSelected == View.VISIBLE) {
-      isControlsViewSelected = true;
-    }
 
     this.getActivityPresentersComponent().inject(this);
 
@@ -199,7 +176,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public ActivityPresentersModule getActivityPresentersModule() {
-    return new ActivityPresentersModule(this, isFrontCameraSelected, Constants.PATH_APP_TEMP,
+    return new ActivityPresentersModule(this, Constants.PATH_APP_TEMP,
         textureView);
   }
 
@@ -262,15 +239,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void onResume() {
     super.onResume();
-    if(isGridSelected){
-
-    }
-    if(isSettingsCameraSelected){
-      settingsCameraButton.setSelected(true);
-      presenter.buttonSettingsCamera(true);
-    }
-    presenter.initViews(isPrincipalViewsSelected, isControlsViewSelected,
-        isGridSelected, isSettingsCameraSelected);
     initOrientationHelper();
     presenter.initViews();
     presenter.onResume();
@@ -424,7 +392,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void showPrincipalViews() {
     clearButton.setImageResource(R.drawable.activity_record_ic_shrink);
     clearButton.setBackground(getResources().getDrawable(R.drawable.circle_background));
-    clearButton.setAlpha(1f);
     clearButton.setActivated(false);
     hudView.setVisibility(View.VISIBLE);
     showControlsButton.setVisibility(View.VISIBLE);
@@ -583,14 +550,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @OnClick(R.id.button_change_camera)
   public void changeCamera() {
-
-    if (!isFrontCameraSelected) {
-      isFrontCameraSelected = true;
-    } else {
-      isFrontCameraSelected = false;
-    }
-
-   presenter.switchCamera(isFrontCameraSelected);
+   presenter.switchCamera();
   }
 
   @OnClick (R.id.button_navigate_edit_or_gallery)
@@ -836,7 +796,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private class OrientationHelper extends OrientationEventListener {
     Context context;
     private boolean orientationHaveChanged = false;
-    private boolean isNormalOrientation;
 
     public OrientationHelper(Context context) {
       super(context);
