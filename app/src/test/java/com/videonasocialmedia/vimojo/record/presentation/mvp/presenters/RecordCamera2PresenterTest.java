@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
@@ -60,6 +61,9 @@ public class RecordCamera2PresenterTest {
   @Mock VideonaFormat mockedVideoFormat;
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
   @Mock Camera2WrapperListener mockedCamera2WrapperListener;
+  int rotation = 0;
+  Drawable fadeTransition;
+  boolean isFadeActivated;
 
   private boolean isControlsViewSelected;
   private boolean isGridSelected;
@@ -163,7 +167,8 @@ public class RecordCamera2PresenterTest {
     assertThat("There are videos in project", numVideos, is(2));
 
     mockedAdaptVideoRecordedToVideoFormatUseCase.adaptVideo(video, mockedVideoFormat,
-        directorySaveVideos, mockedTranscoderHelperListener);
+        directorySaveVideos, rotation, fadeTransition, isFadeActivated,
+        mockedTranscoderHelperListener);
 
     presenter = getRecordCamera2Presenter();
 

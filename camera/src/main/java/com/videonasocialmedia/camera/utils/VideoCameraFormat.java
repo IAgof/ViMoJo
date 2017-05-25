@@ -6,9 +6,9 @@ package com.videonasocialmedia.camera.utils;
 
 public class VideoCameraFormat {
 
-  private int videoWidth = 1280;
-  private int videoHeight = 720;
-  private int videoBitrate = 5 * 1000 * 1000;
+  private int videoWidth = 1920;
+  private int videoHeight = 1080;
+  private int videoBitrate = 32 * 1000 * 1000;
   private int audioBitrate = 192 * 1000;
   private int audioChannels = 1;
   private int samplingRate = 48 * 1000;

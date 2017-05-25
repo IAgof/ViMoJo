@@ -42,8 +42,24 @@ public class GetVideoFormatFromCurrentProjectUseCase {
         return videonaFormat;
     }
 
-    public VideonaFormat getVideonaFormatToAdaptVideo(){
+    public VideonaFormat getVideonaFormatToAdaptAudio(){
         return new VideonaFormat(Constants.DEFAULT_VIMOJO_AUDIO_BITRATE,
             Constants.DEFAULT_VIMOJO_AUDIO_CHANNELS);
+    }
+
+    public VideonaFormat getVideonaFormatToAdaptVideoRecordedAudioAndVideo(){
+        VideonaFormat videonaFormat;
+        VideoResolution resolution = project.getProfile().getVideoResolution();
+        VideoQuality quality = project.getProfile().getVideoQuality();
+        if(resolution!=null && quality!=null) {
+            videonaFormat = new VideonaFormat(quality.getVideoBitRate(), resolution.getWidth(),
+                resolution.getHeight(), Constants.DEFAULT_VIMOJO_AUDIO_BITRATE,
+                Constants.DEFAULT_VIMOJO_AUDIO_CHANNELS);
+        } else {
+            videonaFormat = new VideonaFormat(Constants.DEFAULT_VIMOJO_AUDIO_BITRATE,
+                Constants.DEFAULT_VIMOJO_AUDIO_CHANNELS);
+        }
+
+        return videonaFormat;
     }
 }

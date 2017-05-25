@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.record.domain;
 
+import android.graphics.drawable.Drawable;
+
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -28,6 +30,9 @@ public class AdaptVideoRecordedToVideoFormatUseCaseTest {
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
   @Mock Video mockedVideo;
   String destVideoPath = "dcim/vimojo/masters";
+  int rotation = 0;
+  Drawable fadeTransition;
+  boolean isFadeActivated;
   @Mock VideonaFormat mockedVideoFormat;
 
   @Before
@@ -36,14 +41,15 @@ public class AdaptVideoRecordedToVideoFormatUseCaseTest {
   }
 
   @Test
-  public void adaptVideoRecordedCallsTranscodeAdaptVideoToFormat() throws IOException {
+  public void adaptVideoRecordedCallsTranscoderAdaptVideoToFormat() throws IOException {
 
     injectedAdaptVideoRecordedToVideoFormatUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedAdaptVideoRecordedToVideoFormatUseCase.adaptVideo(mockedVideo, mockedVideoFormat,
-        destVideoPath, mockedTranscoderHelperListener);
+        destVideoPath, rotation, fadeTransition, isFadeActivated, mockedTranscoderHelperListener);
 
-    verify(mockedTranscoderHelper).adaptVideoToDefaultFormat(mockedVideo, mockedVideoFormat,
-        destVideoPath, mockedTranscoderHelperListener);
+    verify(mockedTranscoderHelper).adaptVideoWithRotationToDefaultFormat(mockedVideo,
+        mockedVideoFormat, destVideoPath, rotation, fadeTransition, isFadeActivated,
+        mockedTranscoderHelperListener);
   }
 }

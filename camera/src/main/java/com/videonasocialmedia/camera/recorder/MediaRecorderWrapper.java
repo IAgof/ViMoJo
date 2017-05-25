@@ -1,11 +1,9 @@
 package com.videonasocialmedia.camera.recorder;
 
-import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.util.SparseIntArray;
 import android.view.Surface;
 
-import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.camera.utils.VideoCameraFormat;
 import java.io.IOException;
 

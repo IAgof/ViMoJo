@@ -166,7 +166,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     setupActivityButtons();
     configChronometer();
     configShowThumbAndNumberClips();
-    initOrientationHelper();
+    //initOrientationHelper();
 
     isFrontCameraSelected = getIntent().getBooleanExtra(EXTRA_FRONT_CAMERA_SELECTED, false);
     isPrincipalViewsSelected = getIntent().getBooleanExtra(UI_PRINCIPAL_VIEW, true);
@@ -181,12 +181,20 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
     this.getActivityPresentersComponent().inject(this);
 
-    progressDialog = new ProgressDialog(this);
-    progressDialog.setTitle("Adapting video");
-    progressDialog.setMessage("Loading...");
-    progressDialog.setIndeterminate(false);
+    createProgressDialog();
 
     slideSeekBar.setOnSeekBarChangeListener(this);
+  }
+
+  private void createProgressDialog() {
+    progressDialog = new ProgressDialog(this);
+    progressDialog.setTitle(getString(R.string.dialog_title_record_adapting_video));
+    progressDialog.setMessage(getString(R.string.dialog_message_record_adapting_video));
+    progressDialog.setIndeterminate(false);
+    progressDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+
   }
 
   @Override
@@ -263,13 +271,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
     presenter.initViews(isPrincipalViewsSelected, isControlsViewSelected,
         isGridSelected, isSettingsCameraSelected);
+    initOrientationHelper();
+    presenter.initViews();
     presenter.onResume();
     hideSystemUi();
   }
 
   private void hideSystemUi() {
-   // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-     //   WindowManager.LayoutParams.FLAG_FULLSCREEN);
     getWindow().getDecorView().setSystemUiVisibility(
         View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -382,7 +390,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void showError(int stringResourceId) {
-    // TODO:(alvaro.martinez) 18/01/17 test snack bar in record activity
     showMessage(stringResourceId);
   }
 
@@ -540,6 +547,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
+  public void stopMonitoringRotation() {
+    orientationHelper.stopMonitoringOrientation();
+  }
+
+  @Override
   public void setResolutionSelected(int resolutionSelected) {
     switch (resolutionSelected){
       case (RESOLUTION_SELECTED_HD720):
@@ -578,14 +590,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       isFrontCameraSelected = false;
     }
 
-    Intent intent = new Intent(RecordCamera2Activity.this, RecordCamera2Activity.class);
-    intent.putExtra(EXTRA_FRONT_CAMERA_SELECTED, isFrontCameraSelected);
-    intent.putExtra(UI_PRINCIPAL_VIEW, !clearButton.isActivated());
-    intent.putExtra(UI_RIGHT_CONTROLS_VIEW, controlsView.getVisibility());
-    intent.putExtra(UI_SETTINGS_CAMERA_SELECTED, settingsCameraButton.isSelected());
-    intent.putExtra(UI_GRID_CAMERA_SELECTED, gridButton.isSelected());
-    startActivity(intent);
-    overridePendingTransition(R.anim.from_middle, R.anim.to_middle);
+   presenter.switchCamera(isFrontCameraSelected);
   }
 
   @OnClick (R.id.button_navigate_edit_or_gallery)
@@ -809,7 +814,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void showMessage(int stringResourceId) {
-    //// TODO:(alvaro.martinez) 18/01/17 test snackBar, toast, alert dialog ...
     Snackbar snackbar = Snackbar.make(chronometerAndRecPointView, stringResourceId, Snackbar.LENGTH_SHORT);
     snackbar.show();
   }
@@ -831,6 +835,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private class OrientationHelper extends OrientationEventListener {
     Context context;
+    private boolean orientationHaveChanged = false;
+    private boolean isNormalOrientation;
 
     public OrientationHelper(Context context) {
       super(context);
@@ -839,8 +845,30 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         this.enable();
     }
 
+    public void stopMonitoringOrientation() {
+      this.disable();
+    }
+
     @Override
     public void onOrientationChanged(int orientation) {
+      if (orientation > 85 && orientation < 95) {
+        if (orientationHaveChanged) {
+          Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
+          presenter.restartPreview();
+          orientationHaveChanged = false;
+        }
+      } else if (orientation > 265 && orientation < 275) {
+        if (!orientationHaveChanged) {
+          Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
+          presenter.restartPreview();
+          orientationHaveChanged = true;
+        }
+      }
+      checkShowRotateDeviceImage(orientation);
+    }
+
+
+    private void checkShowRotateDeviceImage(int orientation) {
       if (( orientation > 345 || orientation < 15 ) && orientation != -1) {
         rotateDeviceHint.setRotation(270);
         rotateDeviceHint.setRotationX(0);
@@ -858,6 +886,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         recordButton.setEnabled(true);
       }
     }
+
   }
 
 }

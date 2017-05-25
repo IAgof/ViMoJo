@@ -117,6 +117,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   public float finger_spacing = 0;
   public double zoom_level = 1;
 
+  private int rotation;
+
   /**
    * {@link CameraDevice.StateCallback} is called when {@link CameraDevice} changes its status.
    */
@@ -149,7 +151,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         activity.finish();
       }
     }
-
   };
   private int cameraIdSelected;
   private CameraCharacteristics characteristics;
@@ -170,6 +171,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public void onResume() {
     startBackgroundThread();
+    checkTextureViewToOpenCamera();
+  }
+
+  private void checkTextureViewToOpenCamera() {
     if (textureView.isAvailable()) {
       openCamera(textureView.getWidth(), textureView.getHeight());
     } else {
@@ -183,6 +188,17 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
     closeCamera();
     stopBackgroundThread();
+  }
+
+  public void reStartPreview(){
+    closeCamera();
+    reStartBackgroundThread();
+    checkTextureViewToOpenCamera();
+  }
+
+  private void reStartBackgroundThread() {
+    stopBackgroundThread();
+    startBackgroundThread();
   }
 
   public void stopRecordVideo() {
@@ -276,7 +292,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         textureView.setAspectRatio(previewSize.getHeight(), previewSize.getWidth());
       }
       configureTransform(width, height);
-      int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+      rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+      Log.d(LOG_TAG, "Rotation " + rotation + " cameraId " + cameraIdSelected +
+        " sensorOrientation " + sensorOrientation);
 
       mediaRecorder = new MediaRecorderWrapper(new MediaRecorder(), cameraIdSelected,
           sensorOrientation, rotation, createVideoFilePath(), videoCameraFormat);
@@ -507,7 +525,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   private String createVideoFilePath() {
-
     // TODO:(alvaro.martinez) 19/01/17 Get pattern VID_ from where?
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
     String fileName = "VID_" + timeStamp + ".mp4";
@@ -518,6 +535,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public String getVideoPath() {
     return videoPath;
+  }
+
+  public boolean isRecordingVideo() {
+    return isRecordingVideo;
   }
 
   public boolean onTouchZoom(float current_finger_spacing) {
@@ -632,6 +653,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       }
     };
 
+    // FIXME: 23/05/17 Prevent NPE, onTouch focus.
+    if(previewSession == null){
+      return;
+    }
     //first stop the existing repeating request
     previewSession.stopRepeating();
 
@@ -655,5 +680,47 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   private boolean isMeteringAreaAFSupported() {
     return characteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF) >= 1;
+  }
+
+  public int getRotation() {
+    if(rotation == Surface.ROTATION_270){
+      if(sensorOrientation == 90) {
+        return getInverseRotation();
+      }else {
+        return getNormalRotation();
+      }
+    } else {
+      if(sensorOrientation == 90) {
+        return getNormalRotation();
+      } else {
+        return getInverseRotation();
+      }
+    }
+  }
+
+  private int getInverseRotation() {
+    if(cameraIdSelected == 0) {
+      return 180;
+    } else {
+      return 0;
+    }
+  }
+
+  private int getNormalRotation() {
+    if(cameraIdSelected == 0) {
+      return 0;
+    } else {
+      return 180;
+    }
+  }
+
+  public void switchCamera(boolean isFrontCameraSelected) {
+    if(isFrontCameraSelected){
+      cameraIdSelected = 1;
+    } else {
+      cameraIdSelected = 0;
+    }
+    closeCamera();
+    checkTextureViewToOpenCamera();
   }
 }

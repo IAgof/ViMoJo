@@ -47,6 +47,7 @@ public interface RecordCamera2View {
 
     void hideVideosRecordedNumber();
 
+    void stopMonitoringRotation();
 
     // UI Views showed/hidden by user
 
