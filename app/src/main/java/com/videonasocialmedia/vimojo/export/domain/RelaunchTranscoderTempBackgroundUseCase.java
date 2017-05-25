@@ -40,7 +40,7 @@ public class RelaunchTranscoderTempBackgroundUseCase {
    * @param intermediatesTempAudioFadeDirectory
    */
   public void relaunchExport(Drawable drawableFadeTransition, Video videoToEdit,
-                             VideonaFormat videonaFormat,String intermediatesTempAudioFadeDirectory,
+                             VideonaFormat videonaFormat, String intermediatesTempAudioFadeDirectory,
                              final TranscoderHelperListener
                                  transcoderHelperListener){
     boolean isVideoFadeTransitionActivated =

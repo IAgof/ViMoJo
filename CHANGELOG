@@ -1,3 +1,6 @@
+v0.4.25.1
+- Add new grid for Rtve flavor. Separate resource drawable grid for every flavor.
+
 v0.4.25
 * New Features
     - Now user can track progress of final export process.

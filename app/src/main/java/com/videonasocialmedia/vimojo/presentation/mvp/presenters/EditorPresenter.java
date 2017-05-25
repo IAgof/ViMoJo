@@ -8,20 +8,16 @@ import android.util.Log;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
-import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
-import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -47,7 +43,7 @@ public class EditorPresenter implements TranscoderHelperListener, OnVideosRetrie
   private Context context;
   private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
-  private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
+  private GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
   private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
 
   @Inject
@@ -55,7 +51,7 @@ public class EditorPresenter implements TranscoderHelperListener, OnVideosRetrie
                          SharedPreferences sharedPreferences, Context context,
                          CreateDefaultProjectUseCase createDefaultProjectUseCase,
                          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                         GetVideonaFormatFromCurrentProjectUseCase
+                         GetVideoFormatFromCurrentProjectUseCase
                                getVideonaFormatFromCurrentProjectUseCase,
                          RelaunchTranscoderTempBackgroundUseCase
                                relaunchTranscoderTempBackgroundUseCase,

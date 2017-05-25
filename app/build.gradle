@@ -64,8 +64,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 38 // 20170511
-            versionName "v0.4.25.1" // 20170511
+            versionCode 39 // 20170524
+            versionName "v0.5.0" // 20170524
             resValue "string", "app_out_of_date", "2017-07-31" // 20170321
             resValue "string", "app_name", "Vimojo"
             buildConfigField "boolean", "FEATURE_FTP", "true"
@@ -78,8 +78,8 @@ android {
         }
         hispanopost {
             applicationId "com.videonasocialmedia.vimojo.hispanopost"
-            versionCode 18 // 20170511
-            versionName "v0.4.25.1.fHispanopost" // 20170511
+            versionCode 19 // 20170524
+            versionName "v0.5.0.fHispanopost" // 20170524
             resValue "string", "app_out_of_date", "2016-12-01"
             resValue "string", "app_name", "HispanoPost"
             buildConfigField "boolean", "FEATURE_FTP", "false"
@@ -92,8 +92,8 @@ android {
         }
         shoulderpod {
             applicationId "com.videonasocialmedia.vimojo.shoulderpod"
-            versionCode 18 // 20170511
-            versionName "v0.4.25.1.fShoulderpod" // 20170511
+            versionCode 19 // 20170524
+            versionName "v0.5.0.fShoulderpod" // 20170524
             resValue "string", "app_out_of_date", "2016-12-01"
             resValue "string", "app_name", "Shoulderpod"
             buildConfigField "boolean", "FEATURE_FTP", "false"
@@ -106,8 +106,8 @@ android {
         }
         veinteminutos {
             applicationId "com.videonasocialmedia.vimojo.veinteminutos"
-            versionCode 18 // 20170511
-            versionName "v0.4.25.1.f20minutos" // 20170511
+            versionCode 19 // 20170524
+            versionName "v0.5.0.f20minutos" // 20170524
             resValue "string", "app_out_of_date", "2016-12-13"
             resValue "string", "app_name", "Video 20M"
             buildConfigField "boolean", "FEATURE_FTP", "true"
@@ -120,8 +120,8 @@ android {
         }
         rtve {
             applicationId "com.videonasocialmedia.vimojo.rtve"
-            versionCode 17 // 20170511
-            versionName "v0.4.25.1.fRtve" // 20170511
+            versionCode 18 // 20170524
+            versionName "v0.5.0.fRtve" // 20170524
             resValue "string", "app_out_of_date", "2017-07-31" // 20170321
             resValue "string", "app_name", "Vimojo Rtve"
             buildConfigField "boolean", "FEATURE_FTP", "true"
@@ -134,8 +134,8 @@ android {
         }
         ochoaldia {
             applicationId "com.videonasocialmedia.vimojo.ochoaldia"
-            versionCode 15 // 20170511
-            versionName "v0.4.25.1.fOchoAlDia" // 20170511
+            versionCode 16 // 20170524
+            versionName "v0.5.0.fOchoAlDia" // 20170524
             resValue "string", "app_out_of_date", "2017-07-31"
             resValue "string", "app_name", "8 al día"
             buildConfigField "boolean", "FEATURE_FTP", "true"
@@ -148,8 +148,8 @@ android {
         }
         elpaisdigital {
             applicationId "com.videonasocialmedia.vimojo.elpaisdigital"
-            versionCode 14 // 20170511
-            versionName "v0.4.25.1.fElPaisDigial" // 20170511
+            versionCode 15 // 20170524
+            versionName "v0.5.0.fElPaisDigial" // 20170524
             resValue "string", "app_out_of_date", "2017-07-31"
             resValue "string", "app_name", "El País Digital"
             buildConfigField "boolean", "FEATURE_FTP", "false"
@@ -310,4 +310,5 @@ dependencies {
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support:support-annotations:25.2.0'
 
+    compile project(path: ':camera')
 }

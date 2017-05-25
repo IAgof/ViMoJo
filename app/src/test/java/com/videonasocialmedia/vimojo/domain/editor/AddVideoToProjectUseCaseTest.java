@@ -42,6 +42,7 @@ import static org.mockito.Mockito.verify;
 public class AddVideoToProjectUseCaseTest {
   @Mock ProjectRealmRepository mockedProjectRepository;
   @Mock OnLaunchAVTransitionTempFileListener mockedLaunchAVTransitionTempFileListener;
+  @Mock OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
   @InjectMocks AddVideoToProjectUseCase injectedUseCase;
   private EventBus mockedEventBus;
 
@@ -87,7 +88,7 @@ public class AddVideoToProjectUseCaseTest {
     Project currentProject = Project.getInstance(null, null, null);
     Video video = new Video("media/path");
 
-    injectedUseCase.addVideoToProjectAtPosition(video, 0);
+    injectedUseCase.addVideoToProjectAtPosition(video, 0, mockedOnAddMediaFinishedListener);
 
     verify(mockedProjectRepository).update(currentProject);
   }

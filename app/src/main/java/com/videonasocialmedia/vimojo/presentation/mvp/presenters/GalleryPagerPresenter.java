@@ -22,7 +22,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
@@ -47,7 +47,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
 
     private Context context;
     private final SharedPreferences preferences;
-    private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
+    private GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private AddVideoToProjectUseCase addVideoToProjectUseCase;
     GalleryPagerView galleryPagerView;
     protected Project currentProject;
@@ -69,7 +69,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
             GalleryPagerView galleryPagerView, Context context,
             AddVideoToProjectUseCase addVideoToProjectUseCase,
             UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
-            GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+            GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
             LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionsUseCase,
             UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase,
             SharedPreferences preferences) {
@@ -237,7 +237,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
 
         video.setTempPath(currentProject.getProjectPathIntermediateFiles());
 
-        videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
+        videoFormat = currentProject.getVMComposition().getVideoFormat();
         drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
 
         launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
