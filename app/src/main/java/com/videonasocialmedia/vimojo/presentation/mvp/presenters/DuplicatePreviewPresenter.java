@@ -7,6 +7,7 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -82,7 +83,18 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
     public void duplicateVideo(Video video, int positionInAdapter, int numDuplicates) {
         for (int duplicates = 1; duplicates < numDuplicates; duplicates++) {
             Video copyVideo = new Video(video);
-            addVideoToProjectUseCase.addVideoToProjectAtPosition(copyVideo, positionInAdapter);
+            addVideoToProjectUseCase.addVideoToProjectAtPosition(copyVideo, positionInAdapter,
+                new OnAddMediaFinishedListener() {
+                    @Override
+                    public void onAddMediaItemToTrackError() {
+                        duplicateView.showError(String.valueOf(R.string.addMediaItemToTrackError));
+                    }
+
+                    @Override
+                    public void onAddMediaItemToTrackSuccess(Media media) {
+
+                    }
+                });
         }
         userEventTracker.trackClipDuplicated(numDuplicates, currentProject);
     }

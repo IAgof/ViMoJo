@@ -17,7 +17,6 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -54,7 +53,6 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
-    private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
 
     private SplitView splitView;
@@ -66,8 +64,6 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
                                  Context context, SplitVideoUseCase splitVideoUseCase,
                                  GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                  ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-                                 GetVideonaFormatFromCurrentProjectUseCase
-                                         getVideonaFormatFromCurrentProjectUseCase,
                                  UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase) {
         this.splitView = splitView;
         this.userEventTracker = userEventTracker;
@@ -75,7 +71,6 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
         this.splitVideoUseCase = splitVideoUseCase;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
-        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.currentProject = loadCurrentProject();
     }
@@ -105,7 +100,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
 
     @Override
     public void onNoVideosRetrieved() {
-        splitView.showError("No videos");
+        splitView.showError(R.string.onNoVideosRetrieved);
     }
 
 
@@ -120,8 +115,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
 
     @Override
     public void trimVideo(Video video, int startTimeMs, int finishTimeMs) {
-        VideonaFormat videoFormat =
-            getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
+        VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
         // TODO:(alvaro.martinez) 22/02/17 This drawable saved in app or sdk?
         Drawable drawableFadeTransitionVideo =
             ContextCompat.getDrawable(VimojoApplication.getAppContext(), R.drawable.alpha_transition_white);
@@ -129,6 +123,11 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
         modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, video, videoFormat,
             startTimeMs, finishTimeMs, currentProject.getProjectPathIntermediateFileAudioFade(),
             this);
+    }
+
+    @Override
+    public void showErrorSplittingVideo() {
+        splitView.showError(R.string.addMediaItemToTrackError);
     }
 
     @Override

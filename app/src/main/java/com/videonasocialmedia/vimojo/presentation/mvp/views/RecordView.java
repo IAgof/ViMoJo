@@ -12,6 +12,9 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
 
+/**
+ * @deprecated Not used, RecordPresenter deprecated.
+ */
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 public interface RecordView {

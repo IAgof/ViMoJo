@@ -54,7 +54,6 @@ public class SettingsFragment extends PreferenceFragment implements
     protected Preference emailPref;
     protected ListPreference resolutionPref;
     protected ListPreference qualityPref;
-    protected ListPreference frameRatePref;
     protected Preference resolutionPrefNotAvailable;
     protected Preference qualityPrefNotAvailable;
     protected Preference frameRatePrefNotAvailable;
@@ -81,7 +80,7 @@ public class SettingsFragment extends PreferenceFragment implements
     private FragmentPresentersComponent initComponent() {
         return DaggerFragmentPresentersComponent.builder()
             .fragmentPresentersModule(new FragmentPresentersModule(this, context, sharedPreferences,
-                cameraSettingsPref, resolutionPref,qualityPref, frameRatePref, transitionsVideoPref,
+                cameraSettingsPref, resolutionPref,qualityPref, transitionsVideoPref,
                 transitionsAudioPref,watermarkSwitchPref, emailPref))
             .systemComponent(((VimojoApplication)getActivity().getApplication()).getSystemComponent())
             .build();
@@ -139,7 +138,6 @@ public class SettingsFragment extends PreferenceFragment implements
 
         resolutionPref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION);
         qualityPref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY);
-        frameRatePref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE);
     }
 
 

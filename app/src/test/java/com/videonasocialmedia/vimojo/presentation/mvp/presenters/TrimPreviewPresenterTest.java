@@ -7,7 +7,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -42,7 +41,6 @@ public class TrimPreviewPresenterTest {
 
     @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock ModifyVideoDurationUseCase mockedModifyVideoDurationUseCase;
-    @Mock GetVideonaFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
     @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
 
     @Before
@@ -60,8 +58,7 @@ public class TrimPreviewPresenterTest {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(trimView,
             userEventTracker, mockedGetMediaListFromProjectUseCase,
-            mockedModifyVideoDurationUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
-            mockedUpdateVideoRepositoryUseCase);
+            mockedModifyVideoDurationUseCase, mockedUpdateVideoRepositoryUseCase);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -70,8 +67,7 @@ public class TrimPreviewPresenterTest {
     public void constructorSetsCurrentProject() {
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(trimView,
             mockedUserEventTracker, mockedGetMediaListFromProjectUseCase,
-            mockedModifyVideoDurationUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
-            mockedUpdateVideoRepositoryUseCase);
+            mockedModifyVideoDurationUseCase, mockedUpdateVideoRepositoryUseCase);
         Project videonaProject = getAProject();
 
         assertThat(trimPreviewPresenter.currentProject, is(videonaProject));

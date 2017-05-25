@@ -80,6 +80,7 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 /**
  * RecordActivity manages a single live record.
+ * @deprecated Update and clean activity RecordCamera2Activity. Delete dependency with camera1 and avrecorder module
  */
 public class RecordActivity extends VimojoActivity implements RecordView {
     private final String LOG_TAG = getClass().getSimpleName();
@@ -97,6 +98,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ImageButton rotateCameraButton;
     @Bind(R.id.button_navigate_settings)
     ImageButton buttonNavigateSettings;
+    @Bind(R.id.button_settings_camera)
+    ImageButton settingsCameraButton;
     @Bind(R.id.button_grid)
     ImageButton gridButton;
     @Bind(R.id.button_navigate_edit_or_gallery)
@@ -131,9 +134,9 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     View settingsBarSubmenu;
     @Bind(R.id.button_to_hide_controls)
     ImageButton buttonToHideControlsView;
-    @Bind (R.id.button_to_show_controls)
+    @Bind (R.id.button_to_show_controls_right)
     ImageButton buttonToShowControls;
-    @Bind(R.id.activity_record_icon_resolution)
+    @Bind(R.id.button_resolution_indicator)
     ImageView resolutionIndicator;
     @Bind(R.id.image_view_grid)
     ImageView imageViewGrid;
@@ -198,7 +201,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(LOG_TAG, "init");
+        Log.d(LOG_TAG, "onCreate");
         setContentView(R.layout.record);
         keepScreenOn();
         ButterKnife.bind(this);
@@ -916,7 +919,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
             hidePrincipalViews();
         }
     }
-    @OnClick(R.id.button_to_show_controls)
+    @OnClick(R.id.button_to_show_controls_right)
     public void showControls() {
         buttonToShowControls.setVisibility(View.INVISIBLE);
         buttonToHideControlsView.setVisibility(View.VISIBLE);

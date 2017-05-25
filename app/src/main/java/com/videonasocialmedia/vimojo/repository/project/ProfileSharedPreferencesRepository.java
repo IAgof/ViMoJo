@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.repository.project;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -54,8 +55,12 @@ public class ProfileSharedPreferencesRepository implements ProfileRepository {
         return VideoResolution.Resolution.HD4K;
       }
     }
-    // default
-    return VideoResolution.Resolution.HD1080;
+    // default 1080p. We suppose that 720p is the minimum supported, 1080p not is always presented if all phones,ex Videona MotoG.
+    if(sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, false)) {
+      return VideoResolution.Resolution.HD1080;
+    } else {
+      return VideoResolution.Resolution.HD720;
+    }
   }
 
   private VideoQuality.Quality getQualityFromPreferenceSettings() {
