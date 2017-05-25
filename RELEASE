@@ -1,17 +1,7 @@
-v0.5.0
+v0.5.1
 
-- Added new module, camera. Separate from app, recorder and camera features.
-- Update Vimojo to record videos with new implementation, based in camera2 API. Old camera module
-avrecorder, not used, RecordActivity and RecordPresenter deprecated.
-- Removed setting preference frame rate, not supported now.
-- Videos recorded without synchronization audio, video problems.
-- Remove possibility of change camera if app is recording video.
-- Created new RecordCamera2Activity and RecordCamera2Presenter. Improved uncoupled with camera, same
-UI and features than old camera implementation, flash, zoom, focus, change camera, rotation device
-preview.
-- Camera prepared for future implementation of advanced camera features, white balance, exposure ...
-- Added new job to adapt every video recorded to Vimojo format. Until this job has not ended, we can
-navigate to EditActivity. Job needed to unify all our medias and temporal files and improved final
-video exportation.
+- Added seekBar to control zoom.
+- Added grid button in advance control camera buttons linear layout.
+- Hide advance control camera buttons, show only buttons implemented, grid, zoom.
 
 
