@@ -146,6 +146,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ProgressBar progressBarBatteryOrMemory;
     @Nullable @Bind(R.id.text_percent_level_battery_and_memory)
     TextView percentLevel;
+    @Nullable @Bind(R.id.text_free_memory_space)
+    TextView freeMemorySpace;
 
 
     private boolean buttonBackPressed;
@@ -282,6 +284,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     View dialogView = getLayoutInflater().inflate(R.layout.dialog_level_battery_and_memory, null);
     progressBarBatteryOrMemory = (ProgressBar) dialogView.findViewById(R.id.progressBar_level_battery);
     percentLevel = (TextView) dialogView.findViewById(R.id.text_percent_level_battery_and_memory);
+    freeMemorySpace=(TextView)dialogView.findViewById(R.id.text_free_memory_space);
     progressDialogBatteryOrMemory = builder.setCancelable(true)
         .setView(dialogView)
         .setTitle("Información detallada")
@@ -401,10 +404,10 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     }
 
     private void updatePercentFreeMemory() {
-      StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
+      StatFs statFs= new StatFs(Environment.getDataDirectory().getPath());
       long totalMemory= getTotalMemory(statFs);
       long freeMemory= getFreeMemory(statFs);
-      recordPresenter.updatePercentFreeMemory(totalMemory,freeMemory);
+      recordPresenter.updateFreeMemorySpace(totalMemory,freeMemory);
     }
 
     private long getTotalMemory(StatFs statFs) {
@@ -412,7 +415,6 @@ public class RecordActivity extends VimojoActivity implements RecordView {
       return totalMemory;
     }
     private long getFreeMemory(StatFs statFs) {
-
       long   freeMemory   = (statFs.getAvailableBlocksLong() * statFs.getBlockSizeLong());
       return freeMemory;
     }
@@ -671,6 +673,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     @Override
     public void showBatteryStatus(Constants.BATTERY_STATUS_ENUM batteryStatus, int batteryPercent) {
       progressDialogBatteryOrMemory.setTitle(R.string.battery);
+      freeMemorySpace.setVisibility(View.GONE);
         switch (batteryStatus){
              case CHARGING:
                  battery.setImageResource(R.drawable.record_activity_ic_battery_charging);
@@ -731,8 +734,12 @@ public class RecordActivity extends VimojoActivity implements RecordView {
   }
 
   @Override
-  public void showFreeSpaceMemory(Constants.MEMORY_STATUS memoryStatus, int memoryPercent) {
+  public void showFreeMemorySpace(Constants.MEMORY_STATUS memoryStatus, int memoryPercent, String freeMemoryInBytes, String totalMemoryInBytes) {
     progressDialogBatteryOrMemory.setTitle(R.string.memory);
+    freeMemorySpace.setVisibility(View.VISIBLE);
+
+    freeMemorySpace.setText(getResources().getText(R.string.free_memory_space) + " " +freeMemoryInBytes+ " " +
+    getResources().getText(R.string.preposition_of)+ " "+totalMemoryInBytes);
     switch (memoryStatus) {
       case MEDIUM:
         memory.setImageTintList(ColorStateList.valueOf(Color.YELLOW));
@@ -762,20 +769,20 @@ public class RecordActivity extends VimojoActivity implements RecordView {
   }
 
   private void setColorProgressBarMemory(Constants.MEMORY_STATUS memoryStatus) {
-    GradientDrawable itemProgressBar = getDrawableProgressBar();
+    GradientDrawable drawableProgressBar = getDrawableProgressBar();
 
     switch (memoryStatus) {
       case OKAY:
-        itemProgressBar.setColor(Color.GREEN);
+        drawableProgressBar.setColor(Color.GREEN);
         break;
       case MEDIUM:
-        itemProgressBar.setColor(Color.YELLOW);
+        drawableProgressBar.setColor(Color.YELLOW);
         break;
       case CRITICAL:
-        itemProgressBar.setColor(Color.RED);
+        drawableProgressBar.setColor(Color.RED);
         break;
       default:
-        itemProgressBar.setColor(Color.WHITE);
+        drawableProgressBar.setColor(Color.WHITE);
     }
   }
 

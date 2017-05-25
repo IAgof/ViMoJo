@@ -80,7 +80,7 @@ public class RecordPresenterTest {
   }
 
   @Test
-  public void videoToLaunchAVTransitionTempFileUpdateVideoTempPath(){
+  public void videoToLaunchAVTransitionTempFileUpdateVideoTempPath() {
     Project project = getAProject();
     project.setAudioFadeTransitionActivated(true);
     String path = "media/path";
@@ -175,7 +175,4 @@ public class RecordPresenterTest {
 
     assertThat("Level will be CRITICAL", status, is(Constants.BATTERY_STATUS_ENUM.CRITICAL));
   }
-
-
-
 }

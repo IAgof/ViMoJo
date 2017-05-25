@@ -648,7 +648,9 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="dialog_title_export_error">Error exportando</string>
     <string name="dialog_message_export_error">Ha ocurrido un error durante la exportación y tu
         proyecto no podrá ser exportado correctamente. Por favor, inténtalo otra vez</string>
-    <string name="memory">Estado de la memoria</string>
+    <string name="memory">Almacenamiento interno: </string>
+    <string name="free_memory_space">Espacio disponible: </string>
+    <string name="preposition_of">de</string>
 
 
 </resources>

@@ -50,6 +50,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -68,6 +69,9 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
     /**
      * LOG_TAG
      */
+    public static final long ONE_KB = 1 *1024;
+    public static final long ONE_MB = ONE_KB*1024;
+    public static final long ONE_GB = ONE_MB*1024;
     private static final String LOG_TAG = "RecordPresenter";
     private final UserEventTracker userEventTracker;
     private boolean firstTimeRecording;
@@ -531,17 +535,20 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
     return status;
   }
 
-  public void updatePercentFreeMemory(long totalMemory, long freeMemory) {
-    int memoryFreePercent= getPercentFreeBatery(totalMemory, freeMemory);
-    Constants.MEMORY_STATUS memoryStatus= getMemoryStatus(memoryFreePercent);
-    recordView.showFreeSpaceMemory(memoryStatus, memoryFreePercent);
+  public void updateFreeMemorySpace(long totalMemory, long freeMemory) {
+      int memoryFreePercent= getPercentFreeBattery(totalMemory, freeMemory);
+      Constants.MEMORY_STATUS memoryStatus= getMemoryStatus(memoryFreePercent);
+      String freeMemoryInBytes= toFormattedMemorySpaceWithBytes(freeMemory);
+      String totalMemoryInBytes=toFormattedMemorySpaceWithBytes(totalMemory);
+
+    recordView.showFreeMemorySpace(memoryStatus, memoryFreePercent, freeMemoryInBytes, totalMemoryInBytes);
   }
 
-  private int getPercentFreeBatery(long totalMemory, long freeMemory) {
+  public int getPercentFreeBattery(long totalMemory, long freeMemory) {
     return memoryPercent= Math.round(freeMemory / (float) totalMemory *100);
   }
 
-  private Constants.MEMORY_STATUS getMemoryStatus(int freeMemoryPercent) {
+  public Constants.MEMORY_STATUS getMemoryStatus(int freeMemoryPercent) {
     Constants.MEMORY_STATUS memoryStatus= Constants.MEMORY_STATUS.OKAY;
     if (freeMemoryPercent<25)
       memoryStatus= Constants.MEMORY_STATUS.CRITICAL;
@@ -552,6 +559,24 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
   }
 
 
-
-
+    public String toFormattedMemorySpaceWithBytes(long memorySpace) {
+        double memorySpaceInBytes;
+        if (memorySpace<ONE_KB) {
+            memorySpaceInBytes = memorySpace;
+            return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " bytes";
+        }
+        if (memorySpace>=ONE_KB && memorySpace<ONE_MB) {
+            memorySpaceInBytes = (double) memorySpace / ONE_KB;
+            return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Kb";
+        }
+        if (memorySpace>=ONE_MB && memorySpace<ONE_GB) {
+            memorySpaceInBytes = (double) memorySpace / ONE_MB;
+            return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Mb";
+        }
+        if (memorySpace>=ONE_GB) {
+            memorySpaceInBytes = (double) memorySpace / ONE_GB;
+            return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Gb";
+        }
+        return "";
+    }
 }

@@ -74,5 +74,5 @@ public interface RecordView {
 
     void showBatteryStatus(Constants.BATTERY_STATUS_ENUM statusBattery, int batteryPercent);
 
-    void showFreeSpaceMemory(Constants.MEMORY_STATUS memoryStatus,int memoryPercent);
+    void showFreeMemorySpace(Constants.MEMORY_STATUS memoryStatus, int memoryPercent, String freeMemoryInBytes, String totalMemoryInBytes);
 }

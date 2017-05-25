@@ -31,4 +31,14 @@
             android:textSize="16sp"/>
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/text_free_memory_space"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/progressBar_level_battery"
+        android:layout_gravity="center_horizontal"
+        android:text="Espacio libre de memoria: "
+        android:visibility="gone"
+        android:textSize="16sp"/>
+
 </LinearLayout>
