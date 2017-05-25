@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -65,14 +66,19 @@ public class RecordPresenterTest {
   @Test
   public void constructorSetsCurrentProject() {
 
-    recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
-        mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
-        mockedUpdateVideoRepositoryUseCase, mockedLaunchTranscoderAddAVTransitionsUseCase,
-        mockedGetVideonaFormatFromCurrentProjectUseCase);
+    recordPresenter = getRecordPresenter();
 
     Project project = getAProject();
 
     assertThat(recordPresenter.currentProject, is(project));
+  }
+
+  @NonNull
+  private RecordPresenter getRecordPresenter() {
+    return new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
+        mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
+        mockedUpdateVideoRepositoryUseCase, mockedLaunchTranscoderAddAVTransitionsUseCase,
+        mockedGetVideonaFormatFromCurrentProjectUseCase);
   }
 
   public Project getAProject() {
@@ -88,10 +94,7 @@ public class RecordPresenterTest {
     String path = "media/path";
     assertThat("Audio transition is activated ", project.isAudioFadeTransitionActivated(), is(true));
 
-    recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
-        mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
-        mockedUpdateVideoRepositoryUseCase, mockedLaunchTranscoderAddAVTransitionsUseCase,
-        mockedGetVideonaFormatFromCurrentProjectUseCase);
+    recordPresenter = getRecordPresenter();
 
     Video video = new Video(path);
     String tempPath = video.getTempPath();
@@ -107,10 +110,7 @@ public class RecordPresenterTest {
     int statusBattery = 2;
     int levelBattery = 20;
     int scaleBattery = 100;
-    recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
-        mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
-        mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
-        mockedLaunchTranscoderAddAVTransitionsUseCase);
+    recordPresenter = getRecordPresenter();
 
     recordPresenter.updateBatteryStatus(statusBattery, levelBattery, scaleBattery);
 
@@ -122,10 +122,8 @@ public class RecordPresenterTest {
     int levelBattery = 2;
     int scaleBattery = 10;
     int percentBattery;
-    recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
-        mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
-        mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
-        mockedLaunchTranscoderAddAVTransitionsUseCase);
+    recordPresenter = getRecordPresenter();
+
 
     percentBattery = recordPresenter.getPercentLevel(levelBattery, scaleBattery);
 
@@ -138,10 +136,8 @@ public class RecordPresenterTest {
     int percentBattery = 20;
     int statusBattery = 3; // BatteryManager.BATTERY_STATUS_CHARGING
     Constants.BATTERY_STATUS_ENUM status;
-    recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
-        mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
-        mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
-        mockedLaunchTranscoderAddAVTransitionsUseCase);
+    recordPresenter = getRecordPresenter();
+
 
     status = recordPresenter.getBatteryStatus(statusBattery, percentBattery);
 
@@ -153,10 +149,8 @@ public class RecordPresenterTest {
     int percentBattery = 20;
     int statusBattery = 2; // BatteryManager.BATTERY_STATUS_CHARGING
     Constants.BATTERY_STATUS_ENUM status;
-    recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
-        mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
-        mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
-        mockedLaunchTranscoderAddAVTransitionsUseCase);
+    recordPresenter = getRecordPresenter();
+
 
     status = recordPresenter.getBatteryStatus(statusBattery, percentBattery);
 
@@ -168,10 +162,7 @@ public class RecordPresenterTest {
   public void getBatteryStatusreturnLowStatusIfLevelIsLessThan10AndStatusIsNotCharging() {
     int percentBattery = 10;
     Constants.BATTERY_STATUS_ENUM status;
-    recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
-        mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
-        mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
-        mockedLaunchTranscoderAddAVTransitionsUseCase);
+    recordPresenter = getRecordPresenter();
 
     status = recordPresenter.getStatusNotCharging(percentBattery);
 
