@@ -64,10 +64,6 @@ public class RecordCamera2PresenterTest {
   Drawable fadeTransition;
   boolean isFadeActivated;
 
-  private boolean isControlsViewSelected;
-  private boolean isGridSelected;
-  private boolean isSettingsCameraSelected;
-
 
   @Before
   public void injectMocks() {
@@ -83,9 +79,6 @@ public class RecordCamera2PresenterTest {
   @Test
   public void initViewsWithControlsViewAndSettingsCameraViewSelectedCallsCorrectRecordView(){
 
-    isControlsViewSelected = true;
-    isSettingsCameraSelected = true;
-
     presenter = getRecordCamera2Presenter();
 
     presenter.initViews();
@@ -100,18 +93,14 @@ public class RecordCamera2PresenterTest {
   @Test
   public void initViewsDefaultInitializationCallsCorrectRecordView(){
 
-    isControlsViewSelected = false;
-    isSettingsCameraSelected = false;
-
     presenter = getRecordCamera2Presenter();
 
     presenter.initViews();
 
     verify(mockedRecordView).hideChronometer();
     verify(mockedRecordView).setResolutionSelected(720);
-
     verify(mockedRecordView).showPrincipalViews();
-    verify(mockedRecordView).hideRightControlsView();
+    verify(mockedRecordView).showRightControlsView();
   }
 
   @Test
