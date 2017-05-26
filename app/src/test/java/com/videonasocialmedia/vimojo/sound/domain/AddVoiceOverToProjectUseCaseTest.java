@@ -5,7 +5,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.junit.After;
 import org.junit.Before;
@@ -26,7 +28,8 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class AddVoiceOverToProjectUseCaseTest {
-  @Mock private ProjectRepository mockedProjectRepository;
+  @Mock ProjectRepository mockedProjectRepository;
+  @Mock MusicRepository mockedMusicRepository;
   @Mock private AddMusicToProjectUseCase mockedAddMusicToProjectUseCase;
   @InjectMocks AddVoiceOverToProjectUseCase injectedUseCase;
 
@@ -43,35 +46,31 @@ public class AddVoiceOverToProjectUseCaseTest {
   @Test
   public void setVoiceOverSetsMusicToComposition() {
     Project project = getAProject();
-    assert ! project.getVMComposition().hasMusic();
+    assert ! project.getVMComposition().hasVoiceOver();
     AddMusicToProjectUseCase addMusicToProjectUseCase =
-            new AddMusicToProjectUseCase(mockedProjectRepository);
-    RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase =
-        new RemoveMusicFromProjectUseCase(mockedProjectRepository);
-    AddVoiceOverToProjectUseCase useCase = new AddVoiceOverToProjectUseCase(mockedProjectRepository,
-            addMusicToProjectUseCase, removeMusicFromProjectUseCase);
+            new AddMusicToProjectUseCase(mockedMusicRepository);
+    AddVoiceOverToProjectUseCase useCase = new AddVoiceOverToProjectUseCase(
+        addMusicToProjectUseCase);
 
-    useCase.setVoiceOver(project, "voice/over/path", 0.7f);
+    useCase.setVoiceOver("voice/over/path", 0.7f);
 
-    assertThat(project.getVMComposition().hasMusic(), is(true));
-    assertThat(project.getVMComposition().getMusic().getMediaPath(), is("voice/over/path"));
-    assertThat(project.getVMComposition().getMusic().getVolume(), is(0.7f));
+    assertThat(project.getVMComposition().hasMusic(), is(false));
+    assertThat(project.getVMComposition().hasVoiceOver(), is(true));
+    assertThat(project.getVMComposition().getVoiceOver().getMediaPath(), is("voice/over/path"));
+    assertThat(project.getVMComposition().getVoiceOver().getVolume(), is(0.7f));
   }
 
-  @Ignore // Ignore until separate voice over and music tracks. Now same test that setVoiceOverSetsMusicToCompositon
   @Test
   public void setVoiceOverAddAudioToComposition(){
     Project project = getAProject();
     assert ! project.getVMComposition().hasVoiceOver();
     AddMusicToProjectUseCase addMusicToProjectUseCase =
-        new AddMusicToProjectUseCase(mockedProjectRepository);
-    RemoveMusicFromProjectUseCase removeMusicFromProjectUseCase =
-        new RemoveMusicFromProjectUseCase(mockedProjectRepository);
+        new AddMusicToProjectUseCase(mockedMusicRepository);
 
-    AddVoiceOverToProjectUseCase useCase = new AddVoiceOverToProjectUseCase(mockedProjectRepository,
-        addMusicToProjectUseCase, removeMusicFromProjectUseCase);
+    AddVoiceOverToProjectUseCase useCase = new AddVoiceOverToProjectUseCase(
+        addMusicToProjectUseCase);
 
-    useCase.setVoiceOver(project, "voice/over/path", 0.7f);
+    useCase.setVoiceOver("voice/over/path", 0.7f);
 
     assertThat(project.getVMComposition().hasVoiceOver(), is(true));
     assertThat(project.getVMComposition().getVoiceOver().getMediaPath(), is("voice/over/path"));
@@ -80,12 +79,20 @@ public class AddVoiceOverToProjectUseCaseTest {
   }
 
   @Test
-  public void setVoiceOverCallsUpdateProject() {
+  public void setVoiceOverAddVoiceOverTitle(){
     Project project = getAProject();
+    assert ! project.getVMComposition().hasVoiceOver();
+    AddMusicToProjectUseCase addMusicToProjectUseCase =
+        new AddMusicToProjectUseCase(mockedMusicRepository);
 
-    injectedUseCase.setVoiceOver(project, "voice/over/path", 0.7f);
+    AddVoiceOverToProjectUseCase useCase = new AddVoiceOverToProjectUseCase(
+        addMusicToProjectUseCase);
 
-    verify(mockedProjectRepository).update(project);
+    useCase.setVoiceOver("voice/over/path", 0.7f);
+
+    assertThat(project.getVMComposition().getVoiceOver().getMusicTitle(),
+        is(Constants.MUSIC_AUDIO_VOICEOVER_TITLE));
+
   }
 
   private Project getAProject() {

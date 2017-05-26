@@ -8,6 +8,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
+import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.verify;
 public class RemoveMusicFromProjectUseCaseTest {
 
     @Mock OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
-    @Mock ProjectRepository mockedProjectRepository;
+    @Mock MusicRepository mockedMusicRepository;
     @InjectMocks RemoveMusicFromProjectUseCase injectedUseCase;
 
     @Before
@@ -58,13 +59,13 @@ public class RemoveMusicFromProjectUseCaseTest {
     }
 
     @Test
-    public void removeMusicFromProjectCallsProjectRepositoryUpdate() {
+    public void removeMusicFromProjectCallsMusicRepositoryRemove() {
         Project currentProject = getAProjectWithMusicAdded();
         Music music = currentProject.getMusic();
 
         injectedUseCase.removeMusicFromProject(music, INDEX_AUDIO_TRACKS_MUSIC);
 
-        verify(mockedProjectRepository).update(currentProject);
+        verify(mockedMusicRepository).remove(music);
     }
 
     private Project getAProjectWithMusicAdded() {

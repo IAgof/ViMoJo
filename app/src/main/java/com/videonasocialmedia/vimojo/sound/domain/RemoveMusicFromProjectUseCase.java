@@ -17,7 +17,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 
 import javax.inject.Inject;
 
@@ -25,16 +25,16 @@ import javax.inject.Inject;
  * This class is used to removed videos from the project.
  */
 public class RemoveMusicFromProjectUseCase {
-    private final Project currentProject = Project.getInstance(null, null, null);
-    protected ProjectRepository projectRepository;
+    private Project currentProject;
+    protected MusicRepository musicRepository;
 
     /**
      * Default constructor with project repository argument.
      *
-     * @param projectRepository the project repository.
      */
-    @Inject public RemoveMusicFromProjectUseCase(ProjectRepository projectRepository) {
-        this.projectRepository = projectRepository;
+    @Inject public RemoveMusicFromProjectUseCase(MusicRepository musicRepository) {
+        this.musicRepository = musicRepository;
+        currentProject = Project.getInstance(null, null, null);
     }
 
     /**
@@ -48,8 +48,7 @@ public class RemoveMusicFromProjectUseCase {
             if (audio.equals(music)) {
                 try {
                     audioTrack.deleteItem(audio);
-                    currentProject.setMusicOnProject(false);
-                    projectRepository.update(currentProject);
+                    musicRepository.remove((Music) audio);
                 } catch (IllegalItemOnTrack | IllegalOrphanTransitionOnTrack exception) {
                     //TODO treat exception properly
                 }

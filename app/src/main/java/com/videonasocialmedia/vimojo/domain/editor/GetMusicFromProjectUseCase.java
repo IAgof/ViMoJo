@@ -16,7 +16,7 @@ public class GetMusicFromProjectUseCase {
 
     @Inject
     public GetMusicFromProjectUseCase() {
-        this.project = Project.getInstance(null, null, null);
+        project = Project.getInstance(null, null, null);
     }
 
     public void getMusicFromProject(GetMusicFromProjectCallback listener) {
@@ -31,14 +31,14 @@ public class GetMusicFromProjectUseCase {
     }
 
     public void getVoiceOverFromProject(GetMusicFromProjectCallback listener) {
-        Music music = null;
+        Music voiceOver = null;
         try {
-            music = (Music) project.getAudioTracks()
+            voiceOver = (Music) project.getAudioTracks()
                 .get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER).getItems().get(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        listener.onMusicRetrieved(music);
+        listener.onMusicRetrieved(voiceOver);
     }
 
     public boolean hasBeenMusicSelected(){

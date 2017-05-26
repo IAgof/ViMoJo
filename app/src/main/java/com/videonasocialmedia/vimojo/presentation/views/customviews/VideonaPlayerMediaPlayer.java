@@ -217,7 +217,7 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
     }
 
     @Override
-    public void seekToClipPosition(int position) {
+    public void seekToClip(int position) {
         currentVideoListIndex = position;
 
         int progress = videoStartTimesInTimeList.get(currentVideoListIndex) -

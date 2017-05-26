@@ -1,9 +1,13 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.repository.Mapper;
+import com.videonasocialmedia.vimojo.repository.music.MusicToRealmMusicMapper;
+import com.videonasocialmedia.vimojo.repository.track.TrackToRealmTrackMapper;
 import com.videonasocialmedia.vimojo.repository.video.VideoToRealmVideoMapper;
 
 /**
@@ -12,6 +16,8 @@ import com.videonasocialmedia.vimojo.repository.video.VideoToRealmVideoMapper;
 
 public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject> {
   protected VideoToRealmVideoMapper toRealmVideoMapper = new VideoToRealmVideoMapper();
+  protected TrackToRealmTrackMapper toRealmTrackMapper = new TrackToRealmTrackMapper();
+  protected MusicToRealmMusicMapper toReamMusicMapper = new MusicToRealmMusicMapper();
 
   @Override
   public RealmProject map(Project project) {
@@ -25,11 +31,7 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
             project.isAudioFadeTransitionActivated(), project.isVideoFadeTransitionActivated(),
             project.hasWatermark());
 
-    if (project.hasMusic()) {
-      realmProject.musicTitle = project.getMusic().getMusicTitle();
-      realmProject.musicVolume = project.getMusic().getVolume();
-    }
-    if(project.hasVideoExported()){
+    if (project.hasVideoExported()) {
       realmProject.pathLastVideoExported = project.getPathLastVideoExported();
       realmProject.dateLastVideoExported = project.getDateLastVideoExported();
     }
@@ -37,6 +39,22 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
     for (Media video : project.getMediaTrack().getItems()) {
       realmProject.videos.add(toRealmVideoMapper.map((Video) video));
     }
+
+    for (Media music : project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_MUSIC).getItems()) {
+      realmProject.musics.add(toReamMusicMapper.map((Music) music));
+    }
+
+    for (Media music : project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER)
+        .getItems()) {
+      realmProject.musics.add(toReamMusicMapper.map((Music) music));
+    }
+
+    realmProject.tracks.add(toRealmTrackMapper.map(project.getMediaTrack()));
+    realmProject.tracks.add(toRealmTrackMapper.map(project.getAudioTracks()
+        .get(Constants.INDEX_AUDIO_TRACKS_MUSIC)));
+    realmProject.tracks.add(toRealmTrackMapper.map(project.getAudioTracks()
+        .get(Constants.INDEX_AUDIO_TRACKS_VOICE_OVER)));
+
      return realmProject;
   }
 }

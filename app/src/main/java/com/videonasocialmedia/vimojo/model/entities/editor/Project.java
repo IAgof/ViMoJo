@@ -76,14 +76,9 @@ public class Project {
      */
     private int duration;
 
-    private String musicTitleIdentifier;
-
-    private boolean isMusicOnProject = false;
 
   private boolean isAudioFadeTransitionActivated;
   private boolean isVideoFadeTransitionActivated;
-
-  private String watermarkResource;
 
     /**
      * Constructor of minimum number of parameters. This is the Default constructor.
@@ -217,16 +212,12 @@ public class Project {
       return vmComposition.hasMusic();
     }
 
-    public void setMusicOnProject(boolean musicOnProject) {
-        isMusicOnProject = musicOnProject;
+    public Music getVoiceOver(){
+      return vmComposition.getVoiceOver();
     }
 
-    public String getMusicTitleIdentifier() {
-        return musicTitleIdentifier;
-    }
-
-    public void setMusicTitleIdentifier(String musicTitleIdentifier) {
-        this.musicTitleIdentifier = musicTitleIdentifier;
+    public boolean hasVoiceOver(){
+      return vmComposition.hasVoiceOver();
     }
 
   public boolean isAudioFadeTransitionActivated() {

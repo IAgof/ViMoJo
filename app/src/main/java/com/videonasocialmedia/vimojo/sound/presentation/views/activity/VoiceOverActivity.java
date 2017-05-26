@@ -224,7 +224,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
     @Override
     public void bindVideoList(List<Video> movieList) {
         videonaPlayer.bindVideoList(movieList);
-        videonaPlayer.seekToClipPosition(0);
+        videonaPlayer.seekToClip(0);
         videonaPlayer.seekTo(currentVoiceOverPosition);
         videonaPlayer.hidePlayButton();
         //mute video

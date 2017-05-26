@@ -10,8 +10,11 @@ import java.util.List;
  */
 public interface SoundView {
     void bindVideoList(List<Video> movieList);
+    void bindVideoTrack(float volume, boolean muteAudio, boolean soloAudio);
     void bindMusicList(List<Music> musicList);
+    void bindMusicTrack(float volume, boolean muteAudio, boolean soloAudio, int position);
     void bindVoiceOverList(List<Music> voiceOverList);
+    void bindVoiceOverTrack(float volume, boolean muteAudio, boolean soloAudio, int position);
     void hideVoiceOverCardView();
     void addVoiceOverOptionToFab();
     void setVideoFadeTransitionAmongVideos();
