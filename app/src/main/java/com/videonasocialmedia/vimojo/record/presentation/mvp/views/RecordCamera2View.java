@@ -63,8 +63,13 @@ public interface RecordCamera2View {
 
     void hideSettingsCameraView();
 
-    void setCameraGrid();
+    void hideAdvancedAFSelection();
 
+    void hideISOSelection();
+
+    void hideWhiteBalanceSelection();
+
+    void hideMetteringModeSelection();
 
     // Setters camera
 
@@ -76,8 +81,8 @@ public interface RecordCamera2View {
 
     void setFocus(MotionEvent event);
 
-    void setZoom(float value);
 
+    void setZoom(float value);
 
     // Others
 

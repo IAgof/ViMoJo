@@ -108,10 +108,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton whiteBalanceButton;
   @Bind(R.id.white_balance_submenu)
   View whiteBalanceSubmenuView;
-  @Bind(R.id.button_measurement_mode)
-  ImageButton measurementModeButton;
-  @Bind(R.id.measurement_mode_submenu)
-  View measurementModeSubmenuView;
+  @Bind(R.id.button_metering_mode)
+  ImageButton meteringModeButton;
+  @Bind(R.id.metering_mode_submenu)
+  View meteringModeSubmenuView;
   @Bind(R.id.button_camera_auto)
   ImageButton cameraAutoButton;
   @Bind(R.id.button_resolution_indicator)
@@ -170,8 +170,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     progressDialog.setIndeterminate(false);
     progressDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
         WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-
   }
 
   @Override
@@ -203,7 +201,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(isoButton, button_color);
     tintButton(afSelectionButton, button_color);
     tintButton(whiteBalanceButton, button_color);
-    tintButton(measurementModeButton, button_color);
+    tintButton(meteringModeButton, button_color);
     tintButton(gridButton, button_color);
     tintButton(cameraAutoButton, button_color);
   }
@@ -383,7 +381,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     isoSubmenuView.setVisibility(View.INVISIBLE);
     afSelectionSubmenuView.setVisibility(View.INVISIBLE);
     whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
-    measurementModeSubmenuView.setVisibility(View.INVISIBLE);
+    meteringModeSubmenuView.setVisibility(View.INVISIBLE);
     settingsCameraBarView.setVisibility(View.INVISIBLE);
     zoomSubmenuView.setVisibility(View.INVISIBLE);
   }
@@ -409,7 +407,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     isoSubmenuView.setVisibility(View.INVISIBLE);
     afSelectionSubmenuView.setVisibility(View.INVISIBLE);
     whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
-    measurementModeSubmenuView.setVisibility(View.INVISIBLE);
+    meteringModeSubmenuView.setVisibility(View.INVISIBLE);
   }
 
   @Override
@@ -436,8 +434,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       whiteBalanceSubmenuView.setVisibility(View.VISIBLE);
       return;
     }
-    if(measurementModeButton.isSelected()){
-      measurementModeSubmenuView.setVisibility(View.VISIBLE);
+    if(meteringModeButton.isSelected()){
+      meteringModeSubmenuView.setVisibility(View.VISIBLE);
       return;
     }
   }
@@ -464,8 +462,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       whiteBalanceSubmenuView.setVisibility(View.VISIBLE);
       return;
     }
-    if(measurementModeButton.isSelected()){
-      measurementModeSubmenuView.setVisibility(View.VISIBLE);
+    if(meteringModeButton.isSelected()){
+      meteringModeSubmenuView.setVisibility(View.VISIBLE);
       return;
     }
   }
@@ -479,13 +477,27 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     isoSubmenuView.setVisibility(View.INVISIBLE);
     afSelectionSubmenuView.setVisibility(View.INVISIBLE);
     whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
-    measurementModeSubmenuView.setVisibility(View.INVISIBLE);
+    meteringModeSubmenuView.setVisibility(View.INVISIBLE);
   }
 
   @Override
-  public void setCameraGrid() {
-    gridButton.setSelected(true);
-    imageViewGrid.setVisibility(View.VISIBLE);
+  public void hideAdvancedAFSelection() {
+    afSelectionButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void hideISOSelection() {
+    isoButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void hideWhiteBalanceSelection() {
+    whiteBalanceButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void hideMetteringModeSelection() {
+    meteringModeButton.setVisibility(View.GONE);
   }
 
   @Override
@@ -619,8 +631,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       afSelectionSubmenuView.setVisibility(View.INVISIBLE);
       whiteBalanceButton.setSelected(false);
       whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
-      measurementModeButton.setSelected(false);
-      measurementModeSubmenuView.setVisibility(View.INVISIBLE);
+      meteringModeButton.setSelected(false);
+      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
     }
   }
 
@@ -639,8 +651,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       afSelectionSubmenuView.setVisibility(View.INVISIBLE);
       whiteBalanceButton.setSelected(false);
       whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
-      measurementModeButton.setSelected(false);
-      measurementModeSubmenuView.setVisibility(View.INVISIBLE);
+      meteringModeButton.setSelected(false);
+      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
     }
   }
 
@@ -659,8 +671,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       isoSubmenuView.setVisibility(View.INVISIBLE);
       whiteBalanceButton.setSelected(false);
       whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
-      measurementModeButton.setSelected(false);
-      measurementModeSubmenuView.setVisibility(View.INVISIBLE);
+      meteringModeButton.setSelected(false);
+      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
     }
   }
 
@@ -679,19 +691,19 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       isoSubmenuView.setVisibility(View.INVISIBLE);
       afSelectionButton.setSelected(false);
       afSelectionSubmenuView.setVisibility(View.INVISIBLE);
-      measurementModeButton.setSelected(false);
-      measurementModeSubmenuView.setVisibility(View.INVISIBLE);
+      meteringModeButton.setSelected(false);
+      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
     }
   }
 
-  @OnClick(R.id.button_measurement_mode)
+  @OnClick(R.id.button_metering_mode)
   public void onClickMeasurementeModeListener(){
-    if(measurementModeButton.isSelected()){
-      measurementModeButton.setSelected(false);
-      measurementModeSubmenuView.setVisibility(View.INVISIBLE);
+    if(meteringModeButton.isSelected()){
+      meteringModeButton.setSelected(false);
+      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
     } else {
-      measurementModeButton.setSelected(true);
-      measurementModeSubmenuView.setVisibility(View.VISIBLE);
+      meteringModeButton.setSelected(true);
+      meteringModeSubmenuView.setVisibility(View.VISIBLE);
 
       zoomButton.setSelected(false);
       zoomSubmenuView.setVisibility(View.INVISIBLE);
@@ -718,8 +730,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     afSelectionSubmenuView.setVisibility(View.INVISIBLE);
     whiteBalanceButton.setSelected(false);
     whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
-    measurementModeButton.setSelected(false);
-    measurementModeSubmenuView.setVisibility(View.INVISIBLE);
+    meteringModeButton.setSelected(false);
+    meteringModeSubmenuView.setVisibility(View.INVISIBLE);
   }
 
 
