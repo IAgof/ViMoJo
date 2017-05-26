@@ -85,7 +85,7 @@
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
                     android:background="@null"
-                    android:src="@drawable/record_activity_ic_battery_full"
+                    android:src="@drawable/activity_record_ic_battery_full"
                     android:visibility="visible"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="4dp"
@@ -93,14 +93,14 @@
                     />
 
                 <ImageButton
-                    android:id="@+id/activity_record_icon_memory"
+                    android:id="@+id/activity_record_icon_storage"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
                     android:visibility="visible"
                     android:background="@null"
-                    app:srcCompat="@drawable/record_activity_ic_memory_card"
+                    app:srcCompat="@drawable/activity_record_ic_storage"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"/>
 

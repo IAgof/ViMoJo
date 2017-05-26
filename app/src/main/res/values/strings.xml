@@ -25,6 +25,7 @@
 
     <string name="dialog_title_record_adapting_video">Adapting video</string>
     <string name="dialog_message_record_adapting_video">Working ...</string>
+    <string name="alert_dialog_info_detail">Info detail</string>
 
     <!-- Share Activity -->
     <string name="shareError">Ups, we couldn\'t share this video. Sorry</string>

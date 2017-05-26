@@ -14,6 +14,8 @@ package com.videonasocialmedia.vimojo.record.presentation.mvp.views;
 
 import android.view.MotionEvent;
 
+import com.videonasocialmedia.vimojo.utils.Constants;
+
 public interface RecordCamera2View {
 
 
@@ -86,4 +88,9 @@ public interface RecordCamera2View {
     void hideProgressAdaptingVideo();
 
     void navigateTo(Class cls);
+
+    void showBatteryStatus(Constants.BATTERY_STATUS_ENUM statusBattery, int batteryPercent);
+
+    void showFreeStorageSpace(Constants.MEMORY_STATUS memoryStatus, int memoryPercent,
+                              String freeMemoryInBytes, String totalMemoryInBytes);
 }

@@ -142,14 +142,14 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ImageView imageViewGrid;
     @Bind(R.id.activity_record_icon_battery)
     ImageButton battery;
-    @Bind(R.id.activity_record_icon_memory)
+    @Bind(R.id.activity_record_icon_storage)
     ImageButton memory;
 
     @Nullable @Bind(R.id.progressBar_level_battery)
     ProgressBar progressBarBatteryOrMemory;
-    @Nullable @Bind(R.id.text_percent_level_battery_and_memory)
+    @Nullable @Bind(R.id.text_percent_level_battery_and_storage)
     TextView percentLevel;
-    @Nullable @Bind(R.id.text_free_memory_space)
+    @Nullable @Bind(R.id.text_free_storage_space)
     TextView freeMemorySpace;
 
 
@@ -284,10 +284,10 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
   private void createProgressDialogBatteryOrMemory() {
     AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
-    View dialogView = getLayoutInflater().inflate(R.layout.dialog_level_battery_and_memory, null);
+    View dialogView = getLayoutInflater().inflate(R.layout.dialog_level_battery_and_storage, null);
     progressBarBatteryOrMemory = (ProgressBar) dialogView.findViewById(R.id.progressBar_level_battery);
-    percentLevel = (TextView) dialogView.findViewById(R.id.text_percent_level_battery_and_memory);
-    freeMemorySpace=(TextView)dialogView.findViewById(R.id.text_free_memory_space);
+    percentLevel = (TextView) dialogView.findViewById(R.id.text_percent_level_battery_and_storage);
+    freeMemorySpace=(TextView)dialogView.findViewById(R.id.text_free_storage_space);
     progressDialogBatteryOrMemory = builder.setCancelable(true)
         .setView(dialogView)
         .setTitle("Información detallada")
@@ -679,22 +679,22 @@ public class RecordActivity extends VimojoActivity implements RecordView {
       freeMemorySpace.setVisibility(View.GONE);
         switch (batteryStatus){
              case CHARGING:
-                 battery.setImageResource(R.drawable.record_activity_ic_battery_charging);
+                 battery.setImageResource(R.drawable.activity_record_ic_battery_charging);
                  break;
             case FULL:
-                battery.setImageResource(R.drawable.record_activity_ic_battery_full);
+                battery.setImageResource(R.drawable.activity_record_ic_battery_full);
                 break;
             case MEDIUM:
-                battery.setImageResource(R.drawable.record_activity_ic_battery_medium);
+                battery.setImageResource(R.drawable.activity_record_ic_battery_medium);
                 break;
             case LOW:
-                battery.setImageResource(R.drawable.record_activity_ic_battery_low);
+                battery.setImageResource(R.drawable.activity_record_ic_battery_low);
                 break;
             case CRITICAL:
-                battery.setImageResource(R.drawable.record_activity_ic_battery_alert);
+                battery.setImageResource(R.drawable.activity_record_ic_battery_alert);
                 break;
              default:
-               battery.setImageResource(R.drawable.record_activity_ic_battery_full);
+               battery.setImageResource(R.drawable.activity_record_ic_battery_full);
          }
          if(progressDialogBatteryOrMemory.isShowing()){
            updateProgressBarBattery(batteryStatus, batteryPercent);
@@ -943,7 +943,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
       }
     }
 
-  @OnClick(R.id.activity_record_icon_memory)
+  @OnClick(R.id.activity_record_icon_storage)
   public void showDialogWithLevelMemory(){
     if(!progressDialogBatteryOrMemory.isShowing()) {
       showDialogBatteryOrMemory();

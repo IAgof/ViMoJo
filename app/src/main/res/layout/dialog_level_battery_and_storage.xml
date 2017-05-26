@@ -22,7 +22,7 @@
             android:progressDrawable="@drawable/progress_bar_circular"
             />
         <TextView
-            android:id="@+id/text_percent_level_battery_and_memory"
+            android:id="@+id/text_percent_level_battery_and_storage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/progressBar_level_battery"
@@ -32,7 +32,7 @@
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/text_free_memory_space"
+        android:id="@+id/text_free_storage_space"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/progressBar_level_battery"

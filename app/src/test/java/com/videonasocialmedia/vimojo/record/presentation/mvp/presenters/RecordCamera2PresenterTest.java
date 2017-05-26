@@ -24,6 +24,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.junit.After;
 import org.junit.Before;
@@ -37,6 +38,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
@@ -168,6 +170,66 @@ public class RecordCamera2PresenterTest {
     verify(mockedRecordView).showProgressAdaptingVideo();
   }
 
+  @Test
+  public void updateStatusBatteryCallsRecordViewShowBatteryStatus() {
+    int statusBattery = 2;
+    int levelBattery = 20;
+    int scaleBattery = 100;
+    presenter = getRecordCamera2Presenter();
+
+    presenter.updateBatteryStatus(statusBattery, levelBattery, scaleBattery);
+
+    verify(mockedRecordView).showBatteryStatus(Constants.BATTERY_STATUS_ENUM.CHARGING, 20);
+  }
+
+  @Test
+  public void getPercentBateryIfLevelBatteryIs2AndScaleBatteryIs10() {
+    int levelBattery = 2;
+    int scaleBattery = 10;
+    int percentBattery;
+    presenter = getRecordCamera2Presenter();
+
+    percentBattery = presenter.getPercentLevel(levelBattery, scaleBattery);
+
+    assertThat("percentLevel will be 20", percentBattery, is(20));
+
+  }
+
+  @Test
+  public void getBatteryStatusreturnNoChargingIfStatusIsNot2() {
+    int percentBattery = 20;
+    int statusBattery = 3; // BatteryManager.BATTERY_STATUS_CHARGING
+    Constants.BATTERY_STATUS_ENUM status;
+    presenter = getRecordCamera2Presenter();
+
+    status = presenter.getBatteryStatus(statusBattery, percentBattery);
+
+    assertNotEquals("Status is not charging", status, is(Constants.BATTERY_STATUS_ENUM.CHARGING));
+  }
+
+  @Test
+  public void getBatteryStatusreturnChargingIfStatusIs2() {
+    int percentBattery = 20;
+    int statusBattery = 2; // BatteryManager.BATTERY_STATUS_CHARGING
+    Constants.BATTERY_STATUS_ENUM status;
+    presenter = getRecordCamera2Presenter();
+
+    status = presenter.getBatteryStatus(statusBattery, percentBattery);
+
+    assertThat("Status is charging", status, is(Constants.BATTERY_STATUS_ENUM.CHARGING));
+  }
+
+
+  @Test
+  public void getBatteryStatusreturnLowStatusIfLevelIsLessThan10AndStatusIsNotCharging() {
+    int percentBattery = 10;
+    Constants.BATTERY_STATUS_ENUM status;
+    presenter = getRecordCamera2Presenter();
+
+    status = presenter.getStatusNotCharging(percentBattery);
+
+    assertThat("Level will be CRITICAL", status, is(Constants.BATTERY_STATUS_ENUM.CRITICAL));
+  }
 
   public Project getAProject() {
     return Project.getInstance("title", "/path",
