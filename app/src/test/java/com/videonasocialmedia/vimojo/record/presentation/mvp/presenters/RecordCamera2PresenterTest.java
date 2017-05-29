@@ -125,7 +125,7 @@ public class RecordCamera2PresenterTest {
   public void navigateEditOrGalleryCallsEditActivityIfThereAreVideosInProject()
       throws IllegalItemOnTrack {
 
-    Video video = new Video("dcim/fakeVideo");
+    Video video = new Video("dcim/fakeVideo", Video.DEFAULT_VOLUME);
     Project project = getAProject();
     MediaTrack track = project.getMediaTrack();
     track.insertItem(video);
@@ -148,7 +148,7 @@ public class RecordCamera2PresenterTest {
       throws IllegalItemOnTrack, IOException {
 
     // TODO:(alvaro.martinez) 6/04/17  Prepare this test, i don't know how to mock adapting video process and fake futures.isDone to false.
-    Video video = new Video("dcim/fakeVideo");
+    Video video = new Video("dcim/fakeVideo", Video.DEFAULT_VOLUME);
     Project project = getAProject();
     MediaTrack track = project.getMediaTrack();
     track.insertItem(video);

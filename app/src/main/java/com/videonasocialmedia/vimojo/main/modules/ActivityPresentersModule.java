@@ -455,7 +455,7 @@ public class ActivityPresentersModule {
   }
 
   @Provides GetTracksInProjectUseCase providesTracksInProject(TrackRepository trackRepository){
-    return new GetTracksInProjectUseCase(trackRepository);
+    return new GetTracksInProjectUseCase();
   }
 
   @Provides AddMusicToProjectUseCase providesAddMusicToProject(MusicRepository musicRepository){

@@ -53,7 +53,7 @@ public class AddVideoToProjectUseCase {
         checkIfVideoNeedAVTransitionTempFile(videoToAdd, listener);
     }
 
-    public void addVideoToTrack(Video video) {
+    private void addVideoToTrack(Video video) {
         try {
             Project currentProject = Project.getInstance(null, null, null);
             MediaTrack mediaTrack = currentProject.getMediaTrack();

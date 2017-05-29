@@ -59,7 +59,9 @@ public class AddVideoToProjectUseCaseTest {
     this.mockedEventBus = mockedEventBus;
   }
 
-  @Test
+/**
+ * Borrar test , addVideoToTrack not in use, delete.
+ * @Test
   public void testAddVideoToTrackCallsUpdateProject() {
     Project currentProject = Project.getInstance(null, null, null);
     Video video = new Video("media/path", 1f);
@@ -68,7 +70,9 @@ public class AddVideoToProjectUseCaseTest {
 
     verify(mockedProjectRepository).update(currentProject);
   }
+ */
 
+// Borrar test , addVideoToTrack not in use, delete.
   @Test
   public void testAddVideoToTrackWithListenerCallsUpdateProject() {
     Project currentProject = Project.getInstance(null, null, null);
