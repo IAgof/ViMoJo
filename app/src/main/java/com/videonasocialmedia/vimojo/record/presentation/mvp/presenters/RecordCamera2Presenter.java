@@ -468,7 +468,13 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     } else {
       isFrontCameraSelected = false;
     }
+    resetViewSwitchCamera();
     camera.switchCamera(isFrontCameraSelected);
+  }
+
+  private void resetViewSwitchCamera() {
+    recordView.setZoom(0f);
+    recordView.setFlash(false);   
   }
 
   public void onSeekBarZoom(float zoomValue) {

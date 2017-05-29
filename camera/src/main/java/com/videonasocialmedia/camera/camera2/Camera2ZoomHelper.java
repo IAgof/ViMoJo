@@ -6,8 +6,8 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CaptureRequest;
 import android.util.Log;
 
-public class Camera2ZoomHandler {
-  private static final String TAG = Camera2ZoomHandler.class.getCanonicalName();
+public class Camera2ZoomHelper {
+  private static final String TAG = Camera2ZoomHelper.class.getCanonicalName();
   private final Camera2Wrapper camera2Wrapper;
 
   // zoom, move to custom view
@@ -15,7 +15,7 @@ public class Camera2ZoomHandler {
   public double zoomLevel = 1;
 
 
-  public Camera2ZoomHandler(Camera2Wrapper camera2Wrapper) {
+  public Camera2ZoomHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;
   }
 

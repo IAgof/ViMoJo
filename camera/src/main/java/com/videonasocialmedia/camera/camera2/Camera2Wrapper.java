@@ -54,7 +54,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private final Camera2WrapperListener listener;
   private final Context context;
   private final String directorySaveVideos;
-  private final Camera2ZoomHandler camera2ZoomHandler;
+  private final Camera2ZoomHelper camera2ZoomHelper;
   private final Camera2FocusHelper camera2FocusHelper;
   private final Camera2ISOHelper camera2ISOHelper;
   private final Camera2WhiteBalanceHelper camera2WhiteBalanceHelper;
@@ -163,7 +163,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     this.directorySaveVideos = directorySaveVideos;
     this.videoCameraFormat = videoCameraFormat;
     // TODO(jliarte): 26/05/17 inject the components
-    camera2ZoomHandler = new Camera2ZoomHandler(this);
+    camera2ZoomHelper = new Camera2ZoomHelper(this);
     camera2FocusHelper = new Camera2FocusHelper(this);
     camera2ISOHelper = new Camera2ISOHelper(this);
     camera2WhiteBalanceHelper = new Camera2WhiteBalanceHelper(this);
@@ -565,7 +565,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   /********* Zoom component ********/
   public void onTouchZoom(float current_finger_spacing) {
     try {
-      float zoomValue = camera2ZoomHandler.onTouchZoom(current_finger_spacing);
+      float zoomValue = camera2ZoomHelper.onTouchZoom(current_finger_spacing);
       listener.setZoom(zoomValue);
     } catch (CameraAccessException e) {
       e.printStackTrace();
@@ -575,7 +575,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public void seekBarZoom(float zoomValue) {
     try {
-      camera2ZoomHandler.seekBarZoom(zoomValue);
+      camera2ZoomHelper.seekBarZoom(zoomValue);
     } catch (CameraAccessException e) {
       e.printStackTrace();
       Log.e(TAG, "Error zooming - camera access", e);
