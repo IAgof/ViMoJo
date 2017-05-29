@@ -12,6 +12,8 @@ package com.videonasocialmedia.vimojo.split.presentation.views.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -52,6 +54,8 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     TextView timeTag;
     @Bind(R.id.seekBar_split)
     SeekBar splitSeekBar;
+    @Bind(R.id.coordinator_layout_video_split)
+    CoordinatorLayout coordinatorLayout;
 
     int videoIndexOnTrack;
     private Video video;
@@ -217,7 +221,9 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     @Override
-    public void showError(String message) {
+    public void showError(int stringResourceId) {
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, stringResourceId, Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 
     @Override

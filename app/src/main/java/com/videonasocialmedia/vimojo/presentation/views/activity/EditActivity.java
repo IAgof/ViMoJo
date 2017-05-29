@@ -47,6 +47,8 @@ import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.VideoTimeLineTouchHelperCallback;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
+import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
@@ -188,7 +190,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         switch (fab.getId()){
           case ID_BUTTON_FAB_TOP:
             fabMenu.collapse();
-              navigateTo(RecordActivity.class);
+              //navigateTo(RecordActivity.class);
+              navigateTo(RecordCamera2Activity.class);
               break;
           case ID_BUTTON_FAB_CENTER:
             fabMenu.collapse();
@@ -558,9 +561,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void onBackPressed() {
-      navigateTo(RecordActivity.class);
-      finish();
-  }
+        navigateTo(RecordCamera2Activity.class);
+    }
+
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {

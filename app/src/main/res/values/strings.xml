@@ -23,6 +23,9 @@
     <string name="recordTextGallery">Gallery</string>
     <string name="recordTextEdit">Go to edit</string>
 
+    <string name="dialog_title_record_adapting_video">Adapting video</string>
+    <string name="dialog_message_record_adapting_video">Working ...</string>
+
     <!-- Share Activity -->
     <string name="shareError">Ups, we couldn\'t share this video. Sorry</string>
     <string name="share_using">"Share video using "</string>
@@ -1754,6 +1757,8 @@ and Conditions.\n\n
     <string name="dialog_message_export_project">Making magic in your video</string>
     <string name="dialog_title_export_error">Exporting error</string>
     <string name="dialog_message_export_error">An error ocurred while exporting and exporting could not be completed. Please try again.</string>
+
+    <string name="onNoVideosRetrieved">Not video retrieved</string>
 
     <string name="minVolume">0</string>
     <string name="maxVolume">100</string>

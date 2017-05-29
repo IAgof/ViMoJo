@@ -9,6 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.OnRelaunchTemporalFileListener;
@@ -28,6 +29,7 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
   @Mock ProjectRepository mockedProjectRepository;
   @Mock VideoRepository mockedVideoRepository;
   @Mock OnRelaunchTemporalFileListener mockedOnRelaunchTemporalFileListener;
+  @Mock OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
 
   @Before
   public void init(){
@@ -43,7 +45,8 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
             new AddVideoToProjectUseCase(mockedProjectRepository);
     Video videoAdded = new Video("somepath", 1f);
     videoAdded.setTempPath("tempDirectory");
-    addVideoToProjectUseCase.addVideoToProjectAtPosition(videoAdded, 0);
+    addVideoToProjectUseCase.addVideoToProjectAtPosition(videoAdded, 0,
+        mockedOnAddMediaFinishedListener);
     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
             new GetMediaListFromProjectUseCase();
 

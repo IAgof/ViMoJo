@@ -11,8 +11,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -47,9 +47,10 @@ public class RecordPresenterTest {
   @Mock
   UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
   @Mock
-  GetVideonaFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
-  @Mock
   LaunchTranscoderAddAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionsUseCase;
+  @Mock
+  GetVideoFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
+
   boolean externalIntent;
 
   private RecordPresenter recordPresenter;
@@ -64,8 +65,8 @@ public class RecordPresenterTest {
 
     recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
         mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
-        mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
-        mockedLaunchTranscoderAddAVTransitionsUseCase);
+        mockedUpdateVideoRepositoryUseCase, mockedLaunchTranscoderAddAVTransitionsUseCase,
+        mockedGetVideonaFormatFromCurrentProjectUseCase);
 
     Project project = getAProject();
 
@@ -79,6 +80,7 @@ public class RecordPresenterTest {
 
   @Test
   public void videoToLaunchAVTransitionTempFileUpdateVideoTempPath(){
+    getAProject().clear();
     Project project = getAProject();
     project.setAudioFadeTransitionActivated(true);
     String path = "media/path";
@@ -86,8 +88,8 @@ public class RecordPresenterTest {
 
     recordPresenter = new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
         mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
-        mockedUpdateVideoRepositoryUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
-        mockedLaunchTranscoderAddAVTransitionsUseCase);
+        mockedUpdateVideoRepositoryUseCase, mockedLaunchTranscoderAddAVTransitionsUseCase,
+        mockedGetVideonaFormatFromCurrentProjectUseCase);
 
     Video video = new Video(path, 1f);
     String tempPath = video.getTempPath();

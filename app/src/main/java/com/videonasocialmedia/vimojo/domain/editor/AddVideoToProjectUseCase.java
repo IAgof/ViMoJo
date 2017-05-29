@@ -14,7 +14,6 @@ import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessE
 import com.videonasocialmedia.vimojo.eventbus.events.project.UpdateProjectDurationEvent;
 import com.videonasocialmedia.vimojo.eventbus.events.video.NumVideosChangedEvent;
 import com.videonasocialmedia.vimojo.eventbus.events.video.VideoAddedToTrackEvent;
-import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -85,6 +84,7 @@ public class AddVideoToProjectUseCase {
             projectRepository.update(currentProject);
             listener.onAddMediaItemToTrackSuccess(video);
             checkIfVideoNeedAVTransitionTempFile(video, avtransitionsListener);
+
             // TODO(jliarte): 22/10/16 should get rid of EventBus calls?
             EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
             EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumVideosInProject()));
@@ -94,14 +94,16 @@ public class AddVideoToProjectUseCase {
         }
     }
 
-    public void addVideoToProjectAtPosition(Video video, int position) {
+    public void addVideoToProjectAtPosition(Video video, int position,
+                                            OnAddMediaFinishedListener listener) {
         try {
             Project currentProject = Project.getInstance(null, null, null);
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItemAt(position, video);
             projectRepository.update(currentProject);
+            listener.onAddMediaItemToTrackSuccess(video);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
-            // TODO(jliarte): 22/10/16 error management?
+            listener.onAddMediaItemToTrackError();
         }
     }
 

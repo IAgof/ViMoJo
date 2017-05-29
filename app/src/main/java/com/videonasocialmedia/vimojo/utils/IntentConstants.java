@@ -46,4 +46,11 @@ public class IntentConstants {
      *
      */
     public static final String FTP_SELECTED = "ftp_selected";
+
+  /**
+   * Adapt Video Recorded
+   */
+  public static final String VIDEO_RECORDED_ORIG = "video_recorded_orig";
+  public static final String VIDEO_RECORDED_DEST = "video_recorded_dest";
+
 }

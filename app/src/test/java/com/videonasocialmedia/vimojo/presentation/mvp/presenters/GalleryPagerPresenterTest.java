@@ -15,8 +15,8 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
@@ -58,8 +58,8 @@ public class GalleryPagerPresenterTest {
   @Mock Video mockedVideo;
   @Mock GalleryPagerView mockedGalleryPagerView;
   @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
-  @Mock GetVideonaFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
   @Mock LaunchTranscoderAddAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionsUseCase;
+  @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
   @Mock private MediaMetadataRetriever mockedMetadataRetriever;
   @Mock private UpdateVideoResolutionToProjectUseCase mockedUpdateProjectResolution;
   @Mock Context mockedContext;
@@ -85,13 +85,16 @@ public class GalleryPagerPresenterTest {
   }
 
   @Test
-  public void videoToLaunchAVTransitionTempFileUpdateVideoTempPath() {
-    GalleryPagerPresenter galleryPagerPresenter = getGalleryPresenter();
+  public void videoToLaunchAVTransitionTempFileUpdateVideoTempPath(){
+    getAProject().clear();
     Project project = getAProject();
     project.setAudioFadeTransitionActivated(true);
     String path = "media/path";
     assertThat("Audio transition is activated", project.isAudioFadeTransitionActivated(), is(true));
     Video video = new Video(path, Video.DEFAULT_VOLUME);
+
+    GalleryPagerPresenter galleryPagerPresenter = getGalleryPresenter();
+
     String tempPath = video.getTempPath();
 
     galleryPagerPresenter.videoToLaunchAVTransitionTempFile(video,

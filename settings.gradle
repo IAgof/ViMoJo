@@ -1,2 +1,2 @@
-include ':app', ':avrecorder', ':sdk'
+include ':app', ':avrecorder', ':camera', ':sdk'
 project(':sdk').projectDir = new File('Videona-SDK/sdk')

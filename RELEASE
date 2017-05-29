@@ -1,16 +1,17 @@
-v0.4.25
-* New Features
-    - Now user can track progress of final export process.
-    - Review export project process.
-    - Added option to enable a grid for video recording.
-    - Increased video recording quality.
-    - Now default recording settings are set to 1080p, 32 Mbps.
-* Improved experience and bug fixes
-    - Improved User drawer and Project Gallery.
-    - New Editor video time line with improved experience and bug fixes.
-    - Automatically updating project resolution when importing videos from gallery into a new project.
-    - Improved gallery video loading.
-    - Improved stability exporting files for trim, split, text and audio and video transitions processes.
-    - Improved media player user interface and experience.
-    - Fixed several existing bugs.
+v0.5.0
+
+- Added new module, camera. Separate from app, recorder and camera features.
+- Update Vimojo to record videos with new implementation, based in camera2 API. Old camera module
+avrecorder, not used, RecordActivity and RecordPresenter deprecated.
+- Removed setting preference frame rate, not supported now.
+- Videos recorded without synchronization audio, video problems.
+- Remove possibility of change camera if app is recording video.
+- Created new RecordCamera2Activity and RecordCamera2Presenter. Improved uncoupled with camera, same
+UI and features than old camera implementation, flash, zoom, focus, change camera, rotation device
+preview.
+- Camera prepared for future implementation of advanced camera features, white balance, exposure ...
+- Added new job to adapt every video recorded to Vimojo format. Until this job has not ended, we can
+navigate to EditActivity. Job needed to unify all our medias and temporal files and improved final
+video exportation.
+
 
