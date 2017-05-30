@@ -3,6 +3,9 @@ package com.videonasocialmedia.vimojo.repository.project;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.model.entities.editor.LastVideoExported;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
@@ -16,6 +19,8 @@ import com.videonasocialmedia.vimojo.repository.track.RealmTrack;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideoToVideoMapper;
 import com.videonasocialmedia.vimojo.utils.Constants;
+
+import static com.videonasocialmedia.videonamediaframework.model.Constants.*;
 
 
 /**
@@ -89,75 +94,39 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
   }
 
   private void setProjectTracks(Project project, RealmProject realmProject) {
-
-    RealmTrack realmTrackVideo = null;
-    RealmTrack realmTrackMusic = null;
-    RealmTrack realmTrackVoiceOver = null;
-
     for (RealmTrack realmTrack : realmProject.tracks) {
-      switch (realmTrack.id){
-        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_MEDIA_TRACK:
-          realmTrackVideo = realmTrack;
+      switch (realmTrack.id) {
+        case INDEX_MEDIA_TRACK:
+          setTrackParams(project.getMediaTrack(), realmTrack);
           break;
-        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC:
-          realmTrackMusic = realmTrack;
+        case INDEX_AUDIO_TRACK_MUSIC:
+          setTrackParams(project.getAudioTracks().get(INDEX_AUDIO_TRACKS_MUSIC), realmTrack);
           break;
-        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
-          realmTrackVoiceOver = realmTrack;
+        case INDEX_AUDIO_TRACK_VOICE_OVER:
+          setTrackParams(project.getAudioTracks().get(INDEX_AUDIO_TRACKS_VOICE_OVER), realmTrack);
           break;
-        default:
       }
     }
+  }
 
-    if(realmTrackVideo!=null) {
-      project.getMediaTrack().setVolume(realmTrackVideo.volume);
-      project.getMediaTrack().setSolo(realmTrackVideo.solo);
-      project.getMediaTrack().setMute(realmTrackVideo.mute);
-      project.getMediaTrack().setPosition(realmTrackVideo.position);
-    }
-
-    if(realmTrackMusic!=null) {
-      project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC)
-          .setVolume(realmTrackMusic.volume);
-      project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC)
-          .setSolo(realmTrackMusic.solo);
-      project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC)
-          .setMute(realmTrackMusic.mute);
-      project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC)
-          .setPosition(realmTrackMusic.position);
-    }
-
-    if(realmTrackVoiceOver!=null) {
-      project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
-          .setVolume(realmTrackVoiceOver.volume);
-      project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
-          .setSolo(realmTrackVoiceOver.solo);
-      project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
-          .setMute(realmTrackVoiceOver.mute);
-      project.getAudioTracks()
-          .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
-          .setPosition(realmTrackVoiceOver.position);
+  private void setTrackParams(Track track, RealmTrack realmTrack) {
+    if (realmTrack != null) {
+      track.setVolume(realmTrack.volume);
+      track.setSolo(realmTrack.solo);
+      track.setMute(realmTrack.mute);
+      track.setPosition(realmTrack.position);
     }
   }
 
   private void setProjectMusic(Project project, RealmProject realmProject) {
     for (RealmMusic realmMusic : realmProject.musics) {
       try {
-        if(isAVoiceOver(realmMusic)){
+        if (isAVoiceOver(realmMusic)) {
           project.getAudioTracks()
-              .get(com.videonasocialmedia.videonamediaframework.model
-                  .Constants.INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(toMusicMapper.map(realmMusic));
+              .get(INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(toMusicMapper.map(realmMusic));
         } else {
           project.getAudioTracks()
-              .get(com.videonasocialmedia.videonamediaframework.model
-                  .Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(toMusicMapper.map(realmMusic));
+              .get(INDEX_AUDIO_TRACK_MUSIC).insertItem(toMusicMapper.map(realmMusic));
         }
       } catch (IllegalItemOnTrack illegalItemOnTrack) {
         illegalItemOnTrack.printStackTrace();

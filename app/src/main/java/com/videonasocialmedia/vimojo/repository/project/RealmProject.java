@@ -1,7 +1,6 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
 
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.repository.music.RealmMusic;
 import com.videonasocialmedia.vimojo.repository.track.RealmTrack;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
