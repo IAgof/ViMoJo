@@ -20,21 +20,18 @@ public class GetMusicFromProjectUseCase {
     }
 
     public void getMusicFromProject(GetMusicFromProjectCallback listener) {
-        Music music = null;
-        try {
-            music = (Music) project.getAudioTracks()
-                .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getItems().get(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-          listener.onMusicRetrieved(music);
+        getItemsOnTrack(listener, Constants.INDEX_AUDIO_TRACK_MUSIC);
     }
 
     public void getVoiceOverFromProject(GetMusicFromProjectCallback listener) {
+        getItemsOnTrack(listener, Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    }
+
+    private void getItemsOnTrack(GetMusicFromProjectCallback listener, int indexAudioTrackVoiceOver) {
         Music voiceOver = null;
         try {
             voiceOver = (Music) project.getAudioTracks()
-                .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getItems().get(0);
+                .get(indexAudioTrackVoiceOver).getItems().get(0);
         } catch (Exception e) {
             e.printStackTrace();
         }

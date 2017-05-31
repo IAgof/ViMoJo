@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -13,7 +14,6 @@ import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.project.GetTracksInProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
@@ -28,6 +28,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.internals.di.PerActivity;
@@ -57,10 +58,10 @@ import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFro
 import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.MergeVoiceOverAudiosUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.UpdateAudioTrackProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.UpdateMusicVolumeProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.UpdateVideoTrackProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
@@ -183,12 +184,12 @@ public class ActivityPresentersModule {
                                        GetMusicFromProjectUseCase getMusicFromProjectUseCase,
                                        GetPreferencesTransitionFromProjectUseCase
                                             getPreferencesTransitionFromProjectUseCase,
-                                       UpdateVideoTrackProjectUseCase updateVideoTrackProjectUseCase,
-                                       UpdateAudioTrackProjectUseCase updateAudioTrackProjectUseCase,
-                                       GetTracksInProjectUseCase getTracksInProjectUseCase) {
-    return new SoundPresenter((SoundActivity) activity, (SoundActivity) activity, getMediaListFromProjectUseCase,
-        getMusicFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
-        updateVideoTrackProjectUseCase, updateAudioTrackProjectUseCase, getTracksInProjectUseCase);
+                                       ModifyTrackUseCase modifyTrackUseCase,
+                                       VideoListErrorCheckerDelegate
+                                           videoListErrorCheckerDelegate) {
+    return new SoundPresenter((SoundActivity) activity, getMediaListFromProjectUseCase,
+        getMusicFromProjectUseCase, getPreferencesTransitionFromProjectUseCase, modifyTrackUseCase,
+        videoListErrorCheckerDelegate);
   }
 
   @Provides @PerActivity
@@ -443,21 +444,6 @@ public class ActivityPresentersModule {
    return  new LaunchTranscoderAddAVTransitionsUseCase(videoRepository);
   }
 
-  @Provides UpdateVideoTrackProjectUseCase proviceUpdateVideoTrack(TrackRepository
-                                                                       trackRepository){
-    return new UpdateVideoTrackProjectUseCase(trackRepository);
-  }
-
-  @Provides
-  UpdateAudioTrackProjectUseCase providesUpdateMusicTrack(TrackRepository
-                                                                      trackRepository){
-    return new UpdateAudioTrackProjectUseCase(trackRepository);
-  }
-
-  @Provides GetTracksInProjectUseCase providesTracksInProject(TrackRepository trackRepository){
-    return new GetTracksInProjectUseCase();
-  }
-
   @Provides AddMusicToProjectUseCase providesAddMusicToProject(MusicRepository musicRepository){
     return new AddMusicToProjectUseCase(musicRepository);
   }
@@ -476,5 +462,18 @@ public class ActivityPresentersModule {
 
   @Provides ExportProjectUseCase provideProjectExporter() {
     return new ExportProjectUseCase();
+  }
+
+  @Provides ModifyTrackUseCase providesModifyTrackUseCase(TrackRepository trackRepository){
+    return new ModifyTrackUseCase(trackRepository);
+  }
+
+  @Provides VideoListErrorCheckerDelegate providesVideoListErrorCheckerDelegate(){
+    return new VideoListErrorCheckerDelegate();
+  }
+
+  @Provides UpdateAudioTrackProjectUseCase providesUpdateAudioTrackProjectUseCase(TrackRepository
+                                                                                  trackRepository){
+    return new UpdateAudioTrackProjectUseCase(trackRepository);
   }
 }

@@ -8,11 +8,8 @@ import android.support.v7.widget.RecyclerView;
 
 interface CardViewTrack {
   void setSeekBar(int progress);
-  void setSwitchMuteAudio(boolean state);
-  void setSwitchSoloAudio(boolean state);
+  void setSwitchMuteMedia(boolean state);
   void setTitleTrack(String title);
   void setImageTrack(int resourceId);
   boolean isShowedAudioTrackOptions();
-  RecyclerView getRecyclerView();
-  void setListener(CardViewAudioTrackListener listener, int id);
 }

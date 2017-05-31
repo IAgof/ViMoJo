@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
@@ -14,31 +16,45 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MediaListTimeLineRecyclerViewClickListener;
+import com.videonasocialmedia.vimojo.sound.presentation.views.adapter.MediaListTimeLineAdapter;
 
 /**
  * Created by alvaro on 10/04/17.
  */
 
-public class CardViewAudioTrack extends CardView implements CardViewTrack {
+public class CardViewAudioTrack extends CardView implements CardViewTrack,
+    MediaListTimeLineRecyclerViewClickListener{
 
   private final View cardViewTrack;
-  private ImageView imageAudioBlocks;
-  private RecyclerView recyclerViewTimeLineAudioBlocks;
-  private TextView textTitleAudioBlocks;
-  private SeekBar seekBarAudioBlock;
-  private Switch switchMuteAudio;
-  private Switch switchSoloAudio;
-  private RelativeLayout relativeLayoutAudioVolume;
+  private ImageView imageMediaBlocks;
+  private RecyclerView recyclerViewTimeLineMediaBlocks;
+  private TextView textTitleMediaBlocks;
+  private SeekBar seekBarMediaBlock;
+  private Switch switchMuteMedia;
+  private RelativeLayout relativeLayoutMediaVolume;
 
   private CardViewAudioTrackListener listener;
   private int id;
+  private int position;
   private boolean activatedUiAudioOptions = false;
+
+  private MediaListTimeLineAdapter mediaListTimeLineAdapter;
+  private RecyclerView.LayoutManager mediaListLayoutManager;
+
+  private int num_grid_columns = 1;
+  int orientation = LinearLayoutManager.HORIZONTAL;
+  private Context context;
+
 
   public CardViewAudioTrack(Context context){
     super(context);
     this.cardViewTrack = ((Activity) getContext()).getLayoutInflater()
         .inflate(R.layout.custom_sound_cardview_track, this, true);
+    this.context = context;
     initLayoutsComponents();
   }
 
@@ -52,6 +68,7 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack {
     super(context, attrs);
     this.cardViewTrack = ((Activity) getContext()).getLayoutInflater()
         .inflate(R.layout.custom_sound_cardview_track, this, true);
+    this.context = context;
     initLayoutsComponents();
   }
 
@@ -66,28 +83,66 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack {
     super(context,attrs,defStyle);
     this.cardViewTrack = ((Activity) getContext()).getLayoutInflater()
         .inflate(R.layout.custom_sound_cardview_track, this, true);
+    this.context = context;
     initLayoutsComponents();
   }
 
+  public void setTrack(Track track) {
+    this.id = track.getId();
+    this.position = track.getPosition();
+    initUIComponentsById(track.getId());
+    initAdapter(track);
+    setSeekBar((int) (track.getVolume()*100));
+    setSwitchMuteMedia(track.isMute());
+  }
+
+  public void setListener(CardViewAudioTrackListener listener){
+    this.listener = listener;
+  }
+
+  private void initUIComponentsById(int id) {
+    switch (id) {
+      case Constants.INDEX_MEDIA_TRACK:
+        setImageTrack(R.drawable.activity_edit_sound_original_down);
+        setTitleTrack(context.getString(R.string.title_track_clip_video));
+        break;
+      case Constants.INDEX_AUDIO_TRACK_MUSIC:
+        setImageTrack(R.drawable.activity_edit_sound_music_down);
+        setTitleTrack(context.getString(R.string.title_track_clip_music));
+        break;
+      case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
+        setImageTrack(R.drawable.activity_edit_sound_voice_over_down);
+        setTitleTrack(context.getString(R.string.title_track_clip_voice_over));
+        break;
+    }
+  }
+
+  private void initAdapter(Track track) {
+    mediaListLayoutManager = new GridLayoutManager(context, num_grid_columns,
+        orientation, false);
+    recyclerViewTimeLineMediaBlocks.setLayoutManager(mediaListLayoutManager);
+    mediaListTimeLineAdapter = new MediaListTimeLineAdapter(this, track.getId());
+    recyclerViewTimeLineMediaBlocks.setAdapter(mediaListTimeLineAdapter);
+    mediaListTimeLineAdapter.setMediaList(track.getItems());
+  }
+
   private void initLayoutsComponents() {
-    imageAudioBlocks = (ImageView) findViewById(R.id.image_audio_blocks);
-    imageAudioBlocks.setOnClickListener(onClickImageTrackListener());
-    recyclerViewTimeLineAudioBlocks = (RecyclerView) findViewById(R.id.recyclerview_editor_timeline_audio_blocks);
-    textTitleAudioBlocks = (TextView) findViewById(R.id.volume_view_title);
-    seekBarAudioBlock = (SeekBar) findViewById(R.id.seekBar_volume_sound);
-    seekBarAudioBlock.setOnSeekBarChangeListener(onClickSeekBarProgressListener());
-    switchMuteAudio = (Switch) findViewById(R.id.switchMute);
-    switchMuteAudio.setOnCheckedChangeListener(onClickMuteAudioListener());
-    switchSoloAudio = (Switch) findViewById(R.id.switchSolo);
-    switchSoloAudio.setOnCheckedChangeListener(onClickSoloAudioListener());
-    relativeLayoutAudioVolume = (RelativeLayout) findViewById(R.id.relative_layout_audio_volume);
+    imageMediaBlocks = (ImageView) findViewById(R.id.image_audio_blocks);
+    imageMediaBlocks.setOnClickListener(onClickImageTrackListener());
+    recyclerViewTimeLineMediaBlocks = (RecyclerView) findViewById(R.id.recyclerview_editor_timeline_audio_blocks);
+    textTitleMediaBlocks = (TextView) findViewById(R.id.volume_view_title);
+    seekBarMediaBlock = (SeekBar) findViewById(R.id.seekBar_volume_sound);
+    seekBarMediaBlock.setOnSeekBarChangeListener(onClickSeekBarProgressListener());
+    switchMuteMedia = (Switch) findViewById(R.id.switchMute);
+    switchMuteMedia.setOnCheckedChangeListener(onClickMuteAudioListener());
+    relativeLayoutMediaVolume = (RelativeLayout) findViewById(R.id.relative_layout_audio_volume);
   }
 
   private SeekBar.OnSeekBarChangeListener onClickSeekBarProgressListener() {
     return new SeekBar.OnSeekBarChangeListener() {
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-       listener.setSeekBarProgress(progress, id);
+        listener.setSeekBarProgress(id, progress);
       }
 
       @Override
@@ -102,20 +157,11 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack {
     };
   }
 
-  private CompoundButton.OnCheckedChangeListener onClickSoloAudioListener() {
-    return new CompoundButton.OnCheckedChangeListener() {
-      @Override
-      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        listener.setSwitchSoloAudio(isChecked, id);
-      }
-    };
-  }
-
   private CompoundButton.OnCheckedChangeListener onClickMuteAudioListener() {
     return new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        listener.setSwitchMuteAudio(isChecked, id);
+        listener.setSwitchMuteAudio(id, isChecked);
       }
     };
   }
@@ -126,46 +172,79 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack {
     return new OnClickListener() {
       @Override
       public void onClick(View v) {
-          if (relativeLayoutAudioVolume.getVisibility() == View.VISIBLE) {
-            relativeLayoutAudioVolume.setVisibility(View.GONE);
-            activatedUiAudioOptions = false;
-            listener.onClickImageIconTrack(id);
-            return;
-          }
-          if (relativeLayoutAudioVolume.getVisibility() == View.GONE) {
-            relativeLayoutAudioVolume.setVisibility(View.VISIBLE);
-            activatedUiAudioOptions = true;
-            listener.onClickImageIconTrack(id);
-            return;
-          }
+        onClickImageIconTrack(id);
+        listener.onClickExpandInfoTrack(position);
+        if (relativeLayoutMediaVolume.getVisibility() == View.VISIBLE) {
+          relativeLayoutMediaVolume.setVisibility(View.GONE);
+          activatedUiAudioOptions = false;
+          return;
+        }
+        if (relativeLayoutMediaVolume.getVisibility() == View.GONE) {
+          relativeLayoutMediaVolume.setVisibility(View.VISIBLE);
+          activatedUiAudioOptions = true;
+          return;
+        }
       }
     };
+  }
+
+  private void onClickImageIconTrack(int id) {
+    switch (id){
+      case Constants.INDEX_MEDIA_TRACK:
+        updateImageIconTrackVideo();
+        break;
+      case Constants.INDEX_AUDIO_TRACK_MUSIC:
+        updateImageIconTrackMusic();
+        break;
+      case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
+        updateImageIconTrackVoiceOver();
+        break;
+    }
+  }
+
+
+  private void updateImageIconTrackVideo() {
+    if(isShowedAudioTrackOptions()) {
+      setImageTrack(R.drawable.activity_edit_sound_original_up);
+    } else {
+      setImageTrack(R.drawable.activity_edit_sound_original_down);
+    }
+  }
+
+  private void updateImageIconTrackMusic() {
+    if(isShowedAudioTrackOptions()) {
+      setImageTrack(R.drawable.activity_edit_sound_music_up);
+    } else {
+      setImageTrack(R.drawable.activity_edit_sound_music_down);
+    }
+  }
+
+  private void updateImageIconTrackVoiceOver() {
+    if(isShowedAudioTrackOptions()) {
+      setImageTrack(R.drawable.activity_edit_sound_voice_over_up);
+    } else {
+      setImageTrack(R.drawable.activity_edit_sound_voice_over_down);
+    }
   }
 
 
   @Override
   public void setSeekBar(int progress) {
-    seekBarAudioBlock.setProgress(progress);
+    seekBarMediaBlock.setProgress(progress);
   }
 
-  @Override
-  public void setSwitchMuteAudio(boolean state) {
-    switchMuteAudio.setChecked(state);
-  }
-
-  @Override
-  public void setSwitchSoloAudio(boolean state) {
-    switchSoloAudio.setChecked(state);
+  public void setSwitchMuteMedia(boolean state) {
+    switchMuteMedia.setChecked(state);
   }
 
   @Override
   public void setTitleTrack(String title) {
-    textTitleAudioBlocks.setText(title);
+    textTitleMediaBlocks.setText(title);
   }
 
   @Override
   public void setImageTrack(int resourceId) {
-    imageAudioBlocks.setImageResource(resourceId);
+    imageMediaBlocks.setImageResource(resourceId);
   }
 
   @Override
@@ -174,13 +253,42 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack {
   }
 
   @Override
-  public RecyclerView getRecyclerView() {
-    return recyclerViewTimeLineAudioBlocks;
+  public void onClipClicked(int position, int trackId) {
+        listener.onClickMediaClip(position, trackId);
+    switch (trackId){
+      case Constants.INDEX_MEDIA_TRACK:
+        onAudioClipClicked(position);
+        break;
+      case Constants.INDEX_AUDIO_TRACK_MUSIC:
+        onMusicClipClicked(position);
+        break;
+      case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
+        onVoiceOverClipClicked(position);
+    }
   }
 
-  @Override
-  public void setListener(CardViewAudioTrackListener listener, int id) {
-    this.listener = listener;
-    this.id = id;
+  public void onAudioClipClicked(int position) {
+    int lastPosition = mediaListTimeLineAdapter.getSelectedVideoPosition();
+    mediaListTimeLineAdapter.updateSelection(position);
+    if(lastPosition > position && position > 0) {
+      recyclerViewTimeLineMediaBlocks.smoothScrollToPosition(--position);
+    } else {
+      recyclerViewTimeLineMediaBlocks.smoothScrollToPosition(++position);
+    }
+  }
+
+  public void onMusicClipClicked(int position) {
+    mediaListTimeLineAdapter.updateSelection(0);
+    recyclerViewTimeLineMediaBlocks.smoothScrollToPosition(0);
+  }
+
+  public void onVoiceOverClipClicked(int position) {
+    mediaListTimeLineAdapter.updateSelection(0);
+    recyclerViewTimeLineMediaBlocks.smoothScrollToPosition(0);
+  }
+
+  public void updateClipSelection(int currentClipIndex) {
+    mediaListTimeLineAdapter.updateSelection(currentClipIndex);
+    recyclerViewTimeLineMediaBlocks.smoothScrollToPosition(currentClipIndex + 1);
   }
 }

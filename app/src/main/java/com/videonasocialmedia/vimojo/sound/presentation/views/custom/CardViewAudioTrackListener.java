@@ -5,8 +5,8 @@ package com.videonasocialmedia.vimojo.sound.presentation.views.custom;
  */
 
 public interface CardViewAudioTrackListener {
-  void setSeekBarProgress(int progress, int id);
-  void setSwitchSoloAudio(boolean isChecked, int id);
-  void setSwitchMuteAudio(boolean isChecked, int id);
-  void onClickImageIconTrack(int id);
+  void setSeekBarProgress(int id, int progress);
+  void setSwitchMuteAudio(int id, boolean isChecked);
+  void onClickExpandInfoTrack(int positionInTrack);
+  void onClickMediaClip(int position, int trackId);
 }

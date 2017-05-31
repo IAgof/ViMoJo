@@ -10,10 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -24,6 +20,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
@@ -34,10 +31,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.AudioTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
-import com.videonasocialmedia.vimojo.sound.presentation.views.adapter.AudioTimeLineAdapter;
-import com.videonasocialmedia.vimojo.sound.presentation.views.adapter.MusicTimeLineAdapter;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrackListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -58,14 +52,10 @@ import static butterknife.ButterKnife.findById;
  */
 
 public class SoundActivity extends EditorActivity implements VideonaPlayer.VideonaPlayerListener,
-    SoundView, VideoTranscodingErrorNotifier, AudioTimeLineRecyclerViewClickListener,
-    CardViewAudioTrackListener{
+    SoundView, CardViewAudioTrackListener{
 
   private static final String SOUND_ACTIVITY_PROJECT_POSITION = "sound_activity_project_position";
   private static final String TAG = "SoundActivity";
-  private static final int ID_TRACK_CLIP_VIDEO = 0;
-  private static final int ID_TRACK_CLIP_AUDIO_FIRST = 1;
-  private static final int ID_TRACK_CLIP_AUDIO_SECOND = 2;
   private final int ID_BUTTON_FAB_TOP=1;
   private final int ID_BUTTON_FAB_BOTTOM=3;
 
@@ -94,20 +84,9 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   private BroadcastReceiver exportReceiver;
   private int currentProjectPosition = 0;
 
-  private RecyclerView audioListRecyclerView;
-  private RecyclerView musicListRecyclerView;
-  private RecyclerView voiceOverListRecyclerView;
-  private AudioTimeLineAdapter audioTimeLineAdapter;
-  private MusicTimeLineAdapter musicTimeLineAdapter;
-  private MusicTimeLineAdapter voiceOverTimeLineAdapter;
   private boolean voiceOverActivated;
   private FloatingActionButton fabVoiceOver;
   private String warningTranscodingFilesMessage;
-
-  private int num_grid_columns = 1;
-  int orientation = LinearLayoutManager.HORIZONTAL;
-  private int positionAudioTrackMusic;
-  private RecyclerView.LayoutManager audioListLayoutManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -134,9 +113,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
             break;
           case (R.id.tab_share):
             navigateTo(ShareActivity.class);
-            /*Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
-            Snackbar.make(relativeLayoutActivitySound, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
-            VimojoApplication.getAppContext().startService(intent);*/
             break;
         }
       }
@@ -242,121 +218,16 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   public void bindVideoList(List<Video> movieList) {
     videonaPlayer.bindVideoList(movieList);
     videonaPlayer.seekTo(currentProjectPosition);
-    audioTimeLineAdapter.setAudioList(movieList);
-
-  }
-
-  @Override
-  public void bindVideoTrack(float volume, boolean muteAudio, boolean soloAudio) {
-    trackClipsVideo.setListener(this, ID_TRACK_CLIP_VIDEO);
-    audioListRecyclerView = trackClipsVideo.getRecyclerView();
-
-    trackClipsVideo.setImageTrack(R.drawable.activity_edit_sound_original_down);
-    trackClipsVideo.setTitleTrack(getString(R.string.title_track_clip_video));
-
-    trackClipsVideo.setSeekBar((int) (volume*100));
-    trackClipsVideo.setSwitchMuteAudio(muteAudio);
-    trackClipsVideo.setSwitchSoloAudio(soloAudio);
-
-    audioListLayoutManager = new GridLayoutManager(this, num_grid_columns,
-        orientation, false);
-    audioListRecyclerView.setLayoutManager(audioListLayoutManager);
-    audioTimeLineAdapter = new AudioTimeLineAdapter(this);
-    audioListRecyclerView.setAdapter(audioTimeLineAdapter);
   }
 
   @Override
   public void bindMusicList(List<Music> musicList) {
-    musicTimeLineAdapter.setMusicList(musicList);
     videonaPlayer.setMusic(musicList.get(0));
   }
 
   @Override
-  public void bindMusicTrack(float volume, boolean muteAudio, boolean soloAudio, int position) {
-
-    if(position == 1) {
-      initTrackClipAudioTrackFirst(volume, muteAudio, soloAudio);
-      initTitleAndIconAudioTrackFirstMusic();
-      musicListRecyclerView = trackClipsAudioTrackFirst.getRecyclerView();
-    } else {
-      initTrackClipAudioTrackSecond(volume, muteAudio, soloAudio);
-      initTitleAndIconAudioTrackSecondMusic();
-      musicListRecyclerView = trackClipsAudioTrackSecond.getRecyclerView();
-    }
-
-    RecyclerView.LayoutManager layoutManager2 = new GridLayoutManager(this, num_grid_columns,
-        orientation, false);
-    musicTimeLineAdapter = new MusicTimeLineAdapter(this);
-    musicListRecyclerView.setLayoutManager(layoutManager2);
-    musicListRecyclerView.setAdapter(musicTimeLineAdapter);
-  }
-
-  @Override
   public void bindVoiceOverList(List<Music> voiceOverList) {
-   voiceOverTimeLineAdapter.setMusicList(voiceOverList);
     videonaPlayer.setVoiceOver(voiceOverList.get(0));
-  }
-
-  @Override
-  public void bindVoiceOverTrack(float volume, boolean muteAudio, boolean soloAudio, int position) {
-
-    if(position == 1) {
-      initTrackClipAudioTrackFirst(volume, muteAudio, soloAudio);
-      initTitleAndIconAudioTrackFirstVoiceOver();
-      voiceOverListRecyclerView = trackClipsAudioTrackFirst.getRecyclerView();
-    } else {
-      initTrackClipAudioTrackSecond(volume, muteAudio, soloAudio);
-      initTitleAndIconAudioTrackSecondVoiceOver();
-      voiceOverListRecyclerView = trackClipsAudioTrackSecond.getRecyclerView();
-    }
-
-    RecyclerView.LayoutManager layoutManager3 = new GridLayoutManager(this, num_grid_columns,
-        orientation, false);
-    voiceOverTimeLineAdapter = new MusicTimeLineAdapter(this);
-    voiceOverListRecyclerView.setLayoutManager(layoutManager3);
-    voiceOverListRecyclerView.setAdapter(voiceOverTimeLineAdapter);
-  }
-
-
-  private void initTrackClipAudioTrackFirst(float volume, boolean muteAudio, boolean soloAudio) {
-    trackClipsAudioTrackFirst.setListener(this, ID_TRACK_CLIP_AUDIO_FIRST);
-    trackClipsAudioTrackFirst.setVisibility(View.VISIBLE);
-    trackClipsAudioTrackFirst.isShowedAudioTrackOptions();
-    trackClipsAudioTrackFirst.setSeekBar((int) (volume*100));
-    trackClipsAudioTrackFirst.setSwitchMuteAudio(muteAudio);
-    trackClipsAudioTrackFirst.setSwitchSoloAudio(soloAudio);
-  }
-
-  private void initTrackClipAudioTrackSecond(float volume, boolean muteAudio, boolean soloAudio) {
-    trackClipsAudioTrackSecond.setListener(this, ID_TRACK_CLIP_AUDIO_SECOND);
-    trackClipsAudioTrackSecond.setVisibility(View.VISIBLE);
-
-    trackClipsAudioTrackSecond.isShowedAudioTrackOptions();
-    trackClipsAudioTrackSecond.setSeekBar((int) (volume*100));
-    trackClipsAudioTrackSecond.setSwitchMuteAudio(muteAudio);
-    trackClipsAudioTrackSecond.setSwitchSoloAudio(soloAudio);
-  }
-
-  private void initTitleAndIconAudioTrackFirstMusic() {
-    positionAudioTrackMusic = 1;
-    trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_music_down);
-    trackClipsAudioTrackFirst.setTitleTrack(getString(R.string.title_track_clip_music));
-  }
-
-  private void initTitleAndIconAudioTrackSecondMusic() {
-    positionAudioTrackMusic = 2;
-    trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_music_down);
-    trackClipsAudioTrackSecond.setTitleTrack(getString(R.string.title_track_clip_music));
-  }
-
-  private void initTitleAndIconAudioTrackFirstVoiceOver() {
-    trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_voice_over_down);
-    trackClipsAudioTrackFirst.setTitleTrack(getString(R.string.title_track_clip_voice_over));
-  }
-
-  private void initTitleAndIconAudioTrackSecondVoiceOver() {
-    trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_voice_over_down);
-    trackClipsAudioTrackSecond.setTitleTrack(getString(R.string.title_track_clip_voice_over));
   }
 
   @Override
@@ -404,6 +275,49 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
   @Override
+  public void bindTrack(Track track) {
+    switch (track.getId()) {
+      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_MEDIA_TRACK:
+        trackClipsVideo.setListener(this);
+        trackClipsVideo.setTrack(track);
+        break;
+      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC:
+          if(track.getPosition() == 1) {
+            trackClipsAudioTrackFirst.setListener(this);
+            trackClipsAudioTrackFirst.setTrack(track);
+          }else {
+            trackClipsAudioTrackSecond.setListener(this);
+            trackClipsAudioTrackSecond.setTrack(track);
+          }
+        break;
+      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
+        if(track.getPosition() == 1) {
+          trackClipsAudioTrackFirst.setListener(this);
+          trackClipsAudioTrackFirst.setTrack(track);
+        }else {
+          trackClipsAudioTrackSecond.setListener(this);
+          trackClipsAudioTrackSecond.setTrack(track);
+        }
+        break;
+    }
+  }
+
+  @Override
+  public void showTrackVideo() {
+    trackClipsVideo.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void showTrackAudioFirst() {
+    trackClipsAudioTrackFirst.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void showTrackAudioSecond() {
+    trackClipsAudioTrackSecond.setVisibility(View.VISIBLE);
+  }
+
+  @Override
   public void showWarningTempFile() {
     warningTranscodingFilesButton.setVisibility(View.VISIBLE);
   }
@@ -413,176 +327,49 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
     warningTranscodingFilesMessage = messageTempFile;
   }
 
-
   @Nullable @Override
   public void newClipPlayed(int currentClipIndex) {
-    audioTimeLineAdapter.updateSelection(currentClipIndex);
-    audioListRecyclerView.scrollToPosition(currentClipIndex);
+    trackClipsVideo.updateClipSelection(currentClipIndex);
   }
 
   @Override
-  public void onAudioClipClicked(int position) {
-    Log.d(TAG, "onAudioClipClicked, position " + position);
-    videonaPlayer.seekToClip(position);
-    int lastPosition = audioTimeLineAdapter.getSelectedVideoPosition();
-    audioTimeLineAdapter.updateSelection(position);
-    //audioListLayoutManager.scrollToPosition(position + 2);
-    if(lastPosition > position && position > 0) {
-      audioListRecyclerView.smoothScrollToPosition(--position);
-    } else {
-      audioListRecyclerView.smoothScrollToPosition(++position);
-    }
+  public void setSeekBarProgress(int id, int seekBarProgress) {
+    presenter.setTrackVolume(id, seekBarProgress);
   }
 
   @Override
-  public void onMusicClipClicked(int position) {
-    videonaPlayer.seekTo(0);
-    audioTimeLineAdapter.updateSelection(0);
-    audioListRecyclerView.smoothScrollToPosition(0);
+  public void setSwitchMuteAudio(int id, boolean isChecked) {
+    presenter.setTrackMute(id, isChecked);
   }
 
   @Override
-  public void onVoiceOverClipClicked(int position) {
-    videonaPlayer.seekTo(0);
-    audioTimeLineAdapter.updateSelection(0);
-    audioListRecyclerView.smoothScrollToPosition(0);
-  }
-
-  @Override
-  public void setSeekBarProgress(int seekBarProgress, int id) {
-
-    float progress = (float) (seekBarProgress * 0.01);
-
-    switch (id){
-      case ID_TRACK_CLIP_VIDEO:
-        videonaPlayer.setVideoVolume(progress);
-        presenter.setVideoVolume(progress);
-        break;
-      case ID_TRACK_CLIP_AUDIO_FIRST:
-        if(isMusicFirstTrack()) {
-          videonaPlayer.setMusicVolume(progress);
-          presenter.setMusicVolume(progress);
-        } else {
-          videonaPlayer.setVoiceOverVolume(progress);
-          presenter.setVoiceOverVolume(progress);
-        }
-        break;
-      case ID_TRACK_CLIP_AUDIO_SECOND:
-        if(isMusicSecondTrack()) {
-          videonaPlayer.setMusicVolume(progress);
-          presenter.setMusicVolume(progress);
-        } else {
-          videonaPlayer.setVoiceOverVolume(progress);
-          presenter.setVoiceOverVolume(progress);
-        }
-      default:
-        return;
-    }
-  }
-
-  @Override
-  public void setSwitchSoloAudio(boolean isChecked, int id) {
-    switch (id){
-      case ID_TRACK_CLIP_VIDEO:
-        if(isChecked)
-          videonaPlayer.setVideoVolume(0f);
-        presenter.soloVideo(isChecked);
-        break;
-      case ID_TRACK_CLIP_AUDIO_FIRST:
-        if(isMusicFirstTrack()) {
-          if (isChecked)
-            videonaPlayer.setMusicVolume(0f);
-          presenter.soloMusic(isChecked);
-        } else {
-          if(isChecked)
-            videonaPlayer.setVoiceOverVolume(0f);
-          presenter.soloVoiceOver(isChecked);
-        }
-        break;
-      case ID_TRACK_CLIP_AUDIO_SECOND:
-        if(isMusicSecondTrack()) {
-          if (isChecked)
-            videonaPlayer.setMusicVolume(0f);
-          presenter.soloMusic(isChecked);
-        } else {
-          if (isChecked)
-            videonaPlayer.setVoiceOverVolume(0f);
-          presenter.soloVoiceOver(isChecked);
-        }
-      default:
-        return;
-    }
-  }
-
-  @Override
-  public void setSwitchMuteAudio(boolean isChecked, int id) {
-    switch (id){
-      case ID_TRACK_CLIP_VIDEO:
-        presenter.muteVideo(isChecked);
-        break;
-      case ID_TRACK_CLIP_AUDIO_FIRST:
-        if(isMusicFirstTrack()) {
-          presenter.muteMusic(isChecked);
-        } else {
-          presenter.muteVoiceOver(isChecked);
-        }
-        break;
-      case ID_TRACK_CLIP_AUDIO_SECOND:
-        if(isMusicSecondTrack()) {
-          presenter.muteMusic(isChecked);
-        } else {
-          presenter.muteVoiceOver(isChecked);
-        }
-      default:
-        return;
-    }
-  }
-
-  @Override
-  public void onClickImageIconTrack(int id) {
-    switch (id){
-      case ID_TRACK_CLIP_VIDEO:
+  public void onClickExpandInfoTrack(int positionInTrack) {
+    switch (positionInTrack){
+      case 0:
         focusOnView(trackClipsVideo);
-        if(trackClipsVideo.isShowedAudioTrackOptions()) {
-          trackClipsVideo.setImageTrack(R.drawable.activity_edit_sound_original_up);
-        } else {
-          trackClipsVideo.setImageTrack(R.drawable.activity_edit_sound_original_down);
-        }
         break;
-      case ID_TRACK_CLIP_AUDIO_FIRST:
+      case 1:
         focusOnView(trackClipsAudioTrackFirst);
-        if(trackClipsAudioTrackFirst.isShowedAudioTrackOptions()){
-          if(isMusicFirstTrack()){
-            trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_music_up);
-          } else {
-            trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_voice_over_up);
-          }
-        } else {
-          if(isMusicFirstTrack()){
-            trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_music_down);
-          } else {
-            trackClipsAudioTrackFirst.setImageTrack(R.drawable.activity_edit_sound_voice_over_down);
-          }
-        }
         break;
-      case ID_TRACK_CLIP_AUDIO_SECOND:
+      case 2:
         focusOnView(trackClipsAudioTrackSecond);
-        if(trackClipsAudioTrackSecond.isShowedAudioTrackOptions()){
-          if(isMusicSecondTrack()){
-            trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_music_up);
-          } else {
-            trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_voice_over_up);
-          }
-        } else {
-          if(isMusicSecondTrack()){
-            trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_music_down);
-          } else {
-            trackClipsAudioTrackSecond.setImageTrack(R.drawable.activity_edit_sound_voice_over_down);
-          }
-        }
         break;
-      default:
-        return;
+    }
+  }
+
+  @Override
+  public void onClickMediaClip(int position, int trackId) {
+    videonaPlayer.seekToClip(position);
+    // TODO:(alvaro.martinez) 31/05/17 If Vimojo support more than one music or voice over, update and calculate correct position
+    switch (trackId){
+      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_MEDIA_TRACK:
+        break;
+      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC:
+        trackClipsVideo.updateClipSelection(position);
+        break;
+      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
+        trackClipsVideo.updateClipSelection(position);
+        break;
     }
   }
 
@@ -595,14 +382,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
     });
   }
 
-
-  private boolean isMusicFirstTrack() {
-    return positionAudioTrackMusic == 1;
-  }
-
-  private boolean isMusicSecondTrack() {
-    return positionAudioTrackMusic == 2;
-  }
 
   @Nullable @OnClick(R.id.button_sound_warning_transcoding_file)
   public void onClickWarningTranscodingFile(){

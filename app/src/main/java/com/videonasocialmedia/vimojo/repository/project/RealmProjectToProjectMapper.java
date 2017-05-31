@@ -100,10 +100,10 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
           setTrackParams(project.getMediaTrack(), realmTrack);
           break;
         case INDEX_AUDIO_TRACK_MUSIC:
-          setTrackParams(project.getAudioTracks().get(INDEX_AUDIO_TRACKS_MUSIC), realmTrack);
+          setTrackParams(project.getAudioTracks().get(INDEX_AUDIO_TRACK_MUSIC), realmTrack);
           break;
         case INDEX_AUDIO_TRACK_VOICE_OVER:
-          setTrackParams(project.getAudioTracks().get(INDEX_AUDIO_TRACKS_VOICE_OVER), realmTrack);
+          setTrackParams(project.getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER), realmTrack);
           break;
       }
     }

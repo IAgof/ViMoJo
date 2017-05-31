@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.sound.domain;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -41,7 +42,7 @@ public class UpdateVideoTrackProjectUseCaseTest {
   public void setVideoTrackVolumeUpdateProjectMediaTrackVolume(){
     getAProject().clear();
     Project project = getAProject();
-    assertThat("Default volume is 0.5f", project.getMediaTrack().getVolume(), is(0.5f));
+    assertThat("Default volume is 1f", project.getMediaTrack().getVolume(), is(Video.DEFAULT_VOLUME));
 
     float volume = 0.8f;
     updateVideoTrackProjectUseCase = new UpdateVideoTrackProjectUseCase(mockedTrackRepository);

@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.sound.domain;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
@@ -27,6 +28,7 @@ public class AddVoiceOverToProjectUseCase {
   public void setVoiceOver(String voiceOverPath, float volume) {
     Music voiceOver = new Music(voiceOverPath, volume, FileUtils.getDuration(voiceOverPath));
     voiceOver.setMusicTitle(Constants.MUSIC_AUDIO_VOICEOVER_TITLE);
+    voiceOver.setIconResourceId(R.drawable.activity_edit_audio_voice_over_icon);
     addMusicToProjectUseCase.addMusicToTrack(voiceOver, INDEX_AUDIO_TRACK_VOICE_OVER,
         new OnAddMediaFinishedListener() {
           @Override

@@ -174,7 +174,7 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
 
 //    @Override
 //    public void initVideonaPlayer(VideonaPlayerListener videonaPlayerListener) {
-//        setListener(videonaPlayerListener);
+//        setTrackAndListener(videonaPlayerListener);
 //    }
 
     private void initSeekBar() {

@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
-import android.os.Build;
+import android.support.annotation.NonNull;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -8,17 +8,17 @@ import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.project.GetTracksInProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.UpdateAudioTrackProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.UpdateVideoTrackProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -27,22 +27,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
- * Created by alvaro on 8/03/17.
  */
 public class SoundPresenterTest {
 
@@ -55,17 +49,12 @@ public class SoundPresenterTest {
   @Mock
   GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionFromProjectUseCase;
   @Mock
-  UpdateVideoTrackProjectUseCase mockedUpdateVideoTrackProjectUseCase;
+  ModifyTrackUseCase mockedModifyTrackUseCase;
   @Mock
-  UpdateAudioTrackProjectUseCase mockedUpdateAudioTrackProjectUseCase;
-  @Mock
-  GetTracksInProjectUseCase mockedGetTracksInProjectUseCase;
+  VideoListErrorCheckerDelegate mockedVideoListErrorCheckerDelegate;
   @Mock
   ListenableFuture<Void> mockedTranscodingTask;
-  @Mock
-  VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
-
-
+  @Mock VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
 
   @InjectMocks SoundPresenter injectedSoundPresenter;
 
@@ -81,8 +70,14 @@ public class SoundPresenterTest {
   }
 
   @Test
-  public void getMediaListCallsGetMediaListFromProjectUseCase(){
+  public void getMediaListCallsGetMediaListFromProjectUseCase() throws IllegalItemOnTrack {
+    Project project = getAProject();
+    Video video = new Video("somePath", Video.DEFAULT_VOLUME);
+    project.getMediaTrack().insertItem(video);
+    assertThat("Project has video", project.getVMComposition().hasVideos(), is(true));
+
     injectedSoundPresenter.init();
+
     verify(mockedGetMediaListFromProjectUseCase)
         .getMediaListFromProject(injectedSoundPresenter);
   }
@@ -107,7 +102,7 @@ public class SoundPresenterTest {
   }
 
   @Test
-  public void ifProjectHasVideosCallsBindVideoList() throws IllegalItemOnTrack {
+  public void ifProjectHasVideosCallsBindVideoListAndTrack() throws IllegalItemOnTrack {
     getAProject().clear();
     Project project = getAProject();
     Video video = new Video("video/path", 1f);
@@ -115,66 +110,60 @@ public class SoundPresenterTest {
     videoList.add(video);
     MediaTrack mediaTrack = project.getMediaTrack();
     mediaTrack.insertItem(video);
-
     assertThat("Project has video", project.getVMComposition().hasVideos(), is(true));
-
     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
         new GetMediaListFromProjectUseCase();
-    SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
-        mockedVideoTranscodingErrorNotifier,
-        getMediaListFromProjectUseCase, mockedGetMusicFromProjectUseCase,
-        mockedGetPreferencesTransitionFromProjectUseCase, mockedUpdateVideoTrackProjectUseCase,
-        mockedUpdateAudioTrackProjectUseCase, mockedGetTracksInProjectUseCase);
+    SoundPresenter soundPresenter = getSoundPresenter(getMediaListFromProjectUseCase);
+
     soundPresenter.init();
 
     verify(mockedSoundView).bindVideoList(videoList);
-
+    verify(mockedSoundView).bindTrack(project.getMediaTrack());
   }
 
-  @Test
-  public void ifProjectHasNotVideosCallsResetPreview(){
-    Project project = getAProject();
-    assertThat("Project has not video", project.getVMComposition().hasVideos(), is(false));
-
-    GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
-        new GetMediaListFromProjectUseCase();
-    SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
-        mockedVideoTranscodingErrorNotifier,
+  @NonNull
+  private SoundPresenter getSoundPresenter(GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
+    return new SoundPresenter(mockedSoundView,
         getMediaListFromProjectUseCase, mockedGetMusicFromProjectUseCase,
-        mockedGetPreferencesTransitionFromProjectUseCase, mockedUpdateVideoTrackProjectUseCase,
-        mockedUpdateAudioTrackProjectUseCase, mockedGetTracksInProjectUseCase);
-    soundPresenter.init();
-
-    verify(mockedSoundView).resetPreview();
+        mockedGetPreferencesTransitionFromProjectUseCase, mockedModifyTrackUseCase,
+        mockedVideoListErrorCheckerDelegate);
   }
 
   @Test
-  public void ifProjectHasMusicCallsBindMusicList() throws IllegalItemOnTrack {
+  public void ifProjectHasMusicCallsBindMusicListAndTrack() throws IllegalItemOnTrack {
     Project project = getAProject();
     String musicPath = "music/path";
     float musicVolume = 0.6f;
     Music music = new Music(musicPath, musicVolume, 0);
     List<Music> musicList = new ArrayList<>();
     musicList.add(music);
-    project.getVMComposition().getAudioTracks().get(0).insertItem(music);
+    project.getVMComposition().getAudioTracks()
+        .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC)
+        .insertItem(music);
     GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
 
     Project currentProject = Project.getInstance(null, null, null);
     assertThat("Current project has music", currentProject.hasMusic(), is(true));
 
-    SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
-        mockedVideoTranscodingErrorNotifier,
-        mockedGetMediaListFromProjectUseCase, getMusicFromProjectUseCase,
-        mockedGetPreferencesTransitionFromProjectUseCase, mockedUpdateVideoTrackProjectUseCase,
-        mockedUpdateAudioTrackProjectUseCase, mockedGetTracksInProjectUseCase);
+    SoundPresenter soundPresenter = getSoundPresenter(getMusicFromProjectUseCase);
     soundPresenter.init();
 
     verify(mockedSoundView).bindMusicList(musicList);
+    verify(mockedSoundView).bindTrack(project.getAudioTracks()
+        .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC));
+  }
+
+  @NonNull
+  private SoundPresenter getSoundPresenter(GetMusicFromProjectUseCase getMusicFromProjectUseCase) {
+    return new SoundPresenter(mockedSoundView,
+        mockedGetMediaListFromProjectUseCase, getMusicFromProjectUseCase,
+        mockedGetPreferencesTransitionFromProjectUseCase, mockedModifyTrackUseCase,
+        mockedVideoListErrorCheckerDelegate);
   }
 
 
   @Test
-  public void ifProjectHasVoiceOverCallsBindVoiceOverList() throws IllegalItemOnTrack {
+  public void ifProjectHasVoiceOverCallsBindVoiceOverListAndTrack() throws IllegalItemOnTrack {
 
     Project project = getAProject();
     String musicPath = "voice/over/path";
@@ -183,22 +172,18 @@ public class SoundPresenterTest {
     voiceOver.setMusicTitle(Constants.MUSIC_AUDIO_VOICEOVER_TITLE);
     List<Music> voiceOverList = new ArrayList<>();
     voiceOverList.add(voiceOver);
-    project.getVMComposition().getAudioTracks().get(0).insertItem(voiceOver);
+    project.getVMComposition().getAudioTracks()
+        .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
+        .insertItem(voiceOver);
     GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
-
     Project currentProject = Project.getInstance(null, null, null);
-    assertThat("Current project has music", currentProject.hasMusic(), is(true));
-    assertThat("Music is voiceOver", currentProject.getMusic().getMusicTitle(),
-        is(Constants.MUSIC_AUDIO_VOICEOVER_TITLE));
-
-    SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
-        mockedVideoTranscodingErrorNotifier,
-        mockedGetMediaListFromProjectUseCase, getMusicFromProjectUseCase,
-        mockedGetPreferencesTransitionFromProjectUseCase, mockedUpdateVideoTrackProjectUseCase,
-        mockedUpdateAudioTrackProjectUseCase, mockedGetTracksInProjectUseCase);
+    assertThat("Current project has voiceOver", currentProject.hasVoiceOver(), is(true));
+    SoundPresenter soundPresenter = getSoundPresenter(getMusicFromProjectUseCase);
     soundPresenter.init();
-    verify(mockedSoundView).bindVoiceOverList(voiceOverList);
 
+    verify(mockedSoundView).bindVoiceOverList(voiceOverList);
+    verify(mockedSoundView).bindTrack(project.getAudioTracks()
+        .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
   }
 
   @Test
@@ -218,30 +203,24 @@ public class SoundPresenterTest {
   }
 
   @Test
-  public void ifProjectHasSomeVideoWithErrorsCallsShowWarningTempFile() throws IllegalItemOnTrack {
+  public void initPresenterInProjectWithVideoMusicAndVoiceOverShowTracks() throws IllegalItemOnTrack {
 
-    SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView,
-        mockedVideoTranscodingErrorNotifier,
-        mockedGetMediaListFromProjectUseCase, mockedGetMusicFromProjectUseCase,
-        mockedGetPreferencesTransitionFromProjectUseCase, mockedUpdateVideoTrackProjectUseCase,
-        mockedUpdateAudioTrackProjectUseCase, mockedGetTracksInProjectUseCase);
-    Video video1 = new Video("video/path", Video.DEFAULT_VOLUME);
-    Video video2 = new Video("video/path", Video.DEFAULT_VOLUME);
-    List<Video> videoList = new ArrayList<>();
-    videoList.add(video1);
-    videoList.add(video2);
+    Project project = getAProject();
+    project.getMediaTrack().insertItem(new Video("somePath", Video.DEFAULT_VOLUME));
+    Track musicTrack = project.getAudioTracks()
+        .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC);
+    musicTrack.insertItem(new Music("somePath", 1f, 50));
+    musicTrack.setPosition(1);
+    Track voiceOverTrack = project.getAudioTracks()
+        .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    voiceOverTrack.insertItem(new Music("somePath", 1f, 50));
+    voiceOverTrack.setPosition(2);
 
-    video2.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
-    assertThat("video1 has not error", video1.getVideoError(), is(nullValue()));
-    assertThat("video2 has error", video2.getVideoError(), notNullValue());
-    video1.setTranscodingTask(mockedTranscodingTask);
-    video2.setTranscodingTask(mockedTranscodingTask);
-    when(mockedTranscodingTask.isCancelled()).thenReturn(true);
+    injectedSoundPresenter.init();
 
-    soundPresenter.videoListErrorCheckerDelegate
-            .checkWarningMessageVideosRetrieved(videoList, mockedVideoTranscodingErrorNotifier);
-
-    verify(mockedVideoTranscodingErrorNotifier).showWarningTempFile();
+    verify(mockedSoundView).showTrackVideo();
+    verify(mockedSoundView).showTrackAudioFirst();
+    verify(mockedSoundView).showTrackAudioSecond();
   }
 
   public Project getAProject() {
@@ -249,7 +228,5 @@ public class SoundPresenterTest {
         VideoFrameRate.FrameRate.FPS25);
     return Project.getInstance("title", "/path", profile);
   }
-
-
 
 }
