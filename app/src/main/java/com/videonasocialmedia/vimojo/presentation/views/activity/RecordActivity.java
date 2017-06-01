@@ -674,10 +674,10 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     }
 
     @Override
-    public void showBatteryStatus(Constants.BATTERY_STATUS_ENUM batteryStatus, int batteryPercent) {
+    public void showBatteryStatus(Constants.BATTERY_STATUS batteryStatus, int batteryPercent) {
       progressDialogBatteryOrMemory.setTitle(R.string.battery);
       freeMemorySpace.setVisibility(View.GONE);
-        switch (batteryStatus){
+      switch (batteryStatus) {
              case CHARGING:
                  battery.setImageResource(R.drawable.activity_record_ic_battery_charging);
                  break;
@@ -706,19 +706,17 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     percentLevel.setText(batteryPercent + " %");
   }
 
-  private void updateProgressBarBattery(Constants.BATTERY_STATUS_ENUM batteryStatus, int batteryPercent) {
+  private void updateProgressBarBattery(Constants.BATTERY_STATUS batteryStatus, int batteryPercent) {
     progressBarBatteryOrMemory.setProgress(batteryPercent);
     setColorProgressBarBattery(batteryStatus);
   }
 
-  private void setColorProgressBarBattery(Constants.BATTERY_STATUS_ENUM batteryStatus) {
+  private void setColorProgressBarBattery(Constants.BATTERY_STATUS batteryStatus) {
 
     GradientDrawable drawableProgressBar = getDrawableProgressBar();
 
     switch (batteryStatus) {
       case CHARGING:
-        drawableProgressBar.setColor(Color.GREEN);
-        break;
       case FULL:
         drawableProgressBar.setColor(Color.GREEN);
         break;
@@ -726,13 +724,10 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         drawableProgressBar.setColor(Color.YELLOW);
         break;
       case LOW:
-        drawableProgressBar.setColor(Color.RED);
-        break;
       case CRITICAL:
-        drawableProgressBar.setColor(Color.RED);
-        break;
       default:
         drawableProgressBar.setColor(Color.RED);
+        break;
     }
   }
 

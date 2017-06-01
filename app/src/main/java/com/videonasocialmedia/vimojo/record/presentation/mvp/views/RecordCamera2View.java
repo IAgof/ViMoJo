@@ -89,7 +89,7 @@ public interface RecordCamera2View {
 
     void navigateTo(Class cls);
 
-    void showBatteryStatus(Constants.BATTERY_STATUS_ENUM statusBattery, int batteryPercent);
+    void showBatteryStatus(Constants.BATTERY_STATUS statusBattery, int batteryPercent);
 
     void showFreeStorageSpace(Constants.MEMORY_STATUS memoryStatus, int memoryPercent,
                               String freeMemoryInBytes, String totalMemoryInBytes);

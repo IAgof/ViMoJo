@@ -492,10 +492,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
-  public void showBatteryStatus(Constants.BATTERY_STATUS_ENUM batteryStatus, int batteryPercent) {
+  public void showBatteryStatus(Constants.BATTERY_STATUS batteryStatus, int batteryPercent) {
     alertDialogBatteryOrStorage.setTitle(R.string.battery);
     freeStorageSpace.setVisibility(View.GONE);
-    switch (batteryStatus){
+    switch (batteryStatus) {
       case CHARGING:
         batteryButton.setImageResource(R.drawable.activity_record_ic_battery_charging);
         break;
@@ -524,20 +524,18 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     percentLevel.setText(batteryPercent + " %");
   }
 
-  private void updateProgressBarBattery(Constants.BATTERY_STATUS_ENUM batteryStatus,
+  private void updateProgressBarBattery(Constants.BATTERY_STATUS batteryStatus,
                                         int batteryPercent) {
     progressBarBatteryOrStorage.setProgress(batteryPercent);
     setColorProgressBarBattery(batteryStatus);
   }
 
-  private void setColorProgressBarBattery(Constants.BATTERY_STATUS_ENUM batteryStatus) {
+  private void setColorProgressBarBattery(Constants.BATTERY_STATUS batteryStatus) {
 
     GradientDrawable drawableProgressBar = getDrawableProgressBar();
 
     switch (batteryStatus) {
       case CHARGING:
-        drawableProgressBar.setColor(getResources().getColor(R.color.recordAlertInfoGreen));
-        break;
       case FULL:
         drawableProgressBar.setColor(getResources().getColor(R.color.recordAlertInfoGreen));
         break;
@@ -545,13 +543,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         drawableProgressBar.setColor(getResources().getColor(R.color.recordAlertInfoYellow));
         break;
       case LOW:
-        drawableProgressBar.setColor(getResources().getColor(R.color.recordAlertInfoRed));
-        break;
       case CRITICAL:
-        drawableProgressBar.setColor(getResources().getColor(R.color.recordAlertInfoRed));
-        break;
       default:
         drawableProgressBar.setColor(getResources().getColor(R.color.recordAlertInfoRed));
+        break;
     }
   }
 
