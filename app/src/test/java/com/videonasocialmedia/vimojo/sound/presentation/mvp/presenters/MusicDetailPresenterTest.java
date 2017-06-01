@@ -4,36 +4,45 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
-import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.UpdateAudioTrackProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.UpdateMusicVolumeProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -45,15 +54,15 @@ public class MusicDetailPresenterTest {
     @Mock private VideonaPlayer playerView;
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
-    @Mock private RemoveMusicFromProjectUseCase mockedRemoveMusicUseCase;
-    @Mock private AddMusicToProjectUseCase mockedAddMusicToProjectUseCase;
-    @Mock private UpdateMusicVolumeProjectUseCase mockedUpdateMusicVolumeProjectUseCase;
     @Mock private Context mockedContext;
     @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock private GetMusicFromProjectUseCase mockedGetMusicFromProject;
     @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
-    @Mock UpdateAudioTrackProjectUseCase mockedUpdateAudioTrackProjectUseCase;
-    @Mock UpdateCurrentProjectUseCase mockedUpdateCurrentProjectUseCase;
+    @Mock private AddAudioUseCase mockedAddAudioUseCase;
+    @Mock private RemoveAudioUseCase mockedRemoveAudioUseCase;
+    @Mock private ModifyTrackUseCase mockedModifyTrackUseCase;
+
+    @Mock private OnRemoveMediaFinishedListener mockedOnRemoveMediaFinishedListener;
 
     @Before
     public void injectMocks() {
@@ -85,6 +94,55 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
+    public void addMusicCallsGoToSoundActivityOnAddMediaItemFromTrackSuccess(){
+        MusicDetailPresenter musicDetailPresenter =
+            getMusicDetailPresenter(mockedUserEventTracker);
+        Project videonaProject = getAProject();
+        final Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
+        float volumeMusic = 0.85f;
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                OnAddMediaFinishedListener listener =
+                    invocation.getArgumentAt(2, OnAddMediaFinishedListener.class);
+                listener.onAddMediaItemToTrackSuccess(music);
+                return null;
+            }
+        }).when(mockedAddAudioUseCase).addMusic(eq(music),
+            eq(Constants.INDEX_AUDIO_TRACK_MUSIC),
+            Matchers.any(OnAddMediaFinishedListener.class));
+
+        musicDetailPresenter.addMusic(music, volumeMusic);
+
+        verify(musicDetailView).goToSoundActivity();
+        verify(mockedUserEventTracker).trackMusicSet(videonaProject);
+    }
+
+    @Test
+    public void addMusicCallsGoToSoundActivityOnAddMediaItemFromTrackError(){
+        MusicDetailPresenter musicDetailPresenter =
+            getMusicDetailPresenter(mockedUserEventTracker);
+        Project videonaProject = getAProject();
+        final Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
+        float volumeMusic = 0.85f;
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                OnAddMediaFinishedListener listener =
+                    invocation.getArgumentAt(2, OnAddMediaFinishedListener.class);
+                listener.onAddMediaItemToTrackError();
+                return null;
+            }
+        }).when(mockedAddAudioUseCase).addMusic(eq(music),
+            eq(Constants.INDEX_AUDIO_TRACK_MUSIC),
+            Matchers.any(OnAddMediaFinishedListener.class));
+
+        musicDetailPresenter.addMusic(music, volumeMusic);
+
+        verify(musicDetailView).showError(anyString());
+    }
+
+    @Test
     public void onAddMediaItemToTrackSuccessCallsTrackMusicSet() {
         MusicDetailPresenter musicDetailPresenter =
                 getMusicDetailPresenter(mockedUserEventTracker);
@@ -92,34 +150,86 @@ public class MusicDetailPresenterTest {
         Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
         musicDetailPresenter.onMusicRetrieved(music);
 
-        musicDetailPresenter.onAddMediaItemToTrackSuccess(music);
+       // musicDetailPresenter.onAddMediaItemToTrackSuccess(music);
 
         verify(mockedUserEventTracker).trackMusicSet(videonaProject);
     }
 
     @Test
-    public void removeMusicCallsTrackMusicSet() {
-        MusicDetailPresenter musicDetailPresenter =
-                getMusicDetailPresenter(mockedUserEventTracker);
-        Project videonaProject = getAProject();
-        Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
-//        musicDetailPresenter.removeMusicFromProjectUseCase = mockedRemoveMusicUseCase;
-
-        musicDetailPresenter.removeMusic(music);
-
-        verify(mockedUserEventTracker).trackMusicSet(videonaProject);
-    }
-
-    @Test
-    public void removeMusicCallsGoToSoundActivity(){
+    public void removeMusicCallsGoToSoundActivityOnRemoveMediaItemFromTrackSuccess(){
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         Project videonaProject = getAProject();
         Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                OnRemoveMediaFinishedListener listener =
+                    invocation.getArgumentAt(2, OnRemoveMediaFinishedListener.class);
+                listener.onRemoveMediaItemFromTrackSuccess();
+                return null;
+            }
+        }).when(mockedRemoveAudioUseCase).removeMusic(eq(music),
+            eq(Constants.INDEX_AUDIO_TRACK_MUSIC),
+            Matchers.any(OnRemoveMediaFinishedListener.class));
 
         musicDetailPresenter.removeMusic(music);
 
         verify(musicDetailView).goToSoundActivity();
+        verify(mockedUserEventTracker).trackMusicSet(videonaProject);
+    }
+
+    @Test
+    public void removeMusicCallsShowErrorOnRemoveMediaItemFromTrackError(){
+        MusicDetailPresenter musicDetailPresenter =
+            getMusicDetailPresenter(mockedUserEventTracker);
+        Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                OnRemoveMediaFinishedListener listener =
+                    invocation.getArgumentAt(2, OnRemoveMediaFinishedListener.class);
+                listener.onRemoveMediaItemFromTrackError();
+                return null;
+            }
+        }).when(mockedRemoveAudioUseCase).removeMusic(eq(music),
+            eq(Constants.INDEX_AUDIO_TRACK_MUSIC),
+            Matchers.any(OnRemoveMediaFinishedListener.class));
+
+        musicDetailPresenter.removeMusic(music);
+
+        verify(musicDetailView).showError(anyString());
+    }
+
+    @Test
+    public void addMusicUpdateTrackVolume(){
+        MusicDetailPresenter musicDetailPresenter =
+            getMusicDetailPresenter(mockedUserEventTracker);
+        final Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
+        float volumeMusic = 0.85f;
+        Project project = getAProject();
+
+        musicDetailPresenter.addMusic(music, volumeMusic);
+
+        assertThat("Add music volume update music track volume ", project.getAudioTracks()
+            .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume(), is(volumeMusic));
+    }
+
+    @Test
+    public void setVolumeUpdateMusicTrackVolume() throws IllegalItemOnTrack {
+        MusicDetailPresenter musicDetailPresenter =
+            getMusicDetailPresenter(mockedUserEventTracker);
+        Project project = getAProject();
+        AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+        Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
+        float volumeMusic = 0.85f;
+        musicTrack.insertItem(music);
+        assertThat("Initial volume is 0.5f ", musicTrack.getVolume(), is(0.5f));
+
+        musicDetailPresenter.setVolume(volumeMusic);
+
+        AudioTrack updatedMusicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+        assertThat("Set volume update music track volume ", updatedMusicTrack.getVolume(), is(volumeMusic));
     }
 
     public Project getAProject() {
@@ -130,10 +240,8 @@ public class MusicDetailPresenterTest {
     @NonNull
     private MusicDetailPresenter getMusicDetailPresenter(UserEventTracker userEventTracker) {
         return new MusicDetailPresenter(musicDetailView, userEventTracker,
-                mockedAddMusicToProjectUseCase, mockedRemoveMusicUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedGetMusicFromProject,
-                mockedGetPreferencesTransitionsFromProject, mockedUpdateMusicVolumeProjectUseCase,
-                mockedUpdateAudioTrackProjectUseCase, mockedUpdateCurrentProjectUseCase,
-                mockedContext);
+                mockedGetPreferencesTransitionsFromProject, mockedAddAudioUseCase,
+                mockedRemoveAudioUseCase, mockedModifyTrackUseCase, mockedContext);
     }
 }

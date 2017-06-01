@@ -14,4 +14,5 @@ public interface SoundVolumeView {
     void goToSoundActivity();
     void setVideoFadeTransitionAmongVideos();
     void setAudioFadeTransitionAmongVideos();
+    void showError(String message);
 }

@@ -1,10 +1,13 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
+import android.support.annotation.NonNull;
+
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.UpdateAudioTrackProjectUseCase;
@@ -33,14 +36,12 @@ import static org.mockito.Mockito.verify;
 @RunWith(PowerMockRunner.class)
 public class SoundVolumePresenterTest {
   @Mock private SoundVolumeView mockedSoundVolumeView;
-  @Mock AddVoiceOverToProjectUseCase mockedAddVoiceOverToProjectUseCase;
-  @Mock private RemoveMusicFromProjectUseCase mockedRemoveMusicFromProjectUseCase;
   @InjectMocks SoundVolumePresenter injectedPresenter;
   @Mock private MusicRepository mockedMusicRepository;
   @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
-  @Mock UpdateAudioTrackProjectUseCase mockedUpdateAudioTrackProjectUseCase;
-  @Mock UpdateCurrentProjectUseCase mockedUpdateCurrentProjectUseCase;
+  @Mock private AddAudioUseCase mockedAddAudioUseCase;
+
 
 
   @Before
@@ -68,14 +69,17 @@ public class SoundVolumePresenterTest {
   @Test
   public void setVoiceOverCallsGoToSoundActivity(){
 
-    SoundVolumePresenter soundVolumePresenter = new SoundVolumePresenter(mockedSoundVolumeView,
-        mockedAddVoiceOverToProjectUseCase,mockedGetMediaListFromProjectUseCase,
-        mockedGetPreferencesTransitionsFromProject,mockedUpdateAudioTrackProjectUseCase,
-        mockedUpdateCurrentProjectUseCase);
+    SoundVolumePresenter soundVolumePresenter = getSoundVolumePresenter();
 
     soundVolumePresenter.setVoiceOver("media/path", 0.55f);
 
     verify(mockedSoundVolumeView).goToSoundActivity();
+  }
+
+  @NonNull
+  private SoundVolumePresenter getSoundVolumePresenter() {
+    return new SoundVolumePresenter(mockedSoundVolumeView, mockedGetMediaListFromProjectUseCase,
+        mockedGetPreferencesTransitionsFromProject,mockedAddAudioUseCase);
   }
 
   private Project getCurrentProject() {

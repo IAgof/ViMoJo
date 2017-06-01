@@ -221,6 +221,12 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     }
 
     @Override
+    public void showError(String message) {
+        // TODO:(alvaro.martinez) 1/06/17 Manage error, common alertDialog VimojoActivity ¿?
+
+    }
+
+    @Override
     public void newClipPlayed(int currentClipIndex) {
     }
 }

@@ -19,4 +19,6 @@ public interface MusicDetailView {
     void goToSoundActivity();
     
     void setVideoFadeTransitionAmongVideos();
+
+    void showError(String message);
 }

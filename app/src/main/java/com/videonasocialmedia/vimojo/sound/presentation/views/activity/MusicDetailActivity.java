@@ -225,6 +225,13 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         videonaPlayer.setVideoTransitionFade();
     }
 
+    @Override
+    public void showError(String message) {
+        // TODO:(alvaro.martinez) 1/06/17 Manage error, common alertDialog VimojoActivity ¿?
+        String title = getString(R.string.alert_dialog_title_music);
+        super.showAlertDialog(title, message);
+    }
+
     @Nullable
     @OnClick(R.id.select_music)
     public void selectMusic() {
