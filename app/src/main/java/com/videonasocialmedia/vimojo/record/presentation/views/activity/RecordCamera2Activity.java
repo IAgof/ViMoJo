@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -554,7 +555,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private class OrientationHelper extends OrientationEventListener {
     Context context;
     private boolean orientationHaveChanged = false;
-    private boolean isNormalOrientation;
 
     public OrientationHelper(Context context) {
       super(context);
@@ -569,20 +569,31 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
     @Override
     public void onOrientationChanged(int orientation) {
+      checkShowRotateDeviceImage(orientation);
       if (orientation > 85 && orientation < 95) {
         if (orientationHaveChanged) {
           Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
-          presenter.restartPreview();
           orientationHaveChanged = false;
+          restartPreview();
         }
       } else if (orientation > 265 && orientation < 275) {
         if (!orientationHaveChanged) {
           Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
-          presenter.restartPreview();
           orientationHaveChanged = true;
+          restartPreview();
         }
       }
-      checkShowRotateDeviceImage(orientation);
+    }
+
+    private void restartPreview() {
+      Runnable r = new Runnable() {
+        @Override
+        public void run(){
+          presenter.restartPreview();
+        }
+      };
+      Handler h = new Handler();
+      h.postDelayed(r, 300);
     }
 
 
