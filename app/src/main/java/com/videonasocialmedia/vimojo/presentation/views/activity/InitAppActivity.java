@@ -202,7 +202,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     @Override

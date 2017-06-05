@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:id="@+id/container"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:background="#000"
-             tools:context=".record.presentation.views.activity.RecordCamera2Activity" />-->
 <android.support.design.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
                                                  android:id="@+id/coordinatorLayout"
                                                  xmlns:android="http://schemas.android.com/apk/res/android"
@@ -27,17 +20,25 @@
         android:id="@+id/customManualFocusView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        CustomManualFocusView:focus_icon="@drawable/record_activity_ic_focused"/>
+        CustomManualFocusView:focus_icon="@drawable/activity_record_ic_focused"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/image_view_grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/activity_record_background_grid"
+            android:visibility="invisible"/>
+
         <ImageButton
             android:id="@+id/clear_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/record_activity_ic_expand"
+            android:src="@drawable/activity_record_ic_shrink"
             android:background="@drawable/circle_background"
             android:scaleType="fitCenter"
             android:layout_marginBottom="16dp"
@@ -85,7 +86,7 @@
                     android:layout_height="24dp"
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
-                    app:srcCompat="@drawable/record_activity_ic_battery_charged"
+                    app:srcCompat="@drawable/activity_record_ic_battery_charged"
                     android:visibility="visible"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="4dp"
@@ -98,7 +99,7 @@
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
                     android:visibility="visible"
-                    app:srcCompat="@drawable/record_activity_ic_memory_card"
+                    app:srcCompat="@drawable/activity_record_ic_memory_card"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"/>
 
@@ -109,7 +110,7 @@
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
                     android:visibility="visible"
-                    android:src="@drawable/record_activity_ic_resolution_720"
+                    android:src="@drawable/activity_record_ic_resolution_720"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"/>
 
@@ -120,7 +121,7 @@
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
                     android:visibility="gone"
-                    android:src="@drawable/activity_record_icon_geolocation_normal"
+                    android:src="@drawable/activity_record_ic_geolocation_normal"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp" />
 
@@ -130,7 +131,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:visibility="gone"
-                    android:src="@drawable/activity_record_icon_microphone_pressed"
+                    android:src="@drawable/activity_record_ic_microphone_pressed"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp" />
 
@@ -142,13 +143,14 @@
         <!-- Zoom -->
 
         <LinearLayout
-            android:id="@+id/zoom_bar"
+            android:id="@+id/zoom_submenu"
             android:orientation="vertical"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:background="@color/colorGreyTransparent"
             android:visibility="invisible"
+            android:padding="2dp"
             android:layout_marginLeft="16dp">
 
             <TextView
@@ -156,37 +158,113 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00ffffff"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_color_lens_white_48px"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/colorWhite" />
-            <SeekBar
-                android:layout_width="24dp"
-                android:layout_height="200dp"
-                android:background="#00ffffff"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_brightness_5_white_48px"
-                android:layout_gravity="center_horizontal"
-                android:indeterminate="false"
-                android:visibility="invisible" />
+                android:layout_gravity="center"
+                android:textColor="@color/colorWhite"
+                android:layout_marginTop="4dp"/>
+
+            <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal">
+                <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
+                    android:id="@+id/seekBar_slide_left"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:splitTrack="false"
+                    app:seekBarRotation="CW270" /> <!-- Rotation: CW90 or CW270 -->
+            </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
             <TextView
                 android:text="0%"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00ffffff"
-                android:src="@drawable/ic_brightness_5_white_48px"
-                android:layout_gravity="center_horizontal"
+                android:layout_gravity="center"
                 android:textColor="@color/colorWhite" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/settings_bar_submenu"
+            android:id="@+id/iso_submenu"
             android:layout_above="@+id/settings_bar"
             android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/colorGreyTransparent"
-            android:visibility="visible"
+            android:visibility="invisible"
+            android:layout_marginBottom="4dp">
+
+            <TextView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center_vertical"
+                android:text="Auto"
+                android:textColor="@color/colorWhite"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:text="50"
+                android:textColor="@color/colorWhite"
+                android:layout_gravity="center"
+                android:layout_marginLeft="16dp" />
+
+            <TextView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:text="100"
+                android:textColor="@color/colorWhite"
+                android:layout_marginLeft="16dp" />
+
+            <TextView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:text="200"
+                android:textColor="@color/colorWhite"
+                android:layout_marginLeft="16dp" />
+
+            <TextView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:text="400"
+                android:textColor="@color/colorWhite"
+                android:layout_marginLeft="16dp" />
+
+            <TextView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:text="Max"
+                android:textColor="@color/colorWhite"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/af_selection_submenu"
+            android:layout_above="@+id/settings_bar"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorGreyTransparent"
+            android:visibility="invisible"
             android:layout_marginBottom="4dp">
 
             <ImageButton
@@ -195,7 +273,7 @@
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
-                android:src="@drawable/record_activity_ic_white_balance_auto"
+                android:src="@drawable/activity_record_ic_focus_auto"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp" />
@@ -206,7 +284,7 @@
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
-                android:src="@drawable/record_activity_ic_white_balance_cloudy"
+                android:src="@drawable/activity_record_ic_focus_adjust"
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
@@ -215,7 +293,41 @@
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
-                android:src="@drawable/record_activity_ic_white_balance_daylight"
+                android:src="@drawable/activity_record_ic_focus_touch"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/white_balance_submenu"
+            android:layout_above="@+id/settings_bar"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorGreyTransparent"
+            android:visibility="invisible"
+            android:layout_marginBottom="4dp">
+
+            <ImageButton
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/activity_record_ic_white_balance_auto"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+
+            <ImageButton
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/activity_record_ic_white_balance_cloudy"
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
@@ -224,7 +336,7 @@
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
-                android:src="@drawable/record_activity_ic_white_balance_fluorescent"
+                android:src="@drawable/activity_record_ic_white_balance_daylight"
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
@@ -233,9 +345,80 @@
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
-                android:src="@drawable/record_activity_ic_white_balance_tungsten"
-                android:layout_marginRight="8dp"
+                android:src="@drawable/activity_record_ic_flash"
+                android:layout_marginLeft="16dp" />
+
+            <ImageButton
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/activity_record_ic_white_balance_fluorescent"
+                android:layout_marginLeft="16dp" />
+
+            <ImageButton
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/activity_record_ic_white_balance_tungsten"
+                android:layout_marginRight="16dp"
                 android:layout_marginLeft="16dp"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/metering_mode_submenu"
+            android:layout_above="@+id/settings_bar"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorGreyTransparent"
+            android:visibility="invisible"
+            android:layout_marginBottom="4dp">
+
+            <ImageButton
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/activity_record_ic_brightness_auto"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+
+            <ImageButton
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/activity_record_ic_brightness_adjust"
+                android:layout_marginLeft="16dp" />
+
+            <ImageButton
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/activity_record_ic_metering_center"
+                android:layout_marginLeft="16dp" />
+
+            <ImageButton
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/activity_record_ic_brightness_manual"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                />
 
         </LinearLayout>
 
@@ -247,60 +430,87 @@
             android:layout_height="wrap_content"
             android:background="@color/colorGreyTransparent"
             android:layout_marginBottom="8dp"
-            android:visibility="visible">
+            android:visibility="visible"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp">
 
             <ImageButton
+                android:id="@+id/button_grid"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitXY"
-                android:src="@drawable/record_activity_ic_zoom"
-                android:id="@+id/zoom"
+                android:src="@drawable/activity_record_ic_grid"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                />
+
+            <ImageButton
+                android:id="@+id/button_zoom"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitXY"
+                android:src="@drawable/activity_record_ic_zoom"
                 android:layout_marginLeft="16dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp" />
+                android:layout_margin="8dp"
+                />
 
             <ImageButton
+                android:id="@+id/button_iso"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
-                android:src="@drawable/record_activity_ic_iso"
-                android:id="@+id/iso"
-                android:layout_marginLeft="24dp" />
+                android:src="@drawable/activity_record_ic_iso"
+                android:layout_margin="8dp"
+                />
 
             <ImageButton
+                android:id="@+id/button_af_selection"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
-                android:src="@drawable/record_activity_ic_focus"
-                android:id="@+id/af_selection"
-                android:layout_marginLeft="24dp" />
+                android:src="@drawable/activity_record_ic_focus"
+                android:layout_margin="8dp"
+                />
 
             <ImageButton
+                android:id="@+id/button_white_balance"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
-                android:src="@drawable/record_activity_ic_white_balance"
-                android:id="@+id/wd"
-                android:layout_marginLeft="24dp" />
+                android:src="@drawable/activity_record_ic_white_balance"
+                android:layout_margin="8dp"
+                />
 
             <ImageButton
+                android:id="@+id/button_metering_mode"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
-                android:src="@drawable/record_activity_ic_metering_evaluative"
-                android:id="@+id/measurement_mode"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="16dp" />
+                android:src="@drawable/activity_record_ic_metering_evaluative"
+                android:layout_margin="8dp"
+                />
+
+            <ImageButton
+                android:id="@+id/button_camera_auto"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitXY"
+                android:layout_gravity="center"
+                android:src="@drawable/activity_record_ic_settings_auto"
+                android:layout_margin="8dp"
+                />
 
         </LinearLayout>
 
@@ -365,10 +575,22 @@
                 android:layout_height="40dp"
                 android:background="@drawable/circle_background"
                 android:scaleType="fitCenter"
-                android:src="@drawable/record_activity_ic_galery"
+                android:src="@drawable/activity_record_ic_galery"
                 android:visibility="visible"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:id="@+id/record_text_view_edit_or_gallery"
+                android:padding="2dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/button_navigate_edit_or_gallery"
+                android:layout_centerInParent="true"
+                android:text="@string/recordTextGallery"
+                android:textSize="12sp"
+                android:textColor="@android:color/white"
+            />
 
             <TextView
                 android:id="@+id/text_view_num_videos"
@@ -384,55 +606,57 @@
                 android:layout_centerHorizontal="true"
                 android:layout_alignBottom="@+id/button_navigate_edit_or_gallery" />
 
+
             <LinearLayout
                 android:id="@+id/controls"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="visible"
+                android:padding="2dp"
                 android:background="@color/colorGreyTransparent"
                 android:layout_above="@+id/button_record"
                 android:layout_marginBottom="12dp"
                 android:layout_centerHorizontal="true">
 
                 <ImageButton
-                    android:id="@+id/button_toggle_flash"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:background="@null"
-                    android:layout_gravity="center"
-                    android:scaleType="fitCenter"
-                    android:layout_margin="4dp"
-                    app:srcCompat="@drawable/record_activity_ic_flash"/>
-
-                <ImageButton
                     android:id="@+id/button_change_camera"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:layout_margin="4dp"
+                    android:layout_margin="6dp"
                     android:background="@null"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/record_activity_ic_rotate"/>
+                    android:src="@drawable/activity_record_ic_rotate"/>
 
                 <ImageButton
-                    android:id="@+id/button_settings_camera"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_margin="10dp"
+                    android:id="@+id/button_toggle_flash"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:background="@null"
+                    android:layout_gravity="center"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/record_activity_ic_controls"/>
+                    android:layout_margin="6dp"
+                    app:srcCompat="@drawable/activity_record_ic_flash"/>
+
+                <ImageButton
+                android:id="@+id/button_settings_camera"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="6dp"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/activity_record_ic_controls"/>
 
                 <ImageButton
                     android:id="@+id/button_navigate_settings"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:layout_margin="4dp"
+                    android:layout_margin="6dp"
                     android:background="@null"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/record_activity_ic_settings"
+                    android:src="@drawable/activity_record_ic_settings"
                     />
             </LinearLayout>
 
@@ -442,7 +666,7 @@
                 android:layout_height="32dp"
                 android:background="@drawable/circle_background"
                 android:scaleType="fitCenter"
-                android:src="@drawable/record_activity_ic_hide_menu_normal"
+                android:src="@drawable/activity_record_ic_hide_menu_normal"
                 android:visibility="visible"
                 android:layout_alignBottom="@+id/controls"
                 android:layout_centerHorizontal="true" />
@@ -454,7 +678,7 @@
                 android:background="@null"
                 android:alpha="0.5"
                 android:scaleType="fitCenter"
-                android:src="@drawable/record_activity_ic_rec"
+                android:src="@drawable/activity_record_ic_rec"
                 android:visibility="visible"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"/>
@@ -466,7 +690,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/circle_background"
-            android:src="@drawable/record_activity_ic_show_menu_normal"
+            android:src="@drawable/activity_record_ic_show_menu_normal"
             android:scaleType="fitCenter"
             android:visibility="visible"
             android:layout_alignBottom="@+id/relativeLayout"
