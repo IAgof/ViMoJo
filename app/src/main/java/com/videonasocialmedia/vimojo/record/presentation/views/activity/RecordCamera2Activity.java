@@ -14,6 +14,7 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -25,6 +26,7 @@ import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -56,7 +58,8 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
  * Created by alvaro on 16/01/17.
  */
 
-public class RecordCamera2Activity extends VimojoActivity implements RecordCamera2View {
+public class RecordCamera2Activity extends VimojoActivity implements RecordCamera2View,
+    SeekBar.OnSeekBarChangeListener {
 
   private final String LOG_TAG = getClass().getSimpleName();
 
@@ -69,6 +72,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton flashButton;
   @Bind(R.id.button_change_camera)
   ImageButton changeCameraButton;
+  @Bind(R.id.button_grid)
+  ImageButton gridButton;
   @Bind(R.id.button_to_show_controls_right)
   ImageButton showControlsButton;
   @Bind(R.id.button_to_hide_controls)
@@ -79,6 +84,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   Chronometer chronometer;
   @Bind(R.id.text_view_num_videos)
   TextView numVideosRecordedTextView;
+  @Bind(R.id.record_text_view_edit_or_gallery)
+  TextView editText;
   @Bind(R.id.button_navigate_edit_or_gallery)
   CircleImageView thumbClipRecordedButton;
   @Bind(R.id.button_record)
@@ -95,18 +102,40 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   View controlsView;
   @Bind(R.id.picometer)
   View picometerView;
-  @Bind(R.id.zoom_bar)
-  View zommBarView;
+  @Bind(R.id.seekBar_slide_left)
+  SeekBar slideSeekBar;
   @Bind(R.id.settings_bar)
-  View settingsBarView;
-  @Bind(R.id.settings_bar_submenu)
-  View settingsBarSubmenuView;
+  View settingsCameraBarView;
+  @Bind(R.id.button_zoom)
+  ImageButton zoomButton;
+  @Bind(R.id.zoom_submenu)
+  View zoomSubmenuView;
+  @Bind(R.id.button_iso)
+  ImageButton isoButton;
+  @Bind(R.id.iso_submenu)
+  View isoSubmenuView;
+  @Bind(R.id.button_af_selection)
+  ImageButton afSelectionButton;
+  @Bind(R.id.af_selection_submenu)
+  View afSelectionSubmenuView;
+  @Bind(R.id.button_white_balance)
+  ImageButton whiteBalanceButton;
+  @Bind(R.id.white_balance_submenu)
+  View whiteBalanceSubmenuView;
+  @Bind(R.id.button_metering_mode)
+  ImageButton meteringModeButton;
+  @Bind(R.id.metering_mode_submenu)
+  View meteringModeSubmenuView;
+  @Bind(R.id.button_camera_auto)
+  ImageButton cameraAutoButton;
   @Bind(R.id.button_resolution_indicator)
   ImageView resolutionIndicatorButton;
   @Bind(R.id.customManualFocusView)
   CustomManualFocusView customManualFocusView;
   @Bind(R.id.rotateDeviceHint)
   ImageView rotateDeviceHint;
+  @Bind(R.id.image_view_grid)
+  ImageView imageViewGrid;
 
   @Bind(R.id.activity_record_icon_battery)
   ImageView batteryButton;
@@ -132,14 +161,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private boolean isRecording = false;
   private boolean buttonBackPressed = false;
 
-  private boolean isFrontCameraSelected = false;
-
+  // TODO:(alvaro.martinez) 18/01/17 Move this values to Constants
   private final int RESOLUTION_SELECTED_HD720 = 720;
   private final int RESOLUTION_SELECTED_HD1080 = 1080;
   private final int RESOLUTION_SELECTED_HD4K = 2160;
   private OrientationHelper orientationHelper;
-  private boolean isPrincipalViewsSelected = false;
-  private boolean isControlsViewSelected = false;
 
   private ProgressDialog progressDialogAdaptVideo;
   private AlertDialog alertDialogBatteryOrStorage;
@@ -153,6 +179,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       }
     }
   };
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +197,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
     createProgressDialogAdaptVideo();
     createAlertDialogBatteryOrStorage();
+
+    slideSeekBar.setOnSeekBarChangeListener(this);
   }
 
   private void createProgressDialogAdaptVideo() {
@@ -202,8 +231,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public ActivityPresentersModule getActivityPresentersModule() {
-    return new ActivityPresentersModule(this, isFrontCameraSelected, isPrincipalViewsSelected,
-        isControlsViewSelected, Constants.PATH_APP_TEMP, textureView);
+    return new ActivityPresentersModule(this, Constants.PATH_APP_TEMP,
+        textureView);
   }
 
   private void keepScreenOn() {
@@ -212,14 +241,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   public void setupActivityButtons() {
     // TODO:(alvaro.martinez) 7/11/16 implement this functionality, use case check support camera
-    settingsCameraButton.setEnabled(false);
     tintRecordButtons(R.color.button_color_record_activity);
 
     // Disable until implement camera pro
     picometerView.setVisibility(View.INVISIBLE);
-    zommBarView.setVisibility(View.INVISIBLE);
-    settingsBarSubmenuView.setVisibility(View.INVISIBLE);
-    settingsBarView.setVisibility(View.INVISIBLE);
   }
 
   private void tintRecordButtons(int button_color) {
@@ -229,6 +254,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(hideControlsViewButton, button_color);
     tintButton(navigateSettingsButtons, button_color);
     tintButton(settingsCameraButton, button_color);
+    tintButton(zoomButton, button_color);
+    tintButton(isoButton, button_color);
+    tintButton(afSelectionButton, button_color);
+    tintButton(whiteBalanceButton, button_color);
+    tintButton(meteringModeButton, button_color);
+    tintButton(gridButton, button_color);
+    tintButton(cameraAutoButton, button_color);
   }
 
   private void configChronometer() {
@@ -293,7 +325,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void showRecordButton() {
-    recordButton.setImageResource(R.drawable.record_activity_ic_rec);
+    recordButton.setImageResource(R.drawable.activity_record_ic_rec);
     isRecording = false;
   }
 
@@ -368,7 +400,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void setZoom(float value){
-    // TODO:(alvaro.martinez) 27/01/17 Implement zoom_bar_view
+    slideSeekBar.setProgress((int) (value * 100));
   }
 
   @Override
@@ -400,21 +432,25 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void hidePrincipalViews() {
-    clearButton.setImageResource(R.drawable.record_activity_ic_shrink);
-    clearButton.setAlpha(0.5f);
-    clearButton.setBackground(null);
+    clearButton.setImageResource(R.drawable.activity_record_ic_expand);
     clearButton.setActivated(true);
     hudView.setVisibility(View.INVISIBLE);
     controlsView.setVisibility(View.INVISIBLE);
     hideControlsViewButton.setVisibility(View.INVISIBLE);
     showControlsButton.setVisibility(View.INVISIBLE);
+    zoomSubmenuView.setVisibility(View.INVISIBLE);
+    isoSubmenuView.setVisibility(View.INVISIBLE);
+    afSelectionSubmenuView.setVisibility(View.INVISIBLE);
+    whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+    meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+    settingsCameraBarView.setVisibility(View.INVISIBLE);
+    zoomSubmenuView.setVisibility(View.INVISIBLE);
   }
 
   @Override
   public void showPrincipalViews() {
-    clearButton.setImageResource(R.drawable.record_activity_ic_expand);
+    clearButton.setImageResource(R.drawable.activity_record_ic_shrink);
     clearButton.setBackground(getResources().getDrawable(R.drawable.circle_background));
-    clearButton.setAlpha(1f);
     clearButton.setActivated(false);
     hudView.setVisibility(View.VISIBLE);
     showControlsButton.setVisibility(View.VISIBLE);
@@ -425,6 +461,14 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     hideControlsViewButton.setVisibility(View.INVISIBLE);
     showControlsButton.setVisibility(View.VISIBLE);
     controlsView.setVisibility(View.INVISIBLE);
+    settingsCameraBarView.setVisibility(View.INVISIBLE);
+
+    settingsCameraBarView.setVisibility(View.INVISIBLE);
+    zoomSubmenuView.setVisibility(View.INVISIBLE);
+    isoSubmenuView.setVisibility(View.INVISIBLE);
+    afSelectionSubmenuView.setVisibility(View.INVISIBLE);
+    whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+    meteringModeSubmenuView.setVisibility(View.INVISIBLE);
   }
 
   @Override
@@ -432,35 +476,109 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     showControlsButton.setVisibility(View.INVISIBLE);
     hideControlsViewButton.setVisibility(View.VISIBLE);
     controlsView.setVisibility(View.VISIBLE);
+    if(settingsCameraButton.isSelected()){
+      settingsCameraBarView.setVisibility(View.VISIBLE);
+    }
+    if(zoomButton.isSelected()){
+      zoomSubmenuView.setVisibility(View.VISIBLE);
+      return;
+    }
+    if(isoButton.isSelected()){
+      isoSubmenuView.setVisibility(View.VISIBLE);
+      return;
+    }
+    if(afSelectionButton.isSelected()){
+      afSelectionSubmenuView.setVisibility(View.VISIBLE);
+      return;
+    }
+    if(whiteBalanceButton.isSelected()){
+      whiteBalanceSubmenuView.setVisibility(View.VISIBLE);
+      return;
+    }
+    if(meteringModeButton.isSelected()){
+      meteringModeSubmenuView.setVisibility(View.VISIBLE);
+      return;
+    }
   }
 
   @Override
-  public void showBottomControlsView() {
-    settingsBarSubmenuView.setVisibility(View.VISIBLE);
+  public void showSettingsCameraView() {
+
+    settingsCameraBarView.setVisibility(View.VISIBLE);
     settingsCameraButton.setSelected(true);
+
+    if(zoomButton.isSelected()){
+      zoomSubmenuView.setVisibility(View.VISIBLE);
+      return;
+    }
+    if(isoButton.isSelected()){
+      isoSubmenuView.setVisibility(View.VISIBLE);
+      return;
+    }
+    if(afSelectionButton.isSelected()){
+      afSelectionSubmenuView.setVisibility(View.VISIBLE);
+      return;
+    }
+    if(whiteBalanceButton.isSelected()){
+      whiteBalanceSubmenuView.setVisibility(View.VISIBLE);
+      return;
+    }
+    if(meteringModeButton.isSelected()){
+      meteringModeSubmenuView.setVisibility(View.VISIBLE);
+      return;
+    }
   }
 
   @Override
-  public void hideBottomControlsView() {
-    settingsBarSubmenuView.setVisibility(View.GONE);
+  public void hideSettingsCameraView() {
+    settingsCameraBarView.setVisibility(View.INVISIBLE);
     settingsCameraButton.setSelected(false);
+
+    zoomSubmenuView.setVisibility(View.INVISIBLE);
+    isoSubmenuView.setVisibility(View.INVISIBLE);
+    afSelectionSubmenuView.setVisibility(View.INVISIBLE);
+    whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+    meteringModeSubmenuView.setVisibility(View.INVISIBLE);
   }
 
   @Override
-  public void showRecordedVideoThumb(String path) {
+  public void hideAdvancedAFSelection() {
+    afSelectionButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void hideISOSelection() {
+    isoButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void hideWhiteBalanceSelection() {
+    whiteBalanceButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void hideMetteringModeSelection() {
+    meteringModeButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void showRecordedVideoThumbWithText(String path) {
     thumbClipRecordedButton.setVisibility(View.VISIBLE);
     Glide.with(this).load(path).into(thumbClipRecordedButton);
+    editText.setVisibility(View.VISIBLE);
   }
 
   @Override
-  public void hideRecordedVideoThumb() {
+  public void hideRecordedVideoThumbWithText() {
     thumbClipRecordedButton.setVisibility(View.INVISIBLE);
+    editText.setVisibility(View.INVISIBLE);
   }
 
   @Override
   public void showVideosRecordedNumber(int numberOfVideos) {
     numVideosRecordedTextView.setVisibility(View.VISIBLE);
     numVideosRecordedTextView.setText(String.valueOf(numberOfVideos));
+    editText.setText(getString(R.string.recordTextEdit));
   }
 
   @Override
@@ -477,16 +595,16 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void setResolutionSelected(int resolutionSelected) {
     switch (resolutionSelected){
       case (RESOLUTION_SELECTED_HD720):
-        resolutionIndicatorButton.setImageResource(R.drawable.record_activity_ic_resolution_720);
+        resolutionIndicatorButton.setImageResource(R.drawable.activity_record_ic_resolution_720);
         break;
       case(RESOLUTION_SELECTED_HD1080):
-        resolutionIndicatorButton.setImageResource(R.drawable.record_activity_ic_resolution_1080);
+        resolutionIndicatorButton.setImageResource(R.drawable.activity_record_ic_resolution_1080);
         break;
       case (RESOLUTION_SELECTED_HD4K):
-        resolutionIndicatorButton.setImageResource(R.drawable.record_activity_ic_resolution_4k);
+        resolutionIndicatorButton.setImageResource(R.drawable.activity_record_ic_resolution_4k);
         break;
       default:
-        resolutionIndicatorButton.setImageResource(R.drawable.record_activity_ic_resolution_720);
+        resolutionIndicatorButton.setImageResource(R.drawable.activity_record_ic_resolution_720);
         break;
     }
   }
@@ -634,14 +752,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @OnClick(R.id.button_change_camera)
   public void changeCamera() {
-
-    if (!isFrontCameraSelected) {
-      isFrontCameraSelected = true;
-    } else {
-      isFrontCameraSelected = false;
-    }
-
-   presenter.switchCamera(isFrontCameraSelected);
+   presenter.switchCamera();
   }
 
   @OnClick (R.id.button_navigate_edit_or_gallery)
@@ -652,9 +763,20 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
   }
 
+  @OnClick (R.id.button_grid)
+  public void onClickListenerGridButton(){
+    if(gridButton.isSelected()){
+          gridButton.setSelected(false);
+          imageViewGrid.setVisibility(View.INVISIBLE);
+      } else {
+          gridButton.setSelected(true);
+          imageViewGrid.setVisibility(View.VISIBLE);
+      }
+  }
+
   @OnClick(R.id.button_settings_camera)
   public void showHideBottomSettingsCamera(){
-    presenter.bottomSettingsCamera(settingsCameraButton.isSelected());
+    presenter.buttonSettingsCamera(settingsCameraButton.isSelected());
   }
 
   @OnClick(R.id.button_navigate_settings)
@@ -668,6 +790,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void clearAndShrinkScreen() {
     if (clearButton.isActivated() == true) {
       showPrincipalViews();
+      showRightControlsView();
     } else {
       hidePrincipalViews();
     }
@@ -698,6 +821,125 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       updatePercentFreeStorage();
     }
   }
+
+  @OnClick (R.id.button_zoom)
+  public void onClickZoomListener(){
+    if(zoomButton.isSelected()){
+      zoomSubmenuView.setVisibility(View.INVISIBLE);
+      zoomButton.setSelected(false);
+    } else {
+      zoomButton.setSelected(true);
+      zoomSubmenuView.setVisibility(View.VISIBLE);
+
+      isoButton.setSelected(false);
+      isoSubmenuView.setVisibility(View.INVISIBLE);
+      afSelectionButton.setSelected(false);
+      afSelectionSubmenuView.setVisibility(View.INVISIBLE);
+      whiteBalanceButton.setSelected(false);
+      whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+      meteringModeButton.setSelected(false);
+      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+    }
+  }
+
+  @OnClick (R.id.button_iso)
+  public void onClickIsoListener(){
+    if(isoButton.isSelected()){
+      isoButton.setSelected(false);
+      isoSubmenuView.setVisibility(View.INVISIBLE);
+    } else {
+      isoButton.setSelected(true);
+      isoSubmenuView.setVisibility(View.VISIBLE);
+
+      zoomButton.setSelected(false);
+      zoomSubmenuView.setVisibility(View.INVISIBLE);
+      afSelectionButton.setSelected(false);
+      afSelectionSubmenuView.setVisibility(View.INVISIBLE);
+      whiteBalanceButton.setSelected(false);
+      whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+      meteringModeButton.setSelected(false);
+      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+    }
+  }
+
+  @OnClick (R.id.button_af_selection)
+  public void onClickAfSelectionListener(){
+    if(afSelectionButton.isSelected()){
+      afSelectionButton.setSelected(false);
+      afSelectionSubmenuView.setVisibility(View.INVISIBLE);
+    } else {
+      afSelectionButton.setSelected(true);
+      afSelectionSubmenuView.setVisibility(View.VISIBLE);
+
+      zoomButton.setSelected(false);
+      zoomSubmenuView.setVisibility(View.INVISIBLE);
+      isoButton.setSelected(false);
+      isoSubmenuView.setVisibility(View.INVISIBLE);
+      whiteBalanceButton.setSelected(false);
+      whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+      meteringModeButton.setSelected(false);
+      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+    }
+  }
+
+  @OnClick (R.id.button_white_balance)
+  public void onClickWhiteBalanceListener(){
+    if(whiteBalanceButton.isSelected()){
+      whiteBalanceButton.setSelected(false);
+      whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+    } else{
+      whiteBalanceButton.setSelected(true);
+      whiteBalanceSubmenuView.setVisibility(View.VISIBLE);
+
+      zoomButton.setSelected(false);
+      zoomSubmenuView.setVisibility(View.INVISIBLE);
+      isoButton.setSelected(false);
+      isoSubmenuView.setVisibility(View.INVISIBLE);
+      afSelectionButton.setSelected(false);
+      afSelectionSubmenuView.setVisibility(View.INVISIBLE);
+      meteringModeButton.setSelected(false);
+      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+    }
+  }
+
+  @OnClick(R.id.button_metering_mode)
+  public void onClickMeasurementeModeListener(){
+    if(meteringModeButton.isSelected()){
+      meteringModeButton.setSelected(false);
+      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+    } else {
+      meteringModeButton.setSelected(true);
+      meteringModeSubmenuView.setVisibility(View.VISIBLE);
+
+      zoomButton.setSelected(false);
+      zoomSubmenuView.setVisibility(View.INVISIBLE);
+      isoButton.setSelected(false);
+      isoSubmenuView.setVisibility(View.INVISIBLE);
+      afSelectionButton.setSelected(false);
+      afSelectionSubmenuView.setVisibility(View.INVISIBLE);
+      whiteBalanceButton.setSelected(false);
+      whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+    }
+  }
+
+  @OnClick (R.id.button_camera_auto)
+  public void onClickCameraAutoListener(){
+
+    zoomButton.setSelected(false);
+    zoomSubmenuView.setVisibility(View.INVISIBLE);
+    slideSeekBar.setProgress(0);
+    presenter.setZoom(0f);
+
+    isoButton.setSelected(false);
+    isoSubmenuView.setVisibility(View.INVISIBLE);
+    afSelectionButton.setSelected(false);
+    afSelectionSubmenuView.setVisibility(View.INVISIBLE);
+    whiteBalanceButton.setSelected(false);
+    whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+    meteringModeButton.setSelected(false);
+    meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+  }
+
 
   @OnTouch(R.id.button_record)
   boolean onTouch(MotionEvent event) {
@@ -757,6 +999,21 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     snackbar.show();
   }
 
+  @Override
+  public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    presenter.onSeekBarZoom((float) (progress * 0.01));
+  }
+
+  @Override
+  public void onStartTrackingTouch(SeekBar seekBar) {
+
+  }
+
+  @Override
+  public void onStopTrackingTouch(SeekBar seekBar) {
+
+  }
+
 
   public void updateBatteryStatus() {
     Intent batteryStatus = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
@@ -789,7 +1046,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private class OrientationHelper extends OrientationEventListener {
     Context context;
     private boolean orientationHaveChanged = false;
-    private boolean isNormalOrientation;
 
     public OrientationHelper(Context context) {
       super(context);
@@ -804,20 +1060,31 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
     @Override
     public void onOrientationChanged(int orientation) {
+      checkShowRotateDeviceImage(orientation);
       if (orientation > 85 && orientation < 95) {
         if (orientationHaveChanged) {
           Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
-          presenter.restartPreview();
           orientationHaveChanged = false;
+          restartPreview();
         }
       } else if (orientation > 265 && orientation < 275) {
         if (!orientationHaveChanged) {
           Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
-          presenter.restartPreview();
           orientationHaveChanged = true;
+          restartPreview();
         }
       }
-      checkShowRotateDeviceImage(orientation);
+    }
+
+    private void restartPreview() {
+      Runnable r = new Runnable() {
+        @Override
+        public void run(){
+          presenter.restartPreview();
+        }
+      };
+      Handler h = new Handler();
+      h.postDelayed(r, 300);
     }
 
 

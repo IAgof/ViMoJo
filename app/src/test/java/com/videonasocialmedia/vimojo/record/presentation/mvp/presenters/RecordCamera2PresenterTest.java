@@ -52,9 +52,6 @@ public class RecordCamera2PresenterTest {
 
   @Mock RecordCamera2View mockedRecordView;
   @Mock Context mockedContext;
-  boolean isFrontCameraSelected = true;
-  boolean isPrincipalViewSelected = true;
-  boolean isRightControlsViewSelected = true;
   @Mock AutoFitTextureView mockedTextureView;
   String directorySaveVideos;
   @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
@@ -69,6 +66,7 @@ public class RecordCamera2PresenterTest {
   Drawable fadeTransition;
   boolean isFadeActivated;
 
+
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
@@ -81,7 +79,7 @@ public class RecordCamera2PresenterTest {
   }
 
   @Test
-  public void initViewsWithPrincipalAndRightControlsViewSelectedCallsCorrectRecordView(){
+  public void initViewsWithControlsViewAndSettingsCameraViewSelectedCallsCorrectRecordView(){
 
     presenter = getRecordCamera2Presenter();
 
@@ -96,8 +94,6 @@ public class RecordCamera2PresenterTest {
 
   @Test
   public void initViewsDefaultInitializationCallsCorrectRecordView(){
-    isPrincipalViewSelected = false;
-    isRightControlsViewSelected = false;
 
     presenter = getRecordCamera2Presenter();
 
@@ -105,9 +101,8 @@ public class RecordCamera2PresenterTest {
 
     verify(mockedRecordView).hideChronometer();
     verify(mockedRecordView).setResolutionSelected(720);
-
-    verify(mockedRecordView).hidePrincipalViews();
-    verify(mockedRecordView).hideRightControlsView();
+    verify(mockedRecordView).showPrincipalViews();
+    verify(mockedRecordView).showRightControlsView();
   }
 
   @Test
@@ -137,6 +132,7 @@ public class RecordCamera2PresenterTest {
     assertThat("There are videos in project", numVideosInProject, is(2));
 
     // TODO:(alvaro.martinez) 6/04/17 Assert also there are not videos pending to adapt, transcoding
+
     presenter = getRecordCamera2Presenter();
 
     presenter.navigateToEditOrGallery();
@@ -240,10 +236,10 @@ public class RecordCamera2PresenterTest {
   @NonNull
   private RecordCamera2Presenter getRecordCamera2Presenter() {
     return new RecordCamera2Presenter(mockedContext, mockedRecordView,
-        isFrontCameraSelected, isPrincipalViewSelected,
-        isRightControlsViewSelected, mockedTextureView, directorySaveVideos,
+        mockedTextureView, directorySaveVideos,
         mockedUpdateVideoRepositoryUseCase, mockedLaunchTranscoderAddAVTransitionUseCase,
         mockedGetVideoFormatFromCurrentProjectUseCase,
         mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
   }
+
 }

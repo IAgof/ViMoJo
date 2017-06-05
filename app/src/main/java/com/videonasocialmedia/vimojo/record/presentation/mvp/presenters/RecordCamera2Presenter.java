@@ -30,6 +30,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -60,9 +61,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     OnLaunchAVTransitionTempFileListener, TranscoderHelperListener {
 
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
-  private static final String LOG_TAG = "RecordCamera2Presenter";
-  private final boolean isRightControlsViewSelected;
-  private final boolean isPrincipalViewSelected;
+  private final String TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
   private RecordCamera2View recordView;
   private AddVideoToProjectUseCase addVideoToProjectUseCase;
@@ -80,14 +79,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   private int numTriesAdaptingVideo = 0;
   private final int maxNumTriesAdaptingVideo = 3;
   private boolean isClickedNavigateToEditOrGallery = false;
+  private boolean isFrontCameraSelected = false;
 
   public long ONE_KB = 1 *1024;
   public long ONE_MB = ONE_KB*1024;
   public long ONE_GB = ONE_MB*1024;
 
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
-                                boolean isFrontCameraSelected, boolean isPrincipalViewSelected,
-                                boolean isRightControlsViewSelected, AutoFitTextureView textureView,
+                                AutoFitTextureView textureView,
                                 String directorySaveVideos,
                                 UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
                                 LaunchTranscoderAddAVTransitionsUseCase
@@ -99,8 +98,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
                                     adaptVideoRecordedToVideoFormatUseCase) {
     this.context = context;
     this.recordView = recordView;
-    this.isPrincipalViewSelected = isPrincipalViewSelected;
-    this.isRightControlsViewSelected = isRightControlsViewSelected;
     this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
     this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;
     this.getVideonaFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
@@ -131,15 +128,28 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public void initViews() {
     recordView.setResolutionSelected(getResolutionHeight(currentProject));
     recordView.hideChronometer();
-    if (isPrincipalViewSelected) {
-      recordView.showPrincipalViews();
-    } else {
-      recordView.hidePrincipalViews();
+    recordView.showPrincipalViews();
+    recordView.showRightControlsView();
+    recordView.showSettingsCameraView();
+    setupAdvancedCameraControls();
+  }
+
+  private void setupAdvancedCameraControls() {
+    // TODO(jliarte): 26/05/17 temporal workarround to force showing buttons
+    if (BuildConfig.FEATURE_FORCE_PRO_CONTROLS_SHOW) {
+      return;
     }
-    if (isRightControlsViewSelected) {
-      recordView.showRightControlsView();
-    } else {
-      recordView.hideRightControlsView();
+    if (!camera.ISOSelectionSupported()) {
+      recordView.hideISOSelection();
+    }
+    if (!camera.advancedFocusSupported()) {
+      recordView.hideAdvancedAFSelection();
+    }
+    if (!camera.whiteBalanceSelectionSupported()) {
+      recordView.hideWhiteBalanceSelection();
+    }
+    if (!camera.metteringModeSelectionSupported()) {
+      recordView.hideMetteringModeSelection();
     }
   }
 
@@ -162,7 +172,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   public void onResume() {
     showThumbAndNumber();
-    Log.d(LOG_TAG, "resume presenter");
+    Log.d(TAG, "resume presenter");
     camera.onResume();
   }
 
@@ -180,7 +190,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       final Video lastItem = (Video) mediaInProject.get(lastItemIndex);
       this.recordedVideosNumber = mediaInProject.size();
       recordView.showVideosRecordedNumber(recordedVideosNumber);
-      recordView.showRecordedVideoThumb(lastItem.getMediaPath());
+      recordView.showRecordedVideoThumbWithText(lastItem.getMediaPath());
     } else {
       recordView.hideVideosRecordedNumber();
     }
@@ -193,7 +203,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     recordView.showChronometer();
     recordView.hideNavigateToSettingsActivity();
     recordView.hideVideosRecordedNumber();
-    recordView.hideRecordedVideoThumb();
+    recordView.hideRecordedVideoThumbWithText();
     recordView.hideChangeCamera();
   }
 
@@ -207,10 +217,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public void setFlashSupport() {
     if (camera.isFlashSupported()) {
       recordView.setFlashSupported(true);
-      Log.d(LOG_TAG, "checkSupportFlash flash Supported camera");
+      Log.d(TAG, "checkSupportFlash flash Supported camera");
     } else {
        recordView.setFlashSupported(false);
-      Log.d(LOG_TAG, "checkSupportFlash flash NOT Supported camera");
+      Log.d(TAG, "checkSupportFlash flash NOT Supported camera");
     }
   }
 
@@ -220,7 +230,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     recordView.stopChronometer();
     recordView.hideChronometer();
     recordView.showChangeCamera();
-    recordView.showRecordedVideoThumb(path);
+    recordView.showRecordedVideoThumbWithText(path);
     recordView.showVideosRecordedNumber(++recordedVideosNumber);
     moveAndAdaptRecordedVideo(path);
   }
@@ -281,9 +291,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   @Override
-  public void setZoom(Rect rectValue) {
-    // TODO:(alvaro.martinez) 27/01/17 Convert zoom from 0 to 1 and show on RecordView
-    //recordView.setZoom(0.5f);
+  public void setZoom(float zoomValue) {
+    recordView.setZoom(zoomValue);
   }
 
   public void restartPreview(){
@@ -308,7 +317,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   public void onTouchZoom(MotionEvent event) {
-    camera.onTouchZoom(getFingerSpacing(event));
+      camera.onTouchZoom(getFingerSpacing(event));
   }
 
   //Determine the space between the first two fingers
@@ -327,11 +336,11 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     recordView.hideRightControlsView();
   }
 
-  public void bottomSettingsCamera(boolean isSelected) {
+  public void buttonSettingsCamera(boolean isSelected) {
     if(isSelected) {
-      recordView.hideBottomControlsView();
+      recordView.hideSettingsCameraView();
     } else {
-      recordView.showBottomControlsView();
+      recordView.showSettingsCameraView();
     }
   }
 
@@ -343,6 +352,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       camera.setFocus(x, y);
     } catch (CameraAccessException e) {
       e.printStackTrace();
+      Log.e(TAG, "Error focusing", e);
     }
     recordView.setFocus(event);
   }
@@ -361,7 +371,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     if(areTherePendingTranscodingTask()){
       recordView.showProgressAdaptingVideo();
       isClickedNavigateToEditOrGallery = true;
-      Log.d(LOG_TAG, "showProgressAdaptingVideo");
+      Log.d(TAG, "showProgressAdaptingVideo");
     } else {
       if(areThereVideosInProject()){
         recordView.navigateTo(EditActivity.class);
@@ -387,10 +397,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   @Override
   public void onSuccessTranscoding(Video video) {
     if(isAVideoAdaptedToFormat(video)) {
-      Log.d(LOG_TAG, "onSuccessTranscoding adapting video " + video.getMediaPath());
+      Log.d(TAG, "onSuccessTranscoding adapting video " + video.getMediaPath());
       addVideoRecordedToProject(video);
     } else {
-      Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
+      Log.d(TAG, "onSuccessTranscoding " + video.getTempPath());
       updateVideoRepositoryUseCase.succesTranscodingVideo(video);
     }
   }
@@ -403,7 +413,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       if (videoToAdapt.getVideo().getUuid().compareTo(video.getUuid()) == 0) {
         videoListToAdaptAndPosition.remove(videoToAdapt);
         position = videoToAdapt.getPosition() - 1;
-        Log.d(LOG_TAG, "onSuccessTranscoding position " + position);
+        Log.d(TAG, "onSuccessTranscoding position " + position);
       }
     }
     videoRecordedAdapted(video.getMediaPath(), destVideoRecorded, position);
@@ -421,7 +431,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public void onErrorTranscoding(Video video, String message) {
 
     if(isAVideoAdaptedToFormat(video)) {
-      Log.d(LOG_TAG, "onErrorTranscoding adapting video " + video.getMediaPath() + " - " + message);
+      Log.d(TAG, "onErrorTranscoding adapting video " + video.getMediaPath() + " - " + message);
       if(numTriesAdaptingVideo < maxNumTriesAdaptingVideo) {
         moveAndAdaptRecordedVideo(video.getMediaPath());
         numTriesAdaptingVideo++;
@@ -430,7 +440,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
         addVideoRecordedToProject(video);
       }
     } else {
-      Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
+      Log.d(TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
       if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
         video.increaseNumTriesToExportVideo();
         Project currentProject = Project.getInstance(null, null, null);
@@ -458,8 +468,23 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
         videoFormat, intermediatesTempAudioFadeDirectory, this);
   }
 
-  public void switchCamera(boolean isFrontCameraSelected) {
+  public void switchCamera() {
+    if (!isFrontCameraSelected) {
+      isFrontCameraSelected = true;
+    } else {
+      isFrontCameraSelected = false;
+    }
+    resetViewSwitchCamera();
     camera.switchCamera(isFrontCameraSelected);
+  }
+
+  private void resetViewSwitchCamera() {
+    recordView.setZoom(0f);
+    recordView.setFlash(false);   
+  }
+
+  public void onSeekBarZoom(float zoomValue) {
+    camera.seekBarZoom(zoomValue);
   }
 
   private class VideoToAdapt {

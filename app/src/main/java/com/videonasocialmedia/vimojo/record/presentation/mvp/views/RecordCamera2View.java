@@ -41,9 +41,9 @@ public interface RecordCamera2View {
 
     void hideChangeCamera();
 
-    void showRecordedVideoThumb(String path);
+    void showRecordedVideoThumbWithText(String path);
 
-    void hideRecordedVideoThumb();
+    void hideRecordedVideoThumbWithText();
 
     void showVideosRecordedNumber(int numberOfVideos);
 
@@ -61,10 +61,17 @@ public interface RecordCamera2View {
 
     void showRightControlsView();
 
-    void showBottomControlsView();
+    void showSettingsCameraView();
 
-    void hideBottomControlsView();
+    void hideSettingsCameraView();
 
+    void hideAdvancedAFSelection();
+
+    void hideISOSelection();
+
+    void hideWhiteBalanceSelection();
+
+    void hideMetteringModeSelection();
 
     // Setters camera
 
@@ -76,8 +83,8 @@ public interface RecordCamera2View {
 
     void setFocus(MotionEvent event);
 
-    void setZoom(float value);
 
+    void setZoom(float value);
 
     // Others
 
