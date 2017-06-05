@@ -175,7 +175,7 @@ public class RecordCamera2PresenterTest {
 
     presenter.updateBatteryStatus(statusBattery, levelBattery, scaleBattery);
 
-    verify(mockedRecordView).showBatteryStatus(Constants.BATTERY_STATUS_ENUM.CHARGING, 20);
+    verify(mockedRecordView).showBatteryStatus(Constants.BATTERY_STATUS.CHARGING, 20);
   }
 
   @Test
@@ -195,36 +195,36 @@ public class RecordCamera2PresenterTest {
   public void getBatteryStatusreturnNoChargingIfStatusIsNot2() {
     int percentBattery = 20;
     int statusBattery = 3; // BatteryManager.BATTERY_STATUS_CHARGING
-    Constants.BATTERY_STATUS_ENUM status;
+    Constants.BATTERY_STATUS status;
     presenter = getRecordCamera2Presenter();
 
     status = presenter.getBatteryStatus(statusBattery, percentBattery);
 
-    assertNotEquals("Status is not charging", status, is(Constants.BATTERY_STATUS_ENUM.CHARGING));
+    assertNotEquals("Status is not charging", status, is(Constants.BATTERY_STATUS.CHARGING));
   }
 
   @Test
   public void getBatteryStatusreturnChargingIfStatusIs2() {
     int percentBattery = 20;
     int statusBattery = 2; // BatteryManager.BATTERY_STATUS_CHARGING
-    Constants.BATTERY_STATUS_ENUM status;
+    Constants.BATTERY_STATUS status;
     presenter = getRecordCamera2Presenter();
 
     status = presenter.getBatteryStatus(statusBattery, percentBattery);
 
-    assertThat("Status is charging", status, is(Constants.BATTERY_STATUS_ENUM.CHARGING));
+    assertThat("Status is charging", status, is(Constants.BATTERY_STATUS.CHARGING));
   }
 
 
   @Test
   public void getBatteryStatusreturnLowStatusIfLevelIsLessThan10AndStatusIsNotCharging() {
     int percentBattery = 10;
-    Constants.BATTERY_STATUS_ENUM status;
+    Constants.BATTERY_STATUS status;
     presenter = getRecordCamera2Presenter();
 
     status = presenter.getStatusNotCharging(percentBattery);
 
-    assertThat("Level will be CRITICAL", status, is(Constants.BATTERY_STATUS_ENUM.CRITICAL));
+    assertThat("Level will be CRITICAL", status, is(Constants.BATTERY_STATUS.CRITICAL));
   }
 
   public Project getAProject() {

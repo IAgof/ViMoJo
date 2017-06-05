@@ -517,25 +517,25 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         return batteryPercent= Math.round(level);
   }
 
-  public Constants.BATTERY_STATUS_ENUM getBatteryStatus(int batteryStatus, int batteryPercent) {
-        Constants.BATTERY_STATUS_ENUM status;
+  public Constants.BATTERY_STATUS getBatteryStatus(int batteryStatus, int batteryPercent) {
+        Constants.BATTERY_STATUS status;
         if(batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING)
-            status = Constants.BATTERY_STATUS_ENUM.CHARGING;
+            status = Constants.BATTERY_STATUS.CHARGING;
         else
             status = getStatusNotCharging(batteryPercent);
         return status;
     }
 
-  public Constants.BATTERY_STATUS_ENUM getStatusNotCharging(int batteryPercent) {
-    Constants.BATTERY_STATUS_ENUM status=
-        Constants.BATTERY_STATUS_ENUM.UNKNOW;
+  public Constants.BATTERY_STATUS getStatusNotCharging(int batteryPercent) {
+    Constants.BATTERY_STATUS status=
+        Constants.BATTERY_STATUS.UNKNOW;
     if (batteryPercent < 15)
-      status = Constants.BATTERY_STATUS_ENUM.CRITICAL;
+      status = Constants.BATTERY_STATUS.CRITICAL;
     else if (batteryPercent>=15 && batteryPercent<25)
-      status = Constants.BATTERY_STATUS_ENUM.LOW;
+      status = Constants.BATTERY_STATUS.LOW;
     else if (batteryPercent>=25 && batteryPercent<75)
-      status = Constants.BATTERY_STATUS_ENUM.MEDIUM;
-    else status= Constants.BATTERY_STATUS_ENUM.FULL;
+      status = Constants.BATTERY_STATUS.MEDIUM;
+    else status= Constants.BATTERY_STATUS.FULL;
     return status;
   }
 
