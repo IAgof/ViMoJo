@@ -1,3 +1,9 @@
+v0.5.1
+
+- Added seekBar to control zoom.
+- Added grid button in advance control camera buttons linear layout.
+- Hide advance control camera buttons, show only buttons implemented, grid, zoom.
+
 v0.5.0
 
 - Added new module, camera. Separate from app, recorder and camera features.
