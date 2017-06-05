@@ -305,15 +305,15 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       Log.d(LOG_TAG, "VideoSize " + videoSize.getWidth() + " x " + videoSize.getHeight());
       Log.d(LOG_TAG, "PreviewSize " + previewSize.getWidth() + " x " + previewSize.getHeight());
 
+      int orientation = activity.getResources().getConfiguration().orientation;
+      Log.d(LOG_TAG, "orientation " + orientation);
 
-      int orientation = context.getResources().getConfiguration().orientation;
       if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
         textureView.setAspectRatio(previewSize.getWidth(), previewSize.getHeight());
       } else {
         textureView.setAspectRatio(previewSize.getHeight(), previewSize.getWidth());
       }
       configureTransform(width, height);
-      rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
       Log.d(LOG_TAG, "Rotation " + rotation + " cameraId " + cameraIdSelected +
         " sensorOrientation " + sensorOrientation);
 
@@ -375,9 +375,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private void configureTransform(int viewWidth, int viewHeight) {
     Activity activity = (Activity) context;
     if (null == textureView || null == previewSize || null == activity) {
+      Log.d(LOG_TAG, "configureTransform, null textureView, previewSize, activity");
       return;
     }
-    int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+    rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
     Matrix matrix = new Matrix();
     RectF viewRect = new RectF(0, 0, viewWidth, viewHeight);
     RectF bufferRect = new RectF(0, 0, previewSize.getHeight(), previewSize.getWidth());
