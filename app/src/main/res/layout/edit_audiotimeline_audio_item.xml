@@ -28,7 +28,7 @@
             android:cropToPadding="true"
             android:background="@drawable/timeline_video_selector"
             android:scaleType="center"
-            tools:src="@drawable/ic_galloping_a_stuart_roslyn_matt_foundling"/>
+            tools:src="@drawable/fragment_gallery_no_image"/>
     </android.support.percent.PercentRelativeLayout>
 
 

@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,7 +35,8 @@ public class GoToRecordOrGalleryActivity extends EditorActivity {
 
   @Nullable @OnClick(R.id.button_go_to_record)
   public void onClickGoToRecord(){
-    navigateTo(RecordActivity.class);
+    //navigateTo(RecordActivity.class);
+    navigateTo(RecordCamera2Activity.class);
   }
 
   @Nullable @OnClick(R.id.button_go_to_gallery)

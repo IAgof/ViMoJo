@@ -1,4 +1,6 @@
-v0.4.25.1
-- Add new grid for Rtve flavor. Separate resource drawable grid for every flavor.
+v0.5.2
+
+- Added feature icon camera battery. Info status battery on click and update levels with different colors.
+- Added feature icon camera storage. Info internal storage on click and update levels with different colors.
 
 

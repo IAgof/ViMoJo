@@ -46,4 +46,21 @@ public class IntentConstants {
      *
      */
     public static final String FTP_SELECTED = "ftp_selected";
+
+  /**
+   * Adapt Video Recorded
+   */
+  public static final String VIDEO_RECORDED_ORIG = "video_recorded_orig";
+  public static final String VIDEO_RECORDED_DEST = "video_recorded_dest";
+
+
+    /**
+     * Record Activity
+     */
+
+    public static final String BATTERY_NOTIFICATION = "battery_notifications";
+
+    public static final String BATTERY_STATUS = "battery_status";
+    public static final String BATTERY_LEVEL = "battery_level";
+    public static final String BATTERY_SCALE = "battery_scale" ;
 }

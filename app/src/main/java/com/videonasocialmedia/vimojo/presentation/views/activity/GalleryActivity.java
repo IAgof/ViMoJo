@@ -68,6 +68,11 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         setContentView(R.layout.activity_gallery);
         ButterKnife.bind(this);
         getActivityPresentersComponent().inject(this);
+
+        PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_header);
+        pagerTabStrip.setDrawFullUnderline(true);
+        pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorSecondary));
+        pagerTabStrip.setTextColor(getResources().getColor(R.color.colorSecondary));
         Log.d(TAG, "Creating Activity");
         setupViewPager(savedInstanceState);
         setupPagerTabStrip();

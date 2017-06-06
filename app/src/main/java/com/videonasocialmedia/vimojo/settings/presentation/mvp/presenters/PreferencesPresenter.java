@@ -27,7 +27,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -60,7 +60,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private PreferenceCategory cameraSettingsPref;
     private ListPreference resolutionPref;
     private ListPreference qualityPref;
-    private ListPreference frameRatePref;
     private Preference transitionVideoPref;
     private Preference transitionAudioPref;
     private Preference watermarkPref;
@@ -78,8 +77,10 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
     private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
-    private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
+    private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
 
+    private Drawable drawableFadeTransitionVideo;
+    private VideonaFormat videoFormat;
     private String TAG = "PreferencesPresenter";
 
     /**
@@ -96,7 +97,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             SharedPreferences sharedPreferences,
             PreferenceCategory cameraSettingsPref,
             ListPreference resolutionPref, ListPreference qualityPref,
-            ListPreference frameRatePref, Preference transitionVideoPref,
+            Preference transitionVideoPref,
             Preference transitionAudioPref, Preference watermarkPref, Preference emailPref,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
@@ -110,7 +111,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
             UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
             RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-            GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase) {
+            GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase) {
 
         this.preferencesView = preferencesView;
         this.context = context;
@@ -118,7 +119,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.cameraSettingsPref = cameraSettingsPref;
         this.resolutionPref = resolutionPref;
         this.qualityPref = qualityPref;
-        this.frameRatePref = frameRatePref;
         this.transitionVideoPref = transitionVideoPref;
         this.transitionAudioPref = transitionAudioPref;
         this.watermarkPref = watermarkPref;
@@ -136,7 +136,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.updateWatermarkPreferenceToProjectUseCase = updateWatermarkPreferenceToProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
-        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
+        this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     }
 
     /**
@@ -168,7 +168,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         checkCameraSettingsEnabled();
         checkAvailableResolution();
         checkAvailableQuality();
-        checkAvailableFrameRate();
         checkTransitions();
         checkWatermark(BuildConfig.FEATURE_WATERMARK);
     }
@@ -354,54 +353,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         }
     }
 
-    private void checkAvailableFrameRate(){
-        ArrayList<String> frameRateNames = new ArrayList<>();
-        ArrayList<String> frameRateValues = new ArrayList<>();
-        String defaultFrameRate = null;
-        String key = ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE; //"list_preference_quality";
-
-        if(!isPreferenceAvailable){
-            frameRatePref.setTitle(R.string.frame_rate);
-            frameRatePref.setSummary(R.string.preference_not_available);
-            return;
-        }
-
-        if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false)) {
-            frameRateNames.add(context.getResources().getString(R.string.good_frame_rate_name));
-            frameRateValues.add(context.getResources().getString(R.string.good_frame_rate_value));
-            if (defaultFrameRate == null) {
-                defaultFrameRate = context.getResources().getString(R.string.good_frame_rate_name);
-            }
-        }
-
-        if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false)) {
-            frameRateNames.add(context.getResources().getString(R.string.low_frame_rate_name));
-            frameRateValues.add(context.getResources().getString(R.string.low_frame_rate_value));
-            if (defaultFrameRate == null) {
-                defaultFrameRate = context.getResources().getString(R.string.low_frame_rate_name);
-            }
-        }
-
-        if (sharedPreferences.getBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, false)) {
-            frameRateNames.add(context.getResources().getString(R.string.high_frame_rate_name));
-            frameRateValues.add(context.getResources().getString(R.string.high_frame_rate_value));
-            if (defaultFrameRate == null) {
-                defaultFrameRate = context.getResources().getString(R.string.high_frame_rate_name);
-            }
-        }
-
-        if (frameRateNames.size() > 0 && defaultFrameRate != null) {
-            preferencesView.setAvailablePreferences(frameRatePref, frameRateNames, frameRateValues);
-            if (updateDefaultPreference(key, frameRateNames)) {
-                preferencesView.setDefaultPreference(frameRatePref, defaultFrameRate, key);
-            } else {
-                preferencesView.setPreference(frameRatePref, sharedPreferences.getString(key, ""));
-            }
-        } else {
-            frameRateNames.add(context.getResources().getString(R.string.good_frame_rate_name));
-            preferencesView.setAvailablePreferences(frameRatePref, frameRateNames, frameRateValues);
-        }
-    }
 
     /**
      * Checks if the actual default value in shared preferences is supported by the device
@@ -457,9 +408,10 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     @Override
     public void videoToRelaunch(String videoUuid, String intermediatesTempAudioFadeDirectory) {
         final Video video = getVideo(videoUuid);
+
         relaunchTranscoderTempBackgroundUseCase.relaunchExport(context
                 .getDrawable(R.drawable.alpha_transition_white), video,
-            getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
+            getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
             intermediatesTempAudioFadeDirectory, this);
     }
 
@@ -490,7 +442,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             Project currentProject = Project.getInstance(null, null, null);
             relaunchTranscoderTempBackgroundUseCase.relaunchExport(context
                     .getDrawable(R.drawable.alpha_transition_white), video,
-                getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
+                getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
                 currentProject.getProjectPathIntermediateFileAudioFade(), this);
         } else {
             updateVideoRepositoryUseCase.errorTranscodingVideo(video,

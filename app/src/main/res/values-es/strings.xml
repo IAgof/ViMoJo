@@ -22,6 +22,12 @@
     <string name="giftOverlayDialogMessage">Disfruta de tu nuevo filtro de Bollywood</string>
     <string name="recordTextGallery">Galería</string>
     <string name="recordTextEdit">Editor</string>
+    <string name="battery">Batería</string>
+
+    <string name="dialog_title_record_adapting_video">Adaptando video</string>
+    <string name="dialog_message_record_adapting_video">Trabajando ...</string>
+
+    <string name="alert_dialog_info_detail">Información detallada</string>
 
     <!-- Share Activity -->
     <string name="shareError">Uy, no hemos podido compartir el vídeo.</string>
@@ -647,5 +653,11 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="dialog_title_export_error">Error exportando</string>
     <string name="dialog_message_export_error">Ha ocurrido un error durante la exportación y tu
         proyecto no podrá ser exportado correctamente. Por favor, inténtalo otra vez</string>
+    <string name="memory">Almacenamiento interno: </string>
+    <string name="free_memory_space">Espacio disponible: </string>
+    <string name="preposition_of">de</string>
+
+
+    <string name="onNoVideosRetrieved">Error, no hay vídeos en el proyecto</string>
 
 </resources>

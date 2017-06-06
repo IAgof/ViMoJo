@@ -9,7 +9,7 @@ import android.preference.SwitchPreference;
 
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -54,7 +54,6 @@ public class FragmentPresentersModule {
                                   PreferenceCategory cameraSettingsPref,
                                   ListPreference resolutionPref,
                                   ListPreference qualityPref,
-                                  ListPreference frameRatePref,
                                   SwitchPreference transitionsVideoPref,
                                   SwitchPreference transitionsAudioPref,
                                   SwitchPreference watermarkPref,
@@ -65,7 +64,6 @@ public class FragmentPresentersModule {
     this.cameraSettingsPref = cameraSettingsPref;
     this.resolutionPref = resolutionPref;
     this.qualityPref = qualityPref;
-    this.frameRatePref = frameRatePref;
     this.transitionVideoPref = transitionsVideoPref;
     this.transitionAudioPref = transitionsAudioPref;
     this.watermarkPref = watermarkPref;
@@ -89,10 +87,10 @@ public class FragmentPresentersModule {
              UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
              UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
              RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-             GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase){
+             GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase){
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
-        cameraSettingsPref, resolutionPref, qualityPref, frameRatePref, transitionVideoPref,
+        cameraSettingsPref, resolutionPref, qualityPref, transitionVideoPref,
         transitionAudioPref, watermarkPref, emailPref, getMediaListFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase,
         updateAudioTransitionPreferenceToProjectUseCase,
@@ -155,8 +153,8 @@ public class FragmentPresentersModule {
   }
 
   @Provides
-  GetVideonaFormatFromCurrentProjectUseCase provideoGetVideonaFormat(){
-    return new GetVideonaFormatFromCurrentProjectUseCase();
+  GetVideoFormatFromCurrentProjectUseCase provideoGetVideonaFormat(){
+    return new GetVideoFormatFromCurrentProjectUseCase();
   }
 
 }

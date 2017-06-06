@@ -15,7 +15,6 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideonaFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -46,7 +45,6 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
-    private GetVideonaFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
 
     // View reference. We use as a WeakReference
@@ -63,8 +61,6 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
                                 GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                 ModifyVideoDurationUseCase
                                     modifyVideoDurationUseCase,
-                                GetVideonaFormatFromCurrentProjectUseCase
-                                    getVideonaFormatFromCurrentProjectUseCase,
                                 UpdateVideoRepositoryUseCase
                                         updateVideoRepositoryUseCase) {
         //this.trimView = new WeakReference<>(trimView);
@@ -73,7 +69,6 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
-        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
     }
 
@@ -111,8 +106,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
     }
 
     public void setTrim(int startTimeMs, int finishTimeMs) {
-        VideonaFormat videoFormat =
-            getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
+        VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
 
         // TODO:(alvaro.martinez) 22/02/17 This drawable saved in app or sdk?
         Drawable drawableFadeTransitionVideo =

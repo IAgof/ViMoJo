@@ -11,7 +11,6 @@ import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 
 /**
  * Created by alvaro on 22/03/17.
@@ -37,14 +36,15 @@ public class LaunchTranscoderAddAVTransitionsUseCase {
   }
 
   public void launchExportTempFile(Drawable drawableFadeTransition, Video videoToEdit,
-                             VideonaFormat videonaFormat, String intermediatesTempAudioFadeDirectory,
-                             final TranscoderHelperListener
+                                   VideonaFormat videoTranscoderFormat,
+                                   String intermediatesTempAudioFadeDirectory,
+                                   final TranscoderHelperListener
                                  transcoderHelperListener){
     boolean isVideoFadeTransitionActivated = currentProject.isVideoFadeTransitionActivated();
     boolean isAudioFadeTransitionActivated = currentProject.isAudioFadeTransitionActivated();
     videoToEdit.setTranscodingTempFileFinished(false);
     updateGeneratedVideo(drawableFadeTransition, isVideoFadeTransitionActivated,
-        isAudioFadeTransitionActivated, videoToEdit, videonaFormat,
+        isAudioFadeTransitionActivated, videoToEdit, videoTranscoderFormat,
         intermediatesTempAudioFadeDirectory, transcoderHelperListener);
     videoRepository.update(videoToEdit);
   }
@@ -53,14 +53,14 @@ public class LaunchTranscoderAddAVTransitionsUseCase {
                                     boolean isVideoFadeTransitionActivated,
                                     boolean isAudioFadeTransitionActivated,
                                     Video videoToEdit,
-                                    VideonaFormat videonaFormat,
+                                    VideonaFormat videoTranscoderFormat,
                                     String intermediatesTempAudioFadeDirectory,
                                     TranscoderHelperListener transcoderHelperListener) {
 
     if(isVideoFadeTransitionActivated) {
       transcoderHelper.generateOutputVideoWithAVTransitions(drawableFadeTransition,
           isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
-          videonaFormat, intermediatesTempAudioFadeDirectory, transcoderHelperListener);
+          videoTranscoderFormat, intermediatesTempAudioFadeDirectory, transcoderHelperListener);
     } else {
       if (isAudioFadeTransitionActivated) {
         transcoderHelper.generateOutputVideoWithAudioTransition(videoToEdit,

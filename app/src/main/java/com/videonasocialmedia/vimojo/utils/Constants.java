@@ -65,6 +65,8 @@ public class Constants {
 
     public static final int DEFAULT_VIMOJO_WIDTH = 1280;
     public static final int DEFAULT_VIMOJO_HEIGHT = 720;
+    public static final int DEFAULT_VIMOJO_AUDIO_BITRATE = 192 * 1000;
+    public static final int DEFAULT_VIMOJO_AUDIO_CHANNELS = 1;
     public static final float ALPHA_DISABLED_BOTTOM_BAR= 0.3f;
     public static final int DEFAULT_VIMOJO_BITRATE = 10*1000*1000;
     public static final int DEFAULT_VIMOJO_FRAME_RATE = 25;
@@ -80,4 +82,7 @@ public class Constants {
     public static final int MAX_NUM_TRIES_TO_EXPORT_VIDEO = 4;
 
     public enum ERROR_TRANSCODING_TEMP_FILE_TYPE {SPLIT, TRIM, TEXT, AVTRANSITION, APP_CRASH}
+
+    public enum BATTERY_STATUS {CHARGING, CRITICAL, LOW, MEDIUM, FULL, UNKNOW}
+    public enum MEMORY_STATUS {CRITICAL, MEDIUM, OKAY}
 }
