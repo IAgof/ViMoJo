@@ -12,15 +12,23 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StatFs;
 import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
@@ -30,9 +38,9 @@ import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.vimojo.R;
@@ -41,12 +49,14 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.RecordPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
+import com.videonasocialmedia.vimojo.presentation.views.broadcastreceiver.BatteryReceiver;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import org.json.JSONException;
@@ -130,11 +140,24 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ImageView resolutionIndicator;
     @Bind(R.id.image_view_grid)
     ImageView imageViewGrid;
+    @Bind(R.id.activity_record_icon_battery)
+    ImageButton battery;
+    @Bind(R.id.activity_record_icon_storage)
+    ImageButton memory;
+
+    @Nullable @Bind(R.id.progressBar_level_battery)
+    ProgressBar progressBarBatteryOrMemory;
+    @Nullable @Bind(R.id.text_percent_level_battery_and_storage)
+    TextView percentLevel;
+    @Nullable @Bind(R.id.text_free_storage_space)
+    TextView freeMemorySpace;
+
 
     private boolean buttonBackPressed;
     private boolean recording;
     private OrientationHelper orientationHelper;
     private AlertDialog progressDialog;
+    private AlertDialog progressDialogBatteryOrMemory;
     private boolean mUseImmersiveMode = true;
 //    private SharedPreferences sharedPreferences;
 //    private SharedPreferences.Editor editor;
@@ -152,14 +175,25 @@ public class RecordActivity extends VimojoActivity implements RecordView {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
                 String videoToSharePath = bundle.getString(ExportProjectService.FILEPATH);
-                int resultCode = bundle.getInt(ExportProjectService.RESULT);
-                if (resultCode == RESULT_OK) {
+                if (videoToSharePath!=null) {
+                  int resultCode = bundle.getInt(ExportProjectService.RESULT);
+                  if (resultCode == RESULT_OK) {
                     hideProgressDialog();
                     goToShare(videoToSharePath);
-                } else {
+                  } else {
                     hideProgressDialog();
                     showError(R.string.addMediaItemToTrackError);
+                  }
                 }
+            }
+        }
+    };
+    private BatteryReceiver batteryReceiver = new BatteryReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent){
+            Bundle bundle = intent.getExtras();
+            if (bundle != null) {
+                updateBatteryStatus();
             }
         }
     };
@@ -185,6 +219,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         configChronometer();
         initOrientationHelper();
         createProgressDialog();
+        createProgressDialogBatteryOrMemory();
         configShowThumbAndNumberClips();
     }
 
@@ -247,6 +282,23 @@ public class RecordActivity extends VimojoActivity implements RecordView {
                 .create();
     }
 
+  private void createProgressDialogBatteryOrMemory() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
+    View dialogView = getLayoutInflater().inflate(R.layout.dialog_level_battery_and_storage, null);
+    progressBarBatteryOrMemory = (ProgressBar) dialogView.findViewById(R.id.progressBar_level_battery);
+    percentLevel = (TextView) dialogView.findViewById(R.id.text_percent_level_battery_and_storage);
+    freeMemorySpace=(TextView)dialogView.findViewById(R.id.text_free_storage_space);
+    progressDialogBatteryOrMemory = builder.setCancelable(true)
+        .setView(dialogView)
+        .setTitle("Información detallada")
+        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+          }
+        })
+        .create();
+  }
+
     @Override
     protected void onDestroy() {
         recordPresenter.onDestroy();
@@ -261,6 +313,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         if(recording)
             recordPresenter.stopRecord();
         unregisterReceiver(receiver);
+        unregisterReceiver(batteryReceiver);
         orientationHelper.stopMonitoringOrientation();
         recordPresenter.onPause();
         super.onPause();
@@ -271,10 +324,20 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     protected void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "init");
-        registerReceiver(receiver, new IntentFilter(ExportProjectService.NOTIFICATION));
+        checkReceiver();
+        updateBatteryStatus();
+        updatePercentFreeMemory();
         recordPresenter.onResume();
         recording = false;
         hideSystemUi();
+
+    }
+
+
+
+  private void checkReceiver() {
+        registerReceiver(receiver, new IntentFilter(ExportProjectService.NOTIFICATION));
+        registerReceiver(batteryReceiver,new IntentFilter(IntentConstants.BATTERY_NOTIFICATION));
     }
 
     @Override
@@ -328,12 +391,38 @@ public class RecordActivity extends VimojoActivity implements RecordView {
                 recordPresenter.requestRecord();
             } else {
                 recordPresenter.stopRecord();
+                updateBatteryStatus();
+                updatePercentFreeMemory();
             }
         }
         return true;
     }
 
-    @Override
+    public void updateBatteryStatus() {
+        Intent batteryStatus = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        recordPresenter.updateBatteryStatus(status, level, scale);
+    }
+
+    private void updatePercentFreeMemory() {
+      StatFs statFs= new StatFs(Environment.getDataDirectory().getPath());
+      long totalMemory= getTotalMemory(statFs);
+      long freeMemory= getFreeMemory(statFs);
+      recordPresenter.updateFreeMemorySpace(totalMemory,freeMemory);
+    }
+
+    private long getTotalMemory(StatFs statFs) {
+      long   totalMemory  = (statFs.getBlockCountLong() *  statFs.getBlockSizeLong());
+      return totalMemory;
+    }
+    private long getFreeMemory(StatFs statFs) {
+      long   freeMemory   = (statFs.getAvailableBlocksLong() * statFs.getBlockSizeLong());
+      return freeMemory;
+    }
+
+  @Override
     public void showRecordButton() {
         recButton.setImageResource(R.drawable.activity_record_ic_rec);
         recording = false;
@@ -584,7 +673,124 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         }
     }
 
-    public void setupActivityButtons() {
+    @Override
+    public void showBatteryStatus(Constants.BATTERY_STATUS batteryStatus, int batteryPercent) {
+      progressDialogBatteryOrMemory.setTitle(R.string.battery);
+      freeMemorySpace.setVisibility(View.GONE);
+      switch (batteryStatus) {
+             case CHARGING:
+                 battery.setImageResource(R.drawable.activity_record_ic_battery_charging);
+                 break;
+            case FULL:
+                battery.setImageResource(R.drawable.activity_record_ic_battery_full);
+                break;
+            case MEDIUM:
+                battery.setImageResource(R.drawable.activity_record_ic_battery_medium);
+                break;
+            case LOW:
+                battery.setImageResource(R.drawable.activity_record_ic_battery_low);
+                break;
+            case CRITICAL:
+                battery.setImageResource(R.drawable.activity_record_ic_battery_alert);
+                break;
+             default:
+               battery.setImageResource(R.drawable.activity_record_ic_battery_full);
+         }
+         if(progressDialogBatteryOrMemory.isShowing()){
+           updateProgressBarBattery(batteryStatus, batteryPercent);
+           updatePercentBattery(batteryPercent);
+         }
+    }
+
+  private void updatePercentBattery(int batteryPercent) {
+    percentLevel.setText(batteryPercent + " %");
+  }
+
+  private void updateProgressBarBattery(Constants.BATTERY_STATUS batteryStatus, int batteryPercent) {
+    progressBarBatteryOrMemory.setProgress(batteryPercent);
+    setColorProgressBarBattery(batteryStatus);
+  }
+
+  private void setColorProgressBarBattery(Constants.BATTERY_STATUS batteryStatus) {
+
+    GradientDrawable drawableProgressBar = getDrawableProgressBar();
+
+    switch (batteryStatus) {
+      case CHARGING:
+      case FULL:
+        drawableProgressBar.setColor(Color.GREEN);
+        break;
+      case MEDIUM:
+        drawableProgressBar.setColor(Color.YELLOW);
+        break;
+      case LOW:
+      case CRITICAL:
+      default:
+        drawableProgressBar.setColor(Color.RED);
+        break;
+    }
+  }
+
+  @Override
+  public void showFreeMemorySpace(Constants.MEMORY_STATUS memoryStatus, int memoryPercent, String freeMemoryInBytes, String totalMemoryInBytes) {
+    progressDialogBatteryOrMemory.setTitle(R.string.memory);
+    freeMemorySpace.setVisibility(View.VISIBLE);
+
+    freeMemorySpace.setText(getResources().getText(R.string.free_memory_space) + " " +freeMemoryInBytes+ " " +
+    getResources().getText(R.string.preposition_of)+ " "+totalMemoryInBytes);
+    switch (memoryStatus) {
+      case MEDIUM:
+        memory.setImageTintList(ColorStateList.valueOf(Color.YELLOW));
+        break;
+      case CRITICAL:
+        memory.setImageTintList(ColorStateList.valueOf(Color.RED));
+        break;
+      case OKAY:
+        memory.setImageTintList(ColorStateList.valueOf(Color.GREEN));
+        break;
+      default:
+        memory.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+    }
+    if(progressDialogBatteryOrMemory.isShowing()) {
+      updateProgressBarMemory(memoryStatus, memoryPercent);
+      updatePercentMemory(memoryPercent);
+    }
+  }
+
+  private void updatePercentMemory(int memoryPercent) {
+    percentLevel.setText(memoryPercent + " %");
+  }
+
+  private void updateProgressBarMemory(Constants.MEMORY_STATUS memoryStatus, int memoryPercent) {
+    progressBarBatteryOrMemory.setProgress(memoryPercent);
+    setColorProgressBarMemory(memoryStatus);
+  }
+
+  private void setColorProgressBarMemory(Constants.MEMORY_STATUS memoryStatus) {
+    GradientDrawable drawableProgressBar = getDrawableProgressBar();
+
+    switch (memoryStatus) {
+      case OKAY:
+        drawableProgressBar.setColor(Color.GREEN);
+        break;
+      case MEDIUM:
+        drawableProgressBar.setColor(Color.YELLOW);
+        break;
+      case CRITICAL:
+        drawableProgressBar.setColor(Color.RED);
+        break;
+      default:
+        drawableProgressBar.setColor(Color.WHITE);
+    }
+  }
+
+  private GradientDrawable getDrawableProgressBar() {
+    LayerDrawable drawableProgressBar = (LayerDrawable) progressBarBatteryOrMemory.getProgressDrawable();
+    return (GradientDrawable) drawableProgressBar
+        .findDrawableByLayerId(R.id.progressbar_dialog_battery_and_memory_progress);
+  }
+
+  public void setupActivityButtons() {
         // TODO:(alvaro.martinez) 7/11/16 implement this functionality
         tintRecordButtons(R.color.button_color_record_activity);
     }
@@ -724,12 +930,32 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         hud.setVisibility(View.INVISIBLE);
     }
 
-    public void navigateTo(Class cls) {
+    @OnClick(R.id.activity_record_icon_battery)
+    public void showDialogWithLevelBattery(){
+      if(!progressDialogBatteryOrMemory.isShowing()) {
+        showDialogBatteryOrMemory();
+        updateBatteryStatus();
+      }
+    }
+
+  @OnClick(R.id.activity_record_icon_storage)
+  public void showDialogWithLevelMemory(){
+    if(!progressDialogBatteryOrMemory.isShowing()) {
+      showDialogBatteryOrMemory();
+      updatePercentFreeMemory();
+    }
+  }
+
+  public void navigateTo(Class cls) {
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         startActivity(intent);
     }
 
-    private class OrientationHelper extends OrientationEventListener {
+  private void showDialogBatteryOrMemory() {
+    progressDialogBatteryOrMemory.show();
+  }
+
+  private class OrientationHelper extends OrientationEventListener {
         Context context;
         private int rotationView;
         private boolean orientationHaveChanged = false;

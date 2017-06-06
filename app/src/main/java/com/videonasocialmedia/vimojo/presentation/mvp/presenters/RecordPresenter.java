@@ -17,6 +17,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.BatteryManager;
 import android.util.Log;
 
 import com.videonasocialmedia.avrecorder.AudioVideoRecorder;
@@ -49,6 +50,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -70,6 +72,9 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
     /**
      * LOG_TAG
      */
+    public static final long ONE_KB = 1 *1024;
+    public static final long ONE_MB = ONE_KB*1024;
+    public static final long ONE_GB = ONE_MB*1024;
     private static final String LOG_TAG = "RecordPresenter";
     private final UserEventTracker userEventTracker;
     private boolean firstTimeRecording;
@@ -85,7 +90,8 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
     private GLCameraView cameraPreview;
     protected Project currentProject;
     private int height;
-
+    private int batteryPercent;
+    private int memoryPercent;
     private boolean externalIntent;
 
     private Drawable drawableFadeTransitionVideo;
@@ -224,6 +230,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         if (recorder.isRecording()) {
             trackUserInteracted(AnalyticsConstants.RECORD, AnalyticsConstants.STOP);
             recorder.stopRecording();
+
         }
     }
 
@@ -499,4 +506,81 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         }
     }
 
+    public void updateBatteryStatus(int batteryStatus, int batteryLevel, int batteryScale) {
+        int batteryPercent= getPercentLevel(batteryLevel, batteryScale);
+        recordView.showBatteryStatus(getBatteryStatus(batteryStatus, batteryPercent),batteryPercent);
+      }
+
+
+  public int getPercentLevel(int batteryLevel, int batteryScale) {
+        float level = batteryLevel / (float) batteryScale *100;
+        return batteryPercent= Math.round(level);
+  }
+
+  public Constants.BATTERY_STATUS getBatteryStatus(int batteryStatus, int batteryPercent) {
+        Constants.BATTERY_STATUS status;
+        if(batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING)
+            status = Constants.BATTERY_STATUS.CHARGING;
+        else
+            status = getStatusNotCharging(batteryPercent);
+        return status;
+    }
+
+  public Constants.BATTERY_STATUS getStatusNotCharging(int batteryPercent) {
+    Constants.BATTERY_STATUS status=
+        Constants.BATTERY_STATUS.UNKNOW;
+    if (batteryPercent < 15)
+      status = Constants.BATTERY_STATUS.CRITICAL;
+    else if (batteryPercent>=15 && batteryPercent<25)
+      status = Constants.BATTERY_STATUS.LOW;
+    else if (batteryPercent>=25 && batteryPercent<75)
+      status = Constants.BATTERY_STATUS.MEDIUM;
+    else status= Constants.BATTERY_STATUS.FULL;
+    return status;
+  }
+
+  public void updateFreeMemorySpace(long totalMemory, long freeMemory) {
+      int memoryFreePercent= getPercentFreeBattery(totalMemory, freeMemory);
+      Constants.MEMORY_STATUS memoryStatus= getMemoryStatus(memoryFreePercent);
+      String freeMemoryInBytes= toFormattedMemorySpaceWithBytes(freeMemory);
+      String totalMemoryInBytes=toFormattedMemorySpaceWithBytes(totalMemory);
+
+    recordView.showFreeMemorySpace(memoryStatus, memoryFreePercent, freeMemoryInBytes, totalMemoryInBytes);
+  }
+
+  public int getPercentFreeBattery(long totalMemory, long freeMemory) {
+    return memoryPercent= Math.round(freeMemory / (float) totalMemory *100);
+  }
+
+  public Constants.MEMORY_STATUS getMemoryStatus(int freeMemoryPercent) {
+    Constants.MEMORY_STATUS memoryStatus= Constants.MEMORY_STATUS.OKAY;
+    if (freeMemoryPercent<25)
+      memoryStatus= Constants.MEMORY_STATUS.CRITICAL;
+    else if (freeMemoryPercent>=25 && freeMemoryPercent<75)
+      memoryStatus= Constants.MEMORY_STATUS.MEDIUM;
+    else  memoryStatus= Constants.MEMORY_STATUS.OKAY;
+    return memoryStatus;
+  }
+
+
+    public String toFormattedMemorySpaceWithBytes(long memorySpace) {
+        double memorySpaceInBytes;
+        if (memorySpace<ONE_KB) {
+            memorySpaceInBytes = memorySpace;
+            return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " bytes";
+        }
+        if (memorySpace>=ONE_KB && memorySpace<ONE_MB) {
+            memorySpaceInBytes = (double) memorySpace / ONE_KB;
+            return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Kb";
+        }
+        if (memorySpace>=ONE_MB && memorySpace<ONE_GB) {
+            memorySpaceInBytes = (double) memorySpace / ONE_MB;
+            return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Mb";
+        }
+        if (memorySpace>=ONE_GB) {
+            memorySpaceInBytes = (double) memorySpace / ONE_GB;
+            return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Gb";
+        }
+        return "";
+    }
 }

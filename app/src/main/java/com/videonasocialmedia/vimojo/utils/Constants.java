@@ -82,4 +82,7 @@ public class Constants {
     public static final int MAX_NUM_TRIES_TO_EXPORT_VIDEO = 4;
 
     public enum ERROR_TRANSCODING_TEMP_FILE_TYPE {SPLIT, TRIM, TEXT, AVTRANSITION, APP_CRASH}
+
+    public enum BATTERY_STATUS {CHARGING, CRITICAL, LOW, MEDIUM, FULL, UNKNOW}
+    public enum MEMORY_STATUS {CRITICAL, MEDIUM, OKAY}
 }

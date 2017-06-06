@@ -18,6 +18,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraAccessException;
+import android.os.BatteryManager;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -48,6 +49,7 @@ import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,6 +80,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   private final int maxNumTriesAdaptingVideo = 3;
   private boolean isClickedNavigateToEditOrGallery = false;
   private boolean isFrontCameraSelected = false;
+
+  public long ONE_KB = 1 *1024;
+  public long ONE_MB = ONE_KB*1024;
+  public long ONE_GB = ONE_MB*1024;
 
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
                                 AutoFitTextureView textureView,
@@ -497,6 +503,84 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     public Video getVideo() {
       return video;
     }
+  }
+
+  public void updateBatteryStatus(int batteryStatus, int batteryLevel, int batteryScale) {
+    int batteryPercent= getPercentLevel(batteryLevel, batteryScale);
+    recordView.showBatteryStatus(getBatteryStatus(batteryStatus, batteryPercent),batteryPercent);
+  }
+
+
+  public int getPercentLevel(int batteryLevel, int batteryScale) {
+    float level = batteryLevel / (float) batteryScale *100;
+    return Math.round(level);
+  }
+
+  public Constants.BATTERY_STATUS getBatteryStatus(int batteryStatus, int batteryPercent) {
+    Constants.BATTERY_STATUS status;
+    if(batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING)
+      status = Constants.BATTERY_STATUS.CHARGING;
+    else
+      status = getStatusNotCharging(batteryPercent);
+    return status;
+  }
+
+  public Constants.BATTERY_STATUS getStatusNotCharging(int batteryPercent) {
+    Constants.BATTERY_STATUS status=
+        Constants.BATTERY_STATUS.UNKNOW;
+    if (batteryPercent < 15)
+      status = Constants.BATTERY_STATUS.CRITICAL;
+    else if (batteryPercent>=15 && batteryPercent<25)
+      status = Constants.BATTERY_STATUS.LOW;
+    else if (batteryPercent>=25 && batteryPercent<75)
+      status = Constants.BATTERY_STATUS.MEDIUM;
+    else status= Constants.BATTERY_STATUS.FULL;
+    return status;
+  }
+
+  public void updateFreeStorageSpace(long totalMemory, long freeMemory) {
+    int memoryFreePercent= getPercentFreeBattery(totalMemory, freeMemory);
+    Constants.MEMORY_STATUS memoryStatus= getMemoryStatus(memoryFreePercent);
+    String freeMemoryInBytes= toFormattedMemorySpaceWithBytes(freeMemory);
+    String totalMemoryInBytes=toFormattedMemorySpaceWithBytes(totalMemory);
+
+    recordView.showFreeStorageSpace(memoryStatus, memoryFreePercent, freeMemoryInBytes, totalMemoryInBytes);
+  }
+
+  public int getPercentFreeBattery(long totalMemory, long freeMemory) {
+    return Math.round(freeMemory / (float) totalMemory *100);
+  }
+
+  public Constants.MEMORY_STATUS getMemoryStatus(int freeMemoryPercent) {
+    Constants.MEMORY_STATUS memoryStatus= Constants.MEMORY_STATUS.OKAY;
+    if (freeMemoryPercent<25)
+      memoryStatus= Constants.MEMORY_STATUS.CRITICAL;
+    else if (freeMemoryPercent>=25 && freeMemoryPercent<75)
+      memoryStatus= Constants.MEMORY_STATUS.MEDIUM;
+    else  memoryStatus= Constants.MEMORY_STATUS.OKAY;
+    return memoryStatus;
+  }
+
+
+  public String toFormattedMemorySpaceWithBytes(long memorySpace) {
+    double memorySpaceInBytes;
+    if (memorySpace<ONE_KB) {
+      memorySpaceInBytes = memorySpace;
+      return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " bytes";
+    }
+    if (memorySpace>=ONE_KB && memorySpace<ONE_MB) {
+      memorySpaceInBytes = (double) memorySpace / ONE_KB;
+      return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Kb";
+    }
+    if (memorySpace>=ONE_MB && memorySpace<ONE_GB) {
+      memorySpaceInBytes = (double) memorySpace / ONE_MB;
+      return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Mb";
+    }
+    if (memorySpace>=ONE_GB) {
+      memorySpaceInBytes = (double) memorySpace / ONE_GB;
+      return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Gb";
+    }
+    return "";
   }
 
 }
