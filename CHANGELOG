@@ -1,3 +1,8 @@
+v0.5.2
+
+- Added feature icon camera battery. Info status battery on click and update levels with different colors.
+- Added feature icon camera storage. Info internal storage on click and update levels with different colors.
+
 v0.5.1
 
 - Added seekBar to control zoom.

@@ -1,6 +1,6 @@
-v0.5.2
+v0.5.3
 
-- Added feature icon camera battery. Info status battery on click and update levels with different colors.
-- Added feature icon camera storage. Info internal storage on click and update levels with different colors.
+- Fix bug alert dialog showing status battery and storage.
+- Fix bug flash activated missing in recording mode.
 
 

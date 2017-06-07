@@ -145,11 +145,11 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     @Bind(R.id.activity_record_icon_storage)
     ImageButton memory;
 
-    @Nullable @Bind(R.id.progressBar_level_battery)
+    @Nullable @Bind(R.id.progressBar_level)
     ProgressBar progressBarBatteryOrMemory;
-    @Nullable @Bind(R.id.text_percent_level_battery_and_storage)
+    @Nullable @Bind(R.id.text_percent_level)
     TextView percentLevel;
-    @Nullable @Bind(R.id.text_free_storage_space)
+    @Nullable @Bind(R.id.text_message)
     TextView freeMemorySpace;
 
 
@@ -284,10 +284,10 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
   private void createProgressDialogBatteryOrMemory() {
     AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
-    View dialogView = getLayoutInflater().inflate(R.layout.dialog_level_battery_and_storage, null);
-    progressBarBatteryOrMemory = (ProgressBar) dialogView.findViewById(R.id.progressBar_level_battery);
-    percentLevel = (TextView) dialogView.findViewById(R.id.text_percent_level_battery_and_storage);
-    freeMemorySpace=(TextView)dialogView.findViewById(R.id.text_free_storage_space);
+    View dialogView = getLayoutInflater().inflate(R.layout.alert_dialog_with_info_into_circle, null);
+    progressBarBatteryOrMemory = (ProgressBar) dialogView.findViewById(R.id.progressBar_level);
+    percentLevel = (TextView) dialogView.findViewById(R.id.text_percent_level);
+    freeMemorySpace=(TextView)dialogView.findViewById(R.id.text_message);
     progressDialogBatteryOrMemory = builder.setCancelable(true)
         .setView(dialogView)
         .setTitle("Información detallada")
@@ -733,7 +733,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
   @Override
   public void showFreeMemorySpace(Constants.MEMORY_STATUS memoryStatus, int memoryPercent, String freeMemoryInBytes, String totalMemoryInBytes) {
-    progressDialogBatteryOrMemory.setTitle(R.string.memory);
+    progressDialogBatteryOrMemory.setTitle(R.string.storage);
     freeMemorySpace.setVisibility(View.VISIBLE);
 
     freeMemorySpace.setText(getResources().getText(R.string.free_memory_space) + " " +freeMemoryInBytes+ " " +
@@ -787,7 +787,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
   private GradientDrawable getDrawableProgressBar() {
     LayerDrawable drawableProgressBar = (LayerDrawable) progressBarBatteryOrMemory.getProgressDrawable();
     return (GradientDrawable) drawableProgressBar
-        .findDrawableByLayerId(R.id.progressbar_dialog_battery_and_memory_progress);
+        .findDrawableByLayerId(R.id.progressbar_alert_dialog_circular_progress);
   }
 
   public void setupActivityButtons() {
