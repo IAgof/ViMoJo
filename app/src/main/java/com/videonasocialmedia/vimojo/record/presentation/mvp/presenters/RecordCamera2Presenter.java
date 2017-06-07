@@ -198,6 +198,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   public void startRecord() {
     camera.startRecordingVideo();
+
     recordView.showStopButton();
     recordView.startChronometer();
     recordView.showChronometer();
@@ -232,6 +233,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     recordView.showChangeCamera();
     recordView.showRecordedVideoThumbWithText(path);
     recordView.showVideosRecordedNumber(++recordedVideosNumber);
+    setFlashOff();
     moveAndAdaptRecordedVideo(path);
   }
 
@@ -487,6 +489,16 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     camera.seekBarZoom(zoomValue);
   }
 
+  public void storageDialog(long totalStorage, long freeStorage) {
+    updateFreeStorageSpace(totalStorage, freeStorage);
+    recordView.showAlertDialogStorage();
+  }
+
+  public void batteryDialog(int level, int status, int scale) {
+    updateBatteryStatus(status, level, scale);
+    recordView.showAlertDialogBattery();
+  }
+
   private class VideoToAdapt {
     private final int position;
     private final Video video;
@@ -543,7 +555,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     Constants.MEMORY_STATUS memoryStatus= getMemoryStatus(memoryFreePercent);
     String freeMemoryInBytes= toFormattedMemorySpaceWithBytes(freeMemory);
     String totalMemoryInBytes=toFormattedMemorySpaceWithBytes(totalMemory);
-
     recordView.showFreeStorageSpace(memoryStatus, memoryFreePercent, freeMemoryInBytes, totalMemoryInBytes);
   }
 

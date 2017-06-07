@@ -152,6 +152,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   private String videoPath;
   private CameraManager manager;
+  private boolean isFlashActivated;
 
   public Camera2Wrapper(Context context, Camera2WrapperListener listener, int cameraIdSelected,
                         AutoFitTextureView textureView, String directorySaveVideos, VideoCameraFormat
@@ -498,6 +499,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
           previewSession = cameraCaptureSession;
           updatePreview();
+          if(isFlashActivated){
+            setFlashOn();
+          }
           ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -528,6 +532,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   public void setFlashOff() {
+    isFlashActivated = false;
     previewBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF);
     try {
       previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
@@ -537,6 +542,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   public void setFlashOn() {
+    isFlashActivated = true;
     previewBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
     try {
       previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
