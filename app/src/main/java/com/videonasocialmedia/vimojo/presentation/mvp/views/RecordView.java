@@ -15,6 +15,8 @@ package com.videonasocialmedia.vimojo.presentation.mvp.views;
 /**
  * @deprecated Not used, RecordPresenter deprecated.
  */
+import com.videonasocialmedia.vimojo.utils.Constants;
+
 public interface RecordView {
 
     void showRecordButton();
@@ -72,4 +74,8 @@ public interface RecordView {
     void hideVideosRecordedNumber();
 
     void showResolutionSelected(int height);
+
+    void showBatteryStatus(Constants.BATTERY_STATUS statusBattery, int batteryPercent);
+
+    void showFreeMemorySpace(Constants.MEMORY_STATUS memoryStatus, int memoryPercent, String freeMemoryInBytes, String totalMemoryInBytes);
 }

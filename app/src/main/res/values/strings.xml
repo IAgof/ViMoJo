@@ -25,6 +25,7 @@
 
     <string name="dialog_title_record_adapting_video">Adapting video</string>
     <string name="dialog_message_record_adapting_video">Working ...</string>
+    <string name="alert_dialog_info_detail">Info detail</string>
 
     <!-- Share Activity -->
     <string name="shareError">Ups, we couldn\'t share this video. Sorry</string>
@@ -1757,6 +1758,10 @@ and Conditions.\n\n
     <string name="dialog_message_export_project">Making magic in your video</string>
     <string name="dialog_title_export_error">Exporting error</string>
     <string name="dialog_message_export_error">An error ocurred while exporting and exporting could not be completed. Please try again.</string>
+    <string name="battery">Battery</string>
+    <string name="storage">Internal storage</string>
+    <string name="free_memory_space">Available space:</string>
+    <string name="preposition_of">of</string>
     <string name="alert_dialog_title_music">Music</string>
     <string name="alert_dialog_title_message_adding_music">Problem adding music in project</string>
     <string name="alert_dialog_title_message_removing_music">Problem removing music in project</string>

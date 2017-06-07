@@ -14,6 +14,8 @@ package com.videonasocialmedia.vimojo.record.presentation.mvp.views;
 
 import android.view.MotionEvent;
 
+import com.videonasocialmedia.vimojo.utils.Constants;
+
 public interface RecordCamera2View {
 
 
@@ -39,9 +41,9 @@ public interface RecordCamera2View {
 
     void hideChangeCamera();
 
-    void showRecordedVideoThumb(String path);
+    void showRecordedVideoThumbWithText(String path);
 
-    void hideRecordedVideoThumb();
+    void hideRecordedVideoThumbWithText();
 
     void showVideosRecordedNumber(int numberOfVideos);
 
@@ -59,10 +61,17 @@ public interface RecordCamera2View {
 
     void showRightControlsView();
 
-    void showBottomControlsView();
+    void showSettingsCameraView();
 
-    void hideBottomControlsView();
+    void hideSettingsCameraView();
 
+    void hideAdvancedAFSelection();
+
+    void hideISOSelection();
+
+    void hideWhiteBalanceSelection();
+
+    void hideMetteringModeSelection();
 
     // Setters camera
 
@@ -74,8 +83,8 @@ public interface RecordCamera2View {
 
     void setFocus(MotionEvent event);
 
-    void setZoom(float value);
 
+    void setZoom(float value);
 
     // Others
 
@@ -86,4 +95,13 @@ public interface RecordCamera2View {
     void hideProgressAdaptingVideo();
 
     void navigateTo(Class cls);
+
+    void showBatteryStatus(Constants.BATTERY_STATUS statusBattery, int batteryPercent);
+
+    void showAlertDialogBattery();
+
+    void showFreeStorageSpace(Constants.MEMORY_STATUS memoryStatus, int memoryPercent,
+                              String freeMemoryInBytes, String totalMemoryInBytes);
+
+    void showAlertDialogStorage();
 }

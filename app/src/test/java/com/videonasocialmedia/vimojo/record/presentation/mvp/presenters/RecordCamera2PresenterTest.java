@@ -24,6 +24,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.junit.After;
 import org.junit.Before;
@@ -37,6 +38,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
@@ -50,9 +52,6 @@ public class RecordCamera2PresenterTest {
 
   @Mock RecordCamera2View mockedRecordView;
   @Mock Context mockedContext;
-  boolean isFrontCameraSelected = true;
-  boolean isPrincipalViewSelected = true;
-  boolean isRightControlsViewSelected = true;
   @Mock AutoFitTextureView mockedTextureView;
   String directorySaveVideos;
   @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
@@ -67,6 +66,7 @@ public class RecordCamera2PresenterTest {
   Drawable fadeTransition;
   boolean isFadeActivated;
 
+
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
@@ -79,7 +79,7 @@ public class RecordCamera2PresenterTest {
   }
 
   @Test
-  public void initViewsWithPrincipalAndRightControlsViewSelectedCallsCorrectRecordView(){
+  public void initViewsWithControlsViewAndSettingsCameraViewSelectedCallsCorrectRecordView(){
 
     presenter = getRecordCamera2Presenter();
 
@@ -94,8 +94,6 @@ public class RecordCamera2PresenterTest {
 
   @Test
   public void initViewsDefaultInitializationCallsCorrectRecordView(){
-    isPrincipalViewSelected = false;
-    isRightControlsViewSelected = false;
 
     presenter = getRecordCamera2Presenter();
 
@@ -103,9 +101,8 @@ public class RecordCamera2PresenterTest {
 
     verify(mockedRecordView).hideChronometer();
     verify(mockedRecordView).setResolutionSelected(720);
-
-    verify(mockedRecordView).hidePrincipalViews();
-    verify(mockedRecordView).hideRightControlsView();
+    verify(mockedRecordView).showPrincipalViews();
+    verify(mockedRecordView).showRightControlsView();
   }
 
   @Test
@@ -135,6 +132,7 @@ public class RecordCamera2PresenterTest {
     assertThat("There are videos in project", numVideosInProject, is(2));
 
     // TODO:(alvaro.martinez) 6/04/17 Assert also there are not videos pending to adapt, transcoding
+
     presenter = getRecordCamera2Presenter();
 
     presenter.navigateToEditOrGallery();
@@ -168,6 +166,66 @@ public class RecordCamera2PresenterTest {
     verify(mockedRecordView).showProgressAdaptingVideo();
   }
 
+  @Test
+  public void updateStatusBatteryCallsRecordViewShowBatteryStatus() {
+    int statusBattery = 2;
+    int levelBattery = 20;
+    int scaleBattery = 100;
+    presenter = getRecordCamera2Presenter();
+
+    presenter.updateBatteryStatus(statusBattery, levelBattery, scaleBattery);
+
+    verify(mockedRecordView).showBatteryStatus(Constants.BATTERY_STATUS.CHARGING, 20);
+  }
+
+  @Test
+  public void getPercentBateryIfLevelBatteryIs2AndScaleBatteryIs10() {
+    int levelBattery = 2;
+    int scaleBattery = 10;
+    int percentBattery;
+    presenter = getRecordCamera2Presenter();
+
+    percentBattery = presenter.getPercentLevel(levelBattery, scaleBattery);
+
+    assertThat("percentLevel will be 20", percentBattery, is(20));
+
+  }
+
+  @Test
+  public void getBatteryStatusreturnNoChargingIfStatusIsNot2() {
+    int percentBattery = 20;
+    int statusBattery = 3; // BatteryManager.BATTERY_STATUS_CHARGING
+    Constants.BATTERY_STATUS status;
+    presenter = getRecordCamera2Presenter();
+
+    status = presenter.getBatteryStatus(statusBattery, percentBattery);
+
+    assertNotEquals("Status is not charging", status, is(Constants.BATTERY_STATUS.CHARGING));
+  }
+
+  @Test
+  public void getBatteryStatusreturnChargingIfStatusIs2() {
+    int percentBattery = 20;
+    int statusBattery = 2; // BatteryManager.BATTERY_STATUS_CHARGING
+    Constants.BATTERY_STATUS status;
+    presenter = getRecordCamera2Presenter();
+
+    status = presenter.getBatteryStatus(statusBattery, percentBattery);
+
+    assertThat("Status is charging", status, is(Constants.BATTERY_STATUS.CHARGING));
+  }
+
+
+  @Test
+  public void getBatteryStatusreturnLowStatusIfLevelIsLessThan10AndStatusIsNotCharging() {
+    int percentBattery = 10;
+    Constants.BATTERY_STATUS status;
+    presenter = getRecordCamera2Presenter();
+
+    status = presenter.getStatusNotCharging(percentBattery);
+
+    assertThat("Level will be CRITICAL", status, is(Constants.BATTERY_STATUS.CRITICAL));
+  }
 
   public Project getAProject() {
     return Project.getInstance("title", "/path",
@@ -178,10 +236,10 @@ public class RecordCamera2PresenterTest {
   @NonNull
   private RecordCamera2Presenter getRecordCamera2Presenter() {
     return new RecordCamera2Presenter(mockedContext, mockedRecordView,
-        isFrontCameraSelected, isPrincipalViewSelected,
-        isRightControlsViewSelected, mockedTextureView, directorySaveVideos,
+        mockedTextureView, directorySaveVideos,
         mockedUpdateVideoRepositoryUseCase, mockedLaunchTranscoderAddAVTransitionUseCase,
         mockedGetVideoFormatFromCurrentProjectUseCase,
         mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
   }
+
 }

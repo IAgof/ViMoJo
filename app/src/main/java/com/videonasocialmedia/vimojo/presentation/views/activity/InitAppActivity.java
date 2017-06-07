@@ -117,6 +117,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
         setContentView(R.layout.activity_init_app);
         ButterKnife.bind(this);
+        splashScreen.setImageBitmap(Utils.decodeSampledBitmapFromResource(getResources(),
+            R.drawable.splash_screen, 1280, 720));
         setVersionCode();
         createPermissionListeners();
         Dexter.continuePendingRequestsIfPossible(compositePermissionsListener);
@@ -200,7 +202,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     @Override
