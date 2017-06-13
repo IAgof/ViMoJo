@@ -88,7 +88,7 @@ public interface RecordCamera2View {
 
     // Others
 
-    void showError(int stringResourceId);
+    void showError(String message);
 
     void showProgressAdaptingVideo();
 

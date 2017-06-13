@@ -5,6 +5,8 @@ import android.util.SparseIntArray;
 import android.view.Surface;
 
 import com.videonasocialmedia.camera.utils.VideoCameraFormat;
+
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -56,7 +58,7 @@ public class MediaRecorderWrapper {
     this.videoCameraFormat = videoCameraFormat;
   }
 
-  public void setUpMediaRecorder() throws IOException {
+  public void setUpMediaRecorder() {
 
     mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
     mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
@@ -86,15 +88,30 @@ public class MediaRecorderWrapper {
         mediaRecorder.setOrientationHint(INVERSE_ORIENTATIONS.get(rotation));
         break;
     }
+
+  }
+
+  public void start() {
+    try {
+      mediaRecorder.start();
+    } catch (RuntimeException e) {
+      new File(videoPath).delete();
+      release();
+    }
+  }
+
+  public void prepare() throws IOException {
     mediaRecorder.prepare();
   }
 
-  public void start(){
-    mediaRecorder.start();
-  }
-
   public void stop(){
-    mediaRecorder.stop();
+    try {
+      mediaRecorder.stop();
+    } catch(RuntimeException e) {
+      new File(videoPath).delete();  //you must delete the outputfile when the recorder stop failed.
+    } finally {
+      release();
+    }
   }
 
   public void reset(){

@@ -210,8 +210,19 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   public void stopRecord() {
     camera.stopRecordVideo();
-    stopVideo(camera.getVideoPath());
+    updateStopVideoUI();
+    if(new File(camera.getVideoPath()).exists())
+      stopVideo(camera.getVideoPath());
     restartPreview();
+  }
+
+  private void updateStopVideoUI() {
+    recordView.showRecordButton();
+    recordView.showNavigateToSettingsActivity();
+    recordView.stopChronometer();
+    recordView.hideChronometer();
+    recordView.showChangeCamera();
+    setFlashOff();
   }
 
   @Override
@@ -226,14 +237,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   private void stopVideo(String path) {
-    recordView.showRecordButton();
-    recordView.showNavigateToSettingsActivity();
-    recordView.stopChronometer();
-    recordView.hideChronometer();
-    recordView.showChangeCamera();
     recordView.showRecordedVideoThumbWithText(path);
     recordView.showVideosRecordedNumber(++recordedVideosNumber);
-    setFlashOff();
     moveAndAdaptRecordedVideo(path);
   }
 
@@ -267,7 +272,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       @Override
       public void onAddMediaItemToTrackError() {
         recordView.hideProgressAdaptingVideo();
-        recordView.showError(R.string.addMediaItemToTrackError);
+        recordView.showError(context.getString(R.string.addMediaItemToTrackError));
       }
 
       @Override
@@ -295,6 +300,11 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   @Override
   public void setZoom(float zoomValue) {
     recordView.setZoom(zoomValue);
+  }
+
+  @Override
+  public void setError(String message) {
+    recordView.showError(message);
   }
 
   public void restartPreview(){
