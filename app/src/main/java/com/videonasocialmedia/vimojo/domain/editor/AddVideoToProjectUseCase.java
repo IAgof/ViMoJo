@@ -55,7 +55,7 @@ public class AddVideoToProjectUseCase {
 
     private void addVideoToTrack(Video video) {
         try {
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = Project.getInstance(null, null, null, null);
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(video);
             projectRepository.update(currentProject);
@@ -78,7 +78,7 @@ public class AddVideoToProjectUseCase {
     public void addVideoToTrack(Video video, OnAddMediaFinishedListener listener,
                                 OnLaunchAVTransitionTempFileListener avtransitionsListener) {
         try {
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = Project.getInstance(null, null, null, null);
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(video);
             projectRepository.update(currentProject);
@@ -97,7 +97,7 @@ public class AddVideoToProjectUseCase {
     public void addVideoToProjectAtPosition(Video video, int position,
                                             OnAddMediaFinishedListener listener) {
         try {
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = Project.getInstance(null, null, null, null);
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItemAt(position, video);
             projectRepository.update(currentProject);
@@ -110,7 +110,7 @@ public class AddVideoToProjectUseCase {
     public void addVideoListToTrack(List<Video> videoList, OnAddMediaFinishedListener listener,
                                     OnLaunchAVTransitionTempFileListener avtransitionsListener) {
         try {
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = Project.getInstance(null, null, null, null);
             MediaTrack mediaTrack = currentProject.getMediaTrack();
             for (Video video : videoList) {
                 mediaTrack.insertItem(video);
@@ -129,7 +129,7 @@ public class AddVideoToProjectUseCase {
 
     private void checkIfVideoNeedAVTransitionTempFile(Video videoToAdd,
                                                   OnLaunchAVTransitionTempFileListener listener) {
-        currentProject = Project.getInstance(null,null,null);
+        currentProject = Project.getInstance(null,null,null, null);
         if(currentProject.isAudioFadeTransitionActivated()
             || currentProject.isVideoFadeTransitionActivated())
             listener.videoToLaunchAVTransitionTempFile(videoToAdd,

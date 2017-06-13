@@ -23,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by alvaro on 1/06/17.
@@ -115,7 +116,7 @@ public class AddAudioUseCaseTest {
     assertThat("Project has music", project.hasMusic(), is(true));
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
     AudioTrack voiceOverTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
-    voiceOverTrack.insertItem(music);
+    voiceOverTrack.insertItem(voiceOver);
     assertThat("Initial position in track is 0", voiceOverTrack.getPosition(), is(0));
 
     injectedUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
@@ -140,6 +141,39 @@ public class AddAudioUseCaseTest {
     assertThat("UseCase has updated volume track to 0.7f ",
         project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getVolume(), is(0.7f));
   }
+
+  @Test
+  public void addAudioUpdateRepositories(){
+    Project project = getAProject();
+    float defaultVolume = 0.7f;
+    int defaultDuration = 100;
+    Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+
+    injectedUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+        mockedOnAddMediaFinishedListener);
+
+    verify(mockedProjectRepository).update(project);
+    verify(mockedMusicRepository).update(voiceOver);
+    verify(mockedTrackRepository).update(project.getAudioTracks()
+        .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+  }
+
+  @Test
+  public void addAudioInsertMusicToTrack(){
+    Project project = getAProject();
+    float defaultVolume = 0.7f;
+    int defaultDuration = 100;
+    Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    assertThat("Default items in track is zero",
+        project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getItems().size(), is(0));
+
+    injectedUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+        mockedOnAddMediaFinishedListener);
+
+    assertThat("UseCase has updated audio track items ",
+        project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getItems().size(), is(1));
+  }
+
 
   private Project getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.GOOD,

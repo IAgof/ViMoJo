@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
-import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -56,14 +55,9 @@ import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.AddVoiceOverToProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.MergeVoiceOverAudiosUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.UpdateAudioTrackProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.UpdateMusicVolumeProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
@@ -122,9 +116,10 @@ public class ActivityPresentersModule {
   SoundVolumePresenter getSoundVolumePresenter(GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                      GetPreferencesTransitionFromProjectUseCase
                                          getPreferencesTransitionFromProjectUseCase,
-                                     AddAudioUseCase addAudioUseCase) {
+                                     AddAudioUseCase addAudioUseCase,
+                                     RemoveAudioUseCase removeAudioUseCase) {
     return new SoundVolumePresenter((SoundVolumeView) activity, getMediaListFromProjectUseCase,
-        getPreferencesTransitionFromProjectUseCase, addAudioUseCase);
+        getPreferencesTransitionFromProjectUseCase, addAudioUseCase, removeAudioUseCase, activity);
   }
 
   @Provides @PerActivity
@@ -335,11 +330,6 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  RemoveMusicFromProjectUseCase provideMusicRemover(MusicRepository musicRepository) {
-    return new RemoveMusicFromProjectUseCase(musicRepository);
-  }
-
-  @Provides
   ReorderMediaItemUseCase provideMusicReorderer(ProjectRepository projectRepository) {
     return new ReorderMediaItemUseCase(projectRepository);
   }
@@ -358,11 +348,6 @@ public class ActivityPresentersModule {
   CreateDefaultProjectUseCase provideDefaultProjectCreator(ProjectRepository projectRepository,
                                                             ProfileRepository profileRepository) {
     return new CreateDefaultProjectUseCase(projectRepository, profileRepository);
-  }
-
-  @Provides
-  AddVoiceOverToProjectUseCase  provideVoiceOverSetter(AddMusicToProjectUseCase addMusicToProjectUseCase) {
-    return new AddVoiceOverToProjectUseCase(addMusicToProjectUseCase);
   }
 
   @Provides
@@ -421,18 +406,9 @@ public class ActivityPresentersModule {
     return new UpdateVideoRepositoryUseCase(videoRepository);
   }
 
-  @Provides UpdateMusicVolumeProjectUseCase provideUpdateMusicVolumeProject(
-          ProjectRepository projectRepository) {
-    return new UpdateMusicVolumeProjectUseCase(projectRepository);
-  }
-
   @Provides LaunchTranscoderAddAVTransitionsUseCase provideLaunchTranscoderAddAVTransition(
       VideoRepository videoRepository){
    return  new LaunchTranscoderAddAVTransitionsUseCase(videoRepository);
-  }
-
-  @Provides AddMusicToProjectUseCase providesAddMusicToProject(MusicRepository musicRepository){
-    return new AddMusicToProjectUseCase(musicRepository);
   }
 
   @Provides GetVideoFormatFromCurrentProjectUseCase provideVideoFormatFromCurrentProjectUseCase(){
@@ -458,11 +434,6 @@ public class ActivityPresentersModule {
 
   @Provides VideoListErrorCheckerDelegate providesVideoListErrorCheckerDelegate(){
     return new VideoListErrorCheckerDelegate();
-  }
-
-  @Provides UpdateAudioTrackProjectUseCase providesUpdateAudioTrackProjectUseCase(TrackRepository
-                                                                                  trackRepository){
-    return new UpdateAudioTrackProjectUseCase(trackRepository);
   }
 
   @Provides

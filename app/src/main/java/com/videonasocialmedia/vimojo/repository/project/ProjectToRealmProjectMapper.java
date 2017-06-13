@@ -29,7 +29,13 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
             project.getProfile().getQuality().name(), project.getProfile().getResolution().name(),
             project.getProfile().getFrameRate().name(), project.getDuration(),
             project.isAudioFadeTransitionActivated(), project.isVideoFadeTransitionActivated(),
-            project.hasWatermark());
+            project.hasWatermark(), project.getMediaTrack().getVolume(), project.getMediaTrack()
+            .isMute(), project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume(),
+            project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC).isMute(),
+            project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC).getPosition(),
+            project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getVolume(),
+            project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).isMute(),
+            project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getPosition());
 
     if (project.hasVideoExported()) {
       realmProject.pathLastVideoExported = project.getPathLastVideoExported();
@@ -48,12 +54,6 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
         .getItems()){
       realmProject.musics.add(toReamMusicMapper.map((Music) music));
     }
-
-    realmProject.tracks.add(toRealmTrackMapper.map(project.getMediaTrack()));
-    realmProject.tracks.add(toRealmTrackMapper.map(project.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACK_MUSIC)));
-    realmProject.tracks.add(toRealmTrackMapper.map(project.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER)));
 
      return realmProject;
   }

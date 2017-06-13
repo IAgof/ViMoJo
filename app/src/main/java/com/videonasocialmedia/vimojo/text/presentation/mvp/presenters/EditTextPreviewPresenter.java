@@ -79,7 +79,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
 
     private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null,null,null);
+        return Project.getInstance(null,null,null, null);
     }
 
     public void init(int videoToEditTextIndex) {
@@ -133,7 +133,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
         Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
         if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
             videoToEdit.increaseNumTriesToExportVideo();
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = Project.getInstance(null, null, null, null);
             VideonaFormat videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
             Drawable drawableFadeTransitionVideo = VimojoApplication.getAppContext()
                 .getDrawable(R.drawable.alpha_transition_white);

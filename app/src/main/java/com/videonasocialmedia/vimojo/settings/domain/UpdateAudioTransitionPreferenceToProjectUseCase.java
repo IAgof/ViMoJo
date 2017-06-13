@@ -1,7 +1,6 @@
 package com.videonasocialmedia.vimojo.settings.domain;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 /**
@@ -18,7 +17,7 @@ public class UpdateAudioTransitionPreferenceToProjectUseCase {
   }
 
   public void setAudioFadeTransitionActivated(boolean data) {
-    currentProject = Project.getInstance(null,null,null);
+    currentProject = Project.getInstance(null,null,null, null);
     currentProject.setAudioFadeTransitionActivated(data);
     projectRepository.update(currentProject);
   }

@@ -2,7 +2,6 @@ package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import javax.inject.Inject;
@@ -25,7 +24,7 @@ public class UpdateVideoFrameRateToProjectUseCase {
     }
 
     public void updateFrameRate(VideoFrameRate.FrameRate frameRate) {
-        currentProject = Project.getInstance(null, null, null);
+        currentProject = Project.getInstance(null, null, null, null);
         currentProject.getProfile().setFrameRate(frameRate);
         projectRepository.update(currentProject);
     }

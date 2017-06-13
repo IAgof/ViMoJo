@@ -1765,6 +1765,9 @@ and Conditions.\n\n
     <string name="alert_dialog_title_music">Music</string>
     <string name="alert_dialog_title_message_adding_music">Problem adding music in project</string>
     <string name="alert_dialog_title_message_removing_music">Problem removing music in project</string>
+    <string name="alert_dialog_title_voice_over">Voice over</string>
+    <string name="alert_dialog_title_message_adding_voice_over">Problem adding voice over in project</string>
+
 
     <string name="onNoVideosRetrieved">Not video retrieved</string>
 

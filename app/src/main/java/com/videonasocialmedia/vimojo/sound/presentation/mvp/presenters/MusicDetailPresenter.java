@@ -2,19 +2,16 @@ package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import android.content.Context;
 
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.RemoveMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -24,15 +21,12 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromPro
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
-import com.videonasocialmedia.vimojo.sound.domain.UpdateAudioTrackProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.UpdateMusicVolumeProjectUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC;
 
 /**
  *
@@ -78,7 +72,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null, null, null, null);
     }
 
     public void init(String musicPath) {
@@ -169,7 +163,6 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     public void setVolume(float volume) {
         // Now setVolume update MusicTrackVolume until Vimojo support setVolume by clip.
-        //updateMusicVolumeProjectUseCase.setVolumeMusic(currentProject, volume);
         modifyTrackUseCase.setTrackVolume(currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_MUSIC), volume);
     }

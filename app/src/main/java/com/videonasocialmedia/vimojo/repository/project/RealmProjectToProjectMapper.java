@@ -20,6 +20,9 @@ import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideoToVideoMapper;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.videonasocialmedia.videonamediaframework.model.Constants.*;
 
 
@@ -40,7 +43,7 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
       Project project = mapProject(realmProject);
       setProjectVideos(project, realmProject);
       setProjectLastVideoExported(project, realmProject);
-      setProjectTracks(project, realmProject);
+      //setProjectTracks(project, realmProject);
       setProjectMusic(project, realmProject);
       return project;
     } catch (Exception exception) {
@@ -59,9 +62,24 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
   }
 
   @NonNull
+  private List<Track> mapTrack(RealmProject realmProject){
+    List<Track> trackList = new ArrayList<>();
+    trackList.add(new Track(com.videonasocialmedia.videonamediaframework.model.
+        Constants.INDEX_MEDIA_TRACK,realmProject.volumeVideoTrack, realmProject.muteVideoTrack,
+        false,0));
+    trackList.add(new Track(com.videonasocialmedia.videonamediaframework.model.
+        Constants.INDEX_AUDIO_TRACK_MUSIC,realmProject.volumeMusicTrack,
+        realmProject.muteMusicTrack, false, realmProject.positionMusicTrack));
+    trackList.add(new Track(com.videonasocialmedia.videonamediaframework.model.
+        Constants.INDEX_AUDIO_TRACK_VOICE_OVER,realmProject.volumeVoiceOverTrack,
+        realmProject.muteVoiceOverTrack, false, realmProject.positionVoiceOverTrack));
+    return trackList;
+  }
+
+  @NonNull
   private Project mapProject(RealmProject realmProject){
     Project currentProject = new Project(realmProject.title, Constants.PATH_APP,
-        mapProfile(realmProject));
+        mapProfile(realmProject), mapTrack(realmProject));
     currentProject.setProjectPath(realmProject.projectPath);
     currentProject.setUuid(realmProject.uuid);
     currentProject.setLastModification(realmProject.lastModification);
@@ -93,7 +111,7 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
     }
   }
 
-  private void setProjectTracks(Project project, RealmProject realmProject) {
+  /*private void setProjectTracks(Project project, RealmProject realmProject) {
     for (RealmTrack realmTrack : realmProject.tracks) {
       switch (realmTrack.id) {
         case INDEX_MEDIA_TRACK:
@@ -107,7 +125,7 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
           break;
       }
     }
-  }
+  }*/
 
   private void setTrackParams(Track track, RealmTrack realmTrack) {
     if (realmTrack != null) {

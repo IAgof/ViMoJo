@@ -1,10 +1,18 @@
 package com.videonasocialmedia.vimojo.domain.project;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.track.TrackRealmRepository;
+import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -15,6 +23,7 @@ public class CreateDefaultProjectUseCase {
 
   protected ProfileRepository profileRepository;
   protected ProjectRepository projectRepository;
+  protected TrackRepository trackRepository;
 
   /**
    * Default constructor with project repository argument.
@@ -38,15 +47,28 @@ public class CreateDefaultProjectUseCase {
       Project.INSTANCE = projectRepository.getCurrentProject();
     }
 
-    Project currentProject = Project.getInstance(projectTitle, rootPath, profileRepository.getCurrentProfile());
+    Project currentProject = Project.getInstance(projectTitle, rootPath, profileRepository.getCurrentProfile(),
+        getProjectDefaultTrackList());
     projectRepository.update(currentProject);
   }
 
   public void createProject(String rootPath){
     String projectTitle = DateUtils.getDateRightNow();
-    Project currentProject = new Project(projectTitle,rootPath, profileRepository.getCurrentProfile());
+    Project currentProject = new Project(projectTitle,rootPath,
+        profileRepository.getCurrentProfile(), getProjectDefaultTrackList());
     Project.INSTANCE = currentProject;
     projectRepository.update(currentProject);
+  }
+
+  private List<Track> getProjectDefaultTrackList(){
+    List<Track> trackList = new ArrayList<Track>();
+    Track mediaTrack = new MediaTrack();
+    Track musicTrack = new AudioTrack(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    Track voiceOverTrack = new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    trackList.add(mediaTrack);
+    trackList.add(musicTrack);
+    trackList.add(voiceOverTrack);
+    return trackList;
   }
 
 }

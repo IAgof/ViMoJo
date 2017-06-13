@@ -19,12 +19,14 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -87,9 +89,10 @@ public class Project {
      * @param rootPath - Path to root folder for the current project.
      * @param profile  - Define some characteristics and limitations of the current project.
      */
-    public Project(String title, String rootPath, Profile profile) {
+    public Project(String title, String rootPath, Profile profile, List<Track> trackList) {
         this.title = title;
-        this.vmComposition = new VMComposition(getResourceWatermarkFilePath(rootPath), profile);
+        this.vmComposition = new VMComposition(getResourceWatermarkFilePath(rootPath), profile,
+            trackList);
         this.profile = profile;
         this.duration = 0;
         this.isAudioFadeTransitionActivated = false;
@@ -134,9 +137,10 @@ public class Project {
      * @return - Singleton instance of the current project.
      */
     @Deprecated
-    public static Project getInstance(String title, String rootPath, Profile profile) {
+    public static Project getInstance(String title, String rootPath, Profile profile, List<Track>
+                                      trackList) {
         if (INSTANCE == null) {
-            INSTANCE = new Project(title, rootPath, profile);
+            INSTANCE = new Project(title, rootPath, profile, trackList);
         }
         return INSTANCE;
     }

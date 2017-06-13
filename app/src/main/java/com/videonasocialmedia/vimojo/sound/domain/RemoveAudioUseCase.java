@@ -33,17 +33,17 @@ public class RemoveAudioUseCase {
     this.projectRepository = projectRepository;
     this.trackRepository = trackRepository;
     this.musicRepository = musicRepository;
-    currentProject = Project.getInstance(null,null,null);
+    currentProject = Project.getInstance(null,null,null, null);
   }
 
   public void removeMusic(Music music, int trackIndex, OnRemoveMediaFinishedListener listener){
     AudioTrack audioTrack = currentProject.getAudioTracks().get(trackIndex);
-    updateTrackPosition(audioTrack, trackIndex, music);
+    updateTrackPosition(audioTrack, trackIndex);
     removeMusicInTrack(music, listener, audioTrack);
     updateProject();
   }
 
-  private void updateTrackPosition(AudioTrack audioTrack, int trackIndex, Music music) {
+  private void updateTrackPosition(AudioTrack audioTrack, int trackIndex) {
     audioTrack.setPosition(RESET_POSITION);
     trackRepository.update(audioTrack);
     switch (trackIndex){

@@ -21,16 +21,16 @@ public class ModifyTrackUseCase {
   }
 
   public void setTrackVolume(Track track, float volume){
-    currentProject = Project.getInstance(null, null, null);
+    currentProject = Project.getInstance(null, null, null, null);
     track.setVolume(volume);
-    trackRepository.update(track);
+    //trackRepository.update(track);
     updateProject();
   }
 
   public void setTrackMute(Track track, boolean isMute){
-    currentProject = Project.getInstance(null, null, null);
+    currentProject = Project.getInstance(null, null, null, null);
     track.setMute(isMute);
-    trackRepository.update(track);
+    //trackRepository.update(track);
     updateProject();
   }
 

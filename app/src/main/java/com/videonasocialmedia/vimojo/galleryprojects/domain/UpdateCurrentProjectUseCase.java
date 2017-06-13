@@ -26,7 +26,7 @@ public class UpdateCurrentProjectUseCase {
   }
 
   public void updateProject(){
-    Project project = Project.getInstance(null,null,null);
+    Project project = Project.getInstance(null,null,null, null);
     projectRepository.update(project);
   }
 }

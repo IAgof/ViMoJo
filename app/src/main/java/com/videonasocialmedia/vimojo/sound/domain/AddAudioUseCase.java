@@ -31,7 +31,7 @@ public class AddAudioUseCase {
     this.projectRepository = projectRepository;
     this.trackRepository = trackRepository;
     this.musicRepository = musicRepository;
-    currentProject = Project.getInstance(null,null,null);
+    currentProject = Project.getInstance(null,null,null, null);
   }
 
   public void addMusic(Music music, int trackIndex, OnAddMediaFinishedListener listener) {
@@ -44,13 +44,13 @@ public class AddAudioUseCase {
   private void updateTrack(AudioTrack audioTrack, int trackIndex, Music music) {
     audioTrack.setPosition(getTrackPositionByUserInteraction(audioTrack, trackIndex));
     audioTrack.setVolume(music.getVolume());
-    trackRepository.update(audioTrack);
+    //trackRepository.update(audioTrack);
   }
 
   private void addMusicToTrack(Music music, OnAddMediaFinishedListener listener, AudioTrack audioTrack) {
     try {
       audioTrack.insertItemAt(0,music);
-      musicRepository.update(music);
+      //musicRepository.update(music);
       listener.onAddMediaItemToTrackSuccess(music);
     } catch (IndexOutOfBoundsException | IllegalItemOnTrack exception) {
       listener.onAddMediaItemToTrackError();

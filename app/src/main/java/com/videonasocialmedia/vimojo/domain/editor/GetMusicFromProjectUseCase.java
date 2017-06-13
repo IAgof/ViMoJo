@@ -16,7 +16,7 @@ public class GetMusicFromProjectUseCase {
 
     @Inject
     public GetMusicFromProjectUseCase() {
-        project = Project.getInstance(null, null, null);
+        project = Project.getInstance(null, null, null, null);
     }
 
     public void getMusicFromProject(GetMusicFromProjectCallback listener) {

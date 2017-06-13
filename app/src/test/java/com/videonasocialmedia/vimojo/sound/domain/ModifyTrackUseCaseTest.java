@@ -74,6 +74,27 @@ public class ModifyTrackUseCaseTest {
     assertThat("setTrackVolume update volume track", track.getVolume(), is(volumeTrack));
   }
 
+  @Test
+  public void setTrackMuteUpdateTrackRepository(){
+    Project project = getAProject();
+    AudioTrack track = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+
+    injectedUseCase.setTrackMute(track, true);
+
+    verify(mockedTrackRepository).update(track);
+  }
+
+  @Test
+  public void setTrackMuteUpdateTrack(){
+    Project project = getAProject();
+    AudioTrack track = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    assertThat("Default mute track is false", track.isMute(), is(false));
+
+    injectedUseCase.setTrackMute(track, true);
+
+    assertThat("UseCase update track mute", track.isMute(), is(true));
+  }
+
   private Project getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.GOOD,
         VideoFrameRate.FrameRate.FPS25);

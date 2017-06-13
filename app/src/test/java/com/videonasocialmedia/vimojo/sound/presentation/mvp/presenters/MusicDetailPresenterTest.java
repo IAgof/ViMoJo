@@ -62,6 +62,8 @@ public class MusicDetailPresenterTest {
     @Mock private RemoveAudioUseCase mockedRemoveAudioUseCase;
     @Mock private ModifyTrackUseCase mockedModifyTrackUseCase;
 
+    @Mock Music mockedMusic;
+
     @Mock private OnRemoveMediaFinishedListener mockedOnRemoveMediaFinishedListener;
 
     @Before
@@ -143,19 +145,6 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void onAddMediaItemToTrackSuccessCallsTrackMusicSet() {
-        MusicDetailPresenter musicDetailPresenter =
-                getMusicDetailPresenter(mockedUserEventTracker);
-        Project videonaProject = getAProject();
-        Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
-        musicDetailPresenter.onMusicRetrieved(music);
-
-       // musicDetailPresenter.onAddMediaItemToTrackSuccess(music);
-
-        verify(mockedUserEventTracker).trackMusicSet(videonaProject);
-    }
-
-    @Test
     public void removeMusicCallsGoToSoundActivityOnRemoveMediaItemFromTrackSuccess(){
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
@@ -202,21 +191,18 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void addMusicUpdateTrackVolume(){
+    public void addMusicCallsMusicSetVolume() throws IllegalItemOnTrack {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
-        final Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
         float volumeMusic = 0.85f;
-        Project project = getAProject();
 
-        musicDetailPresenter.addMusic(music, volumeMusic);
+        musicDetailPresenter.addMusic(mockedMusic, volumeMusic);
 
-        assertThat("Add music volume update music track volume ", project.getAudioTracks()
-            .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume(), is(volumeMusic));
+        verify(mockedMusic).setVolume(volumeMusic);
     }
 
     @Test
-    public void setVolumeUpdateMusicTrackVolume() throws IllegalItemOnTrack {
+    public void setVolumeCallsModifyTrackUseCase() throws IllegalItemOnTrack {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         Project project = getAProject();
@@ -228,8 +214,7 @@ public class MusicDetailPresenterTest {
 
         musicDetailPresenter.setVolume(volumeMusic);
 
-        AudioTrack updatedMusicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
-        assertThat("Set volume update music track volume ", updatedMusicTrack.getVolume(), is(volumeMusic));
+        verify(mockedModifyTrackUseCase).setTrackVolume(musicTrack, volumeMusic);
     }
 
     public Project getAProject() {

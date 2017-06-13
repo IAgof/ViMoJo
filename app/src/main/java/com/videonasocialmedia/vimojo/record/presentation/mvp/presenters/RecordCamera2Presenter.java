@@ -122,7 +122,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   private Project loadProject() {
-    return Project.getInstance(null,null,null);
+    return Project.getInstance(null,null,null, null);
   }
 
   public void initViews() {
@@ -445,7 +445,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       Log.d(TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
       if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
         video.increaseNumTriesToExportVideo();
-        Project currentProject = Project.getInstance(null, null, null);
+        Project currentProject = Project.getInstance(null, null, null, null);
         launchTranscoderAddAVTransitionUseCase.launchExportTempFile(context
                 .getDrawable(R.drawable.alpha_transition_white), video,
             getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),

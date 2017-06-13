@@ -26,7 +26,7 @@ public class ExportProjectUseCase implements ExportListener {
    * Project VMCompositionExportSession use case.
    */
   public ExportProjectUseCase() {
-    project = Project.getInstance(null, null, null);
+    project = Project.getInstance(null, null, null, null);
 
     // TODO(jliarte): 28/04/17 move to export method?
     String tempPathIntermediateAudioFilesDirectory =

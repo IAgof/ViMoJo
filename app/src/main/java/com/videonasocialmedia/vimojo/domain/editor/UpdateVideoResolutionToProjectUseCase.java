@@ -2,7 +2,6 @@ package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import javax.inject.Inject;
@@ -26,7 +25,7 @@ public class UpdateVideoResolutionToProjectUseCase {
     }
 
     public void updateResolution(VideoResolution.Resolution resolution) {
-        currentProject = Project.getInstance(null, null, null);
+        currentProject = Project.getInstance(null, null, null, null);
         currentProject.getProfile().setResolution(resolution);
         projectRepository.update(currentProject);
     }

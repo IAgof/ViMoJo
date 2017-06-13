@@ -91,7 +91,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     public Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null, null, null, null);
     }
 
     public String getResolution() {

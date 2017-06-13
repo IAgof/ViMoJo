@@ -20,7 +20,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
-import com.videonasocialmedia.vimojo.sound.domain.AddMusicToProjectUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 
@@ -44,7 +43,6 @@ public class ShareVideoPresenterTest {
     @Mock private SharedPreferences mockSharedPrefs;
     @Mock private Context mockContext;
     @Mock private CreateDefaultProjectUseCase mockedCreateDefaultProjectUseCase;
-    @Mock private AddMusicToProjectUseCase mockedAddMusicToProjectUseCase;
     @Mock private AddLastVideoExportedToProjectUseCase mockedAddLastVideoExportedUseCase;
     @Mock private ExportProjectUseCase mockedExportProjectUseCase;
 

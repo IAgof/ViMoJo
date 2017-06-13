@@ -2,7 +2,6 @@ package com.videonasocialmedia.vimojo.main;
 
 import android.content.SharedPreferences;
 
-import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;

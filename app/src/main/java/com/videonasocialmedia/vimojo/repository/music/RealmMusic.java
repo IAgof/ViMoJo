@@ -1,9 +1,7 @@
 package com.videonasocialmedia.vimojo.repository.music;
 
-import com.videonasocialmedia.vimojo.repository.track.RealmTrack;
 
 import io.realm.RealmObject;
-import io.realm.RealmObjectSchema;
 import io.realm.annotations.PrimaryKey;
 
 /**
