@@ -16,6 +16,7 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
@@ -43,21 +44,20 @@ import javax.inject.Inject;
  */
 public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     OnRemoveMediaFinishedListener, OnLaunchAVTransitionTempFileListener, TranscoderHelperListener {
-    private String LOG_TAG = "GalleryPagerPresenter";
+    private final String LOG_TAG = "GalleryPagerPresenter";
 
-    private Context context;
     private final SharedPreferences preferences;
-    private GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
-    private AddVideoToProjectUseCase addVideoToProjectUseCase;
-    GalleryPagerView galleryPagerView;
-    protected Project currentProject;
-    ArrayList<Integer> listErrorVideoIds = new ArrayList<>();
+    private final GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
+    private final AddVideoToProjectUseCase addVideoToProjectUseCase;
+    private final GalleryPagerView galleryPagerView;
+    protected final Project currentProject;
+    private final ArrayList<Integer> listErrorVideoIds = new ArrayList<>();
+    private final Context context;
     private boolean differentVideoFormat;
 
-    private Drawable drawableFadeTransitionVideo;
     private VideonaFormat videoFormat;
-    private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
-    private LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
+    private final UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
+    private final LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
     // TODO(jliarte): 3/05/17 init in constructor to inject it. Wrap android MMR with our own class
     MediaMetadataRetriever metadataRetriever;
     private final UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase;
@@ -74,75 +74,96 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
             UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase,
             SharedPreferences preferences) {
         this.galleryPagerView = galleryPagerView;
+        this.context = context;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionsUseCase;
         this.currentProject = loadCurrentProject();
-        this.context = context;
         this.updateVideoResolutionToProjectUseCase = updateVideoResolutionToProjectUseCase;
         this.preferences = preferences;
         metadataRetriever = new MediaMetadataRetriever();
     }
 
-    public Project loadCurrentProject() {
+    private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
         return Project.getInstance(null, null, null);
     }
 
     public void loadVideoListToProject(List<Video> videoList) {
-        List<Video> checkedVideoList = checkFormatVideoSelected(videoList);
-
-        if(listErrorVideoIds.size() > 0){
-            galleryPagerView.showDialogVideosNotAddedFromGallery(listErrorVideoIds);
-            differentVideoFormat = true;
+        try {
+            List<Video> checkedVideoList = filterVideosWithResolutionDifferentFromProjectResolution(videoList);
+            if (listErrorVideoIds.size() > 0) {
+                galleryPagerView.showDialogVideosNotAddedFromGallery(listErrorVideoIds);
+                differentVideoFormat = true;
+            }
+            addVideoToProject(checkedVideoList);
+        } catch (Exception errorLoadingVideoList) {
+            // TODO(jliarte): 13/06/17 I'm unable to find the error that is generating these bugs:
+            // https://fabric.io/rtve4/android/apps/com.videonasocialmedia.vimojo.rtve/issues/59391686be077a4dccd740b9
+            // https://fabric.io/vimojo-rtve/android/apps/com.videonasocialmedia.vimojo.main/issues/5920d048be077a4dcc014b98
+            // so this is a workarround while discovering the origin of the bug
+            errorLoadingVideoList.printStackTrace();
+            Log.e(LOG_TAG, "Error while loading videos from gallery", errorLoadingVideoList);
+            Crashlytics.log("Error in GalleryPagerPresenter.filterVideosWithResolutionDifferentFromProjectResolution");
+            Crashlytics.logException(errorLoadingVideoList);
         }
-        addVideoToProject(checkedVideoList);
     }
 
     private void addVideoToProject(List<Video> checkedVideoList) {
         addVideoToProjectUseCase.addVideoListToTrack(checkedVideoList, this, this);
     }
 
-    public List<Video> checkFormatVideoSelected(List<Video> videoList) {
-        List<Video> checkedFortmatVideoList = new ArrayList<>();
+    private List<Video> filterVideosWithResolutionDifferentFromProjectResolution(List<Video> videoList) {
+        List<Video> filteredVideoList = new ArrayList<>();
         updateProfileForEmptyProject(currentProject, videoList);
         VideoResolution projectProfileVideoResolution
                 = currentProject.getProfile().getVideoResolution();
         for (int index = 0; index < videoList.size(); index++) {
             Video video = videoList.get(index);
             try {
-                metadataRetriever.setDataSource(video.getMediaPath());
-                String duration = metadataRetriever.extractMetadata(
-                        MediaMetadataRetriever.METADATA_KEY_DURATION);
+                // TODO(jliarte): 13/06/17 this is not the responsibility stated in the name of the method!
+                setVideoDurationFromMediaMetadata(video);
 
-                int durationInt = Integer.parseInt(duration);
-                video.setDuration(durationInt);
-                video.setStopTime(durationInt);
-
-                String width = metadataRetriever.extractMetadata(
-                        MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-                if (width.compareTo(String
+                String videoWidth = getVideoWidth(video);
+                if (videoWidth.compareTo(String
                         .valueOf(projectProfileVideoResolution.getWidth())) != 0) {
                     listErrorVideoIds.add(index + 1);
                 } else {
-                    checkedFortmatVideoList.add(video);
+                    filteredVideoList.add(video);
                 }
             } catch (Exception e) {
+                // FIXME(jliarte): 13/06/17 if exception is triggered comparing videoWidths video duration should not be set to 0
                 video.setDuration(0);
                 e.printStackTrace();
+                Crashlytics.log("Error in GalleryPagerPresenter.filterVideosWithResolutionDifferentFromProjectResolution");
+                Crashlytics.logException(e);
             }
         }
-        return checkedFortmatVideoList;
+        return filteredVideoList;
+    }
+
+    private String getVideoWidth(Video video) {
+        metadataRetriever.setDataSource(video.getMediaPath());
+        return metadataRetriever.extractMetadata(
+                MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+    }
+
+    private void setVideoDurationFromMediaMetadata(Video video) {
+        metadataRetriever.setDataSource(video.getMediaPath());
+        String duration = metadataRetriever.extractMetadata(
+                MediaMetadataRetriever.METADATA_KEY_DURATION);
+
+        int durationInt = Integer.parseInt(duration);
+        video.setDuration(durationInt);
+        video.setStopTime(durationInt);
     }
 
     protected void updateProfileForEmptyProject(Project currentProject, List<Video> videoList) {
         if ((currentProject.getVMComposition().getMediaTrack().getItems().size() == 0)
                 && (videoList.size() > 0)) {
             Video firstVideo = videoList.get(0);
-            metadataRetriever.setDataSource(firstVideo.getMediaPath());
-            String videoWidth =
-                    metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+            String videoWidth = getVideoWidth(firstVideo);
             VideoResolution.Resolution resolutionForWidth = getResolutionForWidth(videoWidth);
 
             if (resolutionForWidth != null) {
@@ -238,7 +259,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         video.setTempPath(currentProject.getProjectPathIntermediateFiles());
 
         videoFormat = currentProject.getVMComposition().getVideoFormat();
-        drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
+        Drawable drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
 
         launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
             intermediatesTempAudioFadeDirectory, this);
