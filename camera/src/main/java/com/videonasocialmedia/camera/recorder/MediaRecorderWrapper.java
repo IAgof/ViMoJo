@@ -57,7 +57,6 @@ public class MediaRecorderWrapper {
   }
 
   public void setUpMediaRecorder() throws IOException {
-
     mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
     mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
     mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
@@ -89,11 +88,11 @@ public class MediaRecorderWrapper {
     mediaRecorder.prepare();
   }
 
-  public void start(){
+  public void start() {
     mediaRecorder.start();
   }
 
-  public void stop(){
+  public void stop() {
     mediaRecorder.stop();
   }
 
