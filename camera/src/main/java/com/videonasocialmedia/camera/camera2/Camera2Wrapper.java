@@ -224,9 +224,13 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   public void stopRecordVideo() {
-    isRecordingVideo = false;
-    mediaRecorder.stop();
-    mediaRecorder.reset();
+    try {
+      mediaRecorder.stop();
+      isRecordingVideo = false;
+      mediaRecorder.reset();
+    } catch (IllegalStateException illegalStateError) {
+      Log.e(TAG, "Error stoping record", illegalStateError);
+    }
   }
 
   /**
@@ -446,8 +450,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
     try {
       setUpCaptureRequestBuilder(previewBuilder);
-      HandlerThread thread = new HandlerThread("CameraPreview");
-      thread.start();
+      // TODO(jliarte): 14/06/17 I've seen lots of this threads running in debugged, what is it needed for???
+//      HandlerThread thread = new HandlerThread("CameraPreview");
+//      thread.start();
       previewSession.setRepeatingRequest(previewBuilder.build(), null, backgroundHandler);
     } catch (CameraAccessException e) {
       e.printStackTrace();
@@ -465,7 +470,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
-  public void startRecordingVideo() {
+  public void startRecordingVideo(final RecordStartedCallback callback) {
     Log.d(LOG_TAG, "startRecordingVideo");
     if (null == cameraDevice || !textureView.isAvailable() || null == previewSize) {
       return;
@@ -476,6 +481,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       //mediaRecorder.setUpCameraProfileMediaRecoder();
 
       SurfaceTexture texture = textureView.getSurfaceTexture();
+      // TODO(jliarte): 14/06/17 this will crash the app if texture is null???
       assert texture != null;
       texture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
       previewBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
@@ -494,20 +500,24 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       // Start a capture session
       // Once the session starts, we can update the UI and start recording
       cameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
-
         @Override
         public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
           previewSession = cameraCaptureSession;
           updatePreview();
-          if(isFlashActivated){
+          if (isFlashActivated) {
             setFlashOn();
           }
           ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-              isRecordingVideo = true;
               // Start recording
-              mediaRecorder.start();
+              try {
+                mediaRecorder.start();
+                isRecordingVideo = true;
+                callback.onRecordStarted();
+              } catch (IllegalStateException illegalStateError) {
+                Log.e(TAG, "Error starting record", illegalStateError);
+              }
             }
           });
         }
@@ -652,5 +662,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public boolean metteringModeSelectionSupported() {
     return camera2MeteringModeHelper.metteringModeSelectionSupported();
+  }
+
+  public interface RecordStartedCallback {
+    void onRecordStarted();
   }
 }
