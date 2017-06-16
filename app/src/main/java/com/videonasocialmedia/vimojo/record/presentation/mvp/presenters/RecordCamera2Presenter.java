@@ -212,11 +212,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   public void stopRecord() {
-    camera.stopRecordVideo();
-    updateStopVideoUI();
-    if(new File(camera.getVideoPath()).exists())
+    try {
+      camera.stopRecordVideo();
+      updateStopVideoUI();
       stopVideo(camera.getVideoPath());
-    restartPreview();
+      restartPreview();
+    } catch (IllegalStateException illegalState) {
+      // do nothing as it's already managed in camera wrapper
+    }
   }
 
   private void updateStopVideoUI() {
@@ -307,7 +310,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   @Override
   public void setError(String message) {
-    recordView.showError(message);
+    //recordView.showError(message);
   }
 
   public void restartPreview(){

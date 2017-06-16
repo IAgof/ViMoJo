@@ -58,7 +58,7 @@ public class MediaRecorderWrapper {
     this.videoCameraFormat = videoCameraFormat;
   }
 
-  public void setUpMediaRecorder() {
+  public void setUpMediaRecorder() throws IOException {
     mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
     mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
     mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
@@ -87,7 +87,7 @@ public class MediaRecorderWrapper {
         mediaRecorder.setOrientationHint(INVERSE_ORIENTATIONS.get(rotation));
         break;
     }
-
+    mediaRecorder.prepare();
   }
 
   public void start() {
@@ -99,17 +99,15 @@ public class MediaRecorderWrapper {
     }
   }
 
-  public void prepare() throws IOException {
-    mediaRecorder.prepare();
-  }
 
   public void stop(){
     try {
       mediaRecorder.stop();
     } catch(RuntimeException e) {
       new File(videoPath).delete();  //you must delete the outputfile when the recorder stop failed.
+      throw e;
     } finally {
-      release();
+      reset();
     }
   }
 

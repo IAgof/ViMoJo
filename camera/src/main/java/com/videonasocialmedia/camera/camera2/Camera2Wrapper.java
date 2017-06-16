@@ -227,9 +227,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     try {
       mediaRecorder.stop();
       isRecordingVideo = false;
-      mediaRecorder.reset();
     } catch (IllegalStateException illegalStateError) {
       Log.e(TAG, "Error stoping record", illegalStateError);
+      throw illegalStateError;
     }
   }
 
@@ -253,7 +253,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       backgroundThread = null;
     } catch (InterruptedException e) {
       e.printStackTrace();
-      listener.setError(e.getMessage());
     }
   }
 
@@ -346,7 +345,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       // TODO:(alvaro.martinez) 17/01/17 Manage this NPE
       // ErrorDialog.newInstance("error dialog")
       //   .show(getChildFragmentManager(), FRAGMENT_DIALOG);
-      listener.setError("Camera2API is used but not supported on the device");
+      //listener.setError("Camera2API is used but not supported on the device");
     } catch (InterruptedException e) {
       throw new RuntimeException("Interrupted while trying to lock camera opening.");
     }
@@ -409,7 +408,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
    */
   private void startPreview() {
     if (null == cameraDevice || !textureView.isAvailable() || null == previewSize) {
-      listener.setError("starting preview");
       return;
     }
     try {
@@ -441,7 +439,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
           }, backgroundHandler);
     } catch (CameraAccessException e) {
       e.printStackTrace();
-      listener.setError(e.getMessage());
     }
   }
 
@@ -450,7 +447,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
    */
   private void updatePreview() {
     if (null == cameraDevice) {
-      listener.setError("updating preview");
       return;
     }
     try {
@@ -461,7 +457,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       previewSession.setRepeatingRequest(previewBuilder.build(), null, backgroundHandler);
     } catch (CameraAccessException e) {
       e.printStackTrace();
-      listener.setError(e.getMessage());
     }
   }
 
@@ -479,7 +474,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   public void startRecordingVideo(final RecordStartedCallback callback) {
     Log.d(LOG_TAG, "startRecordingVideo");
     if (null == cameraDevice || !textureView.isAvailable() || null == previewSize) {
-      listener.setError("recording video");
       return;
     }
     try {
@@ -500,12 +494,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       previewBuilder.addTarget(previewSurface);
 
       // Set up Surface for the MediaRecorder
-      try {
-        mediaRecorder.prepare();
-      } catch (IOException e) {
-        e.printStackTrace();
-        listener.setError(e.getMessage());
-      }
       recorderSurface = mediaRecorder.getSurface();
       surfaces.add(recorderSurface);
       previewBuilder.addTarget(recorderSurface);
@@ -545,7 +533,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       }, backgroundHandler);
     } catch (CameraAccessException e) {
       e.printStackTrace();
-      listener.setError(e.getMessage());
+    } catch (IOException e) {
+      e.printStackTrace();
     }
   }
 
@@ -560,7 +549,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
     } catch (CameraAccessException e) {
       e.printStackTrace();
-      listener.setError(e.getMessage());
     }
   }
 
@@ -571,7 +559,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
     } catch (CameraAccessException e) {
       e.printStackTrace();
-      listener.setError(e.getMessage());
     }
   }
 
@@ -601,7 +588,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     } catch (CameraAccessException e) {
       e.printStackTrace();
       Log.e(TAG, "Error zooming - camera access", e);
-      listener.setError(e.getMessage());
     }
   }
 
@@ -611,7 +597,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     } catch (CameraAccessException e) {
       e.printStackTrace();
       Log.e(TAG, "Error zooming - camera access", e);
-      listener.setError(e.getMessage());
     }
   }
   /********* end of Zoom component ********/
