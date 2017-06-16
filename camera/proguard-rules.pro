@@ -15,3 +15,12 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+## setup for improving crashlytics reports
+-keepattributes *Annotation* # already present below!
+-keepattributes SourceFile,LineNumberTable
+# If you are using custom exceptions, add this line so that custom exception types are skipped during obfuscation:
+-keep public class * extends java.lang.Exception
+# -printmapping mapping.txt # ensure this is NOT present!!!
+-keep class com.crashlytics.** { *; }
+-dontwarn com.crashlytics.**

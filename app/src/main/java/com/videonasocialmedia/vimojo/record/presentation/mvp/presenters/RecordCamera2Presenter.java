@@ -197,15 +197,18 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   public void startRecord() {
-    camera.startRecordingVideo();
-
-    recordView.showStopButton();
-    recordView.startChronometer();
-    recordView.showChronometer();
-    recordView.hideNavigateToSettingsActivity();
-    recordView.hideVideosRecordedNumber();
-    recordView.hideRecordedVideoThumbWithText();
-    recordView.hideChangeCamera();
+    camera.startRecordingVideo(new Camera2Wrapper.RecordStartedCallback() {
+      @Override
+      public void onRecordStarted() {
+        recordView.showStopButton();
+        recordView.startChronometer();
+        recordView.showChronometer();
+        recordView.hideNavigateToSettingsActivity();
+        recordView.hideVideosRecordedNumber();
+        recordView.hideRecordedVideoThumbWithText();
+        recordView.hideChangeCamera();
+      }
+    });
   }
 
   public void stopRecord() {
