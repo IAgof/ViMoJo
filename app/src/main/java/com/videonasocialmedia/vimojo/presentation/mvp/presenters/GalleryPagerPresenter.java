@@ -87,7 +87,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
 
     public Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null, null);
+        return Project.getInstance(null, null, null);
     }
 
     public void loadVideoListToProject(List<Video> videoList) {
@@ -220,7 +220,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
         if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
             video.increaseNumTriesToExportVideo();
-            Project currentProject = Project.getInstance(null, null, null, null);
+            Project currentProject = Project.getInstance(null, null, null);
             launchTranscoderAddAVTransitionUseCase.launchExportTempFile(context
                     .getDrawable(R.drawable.alpha_transition_white), video,
                 getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),

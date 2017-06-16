@@ -15,7 +15,7 @@ public class GetVideoFormatFromCurrentProjectUseCase {
     public Project project;
 
     public GetVideoFormatFromCurrentProjectUseCase() {
-        this.project = Project.getInstance(null, null, null, null);
+        this.project = Project.getInstance(null, null, null);
     }
 
     public VideoCameraFormat getVideoRecordedFormatFromCurrentProjectUseCase() {

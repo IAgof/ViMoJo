@@ -17,7 +17,7 @@ public class UpdateAudioTransitionPreferenceToProjectUseCase {
   }
 
   public void setAudioFadeTransitionActivated(boolean data) {
-    currentProject = Project.getInstance(null,null,null, null);
+    currentProject = Project.getInstance(null,null,null);
     currentProject.setAudioFadeTransitionActivated(data);
     projectRepository.update(currentProject);
   }

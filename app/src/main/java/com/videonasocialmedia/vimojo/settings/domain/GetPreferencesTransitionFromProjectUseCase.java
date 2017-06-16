@@ -17,12 +17,12 @@ public class GetPreferencesTransitionFromProjectUseCase {
   }
 
   public boolean isAudioFadeTransitionActivated() {
-    currentProject = Project.getInstance(null, null, null, null);
+    currentProject = Project.getInstance(null, null, null);
     return currentProject.isAudioFadeTransitionActivated();
   }
 
   public boolean isVideoFadeTransitionActivated() {
-    currentProject = Project.getInstance(null, null, null, null);
+    currentProject = Project.getInstance(null, null, null);
     return currentProject.isVideoFadeTransitionActivated();
   }
 }

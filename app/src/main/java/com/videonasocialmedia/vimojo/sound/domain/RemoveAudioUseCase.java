@@ -6,6 +6,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
@@ -33,23 +34,28 @@ public class RemoveAudioUseCase {
     this.projectRepository = projectRepository;
     this.trackRepository = trackRepository;
     this.musicRepository = musicRepository;
-    currentProject = Project.getInstance(null,null,null, null);
+    currentProject = Project.getInstance(null,null,null);
   }
 
+  // Remove audio only delete track if it is not music track.
   public void removeMusic(Music music, int trackIndex, OnRemoveMediaFinishedListener listener){
-    AudioTrack audioTrack = currentProject.getAudioTracks().get(trackIndex);
+    Track audioTrack = currentProject.getAudioTracks().get(trackIndex);
     updateTrackPosition(audioTrack, trackIndex);
     removeMusicInTrack(music, listener, audioTrack);
+    if(audioTrack.getItems().size() == 0
+        && audioTrack.getId() == Constants.INDEX_AUDIO_TRACK_VOICE_OVER){
+      currentProject.getAudioTracks().remove(audioTrack);
+    }
     updateProject();
   }
 
-  private void updateTrackPosition(AudioTrack audioTrack, int trackIndex) {
+  private void updateTrackPosition(Track audioTrack, int trackIndex) {
     audioTrack.setPosition(RESET_POSITION);
     trackRepository.update(audioTrack);
     switch (trackIndex){
       case Constants.INDEX_AUDIO_TRACK_MUSIC:
         if(currentProject.hasVoiceOver()) {
-          AudioTrack voiceOverTrack = currentProject.getAudioTracks()
+          Track voiceOverTrack = currentProject.getAudioTracks()
               .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
           voiceOverTrack.setPosition(FIRST_POSITION);
           trackRepository.update(voiceOverTrack);
@@ -57,7 +63,7 @@ public class RemoveAudioUseCase {
         break;
       case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
         if(currentProject.hasMusic()){
-          AudioTrack musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+          Track musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
           musicTrack.setPosition(FIRST_POSITION);
           trackRepository.update(musicTrack);
         }
@@ -66,7 +72,7 @@ public class RemoveAudioUseCase {
   }
 
   private void removeMusicInTrack(Music music, OnRemoveMediaFinishedListener listener,
-                                  AudioTrack audioTrack) {
+                                  Track audioTrack) {
     for(Media audio: audioTrack.getItems()){
       if (audio.equals(music)) {
         try {

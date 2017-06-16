@@ -72,6 +72,7 @@ public class AddAudioUseCaseTest {
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     AudioTrack voiceOverTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     assertThat("Project has voiceOver", project.hasVoiceOver(), is(true));
@@ -83,8 +84,8 @@ public class AddAudioUseCaseTest {
     injectedUseCase.addMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnAddMediaFinishedListener);
 
-    assertThat("UseCase has updated music track position to 2, ",
-        project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC).getPosition(), is(2));
+    assertThat("UseCase has updated music track position to 2, ", project.getAudioTracks()
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getPosition(), is(2));
   }
 
   @Test
@@ -94,6 +95,7 @@ public class AddAudioUseCaseTest {
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     AudioTrack voiceOverTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     assertThat("Initial position in track is 0", voiceOverTrack.getPosition(), is(0));
@@ -115,6 +117,7 @@ public class AddAudioUseCaseTest {
     musicTrack.insertItem(music);
     assertThat("Project has music", project.hasMusic(), is(true));
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     AudioTrack voiceOverTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     assertThat("Initial position in track is 0", voiceOverTrack.getPosition(), is(0));
@@ -132,6 +135,7 @@ public class AddAudioUseCaseTest {
     float defaultVolume = 0.7f;
     int defaultDuration = 100;
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     assertThat("Default volume VoiceOver track is 0.5f",
         project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getVolume(), is(0.5f));
 
@@ -143,19 +147,17 @@ public class AddAudioUseCaseTest {
   }
 
   @Test
-  public void addAudioUpdateRepositories(){
+  public void addAudioUpdateRepositories() {
     Project project = getAProject();
     float defaultVolume = 0.7f;
     int defaultDuration = 100;
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
 
     injectedUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
         mockedOnAddMediaFinishedListener);
 
     verify(mockedProjectRepository).update(project);
-    verify(mockedMusicRepository).update(voiceOver);
-    verify(mockedTrackRepository).update(project.getAudioTracks()
-        .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
   }
 
   @Test
@@ -164,6 +166,7 @@ public class AddAudioUseCaseTest {
     float defaultVolume = 0.7f;
     int defaultDuration = 100;
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     assertThat("Default items in track is zero",
         project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getItems().size(), is(0));
 
@@ -172,6 +175,36 @@ public class AddAudioUseCaseTest {
 
     assertThat("UseCase has updated audio track items ",
         project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getItems().size(), is(1));
+  }
+
+  @Test
+  public void addAudioCreateNewAudioTrackIfVoiceOverIsAdded(){
+    Project project = getAProject();
+    float defaultVolume = 0.7f;
+    int defaultDuration = 100;
+    Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    assertThat("Default audioTrack list size is one",project.getAudioTracks().size(), is(1));
+
+    injectedUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+        mockedOnAddMediaFinishedListener);
+
+    assertThat("UseCase has added one track to audioTrack list", project.getAudioTracks().size(),
+      is(2));
+  }
+
+  @Test
+  public void addAudioDontCreateNewAudioTrackIfMusicIsAdded(){
+    Project project = getAProject();
+    float defaultVolume = 0.7f;
+    int defaultDuration = 100;
+    Music music = new Music("somePath", defaultVolume, defaultDuration);
+    assertThat("Default audioTrack list size is one",project.getAudioTracks().size(), is(1));
+
+    injectedUseCase.addMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+        mockedOnAddMediaFinishedListener);
+
+    assertThat("UseCase has added one track to audioTrack list", project.getAudioTracks().size(),
+        is(1));
   }
 
 

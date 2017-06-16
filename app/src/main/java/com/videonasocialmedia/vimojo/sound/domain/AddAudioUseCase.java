@@ -4,6 +4,7 @@ import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
@@ -20,37 +21,55 @@ public class AddAudioUseCase {
 
   private Project currentProject;
   private ProjectRepository projectRepository;
-  private TrackRepository trackRepository;
-  private MusicRepository musicRepository;
   private final int SECOND_POSITION = 2;
   private final int FIRST_POSITION = 1;
 
   @Inject
-  public AddAudioUseCase(ProjectRepository projectRepository, TrackRepository trackRepository,
-                         MusicRepository musicRepository) {
+  public AddAudioUseCase(ProjectRepository projectRepository) {
     this.projectRepository = projectRepository;
-    this.trackRepository = trackRepository;
-    this.musicRepository = musicRepository;
-    currentProject = Project.getInstance(null,null,null, null);
+    currentProject = Project.getInstance(null,null,null);
   }
 
   public void addMusic(Music music, int trackIndex, OnAddMediaFinishedListener listener) {
-    AudioTrack audioTrack = currentProject.getAudioTracks().get(trackIndex);
+    Track audioTrack = createOrGetTrackFromProject(trackIndex);
     updateTrack(audioTrack, trackIndex, music);
     addMusicToTrack(music, listener, audioTrack);
     updateProject();
   }
 
-  private void updateTrack(AudioTrack audioTrack, int trackIndex, Music music) {
-    audioTrack.setPosition(getTrackPositionByUserInteraction(audioTrack, trackIndex));
-    audioTrack.setVolume(music.getVolume());
-    //trackRepository.update(audioTrack);
+
+  private AudioTrack createOrGetTrackFromProject(int trackIndex) {
+    //Trick to manage correct index in AudioTracks arrayList. VMComposition always will have at
+    // least one audio track, musicTrack with index INDEX_AUDIO_TRACK_MUSIC. It it would be exist
+    // voice overTrack will be in next position in index
+    if(currentProject.getAudioTracks().size() == 0) {
+      if(trackIndex == Constants.INDEX_AUDIO_TRACK_MUSIC){
+        AudioTrack audioTrack = new AudioTrack(trackIndex);
+        currentProject.getAudioTracks().add(0, audioTrack);
+        return audioTrack;
+      } else {
+        AudioTrack audioTrack = new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+        currentProject.getAudioTracks().add(0, new AudioTrack(Constants.INDEX_AUDIO_TRACK_MUSIC));
+        currentProject.getAudioTracks().add(1, audioTrack);
+        return audioTrack;
+      }
+    }
+    if(trackIndex != Constants.INDEX_AUDIO_TRACK_MUSIC){
+      AudioTrack audioTrack = new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+      currentProject.getAudioTracks().add(1, audioTrack);
+    }
+    return currentProject.getAudioTracks().get(trackIndex);
   }
 
-  private void addMusicToTrack(Music music, OnAddMediaFinishedListener listener, AudioTrack audioTrack) {
+  private void updateTrack(Track audioTrack, int trackIndex, Music music) {
+    audioTrack.setPosition(getTrackPositionByUserInteraction(audioTrack, trackIndex));
+    audioTrack.setVolume(music.getVolume());
+  }
+
+  // Only add one item at the beginning, index 0.
+  private void addMusicToTrack(Music music, OnAddMediaFinishedListener listener, Track audioTrack) {
     try {
       audioTrack.insertItemAt(0,music);
-      //musicRepository.update(music);
       listener.onAddMediaItemToTrackSuccess(music);
     } catch (IndexOutOfBoundsException | IllegalItemOnTrack exception) {
       listener.onAddMediaItemToTrackError();
@@ -61,7 +80,7 @@ public class AddAudioUseCase {
     projectRepository.update(currentProject);
   }
 
-  private int getTrackPositionByUserInteraction(AudioTrack audioTrack, int trackIndex) {
+  private int getTrackPositionByUserInteraction(Track audioTrack, int trackIndex) {
     if(audioTrack.getPosition()!=0){
       return audioTrack.getPosition();
     }

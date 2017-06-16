@@ -31,9 +31,10 @@ public class CreateDefaultProjectUseCase {
    * @param projectRepository the project repository.
    */
   @Inject public CreateDefaultProjectUseCase(ProjectRepository projectRepository, ProfileRepository
-                                             profileRepository) {
+                                             profileRepository, TrackRepository trackRepository) {
     this.projectRepository = projectRepository;
     this.profileRepository = profileRepository;
+    this.trackRepository = trackRepository;
   }
 
   public void loadOrCreateProject(String rootPath) {
@@ -47,28 +48,17 @@ public class CreateDefaultProjectUseCase {
       Project.INSTANCE = projectRepository.getCurrentProject();
     }
 
-    Project currentProject = Project.getInstance(projectTitle, rootPath, profileRepository.getCurrentProfile(),
-        getProjectDefaultTrackList());
+    Project currentProject = Project.getInstance(projectTitle, rootPath,
+        profileRepository.getCurrentProfile());
     projectRepository.update(currentProject);
   }
 
   public void createProject(String rootPath){
     String projectTitle = DateUtils.getDateRightNow();
     Project currentProject = new Project(projectTitle,rootPath,
-        profileRepository.getCurrentProfile(), getProjectDefaultTrackList());
+        profileRepository.getCurrentProfile());
     Project.INSTANCE = currentProject;
     projectRepository.update(currentProject);
-  }
-
-  private List<Track> getProjectDefaultTrackList(){
-    List<Track> trackList = new ArrayList<Track>();
-    Track mediaTrack = new MediaTrack();
-    Track musicTrack = new AudioTrack(Constants.INDEX_AUDIO_TRACK_MUSIC);
-    Track voiceOverTrack = new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
-    trackList.add(mediaTrack);
-    trackList.add(musicTrack);
-    trackList.add(voiceOverTrack);
-    return trackList;
   }
 
 }

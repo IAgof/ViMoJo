@@ -7,6 +7,7 @@ import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -123,6 +124,7 @@ public class SoundVolumePresenterTest {
     final float defaultVolume = 0.5f;
     int defaultDuration = 100;
     final Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(voiceOver);
     assertThat("Project has voice over", project.hasVoiceOver(), is(true));
     doAnswer(new Answer() {
@@ -136,11 +138,11 @@ public class SoundVolumePresenterTest {
     }).when(mockedRemoveAudioUseCase).removeMusic(eq(voiceOver),
         eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
         Matchers.any(OnRemoveMediaFinishedListener.class));
-    Music voiceOverAdded = soundVolumePresenter.getVoiceOverAsMusic("media/path", defaultVolume);
+    final Music voiceOverToAdd = soundVolumePresenter.getVoiceOverAsMusic("media/path", defaultVolume);
 
-    injectedPresenter.deletePreviousVoiceOver();
+    injectedPresenter.deletePreviousVoiceOver(voiceOverToAdd);
 
-    verify(mockedSoundVolumePresenter).addVoiceOver(voiceOverAdded);
+    verify(mockedSoundVolumePresenter).addVoiceOver(voiceOverToAdd);
   }
 
   @Test
@@ -149,6 +151,7 @@ public class SoundVolumePresenterTest {
     final float defaultVolume = 0.5f;
     int defaultDuration = 100;
     final Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(voiceOver);
     assertThat("Project has voice over", project.hasVoiceOver(), is(true));
     doAnswer(new Answer() {
@@ -163,7 +166,7 @@ public class SoundVolumePresenterTest {
         eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
         Matchers.any(OnRemoveMediaFinishedListener.class));
 
-    injectedPresenter.deletePreviousVoiceOver();
+    injectedPresenter.deletePreviousVoiceOver(voiceOver);
 
     verify(mockedSoundVolumeView).showError(anyString());
   }

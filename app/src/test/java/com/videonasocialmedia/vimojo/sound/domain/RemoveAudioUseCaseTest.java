@@ -59,6 +59,7 @@ public class RemoveAudioUseCaseTest {
     musicTrack.setPosition(1);
     assertThat("Project has music ", project.hasMusic(), is(true));
     assertThat("MusicTrack position is 1 ", musicTrack.getPosition(), is(1));
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
     AudioTrack voiceOverTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
@@ -128,6 +129,54 @@ public class RemoveAudioUseCaseTest {
     verify(mockedProjectRepository).update(project);
     verify(mockedTrackRepository).update(musicTrack);
     verify(mockedMusicRepository).remove(music);
+  }
+
+  @Test
+  public void removeVoiceOverWithOneItemDeleteVoiceOverTrack() throws IllegalItemOnTrack {
+    Project project = getAProject();
+    float defaultVolume = 0.5f;
+    int defaultDuration = 100;
+    Music music = new Music("somePath", defaultVolume, defaultDuration);
+    AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    musicTrack.insertItem(music);
+    musicTrack.setPosition(1);
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    AudioTrack voiceOverTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    voiceOverTrack.insertItem(voiceOver);
+    voiceOverTrack.setPosition(2);
+    assertThat("AudioTrack list size is 2", project.getAudioTracks().size(), is(2));
+    assertThat("VoiceOver track has only one item", project.getAudioTracks()
+        .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getItems().size(), is(1));
+
+    injectedUseCase.removeMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+        mockedOnRemoveMediaFinishedListener);
+
+    assertThat("UseCase has removed voice over track", project.getAudioTracks().size(), is(1));
+  }
+
+  @Test
+  public void removeVoiceOverWithOneItemDontDeleteMusicTrack() throws IllegalItemOnTrack {
+    Project project = getAProject();
+    float defaultVolume = 0.5f;
+    int defaultDuration = 100;
+    Music music = new Music("somePath", defaultVolume, defaultDuration);
+    AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    musicTrack.insertItem(music);
+    musicTrack.setPosition(1);
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    AudioTrack voiceOverTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    voiceOverTrack.insertItem(voiceOver);
+    voiceOverTrack.setPosition(2);
+    assertThat("AudioTrack list size is 2", project.getAudioTracks().size(), is(2));
+    assertThat("Music track has only one item", project.getAudioTracks()
+        .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getItems().size(), is(1));
+
+    injectedUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+        mockedOnRemoveMediaFinishedListener);
+
+    assertThat("UseCase has removed voice over track", project.getAudioTracks().size(), is(2));
   }
 
   private Project getAProject() {

@@ -51,7 +51,7 @@ public class ModifyVideoTextAndPositionUseCase {
               getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
       videoToEdit.setClipText(text);
       videoToEdit.setClipTextPosition(textPosition);
-      Project project = Project.getInstance(null, null, null, null);
+      Project project = Project.getInstance(null, null, null);
       videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
       updateGeneratedVideo(drawableFadeTransition, videoToEdit, format,
               intermediatesTempAudioFadeDirectory, listener, isVideoFadeTransitionActivated,

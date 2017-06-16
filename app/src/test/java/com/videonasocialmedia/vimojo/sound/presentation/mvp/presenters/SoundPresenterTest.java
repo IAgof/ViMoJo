@@ -7,6 +7,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -91,7 +92,8 @@ public class SoundPresenterTest {
     Music music = new Music(musicPath, musicVolume, 0);
     List<Music> musicList = new ArrayList<>();
     musicList.add(music);
-    project.getVMComposition().getAudioTracks().get(0).insertItem(music);
+    project.getVMComposition().getAudioTracks().get(com.videonasocialmedia.videonamediaframework
+        .model.Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
 
     Project currentProject = Project.getInstance(null, null, null);
     assertThat("Current project has music", currentProject.hasMusic(), is(true));
@@ -172,6 +174,8 @@ public class SoundPresenterTest {
     voiceOver.setMusicTitle(Constants.MUSIC_AUDIO_VOICEOVER_TITLE);
     List<Music> voiceOverList = new ArrayList<>();
     voiceOverList.add(voiceOver);
+    project.getAudioTracks().add(new AudioTrack(com.videonasocialmedia.videonamediaframework.model
+        .Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     project.getVMComposition().getAudioTracks()
         .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
         .insertItem(voiceOver);
@@ -207,6 +211,8 @@ public class SoundPresenterTest {
 
     Project project = getAProject();
     project.getMediaTrack().insertItem(new Video("somePath", Video.DEFAULT_VOLUME));
+    project.getAudioTracks().add(new AudioTrack(com.videonasocialmedia.videonamediaframework.model
+        .Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     Track musicTrack = project.getAudioTracks()
         .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC);
     musicTrack.insertItem(new Music("somePath", 1f, 50));

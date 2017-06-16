@@ -1,11 +1,8 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
 
-import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
-import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.repository.music.RealmMusic;
 import com.videonasocialmedia.vimojo.repository.track.RealmTrack;
-import com.videonasocialmedia.vimojo.repository.track.TrackToRealmTrackMapper;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 
 import io.realm.RealmList;
@@ -32,21 +29,26 @@ public class RealmProject extends RealmObject {
   public boolean isWatermarkActivated;
   public RealmList<RealmVideo> videos;
   public RealmList<RealmMusic> musics;
-  public float volumeVideoTrack;
+  public RealmList<RealmTrack> tracks;
+  /*public RealmTrack mediaTrack;
+  public RealmTrack musicTrack;
+  public RealmTrack voiceOverTrack;*/
+  /*public float volumeVideoTrack;
   public boolean muteVideoTrack;
   public float volumeMusicTrack;
   public boolean muteMusicTrack;
   public int positionMusicTrack;
   public float volumeVoiceOverTrack;
   public boolean muteVoiceOverTrack;
-  public int positionVoiceOverTrack;
+  public int positionVoiceOverTrack;*/
 
   public RealmProject() {
     this.videos = new RealmList<RealmVideo>();
     this.musics = new RealmList<RealmMusic>();
+    this.tracks = new RealmList<RealmTrack>();
   }
 
-  public RealmProject(String uuid, String title, String lastModification, String projectPath,
+/*  public RealmProject(String uuid, String title, String lastModification, String projectPath,
                       String quality, String resolution, String frameRate, int duration,
                       boolean isAudioFadeTransitionActivated,
                       boolean isVideoFadeTransitionActivated, boolean isWatermarkActivated,
@@ -74,5 +76,27 @@ public class RealmProject extends RealmObject {
     this.volumeVoiceOverTrack = volumeVoiceOverTrack;
     this.muteVoiceOverTrack = muteVoiceOverTrack;
     this.positionVoiceOverTrack = positionVoiceOverTrack;
+  }
+  */
+
+  public RealmProject(String uuid, String title, String lastModification, String projectPath,
+                      String quality, String resolution, String frameRate, int duration,
+                      boolean isAudioFadeTransitionActivated,
+                      boolean isVideoFadeTransitionActivated, boolean isWatermarkActivated) {
+    this.uuid = uuid;
+    this.title = title;
+    this.lastModification = lastModification;
+    this.projectPath = projectPath;
+    this.quality = quality;
+    this.resolution = resolution;
+    this.frameRate = frameRate;
+    this.duration = duration;
+    this.videos = new RealmList<RealmVideo>();
+    this.musics = new RealmList<RealmMusic>();
+    this.tracks = new RealmList<RealmTrack>();
+    this.isAudioFadeTransitionActivated = isAudioFadeTransitionActivated;
+    this.isVideoFadeTransitionActivated = isVideoFadeTransitionActivated;
+    this.isWatermarkActivated = isWatermarkActivated;
+
   }
 }

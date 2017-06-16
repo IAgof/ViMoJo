@@ -18,6 +18,7 @@ import android.util.Log;
 
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -91,7 +92,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     public Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null, null);
+        return Project.getInstance(null, null, null);
     }
 
     public String getResolution() {
@@ -216,7 +217,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     private void checkMuteOnTracks() {
         if (currentProject.getVMComposition().hasMusic()) {
-            AudioTrack musicTrack = currentProject.getAudioTracks()
+            Track musicTrack = currentProject.getAudioTracks()
                 .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC);
             if(musicTrack.isMute()){
                 editActivityView.setMusicVolume(VOLUME_MUTE);
@@ -224,7 +225,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         }
 
         if(currentProject.getVMComposition().hasVoiceOver()){
-            AudioTrack voiceOverTrack = currentProject.getAudioTracks()
+            Track voiceOverTrack = currentProject.getAudioTracks()
                 .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
             if(voiceOverTrack.isMute()){
                 editActivityView.setVoiceOverVolume(VOLUME_MUTE);
@@ -232,7 +233,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         }
 
         if(currentProject.getVMComposition().hasVideos()){
-            MediaTrack mediaTrack = currentProject.getMediaTrack();
+            Track mediaTrack = currentProject.getMediaTrack();
             if(mediaTrack.isMute()){
                 editActivityView.setVideoVolume(VOLUME_MUTE);
             }

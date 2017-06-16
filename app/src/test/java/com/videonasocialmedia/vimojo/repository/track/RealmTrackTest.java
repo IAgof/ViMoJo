@@ -27,13 +27,11 @@ public class RealmTrackTest {
     realmTrack.uuid = "sdfkdfgñ";
     realmTrack.id = 0;
     realmTrack.volume = 0.55f;
-    realmTrack.solo = false;
     realmTrack.mute = true;
 
     assertThat(realmTrack.uuid, is("sdfkdfgñ"));
     assertThat(realmTrack.id, is(0));
     assertThat(realmTrack.volume, is(0.55f));
-    assertThat(realmTrack.solo, is(false));
     assertThat(realmTrack.mute, is(true));
   }
 

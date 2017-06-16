@@ -54,7 +54,7 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
 
     public Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null, null);
+        return Project.getInstance(null, null, null);
     }
 
     public void init() {

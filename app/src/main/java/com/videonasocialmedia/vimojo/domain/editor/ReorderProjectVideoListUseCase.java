@@ -20,6 +20,6 @@ public class ReorderProjectVideoListUseCase {
   }
 
   private Project getCurrentProject() {
-    return Project.getInstance(null, null, null, null);
+    return Project.getInstance(null, null, null);
   }
 }

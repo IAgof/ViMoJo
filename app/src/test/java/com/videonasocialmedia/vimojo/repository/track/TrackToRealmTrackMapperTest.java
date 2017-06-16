@@ -16,7 +16,7 @@ public class TrackToRealmTrackMapperTest {
 
   @Test
   public void testMapReturnsARealmTrackInstance() {
-    Track track = new Track(0, 0.55f, false, true, 1);
+    Track track = new Track(0, 0.55f, false, 1);
     TrackToRealmTrackMapper mapper = new TrackToRealmTrackMapper();
     RealmTrack realmTrack = mapper.map(track);
     assertThat(realmTrack, instanceOf(RealmTrack.class));
@@ -24,7 +24,7 @@ public class TrackToRealmTrackMapperTest {
 
   @Test
   public void testMapReturnsTrackObjectWithMappedFields() {
-    Track track = new Track(0, 0.55f, false, true, 1);
+    Track track = new Track(0, 0.55f, false, 1);
     TrackToRealmTrackMapper mapper = new TrackToRealmTrackMapper();
 
     RealmTrack realmTrack = mapper.map(track);
@@ -32,7 +32,6 @@ public class TrackToRealmTrackMapperTest {
     assertThat(realmTrack.id, is(0));
     assertThat(realmTrack.volume, is(0.55f));
     assertThat(realmTrack.mute, is(false));
-    assertThat(realmTrack.solo, is(true));
     assertThat(realmTrack.position, is(1));
   }
 }

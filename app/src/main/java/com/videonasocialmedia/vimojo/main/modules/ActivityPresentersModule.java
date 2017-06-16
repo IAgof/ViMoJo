@@ -346,8 +346,9 @@ public class ActivityPresentersModule {
 
   @Provides
   CreateDefaultProjectUseCase provideDefaultProjectCreator(ProjectRepository projectRepository,
-                                                            ProfileRepository profileRepository) {
-    return new CreateDefaultProjectUseCase(projectRepository, profileRepository);
+                                                            ProfileRepository profileRepository,
+                                                           TrackRepository trackRepository) {
+    return new CreateDefaultProjectUseCase(projectRepository, profileRepository, trackRepository);
   }
 
   @Provides
@@ -383,8 +384,11 @@ public class ActivityPresentersModule {
   }
 
   @Provides DeleteProjectUseCase provideDeleteProject(ProjectRepository projectRepository,
-                                                      VideoRepository videoRepository) {
-    return new DeleteProjectUseCase(projectRepository, videoRepository);
+                                                      VideoRepository videoRepository,
+                                                      MusicRepository musicRepository,
+                                                      TrackRepository trackRepository) {
+    return new DeleteProjectUseCase(projectRepository, videoRepository, musicRepository,
+        trackRepository);
   }
 
   @Provides CheckIfProjectHasBeenExportedUseCase provideCheckIfProjectHasBeenExported() {
@@ -437,9 +441,8 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  AddAudioUseCase providesAddAudioUseCase(ProjectRepository projectRepository, TrackRepository
-                                          trackRepository, MusicRepository musicRepository){
-    return new AddAudioUseCase(projectRepository, trackRepository, musicRepository);
+  AddAudioUseCase providesAddAudioUseCase(ProjectRepository projectRepository){
+    return new AddAudioUseCase(projectRepository);
   }
 
   @Provides

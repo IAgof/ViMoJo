@@ -16,6 +16,7 @@ import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.music.RealmMusic;
 import com.videonasocialmedia.vimojo.repository.music.RealmMusicToMusicMapper;
 import com.videonasocialmedia.vimojo.repository.track.RealmTrack;
+import com.videonasocialmedia.vimojo.repository.track.RealmTrackToTrackMapper;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideoToVideoMapper;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -33,6 +34,7 @@ import static com.videonasocialmedia.videonamediaframework.model.Constants.*;
 public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project> {
   private RealmVideoToVideoMapper toVideoMapper = new RealmVideoToVideoMapper();
   private RealmMusicToMusicMapper toMusicMapper = new RealmMusicToMusicMapper();
+  private RealmTrackToTrackMapper toTrackMapper = new RealmTrackToTrackMapper();
 
   public RealmProjectToProjectMapper() {
   }
@@ -41,9 +43,9 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
   public Project map(RealmProject realmProject) {
     try {
       Project project = mapProject(realmProject);
+      setProjectTracks(project, realmProject);
       setProjectVideos(project, realmProject);
       setProjectLastVideoExported(project, realmProject);
-      //setProjectTracks(project, realmProject);
       setProjectMusic(project, realmProject);
       return project;
     } catch (Exception exception) {
@@ -62,24 +64,9 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
   }
 
   @NonNull
-  private List<Track> mapTrack(RealmProject realmProject){
-    List<Track> trackList = new ArrayList<>();
-    trackList.add(new Track(com.videonasocialmedia.videonamediaframework.model.
-        Constants.INDEX_MEDIA_TRACK,realmProject.volumeVideoTrack, realmProject.muteVideoTrack,
-        false,0));
-    trackList.add(new Track(com.videonasocialmedia.videonamediaframework.model.
-        Constants.INDEX_AUDIO_TRACK_MUSIC,realmProject.volumeMusicTrack,
-        realmProject.muteMusicTrack, false, realmProject.positionMusicTrack));
-    trackList.add(new Track(com.videonasocialmedia.videonamediaframework.model.
-        Constants.INDEX_AUDIO_TRACK_VOICE_OVER,realmProject.volumeVoiceOverTrack,
-        realmProject.muteVoiceOverTrack, false, realmProject.positionVoiceOverTrack));
-    return trackList;
-  }
-
-  @NonNull
   private Project mapProject(RealmProject realmProject){
     Project currentProject = new Project(realmProject.title, Constants.PATH_APP,
-        mapProfile(realmProject), mapTrack(realmProject));
+        mapProfile(realmProject));
     currentProject.setProjectPath(realmProject.projectPath);
     currentProject.setUuid(realmProject.uuid);
     currentProject.setLastModification(realmProject.lastModification);
@@ -111,28 +98,21 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
     }
   }
 
-  /*private void setProjectTracks(Project project, RealmProject realmProject) {
+  private void setProjectTracks(Project project, RealmProject realmProject) {
+    project.getAudioTracks().clear();
     for (RealmTrack realmTrack : realmProject.tracks) {
       switch (realmTrack.id) {
         case INDEX_MEDIA_TRACK:
-          setTrackParams(project.getMediaTrack(), realmTrack);
+          project.setMediaTrack((MediaTrack) toTrackMapper.map(realmTrack));
           break;
         case INDEX_AUDIO_TRACK_MUSIC:
-          setTrackParams(project.getAudioTracks().get(INDEX_AUDIO_TRACK_MUSIC), realmTrack);
-          break;
+          project.getAudioTracks().add(INDEX_AUDIO_TRACK_MUSIC,
+              (AudioTrack) toTrackMapper.map(realmTrack));
         case INDEX_AUDIO_TRACK_VOICE_OVER:
-          setTrackParams(project.getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER), realmTrack);
+          project.getAudioTracks().add(INDEX_AUDIO_TRACK_VOICE_OVER,
+               (AudioTrack) toTrackMapper.map(realmTrack));
           break;
       }
-    }
-  }*/
-
-  private void setTrackParams(Track track, RealmTrack realmTrack) {
-    if (realmTrack != null) {
-      track.setVolume(realmTrack.volume);
-      track.setSolo(realmTrack.solo);
-      track.setMute(realmTrack.mute);
-      track.setPosition(realmTrack.position);
     }
   }
 

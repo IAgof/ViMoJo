@@ -22,7 +22,7 @@ public class DetailProjectPresenter {
                                 updateTitleProjectUseCase){
     this.detailProjectView = detailProjectView;
     this.updateTitleProjectUseCase = updateTitleProjectUseCase;
-    currentProject = Project.getInstance(null,null,null, null);
+    currentProject = Project.getInstance(null,null,null);
   }
 
   public void init(){

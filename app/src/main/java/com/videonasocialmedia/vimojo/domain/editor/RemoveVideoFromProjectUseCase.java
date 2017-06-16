@@ -10,6 +10,7 @@
 
 package com.videonasocialmedia.vimojo.domain.editor;
 
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.eventbus.events.project.UpdateProjectDurationEvent;
 import com.videonasocialmedia.vimojo.eventbus.events.video.NumVideosChangedEvent;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -51,8 +52,8 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
     public void removeMediaItemsFromProject(ArrayList<Media> mediaList,
                                             OnRemoveMediaFinishedListener listener) {
         boolean correct = false;
-        Project currentProject = Project.getInstance(null, null, null, null);
-        MediaTrack mediaTrack = currentProject.getMediaTrack();
+        Project currentProject = Project.getInstance(null, null, null);
+        Track mediaTrack = currentProject.getMediaTrack();
         for (Media media : mediaList) {
             correct = removeVideoItemFromTrack(media, mediaTrack);
             if (!correct) break;
@@ -74,17 +75,17 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
      * @return bool if the item has been deleted from the track, return true. If it fails,
      *          return false.
      */
-    private boolean removeVideoItemFromTrack(Media video, MediaTrack mediaTrack) {
+    private boolean removeVideoItemFromTrack(Media video, Track mediaTrack) {
         boolean result;
         try {
             mediaTrack.deleteItem(video);
             // TODO(jliarte): 23/10/16 get rid of EventBus?
-            Project currentProject = Project.getInstance(null, null, null, null);
+            Project currentProject = Project.getInstance(null, null, null);
             EventBus.getDefault().post(
                     new UpdateProjectDurationEvent(currentProject.getDuration()));
             EventBus.getDefault().post(
                     new NumVideosChangedEvent(currentProject.getMediaTrack()
-                            .getNumVideosInProject()));
+                            .getNumItemsInTrack()));
             result = true;
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             result = false;

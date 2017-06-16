@@ -1,5 +1,8 @@
 package com.videonasocialmedia.vimojo.repository.track;
 
+import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
@@ -67,6 +70,48 @@ public class TrackRealmRepository implements TrackRepository{
   public void removeAllTracks() {
     final Realm realm = Realm.getDefaultInstance();
     realm.delete(RealmTrack.class);
+  }
+
+  @Override
+  public Track getMediaTrack() {
+    Realm realm = Realm.getDefaultInstance();
+    RealmResults<RealmTrack> realmResults = realm.where(RealmTrack.class).findAll();
+    Track mediaTrack = null;
+    for(RealmTrack realmTrack: realmResults){
+      if(realmTrack.id == Constants.INDEX_MEDIA_TRACK){
+        mediaTrack = toTrackMapper.map(realmTrack);
+        break;
+      }
+    }
+    return mediaTrack;
+  }
+
+  @Override
+  public Track getMusicTrack() {
+    Realm realm = Realm.getDefaultInstance();
+    RealmResults<RealmTrack> realmResults = realm.where(RealmTrack.class).findAll();
+    Track musicTrack = null;
+    for(RealmTrack realmTrack: realmResults){
+      if(realmTrack.id == Constants.INDEX_AUDIO_TRACK_MUSIC){
+        musicTrack = toTrackMapper.map(realmTrack);
+        break;
+      }
+    }
+    return musicTrack;
+  }
+
+  @Override
+  public Track getVoiceOverTrack() {
+    Realm realm = Realm.getDefaultInstance();
+    RealmResults<RealmTrack> realmResults = realm.where(RealmTrack.class).findAll();
+    Track voiceOverTrack = null;
+    for(RealmTrack realmTrack: realmResults){
+      if(realmTrack.id == Constants.INDEX_AUDIO_TRACK_VOICE_OVER){
+        voiceOverTrack = toTrackMapper.map(realmTrack);
+        break;
+      }
+    }
+    return voiceOverTrack;
   }
 
   @Override

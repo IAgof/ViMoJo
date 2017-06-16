@@ -15,12 +15,12 @@ public class EditNavigatorPresenter {
 
     public EditNavigatorPresenter(EditNavigatorView navigatorView) {
         this.navigatorView = navigatorView;
-        project = Project.getInstance(null, null, null, null);
+        project = Project.getInstance(null, null, null);
         areThereVideosInProject();
     }
 
     public void areThereVideosInProject() {
-        if (project.getMediaTrack().getNumVideosInProject() > 0)
+        if (project.getMediaTrack().getNumItemsInTrack() > 0)
             navigatorView.enableNavigatorActions();
         else
             navigatorView.disableNavigatorActions();

@@ -14,19 +14,21 @@ public class RealmTrack extends RealmObject {
   public int id;
   public float volume;
   public boolean mute;
-  public boolean solo;
   public int position;
 
   public RealmTrack(){
 
   }
 
-  public RealmTrack(String uuid, int id, float volume, boolean mute, boolean solo, int position){
+  public RealmTrack(int id){
+    this.id = id;
+  }
+
+  public RealmTrack(String uuid, int id, float volume, boolean mute, int position){
     this.uuid = uuid;
     this.id = id;
     this.volume = volume;
     this.mute = mute;
-    this.solo = solo;
     this.position = position;
   }
 }

@@ -98,8 +98,9 @@ public class EditPresenterTest {
     Project project = getAProject();
     String musicPath = "voice/over/path";
     float musicVolume = 0.6f;
-    Music voiceOver = new Music(musicPath, musicVolume, 0);
-    project.getVMComposition().getAudioTracks().get(0).insertItem(voiceOver);
+    Music music = new Music(musicPath, musicVolume, 0);
+    project.getVMComposition().getAudioTracks().get(com.videonasocialmedia.videonamediaframework
+        .model.Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
     GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
     EditPresenter presenter = new EditPresenter(mockedEditorView,
             mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
@@ -108,7 +109,7 @@ public class EditPresenterTest {
 
     presenter.init();
 
-    verify(mockedEditorView).setMusic(voiceOver);
+    verify(mockedEditorView).setMusic(music);
   }
 
   @Test

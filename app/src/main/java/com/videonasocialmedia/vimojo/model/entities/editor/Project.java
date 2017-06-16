@@ -89,10 +89,9 @@ public class Project {
      * @param rootPath - Path to root folder for the current project.
      * @param profile  - Define some characteristics and limitations of the current project.
      */
-    public Project(String title, String rootPath, Profile profile, List<Track> trackList) {
+    public Project(String title, String rootPath, Profile profile) {
         this.title = title;
-        this.vmComposition = new VMComposition(getResourceWatermarkFilePath(rootPath), profile,
-            trackList);
+        this.vmComposition = new VMComposition(getResourceWatermarkFilePath(rootPath), profile);
         this.profile = profile;
         this.duration = 0;
         this.isAudioFadeTransitionActivated = false;
@@ -137,15 +136,15 @@ public class Project {
      * @return - Singleton instance of the current project.
      */
     @Deprecated
-    public static Project getInstance(String title, String rootPath, Profile profile, List<Track>
-                                      trackList) {
+    public static Project getInstance(String title, String rootPath, Profile profile) {
         if (INSTANCE == null) {
-            INSTANCE = new Project(title, rootPath, profile, trackList);
+            INSTANCE = new Project(title, rootPath, profile);
         }
         return INSTANCE;
     }
 
-    // getters & setters
+
+  // getters & setters
     public String getTitle() {
         return title;
     }
@@ -338,5 +337,4 @@ public class Project {
   private void createFolder(String projectPath) {
     FileUtils.createFolder(projectPath);
   }
-
 }

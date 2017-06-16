@@ -25,7 +25,7 @@ public class UpdateVideoResolutionToProjectUseCase {
     }
 
     public void updateResolution(VideoResolution.Resolution resolution) {
-        currentProject = Project.getInstance(null, null, null, null);
+        currentProject = Project.getInstance(null, null, null);
         currentProject.getProfile().setResolution(resolution);
         projectRepository.update(currentProject);
     }

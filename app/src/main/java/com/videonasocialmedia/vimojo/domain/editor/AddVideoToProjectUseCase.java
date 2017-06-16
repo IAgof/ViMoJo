@@ -10,6 +10,7 @@
 
 package com.videonasocialmedia.vimojo.domain.editor;
 
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessEvent;
 import com.videonasocialmedia.vimojo.eventbus.events.project.UpdateProjectDurationEvent;
 import com.videonasocialmedia.vimojo.eventbus.events.video.NumVideosChangedEvent;
@@ -55,15 +56,15 @@ public class AddVideoToProjectUseCase {
 
     private void addVideoToTrack(Video video) {
         try {
-            Project currentProject = Project.getInstance(null, null, null, null);
-            MediaTrack mediaTrack = currentProject.getMediaTrack();
+            Project currentProject = Project.getInstance(null, null, null);
+            Track mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(video);
             projectRepository.update(currentProject);
 
             // TODO(jliarte): 22/10/16 should get rid of EventBus calls?
             EventBus.getDefault().post(new AddMediaItemToTrackSuccessEvent(video));
             EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
-            EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumVideosInProject()));
+            EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumItemsInTrack()));
             EventBus.getDefault().post(new VideoAddedToTrackEvent());
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             //TODO manejar error
@@ -78,8 +79,8 @@ public class AddVideoToProjectUseCase {
     public void addVideoToTrack(Video video, OnAddMediaFinishedListener listener,
                                 OnLaunchAVTransitionTempFileListener avtransitionsListener) {
         try {
-            Project currentProject = Project.getInstance(null, null, null, null);
-            MediaTrack mediaTrack = currentProject.getMediaTrack();
+            Project currentProject = Project.getInstance(null, null, null);
+            Track mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(video);
             projectRepository.update(currentProject);
             listener.onAddMediaItemToTrackSuccess(video);
@@ -87,7 +88,7 @@ public class AddVideoToProjectUseCase {
 
             // TODO(jliarte): 22/10/16 should get rid of EventBus calls?
             EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
-            EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumVideosInProject()));
+            EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumItemsInTrack()));
             EventBus.getDefault().post(new VideoAddedToTrackEvent());
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             listener.onAddMediaItemToTrackError();
@@ -97,8 +98,8 @@ public class AddVideoToProjectUseCase {
     public void addVideoToProjectAtPosition(Video video, int position,
                                             OnAddMediaFinishedListener listener) {
         try {
-            Project currentProject = Project.getInstance(null, null, null, null);
-            MediaTrack mediaTrack = currentProject.getMediaTrack();
+            Project currentProject = Project.getInstance(null, null, null);
+            Track mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItemAt(position, video);
             projectRepository.update(currentProject);
             listener.onAddMediaItemToTrackSuccess(video);
@@ -110,8 +111,8 @@ public class AddVideoToProjectUseCase {
     public void addVideoListToTrack(List<Video> videoList, OnAddMediaFinishedListener listener,
                                     OnLaunchAVTransitionTempFileListener avtransitionsListener) {
         try {
-            Project currentProject = Project.getInstance(null, null, null, null);
-            MediaTrack mediaTrack = currentProject.getMediaTrack();
+            Project currentProject = Project.getInstance(null, null, null);
+            Track mediaTrack = currentProject.getMediaTrack();
             for (Video video : videoList) {
                 mediaTrack.insertItem(video);
                 checkIfVideoNeedAVTransitionTempFile(video,avtransitionsListener);
@@ -120,7 +121,7 @@ public class AddVideoToProjectUseCase {
             listener.onAddMediaItemToTrackSuccess(null);
             // TODO(jliarte): 22/10/16 should get rid of EventBus calls?
             EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
-            EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumVideosInProject()));
+            EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumItemsInTrack()));
             EventBus.getDefault().post(new VideoAddedToTrackEvent());
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             listener.onAddMediaItemToTrackError();
@@ -129,7 +130,7 @@ public class AddVideoToProjectUseCase {
 
     private void checkIfVideoNeedAVTransitionTempFile(Video videoToAdd,
                                                   OnLaunchAVTransitionTempFileListener listener) {
-        currentProject = Project.getInstance(null,null,null, null);
+        currentProject = Project.getInstance(null,null,null);
         if(currentProject.isAudioFadeTransitionActivated()
             || currentProject.isVideoFadeTransitionActivated())
             listener.videoToLaunchAVTransitionTempFile(videoToAdd,

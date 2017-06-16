@@ -7,6 +7,7 @@ import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.pipeline.AudioCompositionExportSession;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
@@ -29,7 +30,7 @@ public class MergeVoiceOverAudiosUseCase {
     public void mergeAudio(String pathAudioMerge, final OnMergeVoiceOverAudiosListener listener) {
         // TODO(jliarte): 30/11/16 make this in just one step and build AVComposition?
         //                Move this to presenter and pass composition as an argument?
-        Project project = Project.getInstance(null,null,null, null);
+        Project project = Project.getInstance(null,null,null);
         ArrayList<String> audioPathList =
             createAudioPathList(project.getProjectPathIntermediateAudioFilesVoiceOverRecord());
         final String pathAudioEdited = pathAudioMerge;
@@ -61,7 +62,7 @@ public class MergeVoiceOverAudiosUseCase {
     private void addAudioTracksToComposition(ArrayList<String> audioPathList,
                                              VMComposition audioComposition)
             throws IllegalItemOnTrack {
-        AudioTrack audioTrack = audioComposition.getAudioTracks().get(0);
+        Track audioTrack = audioComposition.getAudioTracks().get(0);
         for (String audioPath: audioPathList) {
             Audio itemToAdd = new Audio(audioPathList.indexOf(audioPath), audioPath,
                     Audio.DEFAULT_VOLUME, null);
