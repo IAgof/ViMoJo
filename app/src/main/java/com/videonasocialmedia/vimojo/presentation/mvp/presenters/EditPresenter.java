@@ -233,7 +233,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         if(currentProject.getVMComposition().hasVideos()){
             Track mediaTrack = currentProject.getMediaTrack();
             if(mediaTrack.isMute()){
-                editActivityView.setVideoVolume(VOLUME_MUTE);
+                editActivityView.setVideoMute();
             }
         }
     }

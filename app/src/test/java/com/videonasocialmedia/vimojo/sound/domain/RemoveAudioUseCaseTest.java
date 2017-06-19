@@ -113,6 +113,33 @@ public class RemoveAudioUseCaseTest {
   }
 
   @Test
+  public void removeMusicDeleteResetValuesOnTrack() throws IllegalItemOnTrack {
+    Project project = getAProject();
+    float defaultVolume = 0.5f;
+    int defaultDuration = 100;
+    float trackVolume = 0.8f;
+    boolean trackMute = true;
+    Music music = new Music("somePath", defaultVolume, defaultDuration);
+    AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    musicTrack.insertItem(music);
+    musicTrack.setPosition(1);
+    musicTrack.setVolume(trackVolume);
+    musicTrack.setMute(trackMute);
+    assertThat("Project has music ", project.hasMusic(), is(true));
+    assertThat("MusicTrack has one item ", musicTrack.getItems().size(), is(1));
+    assertThat("Music track volume is trackVolume", musicTrack.getVolume(), is(trackVolume));
+    assertThat("Music track mute is trackMute", musicTrack.isMute(), is(trackMute));
+
+    injectedUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+        mockedOnRemoveMediaFinishedListener);
+
+    AudioTrack updatedMusicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    assertThat("UseCase has update track volume to default", updatedMusicTrack.getVolume(),
+        is(Music.DEFAULT_VOLUME));
+    assertThat("UseCase has update track mute to default", updatedMusicTrack.isMute(), is(false));
+  }
+
+  @Test
   public void removeMusicUpdateRepositories() throws IllegalItemOnTrack {
     Project project = getAProject();
     float defaultVolume = 0.5f;

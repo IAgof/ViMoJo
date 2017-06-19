@@ -27,9 +27,11 @@ import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -64,6 +66,8 @@ public class MusicDetailPresenterTest {
     @Mock Music mockedMusic;
 
     @Mock private OnRemoveMediaFinishedListener mockedOnRemoveMediaFinishedListener;
+
+    @InjectMocks MusicDetailPresenter injectedPresenter;
 
     @Before
     public void injectMocks() {

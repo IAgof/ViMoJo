@@ -130,7 +130,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
             }
         }
     };
-
+  private boolean isVideoMute;
 
 
   @Override
@@ -526,6 +526,12 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   }
 
   @Override
+  public void setVideoMute(){
+    isVideoMute = true;
+    videonaPlayer.setVideoVolume(0f);
+  }
+
+  @Override
   public void setVoiceOverVolume(float volume) {
     videonaPlayer.setVoiceOverVolume(volume);
   }
@@ -551,6 +557,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         currentVideoIndex = currentClipIndex;
         timeLineAdapter.updateSelection(currentClipIndex);
         videoListRecyclerView.scrollToPosition(currentClipIndex);
+        if(isVideoMute){
+          videonaPlayer.setVideoVolume(0.f);
+        }
     }
 
 

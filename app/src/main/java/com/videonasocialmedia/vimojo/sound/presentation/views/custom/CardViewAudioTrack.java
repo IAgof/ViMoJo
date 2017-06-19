@@ -143,6 +143,7 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack,
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         listener.setSeekBarProgress(id, progress);
+        switchMuteMedia.setChecked(false);
       }
 
       @Override

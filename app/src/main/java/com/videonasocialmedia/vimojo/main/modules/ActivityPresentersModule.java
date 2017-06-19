@@ -116,10 +116,12 @@ public class ActivityPresentersModule {
   SoundVolumePresenter getSoundVolumePresenter(GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                      GetPreferencesTransitionFromProjectUseCase
                                          getPreferencesTransitionFromProjectUseCase,
+                                     GetAudioFromProjectUseCase getAudioFromProjectUseCase,
                                      AddAudioUseCase addAudioUseCase,
                                      RemoveAudioUseCase removeAudioUseCase) {
     return new SoundVolumePresenter((SoundVolumeView) activity, getMediaListFromProjectUseCase,
-        getPreferencesTransitionFromProjectUseCase, addAudioUseCase, removeAudioUseCase, activity);
+        getPreferencesTransitionFromProjectUseCase, getAudioFromProjectUseCase, addAudioUseCase,
+        removeAudioUseCase, activity);
   }
 
   @Provides @PerActivity

@@ -23,7 +23,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
@@ -218,16 +217,27 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   public void bindVideoList(List<Video> movieList) {
     videonaPlayer.bindVideoList(movieList);
     videonaPlayer.seekTo(currentProjectPosition);
+    presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
+        .INDEX_MEDIA_TRACK);
+  }
+
+  @Override
+  public void updateVideoList(List<Video> videoList) {
+    videonaPlayer.initPreviewLists(videoList);
   }
 
   @Override
   public void bindMusicList(List<Music> musicList) {
     videonaPlayer.setMusic(musicList.get(0));
+    presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
+        .INDEX_AUDIO_TRACK_MUSIC);
   }
 
   @Override
   public void bindVoiceOverList(List<Music> voiceOverList) {
     videonaPlayer.setVoiceOver(voiceOverList.get(0));
+    presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
+        .INDEX_AUDIO_TRACK_VOICE_OVER);
   }
 
   @Override
@@ -330,11 +340,14 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   @Nullable @Override
   public void newClipPlayed(int currentClipIndex) {
     trackClipsVideo.updateClipSelection(currentClipIndex);
+    presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
+        .INDEX_MEDIA_TRACK);
   }
 
   @Override
   public void setSeekBarProgress(int id, int seekBarProgress) {
     presenter.setTrackVolume(id, seekBarProgress);
+
   }
 
   @Override
@@ -360,6 +373,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   @Override
   public void onClickMediaClip(int position, int trackId) {
     videonaPlayer.seekToClip(position);
+    presenter.updateClipPlayed(trackId);
     // TODO:(alvaro.martinez) 31/05/17 If Vimojo support more than one music or voice over, update and calculate correct position
     switch (trackId){
       case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_MEDIA_TRACK:

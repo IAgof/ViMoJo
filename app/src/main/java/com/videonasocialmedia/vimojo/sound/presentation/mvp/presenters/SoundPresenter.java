@@ -164,6 +164,21 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
     float volume = (float) (seekBarProgress * 0.01);
     modifyTrackUseCase.setTrackVolume(track, volume);
     updatePlayerVolume(id, volume);
+    updateVideoList();
+  }
+
+  private void updateVideoList() {
+    getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
+      @Override
+      public void onVideosRetrieved(List<Video> videoList) {
+        soundView.updateVideoList(videoList);
+      }
+
+      @Override
+      public void onNoVideosRetrieved() {
+
+      }
+    });
   }
 
   private void updatePlayerVolume(int id, float volume) {
@@ -233,5 +248,33 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
   @Override
   public void setWarningMessageTempFile(String messageTempFile) {
     soundView.setWarningMessageTempFile(messageTempFile);
+  }
+
+  public void updateClipPlayed(int trackId) {
+    Track track = getTrackById(trackId);
+    switch (trackId){
+      case Constants.INDEX_MEDIA_TRACK:
+        if(track.isMute()){
+          soundView.setVideoVolume(VOLUME_MUTE);
+        } else {
+          soundView.setVideoVolume(track.getVolume());
+        }
+        break;
+      case Constants.INDEX_AUDIO_TRACK_MUSIC:
+        if(track.isMute()){
+          soundView.setMusicVolume(VOLUME_MUTE);
+        } else {
+          soundView.setMusicVolume(track.getVolume());
+        }
+        break;
+      case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
+        if(track.isMute()){
+          soundView.setVoiceOverVolume(VOLUME_MUTE);
+        } else {
+          soundView.setVoiceOverVolume(track.getVolume());
+        }
+        break;
+    }
+
   }
 }

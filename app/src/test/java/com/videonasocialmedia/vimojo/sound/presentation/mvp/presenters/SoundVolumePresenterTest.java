@@ -12,6 +12,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
@@ -57,6 +58,7 @@ public class SoundVolumePresenterTest {
   @Mock SoundVolumePresenter mockedSoundVolumePresenter;
   @Mock private MusicRepository mockedMusicRepository;
   @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
+  @Mock private GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
   @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
   @Mock private AddAudioUseCase mockedAddAudioUseCase;
   @Mock private RemoveAudioUseCase mockedRemoveAudioUseCase;
@@ -158,8 +160,8 @@ public class SoundVolumePresenterTest {
   @NonNull
   private SoundVolumePresenter getSoundVolumePresenter() {
     return new SoundVolumePresenter(mockedSoundVolumeView, mockedGetMediaListFromProjectUseCase,
-        mockedGetPreferencesTransitionsFromProject, mockedAddAudioUseCase,
-        mockedRemoveAudioUseCase, mockedContext);
+        mockedGetPreferencesTransitionsFromProject, mockedGetAudioFromProjectUseCase,
+        mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedContext);
   }
 
   public Project getAProject() {

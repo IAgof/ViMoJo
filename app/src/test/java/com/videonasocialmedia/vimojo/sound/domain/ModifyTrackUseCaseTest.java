@@ -2,7 +2,10 @@ package com.videonasocialmedia.vimojo.sound.domain;
 
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -53,18 +56,6 @@ public class ModifyTrackUseCaseTest {
     verify(mockedProjectRepository).update(project);
   }
 
-  @Ignore //Should use case update track repository
-  @Test
-  public void setTrackVolumeUpdateTrackRepository(){
-    Project project = getAProject();
-    AudioTrack track = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
-    float volumeTrack = 0.85f;
-
-    injectedUseCase.setTrackVolume(track, volumeTrack);
-
-    verify(mockedTrackRepository).update(track);
-  }
-
   @Test
   public void setTrackVolumeUpdateTrackVolume(){
     Project project = getAProject();
@@ -76,15 +67,24 @@ public class ModifyTrackUseCaseTest {
     assertThat("setTrackVolume update volume track", track.getVolume(), is(volumeTrack));
   }
 
-  @Ignore //Should use case update track repository
   @Test
-  public void setTrackMuteUpdateTrackRepository(){
+  public void setTrackVolumeUpdateVolumeInTrackItems() throws IllegalItemOnTrack {
     Project project = getAProject();
-    AudioTrack track = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    MediaTrack mediaTrack = project.getMediaTrack();
+    Video video1 = new Video("media/path", 1f);
+    Video video2 = new Video("media/path", 0.5f);
+    mediaTrack.insertItem(video1);
+    mediaTrack.insertItem(video2);
+    float mediaTrackVolume = 0.7f;
 
-    injectedUseCase.setTrackMute(track, true);
+    injectedUseCase.setTrackVolume(mediaTrack, mediaTrackVolume);
 
-    verify(mockedTrackRepository).update(track);
+    assertThat("setTrackVolume update volume video 1", project.getMediaTrack().getItems().get(0)
+        .getVolume(), is(mediaTrackVolume));
+
+    assertThat("setTrackVolume update volume video 2", project.getMediaTrack().getItems().get(1)
+        .getVolume(), is(mediaTrackVolume));
+
   }
 
   @Test

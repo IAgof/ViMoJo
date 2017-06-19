@@ -190,9 +190,14 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     public void bindVideoList(List<Video> movieList) {
         videonaPlayer.bindVideoList(movieList);
         videonaPlayer.seekTo(currentProjectPosition);
-        videonaPlayer.setMusic(new Music(soundVoiceOverPath,
+        videonaPlayer.setVoiceOver(new Music(soundVoiceOverPath,
             FileUtils.getDuration(soundVoiceOverPath)));
-        videonaPlayer.setMusicVolume(currentSoundVolumePosition*0.01f);
+        videonaPlayer.setVoiceOverVolume(currentSoundVolumePosition*0.01f);
+    }
+
+    @Override
+    public void setMusic(Music music) {
+        videonaPlayer.setMusic(music);
     }
 
     @Override

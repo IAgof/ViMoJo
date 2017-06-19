@@ -140,6 +140,9 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
         musicDetailView.bindVideoList(videoList);
+        if(currentProject.hasVoiceOver()){
+            retrieveVoiceOver();
+        }
     }
 
     @Override
@@ -159,6 +162,15 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         } else {
             musicDetailView.setMusic(musicSelected, false);
         }
+    }
+
+    private void retrieveVoiceOver() {
+        getAudioFromProjectUseCase.getVoiceOverFromProject(new GetMusicFromProjectCallback() {
+            @Override
+            public void onMusicRetrieved(Music voiceOver) {
+                musicDetailView.setVoiceOver(voiceOver);
+            }
+        });
     }
 
     public void setVolume(float volume) {

@@ -197,6 +197,13 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     }
 
     @Override
+    public void setVoiceOver(Music voiceOver) {
+        videonaPlayer.pausePreview();
+        videonaPlayer.setVoiceOver(voiceOver);
+        videonaPlayer.playPreview();
+    }
+
+    @Override
     public void setMusic(Music music, boolean scene) {
         musicSelectedOptions(scene);
         videonaPlayer.setMusic(music);

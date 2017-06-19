@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.sound.domain;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -18,6 +19,9 @@ public class ModifyTrackUseCase {
 
   public void setTrackVolume(Track track, float volume){
     currentProject = Project.getInstance(null, null, null);
+    for(Media item: track.getItems()){
+      item.setVolume(volume);
+    }
     track.setVolume(volume);
     updateProject();
   }

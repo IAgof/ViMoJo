@@ -11,6 +11,7 @@ import java.util.List;
  */
 public interface SoundView {
     void bindVideoList(List<Video> movieList);
+    void updateVideoList(List<Video> videoList);
     void bindMusicList(List<Music> musicList);
     void bindVoiceOverList(List<Music> voiceOverList);
     void hideVoiceOverCardView();

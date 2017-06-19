@@ -42,11 +42,18 @@ public class RemoveAudioUseCase {
     Track audioTrack = currentProject.getAudioTracks().get(trackIndex);
     updateTrackPosition(audioTrack, trackIndex);
     removeMusicInTrack(music, listener, audioTrack);
+    updateTrackDefaultValues(audioTrack);
     if(audioTrack.getItems().size() == 0
         && audioTrack.getId() == Constants.INDEX_AUDIO_TRACK_VOICE_OVER){
       currentProject.getAudioTracks().remove(audioTrack);
     }
     updateProject();
+  }
+
+  // TODO:(alvaro.martinez) 19/06/17 delete this when vimojo support multiple audio items.
+  private void updateTrackDefaultValues(Track audioTrack) {
+    audioTrack.setVolume(Music.DEFAULT_VOLUME);
+    audioTrack.setMute(false);
   }
 
   private void updateTrackPosition(Track audioTrack, int trackIndex) {
