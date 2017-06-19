@@ -8,8 +8,8 @@ import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 
@@ -42,7 +42,6 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -56,7 +55,7 @@ public class MusicDetailPresenterTest {
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private Context mockedContext;
     @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
-    @Mock private GetMusicFromProjectUseCase mockedGetMusicFromProject;
+    @Mock private GetAudioFromProjectUseCase mockedGetMusicFromProject;
     @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
     @Mock private AddAudioUseCase mockedAddAudioUseCase;
     @Mock private RemoveAudioUseCase mockedRemoveAudioUseCase;

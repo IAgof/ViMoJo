@@ -2,13 +2,13 @@ package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import android.content.Context;
 
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
@@ -34,7 +34,7 @@ import javax.inject.Inject;
 public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback {
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
+    private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     private MusicDetailView musicDetailView;
     public UserEventTracker userEventTracker;
@@ -49,7 +49,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     public MusicDetailPresenter(MusicDetailView musicDetailView,
                                 UserEventTracker userEventTracker,
                                 GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                                GetMusicFromProjectUseCase getMusicFromProjectUseCase,
+                                GetAudioFromProjectUseCase getAudioFromProjectUseCase,
                                 GetPreferencesTransitionFromProjectUseCase
                                     getPreferencesTransitionFromProjectUseCase,
                                 AddAudioUseCase addAudioUseCase, RemoveAudioUseCase
@@ -58,7 +58,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
-        this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
+        this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase =
             getPreferencesTransitionFromProjectUseCase;
         this.context = context;
@@ -87,7 +87,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     }
 
     private void obtainMusicsAndVideos() {
-        getMusicFromProjectUseCase.getMusicFromProject(this);
+        getAudioFromProjectUseCase.getMusicFromProject(this);
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 

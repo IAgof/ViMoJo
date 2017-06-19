@@ -34,7 +34,7 @@ import java.util.ArrayList;
  * Created by jliarte on 31/05/16.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class GetMusicFromProjectUseCaseTest {
+public class GetAudioFromProjectUseCaseTest {
     @Mock private GetMusicFromProjectCallback mockedListener;
     @Captor private ArgumentCaptor<Music> retrievedMusicCaptor;
 
@@ -54,9 +54,9 @@ public class GetMusicFromProjectUseCaseTest {
     public void constructorSetsProjectInstance() {
         Project videonaProject = getAProject();
 
-        GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
+        GetAudioFromProjectUseCase getAudioFromProjectUseCase = new GetAudioFromProjectUseCase();
 
-        assertThat("Project field set after construction", getMusicFromProjectUseCase.project,
+        assertThat("Project field set after construction", getAudioFromProjectUseCase.project,
             is(videonaProject));
     }
 
@@ -67,7 +67,7 @@ public class GetMusicFromProjectUseCaseTest {
         ArrayList<AudioTrack> audioTracks = getAudioTracks(project_music);
         videonaProject.setAudioTracks(audioTracks);
 
-        new GetMusicFromProjectUseCase().getMusicFromProject(mockedListener);
+        new GetAudioFromProjectUseCase().getMusicFromProject(mockedListener);
 
         Mockito.verify(mockedListener).onMusicRetrieved(retrievedMusicCaptor.capture());
         Music retrievedMusic = retrievedMusicCaptor.getValue();
@@ -79,7 +79,7 @@ public class GetMusicFromProjectUseCaseTest {
     public void getMusicFromProjectNotifiesWithNullIfNoMusic() {
         Project project = getAProject();
 
-        new GetMusicFromProjectUseCase().getMusicFromProject(mockedListener);
+        new GetAudioFromProjectUseCase().getMusicFromProject(mockedListener);
 
         Mockito.verify(mockedListener).onMusicRetrieved(retrievedMusicCaptor.capture());
         assertThat("Music retrieved when no audio tracks", retrievedMusicCaptor.getValue(), CoreMatchers.<Music>nullValue());

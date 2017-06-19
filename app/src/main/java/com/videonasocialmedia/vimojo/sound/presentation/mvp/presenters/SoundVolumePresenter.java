@@ -90,11 +90,10 @@ public class SoundVolumePresenter implements OnVideosRetrieved {
 
         voiceOver = getVoiceOverAsMusic(voiceOverPath, volume);
 
-        if(currentProject.hasVoiceOver()){
-            deletePreviousVoiceOver(voiceOver);
-        } else {
-            addVoiceOver(voiceOver);
+        if(currentProject.hasVoiceOver()) {
+            deletePreviousVoiceOver();
         }
+        addVoiceOver(voiceOver);
     }
 
     protected void addVoiceOver(Music voiceOver) {
@@ -113,13 +112,13 @@ public class SoundVolumePresenter implements OnVideosRetrieved {
         });
     }
 
-    protected void deletePreviousVoiceOver(final Music voiceOverToAdd){
+    protected void deletePreviousVoiceOver(){
         removeAudioUseCase.removeMusic((Music) currentProject.getAudioTracks()
                 .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getItems().get(0),
             Constants.INDEX_AUDIO_TRACK_VOICE_OVER, new OnRemoveMediaFinishedListener() {
                 @Override
                 public void onRemoveMediaItemFromTrackSuccess() {
-                    addVoiceOver(voiceOverToAdd);
+
                 }
 
                 @Override

@@ -16,14 +16,12 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
-import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +39,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.calls;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
@@ -118,35 +119,7 @@ public class SoundVolumePresenterTest {
   }
 
   @Test
-  public void removePreviousVoiceOverCallsAddVoiceOverOnRemoveMediaItemFromTrackSuccess() throws IllegalItemOnTrack {
-    SoundVolumePresenter soundVolumePresenter = getSoundVolumePresenter();
-    Project project = getAProject();
-    final float defaultVolume = 0.5f;
-    int defaultDuration = 100;
-    final Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
-    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(voiceOver);
-    assertThat("Project has voice over", project.hasVoiceOver(), is(true));
-    doAnswer(new Answer() {
-      @Override
-      public Object answer(InvocationOnMock invocation) throws Throwable {
-        OnRemoveMediaFinishedListener listener =
-            invocation.getArgumentAt(2, OnRemoveMediaFinishedListener.class);
-        listener.onRemoveMediaItemFromTrackSuccess();
-        return null;
-      }
-    }).when(mockedRemoveAudioUseCase).removeMusic(eq(voiceOver),
-        eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
-        Matchers.any(OnRemoveMediaFinishedListener.class));
-    final Music voiceOverToAdd = soundVolumePresenter.getVoiceOverAsMusic("media/path", defaultVolume);
-
-    injectedPresenter.deletePreviousVoiceOver(voiceOverToAdd);
-
-    verify(mockedSoundVolumePresenter).addVoiceOver(voiceOverToAdd);
-  }
-
-  @Test
-  public void removePreviousVoiceOverCallsAddVoiceOverOnRemoveMediaItemFromTrackError() throws IllegalItemOnTrack {
+  public void removePreviousVoiceOverCallsShowErrorOnRemoveMediaItemFromTrackError() throws IllegalItemOnTrack {
     Project project = getAProject();
     final float defaultVolume = 0.5f;
     int defaultDuration = 100;
@@ -166,7 +139,7 @@ public class SoundVolumePresenterTest {
         eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
         Matchers.any(OnRemoveMediaFinishedListener.class));
 
-    injectedPresenter.deletePreviousVoiceOver(voiceOver);
+    injectedPresenter.deletePreviousVoiceOver();
 
     verify(mockedSoundVolumeView).showError(anyString());
   }

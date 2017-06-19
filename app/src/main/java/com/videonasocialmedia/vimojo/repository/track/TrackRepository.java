@@ -15,7 +15,7 @@ public interface TrackRepository extends Repository<Track> {
   void update(Track item);
   List<Track> getAllTracks();
   void removeAllTracks();
-  Track getMediaTrack();
-  Track getMusicTrack();
-  Track getVoiceOverTrack();
+  MediaTrack getMediaTrack();
+  AudioTrack getMusicTrack();
+  AudioTrack getVoiceOverTrack();
 }

@@ -73,13 +73,13 @@ public class TrackRealmRepository implements TrackRepository{
   }
 
   @Override
-  public Track getMediaTrack() {
+  public MediaTrack getMediaTrack() {
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmTrack> realmResults = realm.where(RealmTrack.class).findAll();
-    Track mediaTrack = null;
+    MediaTrack mediaTrack = null;
     for(RealmTrack realmTrack: realmResults){
       if(realmTrack.id == Constants.INDEX_MEDIA_TRACK){
-        mediaTrack = toTrackMapper.map(realmTrack);
+        mediaTrack = (MediaTrack) toTrackMapper.map(realmTrack);
         break;
       }
     }
@@ -87,13 +87,13 @@ public class TrackRealmRepository implements TrackRepository{
   }
 
   @Override
-  public Track getMusicTrack() {
+  public AudioTrack getMusicTrack() {
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmTrack> realmResults = realm.where(RealmTrack.class).findAll();
-    Track musicTrack = null;
+    AudioTrack musicTrack = null;
     for(RealmTrack realmTrack: realmResults){
       if(realmTrack.id == Constants.INDEX_AUDIO_TRACK_MUSIC){
-        musicTrack = toTrackMapper.map(realmTrack);
+        musicTrack = (AudioTrack) toTrackMapper.map(realmTrack);
         break;
       }
     }
@@ -101,13 +101,13 @@ public class TrackRealmRepository implements TrackRepository{
   }
 
   @Override
-  public Track getVoiceOverTrack() {
+  public AudioTrack getVoiceOverTrack() {
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmTrack> realmResults = realm.where(RealmTrack.class).findAll();
-    Track voiceOverTrack = null;
+    AudioTrack voiceOverTrack = null;
     for(RealmTrack realmTrack: realmResults){
       if(realmTrack.id == Constants.INDEX_AUDIO_TRACK_VOICE_OVER){
-        voiceOverTrack = toTrackMapper.map(realmTrack);
+        voiceOverTrack = (AudioTrack) toTrackMapper.map(realmTrack);
         break;
       }
     }

@@ -1,15 +1,12 @@
 package com.videonasocialmedia.vimojo.model;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
-import com.videonasocialmedia.vimojo.repository.track.RealmTrack;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
 import java.util.UUID;
 
 import io.realm.DynamicRealm;
 import io.realm.DynamicRealmObject;
-import io.realm.FieldAttribute;
-import io.realm.RealmList;
 import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
@@ -198,11 +195,17 @@ public class VimojoMigration implements RealmMigration {
       oldVersion++;
     }
 
-    // Migrate from version 6 to version 7, now update RealmVideo, not RealmProject
+    // Migrate from version 6 to version 7, update RealmVideo, update RealmProject, add RealmTrack
+          /*RealmObjectSchema trackSchema = schema.create("RealmTrack")
+          .addField("uuid", String.class, FieldAttribute.PRIMARY_KEY)
+          .addField("id", Integer.class, FieldAttribute.REQUIRED)
+          .addField("volume", Float.class, FieldAttribute.REQUIRED)
+          .addField("mute", Boolean.class, FieldAttribute.REQUIRED)*/
     if (oldVersion == 6) {
-      RealmObjectSchema realmProject = schema.get("RealmVideo");
-      if (!realmProject.hasField("volume")) {
-        realmProject.addField("volume", float.class)
+
+      RealmObjectSchema realmVideo = schema.get("RealmVideo");
+      if (!realmVideo.hasField("volume")) {
+        realmVideo.addField("volume", float.class)
             .transform(new RealmObjectSchema.Function() {
               @Override
               public void apply(DynamicRealmObject obj) {
@@ -210,20 +213,6 @@ public class VimojoMigration implements RealmMigration {
               }
             });
       }
-
-      oldVersion++;
-    }
-
-    //Migrate from verstion 7 to 8, added RealmTrack
-    if(oldVersion == 7) {
-      /*RealmObjectSchema trackSchema = schema.create("RealmTrack")
-          .addField("uuid", String.class, FieldAttribute.PRIMARY_KEY)
-          .addField("id", Integer.class, FieldAttribute.REQUIRED)
-          .addField("volume", Float.class, FieldAttribute.REQUIRED)
-          .addField("mute", Boolean.class, FieldAttribute.REQUIRED)
-          .addField("solo", Boolean.class, FieldAttribute.REQUIRED);*/
-      //RealmObjectSchema trackSchema = schema.get("RealmTrack");
-
       RealmObjectSchema realmProject = schema.get("RealmProject");
       if(!realmProject.hasField("realmTrack")){
         realmProject.addRealmListField("realmTrack", schema.get("RealmTrack"));
@@ -239,6 +228,7 @@ public class VimojoMigration implements RealmMigration {
       }
       oldVersion++;
     }
+
   }
 
   private void updateRealmProjectPrimaryKeyToUuid(RealmObjectSchema realmProject) {

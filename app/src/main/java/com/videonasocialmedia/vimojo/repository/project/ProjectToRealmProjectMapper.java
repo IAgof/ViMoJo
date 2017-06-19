@@ -54,10 +54,9 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
     }
 
     realmProject.tracks.add(toRealmTrackMapper.map(project.getMediaTrack()));
-    if(project.hasMusic()) {
-      realmProject.tracks.add(toRealmTrackMapper.map(project.getAudioTracks()
+    realmProject.tracks.add(toRealmTrackMapper.map(project.getAudioTracks()
           .get(Constants.INDEX_AUDIO_TRACK_MUSIC)));
-    }
+
     if(project.hasVoiceOver()) {
       realmProject.tracks.add(toRealmTrackMapper.map(project.getAudioTracks()
           .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER)));

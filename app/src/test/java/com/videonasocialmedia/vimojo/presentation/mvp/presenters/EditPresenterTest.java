@@ -6,8 +6,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
+import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
@@ -56,7 +56,7 @@ public class EditPresenterTest {
   @Mock private RemoveVideoFromProjectUseCase mockedVideoRemover;
   @Mock private ReorderMediaItemUseCase mockedMediaItemReorderer;
   @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
-  @Mock private GetMusicFromProjectUseCase mockedGetMusicFromProjectUseCase;
+  @Mock private GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
   @Mock ListenableFuture<Void> mockedTranscodingTask;
   @Mock private VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
 
@@ -101,10 +101,10 @@ public class EditPresenterTest {
     Music music = new Music(musicPath, musicVolume, 0);
     project.getVMComposition().getAudioTracks().get(com.videonasocialmedia.videonamediaframework
         .model.Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
-    GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
+    GetAudioFromProjectUseCase getAudioFromProjectUseCase = new GetAudioFromProjectUseCase();
     EditPresenter presenter = new EditPresenter(mockedEditorView,
             mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
-            mockedVideoRemover, mockedMediaItemReorderer, getMusicFromProjectUseCase,
+            mockedVideoRemover, mockedMediaItemReorderer, getAudioFromProjectUseCase,
             mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);
 
     presenter.init();
@@ -136,7 +136,7 @@ public class EditPresenterTest {
 
     EditPresenter presenter = new EditPresenter(mockedEditorView,
             mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
-            mockedVideoRemover, mockedMediaItemReorderer, mockedGetMusicFromProjectUseCase,
+            mockedVideoRemover, mockedMediaItemReorderer, mockedGetAudioFromProjectUseCase,
             mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);
 
     presenter.videoListErrorCheckerDelegate

@@ -4,9 +4,9 @@ import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
@@ -29,7 +29,7 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
 
   private SoundView soundView;
   private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-  private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
+  private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
   private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
   private ModifyTrackUseCase modifyTrackUseCase;
   private final Project currentProject;
@@ -39,13 +39,13 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
    @Inject
     public SoundPresenter(SoundView soundView,
         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-        GetMusicFromProjectUseCase getMusicFromProjectUseCase,
+        GetAudioFromProjectUseCase getAudioFromProjectUseCase,
         GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
         ModifyTrackUseCase modifyTrackUseCase, VideoListErrorCheckerDelegate
                                  videoListErrorCheckerDelegate) {
         this.soundView = soundView;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
-        this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
+        this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
         this.currentProject = loadCurrentProject();
         this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
         this.modifyTrackUseCase = modifyTrackUseCase;
@@ -100,11 +100,11 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
   }
 
   private void obtainVoiceOver() {
-    getMusicFromProjectUseCase.getVoiceOverFromProject(this);
+    getAudioFromProjectUseCase.getVoiceOverFromProject(this);
   }
 
   private void obtainMusic() {
-    getMusicFromProjectUseCase.getMusicFromProject(this);
+    getAudioFromProjectUseCase.getMusicFromProject(this);
   }
 
   private void setupTrack(Track track) {

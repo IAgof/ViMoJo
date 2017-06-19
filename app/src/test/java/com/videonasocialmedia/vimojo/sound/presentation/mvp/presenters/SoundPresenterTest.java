@@ -13,8 +13,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
@@ -46,7 +46,7 @@ public class SoundPresenterTest {
   @Mock
   GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock
-  GetMusicFromProjectUseCase mockedGetMusicFromProjectUseCase;
+  GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
   @Mock
   GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionFromProjectUseCase;
   @Mock
@@ -100,7 +100,7 @@ public class SoundPresenterTest {
 
     injectedSoundPresenter.init();
 
-    verify(mockedGetMusicFromProjectUseCase).getMusicFromProject(injectedSoundPresenter);
+    verify(mockedGetAudioFromProjectUseCase).getMusicFromProject(injectedSoundPresenter);
   }
 
   @Test
@@ -126,7 +126,7 @@ public class SoundPresenterTest {
   @NonNull
   private SoundPresenter getSoundPresenter(GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
     return new SoundPresenter(mockedSoundView,
-        getMediaListFromProjectUseCase, mockedGetMusicFromProjectUseCase,
+        getMediaListFromProjectUseCase, mockedGetAudioFromProjectUseCase,
         mockedGetPreferencesTransitionFromProjectUseCase, mockedModifyTrackUseCase,
         mockedVideoListErrorCheckerDelegate);
   }
@@ -142,12 +142,12 @@ public class SoundPresenterTest {
     project.getVMComposition().getAudioTracks()
         .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC)
         .insertItem(music);
-    GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
+    GetAudioFromProjectUseCase getAudioFromProjectUseCase = new GetAudioFromProjectUseCase();
 
     Project currentProject = Project.getInstance(null, null, null);
     assertThat("Current project has music", currentProject.hasMusic(), is(true));
 
-    SoundPresenter soundPresenter = getSoundPresenter(getMusicFromProjectUseCase);
+    SoundPresenter soundPresenter = getSoundPresenter(getAudioFromProjectUseCase);
     soundPresenter.init();
 
     verify(mockedSoundView).bindMusicList(musicList);
@@ -156,9 +156,9 @@ public class SoundPresenterTest {
   }
 
   @NonNull
-  private SoundPresenter getSoundPresenter(GetMusicFromProjectUseCase getMusicFromProjectUseCase) {
+  private SoundPresenter getSoundPresenter(GetAudioFromProjectUseCase getAudioFromProjectUseCase) {
     return new SoundPresenter(mockedSoundView,
-        mockedGetMediaListFromProjectUseCase, getMusicFromProjectUseCase,
+        mockedGetMediaListFromProjectUseCase, getAudioFromProjectUseCase,
         mockedGetPreferencesTransitionFromProjectUseCase, mockedModifyTrackUseCase,
         mockedVideoListErrorCheckerDelegate);
   }
@@ -179,10 +179,10 @@ public class SoundPresenterTest {
     project.getVMComposition().getAudioTracks()
         .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
         .insertItem(voiceOver);
-    GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
+    GetAudioFromProjectUseCase getAudioFromProjectUseCase = new GetAudioFromProjectUseCase();
     Project currentProject = Project.getInstance(null, null, null);
     assertThat("Current project has voiceOver", currentProject.hasVoiceOver(), is(true));
-    SoundPresenter soundPresenter = getSoundPresenter(getMusicFromProjectUseCase);
+    SoundPresenter soundPresenter = getSoundPresenter(getAudioFromProjectUseCase);
     soundPresenter.init();
 
     verify(mockedSoundView).bindVoiceOverList(voiceOverList);

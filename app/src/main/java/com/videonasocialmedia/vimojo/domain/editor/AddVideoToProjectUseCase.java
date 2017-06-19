@@ -18,7 +18,6 @@ import com.videonasocialmedia.vimojo.eventbus.events.video.VideoAddedToTrackEven
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnLaunchAVTransitionTempFileListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;

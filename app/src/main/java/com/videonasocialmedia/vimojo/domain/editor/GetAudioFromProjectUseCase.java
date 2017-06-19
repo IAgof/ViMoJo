@@ -11,31 +11,31 @@ import javax.inject.Inject;
 /**
  * Created by jliarte on 31/05/16.
  */
-public class GetMusicFromProjectUseCase {
+public class GetAudioFromProjectUseCase {
     public Project project;
 
     @Inject
-    public GetMusicFromProjectUseCase() {
+    public GetAudioFromProjectUseCase() {
         project = Project.getInstance(null, null, null);
     }
 
     public void getMusicFromProject(GetMusicFromProjectCallback listener) {
-        getItemsOnTrack(listener, Constants.INDEX_AUDIO_TRACK_MUSIC);
+        getItemsOnAudioTrack(listener, Constants.INDEX_AUDIO_TRACK_MUSIC);
     }
 
     public void getVoiceOverFromProject(GetMusicFromProjectCallback listener) {
-        getItemsOnTrack(listener, Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+        getItemsOnAudioTrack(listener, Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     }
 
-    private void getItemsOnTrack(GetMusicFromProjectCallback listener, int indexAudioTrackVoiceOver) {
-        Music voiceOver = null;
+    private void getItemsOnAudioTrack(GetMusicFromProjectCallback listener, int indexAudioTrack) {
+        Music music = null;
         try {
-            voiceOver = (Music) project.getAudioTracks()
-                .get(indexAudioTrackVoiceOver).getItems().get(0);
+            music = (Music) project.getAudioTracks()
+                .get(indexAudioTrack).getItems().get(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        listener.onMusicRetrieved(voiceOver);
+        listener.onMusicRetrieved(music);
     }
 
     public boolean hasBeenMusicSelected(){

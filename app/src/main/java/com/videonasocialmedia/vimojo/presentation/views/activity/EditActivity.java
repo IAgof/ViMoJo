@@ -161,9 +161,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
             break;
           case (R.id.tab_share):
             navigateTo(ShareActivity.class);
-           /* Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
-            Snackbar.make(relativeLayoutActivityEdit, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
-            VimojoApplication.getAppContext().startService(intent);*/
             break;
         }
       }
@@ -189,7 +186,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         switch (fab.getId()){
           case ID_BUTTON_FAB_TOP:
             fabMenu.collapse();
-              //navigateTo(RecordActivity.class);
               navigateTo(RecordCamera2Activity.class);
               break;
           case ID_BUTTON_FAB_CENTER:

@@ -28,7 +28,6 @@ import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
-import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;

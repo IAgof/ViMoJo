@@ -19,7 +19,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
-import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.FileUtils;

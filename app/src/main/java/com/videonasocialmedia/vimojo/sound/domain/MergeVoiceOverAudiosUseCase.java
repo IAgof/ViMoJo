@@ -6,7 +6,6 @@ import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.pipeline.AudioCompositionExportSession;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;

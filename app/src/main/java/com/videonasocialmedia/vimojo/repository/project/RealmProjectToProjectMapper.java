@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
-import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.model.entities.editor.LastVideoExported;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
@@ -20,9 +19,6 @@ import com.videonasocialmedia.vimojo.repository.track.RealmTrackToTrackMapper;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideoToVideoMapper;
 import com.videonasocialmedia.vimojo.utils.Constants;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.*;
 

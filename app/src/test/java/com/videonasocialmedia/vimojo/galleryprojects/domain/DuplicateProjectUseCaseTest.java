@@ -46,6 +46,7 @@ public class DuplicateProjectUseCaseTest {
   @Test
   public void duplicateProjectCopyFileToNewProject() throws IllegalItemOnTrack {
     Project project = getAProject();
+
     injectedUseCase.duplicate(project);
 
   }

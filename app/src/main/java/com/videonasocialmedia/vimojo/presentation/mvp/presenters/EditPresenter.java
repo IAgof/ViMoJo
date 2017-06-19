@@ -16,13 +16,11 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 
-import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
-import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -57,7 +55,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     private RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
     private ReorderMediaItemUseCase reorderMediaItemUseCase;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
+    private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     /**
      * EditActivity View
@@ -73,7 +71,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                          UserEventTracker userEventTracker,
                          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
                          ReorderMediaItemUseCase reorderMediaItemUseCase,
-                         GetMusicFromProjectUseCase getMusicFromProjectUseCase,
+                         GetAudioFromProjectUseCase getAudioFromProjectUseCase,
                          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                          GetPreferencesTransitionFromProjectUseCase
                                  getPreferencesTransitionFromProjectUseCase) {
@@ -81,7 +79,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;
         this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
-        this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
+        this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
 
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
@@ -252,7 +250,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     private void retrieveMusic() {
         if (currentProject.getVMComposition().hasMusic()) {
-            getMusicFromProjectUseCase.getMusicFromProject(new GetMusicFromProjectCallback() {
+            getAudioFromProjectUseCase.getMusicFromProject(new GetMusicFromProjectCallback() {
                 @Override
                 public void onMusicRetrieved(Music music) {
                     editActivityView.setMusic(music);
@@ -260,7 +258,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
             });
         }
         if (currentProject.getVMComposition().hasVoiceOver()) {
-            getMusicFromProjectUseCase.getVoiceOverFromProject(new GetMusicFromProjectCallback() {
+            getAudioFromProjectUseCase.getVoiceOverFromProject(new GetMusicFromProjectCallback() {
                 @Override
                 public void onMusicRetrieved(Music voiceOver) {
                     editActivityView.setVoiceOver(voiceOver);
