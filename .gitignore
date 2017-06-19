@@ -8,3 +8,4 @@ local.properties
 captures/
 projectFilesBackup*/
 .local_data/
+app/fabric.properties

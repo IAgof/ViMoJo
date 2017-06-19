@@ -41,9 +41,7 @@ import butterknife.OnClick;
  */
 public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
         VideonaPlayer.VideonaPlayerListener, View.OnTouchListener {
-
     private static final String VOICE_OVER_POSITION = "voice_over_position";
-    private static final String VOICE_OVER_PROJECT_POSITION = "voice_over_project_position";
     private static final String TAG = "VoiceOverActivity";
     private static final String STATE_BUTTON_RECORD = "state_button_record";
 
@@ -74,8 +72,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
     private CountDownTimer timer;
     private int millisecondsLeft;
     private int maxDuration;
-    private boolean buttonRecordIsInStop=false;
-
+    private boolean buttonRecordIsInStop = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +127,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -178,7 +174,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
                         //Yes button clicked
                         resetVoiceRecorder();
                         break;
-
                     case DialogInterface.BUTTON_NEGATIVE:
                         //No button clicked
                         break;
@@ -188,7 +183,8 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
 
         // TODO:(alvaro.martinez) 16/09/16 Define these strings, es and eng
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-        builder.setMessage("¿Desea descartar la locución y volver a grabarla de nuevo?").setPositiveButton("Aceptar", dialogClickListener)
+        builder.setMessage("¿Desea descartar la locución y volver a grabarla de nuevo?")
+                .setPositiveButton("Aceptar", dialogClickListener)
                 .setNegativeButton("Declinar", dialogClickListener).show();
     }
 
@@ -196,12 +192,11 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
         presenter.cleanDirectory();
         progressBarVoiceOver.setProgress(0);
         refreshTimeTag(0);
-        buttonRecordIsInStop=false;
+        buttonRecordIsInStop = false;
         changeVisibilityAndResouceButton(buttonRecordIsInStop);
         millisecondsLeft = maxDuration;
         videonaPlayer.seekTo(0);
     }
-
 
     private void refreshTimeTag(int currentPosition) {
         timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(currentPosition + startTime));
@@ -227,9 +222,10 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
         videonaPlayer.seekToClip(0);
         videonaPlayer.seekTo(currentVoiceOverPosition);
         videonaPlayer.showPauseButton();
-        videonaPlayer.setVideoVolume(0f);
+        videonaPlayer.setVolume(1f);
+        videonaPlayer.muteVideo(true);
         // Disable ontouch view playerExo. Now you can't play/pause video.
-        enableDisableView(videonaPlayer,false);
+        enableDisableView(videonaPlayer, false);
     }
 
     @Override
@@ -241,6 +237,8 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
     public void playVideo() {
         videonaPlayer.playPreview();
         videonaPlayer.showPauseButton();
+        videonaPlayer.setVolume(1f);
+        videonaPlayer.muteVideo(true);
     }
 
     @Override
@@ -278,21 +276,21 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if(event.getAction() == MotionEvent.ACTION_DOWN){
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
             // start recording.
-            if(millisecondsLeft > 0){
+            if (millisecondsLeft > 0) {
                 presenter.requestRecord();
-                buttonRecordVoiceOver.setImageResource(R.drawable.activity_edit_sound_voice_record_pressed);
+                buttonRecordVoiceOver
+                        .setImageResource(R.drawable.activity_edit_sound_voice_record_pressed);
                 timerStart(millisecondsLeft);
             }
             return true;
         }
-        if(event.getAction() == MotionEvent.ACTION_UP){
+        if (event.getAction() == MotionEvent.ACTION_UP) {
             // Stop recording and save file
             presenter.stopRecording();
             buttonRecordIsInStop =true;
             changeVisibilityAndResouceButton(buttonRecordIsInStop);
-
             cancelTimer();
             return true;
         }
@@ -334,7 +332,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
             buttonVoiceOverAccept.setVisibility(View.VISIBLE);
             buttonVoiceOverCancel.setVisibility(View.VISIBLE);
         } else {
-
             buttonVoiceOverAccept.setVisibility(View.INVISIBLE);
             buttonVoiceOverCancel.setVisibility(View.INVISIBLE);
         }
@@ -344,11 +341,9 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
         view.setEnabled(enabled);
         if ( view instanceof ViewGroup ) {
             ViewGroup group = (ViewGroup)view;
-
             for ( int idx = 0 ; idx < group.getChildCount() ; idx++ ) {
                 enableDisableView(group.getChildAt(idx), enabled);
             }
         }
     }
 }
-

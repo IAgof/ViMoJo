@@ -2,10 +2,8 @@ package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 import com.videonasocialmedia.avrecorder.AudioRecorder;
 import com.videonasocialmedia.avrecorder.SessionConfig;
-import com.videonasocialmedia.avrecorder.event.MuxerFinishedEvent;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
@@ -17,12 +15,9 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by ruth on 15/09/16.
@@ -46,7 +41,6 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     private VoiceOverView voiceOverView;
     public UserEventTracker userEventTracker;
     public Project currentProject;
-    private int numAudiosRecorded = 0;
     private boolean firstTimeRecording;
 
     @Inject
@@ -67,8 +61,8 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
 
     public void initAudioRecorder() {
         try {
-            sessionConfig = new
-                SessionConfig(currentProject.getProjectPathIntermediateAudioFilesVoiceOverRecord(), 1);
+            sessionConfig = new SessionConfig(
+                    currentProject.getProjectPathIntermediateAudioFilesVoiceOverRecord(), 1);
             audioRecorder = new AudioRecorder(sessionConfig);
             firstTimeRecording = true;
         } catch (IOException e) {
@@ -77,18 +71,17 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     public void onResume(){
-        EventBus.getDefault().register(this);
         audioRecorder.onHostActivityResumed();
         init();
     }
 
     private void init() {
         obtainVideos();
-        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+        if (getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()) {
             voiceOverView.setVideoFadeTransitionAmongVideos();
         }
-        if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
-            !currentProject.getVMComposition().hasMusic()){
+        if (getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
+                !currentProject.getVMComposition().hasMusic()) {
             voiceOverView.setAudioFadeTransitionAmongVideos();
         }
     }
@@ -98,21 +91,12 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     public void onPause(){
-        EventBus.getDefault().unregister(this);
         stopRecording();
         audioRecorder.onHostActivityPaused();
     }
 
     private Project loadCurrentProject() {
         return Project.getInstance(null,null, null);
-    }
-
-    public void loadProjectVideo(int videoToTrimIndex) {
-        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
-        if (videoList != null) {
-            ArrayList<Video> v = new ArrayList<>();
-            onVideosRetrieved(v);
-        }
     }
 
     @Override
@@ -181,18 +165,6 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
             audioRecorder.stopRecording();
             voiceOverView.pauseVideo();
         }
-    }
-
-    public void onEventMainThread(MuxerFinishedEvent e) {
-        renameAudioRecorded(numAudiosRecorded++);
-    }
-
-    private void renameAudioRecorded(int numAudiosRecorded) {
-        File originalFile = new File(sessionConfig.getOutputPath());
-        String fileName = "AUD_" + numAudiosRecorded + ".mp4";
-        File destinationFile = new
-            File(currentProject.getProjectPathIntermediateAudioFilesVoiceOverRecord(), fileName);
-        originalFile.renameTo(destinationFile);
     }
 
     @Override
