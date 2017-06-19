@@ -1,6 +1,3 @@
-v0.5.3
-
-- Fix bug alert dialog showing status battery and storage.
-- Fix bug flash activated missing in recording mode.
-
-
+v0.5.3.1
+- Fixed several bugs in new camera to improve overall stability while recording
+- Fixed bug in gallery that crashed the application
