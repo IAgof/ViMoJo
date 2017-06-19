@@ -12,5 +12,7 @@ public interface Camera2WrapperListener {
 
   void setZoom(float zoomValue);
 
+  void setError(String message);
+
   // future use, setFlashMode supported, set 3A modes supported
 }

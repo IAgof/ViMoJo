@@ -153,10 +153,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private String videoPath;
   private CameraManager manager;
   private boolean isFlashActivated;
+  private boolean initializingRecorder = false;
 
   public Camera2Wrapper(Context context, Camera2WrapperListener listener, int cameraIdSelected,
-                        AutoFitTextureView textureView, String directorySaveVideos, VideoCameraFormat
-                            videoCameraFormat){
+                        AutoFitTextureView textureView, String directorySaveVideos,
+                        VideoCameraFormat videoCameraFormat) {
     this.context = context;
     this.listener = listener;
     this.cameraIdSelected = cameraIdSelected;
@@ -227,9 +228,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     try {
       mediaRecorder.stop();
       isRecordingVideo = false;
-      mediaRecorder.reset();
-    } catch (IllegalStateException illegalStateError) {
-      Log.e(TAG, "Error stoping record", illegalStateError);
+    } catch (RuntimeException runtimeException) {
+      Log.d(TAG, runtimeException.toString()+" - Caugth error stopping record");
+      throw runtimeException;
     }
   }
 
@@ -345,6 +346,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       // TODO:(alvaro.martinez) 17/01/17 Manage this NPE
       // ErrorDialog.newInstance("error dialog")
       //   .show(getChildFragmentManager(), FRAGMENT_DIALOG);
+      //listener.setError("Camera2API is used but not supported on the device");
     } catch (InterruptedException e) {
       throw new RuntimeException("Interrupted while trying to lock camera opening.");
     }
@@ -421,7 +423,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
       cameraDevice.createCaptureSession(Arrays.asList(previewSurface),
           new CameraCaptureSession.StateCallback() {
-
             @Override
             public void onConfigured(CameraCaptureSession cameraCaptureSession) {
               previewSession = cameraCaptureSession;
@@ -445,7 +446,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
    * Update the camera preview. {@link #startPreview()} needs to be called in advance.
    */
   private void updatePreview() {
-    if (null == cameraDevice) {
+    if ((cameraDevice == null) || (previewSession == null)) {
       return;
     }
     try {
@@ -456,6 +457,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       previewSession.setRepeatingRequest(previewBuilder.build(), null, backgroundHandler);
     } catch (CameraAccessException e) {
       e.printStackTrace();
+    } catch (NullPointerException nullPreviewSession) {
+      Log.e(TAG, "Preview session becomes null!!", nullPreviewSession);
     }
   }
 
@@ -471,7 +474,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   public void startRecordingVideo(final RecordStartedCallback callback) {
-    Log.d(LOG_TAG, "startRecordingVideo");
+    if (initializingRecorder) {
+      // (jliarte): 16/06/17 workarround to prevent startRecording been called consecutively
+      return;
+    }
+    initializingRecorder = true;
     if (null == cameraDevice || !textureView.isAvailable() || null == previewSize) {
       return;
     }
@@ -513,10 +520,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
               // Start recording
               try {
                 mediaRecorder.start();
+                initializingRecorder = false;
                 isRecordingVideo = true;
                 callback.onRecordStarted();
               } catch (IllegalStateException illegalStateError) {
-                Log.e(TAG, "Error starting record", illegalStateError);
+                Log.d(TAG, "IllegalStateException - Caught error starting record");
               }
             }
           });
@@ -542,6 +550,12 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   public void setFlashOff() {
+    if (previewSession == null) {
+      Log.e(TAG, "-----------------------------------------------------------------------------");
+//      checkTextureViewToOpenCamera();
+      reStartPreview();
+      return;
+    }
     isFlashActivated = false;
     previewBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF);
     try {

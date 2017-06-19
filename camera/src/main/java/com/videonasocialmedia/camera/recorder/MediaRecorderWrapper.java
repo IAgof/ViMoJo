@@ -5,6 +5,8 @@ import android.util.SparseIntArray;
 import android.view.Surface;
 
 import com.videonasocialmedia.camera.utils.VideoCameraFormat;
+
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -89,11 +91,30 @@ public class MediaRecorderWrapper {
   }
 
   public void start() {
-    mediaRecorder.start();
+    try {
+      mediaRecorder.start();
+    } catch (RuntimeException e) {
+      new File(videoPath).delete();
+      release();
+    }
   }
 
   public void stop() {
-    mediaRecorder.stop();
+    try {
+      mediaRecorder.stop();
+    } catch (IllegalStateException illegalState) {
+      reset();
+      throw illegalState;
+    } catch (RuntimeException noValidDataReceived) {
+      // Note that a RuntimeException is intentionally thrown to the application, if no valid
+      // audio/video data has been received when stop() is called. This happens if stop() is called
+      // immediately after start(). The failure lets the application take action accordingly to
+      // clean up the output file (delete the output file, for instance), since the output file is
+      // not properly constructed when this happens.
+      new File(videoPath).delete();  //you must delete the outputfile when the recorder stop failed.
+      reset();
+      throw noValidDataReceived;
+    }
   }
 
   public void reset(){
