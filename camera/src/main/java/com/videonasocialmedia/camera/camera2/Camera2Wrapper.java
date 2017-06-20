@@ -49,6 +49,8 @@ import static android.content.ContentValues.TAG;
  */
 
 public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
+  public static final int CAMERA_ID_REAR = 0;
+  public static final int CAMERA_ID_FRONT = 1;
   private final String LOG_TAG = getClass().getSimpleName();
 
   private final Camera2WrapperListener listener;
@@ -107,13 +109,13 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private Integer sensorOrientation;
   private CaptureRequest.Builder previewBuilder;
   private Surface recorderSurface;
+  private Surface previewSurface;
 
   AutoFitTextureView textureView;
 
   private VideoCameraFormat videoCameraFormat;
 
   private int rotation;
-
   /**
    * {@link CameraDevice.StateCallback} is called when {@link CameraDevice} changes its status.
    */
@@ -148,8 +150,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   };
   private int cameraIdSelected;
-  private CameraCharacteristics characteristics;
 
+  private CameraCharacteristics characteristics;
   private String videoPath;
   private CameraManager manager;
   private boolean isFlashActivated;
@@ -163,6 +165,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     this.textureView = textureView;
     this.directorySaveVideos = directorySaveVideos;
     this.videoCameraFormat = videoCameraFormat;
+    getCameraManager(); // (jliarte): 19/06/17 manager is needed to ask for camera characteristics used in helpers
     // TODO(jliarte): 26/05/17 inject the components
     camera2ZoomHelper = new Camera2ZoomHelper(this);
     camera2FocusHelper = new Camera2FocusHelper(this);
@@ -194,6 +197,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   public void onResume() {
     startBackgroundThread();
     checkTextureViewToOpenCamera();
+  }
+
+  private void getCameraManager() {
+    final Activity activity = (Activity) context;
+    manager = (CameraManager) activity.getSystemService(context.CAMERA_SERVICE);
   }
 
   public void onPause() {
@@ -282,12 +290,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
    * Tries to open a {@link CameraDevice}. The result is listened by `stateCallback`.
    */
   private void openCamera(int width, int height) {
-
     final Activity activity = (Activity) context;
-    if (null == activity || activity.isFinishing()) {
+    if (activity == null || activity.isFinishing()) {
       return;
     }
-    manager = (CameraManager) activity.getSystemService(context.CAMERA_SERVICE);
     try {
       Log.d(LOG_TAG, "tryAcquire");
       if (!cameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
@@ -310,7 +316,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       Log.d(LOG_TAG, "VideoSize " + videoSize.getWidth() + " x " + videoSize.getHeight());
       Log.d(LOG_TAG, "PreviewSize " + previewSize.getWidth() + " x " + previewSize.getHeight());
 
-      int orientation = activity.getResources().getConfiguration().orientation;
+      int orientation = getActivityOrientation(activity);
       Log.d(LOG_TAG, "orientation " + orientation);
 
       if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -348,6 +354,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     } catch (InterruptedException e) {
       throw new RuntimeException("Interrupted while trying to lock camera opening.");
     }
+  }
+
+  private int getActivityOrientation(Activity activity) {
+    return activity.getResources().getConfiguration().orientation;
   }
 
   private void closeCamera() {
@@ -416,7 +426,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       texture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
       previewBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 
-      Surface previewSurface = new Surface(texture);
+      previewSurface = new Surface(texture);
       previewBuilder.addTarget(previewSurface);
 
       cameraDevice.createCaptureSession(Arrays.asList(previewSurface),
@@ -424,8 +434,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
             @Override
             public void onConfigured(CameraCaptureSession cameraCaptureSession) {
-              previewSession = cameraCaptureSession;
-              updatePreview();
+              setupPreviewSession(cameraCaptureSession);
             }
 
             @Override
@@ -441,18 +450,22 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
+  private void setupPreviewSession(CameraCaptureSession cameraCaptureSession) {
+    previewSession = cameraCaptureSession;
+    updatePreview();
+    camera2WhiteBalanceHelper.setCurrentWhiteBalanceMode();
+    setCurrentFlashSettings();
+  }
+
   /**
    * Update the camera preview. {@link #startPreview()} needs to be called in advance.
    */
-  private void updatePreview() {
-    if (null == cameraDevice) {
+  public void updatePreview() {
+    if (cameraDevice == null) {
       return;
     }
     try {
       setUpCaptureRequestBuilder(previewBuilder);
-      // TODO(jliarte): 14/06/17 I've seen lots of this threads running in debugged, what is it needed for???
-//      HandlerThread thread = new HandlerThread("CameraPreview");
-//      thread.start();
       previewSession.setRepeatingRequest(previewBuilder.build(), null, backgroundHandler);
     } catch (CameraAccessException e) {
       e.printStackTrace();
@@ -464,6 +477,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   private void closePreviewSession() {
+    Log.d(TAG, "---------------------- close preview session -----------------");
     if (previewSession != null) {
       previewSession.close();
       previewSession = null;
@@ -492,6 +506,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       surfaces.add(previewSurface);
       previewBuilder.addTarget(previewSurface);
 
+      // TODO(jliarte): 20/06/17 trying new approach to use the same surface and capture session that we already have
+//      mediaRecorder.setSurface(previewSurface);
+//      setupPreviewSession(previewSession);
+//      startRecordingSession(callback);
+
       // Set up Surface for the MediaRecorder
       recorderSurface = mediaRecorder.getSurface();
       surfaces.add(recorderSurface);
@@ -502,31 +521,15 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       cameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
         @Override
         public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-          previewSession = cameraCaptureSession;
-          updatePreview();
-          if (isFlashActivated) {
-            setFlashOn();
-          }
-          ((Activity) context).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-              // Start recording
-              try {
-                mediaRecorder.start();
-                isRecordingVideo = true;
-                callback.onRecordStarted();
-              } catch (IllegalStateException illegalStateError) {
-                Log.e(TAG, "Error starting record", illegalStateError);
-              }
-            }
-          });
+          setupPreviewSession(cameraCaptureSession);
+          startRecordingSession(callback);
         }
 
         @Override
         public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
           Activity activity = (Activity) context;
           if (null != activity) {
-            Toast.makeText(activity, "Failed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Failed to start recording.", Toast.LENGTH_SHORT).show();
           }
         }
       }, backgroundHandler);
@@ -534,6 +537,28 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
+    }
+  }
+
+  private void startRecordingSession(final RecordStartedCallback callback) {
+    ((Activity) context).runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        // Start recording
+        try {
+          mediaRecorder.start();
+          isRecordingVideo = true;
+          callback.onRecordStarted();
+        } catch (IllegalStateException illegalStateError) {
+          Log.e(TAG, "Error starting record", illegalStateError);
+        }
+      }
+    });
+  }
+
+  private void setCurrentFlashSettings() {
+    if (isFlashActivated) {
+      setFlashOn();
     }
   }
 
@@ -627,7 +652,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   private int getInverseRotation() {
-    if(cameraIdSelected == 0) {
+    if(cameraIdSelected == CAMERA_ID_REAR) {
       return 180;
     } else {
       return 0;
@@ -635,7 +660,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   private int getNormalRotation() {
-    if(cameraIdSelected == 0) {
+    if(cameraIdSelected == CAMERA_ID_REAR) {
       return 0;
     } else {
       return 180;
@@ -643,10 +668,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   public void switchCamera(boolean isFrontCameraSelected) {
-    if(isFrontCameraSelected){
-      cameraIdSelected = 1;
+    if (isFrontCameraSelected) {
+      cameraIdSelected = CAMERA_ID_FRONT;
     } else {
-      cameraIdSelected = 0;
+      cameraIdSelected = CAMERA_ID_REAR;
     }
     closeCamera();
     checkTextureViewToOpenCamera();
@@ -660,8 +685,16 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     return camera2WhiteBalanceHelper.whiteBalanceSelectionSupported();
   }
 
+  public CameraFeatures.SupportedValues getSupportedWhiteBalanceModes() {
+    return camera2WhiteBalanceHelper.getSupportedWhiteBalanceModes();
+  }
+
   public boolean metteringModeSelectionSupported() {
     return camera2MeteringModeHelper.metteringModeSelectionSupported();
+  }
+
+  public void setWhiteBalanceMode(String whiteBalanceMode) {
+    camera2WhiteBalanceHelper.setWhiteBalanceMode(whiteBalanceMode);
   }
 
   public interface RecordStartedCallback {

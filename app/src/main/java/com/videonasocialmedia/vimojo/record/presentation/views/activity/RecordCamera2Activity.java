@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.videonasocialmedia.avrecorder.view.CustomManualFocusView;
+import com.videonasocialmedia.camera.camera2.Camera2WhiteBalanceHelper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -39,6 +40,9 @@ import com.videonasocialmedia.vimojo.record.presentation.views.custom.AlertDialo
 import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
+
+import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -113,10 +117,24 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton afSelectionButton;
   @Bind(R.id.af_selection_submenu)
   View afSelectionSubmenuView;
+
   @Bind(R.id.button_white_balance)
   ImageButton whiteBalanceButton;
   @Bind(R.id.white_balance_submenu)
   View whiteBalanceSubmenuView;
+  @Bind(R.id.wb_setting_auto)
+  ImageButton WBSettingAuto;
+  @Bind(R.id.wb_setting_cloudy)
+  ImageButton WBSettingCloudy;
+  @Bind(R.id.wb_setting_daylight)
+  ImageButton WBSettingDaylight;
+  @Bind(R.id.wb_setting_flash)
+  ImageButton WBSettingFlash;
+  @Bind(R.id.wb_setting_fluorescent)
+  ImageButton WBSettingFluorescent;
+  @Bind(R.id.wb_setting_incandescent)
+  ImageButton WBSettingIncandescent;
+
   @Bind(R.id.button_metering_mode)
   ImageButton meteringModeButton;
   @Bind(R.id.metering_mode_submenu)
@@ -170,6 +188,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private AlertDialogWithInfoIntoCircle alertDialogBattery;
   private AlertDialogWithInfoIntoCircle alertDialogStorage;
 
+  private HashMap<String, ImageButton> whiteBalanceModeButtons;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -186,6 +206,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
     createProgressDialogAdaptVideo();
     createAlertDialogBatteryAndStorage();
+    initWhiteBalanceModesMap();
 
     slideSeekBar.setOnSeekBarChangeListener(this);
   }
@@ -205,7 +226,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);*/
 
     alertDialogStorage = new AlertDialogWithInfoIntoCircle(this, getString(R.string.storage));
-
   }
 
   @Override
@@ -274,8 +294,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void onResume() {
     super.onResume();
     initOrientationHelper();
-    presenter.initViews();
     presenter.onResume();
+    presenter.initViews();
     hideSystemUi();
     registerReceiver(batteryReceiver,new IntentFilter(IntentConstants.BATTERY_NOTIFICATION));
     updateBatteryStatus();
@@ -537,6 +557,34 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
+  public void setupWhiteBalanceSupportedModesButtons(List<String> values) {
+    for (final String supportedWBMode : values) {
+      ImageButton WBModeButton = whiteBalanceModeButtons.get(supportedWBMode);
+      if (WBModeButton != null) {
+        WBModeButton.setVisibility(View.VISIBLE);
+        WBModeButton.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            presenter.setWhiteBalanceMode(supportedWBMode);
+          }
+        });
+      }
+    }
+  }
+
+  private void initWhiteBalanceModesMap() {
+    whiteBalanceModeButtons = new HashMap();
+    whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_AUTO, WBSettingAuto);
+    whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_CLOUDY_DAYLIGHT, WBSettingCloudy);
+    whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_DAYLIGHT, WBSettingDaylight);
+    whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_FLASH, WBSettingFlash);
+    whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_FLUORESCENT,
+            WBSettingFluorescent);
+    whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_INCANDESCENT,
+            WBSettingIncandescent);
+  }
+
+  @Override
   public void hideMetteringModeSelection() {
     meteringModeButton.setVisibility(View.GONE);
   }
@@ -687,7 +735,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void setColorProgressBarMemory(Constants.MEMORY_STATUS memoryStatus) {
-
     switch (memoryStatus) {
       case OKAY:
         alertDialogStorage.setPercentColor(getResources().getColor(R.color.recordAlertInfoGreen));
@@ -862,7 +909,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     if(whiteBalanceButton.isSelected()){
       whiteBalanceButton.setSelected(false);
       whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
-    } else{
+    } else {
       whiteBalanceButton.setSelected(true);
       whiteBalanceSubmenuView.setVisibility(View.VISIBLE);
 
@@ -898,8 +945,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnClick (R.id.button_camera_auto)
-  public void onClickCameraAutoListener(){
-
+  public void onClickCameraAutoListener() {
     zoomButton.setSelected(false);
     zoomSubmenuView.setVisibility(View.INVISIBLE);
     slideSeekBar.setProgress(0);

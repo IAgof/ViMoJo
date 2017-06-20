@@ -312,59 +312,77 @@
             android:layout_marginBottom="4dp">
 
             <ImageButton
+                android:id="@+id/wb_setting_auto"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_white_balance_auto"
+                android:visibility="gone"
+
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp" />
 
             <ImageButton
+                android:id="@+id/wb_setting_cloudy"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_white_balance_cloudy"
+                android:visibility="gone"
+
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
+                android:id="@+id/wb_setting_daylight"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_white_balance_daylight"
+                android:visibility="gone"
+
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
+                android:id="@+id/wb_setting_flash"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_flash"
+                android:visibility="gone"
+
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
+                android:id="@+id/wb_setting_fluorescent"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_white_balance_fluorescent"
+                android:visibility="gone"
+
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
+                android:id="@+id/wb_setting_incandescent"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_white_balance_tungsten"
+                android:visibility="gone"
+
                 android:layout_marginRight="16dp"
                 android:layout_marginLeft="16dp"/>
 

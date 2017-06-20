@@ -16,6 +16,8 @@ import android.view.MotionEvent;
 
 import com.videonasocialmedia.vimojo.utils.Constants;
 
+import java.util.List;
+
 public interface RecordCamera2View {
 
 
@@ -70,6 +72,8 @@ public interface RecordCamera2View {
     void hideISOSelection();
 
     void hideWhiteBalanceSelection();
+
+    void setupWhiteBalanceSupportedModesButtons(List<String> values);
 
     void hideMetteringModeSelection();
 

@@ -147,6 +147,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     }
     if (!camera.whiteBalanceSelectionSupported()) {
       recordView.hideWhiteBalanceSelection();
+    } else {
+      recordView.setupWhiteBalanceSupportedModesButtons(camera.getSupportedWhiteBalanceModes().values);
     }
     if (!camera.metteringModeSelectionSupported()) {
       recordView.hideMetteringModeSelection();
@@ -500,6 +502,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public void batteryDialog(int level, int status, int scale) {
     updateBatteryStatus(status, level, scale);
     recordView.showAlertDialogBattery();
+  }
+
+  public void setWhiteBalanceMode(String whiteBalanceMode) {
+    camera.setWhiteBalanceMode(whiteBalanceMode);
   }
 
   private class VideoToAdapt {
