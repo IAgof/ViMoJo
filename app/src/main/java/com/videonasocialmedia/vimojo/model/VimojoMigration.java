@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.model;
 
+import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
@@ -225,19 +226,56 @@ public class VimojoMigration implements RealmMigration {
               }
             });
       }
-      RealmObjectSchema realmProject = schema.get("RealmProject");
-      if(!realmProject.hasField("realmTrack")){
-        realmProject.addRealmListField("realmTrack", schema.get("RealmTrack"));
+      final RealmObjectSchema realmProject = schema.get("RealmProject");
+
+      //if project has videos, populate RealmTrack MediaTrack
+      if(realmProject.hasField("realmVideo")){
+        trackSchema.addField("uuid", String.class).transform(new RealmObjectSchema.Function() {
+          @Override
+          public void apply(DynamicRealmObject obj) {
+           obj.setString("uuid", UUID.randomUUID().toString());
+          }
+        });
+        trackSchema.addField("id", Integer.class).transform(new RealmObjectSchema.Function() {
+          @Override
+          public void apply(DynamicRealmObject obj) {
+            obj.setInt("id", Constants.INDEX_MEDIA_TRACK);
+          }
+        });
+        trackSchema.addField("volume", Float.class).transform(new RealmObjectSchema.Function() {
+          @Override
+          public void apply(DynamicRealmObject obj) {
+           obj.setFloat("volume", 1f);
+          }
+        });
+        trackSchema.addField("mute", Boolean.class).transform(new RealmObjectSchema.Function() {
+          @Override
+          public void apply(DynamicRealmObject obj) {
+            obj.setBoolean("mute", false);
+          }
+        });
+        trackSchema.addField("position", Integer.class).transform(new RealmObjectSchema.Function() {
+          @Override
+          public void apply(DynamicRealmObject obj) {
+            obj.setInt("position", 0);
+          }
+        });
       }
-      if(!realmProject.hasField("realmMusic")){
-        realmProject.addRealmListField("realmMusic", schema.get("RealmMusic"));
-      }
+
       if(realmProject.hasField("musicTitle")){
         realmProject.removeField("musicTitle");
       }
       if(realmProject.hasField("musicVolume")){
         realmProject.removeField("musicVolume");
       }
+
+      if(!realmProject.hasField("realmTrack")){
+        realmProject.addRealmListField("realmTrack", schema.get("RealmTrack"));
+      }
+      if(!realmProject.hasField("realmMusic")){
+        realmProject.addRealmListField("realmMusic", schema.get("RealmMusic"));
+      }
+
       oldVersion++;
     }
 
