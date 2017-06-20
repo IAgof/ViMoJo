@@ -153,10 +153,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private String videoPath;
   private CameraManager manager;
   private boolean isFlashActivated;
+  private boolean initializingRecorder = false;
 
   public Camera2Wrapper(Context context, Camera2WrapperListener listener, int cameraIdSelected,
-                        AutoFitTextureView textureView, String directorySaveVideos, VideoCameraFormat
-                            videoCameraFormat){
+                        AutoFitTextureView textureView, String directorySaveVideos,
+                        VideoCameraFormat videoCameraFormat) {
     this.context = context;
     this.listener = listener;
     this.cameraIdSelected = cameraIdSelected;
@@ -224,9 +225,13 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   public void stopRecordVideo() {
-    isRecordingVideo = false;
-    mediaRecorder.stop();
-    mediaRecorder.reset();
+    try {
+      mediaRecorder.stop();
+      isRecordingVideo = false;
+    } catch (RuntimeException runtimeException) {
+      Log.d(TAG, runtimeException.toString()+" - Caugth error stopping record");
+      throw runtimeException;
+    }
   }
 
   /**
@@ -341,6 +346,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       // TODO:(alvaro.martinez) 17/01/17 Manage this NPE
       // ErrorDialog.newInstance("error dialog")
       //   .show(getChildFragmentManager(), FRAGMENT_DIALOG);
+      //listener.setError("Camera2API is used but not supported on the device");
     } catch (InterruptedException e) {
       throw new RuntimeException("Interrupted while trying to lock camera opening.");
     }
@@ -417,7 +423,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
       cameraDevice.createCaptureSession(Arrays.asList(previewSurface),
           new CameraCaptureSession.StateCallback() {
-
             @Override
             public void onConfigured(CameraCaptureSession cameraCaptureSession) {
               previewSession = cameraCaptureSession;
@@ -441,16 +446,19 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
    * Update the camera preview. {@link #startPreview()} needs to be called in advance.
    */
   private void updatePreview() {
-    if (null == cameraDevice) {
+    if ((cameraDevice == null) || (previewSession == null)) {
       return;
     }
     try {
       setUpCaptureRequestBuilder(previewBuilder);
-      HandlerThread thread = new HandlerThread("CameraPreview");
-      thread.start();
+      // TODO(jliarte): 14/06/17 I've seen lots of this threads running in debugged, what is it needed for???
+//      HandlerThread thread = new HandlerThread("CameraPreview");
+//      thread.start();
       previewSession.setRepeatingRequest(previewBuilder.build(), null, backgroundHandler);
     } catch (CameraAccessException e) {
       e.printStackTrace();
+    } catch (NullPointerException nullPreviewSession) {
+      Log.e(TAG, "Preview session becomes null!!", nullPreviewSession);
     }
   }
 
@@ -465,8 +473,12 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
-  public void startRecordingVideo() {
-    Log.d(LOG_TAG, "startRecordingVideo");
+  public void startRecordingVideo(final RecordStartedCallback callback) {
+    if (initializingRecorder) {
+      // (jliarte): 16/06/17 workarround to prevent startRecording been called consecutively
+      return;
+    }
+    initializingRecorder = true;
     if (null == cameraDevice || !textureView.isAvailable() || null == previewSize) {
       return;
     }
@@ -476,6 +488,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       //mediaRecorder.setUpCameraProfileMediaRecoder();
 
       SurfaceTexture texture = textureView.getSurfaceTexture();
+      // TODO(jliarte): 14/06/17 this will crash the app if texture is null???
       assert texture != null;
       texture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
       previewBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
@@ -494,20 +507,25 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       // Start a capture session
       // Once the session starts, we can update the UI and start recording
       cameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
-
         @Override
         public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
           previewSession = cameraCaptureSession;
           updatePreview();
-          if(isFlashActivated){
+          if (isFlashActivated) {
             setFlashOn();
           }
           ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-              isRecordingVideo = true;
               // Start recording
-              mediaRecorder.start();
+              try {
+                mediaRecorder.start();
+                initializingRecorder = false;
+                isRecordingVideo = true;
+                callback.onRecordStarted();
+              } catch (IllegalStateException illegalStateError) {
+                Log.d(TAG, "IllegalStateException - Caught error starting record");
+              }
             }
           });
         }
@@ -532,6 +550,12 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   public void setFlashOff() {
+    if (previewSession == null) {
+      Log.e(TAG, "-----------------------------------------------------------------------------");
+//      checkTextureViewToOpenCamera();
+      reStartPreview();
+      return;
+    }
     isFlashActivated = false;
     previewBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF);
     try {
@@ -652,5 +676,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public boolean metteringModeSelectionSupported() {
     return camera2MeteringModeHelper.metteringModeSelectionSupported();
+  }
+
+  public interface RecordStartedCallback {
+    void onRecordStarted();
   }
 }

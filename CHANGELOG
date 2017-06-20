@@ -1,16 +1,17 @@
-v0.5.2
+v0.5.3
+- Fix bug alert dialog showing status battery and storage.
+- Fix bug flash activated missing in recording mode.
 
+v0.5.2
 - Added feature icon camera battery. Info status battery on click and update levels with different colors.
 - Added feature icon camera storage. Info internal storage on click and update levels with different colors.
 
 v0.5.1
-
 - Added seekBar to control zoom.
 - Added grid button in advance control camera buttons linear layout.
 - Hide advance control camera buttons, show only buttons implemented, grid, zoom.
 
 v0.5.0
-
 - Added new module, camera. Separate from app, recorder and camera features.
 - Update Vimojo to record videos with new implementation, based in camera2 API. Old camera module
 avrecorder, not used, RecordActivity and RecordPresenter deprecated.

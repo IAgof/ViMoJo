@@ -51,6 +51,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -197,21 +198,42 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   public void startRecord() {
-    camera.startRecordingVideo();
-
-    recordView.showStopButton();
-    recordView.startChronometer();
-    recordView.showChronometer();
-    recordView.hideNavigateToSettingsActivity();
-    recordView.hideVideosRecordedNumber();
-    recordView.hideRecordedVideoThumbWithText();
-    recordView.hideChangeCamera();
+    try {
+      camera.startRecordingVideo(new Camera2Wrapper.RecordStartedCallback() {
+        @Override
+        public void onRecordStarted() {
+          recordView.showStopButton();
+          recordView.startChronometer();
+          recordView.showChronometer();
+          recordView.hideNavigateToSettingsActivity();
+          recordView.hideVideosRecordedNumber();
+          recordView.hideRecordedVideoThumbWithText();
+          recordView.hideChangeCamera();
+        }
+      });
+    } catch (IllegalStateException illegalState) {
+      // do nothing as it should be already managed in camera wrapper
+    }
   }
 
   public void stopRecord() {
-    camera.stopRecordVideo();
-    stopVideo(camera.getVideoPath());
-    restartPreview();
+    try {
+      camera.stopRecordVideo();
+      updateStopVideoUI();
+      onVideoRecorded(camera.getVideoPath());
+      restartPreview();
+    } catch (RuntimeException runtimeException) {
+      // do nothing as it's already managed in camera wrapper
+    }
+  }
+
+  private void updateStopVideoUI() {
+    recordView.showRecordButton();
+    recordView.showNavigateToSettingsActivity();
+    recordView.stopChronometer();
+    recordView.hideChronometer();
+    recordView.showChangeCamera();
+//    setFlashOff();
   }
 
   @Override
@@ -225,15 +247,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     }
   }
 
-  private void stopVideo(String path) {
-    recordView.showRecordButton();
-    recordView.showNavigateToSettingsActivity();
-    recordView.stopChronometer();
-    recordView.hideChronometer();
-    recordView.showChangeCamera();
+  private void onVideoRecorded(String path) {
     recordView.showRecordedVideoThumbWithText(path);
     recordView.showVideosRecordedNumber(++recordedVideosNumber);
-    setFlashOff();
     moveAndAdaptRecordedVideo(path);
   }
 
@@ -267,7 +283,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       @Override
       public void onAddMediaItemToTrackError() {
         recordView.hideProgressAdaptingVideo();
-        recordView.showError(R.string.addMediaItemToTrackError);
+        recordView.showError(context.getString(R.string.addMediaItemToTrackError));
       }
 
       @Override
@@ -295,6 +311,11 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   @Override
   public void setZoom(float zoomValue) {
     recordView.setZoom(zoomValue);
+  }
+
+  @Override
+  public void setError(String message) {
+    //recordView.showError(message);
   }
 
   public void restartPreview(){
@@ -389,7 +410,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   private boolean areTherePendingTranscodingTask() {
     for (VideoToAdapt video : videoListToAdaptAndPosition) {
-      if (!video.getVideo().getTranscodingTask().isDone()) {
+      if ((video.getVideo().getTranscodingTask() == null)
+              || (!video.getVideo().getTranscodingTask().isDone())) {
         return true;
       }
     }
@@ -411,7 +433,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     String destVideoRecorded = Constants.PATH_APP_MASTERS +
         File.separator + new File(video.getMediaPath()).getName();
     int position = recordedVideosNumber;
-    for (VideoToAdapt videoToAdapt : videoListToAdaptAndPosition) {
+    // (jliarte): 16/06/17 using iterator to avoid ConcurrentModificationException
+    Iterator<VideoToAdapt> iter = videoListToAdaptAndPosition.iterator();
+    while (iter.hasNext()) {
+      VideoToAdapt videoToAdapt = iter.next();
       if (videoToAdapt.getVideo().getUuid().compareTo(video.getUuid()) == 0) {
         videoListToAdaptAndPosition.remove(videoToAdapt);
         position = videoToAdapt.getPosition() - 1;
@@ -431,8 +456,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   @Override
   public void onErrorTranscoding(Video video, String message) {
-
-    if(isAVideoAdaptedToFormat(video)) {
+    if (isAVideoAdaptedToFormat(video)) {
       Log.d(TAG, "onErrorTranscoding adapting video " + video.getMediaPath() + " - " + message);
       if(numTriesAdaptingVideo < maxNumTriesAdaptingVideo) {
         moveAndAdaptRecordedVideo(video.getMediaPath());
