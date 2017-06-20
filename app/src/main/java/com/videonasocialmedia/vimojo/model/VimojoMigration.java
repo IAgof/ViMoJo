@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import io.realm.DynamicRealm;
 import io.realm.DynamicRealmObject;
+import io.realm.FieldAttribute;
 import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
@@ -195,13 +196,23 @@ public class VimojoMigration implements RealmMigration {
       oldVersion++;
     }
 
-    // Migrate from version 6 to version 7, update RealmVideo, update RealmProject, add RealmTrack
-          /*RealmObjectSchema trackSchema = schema.create("RealmTrack")
+    // Migrate from version 6 to version 7, update RealmVideo, update RealmProject, add RealmTrack, add RealmMusic
+    if (oldVersion == 6) {
+
+      RealmObjectSchema trackSchema = schema.create("RealmTrack")
           .addField("uuid", String.class, FieldAttribute.PRIMARY_KEY)
           .addField("id", Integer.class, FieldAttribute.REQUIRED)
           .addField("volume", Float.class, FieldAttribute.REQUIRED)
-          .addField("mute", Boolean.class, FieldAttribute.REQUIRED)*/
-    if (oldVersion == 6) {
+          .addField("mute", Boolean.class, FieldAttribute.REQUIRED);
+
+      RealmObjectSchema musicSchema = schema.create("RealmMusic")
+          .addField("uuid", String.class, FieldAttribute.PRIMARY_KEY)
+          .addField("musicPath", String.class, FieldAttribute.REQUIRED)
+          .addField("title", String.class, FieldAttribute.REQUIRED)
+          .addField("author", String.class, FieldAttribute.REQUIRED)
+          .addField("iconResourceId", Integer.class, FieldAttribute.REQUIRED)
+          .addField("duration", Integer.class, FieldAttribute.REQUIRED)
+          .addField("volume", Float.class, FieldAttribute.REQUIRED);
 
       RealmObjectSchema realmVideo = schema.get("RealmVideo");
       if (!realmVideo.hasField("volume")) {
