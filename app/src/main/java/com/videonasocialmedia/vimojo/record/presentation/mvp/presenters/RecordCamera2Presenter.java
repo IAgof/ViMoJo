@@ -529,6 +529,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     camera.setWhiteBalanceMode(whiteBalanceMode);
   }
 
+  public void resetWhiteBalanceMode() {
+    camera.resetWhiteBalanceMode();
+  }
+
   private class VideoToAdapt {
     private final int position;
     private final Video video;

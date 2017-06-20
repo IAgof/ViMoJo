@@ -710,6 +710,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2WhiteBalanceHelper.setWhiteBalanceMode(whiteBalanceMode);
   }
 
+  public void resetWhiteBalanceMode() {
+    camera2WhiteBalanceHelper.resetWhiteBalanceMode();
+  }
+
   public interface RecordStartedCallback {
     void onRecordStarted();
   }

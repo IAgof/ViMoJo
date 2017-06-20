@@ -16,6 +16,7 @@ import java.util.HashMap;
 public class Camera2WhiteBalanceHelper {
   private static final String TAG = Camera2WhiteBalanceHelper.class.getCanonicalName();
   public static final int DEFAULT_WHITE_BALANCE_MODE = CameraMetadata.CONTROL_AWB_MODE_AUTO;
+  public static final String WB_MODE_OFF = "off";
   public static final String WB_MODE_AUTO = "auto";
   public static final String WB_MODE_CLOUDY_DAYLIGHT = "cloudy-daylight";
   public static final String WB_MODE_DAYLIGHT = "daylight";
@@ -39,6 +40,7 @@ public class Camera2WhiteBalanceHelper {
   }
 
   private void initWhiteBalanceMap() {
+    this.whiteBalanceMap.put(CameraMetadata.CONTROL_AWB_MODE_OFF, WB_MODE_OFF);
     this.whiteBalanceMap.put(CameraMetadata.CONTROL_AWB_MODE_AUTO, WB_MODE_AUTO);
     this.whiteBalanceMap.put(CameraMetadata.CONTROL_AWB_MODE_CLOUDY_DAYLIGHT,
             WB_MODE_CLOUDY_DAYLIGHT);
@@ -59,6 +61,7 @@ public class Camera2WhiteBalanceHelper {
   private void setupSupportedValues() {
     try {
       ArrayList<String> whiteBalanceStringArrayList = new ArrayList<>();
+      whiteBalanceStringArrayList.add(WB_MODE_OFF);
       int [] returnedValues = camera2Wrapper.getCurrentCameraCharacteristics()
               .get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
       for (int whiteBalanceSetting : returnedValues) {
@@ -87,6 +90,10 @@ public class Camera2WhiteBalanceHelper {
 
   public void setCurrentWhiteBalanceMode() {
     setWhiteBalanceMode(supportedWhiteBalanceValues.selectedValue);
+  }
+
+  public void resetWhiteBalanceMode() {
+    setWhiteBalanceMode(WB_MODE_AUTO);
   }
 
   public void setWhiteBalanceMode(String whiteBalanceMode) {

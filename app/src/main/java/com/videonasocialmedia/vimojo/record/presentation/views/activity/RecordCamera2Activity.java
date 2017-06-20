@@ -569,6 +569,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
             presenter.setWhiteBalanceMode(supportedWBMode);
           }
         });
+      } else {
+        Log.e(LOG_TAG, "Missing WB icon: " + supportedWBMode);
       }
     }
   }
@@ -846,123 +848,134 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnClick (R.id.button_zoom)
-  public void onClickZoomListener(){
-    if(zoomButton.isSelected()){
-      zoomSubmenuView.setVisibility(View.INVISIBLE);
-      zoomButton.setSelected(false);
+  public void onClickZoomListener() {
+    if (zoomButton.isSelected()) {
+      hideZoomSelectionSubmenu();
     } else {
-      zoomButton.setSelected(true);
-      zoomSubmenuView.setVisibility(View.VISIBLE);
-
-      isoButton.setSelected(false);
-      isoSubmenuView.setVisibility(View.INVISIBLE);
-      afSelectionButton.setSelected(false);
-      afSelectionSubmenuView.setVisibility(View.INVISIBLE);
-      whiteBalanceButton.setSelected(false);
-      whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
-      meteringModeButton.setSelected(false);
-      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+      showZoomSelectionSubmenu();
+      hideISOSelectionSubmenu();
+      hideAFSelectionSubmenu();
+      hideWhiteBalanceSubmenu();
+      hideMeteringModeSelectionSubmenu();
     }
   }
 
   @OnClick (R.id.button_iso)
-  public void onClickIsoListener(){
-    if(isoButton.isSelected()){
-      isoButton.setSelected(false);
-      isoSubmenuView.setVisibility(View.INVISIBLE);
+  public void onClickIsoListener() {
+    if (isoButton.isSelected()) {
+      hideISOSelectionSubmenu();
     } else {
-      isoButton.setSelected(true);
-      isoSubmenuView.setVisibility(View.VISIBLE);
-
-      zoomButton.setSelected(false);
-      zoomSubmenuView.setVisibility(View.INVISIBLE);
-      afSelectionButton.setSelected(false);
-      afSelectionSubmenuView.setVisibility(View.INVISIBLE);
-      whiteBalanceButton.setSelected(false);
-      whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
-      meteringModeButton.setSelected(false);
-      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+      showISOSelectionSubmenu();
+      hideZoomSelectionSubmenu();
+      hideAFSelectionSubmenu();
+      hideWhiteBalanceSubmenu();
+      hideMeteringModeSelectionSubmenu();
     }
   }
 
   @OnClick (R.id.button_af_selection)
-  public void onClickAfSelectionListener(){
-    if(afSelectionButton.isSelected()){
-      afSelectionButton.setSelected(false);
-      afSelectionSubmenuView.setVisibility(View.INVISIBLE);
+  public void onClickAfSelectionListener() {
+    if (afSelectionButton.isSelected()) {
+      hideAFSelectionSubmenu();
     } else {
-      afSelectionButton.setSelected(true);
-      afSelectionSubmenuView.setVisibility(View.VISIBLE);
-
-      zoomButton.setSelected(false);
-      zoomSubmenuView.setVisibility(View.INVISIBLE);
-      isoButton.setSelected(false);
-      isoSubmenuView.setVisibility(View.INVISIBLE);
-      whiteBalanceButton.setSelected(false);
-      whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
-      meteringModeButton.setSelected(false);
-      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+      showAFSelectionSubmenu();
+      hideZoomSelectionSubmenu();
+      hideISOSelectionSubmenu();
+      hideWhiteBalanceSubmenu();
+      hideMeteringModeSelectionSubmenu();
     }
   }
 
   @OnClick (R.id.button_white_balance)
-  public void onClickWhiteBalanceListener(){
-    if(whiteBalanceButton.isSelected()){
-      whiteBalanceButton.setSelected(false);
-      whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+  public void onClickWhiteBalanceListener() {
+    if (whiteBalanceButton.isSelected()) {
+      hideWhiteBalanceSubmenu();
     } else {
-      whiteBalanceButton.setSelected(true);
-      whiteBalanceSubmenuView.setVisibility(View.VISIBLE);
-
-      zoomButton.setSelected(false);
-      zoomSubmenuView.setVisibility(View.INVISIBLE);
-      isoButton.setSelected(false);
-      isoSubmenuView.setVisibility(View.INVISIBLE);
-      afSelectionButton.setSelected(false);
-      afSelectionSubmenuView.setVisibility(View.INVISIBLE);
-      meteringModeButton.setSelected(false);
-      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+      showWhiteBalanceSubmenu();
+      hideZoomSelectionSubmenu();
+      hideISOSelectionSubmenu();
+      hideAFSelectionSubmenu();
+      hideMeteringModeSelectionSubmenu();
     }
   }
 
   @OnClick(R.id.button_metering_mode)
-  public void onClickMeasurementeModeListener(){
-    if(meteringModeButton.isSelected()){
-      meteringModeButton.setSelected(false);
-      meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+  public void onClickMeasurementeModeListener() {
+    if (meteringModeButton.isSelected()) {
+      hideMeteringModeSelectionSubmenu();
     } else {
-      meteringModeButton.setSelected(true);
-      meteringModeSubmenuView.setVisibility(View.VISIBLE);
-
-      zoomButton.setSelected(false);
-      zoomSubmenuView.setVisibility(View.INVISIBLE);
-      isoButton.setSelected(false);
-      isoSubmenuView.setVisibility(View.INVISIBLE);
-      afSelectionButton.setSelected(false);
-      afSelectionSubmenuView.setVisibility(View.INVISIBLE);
-      whiteBalanceButton.setSelected(false);
-      whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+      showMeteringModeSelectionSubmenu();
+      hideZoomSelectionSubmenu();
+      hideISOSelectionSubmenu();
+      hideAFSelectionSubmenu();
+      hideWhiteBalanceSubmenu();
     }
   }
 
   @OnClick (R.id.button_camera_auto)
   public void onClickCameraAutoListener() {
-    zoomButton.setSelected(false);
-    zoomSubmenuView.setVisibility(View.INVISIBLE);
+    hideZoomSelectionSubmenu();
     slideSeekBar.setProgress(0);
     presenter.setZoom(0f);
 
+    hideISOSelectionSubmenu();
+    hideAFSelectionSubmenu();
+    hideWhiteBalanceSubmenu();
+    presenter.resetWhiteBalanceMode();
+    hideMeteringModeSelectionSubmenu();
+  }
+
+  private void showZoomSelectionSubmenu() {
+    zoomButton.setSelected(true);
+    zoomSubmenuView.setVisibility(View.VISIBLE);
+  }
+
+  private void hideZoomSelectionSubmenu() {
+    zoomButton.setSelected(false);
+    zoomSubmenuView.setVisibility(View.INVISIBLE);
+  }
+
+  private void showISOSelectionSubmenu() {
+    isoButton.setSelected(true);
+    isoSubmenuView.setVisibility(View.VISIBLE);
+  }
+
+  private void hideISOSelectionSubmenu() {
     isoButton.setSelected(false);
     isoSubmenuView.setVisibility(View.INVISIBLE);
+  }
+
+  private void showAFSelectionSubmenu() {
+    afSelectionButton.setSelected(true);
+    afSelectionSubmenuView.setVisibility(View.VISIBLE);
+  }
+
+  private void hideAFSelectionSubmenu() {
     afSelectionButton.setSelected(false);
     afSelectionSubmenuView.setVisibility(View.INVISIBLE);
-    whiteBalanceButton.setSelected(false);
-    whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+  }
+
+  private void showMeteringModeSelectionSubmenu() {
+    meteringModeButton.setSelected(true);
+    meteringModeSubmenuView.setVisibility(View.VISIBLE);
+  }
+
+  private void hideMeteringModeSelectionSubmenu() {
     meteringModeButton.setSelected(false);
     meteringModeSubmenuView.setVisibility(View.INVISIBLE);
   }
 
- @OnClick(R.id.button_record)
+  private void showWhiteBalanceSubmenu() {
+    whiteBalanceButton.setSelected(true);
+    whiteBalanceSubmenuView.setVisibility(View.VISIBLE);
+  }
+
+  private void hideWhiteBalanceSubmenu() {
+    whiteBalanceButton.setSelected(false);
+    whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+  }
+
+  @OnClick(R.id.button_record)
  public void onClickRecordButton(){
    if (!isRecording) {
      presenter.startRecord();
@@ -1030,7 +1043,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void onStopTrackingTouch(SeekBar seekBar) {
 
   }
-
 
   public void updateBatteryStatus() {
     Intent batteryStatus = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
