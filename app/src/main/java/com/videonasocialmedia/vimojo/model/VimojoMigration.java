@@ -203,7 +203,8 @@ public class VimojoMigration implements RealmMigration {
           .addField("uuid", String.class, FieldAttribute.PRIMARY_KEY)
           .addField("id", Integer.class, FieldAttribute.REQUIRED)
           .addField("volume", Float.class, FieldAttribute.REQUIRED)
-          .addField("mute", Boolean.class, FieldAttribute.REQUIRED);
+          .addField("mute", Boolean.class, FieldAttribute.REQUIRED)
+          .addField("position", Integer.class, FieldAttribute.REQUIRED);
 
       RealmObjectSchema musicSchema = schema.create("RealmMusic")
           .addField("uuid", String.class, FieldAttribute.PRIMARY_KEY)
