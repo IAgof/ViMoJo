@@ -17,7 +17,7 @@ import com.videonasocialmedia.vimojo.repository.video.VideoToRealmVideoMapper;
 public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject> {
   protected VideoToRealmVideoMapper toRealmVideoMapper = new VideoToRealmVideoMapper();
   protected TrackToRealmTrackMapper toRealmTrackMapper = new TrackToRealmTrackMapper();
-  protected MusicToRealmMusicMapper toReamMusicMapper = new MusicToRealmMusicMapper();
+  protected MusicToRealmMusicMapper toRealmMusicMapper = new MusicToRealmMusicMapper();
 
   @Override
   public RealmProject map(Project project) {
@@ -42,14 +42,14 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
 
     if(project.hasMusic()) {
       for (Media music : project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC).getItems()) {
-        realmProject.musics.add(toReamMusicMapper.map((Music) music));
+        realmProject.musics.add(toRealmMusicMapper.map((Music) music));
       }
     }
 
     if(project.hasVoiceOver()) {
       for (Media music : project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
           .getItems()) {
-        realmProject.musics.add(toReamMusicMapper.map((Music) music));
+        realmProject.musics.add(toRealmMusicMapper.map((Music) music));
       }
     }
 

@@ -18,7 +18,7 @@ import io.realm.RealmSchema;
  */
 public class VimojoMigration implements RealmMigration {
   @Override
-  public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
+  public void migrate(final DynamicRealm realm, long oldVersion, long newVersion) {
     // During a migration, a DynamicRealm is exposed. A DynamicRealm is an untyped variant of a normal Realm, but
     // with the same object creation and query capabilities.
     // A DynamicRealm uses Strings instead of Class references because the Classes might not even exist or have been
@@ -226,40 +226,35 @@ public class VimojoMigration implements RealmMigration {
               }
             });
       }
+
       final RealmObjectSchema realmProject = schema.get("RealmProject");
 
-      //if project has videos, populate RealmTrack MediaTrack
-      if(realmProject.hasField("realmVideo")){
-        trackSchema.addField("uuid", String.class).transform(new RealmObjectSchema.Function() {
+      if(!realmProject.hasField("tracks")){
+        realmProject.addRealmListField("tracks", trackSchema).transform(new RealmObjectSchema.Function() {
           @Override
           public void apply(DynamicRealmObject obj) {
-           obj.setString("uuid", UUID.randomUUID().toString());
+            DynamicRealmObject mediaTrack = realm.createObject("RealmTrack");
+            mediaTrack.setString("uuid", UUID.randomUUID().toString());
+            mediaTrack.setInt("id", Constants.INDEX_MEDIA_TRACK);
+            mediaTrack.setFloat("volume", 1f);
+            mediaTrack.setBoolean("mute", false);
+            mediaTrack.setInt("position", 0);
+
+            DynamicRealmObject musicTrack = realm.createObject("RealmTrack");
+            musicTrack.setString("uuid", UUID.randomUUID().toString());
+            musicTrack.setInt("id", Constants.INDEX_AUDIO_TRACK_MUSIC);
+            musicTrack.setFloat("volume", 0.5f);
+            musicTrack.setBoolean("mute", false);
+            musicTrack.setInt("position", 1);
+
+            obj.getList("tracks").add(mediaTrack);
+            obj.getList("tracks").add(musicTrack);
           }
         });
-        trackSchema.addField("id", Integer.class).transform(new RealmObjectSchema.Function() {
-          @Override
-          public void apply(DynamicRealmObject obj) {
-            obj.setInt("id", Constants.INDEX_MEDIA_TRACK);
-          }
-        });
-        trackSchema.addField("volume", Float.class).transform(new RealmObjectSchema.Function() {
-          @Override
-          public void apply(DynamicRealmObject obj) {
-           obj.setFloat("volume", 1f);
-          }
-        });
-        trackSchema.addField("mute", Boolean.class).transform(new RealmObjectSchema.Function() {
-          @Override
-          public void apply(DynamicRealmObject obj) {
-            obj.setBoolean("mute", false);
-          }
-        });
-        trackSchema.addField("position", Integer.class).transform(new RealmObjectSchema.Function() {
-          @Override
-          public void apply(DynamicRealmObject obj) {
-            obj.setInt("position", 0);
-          }
-        });
+      }
+
+      if(!realmProject.hasField("musics")){
+        realmProject.addRealmListField("musics", musicSchema);
       }
 
       if(realmProject.hasField("musicTitle")){
@@ -267,13 +262,6 @@ public class VimojoMigration implements RealmMigration {
       }
       if(realmProject.hasField("musicVolume")){
         realmProject.removeField("musicVolume");
-      }
-
-      if(!realmProject.hasField("realmTrack")){
-        realmProject.addRealmListField("realmTrack", schema.get("RealmTrack"));
-      }
-      if(!realmProject.hasField("realmMusic")){
-        realmProject.addRealmListField("realmMusic", schema.get("RealmMusic"));
       }
 
       oldVersion++;
