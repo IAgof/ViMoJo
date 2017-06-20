@@ -416,8 +416,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
-  public void showError(int stringResourceId) {
-    showMessage(stringResourceId);
+  public void showError(String message) {
+    Log.d(LOG_TAG, "showError " + message);
+    showMessage(message);
   }
 
   @Override
@@ -961,21 +962,16 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     meteringModeSubmenuView.setVisibility(View.INVISIBLE);
   }
 
-
-  @OnTouch(R.id.button_record)
-  boolean onTouch(MotionEvent event) {
-    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-      if (!isRecording) {
-        presenter.startRecord();
-        isRecording = true;
-      } else {
-        presenter.stopRecord();
-        updatePercentFreeStorage();
-        updateBatteryStatus();
-      }
-    }
-    return true;
-  }
+ @OnClick(R.id.button_record)
+ public void onClickRecordButton(){
+   if (!isRecording) {
+     presenter.startRecord();
+   } else {
+     presenter.stopRecord();
+     updatePercentFreeStorage();
+     updateBatteryStatus();
+   }
+ }
 
   @OnTouch(R.id.customManualFocusView)
   boolean onTouchCustomManualFocusView(MotionEvent event) {
@@ -1004,7 +1000,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         System.exit(0);
     } else {
         buttonBackPressed = true;
-        showMessage(R.string.toast_exit);
+        showMessage(getString(R.string.toast_exit));
     }
   }
 
@@ -1014,8 +1010,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     startActivity(intent);
   }
 
-  private void showMessage(int stringResourceId) {
-    Snackbar snackbar = Snackbar.make(chronometerAndRecPointView, stringResourceId,
+  private void showMessage(String message) {
+    Snackbar snackbar = Snackbar.make(chronometerAndRecPointView, message,
         Snackbar.LENGTH_SHORT);
     snackbar.show();
   }
