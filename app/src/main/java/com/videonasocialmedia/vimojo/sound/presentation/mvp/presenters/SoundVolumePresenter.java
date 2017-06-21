@@ -151,6 +151,7 @@ public class SoundVolumePresenter implements OnVideosRetrieved {
         Music voiceOver = new Music(voiceOverPath, volume, FileUtils.getDuration(voiceOverPath));
         voiceOver.setMusicTitle(com.videonasocialmedia.vimojo.utils.Constants
             .MUSIC_AUDIO_VOICEOVER_TITLE);
+        voiceOver.setMusicAuthor(" ");
         voiceOver.setIconResourceId(R.drawable.activity_edit_audio_voice_over_icon);
         return voiceOver;
     }
