@@ -1,3 +1,2 @@
-v0.6
-Added audio multiple track support. Mix audio from video files, music and voice over.
-New screen sound, select volume, mute tracks for video, music and voice over.
+v0.6.1
+Fixed migration problem with multiple projects.
