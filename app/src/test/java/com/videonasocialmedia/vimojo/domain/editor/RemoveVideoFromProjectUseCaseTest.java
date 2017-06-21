@@ -56,7 +56,7 @@ public class RemoveVideoFromProjectUseCaseTest {
   public void testRemoveMediaItemsFromProjectCallsUpdateProject() {
     Project currentProject = Project.getInstance(null, null, null);
     currentProject.setMediaTrack(mockedMediaTrack);
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     ArrayList<Media> videos = new ArrayList<Media>();
     videos.add(video);
     OnRemoveMediaFinishedListener listener = getOnRemoveMediaFinishedListener();

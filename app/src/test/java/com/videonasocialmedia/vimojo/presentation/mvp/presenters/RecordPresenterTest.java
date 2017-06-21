@@ -96,7 +96,7 @@ public class RecordPresenterTest {
 
     recordPresenter = getRecordPresenter();
 
-    Video video = new Video(path);
+    Video video = new Video(path, 1f);
     String tempPath = video.getTempPath();
 
     recordPresenter.videoToLaunchAVTransitionTempFile(video,

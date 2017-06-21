@@ -23,6 +23,7 @@ public interface EditActivityView {
     void showMessage(int stringToast);
     void bindVideoList(List<Video> movieList);
     void setMusic(Music music);
+    void setVoiceOver(Music voiceOver);
     void setVideoFadeTransitionAmongVideos();
     void setAudioFadeTransitionAmongVideos();
     void updateProject();
@@ -35,4 +36,9 @@ public interface EditActivityView {
     void resetPreview();
     void showDialogMediasNotFound();
     void enableFabText(boolean isEnable);
+    void setVideoVolume(float volume);
+    void setVideoMute();
+    void setVoiceOverVolume(float volume);
+    void setMusicVolume(float volume);
+
 }

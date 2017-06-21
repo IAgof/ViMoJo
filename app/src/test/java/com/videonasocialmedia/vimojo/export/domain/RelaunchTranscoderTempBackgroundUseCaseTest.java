@@ -70,7 +70,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
   @Ignore
   @Test
   public void testBugRelaunchExportThrowsNPE_WhenVideoHasntText() throws Exception {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assertThat(video.getClipText(), is(nullValue()));
 
     new RelaunchTranscoderTempBackgroundUseCase().relaunchExport(mockDrawableFadeTransition, video,
@@ -116,7 +116,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
   @Ignore
   @Test
   public void testRelaunchExportCallsTranscodeAndTrimVideoIfVideoHasntText() throws IOException {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assert ! video.hasText();
     injectedRelaunchTranscoderTempBackgroundUseCase.transcoderHelper =
             new TranscoderHelper(mockedDrawableGenerator, mockedMediaTranscoder);
@@ -133,7 +133,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
   @Test
   public void testRelaunchExportCallsGenerateOutputVideoWithTrimmingIfVideoHasntText()
           throws IOException {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assert ! video.hasText();
 
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
@@ -146,7 +146,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
 
   @Test
   public void relaunchExportCallsVideoRepositoryUpdate() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
 
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
         videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
@@ -156,7 +156,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
 
   @Test
   public void relaunchExportUpdateIsTranscodingTempFileFinished() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assert video.isTranscodingTempFileFinished();
 
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
@@ -167,7 +167,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
 
   @NonNull
   private Video getVideoWithText() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     video.setClipText("text");
     video.setClipTextPosition(TextEffect.TextPosition.CENTER.name());
     return video;

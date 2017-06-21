@@ -59,20 +59,24 @@ public class AddVideoToProjectUseCaseTest {
     this.mockedEventBus = mockedEventBus;
   }
 
-  @Test
+/**
+ * Borrar test , addVideoToTrack not in use, delete.
+ * @Test
   public void testAddVideoToTrackCallsUpdateProject() {
     Project currentProject = Project.getInstance(null, null, null);
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
 
     injectedUseCase.addVideoToTrack(video);
 
     verify(mockedProjectRepository).update(currentProject);
   }
+ */
 
+// Borrar test , addVideoToTrack not in use, delete.
   @Test
   public void testAddVideoToTrackWithListenerCallsUpdateProject() {
     Project currentProject = Project.getInstance(null, null, null);
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
     OnLaunchAVTransitionTempFileListener avTransitionTempFileListener =
         getOnLaunchAVTransitionTempFileListener();
@@ -82,11 +86,10 @@ public class AddVideoToProjectUseCaseTest {
     verify(mockedProjectRepository).update(currentProject);
   }
 
-
   @Test
   public void testAddVideoToProjectAtPositionCallsUpdateProject() {
     Project currentProject = Project.getInstance(null, null, null);
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
 
     injectedUseCase.addVideoToProjectAtPosition(video, 0, mockedOnAddMediaFinishedListener);
 
@@ -96,7 +99,7 @@ public class AddVideoToProjectUseCaseTest {
   @Test
   public void testAddVideoListToTrackCallsUpdateProject() {
     Project currentProject = Project.getInstance(null, null, null);
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
     OnLaunchAVTransitionTempFileListener avTransitionTempFileListener =
@@ -113,7 +116,7 @@ public class AddVideoToProjectUseCaseTest {
     project.setAudioFadeTransitionActivated(true);
     assertThat("Audio transition is activated ", project.isAudioFadeTransitionActivated(), is(true));
 
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
 
@@ -129,7 +132,7 @@ public class AddVideoToProjectUseCaseTest {
     project.setVideoFadeTransitionActivated(true);
     assertThat("Video transition is activated ", project.isVideoFadeTransitionActivated(), is(true));
 
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
 
@@ -146,7 +149,7 @@ public class AddVideoToProjectUseCaseTest {
     assertThat("Audio transition is not activated ", project.isAudioFadeTransitionActivated(), is(false));
     assertThat("Video transition is not activated ", project.isVideoFadeTransitionActivated(), is(false));
 
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
 

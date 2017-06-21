@@ -61,7 +61,7 @@ public class RealmProjectRepositoryTest {
   @Ignore
   @Test
   public void testGetCurrentProjectReturnsLastSavedProject() {
-    ProjectRealmRepository repo = new ProjectRealmRepository(mockedContext);
+    ProjectRealmRepository repo = new ProjectRealmRepository();
     RealmQuery<RealmProject> mockedRealmQuery = PowerMockito.mock(RealmQuery.class);
     when(mockedRealm.where(RealmProject.class)).thenReturn(mockedRealmQuery);
 
@@ -72,7 +72,7 @@ public class RealmProjectRepositoryTest {
 
   @Test
   public void testConstructorsSetsMappers() {
-    ProjectRealmRepository repo = new ProjectRealmRepository(mockedContext);
+    ProjectRealmRepository repo = new ProjectRealmRepository();
 
     assertThat(repo.toRealmProjectMapper, is(notNullValue()));
     assertThat(repo.toProjectMapper, is(notNullValue()));

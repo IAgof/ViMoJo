@@ -24,7 +24,6 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
@@ -198,10 +197,16 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     }
 
     @Override
+    public void setVoiceOver(Music voiceOver) {
+        videonaPlayer.pausePreview();
+        videonaPlayer.setVoiceOver(voiceOver);
+        videonaPlayer.playPreview();
+    }
+
+    @Override
     public void setMusic(Music music, boolean scene) {
         musicSelectedOptions(scene);
         videonaPlayer.setMusic(music);
-        videonaPlayer.setVolume(music.getVolume());
         updateCoverInfo(music);
         seekBarVolume.setProgress((int)(music.getVolume()*100));
         this.music = music;
@@ -227,6 +232,12 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         videonaPlayer.setVideoTransitionFade();
     }
 
+    @Override
+    public void showError(String message) {
+        String title = getString(R.string.alert_dialog_title_music);
+        super.showAlertDialog(title, message);
+    }
+
     @Nullable
     @OnClick(R.id.select_music)
     public void selectMusic() {
@@ -240,7 +251,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @OnClick(R.id.delete_music)
     public void deleteMusic() {
         presenter.removeMusic(music);
-        goToMusicList();
     }
 
     private void goToMusicList() {
@@ -264,7 +274,8 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        videonaPlayer.setVolume(progress *0.01f);
+        videonaPlayer.setMusicVolume(progress *0.01f);
+        videonaPlayer.setVideoVolume((1-(progress*0.01f)));
         currentSoundVolumePosition = progress;
         if(music!=null)
             presenter.setVolume(progress*0.01f);

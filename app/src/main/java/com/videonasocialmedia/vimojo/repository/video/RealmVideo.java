@@ -14,6 +14,7 @@ public class RealmVideo extends RealmObject {
     public String uuid;
     public int position;
     public String mediaPath;
+    public float volume;
     public String tempPath;
     // TODO(jliarte): 22/10/16 what to do with those values, as they are private, and maybe we
     //                don't need to store that information
@@ -30,13 +31,14 @@ public class RealmVideo extends RealmObject {
     public RealmVideo() {
     }
 
-    public RealmVideo(String uuid, int position, String mediaPath, String tempPath,
+    public RealmVideo(String uuid, int position, String mediaPath, float volume, String tempPath,
                       String clipText, String clipTextPosition,
                       boolean textToVideoAdded, boolean trimmedVideo, int startTime, int stopTime,
                       String videoError, boolean isTranscodingTempFileFinished) {
         this.uuid = uuid;
         this.position = position;
         this.mediaPath = mediaPath;
+        this.volume = volume;
         this.tempPath = tempPath;
         this.clipText = clipText;
         this.clipTextPosition = clipTextPosition;
