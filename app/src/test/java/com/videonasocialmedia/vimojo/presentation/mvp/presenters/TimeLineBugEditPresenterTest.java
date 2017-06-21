@@ -46,12 +46,12 @@ public class TimeLineBugEditPresenterTest {
 
   @Test
   public void moveItemGetsMediaToMoveFromProjectInsteadOfViewModel() throws IllegalItemOnTrack {
-    Video video0 = new Video("video/0");
-    Video video1 = new Video("video/1");
-    Video video2 = new Video("video/2");
-    Video video3 = new Video("video/3");
-    Video video4 = new Video("video/4");
-    Video video5 = new Video("video/5");
+    Video video0 = new Video("video/0", Video.DEFAULT_VOLUME);
+    Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
+    Video video2 = new Video("video/2", Video.DEFAULT_VOLUME);
+    Video video3 = new Video("video/3", Video.DEFAULT_VOLUME);
+    Video video4 = new Video("video/4", Video.DEFAULT_VOLUME);
+    Video video5 = new Video("video/5", Video.DEFAULT_VOLUME);
     currentProject.getMediaTrack().insertItem(video0);
     currentProject.getMediaTrack().insertItem(video1);
     currentProject.getMediaTrack().insertItem(video2);

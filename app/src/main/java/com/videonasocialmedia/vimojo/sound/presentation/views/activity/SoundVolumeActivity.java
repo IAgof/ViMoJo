@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -17,11 +15,8 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -178,7 +173,8 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         textSeekBarVolume.setText(progress+" % ");
-        videonaPlayer.setVolume(progress *0.01f);
+        videonaPlayer.setVoiceOverVolume(progress *0.01f);
+        videonaPlayer.setVideoVolume((1-(progress*0.01f)));
         currentSoundVolumePosition = progress;
     }
 
@@ -194,9 +190,14 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     public void bindVideoList(List<Video> movieList) {
         videonaPlayer.bindVideoList(movieList);
         videonaPlayer.seekTo(currentProjectPosition);
-        videonaPlayer.setMusic(new Music(soundVoiceOverPath,
+        videonaPlayer.setVoiceOver(new Music(soundVoiceOverPath,
             FileUtils.getDuration(soundVoiceOverPath)));
-        videonaPlayer.setVolume(currentSoundVolumePosition*0.01f);
+        videonaPlayer.setVoiceOverVolume(currentSoundVolumePosition*0.01f);
+    }
+
+    @Override
+    public void setMusic(Music music) {
+        videonaPlayer.setMusic(music);
     }
 
     @Override
@@ -217,6 +218,12 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
     @Override
     public void setAudioFadeTransitionAmongVideos() {
         videonaPlayer.setAudioTransitionFade();
+    }
+
+    @Override
+    public void showError(String message) {
+        String title = getString(R.string.alert_dialog_title_voice_over);
+        super.showAlertDialog(title, message);
     }
 
     @Override

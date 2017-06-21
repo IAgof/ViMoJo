@@ -2,8 +2,8 @@ package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 import android.content.Context;
 
+import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -24,20 +24,20 @@ public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjec
     private List<Music> availableMusic;
     private MusicListView musicListView;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
+    private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
 
     @Inject
     public MusicListPresenter(MusicListView musicListView, Context context,
                               GetMusicListUseCase getMusicListUseCase,
                               GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                              GetMusicFromProjectUseCase getMusicFromProjectUseCase,
+                              GetAudioFromProjectUseCase getAudioFromProjectUseCase,
                               GetPreferencesTransitionFromProjectUseCase
                                   getPreferencesTransitionFromProjectUseCase) {
         this.context = context;
         availableMusic = getMusicListUseCase.getAppMusic();
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
-        this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
+        this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
         this.musicListView = musicListView;
     }
@@ -50,7 +50,7 @@ public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjec
     }
 
     private void obtainMusicsAndVideos() {
-        getMusicFromProjectUseCase.getMusicFromProject(this);
+        getAudioFromProjectUseCase.getMusicFromProject(this);
         getMediaListFromProjectUseCase.getMediaListFromProject(this);
     }
 
@@ -75,7 +75,7 @@ public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjec
 
     @Override
     public void onMusicRetrieved(Music music) {
-        if(getMusicFromProjectUseCase.hasBeenMusicSelected()){
+        if(getAudioFromProjectUseCase.hasBeenMusicSelected()){
             musicListView.goToDetailActivity(music.getMediaPath());
         }
     }

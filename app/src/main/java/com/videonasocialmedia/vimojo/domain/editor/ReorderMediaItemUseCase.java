@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.domain.editor;
 
 import android.util.Log;
 
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
@@ -30,7 +31,7 @@ public class ReorderMediaItemUseCase {
 
     public void moveMediaItem(Media media, int toPositon, OnReorderMediaListener listener){
       Project project = getCurrentProject();
-      MediaTrack videoTrack = project.getMediaTrack();
+      Track videoTrack = project.getMediaTrack();
         try {
           Log.d(TAG, "timeline: reorder media with position " + media.getPosition() + " to: " + toPositon);
 
@@ -48,7 +49,7 @@ public class ReorderMediaItemUseCase {
         }
     }
 
-  private void logTrack(MediaTrack videoTrack) {
+  private void logTrack(Track videoTrack) {
     String logstr = "Video track order: ";
     for (Media item: videoTrack.getItems()) {
       logstr += item.getIdentifier() + " pos: " + item.getPosition() + ", ";

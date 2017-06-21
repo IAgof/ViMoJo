@@ -37,7 +37,7 @@ public class UpdateVideoRepositoryUseCaseTest {
   @Test
   public void succesTranscodingVideoResetNumTriesVideoToExport(){
 
-    Video video= new Video("media/path");
+    Video video= new Video("media/path", Video.DEFAULT_VOLUME);
     video.increaseNumTriesToExportVideo();
     assertThat(video.getNumTriesToExportVideo(), is(1));
 
@@ -49,7 +49,7 @@ public class UpdateVideoRepositoryUseCaseTest {
 
   @Test
   public void succesTranscodingVideoSetTrueIsTranscodingTempfileFinished(){
-    Video video= new Video("media/path");
+    Video video= new Video("media/path", Video.DEFAULT_VOLUME);
     video.setTranscodingTempFileFinished(false);
     assertThat(video.isTranscodingTempFileFinished(), is(false));
 
@@ -61,7 +61,7 @@ public class UpdateVideoRepositoryUseCaseTest {
 
   @Test
   public void errorTranscodingVideoSetTrueIsTranscodingTempfileFinished(){
-    Video video= new Video("media/path");
+    Video video= new Video("media/path", Video.DEFAULT_VOLUME);
     video.setTranscodingTempFileFinished(false);
     assertThat(video.isTranscodingTempFileFinished(), is(false));
 

@@ -48,7 +48,6 @@ import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
@@ -131,7 +130,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
             }
         }
     };
-
+  private boolean isVideoMute;
 
 
   @Override
@@ -162,9 +161,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
             break;
           case (R.id.tab_share):
             navigateTo(ShareActivity.class);
-           /* Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
-            Snackbar.make(relativeLayoutActivityEdit, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
-            VimojoApplication.getAppContext().startService(intent);*/
             break;
         }
       }
@@ -190,7 +186,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         switch (fab.getId()){
           case ID_BUTTON_FAB_TOP:
             fabMenu.collapse();
-              //navigateTo(RecordActivity.class);
               navigateTo(RecordCamera2Activity.class);
               break;
           case ID_BUTTON_FAB_CENTER:
@@ -448,6 +443,11 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     }
 
     @Override
+    public void setVoiceOver(Music voiceOver) {
+      videonaPlayer.setVoiceOver(voiceOver);
+    }
+
+    @Override
     public void setVideoFadeTransitionAmongVideos(){
         videonaPlayer.setVideoTransitionFade();
     }
@@ -521,6 +521,27 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   }
 
   @Override
+  public void setVideoVolume(float volume) {
+    videonaPlayer.setVideoVolume(volume);
+  }
+
+  @Override
+  public void setVideoMute(){
+    isVideoMute = true;
+    videonaPlayer.setVideoVolume(0f);
+  }
+
+  @Override
+  public void setVoiceOverVolume(float volume) {
+    videonaPlayer.setVoiceOverVolume(volume);
+  }
+
+  @Override
+  public void setMusicVolume(float volume) {
+    videonaPlayer.setMusicVolume(volume);
+  }
+
+  @Override
   public void showWarningTempFile() {
     warningTranscodingFilesButton.setVisibility(View.VISIBLE);
   }
@@ -536,6 +557,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         currentVideoIndex = currentClipIndex;
         timeLineAdapter.updateSelection(currentClipIndex);
         videoListRecyclerView.scrollToPosition(currentClipIndex);
+        if(isVideoMute){
+          videonaPlayer.setVideoVolume(0.f);
+        }
     }
 
 

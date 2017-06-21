@@ -174,7 +174,21 @@ public abstract class VimojoActivity extends AppCompatActivity {
         return getOrientation() == Configuration.ORIENTATION_PORTRAIT;
     }
 
-    class CustomPermissionListener extends EmptyMultiplePermissionsListener {
+    public void showAlertDialog(String title, String message) {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alertDialog.show();
+    }
+
+  class CustomPermissionListener extends EmptyMultiplePermissionsListener {
         private final Context context;
         private final String title;
         private final String message;

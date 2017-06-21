@@ -259,7 +259,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     File tempPath = new File(origPath);
     String destVideoRecorded = Constants.PATH_APP_MASTERS + File.separator + tempPath.getName();
 
-    final Video videoToAdapt = new Video(origPath);
+    final Video videoToAdapt = new Video(origPath, Video.DEFAULT_VOLUME);
     videoListToAdaptAndPosition.add(new VideoToAdapt(videoToAdapt,recordedVideosNumber));
 
     // FIXME: 23/05/17 if rotation == 0, should be use getVideonaFormatToAdaptVideoRecordedAudio, more efficient.
@@ -280,8 +280,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   private void videoRecordedAdapted(final String origVideoRecorded, String destVideoRecorded,
                                     int position) {
-    addVideoToProjectUseCase.addVideoToProjectAtPosition(new Video(destVideoRecorded), position,
-        new OnAddMediaFinishedListener() {
+    addVideoToProjectUseCase.addVideoToProjectAtPosition(new Video(destVideoRecorded,
+            Video.DEFAULT_VOLUME), position, new OnAddMediaFinishedListener() {
       @Override
       public void onAddMediaItemToTrackError() {
         recordView.hideProgressAdaptingVideo();

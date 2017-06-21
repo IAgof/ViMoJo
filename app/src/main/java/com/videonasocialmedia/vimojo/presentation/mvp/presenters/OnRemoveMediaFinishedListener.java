@@ -15,13 +15,12 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
  */
 public interface OnRemoveMediaFinishedListener {
     /**
-     * This method is used when fails to deleted items from the track.
-     */
-    void onRemoveMediaItemFromTrackError();
-
-    /**
      * This method is used when items have been deleted from the track.
      */
     void onRemoveMediaItemFromTrackSuccess();
+    /**
+     * This method is used when fails to deleted items from the track.
+     */
+    void onRemoveMediaItemFromTrackError();
 }
 

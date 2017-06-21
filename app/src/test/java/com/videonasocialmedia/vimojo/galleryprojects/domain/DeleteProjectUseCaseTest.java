@@ -1,7 +1,12 @@
 package com.videonasocialmedia.vimojo.galleryprojects.domain;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,8 +25,8 @@ import static org.mockito.Mockito.verify;
 @RunWith(PowerMockRunner.class)
 public class DeleteProjectUseCaseTest {
 
-  @Mock
-  ProjectRepository mockedProjectRepository;
+  @Mock ProjectRepository mockedProjectRepository;
+  @Mock TrackRepository mockedTrackRepository;
   @InjectMocks
   DeleteProjectUseCase injectedUseCase;
 
@@ -32,8 +37,14 @@ public class DeleteProjectUseCaseTest {
 
   @Test
   public void deleteProjectCallsRemoveProjectRepository(){
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = getAProject();
     injectedUseCase.delete(currentProject);
     verify(mockedProjectRepository).remove(currentProject);
+  }
+
+  public Project getAProject() {
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+        VideoFrameRate.FrameRate.FPS25);
+    return Project.getInstance("title", "/path", profile);
   }
 }

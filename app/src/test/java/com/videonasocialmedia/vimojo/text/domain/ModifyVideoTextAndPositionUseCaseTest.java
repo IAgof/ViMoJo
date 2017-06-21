@@ -123,7 +123,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
 
   @Test
   public void addTextToVideoCallsVideoRepositoryUpdate() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     String textPosition = TextEffect.TextPosition.BOTTOM.name();
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
@@ -137,7 +137,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
 
   @NonNull
   private Video getVideoUntrimmedWithText() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     video.setClipText("text");
     video.setClipTextPosition(TextEffect.TextPosition.CENTER.name());
     return video;

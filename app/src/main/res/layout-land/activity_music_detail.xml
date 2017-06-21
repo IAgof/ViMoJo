@@ -125,18 +125,20 @@
                             android:layout_marginRight="16dp"
                             android:layout_marginBottom="8dp"
                             android:id="@+id/linear_layout_icons_mix_audio">
-                            <ImageView
+                            <TextView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:src="@drawable/activity_edit_sound_normal"
                                 android:scaleType="fitXY"
+                                android:text="@string/minVolume"
+                                android:gravity="center"
                                 />
-                            <ImageView
+                            <TextView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:src="@drawable/activity_edit_sound_music_normal"
                                 android:scaleType="fitXY"
                                 android:layout_alignParentRight="true"
+                                android:text="@string/maxVolume"
+                                android:gravity="center"
                                 />
                         </RelativeLayout>
                         <SeekBar

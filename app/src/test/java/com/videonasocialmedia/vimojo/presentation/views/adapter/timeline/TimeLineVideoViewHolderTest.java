@@ -63,7 +63,7 @@ public class TimeLineVideoViewHolderTest {
   @Test
   public void bindDataSetsOrderAndDurationTexts() {
     TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
 
     timeLineVideoViewHolder.bindData(video, 0, 0);
 
@@ -76,7 +76,7 @@ public class TimeLineVideoViewHolderTest {
   public void bindDataCallsDrawThumbnail() {
     TimeLineVideoViewHolder timeLineVideoViewHolder = getVideoViewHolder();
     TimeLineVideoViewHolder holderSpy = spy(timeLineVideoViewHolder);
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
 
     holderSpy.bindData(video, 0, 0);
 

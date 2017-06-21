@@ -1,11 +1,9 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditNavigatorView;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 /**
  *
@@ -22,15 +20,15 @@ public class EditNavigatorPresenter {
     }
 
     public void areThereVideosInProject() {
-        if (project.getMediaTrack().getNumVideosInProject() > 0)
+        if (project.getMediaTrack().getNumItemsInTrack() > 0)
             navigatorView.enableNavigatorActions();
         else
             navigatorView.disableNavigatorActions();
     }
 
     public void checkMusicAndNavigate() {
-        GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
-        getMusicFromProjectUseCase.getMusicFromProject(new GetMusicFromProjectCallback() {
+        GetAudioFromProjectUseCase getAudioFromProjectUseCase = new GetAudioFromProjectUseCase();
+        getAudioFromProjectUseCase.getMusicFromProject(new GetMusicFromProjectCallback() {
             @Override
             public void onMusicRetrieved(Music music) {
                 navigatorView.goToMusic(music);
