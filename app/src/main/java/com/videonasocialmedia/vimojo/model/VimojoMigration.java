@@ -214,7 +214,7 @@ public class VimojoMigration implements RealmMigration {
           .addField("mute", Boolean.class, FieldAttribute.REQUIRED)
           .addField("position", Integer.class, FieldAttribute.REQUIRED);
 
-      RealmObjectSchema musicSchema = schema.create("RealmMusic")
+      final RealmObjectSchema musicSchema = schema.create("RealmMusic")
           .addField("uuid", String.class, FieldAttribute.PRIMARY_KEY)
           .addField("musicPath", String.class, FieldAttribute.REQUIRED)
           .addField("title", String.class, FieldAttribute.REQUIRED)
@@ -236,34 +236,34 @@ public class VimojoMigration implements RealmMigration {
 
       final RealmObjectSchema realmProject = schema.get("RealmProject");
 
-      if(!realmProject.hasField("tracks")){
-        realmProject.addRealmListField("tracks", trackSchema).transform(new RealmObjectSchema.Function() {
-          @Override
-          public void apply(DynamicRealmObject obj) {
-            DynamicRealmObject mediaTrack = realm.createObject("RealmTrack");
-            mediaTrack.setString("uuid", UUID.randomUUID().toString());
-            mediaTrack.setInt("id", Constants.INDEX_MEDIA_TRACK);
-            mediaTrack.setFloat("volume", 1f);
-            mediaTrack.setBoolean("mute", false);
-            mediaTrack.setInt("position", 0);
+      realmProject.addRealmListField("tracks", trackSchema)
+          .transform(new RealmObjectSchema.Function() {
+        @Override
+        public void apply(DynamicRealmObject obj) {
+          DynamicRealmObject mediaTrack = realm.createObject("RealmTrack");
+          mediaTrack.setString("uuid", UUID.randomUUID().toString());
+          mediaTrack.setInt("id", Constants.INDEX_MEDIA_TRACK);
+          mediaTrack.setFloat("volume", 1f);
+          mediaTrack.setBoolean("mute", false);
+          mediaTrack.setInt("position", 0);
 
-            obj.getList("tracks").add(mediaTrack);
+          obj.getList("tracks").add(mediaTrack);
 
-            final DynamicRealmObject musicTrack = realm.createObject("RealmTrack");
-            musicTrack.setString("uuid", UUID.randomUUID().toString());
-            musicTrack.setInt("id", Constants.INDEX_AUDIO_TRACK_MUSIC);
-            musicTrack.setBoolean("mute", false);
-            musicTrack.setFloat("volume", 0.5f);
-            musicTrack.setInt("position", 1);
+          final DynamicRealmObject musicTrack = realm.createObject("RealmTrack");
+          musicTrack.setString("uuid", UUID.randomUUID().toString());
+          musicTrack.setInt("id", Constants.INDEX_AUDIO_TRACK_MUSIC);
+          musicTrack.setBoolean("mute", false);
+          musicTrack.setFloat("volume", 0.5f);
+          musicTrack.setInt("position", 1);
 
-            if(realmProject.hasField("musicTitle") && realmProject.hasField("musicVolume")){
-              realmProject.transform(new RealmObjectSchema.Function() {
-                @Override
-                public void apply(DynamicRealmObject obj) {
-                String title = obj.getString("musicTitle");
-                float volume = obj.getFloat("musicVolume");
-                if(title.compareTo(com.videonasocialmedia.vimojo.utils.Constants
-                    .MUSIC_AUDIO_VOICEOVER_TITLE) == 0){
+          realmProject.transform(new RealmObjectSchema.Function() {
+            @Override
+            public void apply(DynamicRealmObject obj) {
+              String title = obj.getString("musicTitle");
+              float volume = obj.getFloat("musicVolume");
+              if (title != null) {
+                if (title.compareTo(com.videonasocialmedia.vimojo.utils.Constants
+                    .MUSIC_AUDIO_VOICEOVER_TITLE) == 0) {
                   DynamicRealmObject voiceOverTrack = realm.createObject("RealmTrack");
                   voiceOverTrack.setString("uuid", UUID.randomUUID().toString());
                   voiceOverTrack.setInt("id", Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
@@ -277,42 +277,37 @@ public class VimojoMigration implements RealmMigration {
                   musicTrack.setFloat("volume", volume);
                   obj.getList("tracks").add(musicTrack);
                 }
-                }
-              });
-            } else {
-              obj.getList("tracks").add(musicTrack);
-            }
-          }
-        });
-      }
-
-      if(!realmProject.hasField("musics")){
-        if(realmProject.hasField("musicTitle") && realmProject.hasField("musicVolume")){
-          realmProject.addRealmListField("musics", musicSchema).transform(new RealmObjectSchema.Function() {
-            @Override
-            public void apply(DynamicRealmObject obj) {
-              DynamicRealmObject music = realm.createObject("RealmMusic");
-              String title = obj.getString("musicTitle");
-              String projectPath = obj.getString("projectPath");
-              float volume = obj.getFloat("musicVolume");
-              String projectPathIntermediate = projectPath + File.separator + INTERMEDIATE_FILES;
-              Music musicFromSource = new MusicSource(VimojoApplication.getAppContext())
-                  .getMusicByTitle(projectPathIntermediate, title);
-              music.setString("uuid", UUID.randomUUID().toString());
-              music.setString("musicPath", musicFromSource.getMediaPath());
-              music.setString("title", musicFromSource.getMusicTitle());
-              music.setString("author", musicFromSource.getAuthor());
-              music.setInt("iconResourceId", musicFromSource.getIconResourceId());
-              music.setInt("duration", musicFromSource.getDuration());
-              music.setFloat("volume", volume);
-
-              obj.getList("musics").add(music);
+              } else {
+                obj.getList("tracks").add(musicTrack);
+              }
             }
           });
-        } else {
-          realmProject.addRealmListField("musics", musicSchema);
         }
-      }
+      });
+
+      realmProject.addRealmListField("musics", musicSchema)
+          .transform(new RealmObjectSchema.Function() {
+            @Override
+            public void apply(DynamicRealmObject obj) {
+              String title = obj.getString("musicTitle");
+              if(title != null) {
+                DynamicRealmObject music = realm.createObject("RealmMusic");
+                String projectPath = obj.getString("projectPath");
+                float volume = obj.getFloat("musicVolume");
+                String projectPathIntermediate = projectPath + File.separator + INTERMEDIATE_FILES;
+                Music musicFromSource = new MusicSource(VimojoApplication.getAppContext())
+                    .getMusicByTitle(projectPathIntermediate, title);
+                music.setString("uuid", musicFromSource.getUuid());
+                music.setString("musicPath", musicFromSource.getMediaPath());
+                music.setString("title", musicFromSource.getMusicTitle());
+                music.setString("author", musicFromSource.getAuthor());
+                music.setInt("iconResourceId", musicFromSource.getIconResourceId());
+                music.setInt("duration", musicFromSource.getDuration());
+                music.setFloat("volume", volume);
+                obj.getList("musics").add(music);
+              }
+            }
+          });
 
       if(realmProject.hasField("musicTitle")){
         realmProject.removeField("musicTitle");
