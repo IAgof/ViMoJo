@@ -533,6 +533,22 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     camera.resetWhiteBalanceMode();
   }
 
+  public void setExposureCompensation(int exposureCompensation) {
+    camera.setExposureCompensation(exposureCompensation);
+  }
+
+  public int getMinimumExposureCompensation() {
+    return camera.getMinimumExposureCompensation();
+  }
+
+  public int getMaximumExposureCompensation() {
+    return camera.getMaximumExposureCompensation();
+  }
+
+  public int getCurrentExposureCompensation() {
+    return camera.getCurrentExposureCompensation();
+  }
+
   private class VideoToAdapt {
     private final int position;
     private final Video video;
