@@ -66,7 +66,7 @@ public class VideoTimeLineAdapterTest {
     TimeLineVideoViewHolder videoItemViewholder
             = getVideoViewHolder(videoTimeLineAdapter);
     TimeLineVideoViewHolder holderSpy = spy(videoItemViewholder);
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     videoTimeLineAdapter.updateVideoList(Collections.singletonList(video));
 
     videoTimeLineAdapter.onBindViewHolder(holderSpy, 0);
@@ -76,7 +76,7 @@ public class VideoTimeLineAdapterTest {
 
   @Test
   public void setVideoListNotifiesDataSetChange() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     VideoTimeLineAdapter adapterSpy = Mockito.spy(videoTimeLineAdapter);
     adapterSpy.updateVideoList(Collections.singletonList(video));
 
@@ -87,7 +87,7 @@ public class VideoTimeLineAdapterTest {
   public void getItemCountReturnsVideoListSize() {
     assertThat(videoTimeLineAdapter.getItemCount(), is(0));
 
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     videoTimeLineAdapter.updateVideoList(Collections.singletonList(video));
 
     assertThat(videoTimeLineAdapter.getItemCount(), is(1));
@@ -96,9 +96,9 @@ public class VideoTimeLineAdapterTest {
   @Test
   public void onItemMoveForwards() {
     ArrayList<Video> videoList = new ArrayList<>();
-    Video video1 = new Video("video/1");
-    Video video2 = new Video("video/2");
-    Video video3 = new Video("video/3");
+    Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
+    Video video2 = new Video("video/2", Video.DEFAULT_VOLUME);
+    Video video3 = new Video("video/3", Video.DEFAULT_VOLUME);
     videoList.add(video1);
     videoList.add(video2);
     videoList.add(video3);
@@ -114,9 +114,9 @@ public class VideoTimeLineAdapterTest {
   @Test
   public void onItemMoveBackwards() {
     ArrayList<Video> videoList = new ArrayList<>();
-    Video video1 = new Video("video/1");
-    Video video2 = new Video("video/2");
-    Video video3 = new Video("video/3");
+    Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
+    Video video2 = new Video("video/2", Video.DEFAULT_VOLUME);
+    Video video3 = new Video("video/3", Video.DEFAULT_VOLUME);
     videoList.add(video1);
     videoList.add(video2);
     videoList.add(video3);
@@ -132,10 +132,10 @@ public class VideoTimeLineAdapterTest {
   @Test
   public void onItemMoveMoreThanOnePosition() {
     ArrayList<Video> videoList = new ArrayList<>();
-    Video video1 = new Video("video/1");
-    Video video2 = new Video("video/2");
-    Video video3 = new Video("video/3");
-    Video video4 = new Video("video/4");
+    Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
+    Video video2 = new Video("video/2", Video.DEFAULT_VOLUME);
+    Video video3 = new Video("video/3", Video.DEFAULT_VOLUME);
+    Video video4 = new Video("video/4", Video.DEFAULT_VOLUME);
     videoList.add(video1);
     videoList.add(video2);
     videoList.add(video3);
@@ -174,8 +174,8 @@ public class VideoTimeLineAdapterTest {
   @NonNull
   private ArrayList<Video> getVideoListWithTwoItems() {
     ArrayList<Video> videoList = new ArrayList<>();
-    Video video1 = new Video("video/1");
-    Video video2 = new Video("video/2");
+    Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
+    Video video2 = new Video("video/2", Video.DEFAULT_VOLUME);
     videoList.add(video1);
     videoList.add(video2);
     return videoList;
@@ -185,8 +185,8 @@ public class VideoTimeLineAdapterTest {
   public void updateSelection() {
     VideoTimeLineAdapter adapterSpy = Mockito.spy(videoTimeLineAdapter);
     List<Video> videoList = new ArrayList<>();
-    videoList.add(new Video("video/1"));
-    videoList.add(new Video("video/2"));
+    videoList.add(new Video("video/1", Video.DEFAULT_VOLUME));
+    videoList.add(new Video("video/2", Video.DEFAULT_VOLUME));
     adapterSpy.updateVideoList(videoList);
     assertThat(adapterSpy.getSelectedVideoPosition(), is(0));
 

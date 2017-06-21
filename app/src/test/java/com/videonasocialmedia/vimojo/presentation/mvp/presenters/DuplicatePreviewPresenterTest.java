@@ -82,7 +82,7 @@ public class DuplicatePreviewPresenterTest {
     @Config(manifest="../app/AndroidManifest.xml", shadows = {MediaMetadataRetrieverShadow.class})
     public void duplicateVideoCallsTracking() {
         Project videonaProject = getAProject();
-        Video video = new Video("/media/path", 0, 10);
+        Video video = new Video("/media/path", 1f, 0, 10);
         int numCopies = 3;
 
         /**

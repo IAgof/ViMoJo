@@ -19,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class VideoToRealmVideoMapperTest {
   @Test
   public void testMapReturnsARealmVideoInstance() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     VideoToRealmVideoMapper mapper = new VideoToRealmVideoMapper();
 
     RealmVideo realmVideo = mapper.map(video);
@@ -29,7 +29,7 @@ public class VideoToRealmVideoMapperTest {
 
   @Test
   public void testMapReturnsVideoObjectWithMappedFields() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
 //    video.fileDuration = 90;
     video.tempPath = "tmp/path";
     video.setClipText("text");
@@ -47,6 +47,7 @@ public class VideoToRealmVideoMapperTest {
     assertThat(realmVideo.uuid, is(video.getUuid()));
 //    assertThat(realmVideo.fileDuration, is(90));
     assertThat(realmVideo.tempPath, is("tmp/path"));
+    assertThat(realmVideo.volume, is(1f));
     assertThat(realmVideo.clipText, is("text"));
     assertThat(realmVideo.clipTextPosition, is(TextEffect.TextPosition.CENTER.name()));
     assertThat(realmVideo.isTextToVideoAdded, is(true));

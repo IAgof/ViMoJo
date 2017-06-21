@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.domain.editor;
 
 import android.support.annotation.NonNull;
 
+import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
  * Created by jliarte on 31/05/16.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class GetMusicFromProjectUseCaseTest {
+public class GetAudioFromProjectUseCaseTest {
     @Mock private GetMusicFromProjectCallback mockedListener;
     @Captor private ArgumentCaptor<Music> retrievedMusicCaptor;
 
@@ -53,9 +54,10 @@ public class GetMusicFromProjectUseCaseTest {
     public void constructorSetsProjectInstance() {
         Project videonaProject = getAProject();
 
-        GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
+        GetAudioFromProjectUseCase getAudioFromProjectUseCase = new GetAudioFromProjectUseCase();
 
-        assertThat("Project field set after construction", getMusicFromProjectUseCase.project, is(videonaProject));
+        assertThat("Project field set after construction", getAudioFromProjectUseCase.project,
+            is(videonaProject));
     }
 
     @Test
@@ -65,7 +67,7 @@ public class GetMusicFromProjectUseCaseTest {
         ArrayList<AudioTrack> audioTracks = getAudioTracks(project_music);
         videonaProject.setAudioTracks(audioTracks);
 
-        new GetMusicFromProjectUseCase().getMusicFromProject(mockedListener);
+        new GetAudioFromProjectUseCase().getMusicFromProject(mockedListener);
 
         Mockito.verify(mockedListener).onMusicRetrieved(retrievedMusicCaptor.capture());
         Music retrievedMusic = retrievedMusicCaptor.getValue();
@@ -77,7 +79,7 @@ public class GetMusicFromProjectUseCaseTest {
     public void getMusicFromProjectNotifiesWithNullIfNoMusic() {
         Project project = getAProject();
 
-        new GetMusicFromProjectUseCase().getMusicFromProject(mockedListener);
+        new GetAudioFromProjectUseCase().getMusicFromProject(mockedListener);
 
         Mockito.verify(mockedListener).onMusicRetrieved(retrievedMusicCaptor.capture());
         assertThat("Music retrieved when no audio tracks", retrievedMusicCaptor.getValue(), CoreMatchers.<Music>nullValue());
@@ -88,7 +90,7 @@ public class GetMusicFromProjectUseCaseTest {
     @NonNull
     public ArrayList<AudioTrack> getAudioTracks(Music music) {
         ArrayList<AudioTrack> audioTracks = new ArrayList<AudioTrack>();
-        AudioTrack audioTrack = new AudioTrack();
+        AudioTrack audioTrack = new AudioTrack(Constants.INDEX_AUDIO_TRACK_MUSIC);
         try {
             audioTrack.insertItem(music);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {

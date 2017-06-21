@@ -109,13 +109,14 @@
                     android:layout_marginRight="8dp"
                     android:layout_marginLeft="8dp">
 
-                    <ImageView
+                    <TextView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/activity_edit_sound_normal"
                         android:layout_marginRight="4dp"
                         android:layout_gravity="left"
                         android:scaleType="fitXY"
+                        android:gravity="center"
+                        android:text="@string/minVolume"
                         />
 
                     <SeekBar
@@ -134,13 +135,14 @@
                         />
 
 
-                    <ImageView
+                    <TextView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/activity_edit_sound_music_normal"
                         android:layout_marginLeft="4dp"
                         android:layout_gravity="right"
                         android:scaleType="fitXY"
+                        android:text="@string/maxVolume"
+                        android:gravity="center"
                         />
 
                 </LinearLayout>

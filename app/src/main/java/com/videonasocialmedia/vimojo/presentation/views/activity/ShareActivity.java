@@ -191,7 +191,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     }
 
     public void showPreview() {
-        List<Video> shareVideoList = Collections.singletonList(new Video(videoPath));
+        List<Video> shareVideoList = Collections.singletonList(new Video(videoPath,
+                Video.DEFAULT_VOLUME));
         videonaPlayer.initPreviewLists(shareVideoList);
         videonaPlayer.initPreview(currentPosition);
     }

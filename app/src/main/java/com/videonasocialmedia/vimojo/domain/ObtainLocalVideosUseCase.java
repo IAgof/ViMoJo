@@ -63,7 +63,8 @@ public class ObtainLocalVideosUseCase {
                     });
                     for (int i = files.length - 1; i >= 0; i--) {
                         if (files[i].getName().endsWith(".mp4") && files[i].isFile())
-                            videos.add(new Video(path + File.separator + files[i].getName()));
+                            videos.add(new Video(path + File.separator + files[i].getName(),
+                                Video.DEFAULT_VOLUME));
                     }
 
                 }

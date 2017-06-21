@@ -35,8 +35,6 @@ public class RealmProjectTest {
     realmProject.projectPath = "root/path";
     realmProject.resolution = VideoResolution.Resolution.HD720.name();
     realmProject.quality = VideoQuality.Quality.GOOD.name();
-    realmProject.musicTitle = "My cool music";
-    realmProject.musicVolume = 0.5f;
     realmProject.uuid = "123456";
     realmProject.lastModification = "Date";
     realmProject.duration = 10;
@@ -45,8 +43,6 @@ public class RealmProjectTest {
     assertThat(realmProject.projectPath, is("root/path"));
     assertThat(realmProject.resolution, is(VideoResolution.Resolution.HD720.name()));
     assertThat(realmProject.quality, is(VideoQuality.Quality.GOOD.name()));
-    assertThat(realmProject.musicTitle, is("My cool music"));
-    assertThat(realmProject.musicVolume, is(0.5f));
     assertThat(realmProject.uuid, is("123456"));
     assertThat(realmProject.lastModification, is("Date"));
     assertThat(realmProject.duration, is(10));
