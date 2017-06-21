@@ -97,7 +97,7 @@ public class Camera2WhiteBalanceHelper {
   }
 
   public void setWhiteBalanceMode(String whiteBalanceMode) {
-    if (modeIsSupported(whiteBalanceMode)) {
+    if (whiteBalanceSelectionSupported() && modeIsSupported(whiteBalanceMode)) {
       supportedWhiteBalanceValues.selectedValue = whiteBalanceMode;
       Log.d(TAG, "---------------- set white balance to "+whiteBalanceMode+" .............");
       // TODO(jliarte): 19/06/17 set wb in camera (selected) settings (for subsequents restarts) and restart preview

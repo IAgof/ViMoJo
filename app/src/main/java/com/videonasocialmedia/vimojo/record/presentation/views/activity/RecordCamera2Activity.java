@@ -41,6 +41,7 @@ import com.videonasocialmedia.vimojo.settings.presentation.views.activity.Settin
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -123,17 +124,17 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Bind(R.id.white_balance_submenu)
   View whiteBalanceSubmenuView;
   @Bind(R.id.wb_setting_auto)
-  ImageButton WBSettingAuto;
+  ImageButton wbSettingAuto;
   @Bind(R.id.wb_setting_cloudy)
-  ImageButton WBSettingCloudy;
+  ImageButton wbSettingCloudy;
   @Bind(R.id.wb_setting_daylight)
-  ImageButton WBSettingDaylight;
+  ImageButton wbSettingDaylight;
   @Bind(R.id.wb_setting_flash)
-  ImageButton WBSettingFlash;
+  ImageButton wbSettingFlash;
   @Bind(R.id.wb_setting_fluorescent)
-  ImageButton WBSettingFluorescent;
+  ImageButton wbSettingFluorescent;
   @Bind(R.id.wb_setting_incandescent)
-  ImageButton WBSettingIncandescent;
+  ImageButton wbSettingIncandescent;
 
   @Bind(R.id.button_metering_mode)
   ImageButton meteringModeButton;
@@ -189,6 +190,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private AlertDialogWithInfoIntoCircle alertDialogStorage;
 
   private HashMap<String, ImageButton> whiteBalanceModeButtons;
+  private ArrayList<ImageButton> supportedWhiteBalanceModeButtons = new ArrayList<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -256,7 +258,15 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(zoomButton, button_color);
     tintButton(isoButton, button_color);
     tintButton(afSelectionButton, button_color);
+
     tintButton(whiteBalanceButton, button_color);
+    tintButton(wbSettingAuto, button_color);
+    tintButton(wbSettingCloudy, button_color);
+    tintButton(wbSettingDaylight, button_color);
+    tintButton(wbSettingFlash, button_color);
+    tintButton(wbSettingFluorescent, button_color);
+    tintButton(wbSettingIncandescent, button_color);
+
     tintButton(meteringModeButton, button_color);
     tintButton(gridButton, button_color);
     tintButton(cameraAutoButton, button_color);
@@ -560,12 +570,14 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void setupWhiteBalanceSupportedModesButtons(List<String> values) {
     for (final String supportedWBMode : values) {
-      ImageButton WBModeButton = whiteBalanceModeButtons.get(supportedWBMode);
-      if (WBModeButton != null) {
-        WBModeButton.setVisibility(View.VISIBLE);
-        WBModeButton.setOnClickListener(new View.OnClickListener() {
+      final ImageButton wbModeButton = whiteBalanceModeButtons.get(supportedWBMode);
+      if (wbModeButton != null) {
+        supportedWhiteBalanceModeButtons.add(wbModeButton);
+        wbModeButton.setVisibility(View.VISIBLE);
+        wbModeButton.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view) {
+            selectWhiteBalanceButton(wbModeButton);
             presenter.setWhiteBalanceMode(supportedWBMode);
           }
         });
@@ -575,16 +587,27 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
   }
 
+  private void selectWhiteBalanceButton(ImageButton wbModeButton) {
+    deselectAllWhiteBalanceButtons();
+    wbModeButton.setSelected(true);
+  }
+
+  private void deselectAllWhiteBalanceButtons() {
+    for (ImageButton wbModeButton : supportedWhiteBalanceModeButtons) {
+      wbModeButton.setSelected(false);
+    }
+  }
+
   private void initWhiteBalanceModesMap() {
     whiteBalanceModeButtons = new HashMap();
-    whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_AUTO, WBSettingAuto);
-    whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_CLOUDY_DAYLIGHT, WBSettingCloudy);
-    whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_DAYLIGHT, WBSettingDaylight);
-    whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_FLASH, WBSettingFlash);
+    whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_AUTO, wbSettingAuto);
+    whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_CLOUDY_DAYLIGHT, wbSettingCloudy);
+    whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_DAYLIGHT, wbSettingDaylight);
+    whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_FLASH, wbSettingFlash);
     whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_FLUORESCENT,
-            WBSettingFluorescent);
+            wbSettingFluorescent);
     whiteBalanceModeButtons.put(Camera2WhiteBalanceHelper.WB_MODE_INCANDESCENT,
-            WBSettingIncandescent);
+            wbSettingIncandescent);
   }
 
   @Override
@@ -921,6 +944,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     hideISOSelectionSubmenu();
     hideAFSelectionSubmenu();
     hideWhiteBalanceSubmenu();
+    deselectAllWhiteBalanceButtons();
     presenter.resetWhiteBalanceMode();
     hideMeteringModeSelectionSubmenu();
   }
