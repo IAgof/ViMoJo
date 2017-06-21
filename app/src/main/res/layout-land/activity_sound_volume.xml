@@ -68,25 +68,27 @@
                 android:layout_centerHorizontal="true"
                 android:thumb="@drawable/ic_circular_thumb_seekbar"/>
 
-            <ImageView
+            <TextView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/activity_edit_sound_normal"
                 android:layout_marginLeft="8dp"
                 android:layout_marginBottom="8dp"
                 android:scaleType="fitXY"
                 android:layout_above="@+id/seekBar_volume_sound"
-                android:layout_alignStart="@+id/seekBar_volume_sound" />
+                android:layout_alignStart="@+id/seekBar_volume_sound"
+                android:text="@string/minVolume"
+                android:gravity="center"/>
 
-            <ImageView
+            <TextView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/activity_sound_volume_ic_microphone"
                 android:layout_marginRight="16dp"
                 android:scaleType="fitXY"
                 android:layout_above="@+id/seekBar_volume_sound"
                 android:layout_alignEnd="@+id/seekBar_volume_sound"
                 android:layout_marginBottom="8dp"
+                android:text="@string/maxVolume"
+                android:gravity="center"
                 />
         </RelativeLayout>
     </LinearLayout>

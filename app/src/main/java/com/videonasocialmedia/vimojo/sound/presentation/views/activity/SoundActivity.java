@@ -10,24 +10,19 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
@@ -35,10 +30,9 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.AudioTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
-import com.videonasocialmedia.vimojo.sound.presentation.views.adapter.AudioTimeLineAdapter;
-import com.videonasocialmedia.vimojo.sound.presentation.views.adapter.MusicTimeLineAdapter;
+import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack;
+import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrackListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.FabUtils;
 
@@ -50,13 +44,15 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static butterknife.ButterKnife.findById;
+
 /**
  * Created by ruth on 4/10/16.
  */
 
-public class SoundActivity extends EditorActivity implements SoundView,
-        VideoTranscodingErrorNotifier, VideonaPlayer.VideonaPlayerListener,
-        AudioTimeLineRecyclerViewClickListener {
+public class SoundActivity extends EditorActivity implements VideonaPlayer.VideonaPlayerListener,
+    SoundView, CardViewAudioTrackListener{
+
   private static final String SOUND_ACTIVITY_PROJECT_POSITION = "sound_activity_project_position";
   private static final String TAG = "SoundActivity";
   private final int ID_BUTTON_FAB_TOP=1;
@@ -70,14 +66,15 @@ public class SoundActivity extends EditorActivity implements SoundView,
   BottomBar bottomBar;
   @Nullable @Bind(R.id.relative_layout_activity_sound)
   RelativeLayout relativeLayoutActivitySound;
-  @Nullable @Bind(R.id.recyclerview_editor_timeline_audio_blocks)
-  RecyclerView audioListRecyclerView;
-  @Nullable @Bind(R.id.recyclerview_editor_timeline_music_blocks)
-  RecyclerView musicListRecyclerView;
-  @Nullable @Bind(R.id.recyclerview_editor_timeline_voice_over_blocks)
-  RecyclerView voiceOverListRecyclerView;
-  @Nullable @Bind(R.id.cardview_audio_blocks_voice_over)
-  CardView cardViewAudioBlocksVoiceOver;
+
+  @Nullable @Bind(R.id.cardview_audio_blocks_clips_video)
+  CardViewAudioTrack trackClipsVideo;
+  @Nullable @Bind(R.id.cardview_audio_blocks_clips_audio_track_first)
+  CardViewAudioTrack trackClipsAudioTrackFirst;
+  @Nullable @Bind(R.id.cardview_audio_blocks_clips_audio_track_second)
+  CardViewAudioTrack trackClipsAudioTrackSecond;
+  @Nullable @Bind(R.id.scrollview_timeline_audio_blocks)
+  ScrollView scrollViewTimeLineAudioBlocks;
   @Nullable @Bind(R.id.button_sound_warning_transcoding_file)
   ImageButton warningTranscodingFilesButton;
 
@@ -86,10 +83,6 @@ public class SoundActivity extends EditorActivity implements SoundView,
   private BroadcastReceiver exportReceiver;
   private int currentProjectPosition = 0;
 
-  private AudioTimeLineAdapter audioTimeLineAdapter;
-  private MusicTimeLineAdapter musicTimeLineAdapter;
-  private MusicTimeLineAdapter voiceOverTimeLineAdapter;
-  private int currentAudioIndex = 0;
   private boolean voiceOverActivated;
   private FloatingActionButton fabVoiceOver;
   private String warningTranscodingFilesMessage;
@@ -119,9 +112,6 @@ public class SoundActivity extends EditorActivity implements SoundView,
             break;
           case (R.id.tab_share):
             navigateTo(ShareActivity.class);
-            /*Intent intent = new Intent(VimojoApplication.getAppContext(), ExportProjectService.class);
-            Snackbar.make(relativeLayoutActivitySound, "Starting export", Snackbar.LENGTH_INDEFINITE).show();
-            VimojoApplication.getAppContext().startService(intent);*/
             break;
         }
       }
@@ -129,8 +119,8 @@ public class SoundActivity extends EditorActivity implements SoundView,
   }
 
   private void setupFab() {
-    addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.activity_edit_sound_music_normal,R.color.colorWhite);
-    fabMenu.expand();
+    addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.activity_edit_sound_music_normal,
+        R.color.colorWhite);
   }
   protected void addAndConfigurateFabButton(int id, int icon, int color) {
     FloatingActionButton newFabMini = FabUtils.createNewFabMini(id, icon, color);
@@ -220,7 +210,6 @@ public class SoundActivity extends EditorActivity implements SoundView,
 
   @Override
   protected void onStart() {
-    initAudioBlockListRecycler();
     super.onStart();
   }
 
@@ -228,22 +217,32 @@ public class SoundActivity extends EditorActivity implements SoundView,
   public void bindVideoList(List<Video> movieList) {
     videonaPlayer.bindVideoList(movieList);
     videonaPlayer.seekTo(currentProjectPosition);
-    audioTimeLineAdapter.setAudioList(movieList);
+    presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
+        .INDEX_MEDIA_TRACK);
+  }
+
+  @Override
+  public void updateVideoList(List<Video> videoList) {
+    videonaPlayer.initPreviewLists(videoList);
   }
 
   @Override
   public void bindMusicList(List<Music> musicList) {
-    musicTimeLineAdapter.setMusicList(musicList);
+    videonaPlayer.setMusic(musicList.get(0));
+    presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
+        .INDEX_AUDIO_TRACK_MUSIC);
   }
 
   @Override
   public void bindVoiceOverList(List<Music> voiceOverList) {
-   voiceOverTimeLineAdapter.setMusicList(voiceOverList);
+    videonaPlayer.setVoiceOver(voiceOverList.get(0));
+    presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
+        .INDEX_AUDIO_TRACK_VOICE_OVER);
   }
 
   @Override
   public void hideVoiceOverCardView() {
-    cardViewAudioBlocksVoiceOver.setVisibility(View.GONE);
+    trackClipsAudioTrackSecond.setVisibility(View.GONE);
   }
 
   @Override
@@ -271,6 +270,64 @@ public class SoundActivity extends EditorActivity implements SoundView,
   }
 
   @Override
+  public void setVideoVolume(float volume) {
+    videonaPlayer.setVideoVolume(volume);
+  }
+
+  @Override
+  public void setVoiceOverVolume(float volume) {
+    videonaPlayer.setVoiceOverVolume(volume);
+  }
+
+  @Override
+  public void setMusicVolume(float volume) {
+    videonaPlayer.setMusicVolume(volume);
+  }
+
+  @Override
+  public void bindTrack(Track track) {
+    switch (track.getId()) {
+      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_MEDIA_TRACK:
+        trackClipsVideo.setListener(this);
+        trackClipsVideo.setTrack(track);
+        break;
+      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC:
+          if(track.getPosition() == 1) {
+            trackClipsAudioTrackFirst.setListener(this);
+            trackClipsAudioTrackFirst.setTrack(track);
+          }else {
+            trackClipsAudioTrackSecond.setListener(this);
+            trackClipsAudioTrackSecond.setTrack(track);
+          }
+        break;
+      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
+        if(track.getPosition() == 1) {
+          trackClipsAudioTrackFirst.setListener(this);
+          trackClipsAudioTrackFirst.setTrack(track);
+        }else {
+          trackClipsAudioTrackSecond.setListener(this);
+          trackClipsAudioTrackSecond.setTrack(track);
+        }
+        break;
+    }
+  }
+
+  @Override
+  public void showTrackVideo() {
+    trackClipsVideo.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void showTrackAudioFirst() {
+    trackClipsAudioTrackFirst.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void showTrackAudioSecond() {
+    trackClipsAudioTrackSecond.setVisibility(View.VISIBLE);
+  }
+
+  @Override
   public void showWarningTempFile() {
     warningTranscodingFilesButton.setVisibility(View.VISIBLE);
   }
@@ -280,50 +337,65 @@ public class SoundActivity extends EditorActivity implements SoundView,
     warningTranscodingFilesMessage = messageTempFile;
   }
 
-
   @Nullable @Override
   public void newClipPlayed(int currentClipIndex) {
-    currentAudioIndex = currentClipIndex;
-    audioTimeLineAdapter.updateSelection(currentClipIndex);
-    audioListRecyclerView.scrollToPosition(currentClipIndex);
-  }
-
-  private void initAudioBlockListRecycler() {
-    int orientation = LinearLayoutManager.HORIZONTAL;
-    int num_grid_columns = 1;
-    RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, num_grid_columns,
-        orientation, false);
-    audioListRecyclerView.setLayoutManager(layoutManager);
-    audioTimeLineAdapter = new AudioTimeLineAdapter(this);
-    audioListRecyclerView.setAdapter(audioTimeLineAdapter);
-
-    RecyclerView.LayoutManager layoutManager2 = new GridLayoutManager(this, num_grid_columns,
-        orientation, false);
-    musicTimeLineAdapter = new MusicTimeLineAdapter(this);
-    musicListRecyclerView.setLayoutManager(layoutManager2);
-    musicListRecyclerView.setAdapter(musicTimeLineAdapter);
-
-    RecyclerView.LayoutManager layoutManager3 = new GridLayoutManager(this, num_grid_columns,
-        orientation, false);
-    voiceOverTimeLineAdapter = new MusicTimeLineAdapter(this);
-    voiceOverListRecyclerView.setLayoutManager(layoutManager3);
-    voiceOverListRecyclerView.setAdapter(voiceOverTimeLineAdapter);
+    trackClipsVideo.updateClipSelection(currentClipIndex);
+    presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
+        .INDEX_MEDIA_TRACK);
   }
 
   @Override
-  public void onAudioClipClicked(int position) {
-    Log.d(TAG, "onAudioClipClicked, position " + position);
+  public void setSeekBarProgress(int id, int seekBarProgress) {
+    presenter.setTrackVolume(id, seekBarProgress);
+
   }
 
   @Override
-  public void onMusicClipClicked(int position) {
-    //navigateTo(MusicListActivity.class);
+  public void setSwitchMuteAudio(int id, boolean isChecked) {
+    presenter.setTrackMute(id, isChecked);
   }
 
   @Override
-  public void onVoiceOverClipClicked(int position) {
-    //navigateTo(VoiceOverActivity.class);
+  public void onClickExpandInfoTrack(int positionInTrack) {
+    switch (positionInTrack){
+      case 0:
+        focusOnView(trackClipsVideo);
+        break;
+      case 1:
+        focusOnView(trackClipsAudioTrackFirst);
+        break;
+      case 2:
+        focusOnView(trackClipsAudioTrackSecond);
+        break;
+    }
   }
+
+  @Override
+  public void onClickMediaClip(int position, int trackId) {
+    videonaPlayer.seekToClip(position);
+    presenter.updateClipPlayed(trackId);
+    // TODO:(alvaro.martinez) 31/05/17 If Vimojo support more than one music or voice over, update and calculate correct position
+    switch (trackId){
+      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_MEDIA_TRACK:
+        break;
+      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC:
+        trackClipsVideo.updateClipSelection(position);
+        break;
+      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
+        trackClipsVideo.updateClipSelection(position);
+        break;
+    }
+  }
+
+  private final void focusOnView(final View view) {
+    scrollViewTimeLineAudioBlocks.post(new Runnable() {
+      @Override
+      public void run() {
+        scrollViewTimeLineAudioBlocks.scrollTo(0, view.getTop());
+      }
+    });
+  }
+
 
   @Nullable @OnClick(R.id.button_sound_warning_transcoding_file)
   public void onClickWarningTranscodingFile(){

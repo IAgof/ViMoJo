@@ -14,9 +14,14 @@ public interface MusicDetailView {
 
     void bindVideoList(List<Video> movieList);
 
+    void setVoiceOver(Music voiceOver);
+
     void setMusic(Music music, boolean scene);
 
     void goToSoundActivity();
     
     void setVideoFadeTransitionAmongVideos();
+
+    void showError(String message);
+
 }

@@ -28,7 +28,6 @@ import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
-import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
@@ -54,7 +53,7 @@ public class VimojoApplication extends Application {
      * lazy initialization of state) since the time spent in this function
      * directly impacts the performance of starting the first activity,
      * service, or receiver in a process.
-     * If you override this method, be sure to call super.init().
+     * If you override this method, be sure to call super.onCreate().
      */
     @Override
     public void onCreate() {
@@ -124,7 +123,7 @@ public class VimojoApplication extends Application {
     protected void setupDataBase() {
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
                 .name("vimojoDB")
-                .schemaVersion(6) // 25042017 - v0.4.23 21070227
+                .schemaVersion(7) // 20062017 - v0.4.23 21070227
                 .migration(new VimojoMigration())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);
