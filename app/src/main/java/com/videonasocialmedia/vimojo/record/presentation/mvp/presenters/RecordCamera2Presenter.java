@@ -149,10 +149,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     if (!camera.whiteBalanceSelectionSupported()) {
       recordView.hideWhiteBalanceSelection();
     } else {
-      recordView.setupWhiteBalanceSupportedModesButtons(camera.getSupportedWhiteBalanceModes().values);
+      recordView.setupWhiteBalanceSupportedModesButtons(
+              camera.getSupportedWhiteBalanceModes().values);
     }
     if (!camera.metteringModeSelectionSupported()) {
       recordView.hideMetteringModeSelection();
+    } else {
+      recordView.setupMeteringModeSupportedModesButtons(
+              camera.getSupportedMeteringModes().values);
     }
   }
 
@@ -525,12 +529,20 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     recordView.showAlertDialogBattery();
   }
 
+  // ------------------ white balance settings --------------------
+
+  public void resetWhiteBalanceMode() {
+    camera.resetWhiteBalanceMode();
+  }
+
   public void setWhiteBalanceMode(String whiteBalanceMode) {
     camera.setWhiteBalanceMode(whiteBalanceMode);
   }
 
-  public void resetWhiteBalanceMode() {
-    camera.resetWhiteBalanceMode();
+  // ------------------ metering-exposure settings --------------------
+
+  public void resetMeteringMode() {
+    camera.resetMeteringMode();
   }
 
   public void setExposureCompensation(int exposureCompensation) {
@@ -548,6 +560,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public int getCurrentExposureCompensation() {
     return camera.getCurrentExposureCompensation();
   }
+
+  // --------------------------------------------------------------
 
   private class VideoToAdapt {
     private final int position;

@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.videonasocialmedia.avrecorder.view.CustomManualFocusView;
+import com.videonasocialmedia.camera.camera2.Camera2MeteringModeHelper;
 import com.videonasocialmedia.camera.camera2.Camera2WhiteBalanceHelper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.R;
@@ -284,7 +285,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(wbSettingIncandescent, button_color);
 
     tintButton(meteringModeButton, button_color);
+    tintButton(meteringModeAuto, button_color);
     tintButton(meteringModeExposureCompensation, button_color);
+    tintButton(meteringModeCenter, button_color);
+    tintButton(meteringModeSpot, button_color);
+
 
     tintButton(gridButton, button_color);
     tintButton(cameraAutoButton, button_color);
@@ -295,7 +300,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       @Override
       public void onChronometerTick(Chronometer chronometer) {
         long elapsedTime = SystemClock.elapsedRealtime() - chronometer.getBase();
-
         int h = (int) (elapsedTime / 3600000);
         int m = (int) (elapsedTime - h * 3600000) / 60000;
         int s = (int) (elapsedTime - h * 3600000 - m * 60000) / 1000;
@@ -588,6 +592,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void setupWhiteBalanceSupportedModesButtons(List<String> values) {
+    wbSettingAuto.setSelected(true);
     for (final String supportedWBMode : values) {
       final ImageButton wbModeButton = whiteBalanceModeButtons.get(supportedWBMode);
       if (wbModeButton != null) {
@@ -629,15 +634,37 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
             wbSettingIncandescent);
   }
 
+  @Override
+  public void setupMeteringModeSupportedModesButtons(List<String> supportedMeteringModes) {
+    meteringModeAuto.setSelected(true);
+    if (supportedMeteringModes.contains(Camera2MeteringModeHelper.AE_MODE_EXPOSURE_COMPENSATION)) {
+      meteringModeExposureCompensation.setVisibility(View.VISIBLE);
+    }
+    if (supportedMeteringModes.contains(Camera2MeteringModeHelper.AE_MODE_OFF)) {
+      meteringModeCenter.setVisibility(View.VISIBLE);
+      meteringModeSpot.setVisibility(View.VISIBLE);
+    }
+  }
+
+  private void deselectAllMeteringModeButtons() {
+    meteringModeAuto.setSelected(false);
+    meteringModeExposureCompensation.setSelected(false);
+    meteringModeCenter.setSelected(false);
+    meteringModeSpot.setSelected(false);
+  }
+
+  @OnClick(R.id.metering_mode_auto)
+  public void clickAutoExposureButton() {
+    deselectAllMeteringModeButtons();
+    meteringModeAuto.setSelected(true);
+    presenter.resetMeteringMode();
+  }
+
   @OnClick(R.id.metering_mode_exposure_compensation)
   public void clickExposureCompensationButton() {
-    if (meteringModeExposureCompensation.isSelected()) {
-      meteringModeExposureCompensation.setSelected(false);
-      hideExposureCompensationSubmenu();
-    } else {
-      meteringModeExposureCompensation.setSelected(true);
-      showExposureCompensationSubmenu();
-    }
+    deselectAllMeteringModeButtons();
+    meteringModeExposureCompensation.setSelected(true);
+    showExposureCompensationSubmenu();
   }
 
   private void hideExposureCompensationSubmenu() {
@@ -1006,10 +1033,16 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
     hideISOSelectionSubmenu();
     hideAFSelectionSubmenu();
+
     hideWhiteBalanceSubmenu();
     deselectAllWhiteBalanceButtons();
+    wbSettingAuto.setSelected(true);
     presenter.resetWhiteBalanceMode();
+
     hideMeteringModeSelectionSubmenu();
+    deselectAllWhiteBalanceButtons();
+    meteringModeAuto.setSelected(true);
+    presenter.resetMeteringMode();
   }
 
   private void showZoomSelectionSubmenu() {

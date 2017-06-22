@@ -454,6 +454,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     previewSession = cameraCaptureSession;
     updatePreview();
     camera2WhiteBalanceHelper.setCurrentWhiteBalanceMode();
+    camera2MeteringModeHelper.setCurrentMeteringMode();
     setCurrentFlashSettings();
   }
 
@@ -728,6 +729,14 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public void setExposureCompensation(int exposureCompensation) {
     camera2MeteringModeHelper.setExposureCompensation(exposureCompensation);
+  }
+
+  public CameraFeatures.SupportedValues getSupportedMeteringModes() {
+    return camera2MeteringModeHelper.getSupportedMeteringModes();
+  }
+
+  public void resetMeteringMode() {
+    camera2MeteringModeHelper.resetMeteringMode();
   }
 
   public interface RecordStartedCallback {

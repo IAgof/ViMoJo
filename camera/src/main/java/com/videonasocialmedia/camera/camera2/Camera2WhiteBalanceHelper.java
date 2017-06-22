@@ -86,12 +86,12 @@ public class Camera2WhiteBalanceHelper {
     return supportedWhiteBalanceValues;
   }
 
-  public void setCurrentWhiteBalanceMode() {
-    setWhiteBalanceMode(supportedWhiteBalanceValues.selectedValue);
-  }
-
   public void resetWhiteBalanceMode() {
     setWhiteBalanceMode(WB_MODE_AUTO);
+  }
+
+  public void setCurrentWhiteBalanceMode() {
+    setWhiteBalanceMode(supportedWhiteBalanceValues.selectedValue);
   }
 
   public void setWhiteBalanceMode(String whiteBalanceMode) {

@@ -8,22 +8,19 @@ import android.util.Log;
 import android.util.Range;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 
 /**
  * Created by jliarte on 26/05/17.
  */
 
-class Camera2MeteringModeHelper {
+public class Camera2MeteringModeHelper {
   private static final String TAG = Camera2MeteringModeHelper.class.getCanonicalName();
-  private static final Integer DEFAULT_AE_MODE = CameraMetadata.CONTROL_AE_MODE_ON;
-  private static final String AE_MODE_OFF = "ae_off";
-  private static final String AE_MODE_ON = "ae_on";
-  private static final String AE_MODE_ON_ALWAYS_FLASH = "ae_on_always_flash";
-  private static final String AE_MODE_ON_AUTO_FLASH = "ae_on_auto_flash";
-  private static final String AE_MODE_ON_AUTO_FLASH_REDEYE = "ae_on_auto_flash_redeye";
+  public static final String AE_MODE_ON = "ae_on";
+  public static final String AE_MODE_OFF = "ae_off";
+  public static final String AE_MODE_EXPOSURE_COMPENSATION = "ae_exposure_compensation";
+  private static final String DEFAULT_AE_MODE = AE_MODE_ON;
   private final Camera2Wrapper camera2Wrapper;
-  private HashMap<Integer, String> aeMap;
   private CameraFeatures.SupportedValues supportedAEValues;
   private int aeRegions;
   private int minExposureCompensation = 0;
@@ -33,50 +30,57 @@ class Camera2MeteringModeHelper {
 
   public Camera2MeteringModeHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;
-    initAEMap();
     setupSupportedValues();
-  }
-
-  private void initAEMap() {
-    this.aeMap = new HashMap<>();
-    this.aeMap.put(CameraMetadata.CONTROL_AE_MODE_OFF, AE_MODE_OFF);
-    this.aeMap.put(CameraMetadata.CONTROL_AE_MODE_ON, AE_MODE_ON);
-    this.aeMap.put(CameraMetadata.CONTROL_AE_MODE_ON_ALWAYS_FLASH, AE_MODE_ON_ALWAYS_FLASH);
-    this.aeMap.put(CameraMetadata.CONTROL_AE_MODE_ON_AUTO_FLASH, AE_MODE_ON_AUTO_FLASH);
-    this.aeMap.put(CameraMetadata.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE,
-            AE_MODE_ON_AUTO_FLASH_REDEYE);
   }
 
   private void setupSupportedValues() {
     try {
       ArrayList<String> aeStringArrayList = new ArrayList<>();
+      aeStringArrayList.add(AE_MODE_ON);
       CameraCharacteristics cameraCharacteristics = camera2Wrapper.getCurrentCameraCharacteristics();
       int [] returnedValues = cameraCharacteristics
               .get(CameraCharacteristics.CONTROL_AE_AVAILABLE_MODES);
-      for (int aeSetting : returnedValues) {
-        aeStringArrayList.add(convertAEToString(aeSetting));
+      if (Arrays.asList(returnedValues).contains(CameraMetadata.CONTROL_AE_MODE_OFF)) {
+        aeStringArrayList.add(AE_MODE_OFF);
+      }
+      Range<Integer> exposure_range = cameraCharacteristics
+              .get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+      minExposureCompensation = exposure_range != null ? exposure_range.getLower() : 0;
+      maxExposureCompensation = exposure_range != null ? exposure_range.getUpper() : 0;
+      exposureStep = cameraCharacteristics
+              .get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP).floatValue();
+      if (minExposureCompensation != maxExposureCompensation) {
+        aeStringArrayList.add(AE_MODE_EXPOSURE_COMPENSATION);
       }
       this.supportedAEValues = new CameraFeatures.SupportedValues(
               aeStringArrayList, getDefaultAESetting());
 
-      aeRegions = cameraCharacteristics
+      this.aeRegions = cameraCharacteristics
               .get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE);
-
-      Range<Integer> exposure_range = cameraCharacteristics
-              .get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
-      minExposureCompensation = exposure_range.getLower();
-      maxExposureCompensation = exposure_range.getUpper();
-      exposureStep = cameraCharacteristics
-              .get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP).floatValue();
-      Log.d(TAG, "ae");
     } catch (CameraAccessException e) {
       Log.e(TAG, "failed to get camera characteristics");
       Log.e(TAG, "reason: " + e.getReason());
       Log.e(TAG, "message: " + e.getMessage());
+    } catch (NullPointerException npe) {
+      Log.e(TAG, "Caught NullPointerException while getting camera metering capabilities", npe);
+    }
+  }
+
+  public void resetMeteringMode() {
+    if (supportedAEValues.selectedValue.equals(AE_MODE_EXPOSURE_COMPENSATION)) {
+      currentExposureCompensation = 0;
+      setExposureCompensation(0);
+    }
+  }
+
+  public void setCurrentMeteringMode() {
+    if (supportedAEValues.selectedValue.equals(AE_MODE_EXPOSURE_COMPENSATION)) {
+      setExposureCompensation(currentExposureCompensation);
     }
   }
 
   public void setExposureCompensation(int exposureCompensation) {
+    supportedAEValues.selectedValue = AE_MODE_EXPOSURE_COMPENSATION;
     currentExposureCompensation = exposureCompensation;
     Log.d(TAG, "---------------- set exposure compensation to "
             +exposureCompensation+" .............");
@@ -86,15 +90,11 @@ class Camera2MeteringModeHelper {
   }
 
   private String getDefaultAESetting() {
-    return aeMap.get(DEFAULT_AE_MODE);
-  }
-
-  private String convertAEToString(int aeSetting) {
-    return null;
+    return DEFAULT_AE_MODE;
   }
 
   public boolean metteringModeSelectionSupported() {
-    return true;
+    return supportedAEValues.values.size() > 1;
   }
 
   public int getMinimumExposureCompensation() {
@@ -107,5 +107,9 @@ class Camera2MeteringModeHelper {
 
   public int getCurrentExposureCompensation() {
     return currentExposureCompensation;
+  }
+
+  public CameraFeatures.SupportedValues getSupportedMeteringModes() {
+    return supportedAEValues;
   }
 }

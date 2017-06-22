@@ -421,6 +421,7 @@
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_brightness_adjust"
+                android:visibility="invisible"
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
@@ -431,6 +432,7 @@
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_metering_center"
+                android:visibility="invisible"
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
@@ -441,6 +443,7 @@
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_brightness_manual"
+                android:visibility="invisible"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 />
