@@ -714,6 +714,22 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2WhiteBalanceHelper.resetWhiteBalanceMode();
   }
 
+  public int getMinimumExposureCompensation() {
+    return camera2MeteringModeHelper.getMinimumExposureCompensation();
+  }
+
+  public int getMaximumExposureCompensation() {
+    return camera2MeteringModeHelper.getMaximumExposureCompensation();
+  }
+
+  public int getCurrentExposureCompensation() {
+    return camera2MeteringModeHelper.getCurrentExposureCompensation();
+  }
+
+  public void setExposureCompensation(int exposureCompensation) {
+    camera2MeteringModeHelper.setExposureCompensation(exposureCompensation);
+  }
+
   public interface RecordStartedCallback {
     void onRecordStarted();
   }

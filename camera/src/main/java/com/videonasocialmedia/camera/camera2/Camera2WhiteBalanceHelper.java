@@ -28,13 +28,11 @@ public class Camera2WhiteBalanceHelper {
   public static final String WB_MODE_WARM_FLUORESCENT = "warm-fluorescent";
   public static final String WB_MODE_MANUAL = "manual";
   private final Camera2Wrapper camera2Wrapper;
-  private final CameraFeatures cameraFeatures;
   private final HashMap<Integer, String> whiteBalanceMap = new HashMap<>();
   private CameraFeatures.SupportedValues supportedWhiteBalanceValues;
 
   public Camera2WhiteBalanceHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;
-    this.cameraFeatures = new CameraFeatures();
     initWhiteBalanceMap();
     setupSupportedValues();
   }
@@ -100,7 +98,6 @@ public class Camera2WhiteBalanceHelper {
     if (whiteBalanceSelectionSupported() && modeIsSupported(whiteBalanceMode)) {
       supportedWhiteBalanceValues.selectedValue = whiteBalanceMode;
       Log.d(TAG, "---------------- set white balance to "+whiteBalanceMode+" .............");
-      // TODO(jliarte): 19/06/17 set wb in camera (selected) settings (for subsequents restarts) and restart preview
       camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AWB_MODE,
               getCameraMetadataWBFromString(whiteBalanceMode));
       camera2Wrapper.updatePreview();
