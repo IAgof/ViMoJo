@@ -2,7 +2,12 @@ package com.videonasocialmedia.vimojo.repository.project;
 
 import android.support.annotation.NonNull;
 
+import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -14,6 +19,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -40,6 +48,7 @@ public class ProjectToRealmProjectMapperTest {
   public void testMapSetsRealmProjectFieldsFromProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
+
     Project project = new Project("Project title", "root/path", profile);
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
@@ -52,35 +61,9 @@ public class ProjectToRealmProjectMapperTest {
   }
 
   @Test
-  public void testMapSetsRealmProjectMusicTitle() throws IllegalItemOnTrack {
-    Project project = getAProject();
-    Music music = new Music("music/path", 0);
-    music.setMusicTitle("Music title");
-    project.getAudioTracks().get(0).insertItemAt(0, music);
-    ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
-
-    RealmProject realmProject = mapper.map(project);
-
-    assertThat(realmProject.musicTitle, is(music.getMusicTitle()));
-  }
-
-  @Test
-  public void testMapSetsRealmProjectMusicVolume() throws IllegalItemOnTrack {
-    Project project = getAProject();
-    Music music = new Music("music/path", 0.8f, 0);
-    music.setMusicTitle("Music title");
-    project.getAudioTracks().get(0).insertItemAt(0, music);
-    ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
-
-    RealmProject realmProject = mapper.map(project);
-
-    assertThat(realmProject.musicVolume, is(0.8f));
-  }
-
-  @Test
   public void testMapSetsRealmProjectVideos() throws IllegalItemOnTrack {
     Project project = getAProject();
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     project.getMediaTrack().insertItem(video);
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
@@ -89,10 +72,74 @@ public class ProjectToRealmProjectMapperTest {
     assertThat(realmProject.videos.size(), is(1));
   }
 
+  @Test
+  public void testMapSetsRealmProjectMusics() throws IllegalItemOnTrack {
+    Project project = getAProject();
+    Music music = new Music("media/path", 1f, 60);
+    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
+    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
+    ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
+
+    RealmProject realmProject = mapper.map(project);
+
+    assertThat(realmProject.musics.size(), is(2));
+  }
+
+  @Test
+  public void testMapSetsRealmProjectVoiceOver() throws IllegalItemOnTrack {
+    Project project = getAProject();
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    Music voiceOver = new Music(com.videonasocialmedia.vimojo.utils
+        .Constants.MUSIC_AUDIO_VOICEOVER_TITLE, 0.5f, 60);
+    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(voiceOver);
+    assertThat("Project has voice over", project.hasVoiceOver(), is(true));
+    ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
+
+    RealmProject realmProject = mapper.map(project);
+
+    assertThat(realmProject.musics.size(), is(1));
+  }
+
+  @Test
+  public void testMapSetsRealmProjectMusicAndVoiceOver() throws IllegalItemOnTrack {
+    Project project = getAProject();
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    Music voiceOver = new Music(com.videonasocialmedia.vimojo.utils
+        .Constants.MUSIC_AUDIO_VOICEOVER_TITLE, 0.5f, 60);
+    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(voiceOver);
+    Music music = new Music("media/path", 0.5f, 60);
+    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
+    assertThat("Project has voice over", project.hasVoiceOver(), is(true));
+    ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
+
+    RealmProject realmProject = mapper.map(project);
+
+    assertThat(realmProject.musics.size(), is(2));
+  }
+
+  @Test
+  public void testMapSetsRealmProjectTracks() throws IllegalItemOnTrack {
+    Project project = getAProject();
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    Music voiceOver = new Music(com.videonasocialmedia.vimojo.utils
+        .Constants.MUSIC_AUDIO_VOICEOVER_TITLE, 0.5f, 60);
+    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(voiceOver);
+    Music music = new Music("media/path", 0.5f, 60);
+    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
+    assertThat("Project has MediaTrack", project.getMediaTrack(), notNullValue());
+    assertThat("Project has two AudioTrack", project.getAudioTracks().size(), is(2));
+    ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
+
+    RealmProject realmProject = mapper.map(project);
+
+    assertThat(realmProject.tracks.size(), is(3));
+  }
+
   // TODO(jliarte): 23/10/16 what to do in this case? exception in realm
   //                   java.lang.IllegalArgumentException: Null objects cannot be copied into Realm.
   @Test
   public void testMapReturnsNullRealmProjectIfNullProjectProfile() {
+
     Project project = new Project("title", "root/path", null);
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
@@ -107,4 +154,5 @@ public class ProjectToRealmProjectMapperTest {
             VideoFrameRate.FrameRate.FPS25);
     return new Project("Project title", "root/path", profile);
   }
+
 }

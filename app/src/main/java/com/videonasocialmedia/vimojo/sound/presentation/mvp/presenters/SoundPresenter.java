@@ -1,17 +1,19 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 
 import java.util.ArrayList;
@@ -22,30 +24,32 @@ import javax.inject.Inject;
 /**
  * Created by ruth on 13/09/16.
  */
-public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback {
-  private SoundView soundView;
-  private final VideoTranscodingErrorNotifier videoTranscodingErrorNotifier;
-  private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    private GetMusicFromProjectUseCase getMusicFromProjectUseCase;
-    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
-    private final Project currentProject;
-  // TODO(jliarte): 2/05/17 inject delegate?
-  final VideoListErrorCheckerDelegate videoListErrorCheckerDelegate
-          = new VideoListErrorCheckerDelegate();
+public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback,
+    VideoTranscodingErrorNotifier {
 
-  @Inject
+  private SoundView soundView;
+  private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+  private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
+  private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
+  private ModifyTrackUseCase modifyTrackUseCase;
+  private final Project currentProject;
+  public VideoListErrorCheckerDelegate videoListErrorCheckerDelegate;
+  public static final float VOLUME_MUTE = 0f;
+
+   @Inject
     public SoundPresenter(SoundView soundView,
-                          VideoTranscodingErrorNotifier videoTranscodingErrorNotifier,
-                          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                          GetMusicFromProjectUseCase getMusicFromProjectUseCase,
-                          GetPreferencesTransitionFromProjectUseCase
-                                      getPreferencesTransitionFromProjectUseCase) {
-      this.soundView = soundView;
-      this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;
-      this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
-      this.getMusicFromProjectUseCase = getMusicFromProjectUseCase;
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+        GetAudioFromProjectUseCase getAudioFromProjectUseCase,
+        GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+        ModifyTrackUseCase modifyTrackUseCase, VideoListErrorCheckerDelegate
+                                 videoListErrorCheckerDelegate) {
+        this.soundView = soundView;
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
         this.currentProject = loadCurrentProject();
         this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
+        this.modifyTrackUseCase = modifyTrackUseCase;
+        this.videoListErrorCheckerDelegate = videoListErrorCheckerDelegate;
     }
 
     public Project loadCurrentProject() {
@@ -55,11 +59,58 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
 
     public void init() {
       checkVoiceOverFeatureToggle(BuildConfig.FEATURE_VOICE_OVER);
-      obtainVideos();
-      retrieveCompositionMusic();
       // TODO:(alvaro.martinez) 22/03/17 Player should be in charge of these checks from VMComposition 
       checkAVTransitionsActivated();
+      retrieveTracks();
     }
+
+  private void retrieveTracks() {
+    if(currentProject.getVMComposition().hasVideos()){
+      Track videoTrack = currentProject.getVMComposition().getMediaTrack();
+      setupTrack(videoTrack);
+      obtainVideos();
+      soundView.showTrackVideo();
+    }
+    if(currentProject.getVMComposition().hasMusic()){
+      Track musicTrack = currentProject.getVMComposition().getAudioTracks()
+          .get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+      setupTrack(musicTrack);
+      obtainMusic();
+      if(musicTrack.getPosition()==1){
+        soundView.showTrackAudioFirst();
+      } else {
+        soundView.showTrackAudioSecond();
+      }
+    }
+    if(currentProject.getVMComposition().hasVoiceOver()){
+      Track voiceOverTrack = currentProject.getVMComposition().getAudioTracks()
+          .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+      setupTrack(voiceOverTrack);
+      obtainVoiceOver();
+      if(voiceOverTrack.getPosition()==1){
+        soundView.showTrackAudioFirst();
+      } else {
+        soundView.showTrackAudioSecond();
+      }
+    }
+  }
+
+  private void obtainVideos() {
+    getMediaListFromProjectUseCase.getMediaListFromProject(this);
+  }
+
+  private void obtainVoiceOver() {
+    getAudioFromProjectUseCase.getVoiceOverFromProject(this);
+  }
+
+  private void obtainMusic() {
+    getAudioFromProjectUseCase.getMusicFromProject(this);
+  }
+
+  private void setupTrack(Track track) {
+    soundView.bindTrack(track);
+    updatePlayerMute(track.getId(), track.isMute());
+  }
 
   private void checkAVTransitionsActivated() {
     if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
@@ -71,20 +122,10 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
     }
   }
 
-  private void retrieveCompositionMusic() {
-    if (currentProject.hasMusic()) {
-        getMusicFromProjectUseCase.getMusicFromProject(this);
-      }
-    }
-
-    private void obtainVideos() {
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
-    }
-
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
         soundView.bindVideoList(videoList);
-        videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(videoList, videoTranscodingErrorNotifier);
+        videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(videoList, this);
     }
 
   @Override
@@ -118,4 +159,122 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
         .compareTo(com.videonasocialmedia.vimojo.utils.Constants.MUSIC_AUDIO_VOICEOVER_TITLE) == 0;
   }
 
+  public void setTrackVolume(int id, int seekBarProgress){
+    Track track = getTrackById(id);
+    float volume = (float) (seekBarProgress * 0.01);
+    modifyTrackUseCase.setTrackVolume(track, volume);
+    updatePlayerVolume(id, volume);
+    updateVideoList();
+  }
+
+  private void updateVideoList() {
+    getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
+      @Override
+      public void onVideosRetrieved(List<Video> videoList) {
+        soundView.updateVideoList(videoList);
+      }
+
+      @Override
+      public void onNoVideosRetrieved() {
+
+      }
+    });
+  }
+
+  private void updatePlayerVolume(int id, float volume) {
+    switch (id) {
+      case Constants.INDEX_MEDIA_TRACK:
+        soundView.setVideoVolume(volume);
+        break;
+      case Constants.INDEX_AUDIO_TRACK_MUSIC:
+        soundView.setMusicVolume(volume);
+        break;
+      case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
+        soundView.setVoiceOverVolume(volume);
+        break;
+    }
+  }
+
+  private Track getTrackById(int id) {
+    switch (id){
+      case Constants.INDEX_MEDIA_TRACK:
+        return currentProject.getVMComposition().getMediaTrack();
+      case Constants.INDEX_AUDIO_TRACK_MUSIC:
+        return currentProject.getVMComposition().getAudioTracks().get(id);
+      case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
+        return currentProject.getVMComposition().getAudioTracks().get(id);
+      default:
+        return null;
+    }
+  }
+
+  public void setTrackMute(int id, boolean isMute){
+    Track track = getTrackById(id);
+    modifyTrackUseCase.setTrackMute(track, isMute);
+    updatePlayerMute(id, isMute);
+  }
+
+  private void updatePlayerMute(int id, boolean isMute) {
+    switch (id) {
+      case Constants.INDEX_MEDIA_TRACK:
+        if(isMute){
+          soundView.setVideoVolume(VOLUME_MUTE);
+        } else {
+          soundView.setVideoVolume(getTrackById(id).getVolume());
+        }
+        break;
+      case Constants.INDEX_AUDIO_TRACK_MUSIC:
+        if(isMute){
+          soundView.setMusicVolume(VOLUME_MUTE);
+        } else {
+          soundView.setMusicVolume(getTrackById(id).getVolume());
+        }
+        break;
+      case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
+        if(isMute){
+          soundView.setVoiceOverVolume(VOLUME_MUTE);
+        } else {
+          soundView.setVoiceOverVolume(getTrackById(id).getVolume());
+        }
+        break;
+    }
+  }
+
+  @Override
+  public void showWarningTempFile() {
+    soundView.showWarningTempFile();
+  }
+
+  @Override
+  public void setWarningMessageTempFile(String messageTempFile) {
+    soundView.setWarningMessageTempFile(messageTempFile);
+  }
+
+  public void updateClipPlayed(int trackId) {
+    Track track = getTrackById(trackId);
+    switch (trackId){
+      case Constants.INDEX_MEDIA_TRACK:
+        if(track.isMute()){
+          soundView.setVideoVolume(VOLUME_MUTE);
+        } else {
+          soundView.setVideoVolume(track.getVolume());
+        }
+        break;
+      case Constants.INDEX_AUDIO_TRACK_MUSIC:
+        if(track.isMute()){
+          soundView.setMusicVolume(VOLUME_MUTE);
+        } else {
+          soundView.setMusicVolume(track.getVolume());
+        }
+        break;
+      case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
+        if(track.isMute()){
+          soundView.setVoiceOverVolume(VOLUME_MUTE);
+        } else {
+          soundView.setVoiceOverVolume(track.getVolume());
+        }
+        break;
+    }
+
+  }
 }

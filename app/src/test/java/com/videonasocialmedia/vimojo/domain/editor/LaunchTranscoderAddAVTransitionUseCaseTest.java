@@ -63,7 +63,7 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
     //getAProject().clear();
     Project project = getAProject();
     project.setVideoFadeTransitionActivated(true);
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     Track track = project.getMediaTrack();
     track.insertItem(video);
 
@@ -94,7 +94,7 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
     Project project = getAProject();
     project.setAudioFadeTransitionActivated(true);
     project.setVideoFadeTransitionActivated(false);
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", 1f);
     Track track = project.getMediaTrack();
     track.insertItem(video);
 
@@ -118,7 +118,7 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
 
   @Test
   public void launchExportTempFileCallsVideoRepositoryUpdate() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
 
     injectedLaunchTranscoderAddAVTransitionsUseCase.transcoderHelper = mockedTranscoderHelper;
     injectedLaunchTranscoderAddAVTransitionsUseCase.launchExportTempFile(mockedDrawableFadeTransition,
@@ -130,7 +130,7 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
 
   @Test
   public void launchExportTempFileUpdateIsTranscodingTempFileFinished() {
-    Video video = new Video("media/path");
+    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assert video.isTranscodingTempFileFinished();
 
     injectedLaunchTranscoderAddAVTransitionsUseCase.transcoderHelper = mockedTranscoderHelper;

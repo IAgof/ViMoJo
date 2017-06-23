@@ -644,6 +644,12 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="bottom_bar_sound">Audio</string>
     <string name="bottom_bar_share">Compartir</string>
 
+    <string name="title_track_clip_video">Volumen pista original</string>
+    <string name="title_track_clip_music">Volumen pista de música</string>
+    <string name="title_track_clip_voice_over">Volumen pista de locución</string>
+    <string name="mute">Mute</string>
+    <string name="solo">Solo</string>
+
     <string name="dialog_title_warning_error_transcoding_file">Clip corrupto</string>
     <string name="dialog_message_warning_error_transcoding_file">Revise los clips, el archivo no se podrá exportar correctamente</string>
 
@@ -656,6 +662,11 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="storage">Almacenamiento interno: </string>
     <string name="free_memory_space">Espacio disponible: </string>
     <string name="preposition_of">de</string>
+    <string name="alert_dialog_title_music">Música</string>
+    <string name="alert_dialog_title_message_adding_music">Problema añadiendo música al proyecto</string>
+    <string name="alert_dialog_title_message_removing_music">Problema borrando música del proyecto</string>
+    <string name="alert_dialog_title_voice_over">Locución</string>
+    <string name="alert_dialog_title_message_adding_voice_over">Problema añadiendo locución al proyecto</string>
 
 
     <string name="onNoVideosRetrieved">Error, no hay vídeos en el proyecto</string>

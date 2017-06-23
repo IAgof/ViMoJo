@@ -10,6 +10,7 @@
 
 package com.videonasocialmedia.vimojo.domain.editor;
 
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.eventbus.events.project.UpdateProjectDurationEvent;
 import com.videonasocialmedia.vimojo.eventbus.events.video.NumVideosChangedEvent;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -52,7 +53,7 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
                                             OnRemoveMediaFinishedListener listener) {
         boolean correct = false;
         Project currentProject = Project.getInstance(null, null, null);
-        MediaTrack mediaTrack = currentProject.getMediaTrack();
+        Track mediaTrack = currentProject.getMediaTrack();
         for (Media media : mediaList) {
             correct = removeVideoItemFromTrack(media, mediaTrack);
             if (!correct) break;
@@ -74,7 +75,7 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
      * @return bool if the item has been deleted from the track, return true. If it fails,
      *          return false.
      */
-    private boolean removeVideoItemFromTrack(Media video, MediaTrack mediaTrack) {
+    private boolean removeVideoItemFromTrack(Media video, Track mediaTrack) {
         boolean result;
         try {
             mediaTrack.deleteItem(video);
@@ -84,7 +85,7 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
                     new UpdateProjectDurationEvent(currentProject.getDuration()));
             EventBus.getDefault().post(
                     new NumVideosChangedEvent(currentProject.getMediaTrack()
-                            .getNumVideosInProject()));
+                            .getNumItemsInTrack()));
             result = true;
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             result = false;

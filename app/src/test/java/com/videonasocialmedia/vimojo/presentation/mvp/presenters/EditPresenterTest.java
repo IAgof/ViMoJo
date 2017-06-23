@@ -6,8 +6,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
+import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.GetMusicFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
@@ -56,7 +56,7 @@ public class EditPresenterTest {
   @Mock private RemoveVideoFromProjectUseCase mockedVideoRemover;
   @Mock private ReorderMediaItemUseCase mockedMediaItemReorderer;
   @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
-  @Mock private GetMusicFromProjectUseCase mockedGetMusicFromProjectUseCase;
+  @Mock private GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
   @Mock ListenableFuture<Void> mockedTranscodingTask;
   @Mock private VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
 
@@ -98,24 +98,25 @@ public class EditPresenterTest {
     Project project = getAProject();
     String musicPath = "voice/over/path";
     float musicVolume = 0.6f;
-    Music voiceOver = new Music(musicPath, musicVolume, 0);
-    project.getVMComposition().getAudioTracks().get(0).insertItem(voiceOver);
-    GetMusicFromProjectUseCase getMusicFromProjectUseCase = new GetMusicFromProjectUseCase();
+    Music music = new Music(musicPath, musicVolume, 0);
+    project.getVMComposition().getAudioTracks().get(com.videonasocialmedia.videonamediaframework
+        .model.Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
+    GetAudioFromProjectUseCase getAudioFromProjectUseCase = new GetAudioFromProjectUseCase();
     EditPresenter presenter = new EditPresenter(mockedEditorView,
             mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
-            mockedVideoRemover, mockedMediaItemReorderer, getMusicFromProjectUseCase,
+            mockedVideoRemover, mockedMediaItemReorderer, getAudioFromProjectUseCase,
             mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);
 
     presenter.init();
 
-    verify(mockedEditorView).setMusic(voiceOver);
+    verify(mockedEditorView).setMusic(music);
   }
 
   @Test
   public void ifProjectHasSomeVideoWithErrorsCallsShowWarningTempFile() throws IllegalItemOnTrack {
     Project project = getAProject();
-    Video video1 = new Video("video/path");
-    Video video2 = new Video("video/path");
+    Video video1 = new Video("video/path", Video.DEFAULT_VOLUME);
+    Video video2 = new Video("video/path", Video.DEFAULT_VOLUME);
     video2.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
 
     assertThat("video1 has not error", video1.getVideoError() == null, is(true));
@@ -135,7 +136,7 @@ public class EditPresenterTest {
 
     EditPresenter presenter = new EditPresenter(mockedEditorView,
             mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
-            mockedVideoRemover, mockedMediaItemReorderer, mockedGetMusicFromProjectUseCase,
+            mockedVideoRemover, mockedMediaItemReorderer, mockedGetAudioFromProjectUseCase,
             mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);
 
     presenter.videoListErrorCheckerDelegate
