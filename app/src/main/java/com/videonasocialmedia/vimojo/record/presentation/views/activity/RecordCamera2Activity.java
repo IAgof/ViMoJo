@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -51,6 +53,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 import butterknife.OnTouch;
 
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
@@ -163,6 +166,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageView resolutionIndicatorButton;
   @Bind(R.id.customManualFocusView)
   CustomManualFocusView customManualFocusView;
+  @Bind(R.id.camera_shutter)
+  ImageView cameraShutter;
   @Bind(R.id.rotateDeviceHint)
   ImageView rotateDeviceHint;
   @Bind(R.id.image_view_grid)
@@ -210,6 +215,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private ArrayList<ImageButton> supportedWhiteBalanceModeButtons = new ArrayList<>();
   private int slideSeekBarMode;
   private int currentSeekbarZoom;
+  private int touchEventX = 0;
+  private int touchEventY = 0;
+  private PointF cameraShutterOffsetPoint;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -640,9 +648,37 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     if (supportedMeteringModes.contains(Camera2MeteringModeHelper.AE_MODE_EXPOSURE_COMPENSATION)) {
       meteringModeExposureCompensation.setVisibility(View.VISIBLE);
     }
-    if (supportedMeteringModes.contains(Camera2MeteringModeHelper.AE_MODE_OFF)) {
+    if (supportedMeteringModes.contains(Camera2MeteringModeHelper.AE_MODE_REGIONS)) {
       meteringModeCenter.setVisibility(View.VISIBLE);
       meteringModeSpot.setVisibility(View.VISIBLE);
+      final int windowwidth = customManualFocusView.getWidth();
+      final int windowheight = customManualFocusView.getHeight();
+      cameraShutterOffsetPoint = new PointF();
+      cameraShutter.setOnTouchListener(new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+          switch(motionEvent.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+              cameraShutterOffsetPoint.x = motionEvent.getX();
+              cameraShutterOffsetPoint.y = motionEvent.getY();
+              break;
+            case MotionEvent.ACTION_UP:
+              setSpotMetering(touchEventX, touchEventY);
+              break;
+            case MotionEvent.ACTION_MOVE:
+              int eventX = (int) Math.max(motionEvent.getX(), windowwidth);
+              int eventY = (int) Math.max(motionEvent.getY(), windowheight);
+              cameraShutter.offsetLeftAndRight((int) (eventX - cameraShutterOffsetPoint.x));
+              cameraShutter.offsetTopAndBottom((int) (eventY - cameraShutterOffsetPoint.y));
+              touchEventX = (int) motionEvent.getRawX();
+              touchEventY = (int) motionEvent.getRawY();
+              break;
+            default:
+              break;
+          }
+          return true;
+        }
+      });
     }
   }
 
@@ -658,6 +694,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     deselectAllMeteringModeButtons();
     meteringModeAuto.setSelected(true);
     presenter.resetMeteringMode();
+    disableSpotMeteringControl();
   }
 
   @OnClick(R.id.metering_mode_exposure_compensation)
@@ -674,6 +711,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void showExposureCompensationSubmenu() {
+    // TODO(jliarte): 22/06/17 For example, if the exposure value (EV) step is 0.333, '6' will mean
+    // an exposure compensation of +2 EV; -3 will mean an exposure compensation of -1 EV. One EV
+    // represents a doubling of image brightness. Note that this control will only be effective if
+    // android.control.aeMode != OFF. This control will take effect even when
+    // android.control.aeLock == true.
     seekbarUpperText.setText("+2EV");
     seekbarLowerText.setText("-2EV");
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_EXPOSURE_COMPENSATION;
@@ -1144,6 +1186,33 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       // zoom touch
       presenter.onTouchZoom(event);
     }
+    return false;
+  }
+
+  @OnClick(R.id.metering_mode_spot)
+  public void onClickSpotMetering() {
+    deselectAllMeteringModeButtons();
+    meteringModeSpot.setSelected(true);
+    enableSpotMeteringControl();
+  }
+
+  private void enableSpotMeteringControl() {
+    cameraShutter.setVisibility(View.VISIBLE);
+    cameraShutter.setEnabled(true);
+  }
+
+  private void disableSpotMeteringControl() {
+    cameraShutter.setVisibility(View.GONE);
+    cameraShutter.setEnabled(false);
+  }
+
+  // TODO(jliarte): 22/06/17 rename the view to include metering and zoom
+  boolean setSpotMetering(int touchEventX, int touchEventY) {
+    Log.d(LOG_TAG, "-------------------- spot metering on " + touchEventX
+            + ", " + touchEventY + "--------------");
+    int viewWidth = customManualFocusView.getWidth();
+    int viewHeight = customManualFocusView.getHeight();
+    presenter.setMeteringPoint(touchEventX, touchEventY, viewWidth, viewHeight);
     return true;
   }
 

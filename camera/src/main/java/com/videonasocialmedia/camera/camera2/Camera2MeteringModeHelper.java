@@ -4,6 +4,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.params.MeteringRectangle;
 import android.util.Log;
 import android.util.Range;
 
@@ -19,13 +20,16 @@ public class Camera2MeteringModeHelper {
   public static final String AE_MODE_ON = "ae_on";
   public static final String AE_MODE_OFF = "ae_off";
   public static final String AE_MODE_EXPOSURE_COMPENSATION = "ae_exposure_compensation";
+  public static final String AE_MODE_REGIONS = "ae_mode_regions";
   private static final String DEFAULT_AE_MODE = AE_MODE_ON;
+  public static final int AE_METERING_AREA_SIZE = 50;
   private final Camera2Wrapper camera2Wrapper;
   private CameraFeatures.SupportedValues supportedAEValues;
-  private int aeRegions;
+  private int[] aeAvailableModes;
   private int minExposureCompensation = 0;
   private int maxExposureCompensation = 0;
   private float exposureStep;
+  private int maxAERegions;
   private int currentExposureCompensation = 0;
 
   public Camera2MeteringModeHelper(Camera2Wrapper camera2Wrapper) {
@@ -34,28 +38,35 @@ public class Camera2MeteringModeHelper {
   }
 
   private void setupSupportedValues() {
+    ArrayList<String> aeStringArrayList = new ArrayList<>();
+    aeStringArrayList.add(AE_MODE_ON);
+    getCameraMeteringCapabilities();
+    if (Arrays.asList(aeAvailableModes).contains(CameraMetadata.CONTROL_AE_MODE_OFF)) {
+      aeStringArrayList.add(AE_MODE_OFF);
+    }
+    if (minExposureCompensation != maxExposureCompensation) {
+      aeStringArrayList.add(AE_MODE_EXPOSURE_COMPENSATION);
+    }
+    if (maxAERegions > 0) {
+      aeStringArrayList.add(AE_MODE_REGIONS);
+    }
+    this.supportedAEValues = new CameraFeatures.SupportedValues(
+            aeStringArrayList, getDefaultAESetting());
+  }
+
+  private void getCameraMeteringCapabilities() {
     try {
-      ArrayList<String> aeStringArrayList = new ArrayList<>();
-      aeStringArrayList.add(AE_MODE_ON);
       CameraCharacteristics cameraCharacteristics = camera2Wrapper.getCurrentCameraCharacteristics();
-      int [] returnedValues = cameraCharacteristics
+      aeAvailableModes = cameraCharacteristics
               .get(CameraCharacteristics.CONTROL_AE_AVAILABLE_MODES);
-      if (Arrays.asList(returnedValues).contains(CameraMetadata.CONTROL_AE_MODE_OFF)) {
-        aeStringArrayList.add(AE_MODE_OFF);
-      }
       Range<Integer> exposure_range = cameraCharacteristics
               .get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
       minExposureCompensation = exposure_range != null ? exposure_range.getLower() : 0;
       maxExposureCompensation = exposure_range != null ? exposure_range.getUpper() : 0;
       exposureStep = cameraCharacteristics
               .get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP).floatValue();
-      if (minExposureCompensation != maxExposureCompensation) {
-        aeStringArrayList.add(AE_MODE_EXPOSURE_COMPENSATION);
-      }
-      this.supportedAEValues = new CameraFeatures.SupportedValues(
-              aeStringArrayList, getDefaultAESetting());
-
-      this.aeRegions = cameraCharacteristics
+//      this.aeRegions = cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_REGIONS);
+      this.maxAERegions = cameraCharacteristics
               .get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE);
     } catch (CameraAccessException e) {
       Log.e(TAG, "failed to get camera characteristics");
@@ -86,6 +97,19 @@ public class Camera2MeteringModeHelper {
             +exposureCompensation+" .............");
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION,
             exposureCompensation);
+    camera2Wrapper.updatePreview();
+  }
+
+  public void setMeteringPoint(int touchEventX, int touchEventY, int viewWidth, int viewHeight) {
+    MeteringRectangle[] meteringRectangles = camera2Wrapper
+            .getMeteringRectangles(touchEventX, touchEventY,
+                    viewWidth, viewHeight, AE_METERING_AREA_SIZE);
+    camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+            CameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_CANCEL);
+    camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_REGIONS,
+            meteringRectangles);
+    camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+            CameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_START);
     camera2Wrapper.updatePreview();
   }
 

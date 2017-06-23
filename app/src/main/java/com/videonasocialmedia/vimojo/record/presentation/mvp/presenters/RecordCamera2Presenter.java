@@ -561,6 +561,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     return camera.getCurrentExposureCompensation();
   }
 
+  public void setMeteringPoint(int touchEventX, int touchEventY, int viewWidth, int viewHeight) {
+    camera.setMeteringPoint(touchEventX, touchEventY, viewWidth, viewHeight);
+  }
+
   // --------------------------------------------------------------
 
   private class VideoToAdapt {

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -14,6 +15,7 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaRecorder;
 import android.os.Handler;
@@ -156,6 +158,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private boolean isFlashActivated;
   private boolean initializingRecorder = false;
 
+  private int sensorArrayRight = 0;
+  private int sensorArrayBottom = 0;
+
   public Camera2Wrapper(Context context, Camera2WrapperListener listener, int cameraIdSelected,
                         AutoFitTextureView textureView, String directorySaveVideos,
                         VideoCameraFormat videoCameraFormat) {
@@ -166,6 +171,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     this.directorySaveVideos = directorySaveVideos;
     this.videoCameraFormat = videoCameraFormat;
     getCameraManager(); // (jliarte): 19/06/17 manager is needed to ask for camera characteristics used in helpers
+    setupSensorParams();
     // TODO(jliarte): 26/05/17 inject the components
     camera2ZoomHelper = new Camera2ZoomHelper(this);
     camera2FocusHelper = new Camera2FocusHelper(this);
@@ -180,6 +186,24 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   CameraCharacteristics getCurrentCameraCharacteristics() throws CameraAccessException {
     return manager.getCameraCharacteristics(getCameraId());
+  }
+
+  private void setupSensorParams() {
+    try {
+      Rect sensorActiveArray = getCurrentCameraCharacteristics().
+              get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+      sensorArrayRight = sensorActiveArray.right;
+      sensorArrayBottom = sensorActiveArray.bottom;
+
+      Size pixelSize = getCurrentCameraCharacteristics()
+              .get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE);
+      Log.i(TAG, "cameraCharacteristics,,,,pixelSize.getWidth()--->" + pixelSize.getWidth()
+              + ",,,pixelSize.getHeight()--->" + pixelSize.getHeight());
+    } catch (CameraAccessException e) {
+      Log.e(TAG, "failed to get camera characteristics");
+      Log.e(TAG, "reason: " + e.getReason());
+      Log.e(TAG, "message: " + e.getMessage());
+    }
   }
 
   public CaptureRequest.Builder getPreviewBuilder() {
@@ -738,6 +762,33 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   public void resetMeteringMode() {
     camera2MeteringModeHelper.resetMeteringMode();
   }
+
+  public void setMeteringPoint(int touchEventX, int touchEventY, int viewWidth, int viewHeight) {
+    camera2MeteringModeHelper.setMeteringPoint(touchEventX, touchEventY, viewWidth, viewHeight);
+  }
+
+  public MeteringRectangle[] getMeteringRectangles(int touchEventX, int touchEventY,
+                                                   int viewWidth, int viewHeight, int areaSize) {
+    int ll = ((touchEventX * sensorArrayRight) - areaSize) / viewWidth;
+    int rr = ((touchEventY * sensorArrayBottom) - areaSize) / viewHeight;
+    int focusAreaLeft = clamp(ll, 0, sensorArrayRight);
+    int focusAreaBottom = clamp(rr, 0, sensorArrayBottom);
+    Rect newRect = new Rect(focusAreaLeft, focusAreaBottom, focusAreaLeft + areaSize, focusAreaBottom + areaSize);
+    MeteringRectangle meteringRectangle = new MeteringRectangle(newRect, 500);
+    MeteringRectangle[] meteringRectangleArr = {meteringRectangle};
+    return meteringRectangleArr;
+  }
+
+  private int clamp(int x, int min, int max) {
+    if (x < min) {
+      return min;
+    } else if (x > max) {
+      return max;
+    } else {
+      return x;
+    }
+  }
+
 
   public interface RecordStartedCallback {
     void onRecordStarted();
