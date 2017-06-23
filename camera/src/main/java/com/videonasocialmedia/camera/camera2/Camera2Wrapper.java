@@ -160,6 +160,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   private int sensorArrayRight = 0;
   private int sensorArrayBottom = 0;
+  private Rect sensorActiveArray;
 
   public Camera2Wrapper(Context context, Camera2WrapperListener listener, int cameraIdSelected,
                         AutoFitTextureView textureView, String directorySaveVideos,
@@ -190,7 +191,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   private void setupSensorParams() {
     try {
-      Rect sensorActiveArray = getCurrentCameraCharacteristics().
+      sensorActiveArray = getCurrentCameraCharacteristics().
               get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
       sensorArrayRight = sensorActiveArray.right;
       sensorArrayBottom = sensorActiveArray.bottom;
@@ -774,6 +775,14 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     int focusAreaLeft = clamp(ll, 0, sensorArrayRight);
     int focusAreaBottom = clamp(rr, 0, sensorArrayBottom);
     Rect newRect = new Rect(focusAreaLeft, focusAreaBottom, focusAreaLeft + areaSize, focusAreaBottom + areaSize);
+    MeteringRectangle meteringRectangle = new MeteringRectangle(newRect, 500);
+    MeteringRectangle[] meteringRectangleArr = {meteringRectangle};
+    return meteringRectangleArr;
+  }
+
+  public MeteringRectangle[] getFullSensorAreaMeteringRectangle() {
+    Rect newRect = new Rect(sensorActiveArray.left, sensorActiveArray.top,
+            sensorActiveArray.right, sensorActiveArray.bottom);
     MeteringRectangle meteringRectangle = new MeteringRectangle(newRect, 500);
     MeteringRectangle[] meteringRectangleArr = {meteringRectangle};
     return meteringRectangleArr;

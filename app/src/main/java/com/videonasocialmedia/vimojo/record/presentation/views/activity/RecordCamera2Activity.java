@@ -22,7 +22,6 @@ import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -53,7 +52,6 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnLongClick;
 import butterknife.OnTouch;
 
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
@@ -692,6 +690,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnClick(R.id.metering_mode_auto)
   public void clickAutoExposureButton() {
     deselectAllMeteringModeButtons();
+    hideExposureCompensationSubmenu();
     meteringModeAuto.setSelected(true);
     presenter.resetMeteringMode();
     disableSpotMeteringControl();
@@ -702,6 +701,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     deselectAllMeteringModeButtons();
     meteringModeExposureCompensation.setSelected(true);
     showExposureCompensationSubmenu();
+  }
+
+  @OnClick(R.id.metering_mode_center)
+  public void clickCenterMeteringMode() {
+    deselectAllMeteringModeButtons();
+    meteringModeCenter.setSelected(true);
+    setSpotMetering(customManualFocusView.getWidth() / 2, customManualFocusView.getHeight() / 2);
   }
 
   private void hideExposureCompensationSubmenu() {
