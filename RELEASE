@@ -1,2 +1,3 @@
-v0.6.1
-Fixed migration problem with multiple projects.
+v0.7.0-RC1
+- First implementation of White Balance pro controls. Implemented WB auto setting
+- First implementation of exposure metering pro controls: auto setting, exposure compensation, center and spot metering
