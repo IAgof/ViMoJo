@@ -683,25 +683,28 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private void deselectAllMeteringModeButtons() {
     meteringModeAuto.setSelected(false);
-    meteringModeExposureCompensation.setSelected(false);
     meteringModeCenter.setSelected(false);
     meteringModeSpot.setSelected(false);
   }
 
   @OnClick(R.id.metering_mode_auto)
-  public void clickAutoExposureButton() {
+  public void setAutoExposure() {
     deselectAllMeteringModeButtons();
+    meteringModeExposureCompensation.setSelected(false);
     hideExposureCompensationSubmenu();
+    disableSpotMeteringControl();
     meteringModeAuto.setSelected(true);
     presenter.resetMeteringMode();
-    disableSpotMeteringControl();
   }
 
   @OnClick(R.id.metering_mode_exposure_compensation)
   public void clickExposureCompensationButton() {
-    deselectAllMeteringModeButtons();
     meteringModeExposureCompensation.setSelected(true);
-    showExposureCompensationSubmenu();
+    if (slideSeekbarSubmenuView.getVisibility() == View.VISIBLE) {
+      hideExposureCompensationSubmenu();
+    } else {
+      showExposureCompensationSubmenu();
+    }
   }
 
   @OnClick(R.id.metering_mode_center)
@@ -718,13 +721,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void showExposureCompensationSubmenu() {
-    // TODO(jliarte): 22/06/17 For example, if the exposure value (EV) step is 0.333, '6' will mean
-    // an exposure compensation of +2 EV; -3 will mean an exposure compensation of -1 EV. One EV
-    // represents a doubling of image brightness. Note that this control will only be effective if
-    // android.control.aeMode != OFF. This control will take effect even when
-    // android.control.aeLock == true.
-    seekbarUpperText.setText("+2EV");
-    seekbarLowerText.setText("-2EV");
+    float maxEV = presenter.getMaximumExposureCompensation() * presenter.getExposureCompensationStep();
+    float minEV = presenter.getMinimumExposureCompensation() * presenter.getExposureCompensationStep();
+    seekbarUpperText.setText(maxEV + "EV");
+    seekbarLowerText.setText(minEV + "EV");
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_EXPOSURE_COMPENSATION;
     final int minExposure = presenter.getMinimumExposureCompensation();
     slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to call the listener when setting up the progress bar to match the existing state
@@ -1088,10 +1088,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     wbSettingAuto.setSelected(true);
     presenter.resetWhiteBalanceMode();
 
+    setAutoExposure();
     hideMeteringModeSelectionSubmenu();
-    deselectAllWhiteBalanceButtons();
-    meteringModeAuto.setSelected(true);
-    presenter.resetMeteringMode();
   }
 
   private void showZoomSelectionSubmenu() {

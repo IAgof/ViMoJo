@@ -557,6 +557,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     return camera.getMaximumExposureCompensation();
   }
 
+  public float getExposureCompensationStep() {
+    return camera.getExposureCompensationStep();
+  }
+
   public int getCurrentExposureCompensation() {
     return camera.getCurrentExposureCompensation();
   }

@@ -758,6 +758,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     return camera2MeteringModeHelper.getMaximumExposureCompensation();
   }
 
+  public float getExposureCompensationStep() {
+    return camera2MeteringModeHelper.getExposureCompensationStep();
+  }
+
   public int getCurrentExposureCompensation() {
     return camera2MeteringModeHelper.getCurrentExposureCompensation();
   }
