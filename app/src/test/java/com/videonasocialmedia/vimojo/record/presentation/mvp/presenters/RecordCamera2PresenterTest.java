@@ -1,9 +1,11 @@
 package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
+import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
@@ -47,7 +49,6 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class RecordCamera2PresenterTest {
-
   RecordCamera2Presenter presenter;
 
   @Mock RecordCamera2View mockedRecordView;
@@ -65,7 +66,8 @@ public class RecordCamera2PresenterTest {
   int rotation = 0;
   Drawable fadeTransition;
   boolean isFadeActivated;
-
+  @Mock private Activity mockedActivity;
+  @Mock private Camera2Wrapper mockedCamera2Wrapper;
 
   @Before
   public void injectMocks() {
@@ -79,22 +81,7 @@ public class RecordCamera2PresenterTest {
   }
 
   @Test
-  public void initViewsWithControlsViewAndSettingsCameraViewSelectedCallsCorrectRecordView(){
-
-    presenter = getRecordCamera2Presenter();
-
-    presenter.initViews();
-
-    verify(mockedRecordView).hideChronometer();
-    verify(mockedRecordView).setResolutionSelected(720);
-
-    verify(mockedRecordView).showPrincipalViews();
-    verify(mockedRecordView).showRightControlsView();
-  }
-
-  @Test
-  public void initViewsDefaultInitializationCallsCorrectRecordView(){
-
+  public void initViewsWithControlsViewAndSettingsCameraViewSelectedCallsCorrectRecordView() {
     presenter = getRecordCamera2Presenter();
 
     presenter.initViews();
@@ -106,11 +93,22 @@ public class RecordCamera2PresenterTest {
   }
 
   @Test
-  public void navigateEditOrGalleryButtonCallsGalleryIfThereIsNotVideos(){
+  public void initViewsDefaultInitializationCallsCorrectRecordView() {
+    presenter = getRecordCamera2Presenter();
+
+    presenter.initViews();
+
+    verify(mockedRecordView).hideChronometer();
+    verify(mockedRecordView).setResolutionSelected(720);
+    verify(mockedRecordView).showPrincipalViews();
+    verify(mockedRecordView).showRightControlsView();
+  }
+
+  @Test
+  public void navigateEditOrGalleryButtonCallsGalleryIfThereIsNotVideos() {
     getAProject().clear();
     int numVideosInProject = getAProject().getVMComposition().getMediaTrack().getNumVideosInProject();
     assertThat("There is not videos in project ", numVideosInProject, is(0));
-
     presenter = getRecordCamera2Presenter();
 
     presenter.navigateToEditOrGallery();
@@ -121,18 +119,14 @@ public class RecordCamera2PresenterTest {
   @Test
   public void navigateEditOrGalleryCallsEditActivityIfThereAreVideosInProject()
       throws IllegalItemOnTrack {
-
     Video video = new Video("dcim/fakeVideo", Video.DEFAULT_VOLUME);
     Project project = getAProject();
     MediaTrack track = project.getMediaTrack();
     track.insertItem(video);
     track.insertItem(video);
-
     int numVideosInProject = getAProject().getVMComposition().getMediaTrack().getNumVideosInProject();
     assertThat("There are videos in project", numVideosInProject, is(2));
-
     // TODO:(alvaro.martinez) 6/04/17 Assert also there are not videos pending to adapt, transcoding
-
     presenter = getRecordCamera2Presenter();
 
     presenter.navigateToEditOrGallery();
@@ -144,21 +138,17 @@ public class RecordCamera2PresenterTest {
   @Test
   public void navigateEditOrGalleryCallsShowProgressAdaptingVideoIfThereAreVideosPendingToAdapt()
       throws IllegalItemOnTrack, IOException {
-
     // TODO:(alvaro.martinez) 6/04/17  Prepare this test, i don't know how to mock adapting video process and fake futures.isDone to false.
     Video video = new Video("dcim/fakeVideo", Video.DEFAULT_VOLUME);
     Project project = getAProject();
     MediaTrack track = project.getMediaTrack();
     track.insertItem(video);
     track.insertItem(video);
-
     int numVideos = getAProject().getVMComposition().getMediaTrack().getNumVideosInProject();
     assertThat("There are videos in project", numVideos, is(2));
-
     mockedAdaptVideoRecordedToVideoFormatUseCase.adaptVideo(video, mockedVideoFormat,
         directorySaveVideos, rotation, fadeTransition, isFadeActivated,
         mockedTranscoderHelperListener);
-
     presenter = getRecordCamera2Presenter();
 
     presenter.navigateToEditOrGallery();
@@ -235,11 +225,12 @@ public class RecordCamera2PresenterTest {
 
   @NonNull
   private RecordCamera2Presenter getRecordCamera2Presenter() {
-    return new RecordCamera2Presenter(mockedContext, mockedRecordView,
-        mockedTextureView, directorySaveVideos,
-        mockedUpdateVideoRepositoryUseCase, mockedLaunchTranscoderAddAVTransitionUseCase,
-        mockedGetVideoFormatFromCurrentProjectUseCase,
-        mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase);
+    return new RecordCamera2Presenter(mockedActivity,
+            mockedRecordView, mockedUpdateVideoRepositoryUseCase,
+            mockedLaunchTranscoderAddAVTransitionUseCase,
+            mockedGetVideoFormatFromCurrentProjectUseCase,
+            mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase,
+            mockedCamera2Wrapper);
   }
 
 }
