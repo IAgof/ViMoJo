@@ -226,7 +226,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     keepScreenOn();
     ButterKnife.bind(this);
     setupActivityButtons();
-    configChronometer();
+//    configChronometer(); // TODO(jliarte): 26/06/17 make sure this is not needed anymore
     configShowThumbAndNumberClips();
 
     this.getActivityPresentersComponent().inject(this);
@@ -302,6 +302,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void configChronometer() {
+    // TODO(jliarte): 26/06/17 make sure this is not needed anymore
     chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
       @Override
       public void onChronometerTick(Chronometer chronometer) {
@@ -649,8 +650,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     if (supportedMeteringModes.contains(Camera2MeteringModeHelper.AE_MODE_REGIONS)) {
       meteringModeCenter.setVisibility(View.VISIBLE);
       meteringModeSpot.setVisibility(View.VISIBLE);
-      final int windowwidth = customManualFocusView.getWidth();
-      final int windowheight = customManualFocusView.getHeight();
+      final int windowWidth = customManualFocusView.getWidth();
+      final int windowHeight = customManualFocusView.getHeight();
       cameraShutterOffsetPoint = new PointF();
       cameraShutter.setOnTouchListener(new View.OnTouchListener() {
         @Override
@@ -664,12 +665,12 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
               setSpotMetering(touchEventX, touchEventY);
               break;
             case MotionEvent.ACTION_MOVE:
-              int eventX = (int) Math.max(motionEvent.getX(), windowwidth);
-              int eventY = (int) Math.max(motionEvent.getY(), windowheight);
-              cameraShutter.offsetLeftAndRight((int) (eventX - cameraShutterOffsetPoint.x));
-              cameraShutter.offsetTopAndBottom((int) (eventY - cameraShutterOffsetPoint.y));
-              touchEventX = (int) motionEvent.getRawX();
-              touchEventY = (int) motionEvent.getRawY();
+              touchEventX = (int) Math.max(motionEvent.getRawX(), windowWidth);
+              touchEventY = (int) Math.max(motionEvent.getRawY(), windowHeight);
+              cameraShutter.setX(touchEventX - cameraShutter.getMeasuredWidth() / 2);
+              cameraShutter.setY(touchEventY - cameraShutter.getMeasuredHeight() / 2);
+              Log.d(LOG_TAG, "Move shutter to "+(int) (touchEventX - cameraShutterOffsetPoint.x)
+                      +" - "+(int) (touchEventY - cameraShutterOffsetPoint.y));
               break;
             default:
               break;
