@@ -201,10 +201,14 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       Log.i(TAG, "cameraCharacteristics,,,,pixelSize.getWidth()--->" + pixelSize.getWidth()
               + ",,,pixelSize.getHeight()--->" + pixelSize.getHeight());
     } catch (CameraAccessException e) {
-      Log.e(TAG, "failed to get camera characteristics");
-      Log.e(TAG, "reason: " + e.getReason());
-      Log.e(TAG, "message: " + e.getMessage());
+      logExceptionAccessingCameraCharacteristics(e);
     }
+  }
+
+  private void logExceptionAccessingCameraCharacteristics(CameraAccessException e) {
+    Log.e(TAG, "failed to get camera characteristics");
+    Log.e(TAG, "reason: " + e.getReason());
+    Log.e(TAG, "message: " + e.getMessage());
   }
 
   public CaptureRequest.Builder getPreviewBuilder() {
@@ -480,6 +484,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     updatePreview();
     camera2WhiteBalanceHelper.setCurrentWhiteBalanceMode();
     camera2MeteringModeHelper.setCurrentMeteringMode();
+    try {
+      camera2ZoomHelper.setCurrentZoom();
+    } catch (CameraAccessException e) {
+      logExceptionAccessingCameraCharacteristics(e);
+    }
     setCurrentFlashSettings();
   }
 
@@ -554,6 +563,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       cameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
         @Override
         public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+          initializingRecorder = false;
           setupPreviewSession(cameraCaptureSession);
           startRecordingSession(callback);
         }
