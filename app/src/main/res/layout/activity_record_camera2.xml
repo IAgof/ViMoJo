@@ -27,6 +27,14 @@
         android:layout_height="match_parent">
 
         <ImageView
+            android:id="@+id/camera_shutter"
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:layout_centerInParent="true"
+            android:src="@drawable/activity_record_camera_shutter"
+            android:visibility="invisible"/>
+
+        <ImageView
             android:id="@+id/image_view_grid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -427,6 +435,7 @@
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_brightness_adjust"
+                android:visibility="invisible"
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
@@ -437,6 +446,7 @@
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_metering_center"
+                android:visibility="invisible"
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
@@ -447,6 +457,7 @@
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_brightness_manual"
+                android:visibility="invisible"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 />

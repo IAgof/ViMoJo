@@ -71,13 +71,19 @@ public interface RecordCamera2View {
 
     void hideISOSelection();
 
+    // White balance settings
+
     void hideWhiteBalanceSelection();
 
     void setupWhiteBalanceSupportedModesButtons(List<String> values);
 
+    // Metering - exposure settings
+
     void hideMetteringModeSelection();
 
     void setupFocusSelectionSupportedModesButtons(List<String> values);
+
+    void setupMeteringModeSupportedModesButtons(List<String> values);
 
     // Setters camera
 
@@ -87,8 +93,8 @@ public interface RecordCamera2View {
 
     void setResolutionSelected(int height);
 
-    void setFocus(MotionEvent event);
 
+    void setFocus(MotionEvent event);
 
     void setZoom(float value);
 
