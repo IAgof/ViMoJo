@@ -9,17 +9,119 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.util.Log;
+import android.util.Range;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static android.hardware.camera2.CameraMetadata.CONTROL_AF_MODE_AUTO;
+import static android.hardware.camera2.CameraMetadata.CONTROL_AF_MODE_OFF;
 
 public class Camera2FocusHelper {
   private static final String TAG = Camera2FocusHelper.class.getCanonicalName();
+  public static final int DEFAULT_FOCUS_SELECTION_MODE = CameraMetadata.CONTROL_AF_MODE_AUTO;
+  public static final String AF_MODE_AUTO = "auto";
+  public static final String AF_MODE_OFF = "off";
+  public static final String AF_MODE_MANUAL = "manual";
+  public static final String AF_MODE_SELECTIVE = "selective";
+
   private final Camera2Wrapper camera2Wrapper;
+  private final HashMap<Integer, String> focusSelectionMap = new HashMap<>();
+  private CameraFeatures.SupportedValues supportedFocusSelectionValues;
 
   public Camera2FocusHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;
+    initFocusSelectionMap();
+    setupSupportedValues();
+  }
+
+  private void initFocusSelectionMap() {
+    this.focusSelectionMap.put(CameraMetadata.CONTROL_AF_MODE_AUTO, AF_MODE_AUTO);
+    this.focusSelectionMap.put(CameraMetadata.CONTROL_AF_MODE_OFF, AF_MODE_MANUAL);
+    this.focusSelectionMap.put(CameraMetadata.CONTROL_AF_MODE_OFF, AF_MODE_SELECTIVE);
+  }
+
+  private void setupSupportedValues() {
+    try {
+      ArrayList<String> focusSelectionStringArrayList = new ArrayList<>();
+      focusSelectionStringArrayList.add(AF_MODE_OFF);
+      int [] returnedValues = camera2Wrapper.getCurrentCameraCharacteristics()
+          .get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
+
+      for (int focusSelectionSetting : returnedValues) {
+        if(focusSelectionSetting == CONTROL_AF_MODE_OFF) {
+          focusSelectionStringArrayList.add(AF_MODE_MANUAL);
+        }
+        if(focusSelectionSetting == CONTROL_AF_MODE_AUTO){
+          focusSelectionStringArrayList.add(AF_MODE_AUTO);
+          if(camera2Wrapper.getCurrentCameraCharacteristics()
+              .get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF) > 0){
+            focusSelectionStringArrayList.add(AF_MODE_SELECTIVE);
+          }
+        }
+      }
+      this.supportedFocusSelectionValues = new CameraFeatures.SupportedValues(
+          focusSelectionStringArrayList, getDefaultFocusSelectionSetting());
+    } catch (CameraAccessException e) {
+      Log.e(TAG, "failed to get camera characteristics");
+      Log.e(TAG, "reason: " + e.getReason());
+      Log.e(TAG, "message: " + e.getMessage());
+    }
+  }
+
+
+  private String getDefaultFocusSelectionSetting() {
+    return focusSelectionMap.get(DEFAULT_FOCUS_SELECTION_MODE);
+  }
+
+  public boolean isFocusSelectionSupported() {
+    return supportedFocusSelectionValues.values.size() > 1;
+  }
+
+  public CameraFeatures.SupportedValues getSupportedFocusSelectionModes() {
+    return supportedFocusSelectionValues;
+  }
+
+  public void setCurrentFocusSelectionMode() {
+    setFocusSelectionMode(supportedFocusSelectionValues.selectedValue);
+  }
+
+  public void resetFocusSelectionMode() {
+    setFocusSelectionMode(AF_MODE_AUTO);
+  }
+
+  public void setFocusSelectionMode(String afMode) {
+    if (isFocusSelectionSupported() && modeIsSupported(afMode)) {
+      supportedFocusSelectionValues.selectedValue = afMode;
+      Log.d(TAG, "---------------- set focus selection to "+afMode+" .............");
+     /* if(afMode != AF_MODE_AUTO){
+        camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AF_MODE,
+            CONTROL_AF_MODE_OFF);
+        camera2Wrapper.updatePreview();
+      } else {
+        camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AF_MODE,
+            CONTROL_AF_MODE_AUTO);
+        camera2Wrapper.updatePreview();
+      }
+      */
+    }
+  }
+
+  private Integer getCameraMetadataFocusSelectionFromString(String focusSelectionMode) {
+    return supportedFocusSelectionValues.values.indexOf(focusSelectionMode);
+  }
+
+  private boolean modeIsSupported(String focusSelectionMode) {
+    return supportedFocusSelectionValues.values.contains(focusSelectionMode);
   }
 
   /********* Focus component ********/
   public void setFocus(int x, int y) throws CameraAccessException {
+
+    if(!(supportedFocusSelectionValues.selectedValue.compareTo(AF_MODE_AUTO) == 0)){
+      return;
+    }
+
     // FIXME(jliarte): 26/05/17 not used vars
 //    CameraCharacteristics characteristics = getCurrentCameraCharacteristics();
 //    final Rect sensorArraySize = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
@@ -105,7 +207,7 @@ public class Camera2FocusHelper {
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AF_TRIGGER,
             CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AF_MODE,
-            CaptureRequest.CONTROL_AF_MODE_OFF);
+            CONTROL_AF_MODE_OFF);
     RequestCapture(captureCallbackHandler);
   }
 
@@ -113,9 +215,5 @@ public class Camera2FocusHelper {
     Integer AFRegions = camera2Wrapper.getCurrentCameraCharacteristics()
             .get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF);
     return AFRegions != null && AFRegions >= 1;
-  }
-
-  public boolean advancedFocusSupported() {
-    return false;
   }
 }

@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.videonasocialmedia.avrecorder.view.CustomManualFocusView;
+import com.videonasocialmedia.camera.camera2.Camera2FocusHelper;
 import com.videonasocialmedia.camera.camera2.Camera2WhiteBalanceHelper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.R;
@@ -52,6 +53,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
 
+import static com.videonasocialmedia.camera.camera2.Camera2FocusHelper.AF_MODE_AUTO;
+import static com.videonasocialmedia.camera.camera2.Camera2FocusHelper.AF_MODE_SELECTIVE;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 /**
@@ -63,6 +66,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private static final int SLIDE_SEEKBAR_MODE_UNACTIVE = 0;
   public static final int SLIDE_SEEKBAR_MODE_EXPOSURE_COMPENSATION = 1;
   public static final int SLIDE_SEEKBAR_MODE_ZOOM = 2;
+  public static final int SLIDE_SEEKBAR_MODE_FOCUS_MANUAL = 3;
   private final String LOG_TAG = getClass().getSimpleName();
 
   @Inject
@@ -125,7 +129,12 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton afSelectionButton;
   @Bind(R.id.af_selection_submenu)
   View afSelectionSubmenuView;
-
+  @Bind(R.id.af_setting_auto)
+  ImageButton afSettingAuto;
+  @Bind(R.id.af_setting_manual)
+  ImageButton afSettingManual;
+  @Bind(R.id.af_setting_selective)
+  ImageButton afSettingSelective;
   @Bind(R.id.button_white_balance)
   ImageButton whiteBalanceButton;
   @Bind(R.id.white_balance_submenu)
@@ -206,7 +215,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private AlertDialogWithInfoIntoCircle alertDialogStorage;
 
   private HashMap<String, ImageButton> whiteBalanceModeButtons;
+  private HashMap<String, ImageButton> focusSelectionModeButtons;
   private ArrayList<ImageButton> supportedWhiteBalanceModeButtons = new ArrayList<>();
+  private ArrayList<ImageButton> supportedFocusSelectionModeButtons = new ArrayList<>();
   private int slideSeekBarMode;
   private int currentSeekbarZoom;
 
@@ -227,6 +238,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     createProgressDialogAdaptVideo();
     createAlertDialogBatteryAndStorage();
     initWhiteBalanceModesMap();
+    initFocusSelectionModesMap();
   }
 
   private void createProgressDialogAdaptVideo() {
@@ -273,7 +285,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(settingsCameraButton, button_color);
     tintButton(zoomButton, button_color);
     tintButton(isoButton, button_color);
+
     tintButton(afSelectionButton, button_color);
+    tintButton(afSettingAuto, button_color);
+    tintButton(afSettingManual, button_color);
+    tintButton(afSettingSelective, button_color);
 
     tintButton(whiteBalanceButton, button_color);
     tintButton(wbSettingAuto, button_color);
@@ -629,6 +645,15 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
             wbSettingIncandescent);
   }
 
+  private void initFocusSelectionModesMap() {
+    focusSelectionModeButtons = new HashMap();
+    focusSelectionModeButtons.put(AF_MODE_AUTO, afSettingAuto);
+    focusSelectionModeButtons.put(Camera2FocusHelper.AF_MODE_MANUAL, afSettingManual);
+    focusSelectionModeButtons.put(Camera2FocusHelper.AF_MODE_SELECTIVE, afSettingSelective);
+
+    afSettingAuto.setSelected(true);
+  }
+
   @OnClick(R.id.metering_mode_exposure_compensation)
   public void clickExposureCompensationButton() {
     if (meteringModeExposureCompensation.isSelected()) {
@@ -676,6 +701,89 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void hideMetteringModeSelection() {
     meteringModeButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void setupFocusSelectionSupportedModesButtons(List<String> values) {
+    for (final String supportedFocusSelectionMode : values) {
+      final ImageButton focusSelectionModeButton = focusSelectionModeButtons
+          .get(supportedFocusSelectionMode);
+      if (focusSelectionModeButton != null) {
+        supportedFocusSelectionModeButtons.add(focusSelectionModeButton);
+        focusSelectionModeButton.setVisibility(View.VISIBLE);
+      } else {
+        Log.e(LOG_TAG, "Missing focus selection icon: " + supportedFocusSelectionMode);
+      }
+    }
+  }
+
+  private void selectFocusSelectionButton(ImageButton focusSelectionModeButton) {
+    deselectAllFocusSelectionButtons();
+    focusSelectionModeButton.setSelected(true);
+  }
+
+  private void deselectAllFocusSelectionButtons() {
+    for (ImageButton focusSelectionModeButton : supportedFocusSelectionModeButtons) {
+      focusSelectionModeButton.setSelected(false);
+    }
+  }
+
+  @OnClick(R.id.af_setting_auto)
+  public void onClickFocusModeAuto(){
+    presenter.setFocusSelectionMode(AF_MODE_AUTO); // Ask for QA, UX.
+    selectFocusSelectionButton(afSettingAuto);
+    hideManualSlider();
+  }
+
+  @OnClick(R.id.af_setting_manual)
+  public void onClickFocusModeManual(){
+    if(afSettingManual.isSelected()){
+      afSettingManual.setSelected(false);
+      hideManualSlider();
+    } else {
+      afSettingManual.setSelected(true);
+      showFocusModeManualSlider();
+    }
+    selectFocusSelectionButton(afSettingManual);
+  }
+
+  @OnClick(R.id.af_setting_selective)
+  public void onClickFocusModeSelective(){
+    presenter.setFocusSelectionMode(AF_MODE_SELECTIVE);
+    selectFocusSelectionButton(afSettingSelective);
+    hideManualSlider();
+  }
+
+  private void showFocusModeManualSlider() {
+    seekbarUpperText.setText("100%");
+    seekbarLowerText.setText("0%");
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_FOCUS_MANUAL;
+    slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to call the listener when setting up the progress bar to match the existing state
+    slideSeekBar.setMax(100);
+    slideSeekBar.setProgress(50);
+    slideSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int seekbarProgress, boolean b) {
+
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+
+      }
+    });
+    slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
+  }
+
+  private void hideManualSlider() {
+    slideSeekbarSubmenuView.setVisibility(View.INVISIBLE);
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_UNACTIVE;
+    slideSeekbarSubmenuView.setVisibility(View.INVISIBLE);
   }
 
   @Override
@@ -846,6 +954,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void setFocus(MotionEvent event) {
+    event.setLocation(customManualFocusView.getWidth()/2, customManualFocusView.getHeight()/2);
     customManualFocusView.onTouchEvent(event);
   }
 
@@ -1009,7 +1118,14 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     hideWhiteBalanceSubmenu();
     deselectAllWhiteBalanceButtons();
     presenter.resetWhiteBalanceMode();
+    deselectAllFocusSelectionButtons();
+    presenter.resetFocusSelectionMode();
+    selectAutoSettingsValuesByDefault();
     hideMeteringModeSelectionSubmenu();
+  }
+
+  private void selectAutoSettingsValuesByDefault() {
+    afSettingAuto.setSelected(true);
   }
 
   private void showZoomSelectionSubmenu() {
@@ -1057,11 +1173,15 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private void showAFSelectionSubmenu() {
     afSelectionButton.setSelected(true);
     afSelectionSubmenuView.setVisibility(View.VISIBLE);
+    if(afSettingManual.isSelected()){
+      showFocusModeManualSlider();
+    }
   }
 
   private void hideAFSelectionSubmenu() {
     afSelectionButton.setSelected(false);
     afSelectionSubmenuView.setVisibility(View.INVISIBLE);
+    hideManualSlider();
   }
 
   private void showMeteringModeSelectionSubmenu() {

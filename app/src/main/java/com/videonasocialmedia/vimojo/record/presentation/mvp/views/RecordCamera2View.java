@@ -77,6 +77,8 @@ public interface RecordCamera2View {
 
     void hideMetteringModeSelection();
 
+    void setupFocusSelectionSupportedModesButtons(List<String> values);
+
     // Setters camera
 
     void setFlash(boolean on);

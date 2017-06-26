@@ -22,6 +22,7 @@ import android.os.BatteryManager;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.videonasocialmedia.camera.camera2.Camera2FocusHelper;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
@@ -143,8 +144,11 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     if (!camera.ISOSelectionSupported()) {
       recordView.hideISOSelection();
     }
-    if (!camera.advancedFocusSupported()) {
+    if (!camera.focusSelectionSupported()) {
       recordView.hideAdvancedAFSelection();
+    } else {
+      recordView.setupFocusSelectionSupportedModesButtons(camera.getSupportedFocusSelectionModes()
+          .values);
     }
     if (!camera.whiteBalanceSelectionSupported()) {
       recordView.hideWhiteBalanceSelection();
@@ -531,6 +535,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   public void resetWhiteBalanceMode() {
     camera.resetWhiteBalanceMode();
+  }
+
+  public void setFocusSelectionMode(String focusSelectionMode){
+    camera.setFocusSelectionMode(focusSelectionMode);
+  }
+
+  public void resetFocusSelectionMode(){
+    camera.resetFocusSelectionMode();
   }
 
   public void setExposureCompensation(int exposureCompensation) {

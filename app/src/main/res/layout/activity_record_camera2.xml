@@ -268,9 +268,11 @@
             android:layout_height="wrap_content"
             android:background="@color/colorGreyTransparent"
             android:visibility="invisible"
-            android:layout_marginBottom="4dp">
+            android:layout_marginBottom="4dp"
+            android:paddingRight="16dp">
 
             <ImageButton
+                android:id="@+id/af_setting_auto"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
@@ -279,18 +281,22 @@
                 android:src="@drawable/activity_record_ic_focus_auto"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"/>
 
             <ImageButton
+                android:id="@+id/af_setting_manual"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_focus_adjust"
-                android:layout_marginLeft="16dp" />
+                android:layout_marginLeft="16dp"
+                android:visibility="gone"/>
 
             <ImageButton
+                android:id="@+id/af_setting_selective"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
@@ -298,7 +304,7 @@
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_focus_touch"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:visibility="gone"
                 />
 
         </LinearLayout>

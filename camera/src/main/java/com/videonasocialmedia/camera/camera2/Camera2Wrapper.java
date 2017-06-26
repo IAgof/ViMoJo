@@ -455,6 +455,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     updatePreview();
     camera2WhiteBalanceHelper.setCurrentWhiteBalanceMode();
     setCurrentFlashSettings();
+    camera2FocusHelper.setCurrentFocusSelectionMode();
   }
 
   /**
@@ -643,9 +644,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2FocusHelper.setFocus(x, y);
   }
 
-  public boolean advancedFocusSupported() {
-    return camera2FocusHelper.advancedFocusSupported();
-  }
   /********* end of Focus component ********/
 
   public int getRotation() {
@@ -728,6 +726,22 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public void setExposureCompensation(int exposureCompensation) {
     camera2MeteringModeHelper.setExposureCompensation(exposureCompensation);
+  }
+
+  public void setFocusSelectionMode(String focusSelectionMode){
+    camera2FocusHelper.setFocusSelectionMode(focusSelectionMode);
+  }
+
+  public void resetFocusSelectionMode() {
+    camera2FocusHelper.resetFocusSelectionMode();
+  }
+
+  public boolean focusSelectionSupported() {
+    return camera2FocusHelper.isFocusSelectionSupported();
+  }
+
+  public CameraFeatures.SupportedValues getSupportedFocusSelectionModes(){
+    return camera2FocusHelper.getSupportedFocusSelectionModes();
   }
 
   public interface RecordStartedCallback {
