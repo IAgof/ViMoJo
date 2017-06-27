@@ -55,7 +55,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   public static final int CAMERA_ID_FRONT = 1;
   private final String LOG_TAG = getClass().getSimpleName();
 
-  private final Camera2WrapperListener listener;
+  private Camera2WrapperListener listener;
   private final Context context;
   private final String directorySaveVideos;
   private final Camera2ZoomHelper camera2ZoomHelper;
@@ -162,11 +162,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private int sensorArrayBottom = 0;
   private Rect sensorActiveArray;
 
-  public Camera2Wrapper(Context context, Camera2WrapperListener listener, int cameraIdSelected,
+  public Camera2Wrapper(Context context, int cameraIdSelected,
                         AutoFitTextureView textureView, String directorySaveVideos,
                         VideoCameraFormat videoCameraFormat) {
     this.context = context;
-    this.listener = listener;
     this.cameraIdSelected = cameraIdSelected;
     this.textureView = textureView;
     this.directorySaveVideos = directorySaveVideos;
@@ -179,6 +178,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2ISOHelper = new Camera2ISOHelper(this);
     camera2WhiteBalanceHelper = new Camera2WhiteBalanceHelper(this);
     camera2MeteringModeHelper = new Camera2MeteringModeHelper(this);
+  }
+
+  public void setCameraListener(Camera2WrapperListener camera2WrapperListener) {
+    this.listener = camera2WrapperListener;
   }
 
   private String getCameraId() throws CameraAccessException {
@@ -201,10 +204,14 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       Log.i(TAG, "cameraCharacteristics,,,,pixelSize.getWidth()--->" + pixelSize.getWidth()
               + ",,,pixelSize.getHeight()--->" + pixelSize.getHeight());
     } catch (CameraAccessException e) {
-      Log.e(TAG, "failed to get camera characteristics");
-      Log.e(TAG, "reason: " + e.getReason());
-      Log.e(TAG, "message: " + e.getMessage());
+      logExceptionAccessingCameraCharacteristics(e);
     }
+  }
+
+  private void logExceptionAccessingCameraCharacteristics(CameraAccessException e) {
+    Log.e(TAG, "failed to get camera characteristics");
+    Log.e(TAG, "reason: " + e.getReason());
+    Log.e(TAG, "message: " + e.getMessage());
   }
 
   public CaptureRequest.Builder getPreviewBuilder() {
@@ -405,6 +412,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
+
   /**
    * Configures the necessary {@link android.graphics.Matrix} transformation to `mTextureView`.
    * This method should not to be called until the camera preview size is determined in
@@ -436,7 +444,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
     textureView.setTransform(matrix);
   }
-
 
   /**
    * Start the camera preview.
@@ -480,6 +487,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     updatePreview();
     camera2WhiteBalanceHelper.setCurrentWhiteBalanceMode();
     camera2MeteringModeHelper.setCurrentMeteringMode();
+    try {
+      camera2ZoomHelper.setCurrentZoom();
+    } catch (CameraAccessException e) {
+      logExceptionAccessingCameraCharacteristics(e);
+    }
     setCurrentFlashSettings();
     camera2FocusHelper.setCurrentFocusSelectionMode();
   }
@@ -555,6 +567,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       cameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
         @Override
         public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+          initializingRecorder = false;
           setupPreviewSession(cameraCaptureSession);
           startRecordingSession(callback);
         }
@@ -635,10 +648,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     return videoPath;
   }
 
+
   public String getVideoPath() {
     return videoPath;
   }
-
 
   public boolean isRecordingVideo() {
     return isRecordingVideo;
@@ -737,6 +750,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public int getMaximumExposureCompensation() {
     return camera2MeteringModeHelper.getMaximumExposureCompensation();
+  }
+
+  public float getExposureCompensationStep() {
+    return camera2MeteringModeHelper.getExposureCompensationStep();
   }
 
   public int getCurrentExposureCompensation() {

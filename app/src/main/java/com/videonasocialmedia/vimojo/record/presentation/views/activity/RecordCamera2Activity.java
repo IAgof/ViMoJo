@@ -244,7 +244,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     keepScreenOn();
     ButterKnife.bind(this);
     setupActivityButtons();
-    configChronometer();
+//    configChronometer(); // TODO(jliarte): 26/06/17 make sure this is not needed anymore
     configShowThumbAndNumberClips();
 
     this.getActivityPresentersComponent().inject(this);
@@ -325,6 +325,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void configChronometer() {
+    // TODO(jliarte): 26/06/17 make sure this is not needed anymore
     chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
       @Override
       public void onChronometerTick(Chronometer chronometer) {
@@ -681,8 +682,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     if (supportedMeteringModes.contains(Camera2MeteringModeHelper.AE_MODE_REGIONS)) {
       meteringModeCenter.setVisibility(View.VISIBLE);
       meteringModeSpot.setVisibility(View.VISIBLE);
-      final int windowwidth = customManualFocusView.getWidth();
-      final int windowheight = customManualFocusView.getHeight();
+      final int windowWidth = customManualFocusView.getWidth();
+      final int windowHeight = customManualFocusView.getHeight();
       cameraShutterOffsetPoint = new PointF();
       cameraShutter.setOnTouchListener(new View.OnTouchListener() {
         @Override
@@ -696,12 +697,12 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
               onTouchSelectedArea(TOUCH_AREA_MODE_METERING_POINT, motionEvent);
               break;
             case MotionEvent.ACTION_MOVE:
-              int eventX = (int) Math.max(motionEvent.getX(), windowwidth);
-              int eventY = (int) Math.max(motionEvent.getY(), windowheight);
-              cameraShutter.offsetLeftAndRight((int) (eventX - cameraShutterOffsetPoint.x));
-              cameraShutter.offsetTopAndBottom((int) (eventY - cameraShutterOffsetPoint.y));
-              touchEventX = (int) motionEvent.getRawX();
-              touchEventY = (int) motionEvent.getRawY();
+              touchEventX = (int) Math.max(motionEvent.getRawX(), windowWidth);
+              touchEventY = (int) Math.max(motionEvent.getRawY(), windowHeight);
+              cameraShutter.setX(touchEventX - cameraShutter.getMeasuredWidth() / 2);
+              cameraShutter.setY(touchEventY - cameraShutter.getMeasuredHeight() / 2);
+              Log.d(LOG_TAG, "Move shutter to "+(int) (touchEventX - cameraShutterOffsetPoint.x)
+                      +" - "+(int) (touchEventY - cameraShutterOffsetPoint.y));
               break;
             default:
               break;
@@ -714,25 +715,28 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private void deselectAllMeteringModeButtons() {
     meteringModeAuto.setSelected(false);
-    meteringModeExposureCompensation.setSelected(false);
     meteringModeCenter.setSelected(false);
     meteringModeSpot.setSelected(false);
   }
 
   @OnClick(R.id.metering_mode_auto)
-  public void clickAutoExposureButton() {
+  public void setAutoExposure() {
     deselectAllMeteringModeButtons();
+    meteringModeExposureCompensation.setSelected(false);
     hideExposureCompensationSubmenu();
+    disableSpotMeteringControl();
     meteringModeAuto.setSelected(true);
     presenter.resetMeteringMode();
-    disableSpotMeteringControl();
   }
 
   @OnClick(R.id.metering_mode_exposure_compensation)
   public void clickExposureCompensationButton() {
-    deselectAllMeteringModeButtons();
     meteringModeExposureCompensation.setSelected(true);
-    showExposureCompensationSubmenu();
+    if (slideSeekbarSubmenuView.getVisibility() == View.VISIBLE) {
+      hideExposureCompensationSubmenu();
+    } else {
+      showExposureCompensationSubmenu();
+    }
   }
 
   @OnClick(R.id.metering_mode_center)
@@ -749,17 +753,14 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void showExposureCompensationSubmenu() {
-    // TODO(jliarte): 22/06/17 For example, if the exposure value (EV) step is 0.333, '6' will mean
-    // an exposure compensation of +2 EV; -3 will mean an exposure compensation of -1 EV. One EV
-    // represents a doubling of image brightness. Note that this control will only be effective if
-    // android.control.aeMode != OFF. This control will take effect even when
-    // android.control.aeLock == true.
     seekbarUpperText.setVisibility(View.VISIBLE);
     seekbarLowerText.setVisibility(View.VISIBLE);
     seekBarUpperImage.setVisibility(View.GONE);
     seekBarLowerImage.setVisibility(View.GONE);
-    seekbarUpperText.setText("+2EV");
-    seekbarLowerText.setText("-2EV");
+    float maxEV = presenter.getMaximumExposureCompensation() * presenter.getExposureCompensationStep();
+    float minEV = presenter.getMinimumExposureCompensation() * presenter.getExposureCompensationStep();
+    seekbarUpperText.setText(maxEV + "EV");
+    seekbarLowerText.setText(minEV + "EV");
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_EXPOSURE_COMPENSATION;
     final int minExposure = presenter.getMinimumExposureCompensation();
     slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to call the listener when setting up the progress bar to match the existing state
@@ -1217,10 +1218,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     presenter.resetFocusSelectionMode();
     selectAutoSettingsValuesByDefault();
 
+    setAutoExposure();
     hideMeteringModeSelectionSubmenu();
-    deselectAllWhiteBalanceButtons();
-    meteringModeAuto.setSelected(true);
-    presenter.resetMeteringMode();
   }
 
   private void selectAutoSettingsValuesByDefault() {

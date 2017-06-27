@@ -142,6 +142,10 @@ public class Camera2MeteringModeHelper {
     return maxExposureCompensation;
   }
 
+  public float getExposureCompensationStep() {
+    return exposureStep;
+  }
+
   public int getCurrentExposureCompensation() {
     return currentExposureCompensation;
   }

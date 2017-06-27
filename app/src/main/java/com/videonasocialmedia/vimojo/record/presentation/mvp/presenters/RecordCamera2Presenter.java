@@ -59,7 +59,7 @@ import java.util.List;
 
 public class RecordCamera2Presenter implements Camera2WrapperListener,
     OnLaunchAVTransitionTempFileListener, TranscoderHelperListener {
-
+  public static final int DEFAULT_CAMERA_ID = 0;
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private final String TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
@@ -86,8 +86,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public long ONE_GB = ONE_MB*1024;
 
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
-                                AutoFitTextureView textureView,
-                                String directorySaveVideos,
+//                                AutoFitTextureView textureView,
+//                                String directorySaveVideos,
                                 UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
                                 LaunchTranscoderAddAVTransitionsUseCase
                                     launchTranscoderAddAVTransitionUseCase,
@@ -95,30 +95,21 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
                                     getVideoFormatFromCurrentProjectUseCase,
                                 AddVideoToProjectUseCase addVideoToProjectUseCase,
                                 AdaptVideoRecordedToVideoFormatUseCase
-                                    adaptVideoRecordedToVideoFormatUseCase) {
+                                    adaptVideoRecordedToVideoFormatUseCase,
+                                Camera2Wrapper camera) {
     this.context = context;
     this.recordView = recordView;
     this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
     this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;
     this.getVideonaFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-    initCameraWrapper(context, isFrontCameraSelected, textureView, directorySaveVideos,
-        getVideoFormatFromCurrentProjectUseCase);
     this.adaptVideoRecordedToVideoFormatUseCase = adaptVideoRecordedToVideoFormatUseCase;
     this.currentProject = loadProject();
-  }
-
-  private void initCameraWrapper(
-          Context context, boolean isFrontCameraSelected, AutoFitTextureView textureView,
-          String directorySaveVideos,
-          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase) {
-    int cameraId = 0;
-    if (isFrontCameraSelected) {
-      cameraId = 1;
-    }
     // TODO:(alvaro.martinez) 25/01/17 Support camera1, api <21 or combine both. Make Camera1Wrapper
-    camera = new Camera2Wrapper(context, this, cameraId, textureView, directorySaveVideos,
-        getVideoFormatFromCurrentProjectUseCase.getVideoRecordedFormatFromCurrentProjectUseCase());
+//    camera = new Camera2Wrapper(context, DEFAULT_CAMERA_ID, textureView, directorySaveVideos,
+//        getVideoFormatFromCurrentProjectUseCase.getVideoRecordedFormatFromCurrentProjectUseCase());
+    this.camera = camera;
+    camera.setCameraListener(this);
   }
 
   private Project loadProject() {
@@ -543,6 +534,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   public int getMaximumExposureCompensation() {
     return camera.getMaximumExposureCompensation();
+  }
+
+  public float getExposureCompensationStep() {
+    return camera.getExposureCompensationStep();
   }
 
   public int getCurrentExposureCompensation() {
