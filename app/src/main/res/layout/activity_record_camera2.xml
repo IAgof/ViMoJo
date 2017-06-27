@@ -31,7 +31,7 @@
             android:layout_width="50dip"
             android:layout_height="50dip"
             android:layout_centerInParent="true"
-            android:src="@drawable/activity_record_camera_shutter"
+            android:src="@drawable/activity_record_ic_metering_shutter"
             android:visibility="invisible"/>
 
         <ImageView
@@ -156,11 +156,12 @@
             android:orientation="vertical"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="205dp"
             android:background="@color/colorGreyTransparent"
             android:visibility="invisible"
             android:padding="2dp"
-            android:layout_marginLeft="16dp">
+            android:layout_marginLeft="16dp"
+            >
 
             <TextView
                 android:id="@+id/seekBar_upper_text"
@@ -170,7 +171,8 @@
                 android:background="#00ffffff"
                 android:layout_gravity="center"
                 android:textColor="@color/colorWhite"
-                android:layout_marginTop="4dp"/>
+                android:layout_marginTop="4dp"
+                tools:visibility="gone"/>
 
             <ImageView
                 android:id="@+id/seekBar_upper_image"
@@ -179,9 +181,9 @@
                 android:layout_height="wrap_content"
                 android:background="#00ffffff"
                 android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_iso"
+                tools:src="@drawable/activity_record_ic_focus_macro"
                 android:layout_marginTop="4dp"
-                android:visibility="gone"/>
+                />
 
             <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
                 android:layout_width="wrap_content"
@@ -201,7 +203,8 @@
                 android:layout_height="wrap_content"
                 android:background="#00ffffff"
                 android:layout_gravity="center"
-                android:textColor="@color/colorWhite" />
+                android:textColor="@color/colorWhite"
+                tools:visibility="gone"/>
             <ImageView
                 android:id="@+id/seekBar_lower_image"
                 android:text="100%"
@@ -209,9 +212,8 @@
                 android:layout_height="wrap_content"
                 android:background="#00ffffff"
                 android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_iso"
-                android:layout_marginTop="4dp"
-                android:visibility="gone"/>
+                android:src="@drawable/activity_record_ic_focus_infinite"
+                tools:visibility="visible"/>
         </LinearLayout>
 
         <LinearLayout
@@ -455,7 +457,7 @@
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_brightness_adjust"
+                android:src="@drawable/activity_record_ic_metering_manual"
                 android:visibility="invisible"
                 android:layout_marginLeft="16dp" />
 

@@ -843,8 +843,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     seekbarLowerText.setVisibility(View.GONE);
     seekBarUpperImage.setVisibility(View.VISIBLE);
     seekBarLowerImage.setVisibility(View.VISIBLE);
-    seekBarUpperImage.setImageResource(R.drawable.activity_record_ic_flash);
-    seekBarLowerImage.setImageResource(R.drawable.activity_record_ic_battery_alert);
+    seekBarUpperImage.setImageResource(R.drawable.activity_record_ic_focus_macro);
+    seekBarLowerImage.setImageResource(R.drawable.activity_record_ic_focus_infinite);
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_FOCUS_MANUAL;
     slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to call the listener when setting up the progress bar to match the existing state
     slideSeekBar.setMax(100);
