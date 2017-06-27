@@ -172,6 +172,17 @@
                 android:textColor="@color/colorWhite"
                 android:layout_marginTop="4dp"/>
 
+            <ImageView
+                android:id="@+id/seekBar_upper_image"
+                android:text="100%"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:layout_gravity="center"
+                android:src="@drawable/activity_record_ic_iso"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"/>
+
             <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
                 android:layout_width="wrap_content"
                 android:layout_height="150dp"
@@ -191,6 +202,16 @@
                 android:background="#00ffffff"
                 android:layout_gravity="center"
                 android:textColor="@color/colorWhite" />
+            <ImageView
+                android:id="@+id/seekBar_lower_image"
+                android:text="100%"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:layout_gravity="center"
+                android:src="@drawable/activity_record_ic_iso"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"/>
         </LinearLayout>
 
         <LinearLayout
@@ -280,6 +301,18 @@
             android:paddingRight="16dp">
 
             <ImageButton
+                android:id="@+id/af_setting_selective"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/activity_record_ic_focus_touch"
+                android:layout_marginLeft="16dp"
+                android:visibility="gone"
+                />
+
+            <ImageButton
                 android:id="@+id/af_setting_auto"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -302,18 +335,6 @@
                 android:src="@drawable/activity_record_ic_focus_adjust"
                 android:layout_marginLeft="16dp"
                 android:visibility="gone"/>
-
-            <ImageButton
-                android:id="@+id/af_setting_selective"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_focus_touch"
-                android:layout_marginLeft="16dp"
-                android:visibility="gone"
-                />
 
         </LinearLayout>
 

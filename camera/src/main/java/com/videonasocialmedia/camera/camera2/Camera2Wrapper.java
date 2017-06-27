@@ -665,13 +665,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
   /********* end of Zoom component ********/
 
-  /********* Focus component ********/
-  public void setFocus(int x, int y) throws CameraAccessException {
-    camera2FocusHelper.setFocus(x, y);
-  }
-
-  /********* end of Focus component ********/
-
   public int getRotation() {
     if(rotation == Surface.ROTATION_270){
       if(sensorOrientation == 90) {
@@ -782,6 +775,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2MeteringModeHelper.setMeteringPoint(touchEventX, touchEventY, viewWidth, viewHeight);
   }
 
+  public void setFocusModeSelective(int touchEventX, int touchEventY, int viewWidth, int viewHeight){
+    camera2FocusHelper.setFocusModeRegion(touchEventX, touchEventY, viewWidth, viewHeight);
+  }
+
   public MeteringRectangle[] getMeteringRectangles(int touchEventX, int touchEventY,
                                                    int viewWidth, int viewHeight, int areaSize) {
     int ll = ((touchEventX * sensorArrayRight) - areaSize) / viewWidth;
@@ -810,6 +807,14 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     } else {
       return x;
     }
+  }
+
+  public void setFocusModeManual(int seekbarProgress) {
+    camera2FocusHelper.setFocusModeManual(seekbarProgress);
+  }
+
+  public void setFocusModeAuto() {
+    camera2FocusHelper.setFocusModeAuto();
   }
 
 

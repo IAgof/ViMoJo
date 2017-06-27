@@ -93,8 +93,9 @@ public interface RecordCamera2View {
 
     void setResolutionSelected(int height);
 
+    void setFocusModeAuto(MotionEvent event);
 
-    void setFocus(MotionEvent event);
+    void setFocusModeManual(MotionEvent event);
 
     void setZoom(float value);
 
