@@ -90,6 +90,9 @@ public class Camera2FocusHelper {
     if (isFocusSelectionSupported() && modeIsSupported(afMode)) {
       supportedFocusSelectionValues.selectedValue = afMode;
       Log.d(TAG, "---------------- set focus selection to "+afMode+" .............");
+      if(afMode == AF_MODE_AUTO){
+        setFocusModeAuto();
+      }
     }
   }
 

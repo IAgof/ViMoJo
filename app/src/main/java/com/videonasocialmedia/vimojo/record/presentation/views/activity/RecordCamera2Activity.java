@@ -1042,12 +1042,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
-  public void setFocusModeAuto(MotionEvent event) {
-    event.setLocation(customManualFocusView.getWidth()/2, customManualFocusView.getHeight()/2);
-    customManualFocusView.onTouchEvent(event);
-  }
-
-  @Override
   public void setFocusModeManual(MotionEvent event){
     customManualFocusView.onTouchEvent(event);
   }
@@ -1325,10 +1319,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   boolean onTouchCustomManualFocusView(MotionEvent event) {
     if (event.getAction() == MotionEvent.ACTION_DOWN) {
       if(afSettingSelective.isSelected()) {
-        onTouchSelectedArea(TOUCH_AREA_MODE_FOCUS_SELECTIVE, event); //(int) event.getRawX(),   (int) event.getRawY());
-      }
-      if(afSettingAuto.isSelected()){
-        presenter.onTouchFocusModeAuto(event);
+        onTouchSelectedArea(TOUCH_AREA_MODE_FOCUS_SELECTIVE, event);
       }
       return true;
     }
@@ -1370,7 +1361,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       presenter.setMeteringPoint(viewWidth/2, viewHeight/2, viewWidth, viewHeight);
     }
     if(type == TOUCH_AREA_MODE_FOCUS_SELECTIVE){
-      presenter.setFocusSelectionModeSelective((int) event.getRawX(), (int) event.getRawY(), viewWidth, viewHeight, event);
+      presenter.setFocusSelectionModeSelective((int) event.getRawX(), (int) event.getRawY(),
+          viewWidth, viewHeight, event);
     }
     return true;
   }

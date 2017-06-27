@@ -548,11 +548,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     camera.setMeteringPoint(touchEventX, touchEventY, viewWidth, viewHeight);
   }
 
-  public void onTouchFocusModeAuto(MotionEvent event) {
-    camera.setFocusModeAuto();
-    recordView.setFocusModeAuto(event);
-  }
-
   public void setFocusSelectionModeSelective(int touchEventX, int touchEventY, int viewWidth,
                                              int viewHeight, MotionEvent event) {
     camera.setFocusModeSelective(touchEventX, touchEventY, viewWidth, viewHeight);
