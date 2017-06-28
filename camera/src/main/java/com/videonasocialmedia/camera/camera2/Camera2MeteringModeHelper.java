@@ -66,7 +66,7 @@ public class Camera2MeteringModeHelper {
       maxExposureCompensation = exposure_range != null ? exposure_range.getUpper() : 0;
       exposureStep = cameraCharacteristics
               .get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP).floatValue();
-              this.maxAERegions = cameraCharacteristics
+      this.maxAERegions = cameraCharacteristics
               .get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE);
 //      if (maxAERegions > 0) {
 //        this.defaultAERegions = cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_REGIONS);

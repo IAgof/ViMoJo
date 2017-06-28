@@ -64,7 +64,7 @@ public class Camera2MeteringModeHelperTest {
     doReturn(12).when(compensationRange).getUpper();
     Rational mockedRational = Mockito.mock(Rational.class);
     doReturn(0.6F).when(mockedRational).floatValue();
-    doReturn(supportedValues).doReturn(1).doReturn(compensationRange).doReturn(mockedRational)
+    doReturn(supportedValues).doReturn(compensationRange).doReturn(mockedRational).doReturn(1)
             .when(mockedCharacteristics).get(CameraCharacteristics.CONTROL_AE_AVAILABLE_MODES);
     doReturn(mockedCharacteristics)
             .when(mockedCameraWrapper).getCurrentCameraCharacteristics();
