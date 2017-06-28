@@ -234,6 +234,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private int touchEventX = 0;
   private int touchEventY = 0;
   private PointF cameraShutterOffsetPoint;
+  private HashMap<TextView, Integer> isoButtons;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -622,7 +623,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void setupISOSupportedModesButtons(Range<Integer> supportedISORange) {
     isoSettingAuto.setSelected(true);
-    HashMap<TextView, Integer> isoButtons = new HashMap<>();
+    isoButtons = new HashMap<>();
     isoButtons.put(isoSettingAuto, 0); // (jliarte): 27/06/17 convention for auto ISO setting
     isoButtons.put(isoSetting50, 50);
     isoButtons.put(isoSetting100, 100);
@@ -631,7 +632,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     isoButtons.put(isoSetting800, 800);
     isoButtons.put(isoSettingMax, supportedISORange.getUpper());
     for (Map.Entry<TextView , Integer> isoMap: isoButtons.entrySet()) {
-      TextView isoButton = isoMap.getKey();
+      final TextView isoButton = isoMap.getKey();
       final Integer isoValue = isoMap.getValue();
       if (supportedISORange.contains(isoValue) || isoValue == 0) {
         isoButton.setVisibility(View.VISIBLE);
@@ -641,9 +642,20 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       isoButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+          deselectAllISOButtons();
+          isoButton.setSelected(true);
+          isoButton.setTextColor(getResources().getColor(R.color.button_selected));
           presenter.setISO(isoValue);
         }
       });
+    }
+  }
+
+  private void deselectAllISOButtons() {
+    for (Map.Entry<TextView , Integer> isoMap: isoButtons.entrySet()) {
+      TextView isoButton = isoMap.getKey();
+      isoButton.setSelected(false);
+      isoButton.setTextColor(getResources().getColor(R.color.button_color_record_activity));
     }
   }
 
