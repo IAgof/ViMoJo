@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.util.Range;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -46,6 +47,7 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -119,10 +121,26 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton zoomButton;
   @Bind(R.id.slide_seekbar_submenu)
   View slideSeekbarSubmenuView;
+
   @Bind(R.id.button_iso)
   ImageButton isoButton;
   @Bind(R.id.iso_submenu)
   View isoSubmenuView;
+  @Bind(R.id.iso_auto)
+  TextView isoSettingAuto;
+  @Bind(R.id.iso_50)
+  TextView isoSetting50;
+  @Bind(R.id.iso_100)
+  TextView isoSetting100;
+  @Bind(R.id.iso_200)
+  TextView isoSetting200;
+  @Bind(R.id.iso_400)
+  TextView isoSetting400;
+  @Bind(R.id.iso_800)
+  TextView isoSetting800;
+  @Bind(R.id.iso_max)
+  TextView isoSettingMax;
+
   @Bind(R.id.button_af_selection)
   ImageButton afSelectionButton;
   @Bind(R.id.af_selection_submenu)
@@ -279,7 +297,16 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(navigateSettingsButtons, button_color);
     tintButton(settingsCameraButton, button_color);
     tintButton(zoomButton, button_color);
+
     tintButton(isoButton, button_color);
+//    tintButton(isoSettingAuto, button_color);
+//    tintButton(isoSetting50, button_color);
+//    tintButton(isoSetting100, button_color);
+//    tintButton(isoSetting200, button_color);
+//    tintButton(isoSetting400, button_color);
+//    tintButton(isoSetting800, button_color);
+//    tintButton(isoSettingMax, button_color);
+
     tintButton(afSelectionButton, button_color);
 
     tintButton(whiteBalanceButton, button_color);
@@ -590,6 +617,34 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void hideISOSelection() {
     isoButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void setupISOSupportedModesButtons(Range<Integer> supportedISORange) {
+    isoSettingAuto.setSelected(true);
+    HashMap<TextView, Integer> isoButtons = new HashMap<>();
+    isoButtons.put(isoSettingAuto, 0); // (jliarte): 27/06/17 convention for auto ISO setting
+    isoButtons.put(isoSetting50, 50);
+    isoButtons.put(isoSetting100, 100);
+    isoButtons.put(isoSetting200, 200);
+    isoButtons.put(isoSetting400, 400);
+    isoButtons.put(isoSetting800, 800);
+    isoButtons.put(isoSettingMax, supportedISORange.getUpper());
+    for (Map.Entry<TextView , Integer> isoMap: isoButtons.entrySet()) {
+      TextView isoButton = isoMap.getKey();
+      final Integer isoValue = isoMap.getValue();
+      if (supportedISORange.contains(isoValue) || isoValue == 0) {
+        isoButton.setVisibility(View.VISIBLE);
+      } else {
+        isoButton.setVisibility(View.GONE);
+      }
+      isoButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          presenter.setISO(isoValue);
+        }
+      });
+    }
   }
 
   @Override

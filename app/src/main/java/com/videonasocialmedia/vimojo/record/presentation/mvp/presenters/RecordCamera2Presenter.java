@@ -133,6 +133,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     }
     if (!camera.ISOSelectionSupported()) {
       recordView.hideISOSelection();
+    } else {
+      recordView.setupISOSupportedModesButtons(
+              camera.getSupportedISORange());
     }
     if (!camera.advancedFocusSupported()) {
       recordView.hideAdvancedAFSelection();
@@ -558,6 +561,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   public void setMeteringPoint(int touchEventX, int touchEventY, int viewWidth, int viewHeight) {
     camera.setMeteringPoint(touchEventX, touchEventY, viewWidth, viewHeight);
+  }
+
+  public Integer getMaximumSensitivity() {
+    return camera.getMaximumSensitivity();
+  }
+
+  public void setISO(Integer isoValue) {
+    camera.setISO(isoValue);
   }
 
   // --------------------------------------------------------------

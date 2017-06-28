@@ -204,6 +204,7 @@
             android:layout_marginBottom="4dp">
 
             <TextView
+                android:id="@+id/iso_auto"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
@@ -216,6 +217,7 @@
                 android:layout_marginBottom="8dp" />
 
             <TextView
+                android:id="@+id/iso_50"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
@@ -226,6 +228,7 @@
                 android:layout_marginLeft="16dp" />
 
             <TextView
+                android:id="@+id/iso_100"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
@@ -236,6 +239,7 @@
                 android:layout_marginLeft="16dp" />
 
             <TextView
+                android:id="@+id/iso_200"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
@@ -246,6 +250,7 @@
                 android:layout_marginLeft="16dp" />
 
             <TextView
+                android:id="@+id/iso_400"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
@@ -256,6 +261,18 @@
                 android:layout_marginLeft="16dp" />
 
             <TextView
+                android:id="@+id/iso_800"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:text="800"
+                android:textColor="@color/colorWhite"
+                android:layout_marginLeft="16dp" />
+
+            <TextView
+                android:id="@+id/iso_max"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
