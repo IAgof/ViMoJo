@@ -1132,6 +1132,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     presenter.setZoom(0f);
 
     hideISOSelectionSubmenu();
+    setAutoISO();
+
     hideAFSelectionSubmenu();
 
     hideWhiteBalanceSubmenu();
@@ -1183,6 +1185,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private void hideISOSelectionSubmenu() {
     isoButton.setSelected(false);
     isoSubmenuView.setVisibility(View.INVISIBLE);
+  }
+
+  private void setAutoISO() {
+    deselectAllISOButtons();
+    isoSettingAuto.setSelected(true);
+    isoSettingAuto.setTextColor(getResources().getColor(R.color.button_selected));
+    presenter.setISO(0);
   }
 
   private void showAFSelectionSubmenu() {
