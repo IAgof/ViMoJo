@@ -84,13 +84,14 @@ public class Camera2FocusHelper {
 
   public void resetFocusSelectionMode() {
     setFocusSelectionMode(AF_MODE_REGIONS);
+    setFocusModeAuto();
   }
 
   public void setFocusSelectionMode(String afMode) {
     if (isFocusSelectionSupported() && modeIsSupported(afMode)) {
       supportedFocusSelectionValues.selectedValue = afMode;
       Log.d(TAG, "---------------- set focus selection to "+afMode+" .............");
-      if(afMode == AF_MODE_AUTO){
+      if(afMode.compareTo(AF_MODE_AUTO) == 0){
         setFocusModeAuto();
       }
     }
@@ -128,7 +129,7 @@ public class Camera2FocusHelper {
       Log.e(TAG, "reason: " + e.getReason());
       Log.e(TAG, "message: " + e.getMessage());
     }
-    float num = (((float) seekbarProgress) * minimumLens / 100);
+    float num = (((float) (100 - seekbarProgress)) * minimumLens / 100);
 
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AF_MODE,
         CaptureRequest.CONTROL_AF_MODE_OFF);
