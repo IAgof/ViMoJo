@@ -14,6 +14,7 @@ import android.os.StatFs;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Range;
 import android.view.MotionEvent;
@@ -23,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -125,21 +127,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Bind(R.id.button_iso)
   ImageButton isoButton;
   @Bind(R.id.iso_submenu)
-  View isoSubmenuView;
+  LinearLayout isoSubmenuView;
   @Bind(R.id.iso_auto)
   TextView isoSettingAuto;
-  @Bind(R.id.iso_50)
-  TextView isoSetting50;
-  @Bind(R.id.iso_100)
-  TextView isoSetting100;
-  @Bind(R.id.iso_200)
-  TextView isoSetting200;
-  @Bind(R.id.iso_400)
-  TextView isoSetting400;
-  @Bind(R.id.iso_800)
-  TextView isoSetting800;
-  @Bind(R.id.iso_max)
-  TextView isoSettingMax;
 
   @Bind(R.id.button_af_selection)
   ImageButton afSelectionButton;
@@ -298,16 +288,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(navigateSettingsButtons, button_color);
     tintButton(settingsCameraButton, button_color);
     tintButton(zoomButton, button_color);
-
     tintButton(isoButton, button_color);
-//    tintButton(isoSettingAuto, button_color);
-//    tintButton(isoSetting50, button_color);
-//    tintButton(isoSetting100, button_color);
-//    tintButton(isoSetting200, button_color);
-//    tintButton(isoSetting400, button_color);
-//    tintButton(isoSetting800, button_color);
-//    tintButton(isoSettingMax, button_color);
-
     tintButton(afSelectionButton, button_color);
 
     tintButton(whiteBalanceButton, button_color);
@@ -623,32 +604,35 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void setupISOSupportedModesButtons(Range<Integer> supportedISORange) {
     isoSettingAuto.setSelected(true);
+    isoSettingAuto.setTextColor(getResources().getColor(R.color.button_selected));
     isoButtons = new HashMap<>();
     isoButtons.put(isoSettingAuto, 0); // (jliarte): 27/06/17 convention for auto ISO setting
-    isoButtons.put(isoSetting50, 50);
-    isoButtons.put(isoSetting100, 100);
-    isoButtons.put(isoSetting200, 200);
-    isoButtons.put(isoSetting400, 400);
-    isoButtons.put(isoSetting800, 800);
-    isoButtons.put(isoSettingMax, supportedISORange.getUpper());
-    for (Map.Entry<TextView , Integer> isoMap: isoButtons.entrySet()) {
-      final TextView isoButton = isoMap.getKey();
-      final Integer isoValue = isoMap.getValue();
-      if (supportedISORange.contains(isoValue) || isoValue == 0) {
-        isoButton.setVisibility(View.VISIBLE);
-      } else {
-        isoButton.setVisibility(View.GONE);
+    setIsoModeOnClickListener(0, isoSettingAuto);
+    int[] isoValues = {50, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200};
+    for (final int isoValue : isoValues) {
+      if (supportedISORange.contains(isoValue)) {
+        final TextView isoModeButton = new TextView(this);
+        isoModeButton.setLayoutParams(isoSettingAuto.getLayoutParams());
+        isoModeButton.setText(String.valueOf(isoValue));
+        isoModeButton.setTextColor(getResources().getColor(R.color.button_color_record_activity));
+        setIsoModeOnClickListener(isoValue, isoModeButton);
+        isoButtons.put(isoModeButton, isoValue);
+        isoSubmenuView.addView(isoModeButton);
       }
-      isoButton.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-          deselectAllISOButtons();
-          isoButton.setSelected(true);
-          isoButton.setTextColor(getResources().getColor(R.color.button_selected));
-          presenter.setISO(isoValue);
-        }
-      });
     }
+  }
+
+  private void setIsoModeOnClickListener(final int isoValue, final TextView isoModeButton) {
+    isoModeButton.setOnClickListener(
+            new View.OnClickListener() {
+              @Override
+              public void onClick(View view) {
+                deselectAllISOButtons();
+                isoModeButton.setSelected(true);
+                isoModeButton.setTextColor(getResources().getColor(R.color.button_selected));
+                presenter.setISO(isoValue);
+              }
+            });
   }
 
   private void deselectAllISOButtons() {
