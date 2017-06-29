@@ -48,12 +48,7 @@ public class Camera2FocusHelper {
           //the focus trigger is complete -
           //resume repeating (preview surface will get frames), clear AF trigger
           camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AF_TRIGGER, null);
-          try {
-            camera2Wrapper.getPreviewSession().setRepeatingRequest(
-                    camera2Wrapper.getPreviewBuilder().build(), null, null);
-          } catch (CameraAccessException e) {
-            e.printStackTrace();
-          }
+          camera2Wrapper.updatePreview();
         }
       }
 

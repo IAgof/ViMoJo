@@ -31,6 +31,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.camera.recorder.MediaRecorderWrapper;
 import com.videonasocialmedia.camera.utils.Camera2Utils;
@@ -252,7 +253,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
-  public void reStartPreview(){
+  public void reStartPreview() {
     closeCamera();
     reStartBackgroundThread();
     checkTextureViewToOpenCamera();
@@ -500,14 +501,23 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
    * Update the camera preview. {@link #startPreview()} needs to be called in advance.
    */
   public void updatePreview() {
-    if (cameraDevice == null) {
+    if (cameraDevice == null || previewSession == null) {
       return;
     }
     try {
 //      setUpCaptureRequestBuilderAutoMode(previewBuilder);
-      previewSession.setRepeatingRequest(previewBuilder.build(), previewCaptureCallback, backgroundHandler);
+      // TODO(jliarte): 28/06/17 check if we can change frame rate with this.
+      //                Tested on M5 and working at 25FPS.
+      //                Seems not to crash if camera doesnt support FPS, it aproximates to next available FPS setting
+      getPreviewBuilder().set(CaptureRequest.SENSOR_FRAME_DURATION, Long.valueOf(40000000));
+      previewSession.setRepeatingRequest(previewBuilder.build(), previewCaptureCallback,
+              backgroundHandler);
     } catch (CameraAccessException e) {
       e.printStackTrace();
+    } catch (IllegalStateException illegalStateError) {
+      Log.e(TAG, "Illegal state updating preview", illegalStateError);
+      Crashlytics.log("Illegal state updating preview");
+      Crashlytics.logException(illegalStateError);
     } catch (NullPointerException nullPreviewSession) {
       Log.e(TAG, "Preview session becomes null!!", nullPreviewSession);
     }
@@ -520,8 +530,13 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private void closePreviewSession() {
     Log.d(TAG, "---------------------- close preview session -----------------");
     if (previewSession != null) {
-      previewSession.close();
-      previewSession = null;
+      try {
+        previewSession.close();
+        previewSession = null;
+      } catch (Exception errorCLosingPreview) {
+        Log.e(TAG, "failed to close preview");
+        Log.e(TAG, "message: " + errorCLosingPreview.getMessage());
+      }
     }
   }
 
@@ -575,16 +590,19 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         @Override
         public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
           Activity activity = (Activity) context;
-          if (null != activity) {
+          if (activity != null) {
             Toast.makeText(activity, "Failed to start recording.", Toast.LENGTH_SHORT).show();
           }
+          initializingRecorder = false;
         }
       }, backgroundHandler);
     } catch (CameraAccessException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
-    }
+    } finally {
+      initializingRecorder = false;
+      }
   }
 
   private void startRecordingSession(final RecordStartedCallback callback) {
@@ -638,7 +656,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     return videoPath;
   }
 
-
   public String getVideoPath() {
     return videoPath;
   }
@@ -679,7 +696,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   /********* end of Focus component ********/
 
   public int getRotation() {
-    if(rotation == Surface.ROTATION_270){
+    if(rotation == Surface.ROTATION_270) {
       if(sensorOrientation == 90) {
         return getInverseRotation();
       }else {
@@ -794,7 +811,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     int rr = ((touchEventY * sensorArrayBottom) - areaSize) / viewHeight;
     int focusAreaLeft = clamp(ll, 0, sensorArrayRight);
     int focusAreaBottom = clamp(rr, 0, sensorArrayBottom);
-    Rect newRect = new Rect(focusAreaLeft, focusAreaBottom, focusAreaLeft + areaSize, focusAreaBottom + areaSize);
+    Rect newRect = new Rect(focusAreaLeft, focusAreaBottom, focusAreaLeft + areaSize,
+            focusAreaBottom + areaSize);
     MeteringRectangle meteringRectangle = new MeteringRectangle(newRect, 500);
     MeteringRectangle[] meteringRectangleArr = {meteringRectangle};
     return meteringRectangleArr;
@@ -864,15 +882,19 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       }
       if (result.get(CaptureResult.SENSOR_EXPOSURE_TIME) != null) {
         captureResultSettings.captureResultHasExposureTime = true;
-        captureResultSettings.captureResultExposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
-        Log.d(TAG, "Capture result exposure time: " + captureResultSettings.captureResultExposureTime);
+        captureResultSettings.captureResultExposureTime =
+                result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+        Log.d(TAG, "Capture result exposure time: "
+                + captureResultSettings.captureResultExposureTime);
       } else {
         captureResultSettings.captureResultHasExposureTime = false;
       }
       if (result.get(CaptureResult.SENSOR_FRAME_DURATION) != null) {
         captureResultSettings.captureResultHasFrameDuration = true;
-        captureResultSettings.captureResultFrameDuration = result.get(CaptureResult.SENSOR_FRAME_DURATION);
-        Log.d(TAG, "Capture result frame duration: " + captureResultSettings.captureResultFrameDuration);
+        captureResultSettings.captureResultFrameDuration =
+                result.get(CaptureResult.SENSOR_FRAME_DURATION);
+        Log.d(TAG, "Capture result frame duration: "
+                + captureResultSettings.captureResultFrameDuration);
       } else {
         captureResultSettings.captureResultHasFrameDuration = false;
       }
@@ -880,15 +902,17 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       if (result.get(CaptureResult.LENS_APERTURE) != null) {
         captureResultSettings.captureResultHasLensAperture = true;
         captureResultSettings.captureResultLensAperture = result.get(CaptureResult.LENS_APERTURE);
-        Log.d(TAG, "Capture result lens aperture: " + captureResultSettings.captureResultLensAperture);
+        Log.d(TAG, "Capture result lens aperture: "
+                + captureResultSettings.captureResultLensAperture);
       } else {
         captureResultSettings.captureResultHasLensAperture = false;
       }
       if (result.get(CaptureResult.LENS_FOCAL_LENGTH) != null) {
         captureResultSettings.captureResultHasFocalLength = true;
-        captureResultSettings.captureResultFocalLength = result.get(CaptureResult.LENS_FOCAL_LENGTH);
-        Log.d(TAG, "Capture result focal lenght: " + captureResultSettings.captureResultFocalLength);
-        Log.d(TAG, "f-stop = N*D: " + captureResultSettings.captureResultFocalLength *captureResultSettings.captureResultLensAperture);
+        captureResultSettings.captureResultFocalLength =
+                result.get(CaptureResult.LENS_FOCAL_LENGTH);
+        Log.d(TAG, "Capture result focal lenght: "
+                + captureResultSettings.captureResultFocalLength);
       } else {
         captureResultSettings.captureResultHasFocalLength = false;
       }

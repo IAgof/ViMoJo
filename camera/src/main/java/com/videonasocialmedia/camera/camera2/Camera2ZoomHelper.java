@@ -4,12 +4,11 @@ import android.graphics.Rect;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CaptureRequest;
-import android.util.Log;
 
 public class Camera2ZoomHelper {
   private static final String TAG = Camera2ZoomHelper.class.getCanonicalName();
   private final Camera2Wrapper camera2Wrapper;
-  private float maxzoom = 0;
+  private float maxZoom = 0;
 
   // zoom, move to custom view
   public float fingerSpacing = 0;
@@ -19,10 +18,10 @@ public class Camera2ZoomHelper {
   public Camera2ZoomHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;
     try {
-      maxzoom = (camera2Wrapper.getCurrentCameraCharacteristics()
+      maxZoom = (camera2Wrapper.getCurrentCameraCharacteristics()
               .get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM)) * 5;
     } catch (CameraAccessException e) {
-      maxzoom = 0;
+      maxZoom = 0;
     }
   }
 
@@ -35,7 +34,7 @@ public class Camera2ZoomHelper {
    */
   public float onTouchZoom(float currentFingerSpacing) throws CameraAccessException {
     if (fingerSpacing != 0) {
-      if (currentFingerSpacing > fingerSpacing && maxzoom > currentZoomLevel) {
+      if (currentFingerSpacing > fingerSpacing && maxZoom > currentZoomLevel) {
         currentZoomLevel++;
       } else if (currentFingerSpacing < fingerSpacing && currentZoomLevel > 1) {
         currentZoomLevel--;
@@ -43,7 +42,7 @@ public class Camera2ZoomHelper {
     }
     fingerSpacing = currentFingerSpacing;
     setCurrentZoom();
-    return (float) (currentZoomLevel / maxzoom);
+    return (float) (currentZoomLevel / maxZoom);
   }
 
   /**
@@ -52,15 +51,15 @@ public class Camera2ZoomHelper {
    * @throws CameraAccessException If camera characteristics cannot be accessed
    */
   public void seekBarZoom(float zoomValue) throws CameraAccessException {
-    currentZoomLevel = zoomValue * maxzoom;
+    currentZoomLevel = zoomValue * maxZoom;
     setCurrentZoom();
   }
 
   void setCurrentZoom() throws CameraAccessException {
     Rect activeArraySize = camera2Wrapper.getCurrentCameraCharacteristics()
             .get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
-    int minW = (int) (activeArraySize.width() / maxzoom);
-    int minH = (int) (activeArraySize.height() / maxzoom);
+    int minW = (int) (activeArraySize.width() / maxZoom);
+    int minH = (int) (activeArraySize.height() / maxZoom);
     int difW = activeArraySize.width() - minW;
     int difH = activeArraySize.height() - minH;
     int cropW = difW / 100 * (int) currentZoomLevel;
@@ -70,14 +69,7 @@ public class Camera2ZoomHelper {
     Rect zoom = new Rect(cropW, cropH, activeArraySize.width()
             - cropW, activeArraySize.height() - cropH);
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.SCALER_CROP_REGION, zoom);
-
-    try {
-      camera2Wrapper.getPreviewSession().setRepeatingRequest(
-              camera2Wrapper.getPreviewBuilder().build(), null, null);
-    } catch (CameraAccessException cae) {
-      cae.printStackTrace();
-      Log.e(TAG, "Error setting zoom - camera access", cae);
-    }
+    camera2Wrapper.updatePreview();
   }
 
 }

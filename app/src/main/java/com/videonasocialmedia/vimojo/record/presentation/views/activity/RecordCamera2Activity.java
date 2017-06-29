@@ -224,7 +224,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private int touchEventX = 0;
   private int touchEventY = 0;
   private PointF cameraShutterOffsetPoint;
-  private HashMap<TextView, Integer> isoButtons;
+  private HashMap<TextView, Integer> isoButtons = new HashMap<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -605,7 +605,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void setupISOSupportedModesButtons(Range<Integer> supportedISORange) {
     isoSettingAuto.setSelected(true);
     isoSettingAuto.setTextColor(getResources().getColor(R.color.button_selected));
-    isoButtons = new HashMap<>();
     isoButtons.put(isoSettingAuto, 0); // (jliarte): 27/06/17 convention for auto ISO setting
     setIsoModeOnClickListener(0, isoSettingAuto);
     int[] isoValues = {50, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200};
@@ -772,8 +771,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void showExposureCompensationSubmenu() {
-    float maxEV = presenter.getMaximumExposureCompensation() * presenter.getExposureCompensationStep();
-    float minEV = presenter.getMinimumExposureCompensation() * presenter.getExposureCompensationStep();
+    float maxEV = Math.round(presenter.getMaximumExposureCompensation()
+            * presenter.getExposureCompensationStep());
+    float minEV = Math.round(presenter.getMinimumExposureCompensation()
+            * presenter.getExposureCompensationStep());
     seekbarUpperText.setText(maxEV + "EV");
     seekbarLowerText.setText(minEV + "EV");
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_EXPOSURE_COMPENSATION;
