@@ -14,7 +14,9 @@ import android.os.StatFs;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Range;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -22,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -47,6 +50,7 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -130,10 +134,14 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton zoomButton;
   @Bind(R.id.slide_seekbar_submenu)
   View slideSeekbarSubmenuView;
+
   @Bind(R.id.button_iso)
   ImageButton isoButton;
   @Bind(R.id.iso_submenu)
-  View isoSubmenuView;
+  LinearLayout isoSubmenuView;
+  @Bind(R.id.iso_auto)
+  TextView isoSettingAuto;
+
   @Bind(R.id.button_af_selection)
   ImageButton afSelectionButton;
   @Bind(R.id.af_selection_submenu)
@@ -234,6 +242,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private int touchEventX = 0;
   private int touchEventY = 0;
   private PointF cameraShutterOffsetPoint;
+  private HashMap<TextView, Integer> isoButtons;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -613,6 +622,48 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void hideISOSelection() {
     isoButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void setupISOSupportedModesButtons(Range<Integer> supportedISORange) {
+    isoSettingAuto.setSelected(true);
+    isoSettingAuto.setTextColor(getResources().getColor(R.color.button_selected));
+    isoButtons = new HashMap<>();
+    isoButtons.put(isoSettingAuto, 0); // (jliarte): 27/06/17 convention for auto ISO setting
+    setIsoModeOnClickListener(0, isoSettingAuto);
+    int[] isoValues = {50, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200};
+    for (final int isoValue : isoValues) {
+      if (supportedISORange.contains(isoValue)) {
+        final TextView isoModeButton = new TextView(this);
+        isoModeButton.setLayoutParams(isoSettingAuto.getLayoutParams());
+        isoModeButton.setText(String.valueOf(isoValue));
+        isoModeButton.setTextColor(getResources().getColor(R.color.button_color_record_activity));
+        setIsoModeOnClickListener(isoValue, isoModeButton);
+        isoButtons.put(isoModeButton, isoValue);
+        isoSubmenuView.addView(isoModeButton);
+      }
+    }
+  }
+
+  private void setIsoModeOnClickListener(final int isoValue, final TextView isoModeButton) {
+    isoModeButton.setOnClickListener(
+            new View.OnClickListener() {
+              @Override
+              public void onClick(View view) {
+                deselectAllISOButtons();
+                isoModeButton.setSelected(true);
+                isoModeButton.setTextColor(getResources().getColor(R.color.button_selected));
+                presenter.setISO(isoValue);
+              }
+            });
+  }
+
+  private void deselectAllISOButtons() {
+    for (Map.Entry<TextView , Integer> isoMap: isoButtons.entrySet()) {
+      TextView isoButton = isoMap.getKey();
+      isoButton.setSelected(false);
+      isoButton.setTextColor(getResources().getColor(R.color.button_color_record_activity));
+    }
   }
 
   @Override

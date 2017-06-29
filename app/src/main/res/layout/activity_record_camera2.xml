@@ -224,9 +224,12 @@
             android:layout_height="wrap_content"
             android:background="@color/colorGreyTransparent"
             android:visibility="invisible"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             android:layout_marginBottom="4dp">
 
             <TextView
+                android:id="@+id/iso_auto"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
@@ -234,60 +237,20 @@
                 android:layout_gravity="center_vertical"
                 android:text="Auto"
                 android:textColor="@color/colorWhite"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp" />
+                android:layout_margin="8dp"
+                />
 
-            <TextView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:text="50"
-                android:textColor="@color/colorWhite"
-                android:layout_gravity="center"
-                android:layout_marginLeft="16dp" />
-
-            <TextView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:text="100"
-                android:textColor="@color/colorWhite"
-                android:layout_marginLeft="16dp" />
-
-            <TextView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:text="200"
-                android:textColor="@color/colorWhite"
-                android:layout_marginLeft="16dp" />
-
-            <TextView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:text="400"
-                android:textColor="@color/colorWhite"
-                android:layout_marginLeft="16dp" />
-
-            <TextView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:text="Max"
-                android:textColor="@color/colorWhite"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"/>
+            <!--<TextView-->
+                <!--android:id="@+id/iso_max"-->
+                <!--android:layout_width="32dp"-->
+                <!--android:layout_height="32dp"-->
+                <!--android:background="#00ffffff"-->
+                <!--android:scaleType="fitCenter"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:text="Max"-->
+                <!--android:textColor="@color/colorWhite"-->
+                <!--android:layout_marginRight="16dp"-->
+                <!--android:layout_marginLeft="16dp"/>-->
 
         </LinearLayout>
 

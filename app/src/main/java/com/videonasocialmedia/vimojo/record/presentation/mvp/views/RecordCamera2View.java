@@ -12,6 +12,7 @@
 package com.videonasocialmedia.vimojo.record.presentation.mvp.views;
 
 
+import android.util.Range;
 import android.view.MotionEvent;
 
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -71,6 +72,8 @@ public interface RecordCamera2View {
 
     void hideISOSelection();
 
+    void setupISOSupportedModesButtons(Range<Integer> supportedISORange);
+
     // White balance settings
 
     void hideWhiteBalanceSelection();
@@ -90,6 +93,7 @@ public interface RecordCamera2View {
     void setFlash(boolean on);
 
     void setFlashSupported(boolean state);
+
 
     void setResolutionSelected(int height);
 

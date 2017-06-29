@@ -132,6 +132,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     }
     if (!camera.ISOSelectionSupported()) {
       recordView.hideISOSelection();
+    } else {
+      recordView.setupISOSupportedModesButtons(
+              camera.getSupportedISORange());
     }
     if (!camera.focusSelectionSupported()) {
       recordView.hideAdvancedAFSelection();
@@ -557,6 +560,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public void setFocusSelectionModeManual(int seekbarProgress) {
     camera.setFocusModeManual(seekbarProgress);
   }
+  public Integer getMaximumSensitivity() {
+    return camera.getMaximumSensitivity();
+  }
+
+  public void setISO(Integer isoValue) {
+    camera.setISO(isoValue);
+  }
+
   // --------------------------------------------------------------
 
   private class VideoToAdapt {

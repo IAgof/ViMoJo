@@ -15,6 +15,8 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaRecorder;
@@ -23,6 +25,7 @@ import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.util.Range;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
@@ -43,9 +46,6 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import static android.content.ContentValues.TAG;
-
-
 /**
  * Created by alvaro on 18/01/17.
  */
@@ -53,7 +53,7 @@ import static android.content.ContentValues.TAG;
 public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   public static final int CAMERA_ID_REAR = 0;
   public static final int CAMERA_ID_FRONT = 1;
-  private final String LOG_TAG = getClass().getSimpleName();
+  private final String TAG = getClass().getSimpleName();
 
   private Camera2WrapperListener listener;
   private final Context context;
@@ -299,13 +299,13 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   @Override
   public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
     openCamera(width, height);
-    Log.d(LOG_TAG, "onSurfaceTextureAvailable " + width + " x " + height );
+    Log.d(TAG, "onSurfaceTextureAvailable " + width + " x " + height );
   }
 
   @Override
   public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
     configureTransform(width, height);
-    Log.d(LOG_TAG, "onSurfaceTextureSizeChanged " + width + " x " + height );
+    Log.d(TAG, "onSurfaceTextureSizeChanged " + width + " x " + height );
   }
 
   @Override
@@ -327,7 +327,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       return;
     }
     try {
-      Log.d(LOG_TAG, "tryAcquire");
+      Log.d(TAG, "tryAcquire");
       if (!cameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
         throw new RuntimeException("Time out waiting to lock camera opening.");
       }
@@ -345,11 +345,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       previewSize = Camera2Utils.chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
           width, height, videoSize);
 
-      Log.d(LOG_TAG, "VideoSize " + videoSize.getWidth() + " x " + videoSize.getHeight());
-      Log.d(LOG_TAG, "PreviewSize " + previewSize.getWidth() + " x " + previewSize.getHeight());
+      Log.d(TAG, "VideoSize " + videoSize.getWidth() + " x " + videoSize.getHeight());
+      Log.d(TAG, "PreviewSize " + previewSize.getWidth() + " x " + previewSize.getHeight());
 
       int orientation = getActivityOrientation(activity);
-      Log.d(LOG_TAG, "orientation " + orientation);
+      Log.d(TAG, "orientation " + orientation);
 
       if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
         textureView.setAspectRatio(previewSize.getWidth(), previewSize.getHeight());
@@ -357,7 +357,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         textureView.setAspectRatio(previewSize.getHeight(), previewSize.getWidth());
       }
       configureTransform(width, height);
-      Log.d(LOG_TAG, "Rotation " + rotation + " cameraId " + cameraIdSelected +
+      Log.d(TAG, "Rotation " + rotation + " cameraId " + cameraIdSelected +
         " sensorOrientation " + sensorOrientation);
 
       mediaRecorder = new MediaRecorderWrapper(new MediaRecorder(), cameraIdSelected,
@@ -424,7 +424,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private void configureTransform(int viewWidth, int viewHeight) {
     Activity activity = (Activity) context;
     if (null == textureView || null == previewSize || null == activity) {
-      Log.d(LOG_TAG, "configureTransform, null textureView, previewSize, activity");
+      Log.d(TAG, "configureTransform, null textureView, previewSize, activity");
       return;
     }
     rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
@@ -457,7 +457,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       SurfaceTexture texture = textureView.getSurfaceTexture();
       assert texture != null;
       texture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
-      previewBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+      previewBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 
       Surface previewSurface = new Surface(texture);
       previewBuilder.addTarget(previewSurface);
@@ -484,9 +484,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   private void setupPreviewSession(CameraCaptureSession cameraCaptureSession) {
     previewSession = cameraCaptureSession;
-    updatePreview();
     camera2WhiteBalanceHelper.setCurrentWhiteBalanceMode();
     camera2MeteringModeHelper.setCurrentMeteringMode();
+    camera2ISOHelper.setCurrentISO();
     try {
       camera2ZoomHelper.setCurrentZoom();
     } catch (CameraAccessException e) {
@@ -494,6 +494,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
     setCurrentFlashSettings();
     camera2FocusHelper.setCurrentFocusSelectionMode();
+    updatePreview();
   }
 
   /**
@@ -504,8 +505,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       return;
     }
     try {
-      setUpCaptureRequestBuilder(previewBuilder);
-      previewSession.setRepeatingRequest(previewBuilder.build(), null, backgroundHandler);
+//      setUpCaptureRequestBuilderAutoMode(previewBuilder);
+      previewSession.setRepeatingRequest(previewBuilder.build(), previewCaptureCallback, backgroundHandler);
     } catch (CameraAccessException e) {
       e.printStackTrace();
     } catch (NullPointerException nullPreviewSession) {
@@ -513,7 +514,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
-  private void setUpCaptureRequestBuilder(CaptureRequest.Builder builder) {
+  private void setUpCaptureRequestBuilderAutoMode(CaptureRequest.Builder builder) {
     builder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
   }
 
@@ -526,7 +527,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   public void startRecordingVideo(final RecordStartedCallback callback) {
-    Log.d(LOG_TAG, "startRecordingVideo");
+    Log.d(TAG, "startRecordingVideo");
     if (initializingRecorder) {
       // (jliarte): 16/06/17 workarround to prevent startRecording been called consecutively
       return;
@@ -615,28 +616,18 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public void setFlashOff() {
     if (previewSession == null) {
-      Log.e(TAG, "-----------------------------------------------------------------------------");
-//      checkTextureViewToOpenCamera();
       reStartPreview();
       return;
     }
     isFlashActivated = false;
     previewBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF);
-    try {
-      previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
-    } catch (CameraAccessException e) {
-      e.printStackTrace();
-    }
+    updatePreview();
   }
 
   public void setFlashOn() {
     isFlashActivated = true;
     previewBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
-    try {
-      previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
-    } catch (CameraAccessException e) {
-      e.printStackTrace();
-    }
+    updatePreview();
   }
 
   private String createVideoFilePath() {
@@ -722,6 +713,18 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public boolean ISOSelectionSupported() {
     return camera2ISOHelper.ISOSelectionSupported();
+  }
+
+  public Integer getMaximumSensitivity() {
+    return camera2ISOHelper.getMaximumSensitivity();
+  }
+
+  public Range<Integer> getSupportedISORange() {
+    return camera2ISOHelper.getSupportedISORange();
+  }
+
+  public void setISO(Integer isoValue) {
+    camera2ISOHelper.setISO(isoValue);
   }
 
   public boolean whiteBalanceSelectionSupported() {
@@ -833,4 +836,77 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   public interface RecordStartedCallback {
     void onRecordStarted();
   }
+
+  public class CaptureResultSettings {
+    boolean captureResultHasIso;
+    Integer captureResultIso;
+    boolean captureResultHasExposureTime;
+    Long captureResultExposureTime;
+    private boolean captureResultHasFrameDuration;
+    private Long captureResultFrameDuration;
+    private boolean captureResultHasLensAperture;
+    private Float captureResultLensAperture;
+    private boolean captureResultHasFocalLength;
+    private Float captureResultFocalLength;
+  }
+
+  private CaptureResultSettings captureResultSettings = new CaptureResultSettings();
+
+  public CaptureResultSettings getCaptureResultSettings() {
+    return captureResultSettings;
+  }
+
+  private final CameraCaptureSession.CaptureCallback previewCaptureCallback =
+          new CameraCaptureSession.CaptureCallback() {
+    @Override
+    public void onCaptureCompleted(@NonNull CameraCaptureSession session,
+                                   @NonNull CaptureRequest request,
+                                   @NonNull TotalCaptureResult result) {
+      processCompleted(request, result);
+      super.onCaptureCompleted(session, request, result); // API docs say this does nothing, but call it just to be safe (as with Google Camera)
+    }
+
+    /** Processes a total result.
+     */
+    private void processCompleted(CaptureRequest request, CaptureResult result) {
+      if (result.get(CaptureResult.SENSOR_SENSITIVITY) != null) {
+        captureResultSettings.captureResultHasIso = true;
+        captureResultSettings.captureResultIso = result.get(CaptureResult.SENSOR_SENSITIVITY);
+        Log.d(TAG, "Capture result iso: " + captureResultSettings.captureResultIso);
+      } else {
+        captureResultSettings.captureResultHasIso = false;
+      }
+      if (result.get(CaptureResult.SENSOR_EXPOSURE_TIME) != null) {
+        captureResultSettings.captureResultHasExposureTime = true;
+        captureResultSettings.captureResultExposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+        Log.d(TAG, "Capture result exposure time: " + captureResultSettings.captureResultExposureTime);
+      } else {
+        captureResultSettings.captureResultHasExposureTime = false;
+      }
+      if (result.get(CaptureResult.SENSOR_FRAME_DURATION) != null) {
+        captureResultSettings.captureResultHasFrameDuration = true;
+        captureResultSettings.captureResultFrameDuration = result.get(CaptureResult.SENSOR_FRAME_DURATION);
+        Log.d(TAG, "Capture result frame duration: " + captureResultSettings.captureResultFrameDuration);
+      } else {
+        captureResultSettings.captureResultHasFrameDuration = false;
+      }
+
+      if (result.get(CaptureResult.LENS_APERTURE) != null) {
+        captureResultSettings.captureResultHasLensAperture = true;
+        captureResultSettings.captureResultLensAperture = result.get(CaptureResult.LENS_APERTURE);
+        Log.d(TAG, "Capture result lens aperture: " + captureResultSettings.captureResultLensAperture);
+      } else {
+        captureResultSettings.captureResultHasLensAperture = false;
+      }
+      if (result.get(CaptureResult.LENS_FOCAL_LENGTH) != null) {
+        captureResultSettings.captureResultHasFocalLength = true;
+        captureResultSettings.captureResultFocalLength = result.get(CaptureResult.LENS_FOCAL_LENGTH);
+        Log.d(TAG, "Capture result focal lenght: " + captureResultSettings.captureResultFocalLength);
+        Log.d(TAG, "f-stop = N*D: " + captureResultSettings.captureResultFocalLength *captureResultSettings.captureResultLensAperture);
+      } else {
+        captureResultSettings.captureResultHasFocalLength = false;
+      }
+    }
+  };
+
 }
