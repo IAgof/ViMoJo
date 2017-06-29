@@ -458,7 +458,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       SurfaceTexture texture = textureView.getSurfaceTexture();
       assert texture != null;
       texture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
-      previewBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+      previewBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 
       Surface previewSurface = new Surface(texture);
       previewBuilder.addTarget(previewSurface);
@@ -487,7 +487,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     previewSession = cameraCaptureSession;
     camera2WhiteBalanceHelper.setCurrentWhiteBalanceMode();
     camera2MeteringModeHelper.setCurrentMeteringMode();
-    camera2ISOHelper.setCurrentISO();
+    camera2ISOHelper.setCurrentISOValue();
     try {
       camera2ZoomHelper.setCurrentZoom();
     } catch (CameraAccessException e) {
@@ -523,7 +523,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
-  private void setUpCaptureRequestBuilderAutoMode(CaptureRequest.Builder builder) {
+  void setUpCaptureRequestBuilderAutoMode(CaptureRequest.Builder builder) {
     builder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
   }
 
@@ -876,7 +876,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       if (result.get(CaptureResult.SENSOR_SENSITIVITY) != null) {
         captureResultSettings.captureResultHasIso = true;
         captureResultSettings.captureResultIso = result.get(CaptureResult.SENSOR_SENSITIVITY);
-        Log.d(TAG, "Capture result iso: " + captureResultSettings.captureResultIso);
+//        Log.d(TAG, "Capture result iso: " + captureResultSettings.captureResultIso);
       } else {
         captureResultSettings.captureResultHasIso = false;
       }
@@ -884,8 +884,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         captureResultSettings.captureResultHasExposureTime = true;
         captureResultSettings.captureResultExposureTime =
                 result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
-        Log.d(TAG, "Capture result exposure time: "
-                + captureResultSettings.captureResultExposureTime);
+//        Log.d(TAG, "Capture result exposure time: "
+//                + captureResultSettings.captureResultExposureTime);
       } else {
         captureResultSettings.captureResultHasExposureTime = false;
       }
@@ -893,8 +893,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         captureResultSettings.captureResultHasFrameDuration = true;
         captureResultSettings.captureResultFrameDuration =
                 result.get(CaptureResult.SENSOR_FRAME_DURATION);
-        Log.d(TAG, "Capture result frame duration: "
-                + captureResultSettings.captureResultFrameDuration);
+//        Log.d(TAG, "Capture result frame duration: "
+//                + captureResultSettings.captureResultFrameDuration);
       } else {
         captureResultSettings.captureResultHasFrameDuration = false;
       }
@@ -902,8 +902,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       if (result.get(CaptureResult.LENS_APERTURE) != null) {
         captureResultSettings.captureResultHasLensAperture = true;
         captureResultSettings.captureResultLensAperture = result.get(CaptureResult.LENS_APERTURE);
-        Log.d(TAG, "Capture result lens aperture: "
-                + captureResultSettings.captureResultLensAperture);
+//        Log.d(TAG, "Capture result lens aperture: "
+//                + captureResultSettings.captureResultLensAperture);
       } else {
         captureResultSettings.captureResultHasLensAperture = false;
       }
@@ -911,8 +911,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         captureResultSettings.captureResultHasFocalLength = true;
         captureResultSettings.captureResultFocalLength =
                 result.get(CaptureResult.LENS_FOCAL_LENGTH);
-        Log.d(TAG, "Capture result focal lenght: "
-                + captureResultSettings.captureResultFocalLength);
+//        Log.d(TAG, "Capture result focal lenght: "
+//                + captureResultSettings.captureResultFocalLength);
       } else {
         captureResultSettings.captureResultHasFocalLength = false;
       }

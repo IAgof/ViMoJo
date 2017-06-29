@@ -64,39 +64,41 @@ class Camera2ISOHelper {
     return maxSensitivity;
   }
 
-  public void setISO(Integer isoValue) {
-    currentIso = isoValue;
-    setCurrentISO();
+  public void setCurrentISOValue() {
+    setISO(currentIso);
   }
 
-  void setCurrentISO() {
+  void setISO(Integer iso) {
+    currentIso = iso;
     CaptureRequest.Builder previewBuilder = this.camera2Wrapper.getPreviewBuilder();
-    if (currentIso == 0) {
+    if (iso == 0) {
       previewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
       previewBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_ON);
     } else {
-      // (jliarte): 27/06/17 default value to the middle of the supported range
-      long exposureTime = (exposureTimeRange.getUpper() - exposureTimeRange.getLower()) / 2;
-      exposureTime = getNewExposureTime(exposureTime);
+      long exposureTime = getNewExposureTime();
       Long currentExposureTime = previewBuilder.get(CaptureRequest.SENSOR_EXPOSURE_TIME);
       previewBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_OFF);
       previewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_OFF);
       Log.d(TAG, "Manual exposure settings: current exposure time " + currentExposureTime
               + " def setting: " + exposureTime);
-      Log.d(TAG, "Setting ISO value to: " + currentIso);
+      Log.d(TAG, "Setting ISO value to: " + iso);
 
       previewBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exposureTime);
-      previewBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, currentIso);
+      previewBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, iso);
     }
     this.camera2Wrapper.updatePreview();
   }
 
-  private long getNewExposureTime(long exposureTime) {
-    if (camera2Wrapper.getCaptureResultSettings().captureResultHasIso && camera2Wrapper.getCaptureResultSettings().captureResultHasExposureTime) {
-      double iso_ratio = (double)camera2Wrapper.getCaptureResultSettings().captureResultIso / (double)currentIso;
-      long exposureTime1;// TODO(jliarte): 27/06/17 when shutter speed will be enabled on ISO change,
-      // this will be the correct setting and we also will include eventually the exposure
-      // compensation
+  private long getNewExposureTime() {
+    // (jliarte): 27/06/17 default value to the middle of the supported range
+    long exposureTime = (exposureTimeRange.getUpper() - exposureTimeRange.getLower()) / 2;
+    if (camera2Wrapper.getCaptureResultSettings().captureResultHasIso
+            && camera2Wrapper.getCaptureResultSettings().captureResultHasExposureTime) {
+      double iso_ratio = (double) camera2Wrapper.getCaptureResultSettings().captureResultIso
+              / (double) currentIso;
+      long exposureTime1;// TODO(jliarte): 27/06/17 when shutter speed will be enabled on
+      // ISO change, this will be the correct setting and we also will include eventually the
+      // exposure compensation
       exposureTime1 = (long) (
               camera2Wrapper.getCaptureResultSettings().captureResultExposureTime * iso_ratio);
       if (exposureTime1 < MINIMUM_VIDEO_EXPOSURE_TIME) {
@@ -107,6 +109,9 @@ class Camera2ISOHelper {
 //    exposureTime = camera2Wrapper.getCaptureResultSettings().captureResultExposureTime;
 //    previewBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
       exposureTime = Math.min(exposureTime1, MINIMUM_VIDEO_EXPOSURE_TIME);
+//      exposureTime = exposureTime1;
+      exposureTime = Math.min(camera2Wrapper.getCaptureResultSettings().captureResultExposureTime,
+              MINIMUM_VIDEO_EXPOSURE_TIME);
     }
     return exposureTime;
   }

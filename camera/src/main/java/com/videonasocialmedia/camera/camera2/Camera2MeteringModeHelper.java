@@ -81,6 +81,7 @@ public class Camera2MeteringModeHelper {
   }
 
   public void resetMeteringMode() {
+    setAutoCameraControlMode();
     if (supportedAEValues.selectedValue.equals(AE_MODE_EXPOSURE_COMPENSATION)) {
       currentExposureCompensation = 0;
       setExposureCompensation(0);
@@ -99,6 +100,7 @@ public class Camera2MeteringModeHelper {
   }
 
   public void setExposureCompensation(int exposureCompensation) {
+    setAutoCameraControlMode();
     supportedAEValues.selectedValue = AE_MODE_EXPOSURE_COMPENSATION;
     currentExposureCompensation = exposureCompensation;
     Log.d(TAG, "---------------- set exposure compensation to "
@@ -108,7 +110,14 @@ public class Camera2MeteringModeHelper {
     camera2Wrapper.updatePreview();
   }
 
+  private void setAutoCameraControlMode() {
+    // TODO(jliarte): 29/06/17 should update camera activity ISO submenu?
+    camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_ON);
+    camera2Wrapper.setUpCaptureRequestBuilderAutoMode(camera2Wrapper.getPreviewBuilder());
+  }
+
   public void setMeteringPoint(int touchEventX, int touchEventY, int viewWidth, int viewHeight) {
+    setAutoCameraControlMode();
     lastMeteringRectangles = camera2Wrapper.getMeteringRectangles(touchEventX, touchEventY,
                     viewWidth, viewHeight, AE_METERING_AREA_SIZE);
     setMeteringRectangles(lastMeteringRectangles);
