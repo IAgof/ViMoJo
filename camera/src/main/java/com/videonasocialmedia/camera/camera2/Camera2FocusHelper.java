@@ -10,14 +10,14 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static android.hardware.camera2.CameraMetadata.CONTROL_AF_MODE_AUTO;
+import static android.hardware.camera2.CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_VIDEO;
 import static android.hardware.camera2.CameraMetadata.CONTROL_AF_MODE_OFF;
 
 public class Camera2FocusHelper {
   private static final String TAG = Camera2FocusHelper.class.getCanonicalName();
-  public static final int DEFAULT_FOCUS_SELECTION_MODE = CameraMetadata.CONTROL_AF_MODE_AUTO;
+  public static final int DEFAULT_FOCUS_SELECTION_MODE = CameraMetadata
+      .CONTROL_AF_MODE_CONTINUOUS_VIDEO;
   public static final String AF_MODE_AUTO = "auto";
-  public static final String AF_MODE_OFF = "off";
   public static final String AF_MODE_MANUAL = "manual";
   public static final String AF_MODE_REGIONS = "selective";
   private static final int AF_METERING_AREA_SIZE = 50;
@@ -25,31 +25,35 @@ public class Camera2FocusHelper {
   private final Camera2Wrapper camera2Wrapper;
   private final HashMap<Integer, String> focusSelectionMap = new HashMap<>();
   private CameraFeatures.SupportedValues supportedFocusSelectionValues;
+  private int seekBarProgress;
+  private MeteringRectangle[] focusMeteringRectangle;
 
   public Camera2FocusHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;
     initFocusSelectionMap();
     setupSupportedValues();
+    focusMeteringRectangle = camera2Wrapper.getFullSensorAreaMeteringRectangle();
+    seekBarProgress = 50;
   }
 
   private void initFocusSelectionMap() {
-    this.focusSelectionMap.put(CameraMetadata.CONTROL_AF_MODE_AUTO, AF_MODE_AUTO);
+    this.focusSelectionMap.put(CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_VIDEO, AF_MODE_AUTO);
     this.focusSelectionMap.put(CameraMetadata.CONTROL_AF_MODE_OFF, AF_MODE_MANUAL);
-    this.focusSelectionMap.put(CameraMetadata.CONTROL_AF_MODE_AUTO, AF_MODE_REGIONS);
+    this.focusSelectionMap.put(CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_VIDEO, AF_MODE_REGIONS);
   }
 
   private void setupSupportedValues() {
     try {
       ArrayList<String> focusSelectionStringArrayList = new ArrayList<>();
-      focusSelectionStringArrayList.add(AF_MODE_OFF);
-      int [] returnedValues = camera2Wrapper.getCurrentCameraCharacteristics()
-          .get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
 
+      int[] returnedValues;
+      returnedValues = camera2Wrapper.getCurrentCameraCharacteristics()
+          .get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
       for (int focusSelectionSetting : returnedValues) {
         if(focusSelectionSetting == CONTROL_AF_MODE_OFF) {
           focusSelectionStringArrayList.add(AF_MODE_MANUAL);
         }
-        if(focusSelectionSetting == CONTROL_AF_MODE_AUTO){
+        if(focusSelectionSetting == CONTROL_AF_MODE_CONTINUOUS_VIDEO){
           focusSelectionStringArrayList.add(AF_MODE_AUTO);
           if(camera2Wrapper.getCurrentCameraCharacteristics()
               .get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF) >= 1){
@@ -83,6 +87,8 @@ public class Camera2FocusHelper {
   }
 
   public void resetFocusSelectionMode() {
+    focusMeteringRectangle = camera2Wrapper.getFullSensorAreaMeteringRectangle();
+    seekBarProgress = 50;
     setFocusSelectionMode(AF_MODE_REGIONS);
     setFocusModeAuto();
   }
@@ -94,6 +100,12 @@ public class Camera2FocusHelper {
       if(afMode.compareTo(AF_MODE_AUTO) == 0){
         setFocusModeAuto();
       }
+      if(afMode.compareTo(AF_MODE_MANUAL) == 0){
+        setFocusModeManual(seekBarProgress);
+      }
+      if(afMode.compareTo(AF_MODE_REGIONS) == 0){
+        applyModeFocusRegion(focusMeteringRectangle);
+      }
     }
   }
 
@@ -104,21 +116,26 @@ public class Camera2FocusHelper {
   public void setFocusModeRegion(int touchEventX, int touchEventY, int viewWidth,
                                  int viewHeight) {
 
-    MeteringRectangle[] focusMeteringRectangle = camera2Wrapper.getMeteringRectangles(touchEventX,
+    focusMeteringRectangle = camera2Wrapper.getMeteringRectangles(touchEventX,
         touchEventY, viewWidth, viewHeight, AF_METERING_AREA_SIZE);
 
+    applyModeFocusRegion(focusMeteringRectangle);
+  }
+
+  private void applyModeFocusRegion(MeteringRectangle[] focusMeteringRectangle) {
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AF_TRIGGER,
         CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
-    camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AF_MODE,
-        CaptureRequest.CONTROL_AF_MODE_AUTO);
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AF_REGIONS,
         focusMeteringRectangle);
+    camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AF_MODE,
+        CaptureRequest.CONTROL_AF_MODE_AUTO);
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AF_TRIGGER,
         CameraMetadata.CONTROL_AF_TRIGGER_START);
     camera2Wrapper.updatePreview();
   }
 
   public void setFocusModeManual(int seekbarProgress) {
+    seekBarProgress = seekbarProgress;
     float minimumLens = 0;
     try {
       minimumLens = camera2Wrapper.getCurrentCameraCharacteristics()
@@ -135,10 +152,6 @@ public class Camera2FocusHelper {
         CaptureRequest.CONTROL_AF_MODE_OFF);
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.LENS_FOCUS_DISTANCE, num);
     camera2Wrapper.updatePreview();
-
-    Log.d(TAG, "Control mode " + camera2Wrapper.getPreviewBuilder().get(CaptureRequest.CONTROL_MODE) +
-        ", AF mode: " + camera2Wrapper.getPreviewBuilder().get(CaptureRequest.CONTROL_AF_MODE) +
-        ", Focus value; " +camera2Wrapper.getPreviewBuilder().get(CaptureRequest.LENS_FOCUS_DISTANCE));
   }
 
   public void setFocusModeAuto(){

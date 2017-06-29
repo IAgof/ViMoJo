@@ -830,11 +830,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2FocusHelper.setFocusModeManual(seekbarProgress);
   }
 
-  public void setFocusModeAuto() {
-    camera2FocusHelper.setFocusModeAuto();
-  }
-
-
   public interface RecordStartedCallback {
     void onRecordStarted();
   }
