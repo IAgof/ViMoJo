@@ -27,6 +27,7 @@ public class Camera2FocusHelper {
   private CameraFeatures.SupportedValues supportedFocusSelectionValues;
   private int seekBarProgress;
   private MeteringRectangle[] focusMeteringRectangle;
+  private Integer maxAFRegions;
 
   public Camera2FocusHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;
@@ -45,18 +46,18 @@ public class Camera2FocusHelper {
   private void setupSupportedValues() {
     try {
       ArrayList<String> focusSelectionStringArrayList = new ArrayList<>();
-
       int[] returnedValues;
       returnedValues = camera2Wrapper.getCurrentCameraCharacteristics()
           .get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
+      maxAFRegions = camera2Wrapper.getCurrentCameraCharacteristics()
+          .get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF);
       for (int focusSelectionSetting : returnedValues) {
         if(focusSelectionSetting == CONTROL_AF_MODE_OFF) {
           focusSelectionStringArrayList.add(AF_MODE_MANUAL);
         }
         if(focusSelectionSetting == CONTROL_AF_MODE_CONTINUOUS_VIDEO){
           focusSelectionStringArrayList.add(AF_MODE_AUTO);
-          if(camera2Wrapper.getCurrentCameraCharacteristics()
-              .get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF) >= 1){
+          if(isFocusModeSelectiveSupported()){
             focusSelectionStringArrayList.add(AF_MODE_REGIONS);
           }
         }
@@ -68,6 +69,10 @@ public class Camera2FocusHelper {
       Log.e(TAG, "reason: " + e.getReason());
       Log.e(TAG, "message: " + e.getMessage());
     }
+  }
+
+  private boolean isFocusModeSelectiveSupported() {
+    return maxAFRegions >= 1;
   }
 
   private String getDefaultFocusSelectionSetting() {
@@ -89,7 +94,8 @@ public class Camera2FocusHelper {
   public void resetFocusSelectionMode() {
     focusMeteringRectangle = camera2Wrapper.getFullSensorAreaMeteringRectangle();
     seekBarProgress = 50;
-    setFocusSelectionMode(AF_MODE_REGIONS);
+    if(isFocusModeSelectiveSupported())
+      setFocusSelectionMode(AF_MODE_REGIONS);
     setFocusModeAuto();
   }
 

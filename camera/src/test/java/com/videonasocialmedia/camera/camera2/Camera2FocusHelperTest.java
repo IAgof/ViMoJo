@@ -4,21 +4,21 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.params.MeteringRectangle;
 import android.util.Log;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -44,22 +44,22 @@ public class Camera2FocusHelperTest {
     PowerMockito.mockStatic(Log.class);
   }
 
-  @Ignore
   @Test
-  public void setFocusModeSelectiveIsNotCalledIfIsNotSuported() throws CameraAccessException {
-    setupCameraWrapper();
+  public void setFocusModeSelectiveIsNotCalledIfIsNotSupported() throws CameraAccessException {
+    setupCameraWrapperSelectiveModeNotSupported();
     Camera2FocusHelper focusHelper = new Camera2FocusHelper(mockedCameraWrapper);
-    doReturn(false).when(focusHelper).isFocusSelectionSupported();
 
     CameraFeatures.SupportedValues supportedFocusSelectionValues = focusHelper
         .getSupportedFocusSelectionModes();
 
+    for(String focusMode: supportedFocusSelectionValues.values){
+      assertThat("Mode selective is not supported", focusMode, not(Camera2FocusHelper.AF_MODE_REGIONS));
+    }
   }
 
-  @Ignore
   @Test
   public void setFocusModeAutoSetsCameraSettingsAndUpdatesPreview() throws CameraAccessException {
-    setupCameraWrapper();
+    setupCameraWrapperAllModesSupported();
     Camera2FocusHelper focusHelper = new Camera2FocusHelper(mockedCameraWrapper);
 
     focusHelper.setFocusSelectionMode(Camera2FocusHelper.AF_MODE_AUTO);
@@ -71,12 +71,58 @@ public class Camera2FocusHelperTest {
     verify(mockedCameraWrapper).updatePreview();
   }
 
-  private void setupCameraWrapper() throws CameraAccessException {
+  @Test
+  public void setFocusModeManualSetsCameraSettingsAndUpdatesPreview() throws CameraAccessException {
+    setupCameraWrapperAllModesSupported();
+    Camera2FocusHelper focusHelper = new Camera2FocusHelper(mockedCameraWrapper);
+
+    focusHelper.setFocusSelectionMode(Camera2FocusHelper.AF_MODE_MANUAL);
+
+    verify(mockedPreviewBuilder)
+        .set(CaptureRequest.CONTROL_AF_MODE, CameraMetadata.CONTROL_AF_MODE_OFF);
+    verify(mockedPreviewBuilder)
+        .set(CaptureRequest.LENS_FOCUS_DISTANCE, 5.0f);
+    verify(mockedCameraWrapper).updatePreview();
+  }
+
+  @Test
+  public void setFocusModeSelectiveSetsCameraSettingsAndUpdatesPreview() throws CameraAccessException {
+    setupCameraWrapperAllModesSupported();
+    Camera2FocusHelper focusHelper = new Camera2FocusHelper(mockedCameraWrapper);
+    MeteringRectangle[] focusMeteringRectangle = mockedCameraWrapper.getFullSensorAreaMeteringRectangle();
+
+    focusHelper.setFocusSelectionMode(Camera2FocusHelper.AF_MODE_REGIONS);
+
+    verify(mockedPreviewBuilder)
+        .set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
+    verify(mockedPreviewBuilder)
+        .set(CaptureRequest.CONTROL_AF_REGIONS, focusMeteringRectangle);
+    verify(mockedPreviewBuilder, atLeastOnce())
+        .set(CaptureRequest.CONTROL_AF_MODE, CameraMetadata.CONTROL_AF_MODE_AUTO);
+    verify(mockedPreviewBuilder, atLeastOnce())
+        .set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
+    verify(mockedCameraWrapper).updatePreview();
+
+  }
+
+  private void setupCameraWrapperAllModesSupported() throws CameraAccessException {
     int[] supportedValues = {CameraMetadata.CONTROL_AF_MODE_OFF,
         CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_VIDEO};
-    doReturn(supportedValues).when(mockedCharacteristics)
+
+    doReturn(supportedValues).doReturn(1).doReturn(10f).when(mockedCharacteristics)
         .get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
-    doReturn(2).when(mockedCharacteristics).get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF);
+    doReturn(mockedCharacteristics)
+        .when(mockedCameraWrapper).getCurrentCameraCharacteristics();
+    doReturn(mockedPreviewBuilder).when(mockedCameraWrapper).getPreviewBuilder();
+  }
+
+  private void setupCameraWrapperSelectiveModeNotSupported() throws CameraAccessException {
+    int[] supportedValues = {CameraMetadata.CONTROL_AF_MODE_OFF,
+        CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_VIDEO};
+
+    doReturn(supportedValues).doReturn(0).when(mockedCharacteristics)
+        .get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
+
     doReturn(mockedCharacteristics)
         .when(mockedCameraWrapper).getCurrentCameraCharacteristics();
     doReturn(mockedPreviewBuilder).when(mockedCameraWrapper).getPreviewBuilder();
