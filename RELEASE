@@ -1,3 +1,6 @@
-v0.7.0-RC1
-- First implementation of White Balance pro controls. Implemented WB auto setting
-- First implementation of exposure metering pro controls: auto setting, exposure compensation, center and spot metering
+v0.7.0-RC2
+- Implementation of White Balance pro controls.
+- Implementation of ISO pro controls.
+- Implementation of Focus mode controls, manual, selective, auto.
+- Implementation of Exposure metering, compensation, pro controls.
+- Implemented auto settings

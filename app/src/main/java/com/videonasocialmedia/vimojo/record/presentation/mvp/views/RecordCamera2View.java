@@ -84,6 +84,8 @@ public interface RecordCamera2View {
 
     void hideMetteringModeSelection();
 
+    void setupFocusSelectionSupportedModesButtons(List<String> values);
+
     void setupMeteringModeSupportedModesButtons(List<String> values);
 
     // Setters camera
@@ -95,7 +97,7 @@ public interface RecordCamera2View {
 
     void setResolutionSelected(int height);
 
-    void setFocus(MotionEvent event);
+    void setFocusModeManual(MotionEvent event);
 
     void setZoom(float value);
 

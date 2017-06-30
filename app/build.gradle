@@ -64,8 +64,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 45 // 20170623
-            versionName "0.7.0-RC1" // 20170623
+            versionCode 46 // 20170629
+            versionName "0.7.0-RC2" // 20170629
             resValue "string", "app_out_of_date", "2017-07-31" // 20170321
             resValue "string", "app_name", "Vimojo"
             buildConfigField "boolean", "FEATURE_FTP", "true"
@@ -79,8 +79,8 @@ android {
         }
         hispanopost {
             applicationId "com.videonasocialmedia.vimojo.hispanopost"
-            versionCode 25 // 20170623
-            versionName "0.7.0-RC1.fHispanopost" // 20170623
+            versionCode 26 // 20170629
+            versionName "0.7.0-RC2.fHispanopost" // 20170629
             resValue "string", "app_out_of_date", "2016-12-01"
             resValue "string", "app_name", "HispanoPost"
             buildConfigField "boolean", "FEATURE_FTP", "false"
@@ -94,8 +94,8 @@ android {
         }
         shoulderpod {
             applicationId "com.videonasocialmedia.vimojo.shoulderpod"
-            versionCode 25 // 20170623
-            versionName "0.7.0-RC1.fShoulderpod" // 20170623
+            versionCode 26 // 20170629
+            versionName "0.7.0-RC2.fShoulderpod" // 20170629
             resValue "string", "app_out_of_date", "2016-12-01"
             resValue "string", "app_name", "Shoulderpod"
             buildConfigField "boolean", "FEATURE_FTP", "false"
@@ -109,8 +109,8 @@ android {
         }
         veinteminutos {
             applicationId "com.videonasocialmedia.vimojo.veinteminutos"
-            versionCode 25 // 20170623
-            versionName "0.7.0-RC1.f20minutos" // 20170623
+            versionCode 26 // 20170629
+            versionName "0.7.0-RC2.f20minutos" // 20170629
             resValue "string", "app_out_of_date", "2016-12-13"
             resValue "string", "app_name", "Video 20M"
             buildConfigField "boolean", "FEATURE_FTP", "true"
@@ -124,8 +124,8 @@ android {
         }
         rtve {
             applicationId "com.videonasocialmedia.vimojo.rtve"
-            versionCode 25 // 20170623
-            versionName "0.7.0-RC1.fRtve" // 20170623
+            versionCode 26 // 20170629
+            versionName "0.7.0-RC2.fRtve" // 20170629
             resValue "string", "app_out_of_date", "2017-07-31" // 20170321
             resValue "string", "app_name", "Vimojo Rtve"
             buildConfigField "boolean", "FEATURE_FTP", "true"
@@ -139,8 +139,8 @@ android {
         }
         ochoaldia {
             applicationId "com.videonasocialmedia.vimojo.ochoaldia"
-            versionCode 22 // 20170623
-            versionName "0.7.0-RC1.fOchoAlDia" // 20170623
+            versionCode 23 // 20170629
+            versionName "0.7.0-RC2.fOchoAlDia" // 20170629
             resValue "string", "app_out_of_date", "2017-07-31"
             resValue "string", "app_name", "8 al día"
             buildConfigField "boolean", "FEATURE_FTP", "true"
@@ -154,8 +154,8 @@ android {
         }
         elpaisdigital {
             applicationId "com.videonasocialmedia.vimojo.elpaisdigital"
-            versionCode 20 // 20170623
-            versionName "0.7.0-RC1.fElPaisDigial" // 20170623
+            versionCode 21 // 20170629
+            versionName "0.7.0-RC2.fElPaisDigial" // 20170629
             resValue "string", "app_out_of_date", "2017-07-31"
             resValue "string", "app_name", "El País Digital"
             buildConfigField "boolean", "FEATURE_FTP", "false"

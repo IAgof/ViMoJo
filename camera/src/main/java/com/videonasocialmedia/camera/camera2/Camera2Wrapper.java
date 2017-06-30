@@ -494,6 +494,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       logExceptionAccessingCameraCharacteristics(e);
     }
     setCurrentFlashSettings();
+    camera2FocusHelper.setCurrentFocusSelectionMode();
     updatePreview();
   }
 
@@ -685,16 +686,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
   /********* end of Zoom component ********/
 
-  /********* Focus component ********/
-  public void setFocus(int x, int y) throws CameraAccessException {
-    camera2FocusHelper.setFocus(x, y);
-  }
-  public boolean advancedFocusSupported() {
-    return camera2FocusHelper.advancedFocusSupported();
-  }
-
-  /********* end of Focus component ********/
-
   public int getRotation() {
     if(rotation == Surface.ROTATION_270) {
       if(sensorOrientation == 90) {
@@ -793,6 +784,22 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2MeteringModeHelper.setExposureCompensation(exposureCompensation);
   }
 
+  public void setFocusSelectionMode(String focusSelectionMode){
+    camera2FocusHelper.setFocusSelectionMode(focusSelectionMode);
+  }
+
+  public void resetFocusSelectionMode() {
+    camera2FocusHelper.resetFocusSelectionMode();
+  }
+
+  public boolean focusSelectionSupported() {
+    return camera2FocusHelper.isFocusSelectionSupported();
+  }
+
+  public CameraFeatures.SupportedValues getSupportedFocusSelectionModes(){
+    return camera2FocusHelper.getSupportedFocusSelectionModes();
+  }
+
   public CameraFeatures.SupportedValues getSupportedMeteringModes() {
     return camera2MeteringModeHelper.getSupportedMeteringModes();
   }
@@ -803,6 +810,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public void setMeteringPoint(int touchEventX, int touchEventY, int viewWidth, int viewHeight) {
     camera2MeteringModeHelper.setMeteringPoint(touchEventX, touchEventY, viewWidth, viewHeight);
+  }
+
+  public void setFocusModeSelective(int touchEventX, int touchEventY, int viewWidth, int viewHeight){
+    camera2FocusHelper.setFocusModeRegion(touchEventX, touchEventY, viewWidth, viewHeight);
   }
 
   public MeteringRectangle[] getMeteringRectangles(int touchEventX, int touchEventY,
@@ -836,6 +847,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
+  public void setFocusModeManual(int seekbarProgress) {
+    camera2FocusHelper.setFocusModeManual(seekbarProgress);
+  }
 
   public interface RecordStartedCallback {
     void onRecordStarted();

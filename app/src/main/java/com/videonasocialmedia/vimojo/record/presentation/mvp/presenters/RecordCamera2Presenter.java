@@ -17,7 +17,6 @@ package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.hardware.camera2.CameraAccessException;
 import android.os.BatteryManager;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -137,8 +136,11 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       recordView.setupISOSupportedModesButtons(
               camera.getSupportedISORange());
     }
-    if (!camera.advancedFocusSupported()) {
+    if (!camera.focusSelectionSupported()) {
       recordView.hideAdvancedAFSelection();
+    } else {
+      recordView.setupFocusSelectionSupportedModesButtons(camera.getSupportedFocusSelectionModes()
+          .values);
     }
     if (!camera.whiteBalanceSelectionSupported()) {
       recordView.hideWhiteBalanceSelection();
@@ -367,28 +369,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     }
   }
 
-  public void onTouchFocus(MotionEvent event) {
-    int x = Math.round(event.getX());
-    int y = Math.round(event.getY());
-    //camera.setFocus(calculateBounds(x, y), 100);
-    try {
-      camera.setFocus(x, y);
-    } catch (CameraAccessException e) {
-      e.printStackTrace();
-      Log.e(TAG, "Error focusing", e);
-    }
-    recordView.setFocus(event);
-  }
-
-  private Rect calculateBounds(int x, int y) {
-    Rect focusIconBounds = new Rect();
-    // TODO:(alvaro.martinez) 24/01/17 Define area to calculate autofocus
-    int halfHeight = 100; // focusIcon.getIntrinsicHeight();
-    int halfWidth = 100; //focusIcon.getIntrinsicWidth();
-    focusIconBounds.set(x - halfWidth, y - halfHeight, x + halfWidth, y + halfHeight);
-    return focusIconBounds;
-  }
-
   public void navigateToEditOrGallery() {
 
     if(areTherePendingTranscodingTask()){
@@ -539,6 +519,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     camera.resetMeteringMode();
   }
 
+  public void setFocusSelectionMode(String focusSelectionMode){
+    camera.setFocusSelectionMode(focusSelectionMode);
+  }
+
+  public void resetFocusSelectionMode(){
+    camera.resetFocusSelectionMode();
+  }
+
   public void setExposureCompensation(int exposureCompensation) {
     camera.setExposureCompensation(exposureCompensation);
   }
@@ -563,6 +551,15 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     camera.setMeteringPoint(touchEventX, touchEventY, viewWidth, viewHeight);
   }
 
+  public void setFocusSelectionModeSelective(int touchEventX, int touchEventY, int viewWidth,
+                                             int viewHeight, MotionEvent event) {
+    camera.setFocusModeSelective(touchEventX, touchEventY, viewWidth, viewHeight);
+    recordView.setFocusModeManual(event);
+  }
+
+  public void setFocusSelectionModeManual(int seekbarProgress) {
+    camera.setFocusModeManual(seekbarProgress);
+  }
   public Integer getMaximumSensitivity() {
     return camera.getMaximumSensitivity();
   }
