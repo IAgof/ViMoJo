@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.main.modules;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
+import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
@@ -224,22 +225,16 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   RecordCamera2Presenter provideRecordCamera2Presenter(
-                                                       UpdateVideoRepositoryUseCase
-                                                           updateVideoRepositoryUseCase,
-                                                       LaunchTranscoderAddAVTransitionsUseCase
-                                                            launchTranscoderAddAVTransitionsUseCase,
-                                                       GetVideoFormatFromCurrentProjectUseCase
-                                                           getVideoFormatFromCurrentProjectUseCase,
-                                                       AddVideoToProjectUseCase
-                                                           addVideoToProjectUseCase,
-                                                       AdaptVideoRecordedToVideoFormatUseCase
-                                                       adaptVideoRecordedToVideoFormatUseCase){
-
+          UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
+          LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionsUseCase,
+          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+          AddVideoToProjectUseCase addVideoToProjectUseCase,
+          AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase,
+          Camera2Wrapper camera2wrapper) {
     return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity,
-        textureView, directorySaveVideos, updateVideoRepositoryUseCase,
-        launchTranscoderAddAVTransitionsUseCase,
-        getVideoFormatFromCurrentProjectUseCase, addVideoToProjectUseCase,
-        adaptVideoRecordedToVideoFormatUseCase);
+            updateVideoRepositoryUseCase, launchTranscoderAddAVTransitionsUseCase,
+            getVideoFormatFromCurrentProjectUseCase, addVideoToProjectUseCase,
+            adaptVideoRecordedToVideoFormatUseCase, camera2wrapper);
   }
 
   @Provides @PerActivity
@@ -450,5 +445,14 @@ public class ActivityPresentersModule {
   RemoveAudioUseCase providesRemoveAudioUseCase(ProjectRepository projectRepository, TrackRepository
       trackRepository, MusicRepository musicRepository){
     return new RemoveAudioUseCase(projectRepository, trackRepository, musicRepository);
+  }
+
+  @Provides
+  Camera2Wrapper provideCamera2wrapper(
+          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase) {
+    return new Camera2Wrapper(activity, RecordCamera2Presenter.DEFAULT_CAMERA_ID, textureView,
+            directorySaveVideos,
+            getVideoFormatFromCurrentProjectUseCase
+                    .getVideoRecordedFormatFromCurrentProjectUseCase());
   }
 }

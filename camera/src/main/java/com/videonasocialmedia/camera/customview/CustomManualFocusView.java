@@ -38,7 +38,7 @@ public class CustomManualFocusView extends View {
             R.styleable.CustomManualFocusView,
                 0, 0);
         focusIcon = typedArray.getDrawable(R.styleable.CustomManualFocusView_focus_icon);
-        focusIconBounds=new Rect();
+        focusIconBounds = new Rect();
     }
 
     @Override

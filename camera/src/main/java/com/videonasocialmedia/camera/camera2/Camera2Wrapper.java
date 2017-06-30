@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -14,6 +15,9 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaRecorder;
 import android.os.Handler;
@@ -21,11 +25,13 @@ import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.util.Range;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.camera.recorder.MediaRecorderWrapper;
 import com.videonasocialmedia.camera.utils.Camera2Utils;
@@ -41,17 +47,16 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import static android.content.ContentValues.TAG;
-
-
 /**
  * Created by alvaro on 18/01/17.
  */
 
 public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
-  private final String LOG_TAG = getClass().getSimpleName();
+  public static final int CAMERA_ID_REAR = 0;
+  public static final int CAMERA_ID_FRONT = 1;
+  private final String TAG = getClass().getSimpleName();
 
-  private final Camera2WrapperListener listener;
+  private Camera2WrapperListener listener;
   private final Context context;
   private final String directorySaveVideos;
   private final Camera2ZoomHelper camera2ZoomHelper;
@@ -149,21 +154,25 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   };
   private int cameraIdSelected;
   private CameraCharacteristics characteristics;
-
   private String videoPath;
   private CameraManager manager;
   private boolean isFlashActivated;
   private boolean initializingRecorder = false;
 
-  public Camera2Wrapper(Context context, Camera2WrapperListener listener, int cameraIdSelected,
+  private int sensorArrayRight = 0;
+  private int sensorArrayBottom = 0;
+  private Rect sensorActiveArray;
+
+  public Camera2Wrapper(Context context, int cameraIdSelected,
                         AutoFitTextureView textureView, String directorySaveVideos,
                         VideoCameraFormat videoCameraFormat) {
     this.context = context;
-    this.listener = listener;
     this.cameraIdSelected = cameraIdSelected;
     this.textureView = textureView;
     this.directorySaveVideos = directorySaveVideos;
     this.videoCameraFormat = videoCameraFormat;
+    getCameraManager(); // (jliarte): 19/06/17 manager is needed to ask for camera characteristics used in helpers
+    setupSensorParams();
     // TODO(jliarte): 26/05/17 inject the components
     camera2ZoomHelper = new Camera2ZoomHelper(this);
     camera2FocusHelper = new Camera2FocusHelper(this);
@@ -172,12 +181,38 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2MeteringModeHelper = new Camera2MeteringModeHelper(this);
   }
 
+  public void setCameraListener(Camera2WrapperListener camera2WrapperListener) {
+    this.listener = camera2WrapperListener;
+  }
+
   private String getCameraId() throws CameraAccessException {
     return manager.getCameraIdList()[this.cameraIdSelected];
   }
 
   CameraCharacteristics getCurrentCameraCharacteristics() throws CameraAccessException {
     return manager.getCameraCharacteristics(getCameraId());
+  }
+
+  private void setupSensorParams() {
+    try {
+      sensorActiveArray = getCurrentCameraCharacteristics().
+              get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+      sensorArrayRight = sensorActiveArray.right;
+      sensorArrayBottom = sensorActiveArray.bottom;
+
+      Size pixelSize = getCurrentCameraCharacteristics()
+              .get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE);
+      Log.i(TAG, "cameraCharacteristics,,,,pixelSize.getWidth()--->" + pixelSize.getWidth()
+              + ",,,pixelSize.getHeight()--->" + pixelSize.getHeight());
+    } catch (CameraAccessException e) {
+      logExceptionAccessingCameraCharacteristics(e);
+    }
+  }
+
+  private void logExceptionAccessingCameraCharacteristics(CameraAccessException e) {
+    Log.e(TAG, "failed to get camera characteristics");
+    Log.e(TAG, "reason: " + e.getReason());
+    Log.e(TAG, "message: " + e.getMessage());
   }
 
   public CaptureRequest.Builder getPreviewBuilder() {
@@ -197,6 +232,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     checkTextureViewToOpenCamera();
   }
 
+  private void getCameraManager() {
+    final Activity activity = (Activity) context;
+    manager = (CameraManager) activity.getSystemService(context.CAMERA_SERVICE);
+  }
+
   public void onPause() {
     if(isRecordingVideo) {
       stopRecordVideo();
@@ -213,7 +253,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
-  public void reStartPreview(){
+  public void reStartPreview() {
     closeCamera();
     reStartBackgroundThread();
     checkTextureViewToOpenCamera();
@@ -260,13 +300,13 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   @Override
   public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
     openCamera(width, height);
-    Log.d(LOG_TAG, "onSurfaceTextureAvailable " + width + " x " + height );
+    Log.d(TAG, "onSurfaceTextureAvailable " + width + " x " + height );
   }
 
   @Override
   public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
     configureTransform(width, height);
-    Log.d(LOG_TAG, "onSurfaceTextureSizeChanged " + width + " x " + height );
+    Log.d(TAG, "onSurfaceTextureSizeChanged " + width + " x " + height );
   }
 
   @Override
@@ -283,14 +323,12 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
    * Tries to open a {@link CameraDevice}. The result is listened by `stateCallback`.
    */
   private void openCamera(int width, int height) {
-
     final Activity activity = (Activity) context;
-    if (null == activity || activity.isFinishing()) {
+    if (activity == null || activity.isFinishing()) {
       return;
     }
-    manager = (CameraManager) activity.getSystemService(context.CAMERA_SERVICE);
     try {
-      Log.d(LOG_TAG, "tryAcquire");
+      Log.d(TAG, "tryAcquire");
       if (!cameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
         throw new RuntimeException("Time out waiting to lock camera opening.");
       }
@@ -308,11 +346,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       previewSize = Camera2Utils.chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
           width, height, videoSize);
 
-      Log.d(LOG_TAG, "VideoSize " + videoSize.getWidth() + " x " + videoSize.getHeight());
-      Log.d(LOG_TAG, "PreviewSize " + previewSize.getWidth() + " x " + previewSize.getHeight());
+      Log.d(TAG, "VideoSize " + videoSize.getWidth() + " x " + videoSize.getHeight());
+      Log.d(TAG, "PreviewSize " + previewSize.getWidth() + " x " + previewSize.getHeight());
 
-      int orientation = activity.getResources().getConfiguration().orientation;
-      Log.d(LOG_TAG, "orientation " + orientation);
+      int orientation = getActivityOrientation(activity);
+      Log.d(TAG, "orientation " + orientation);
 
       if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
         textureView.setAspectRatio(previewSize.getWidth(), previewSize.getHeight());
@@ -320,7 +358,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         textureView.setAspectRatio(previewSize.getHeight(), previewSize.getWidth());
       }
       configureTransform(width, height);
-      Log.d(LOG_TAG, "Rotation " + rotation + " cameraId " + cameraIdSelected +
+      Log.d(TAG, "Rotation " + rotation + " cameraId " + cameraIdSelected +
         " sensorOrientation " + sensorOrientation);
 
       mediaRecorder = new MediaRecorderWrapper(new MediaRecorder(), cameraIdSelected,
@@ -352,6 +390,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
+  private int getActivityOrientation(Activity activity) {
+    return activity.getResources().getConfiguration().orientation;
+  }
+
   private void closeCamera() {
     try {
       cameraOpenCloseLock.acquire();
@@ -371,6 +413,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
+
   /**
    * Configures the necessary {@link android.graphics.Matrix} transformation to `mTextureView`.
    * This method should not to be called until the camera preview size is determined in
@@ -382,7 +425,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private void configureTransform(int viewWidth, int viewHeight) {
     Activity activity = (Activity) context;
     if (null == textureView || null == previewSize || null == activity) {
-      Log.d(LOG_TAG, "configureTransform, null textureView, previewSize, activity");
+      Log.d(TAG, "configureTransform, null textureView, previewSize, activity");
       return;
     }
     rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
@@ -402,7 +445,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
     textureView.setTransform(matrix);
   }
-
 
   /**
    * Start the camera preview.
@@ -425,8 +467,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
           new CameraCaptureSession.StateCallback() {
             @Override
             public void onConfigured(CameraCaptureSession cameraCaptureSession) {
-              previewSession = cameraCaptureSession;
-              updatePreview();
+              setupPreviewSession(cameraCaptureSession);
             }
 
             @Override
@@ -442,38 +483,66 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
+  private void setupPreviewSession(CameraCaptureSession cameraCaptureSession) {
+    previewSession = cameraCaptureSession;
+    camera2WhiteBalanceHelper.setCurrentWhiteBalanceMode();
+    camera2MeteringModeHelper.setCurrentMeteringMode();
+    camera2ISOHelper.setCurrentISOValue();
+    try {
+      camera2ZoomHelper.setCurrentZoom();
+    } catch (CameraAccessException e) {
+      logExceptionAccessingCameraCharacteristics(e);
+    }
+    setCurrentFlashSettings();
+    camera2FocusHelper.setCurrentFocusSelectionMode();
+    updatePreview();
+  }
+
   /**
    * Update the camera preview. {@link #startPreview()} needs to be called in advance.
    */
-  private void updatePreview() {
-    if ((cameraDevice == null) || (previewSession == null)) {
+  public void updatePreview() {
+    if (cameraDevice == null || previewSession == null) {
       return;
     }
     try {
-      setUpCaptureRequestBuilder(previewBuilder);
-      // TODO(jliarte): 14/06/17 I've seen lots of this threads running in debugged, what is it needed for???
-//      HandlerThread thread = new HandlerThread("CameraPreview");
-//      thread.start();
-      previewSession.setRepeatingRequest(previewBuilder.build(), null, backgroundHandler);
+//      setUpCaptureRequestBuilderAutoMode(previewBuilder);
+      // TODO(jliarte): 28/06/17 check if we can change frame rate with this.
+      //                Tested on M5 and working at 25FPS.
+      //                Seems not to crash if camera doesnt support FPS, it aproximates to next available FPS setting
+      getPreviewBuilder().set(CaptureRequest.SENSOR_FRAME_DURATION, Long.valueOf(40000000));
+      previewSession.setRepeatingRequest(previewBuilder.build(), previewCaptureCallback,
+              backgroundHandler);
     } catch (CameraAccessException e) {
       e.printStackTrace();
+    } catch (IllegalStateException illegalStateError) {
+      Log.e(TAG, "Illegal state updating preview", illegalStateError);
+      Crashlytics.log("Illegal state updating preview");
+      Crashlytics.logException(illegalStateError);
     } catch (NullPointerException nullPreviewSession) {
       Log.e(TAG, "Preview session becomes null!!", nullPreviewSession);
     }
   }
 
-  private void setUpCaptureRequestBuilder(CaptureRequest.Builder builder) {
+  void setUpCaptureRequestBuilderAutoMode(CaptureRequest.Builder builder) {
     builder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
   }
 
   private void closePreviewSession() {
+    Log.d(TAG, "---------------------- close preview session -----------------");
     if (previewSession != null) {
-      previewSession.close();
-      previewSession = null;
+      try {
+        previewSession.close();
+        previewSession = null;
+      } catch (Exception errorCLosingPreview) {
+        Log.e(TAG, "failed to close preview");
+        Log.e(TAG, "message: " + errorCLosingPreview.getMessage());
+      }
     }
   }
 
   public void startRecordingVideo(final RecordStartedCallback callback) {
+    Log.d(TAG, "startRecordingVideo");
     if (initializingRecorder) {
       // (jliarte): 16/06/17 workarround to prevent startRecording been called consecutively
       return;
@@ -499,6 +568,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       surfaces.add(previewSurface);
       previewBuilder.addTarget(previewSurface);
 
+      // TODO(jliarte): 20/06/17 trying new approach to use the same surface and capture session that we already have
+//      mediaRecorder.setSurface(previewSurface);
+//      setupPreviewSession(previewSession);
+//      startRecordingSession(callback);
+
       // Set up Surface for the MediaRecorder
       recorderSurface = mediaRecorder.getSurface();
       surfaces.add(recorderSurface);
@@ -509,39 +583,48 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       cameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
         @Override
         public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-          previewSession = cameraCaptureSession;
-          updatePreview();
-          if (isFlashActivated) {
-            setFlashOn();
-          }
-          ((Activity) context).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-              // Start recording
-              try {
-                mediaRecorder.start();
-                initializingRecorder = false;
-                isRecordingVideo = true;
-                callback.onRecordStarted();
-              } catch (IllegalStateException illegalStateError) {
-                Log.d(TAG, "IllegalStateException - Caught error starting record");
-              }
-            }
-          });
+          initializingRecorder = false;
+          setupPreviewSession(cameraCaptureSession);
+          startRecordingSession(callback);
         }
 
         @Override
         public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
           Activity activity = (Activity) context;
-          if (null != activity) {
-            Toast.makeText(activity, "Failed", Toast.LENGTH_SHORT).show();
+          if (activity != null) {
+            Toast.makeText(activity, "Failed to start recording.", Toast.LENGTH_SHORT).show();
           }
+          initializingRecorder = false;
         }
       }, backgroundHandler);
     } catch (CameraAccessException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
+    } finally {
+      initializingRecorder = false;
+      }
+  }
+
+  private void startRecordingSession(final RecordStartedCallback callback) {
+    ((Activity) context).runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        // Start recording
+        try {
+          mediaRecorder.start();
+          isRecordingVideo = true;
+          callback.onRecordStarted();
+        } catch (IllegalStateException illegalStateError) {
+          Log.d(TAG, "IllegalStateException - Caught error starting record");
+        }
+      }
+    });
+  }
+
+  private void setCurrentFlashSettings() {
+    if (isFlashActivated) {
+      setFlashOn();
     }
   }
 
@@ -551,28 +634,18 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public void setFlashOff() {
     if (previewSession == null) {
-      Log.e(TAG, "-----------------------------------------------------------------------------");
-//      checkTextureViewToOpenCamera();
       reStartPreview();
       return;
     }
     isFlashActivated = false;
     previewBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF);
-    try {
-      previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
-    } catch (CameraAccessException e) {
-      e.printStackTrace();
-    }
+    updatePreview();
   }
 
   public void setFlashOn() {
     isFlashActivated = true;
     previewBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
-    try {
-      previewSession.setRepeatingRequest(previewBuilder.build(),null,null);
-    } catch (CameraAccessException e) {
-      e.printStackTrace();
-    }
+    updatePreview();
   }
 
   private String createVideoFilePath() {
@@ -587,7 +660,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   public String getVideoPath() {
     return videoPath;
   }
-
 
   public boolean isRecordingVideo() {
     return isRecordingVideo;
@@ -614,18 +686,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
   /********* end of Zoom component ********/
 
-  /********* Focus component ********/
-  public void setFocus(int x, int y) throws CameraAccessException {
-    camera2FocusHelper.setFocus(x, y);
-  }
-
-  public boolean advancedFocusSupported() {
-    return camera2FocusHelper.advancedFocusSupported();
-  }
-  /********* end of Focus component ********/
-
   public int getRotation() {
-    if(rotation == Surface.ROTATION_270){
+    if(rotation == Surface.ROTATION_270) {
       if(sensorOrientation == 90) {
         return getInverseRotation();
       }else {
@@ -641,7 +703,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   private int getInverseRotation() {
-    if(cameraIdSelected == 0) {
+    if(cameraIdSelected == CAMERA_ID_REAR) {
       return 180;
     } else {
       return 0;
@@ -649,7 +711,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   private int getNormalRotation() {
-    if(cameraIdSelected == 0) {
+    if(cameraIdSelected == CAMERA_ID_REAR) {
       return 0;
     } else {
       return 180;
@@ -657,10 +719,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   public void switchCamera(boolean isFrontCameraSelected) {
-    if(isFrontCameraSelected){
-      cameraIdSelected = 1;
+    if (isFrontCameraSelected) {
+      cameraIdSelected = CAMERA_ID_FRONT;
     } else {
-      cameraIdSelected = 0;
+      cameraIdSelected = CAMERA_ID_REAR;
     }
     closeCamera();
     checkTextureViewToOpenCamera();
@@ -670,15 +732,205 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     return camera2ISOHelper.ISOSelectionSupported();
   }
 
+  public Integer getMaximumSensitivity() {
+    return camera2ISOHelper.getMaximumSensitivity();
+  }
+
+  public Range<Integer> getSupportedISORange() {
+    return camera2ISOHelper.getSupportedISORange();
+  }
+
+  public void setISO(Integer isoValue) {
+    camera2ISOHelper.setISO(isoValue);
+  }
+
   public boolean whiteBalanceSelectionSupported() {
     return camera2WhiteBalanceHelper.whiteBalanceSelectionSupported();
+  }
+
+  public CameraFeatures.SupportedValues getSupportedWhiteBalanceModes() {
+    return camera2WhiteBalanceHelper.getSupportedWhiteBalanceModes();
   }
 
   public boolean metteringModeSelectionSupported() {
     return camera2MeteringModeHelper.metteringModeSelectionSupported();
   }
 
+  public void setWhiteBalanceMode(String whiteBalanceMode) {
+    camera2WhiteBalanceHelper.setWhiteBalanceMode(whiteBalanceMode);
+  }
+
+  public void resetWhiteBalanceMode() {
+    camera2WhiteBalanceHelper.resetWhiteBalanceMode();
+  }
+
+  public int getMinimumExposureCompensation() {
+    return camera2MeteringModeHelper.getMinimumExposureCompensation();
+  }
+
+  public int getMaximumExposureCompensation() {
+    return camera2MeteringModeHelper.getMaximumExposureCompensation();
+  }
+
+  public float getExposureCompensationStep() {
+    return camera2MeteringModeHelper.getExposureCompensationStep();
+  }
+
+  public int getCurrentExposureCompensation() {
+    return camera2MeteringModeHelper.getCurrentExposureCompensation();
+  }
+
+  public void setExposureCompensation(int exposureCompensation) {
+    camera2MeteringModeHelper.setExposureCompensation(exposureCompensation);
+  }
+
+  public void setFocusSelectionMode(String focusSelectionMode){
+    camera2FocusHelper.setFocusSelectionMode(focusSelectionMode);
+  }
+
+  public void resetFocusSelectionMode() {
+    camera2FocusHelper.resetFocusSelectionMode();
+  }
+
+  public boolean focusSelectionSupported() {
+    return camera2FocusHelper.isFocusSelectionSupported();
+  }
+
+  public CameraFeatures.SupportedValues getSupportedFocusSelectionModes(){
+    return camera2FocusHelper.getSupportedFocusSelectionModes();
+  }
+
+  public CameraFeatures.SupportedValues getSupportedMeteringModes() {
+    return camera2MeteringModeHelper.getSupportedMeteringModes();
+  }
+
+  public void resetMeteringMode() {
+    camera2MeteringModeHelper.resetMeteringMode();
+  }
+
+  public void setMeteringPoint(int touchEventX, int touchEventY, int viewWidth, int viewHeight) {
+    camera2MeteringModeHelper.setMeteringPoint(touchEventX, touchEventY, viewWidth, viewHeight);
+  }
+
+  public void setFocusModeSelective(int touchEventX, int touchEventY, int viewWidth, int viewHeight){
+    camera2FocusHelper.setFocusModeRegion(touchEventX, touchEventY, viewWidth, viewHeight);
+  }
+
+  public MeteringRectangle[] getMeteringRectangles(int touchEventX, int touchEventY,
+                                                   int viewWidth, int viewHeight, int areaSize) {
+    int ll = ((touchEventX * sensorArrayRight) - areaSize) / viewWidth;
+    int rr = ((touchEventY * sensorArrayBottom) - areaSize) / viewHeight;
+    int focusAreaLeft = clamp(ll, 0, sensorArrayRight);
+    int focusAreaBottom = clamp(rr, 0, sensorArrayBottom);
+    Rect newRect = new Rect(focusAreaLeft, focusAreaBottom, focusAreaLeft + areaSize,
+            focusAreaBottom + areaSize);
+    MeteringRectangle meteringRectangle = new MeteringRectangle(newRect, 500);
+    MeteringRectangle[] meteringRectangleArr = {meteringRectangle};
+    return meteringRectangleArr;
+  }
+
+  public MeteringRectangle[] getFullSensorAreaMeteringRectangle() {
+    Rect newRect = new Rect(sensorActiveArray.left, sensorActiveArray.top,
+            sensorActiveArray.right, sensorActiveArray.bottom);
+    MeteringRectangle meteringRectangle = new MeteringRectangle(newRect, 500);
+    MeteringRectangle[] meteringRectangleArr = {meteringRectangle};
+    return meteringRectangleArr;
+  }
+
+  private int clamp(int x, int min, int max) {
+    if (x < min) {
+      return min;
+    } else if (x > max) {
+      return max;
+    } else {
+      return x;
+    }
+  }
+
+  public void setFocusModeManual(int seekbarProgress) {
+    camera2FocusHelper.setFocusModeManual(seekbarProgress);
+  }
+
   public interface RecordStartedCallback {
     void onRecordStarted();
   }
+
+  public class CaptureResultSettings {
+    boolean captureResultHasIso;
+    Integer captureResultIso;
+    boolean captureResultHasExposureTime;
+    Long captureResultExposureTime;
+    private boolean captureResultHasFrameDuration;
+    private Long captureResultFrameDuration;
+    private boolean captureResultHasLensAperture;
+    private Float captureResultLensAperture;
+    private boolean captureResultHasFocalLength;
+    private Float captureResultFocalLength;
+  }
+
+  private CaptureResultSettings captureResultSettings = new CaptureResultSettings();
+
+  public CaptureResultSettings getCaptureResultSettings() {
+    return captureResultSettings;
+  }
+
+  private final CameraCaptureSession.CaptureCallback previewCaptureCallback =
+          new CameraCaptureSession.CaptureCallback() {
+    @Override
+    public void onCaptureCompleted(@NonNull CameraCaptureSession session,
+                                   @NonNull CaptureRequest request,
+                                   @NonNull TotalCaptureResult result) {
+      processCompleted(request, result);
+      super.onCaptureCompleted(session, request, result); // API docs say this does nothing, but call it just to be safe (as with Google Camera)
+    }
+
+    /** Processes a total result.
+     */
+    private void processCompleted(CaptureRequest request, CaptureResult result) {
+      if (result.get(CaptureResult.SENSOR_SENSITIVITY) != null) {
+        captureResultSettings.captureResultHasIso = true;
+        captureResultSettings.captureResultIso = result.get(CaptureResult.SENSOR_SENSITIVITY);
+//        Log.d(TAG, "Capture result iso: " + captureResultSettings.captureResultIso);
+      } else {
+        captureResultSettings.captureResultHasIso = false;
+      }
+      if (result.get(CaptureResult.SENSOR_EXPOSURE_TIME) != null) {
+        captureResultSettings.captureResultHasExposureTime = true;
+        captureResultSettings.captureResultExposureTime =
+                result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+//        Log.d(TAG, "Capture result exposure time: "
+//                + captureResultSettings.captureResultExposureTime);
+      } else {
+        captureResultSettings.captureResultHasExposureTime = false;
+      }
+      if (result.get(CaptureResult.SENSOR_FRAME_DURATION) != null) {
+        captureResultSettings.captureResultHasFrameDuration = true;
+        captureResultSettings.captureResultFrameDuration =
+                result.get(CaptureResult.SENSOR_FRAME_DURATION);
+//        Log.d(TAG, "Capture result frame duration: "
+//                + captureResultSettings.captureResultFrameDuration);
+      } else {
+        captureResultSettings.captureResultHasFrameDuration = false;
+      }
+
+      if (result.get(CaptureResult.LENS_APERTURE) != null) {
+        captureResultSettings.captureResultHasLensAperture = true;
+        captureResultSettings.captureResultLensAperture = result.get(CaptureResult.LENS_APERTURE);
+//        Log.d(TAG, "Capture result lens aperture: "
+//                + captureResultSettings.captureResultLensAperture);
+      } else {
+        captureResultSettings.captureResultHasLensAperture = false;
+      }
+      if (result.get(CaptureResult.LENS_FOCAL_LENGTH) != null) {
+        captureResultSettings.captureResultHasFocalLength = true;
+        captureResultSettings.captureResultFocalLength =
+                result.get(CaptureResult.LENS_FOCAL_LENGTH);
+//        Log.d(TAG, "Capture result focal lenght: "
+//                + captureResultSettings.captureResultFocalLength);
+      } else {
+        captureResultSettings.captureResultHasFocalLength = false;
+      }
+    }
+  };
+
 }
