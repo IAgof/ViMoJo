@@ -27,6 +27,14 @@
         android:layout_height="match_parent">
 
         <ImageView
+            android:id="@+id/camera_shutter"
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:layout_centerInParent="true"
+            android:src="@drawable/activity_record_ic_metering_shutter"
+            android:visibility="invisible"/>
+
+        <ImageView
             android:id="@+id/image_view_grid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -144,24 +152,38 @@
         <!-- Zoom -->
 
         <LinearLayout
-            android:id="@+id/zoom_submenu"
+            android:id="@+id/slide_seekbar_submenu"
             android:orientation="vertical"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="205dp"
             android:background="@color/colorGreyTransparent"
             android:visibility="invisible"
             android:padding="2dp"
-            android:layout_marginLeft="16dp">
+            android:layout_marginLeft="16dp"
+            >
 
             <TextView
+                android:id="@+id/seekBar_upper_text"
                 android:text="100%"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00ffffff"
                 android:layout_gravity="center"
                 android:textColor="@color/colorWhite"
-                android:layout_marginTop="4dp"/>
+                android:layout_marginTop="4dp"
+                tools:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/seekBar_upper_image"
+                android:text="100%"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:layout_gravity="center"
+                tools:src="@drawable/activity_record_ic_focus_macro"
+                android:layout_marginTop="4dp"
+                />
 
             <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
                 android:layout_width="wrap_content"
@@ -175,12 +197,23 @@
                     app:seekBarRotation="CW270" /> <!-- Rotation: CW90 or CW270 -->
             </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
             <TextView
+                android:id="@+id/seekBar_lower_text"
                 android:text="0%"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00ffffff"
                 android:layout_gravity="center"
-                android:textColor="@color/colorWhite" />
+                android:textColor="@color/colorWhite"
+                tools:visibility="gone"/>
+            <ImageView
+                android:id="@+id/seekBar_lower_image"
+                android:text="100%"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:layout_gravity="center"
+                android:src="@drawable/activity_record_ic_focus_infinite"
+                tools:visibility="visible"/>
         </LinearLayout>
 
         <LinearLayout
@@ -191,9 +224,12 @@
             android:layout_height="wrap_content"
             android:background="@color/colorGreyTransparent"
             android:visibility="invisible"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             android:layout_marginBottom="4dp">
 
             <TextView
+                android:id="@+id/iso_auto"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
@@ -201,60 +237,20 @@
                 android:layout_gravity="center_vertical"
                 android:text="Auto"
                 android:textColor="@color/colorWhite"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp" />
+                android:layout_margin="8dp"
+                />
 
-            <TextView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:text="50"
-                android:textColor="@color/colorWhite"
-                android:layout_gravity="center"
-                android:layout_marginLeft="16dp" />
-
-            <TextView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:text="100"
-                android:textColor="@color/colorWhite"
-                android:layout_marginLeft="16dp" />
-
-            <TextView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:text="200"
-                android:textColor="@color/colorWhite"
-                android:layout_marginLeft="16dp" />
-
-            <TextView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:text="400"
-                android:textColor="@color/colorWhite"
-                android:layout_marginLeft="16dp" />
-
-            <TextView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:text="Max"
-                android:textColor="@color/colorWhite"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"/>
+            <!--<TextView-->
+                <!--android:id="@+id/iso_max"-->
+                <!--android:layout_width="32dp"-->
+                <!--android:layout_height="32dp"-->
+                <!--android:background="#00ffffff"-->
+                <!--android:scaleType="fitCenter"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:text="Max"-->
+                <!--android:textColor="@color/colorWhite"-->
+                <!--android:layout_marginRight="16dp"-->
+                <!--android:layout_marginLeft="16dp"/>-->
 
         </LinearLayout>
 
@@ -266,9 +262,23 @@
             android:layout_height="wrap_content"
             android:background="@color/colorGreyTransparent"
             android:visibility="invisible"
-            android:layout_marginBottom="4dp">
+            android:layout_marginBottom="4dp"
+            android:paddingRight="16dp">
 
             <ImageButton
+                android:id="@+id/af_setting_selective"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/activity_record_ic_focus_touch"
+                android:layout_marginLeft="16dp"
+                android:visibility="gone"
+                />
+
+            <ImageButton
+                android:id="@+id/af_setting_auto"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
@@ -277,27 +287,19 @@
                 android:src="@drawable/activity_record_ic_focus_auto"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"/>
 
             <ImageButton
+                android:id="@+id/af_setting_manual"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_focus_adjust"
-                android:layout_marginLeft="16dp" />
-
-            <ImageButton
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_focus_touch"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                />
+                android:visibility="gone"/>
 
         </LinearLayout>
 
@@ -312,59 +314,77 @@
             android:layout_marginBottom="4dp">
 
             <ImageButton
+                android:id="@+id/wb_setting_auto"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_white_balance_auto"
+                android:visibility="gone"
+
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp" />
 
             <ImageButton
+                android:id="@+id/wb_setting_cloudy"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_white_balance_cloudy"
+                android:visibility="gone"
+
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
+                android:id="@+id/wb_setting_daylight"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_white_balance_daylight"
+                android:visibility="gone"
+
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
+                android:id="@+id/wb_setting_flash"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_flash"
+                android:visibility="gone"
+
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
+                android:id="@+id/wb_setting_fluorescent"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_white_balance_fluorescent"
+                android:visibility="gone"
+
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
+                android:id="@+id/wb_setting_incandescent"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_white_balance_tungsten"
+                android:visibility="gone"
+
                 android:layout_marginRight="16dp"
                 android:layout_marginLeft="16dp"/>
 
@@ -382,6 +402,7 @@
             android:layout_marginBottom="4dp">
 
             <ImageButton
+                android:id="@+id/metering_mode_auto"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
@@ -393,30 +414,36 @@
                 android:layout_marginBottom="8dp" />
 
             <ImageButton
+                android:id="@+id/metering_mode_exposure_compensation"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_brightness_adjust"
+                android:src="@drawable/activity_record_ic_metering_manual"
+                android:visibility="invisible"
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
+                android:id="@+id/metering_mode_center"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_metering_center"
+                android:visibility="invisible"
                 android:layout_marginLeft="16dp" />
 
             <ImageButton
+                android:id="@+id/metering_mode_spot"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitCenter"
                 android:layout_gravity="center"
                 android:src="@drawable/activity_record_ic_brightness_manual"
+                android:visibility="invisible"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 />

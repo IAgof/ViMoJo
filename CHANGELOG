@@ -1,3 +1,10 @@
+v0.7.0-RC1
+- First implementation of White Balance pro controls. Implemented WB auto setting
+- First implementation of exposure metering pro controls: auto setting, exposure compensation, center and spot metering
+
+v0.6.1
+Fixed migration problem with multiple projects.
+
 v0.6
 Added audio multiple track support. Mix audio from video files, music and voice over.
 New screen sound, select volume, mute tracks for video, music and voice over.
