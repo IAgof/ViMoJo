@@ -88,18 +88,21 @@
                 android:orientation="vertical">
 
                 <android.support.v7.widget.CardView
-                    android:id="@+id/advance_low_card_view"
+                    android:id="@+id/advance_low_cardview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    >
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="16dp">
                     <RelativeLayout
+                        android:id="@+id/advance_low_relative"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingRight="8dp"
                         android:paddingLeft="8dp"
                         android:paddingBottom="4dp"
-                        android:paddingTop="4dp">
+                        android:paddingTop="16dp">
                         <ImageButton
                             android:id="@+id/player_advance_low_backward_start_trim"
                             android:layout_width="wrap_content"
@@ -108,6 +111,7 @@
                             android:layout_alignParentLeft="true"
                             android:layout_marginRight="16dp"
                             android:background="@null"
+                            android:layout_centerVertical="true"
                             />
                         <ImageButton
                             android:id="@+id/player_advance_low_forward_start_trim"
@@ -116,7 +120,9 @@
                             android:rotation="180"
                             android:src="@drawable/activity_edit_player_advance_low"
                             android:layout_toRightOf="@+id/player_advance_low_backward_start_trim"
-                            android:background="@null"/>
+                            android:background="@null"
+                            android:layout_centerVertical="true"
+                            />
                         <TextView
                             android:id="@+id/player_advance_low_text_view"
                             android:layout_width="wrap_content"
@@ -132,7 +138,9 @@
                             android:layout_marginRight="16dp"
                             android:src="@drawable/activity_edit_player_advance_low"
                             android:layout_toLeftOf="@+id/player_advance_low_forward_end_trim"
-                            android:background="@null"/>
+                            android:background="@null"
+                            android:layout_centerVertical="true"
+                            />
                         <ImageButton
                             android:id="@+id/player_advance_low_forward_end_trim"
                             android:layout_width="wrap_content"
@@ -142,6 +150,7 @@
                             android:layout_gravity="end"
                             android:layout_alignParentEnd="true"
                             android:background="@null"
+                            android:layout_centerVertical="true"
                             />
                     </RelativeLayout>
                 </android.support.v7.widget.CardView>
@@ -149,15 +158,20 @@
                     android:id="@+id/advance_medium_card_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    >
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="16dp">
                     <RelativeLayout
+                        android:id="@+id/advance_medium_relative"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingRight="8dp"
                         android:paddingLeft="8dp"
                         android:paddingBottom="4dp"
-                        android:paddingTop="4dp">
+                        android:paddingTop="16dp"
+                        android:layout_above="@+id/advance_high_relative"
+                        >
                         <ImageButton
                             android:id="@+id/player_advance_medium_backward_start_trim"
                             android:layout_width="wrap_content"
@@ -166,6 +180,7 @@
                             android:layout_alignParentLeft="true"
                             android:layout_marginRight="16dp"
                             android:background="@null"
+                            android:layout_centerVertical="true"
                             />
                         <ImageButton
                             android:id="@+id/player_advance_medium_forward_start_trim"
@@ -174,7 +189,9 @@
                             android:rotation="180"
                             android:src="@drawable/activity_edit_player_advance_medium"
                             android:layout_toRightOf="@+id/player_advance_medium_backward_start_trim"
-                            android:background="@null"/>
+                            android:background="@null"
+                            android:layout_centerVertical="true"
+                            />
                         <TextView
                             android:id="@+id/player_advance_medium_text_view"
                             android:layout_width="wrap_content"
@@ -190,7 +207,9 @@
                             android:layout_marginRight="16dp"
                             android:src="@drawable/activity_edit_player_advance_medium"
                             android:layout_toLeftOf="@+id/player_advance_medium_forward_end_trim"
-                            android:background="@null"/>
+                            android:background="@null"
+                            android:layout_centerVertical="true"
+                            />
                         <ImageButton
                             android:id="@+id/player_advance_medium_forward_end_trim"
                             android:layout_width="wrap_content"
@@ -200,6 +219,7 @@
                             android:layout_gravity="end"
                             android:layout_alignParentEnd="true"
                             android:background="@null"
+                            android:layout_centerVertical="true"
                             />
                     </RelativeLayout>
 
@@ -208,14 +228,21 @@
                     android:id="@+id/advance_high_card_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp">
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="16dp"
+                    >
                     <RelativeLayout
+                        android:id="@+id/advance_high_relative"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingRight="8dp"
                         android:paddingLeft="8dp"
                         android:paddingBottom="4dp"
-                        android:paddingTop="4dp">
+                        android:paddingTop="16dp"
+                        android:layout_above="@id/advance_medium_relative"
+                        >
                         <ImageButton
                             android:id="@+id/player_advance_high_backward_start_trim"
                             android:layout_width="wrap_content"
@@ -224,6 +251,7 @@
                             android:layout_alignParentLeft="true"
                             android:layout_marginRight="16dp"
                             android:background="@null"
+                            android:layout_centerVertical="true"
                             />
                         <ImageButton
                             android:id="@+id/player_advance_high_forward_start_trim"
@@ -232,7 +260,9 @@
                             android:rotation="180"
                             android:src="@drawable/activity_edit_player_advance_high"
                             android:layout_toRightOf="@+id/player_advance_high_backward_start_trim"
-                            android:background="@null"/>
+                            android:background="@null"
+                            android:layout_centerVertical="true"
+                            />
                         <TextView
                             android:id="@+id/player_advance_high_text_view"
                             android:layout_width="wrap_content"
@@ -248,7 +278,9 @@
                             android:layout_marginRight="16dp"
                             android:src="@drawable/activity_edit_player_advance_high"
                             android:layout_toLeftOf="@+id/player_advance_high_forward_end_trim"
-                            android:background="@null"/>
+                            android:background="@null"
+                            android:layout_centerVertical="true"
+                            />
                         <ImageButton
                             android:id="@+id/player_advance_high_forward_end_trim"
                             android:layout_width="wrap_content"
@@ -258,6 +290,7 @@
                             android:layout_gravity="end"
                             android:layout_alignParentEnd="true"
                             android:background="@null"
+                            android:layout_centerVertical="true"
                             />
                     </RelativeLayout>
 
