@@ -14,7 +14,6 @@ import android.os.StatFs;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Range;
 import android.view.MotionEvent;
@@ -182,8 +181,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Bind(R.id.metering_mode_spot)
   ImageButton meteringModeSpot;
 
-  @Bind(R.id.button_camera_auto)
-  ImageButton cameraAutoButton;
+  @Bind(R.id.button_camera_default)
+  ImageButton cameraDefaultSettingsButton;
   @Bind(R.id.button_resolution_indicator)
   ImageView resolutionIndicatorButton;
   @Bind(R.id.customManualFocusView)
@@ -330,7 +329,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
 
     tintButton(gridButton, button_color);
-    tintButton(cameraAutoButton, button_color);
+    tintButton(cameraDefaultSettingsButton, button_color);
   }
 
   private void configChronometer() {
@@ -1119,14 +1118,22 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnClick (R.id.button_grid)
-  public void onClickListenerGridButton(){
-    if(gridButton.isSelected()){
-          gridButton.setSelected(false);
-          imageViewGrid.setVisibility(View.INVISIBLE);
-      } else {
-          gridButton.setSelected(true);
-          imageViewGrid.setVisibility(View.VISIBLE);
-      }
+  public void onClickListenerGridButton() {
+    if (gridButton.isSelected()) {
+      disableGrid();
+    } else {
+      enableGrid();
+    }
+  }
+
+  private void enableGrid() {
+    gridButton.setSelected(true);
+    imageViewGrid.setVisibility(View.VISIBLE);
+  }
+
+  private void disableGrid() {
+    gridButton.setSelected(false);
+    imageViewGrid.setVisibility(View.INVISIBLE);
   }
 
   @OnClick(R.id.button_settings_camera)
@@ -1247,14 +1254,17 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
   }
 
-  @OnClick (R.id.button_camera_auto)
-  public void onClickCameraAutoListener() {
+  @OnClick (R.id.button_camera_default)
+  public void onClickCameraDefaultSettings() {
+    // TODO(jliarte): 6/07/17 should move this logic to presenter? 
     hideZoomSelectionSubmenu();
     slideSeekBar.setProgress(0);
     presenter.setZoom(0f);
 
     hideISOSelectionSubmenu();
     setAutoISO();
+
+    disableGrid();
 
     hideAFSelectionSubmenu();
 
