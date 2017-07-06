@@ -36,79 +36,105 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            >
 
-            <SeekBar
-                android:id="@+id/seekBar_split"
+            <android.support.v7.widget.CardView
+                android:id="@+id/trim_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginBottom="0dp"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:background="@null"
-                android:maxHeight="1dp"
-                android:paddingBottom="0dp"
-                android:progressDrawable="@color/colorAccent"
-                android:splitTrack="false"
-                android:thumb="@drawable/ic_circular_thumb_seekbar"
+                android:layout_margin="14dp"
+                android:layout_gravity="center_horizontal"
+                >
 
-                />
+                <SeekBar
+                    android:id="@+id/seekBar_split"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="120dp"
+                    android:background="@null"
+                    android:maxHeight="1dp"
+                    android:paddingBottom="0dp"
+                    android:progressDrawable="@color/colorAccent"
+                    android:splitTrack="false"
+                    android:thumb="@drawable/ic_circular_thumb_seekbar"
+
+                    />
 
 
-            <TextView
-                android:id="@+id/text_time_split"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/text_time_split"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="false"
+                    android:layout_below="@+id/seekBar_split"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="00:00"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:visibility="visible"
+                    />
+
+                <TextView
+                    android:id="@+id/text_info_split"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/seekBar_split"
+                    android:layout_alignParentBottom="false"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_marginBottom="60dp"
+                    android:text="@string/text_edit_info_split"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:visibility="visible"
+                    />
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/cancel_accept_trim_cardview"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="false"
-                android:layout_below="@+id/seekBar_split"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="4dp"
-                android:gravity="center_vertical|center_horizontal"
-                android:paddingTop="12dp"
-                android:text="00:00"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                android:visibility="visible"
-                />
-
-            <TextView
-                android:id="@+id/text_info_split"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/seekBar_split"
-                android:layout_alignParentBottom="false"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="32dp"
-                android:gravity="center_vertical|center_horizontal"
-                android:text="@string/text_edit_info_split"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                android:visibility="visible"
-                />
-
-
-            <ImageButton
-                android:id="@+id/button_split_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="12dp"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/activity_edit_common_icon_cancel"/>
+                android:layout_margin="14dp">
 
-            <ImageButton
-                android:id="@+id/button_split_accept"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="4dp"
-                android:layout_marginRight="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/activity_edit_common_icon_accept"/>
+
+                <ImageButton
+                    android:id="@+id/button_split_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/activity_edit_common_icon_cancel"/>
+
+                <ImageButton
+                    android:id="@+id/button_split_accept"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="end"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/activity_edit_common_icon_accept"/>
+
+            </android.support.v7.widget.CardView>
 
         </RelativeLayout>
 
