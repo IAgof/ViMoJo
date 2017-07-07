@@ -37,18 +37,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_marginTop="20dp"
+
             >
 
             <android.support.v7.widget.CardView
                 android:id="@+id/split_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginRight="14dp"
                 android:layout_marginLeft="14dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="4dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_above="@+id/advance_split_cardview"
                 >
 
                 <SeekBar
@@ -59,7 +60,7 @@
                     android:layout_marginLeft="12dp"
                     android:layout_marginRight="12dp"
                     android:layout_marginBottom="16dp"
-                    android:layout_marginTop="120dp"
+                    android:layout_marginTop="100dp"
                     android:background="@null"
                     android:maxHeight="1dp"
                     android:paddingBottom="0dp"
@@ -82,7 +83,7 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="00:00"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                     android:visibility="visible"
                     />
 
@@ -99,7 +100,7 @@
                     android:gravity="center"
                     android:layout_marginBottom="60dp"
                     android:text="@string/text_edit_info_split"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                     android:visibility="visible"
                     />
             </android.support.v7.widget.CardView>
@@ -109,93 +110,129 @@
                 android:id="@+id/advance_split_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="4dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 android:layout_above="@+id/cancel_accept_split_cardview"
-                android:layout_below="@+id/split_cardview">
+                >
 
-                <RelativeLayout
-                    android:id="@+id/advance_split_relative"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="1dp"
-                    android:paddingLeft="1dp"
-                    android:paddingRight="1dp"
-                    >
+                    android:orientation="vertical">
 
-                    <ImageButton
-                        android:id="@+id/player_advance_low_backward_start_split"
-                        android:layout_width="wrap_content"
+                    <RelativeLayout
+                        android:id="@+id/advance_split_info_relative"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
-                        android:padding="8dp"
-                        android:background="@null"
-                        android:src="@drawable/activity_edit_player_advance_low" />
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="8dp"
 
-                    <ImageButton
-                        android:id="@+id/player_advance_medium_backward_start_split"
-                        android:layout_width="wrap_content"
+                        >
+
+                        <TextView
+                            android:id="@+id/split_info_low"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@+id/split_info_medium"
+                            android:text="300 ms"/>
+                        <TextView
+                            android:id="@+id/split_info_medium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="60dp"
+                            android:layout_marginLeft="60dp"
+                            android:layout_centerHorizontal="true"
+                            android:text="600 ms"/>
+                        <TextView
+                            android:id="@+id/split_info_high"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/split_info_medium"
+                            android:text="1200 ms"/>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/advance_split_relative"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:padding="8dp"
-                        android:layout_toRightOf="@+id/player_advance_low_backward_start_split"
-                        android:background="@null"
-                        android:src="@drawable/activity_edit_player_advance_medium" />
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="8dp"
+                        >
 
-                    <ImageButton
-                        android:id="@+id/player_advance_high_backward_start_trim"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="false"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="8dp"
-                        android:padding="8dp"
-                        android:layout_toRightOf="@+id/player_advance_medium_backward_start_split"
-                        android:background="@null"
-                        android:src="@drawable/activity_edit_player_advance_high" />
+                        <ImageButton
+                            android:id="@+id/player_advance_low_backward_start_split"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:padding="8dp"
+                            android:background="@null"
+                            android:src="@drawable/activity_edit_player_advance_low" />
 
-                    <ImageButton
-                        android:id="@+id/player_advance_high_forward_end_split"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="false"
-                        android:layout_centerVertical="true"
-                        android:padding="8dp"
-                        android:layout_gravity="end"
-                        android:background="@null"
-                        android:rotation="180"
-                        android:layout_toLeftOf="@+id/player_advance_medium_forward_end_split"
-                        android:src="@drawable/activity_edit_player_advance_high" />
+                        <ImageButton
+                            android:id="@+id/player_advance_medium_backward_start_split"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:padding="8dp"
+                            android:layout_toRightOf="@+id/player_advance_low_backward_start_split"
+                            android:background="@null"
+                            android:src="@drawable/activity_edit_player_advance_medium" />
+
+                        <ImageButton
+                            android:id="@+id/player_advance_high_backward_start_trim"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="8dp"
+                            android:padding="8dp"
+                            android:background="@null"
+                            android:src="@drawable/activity_edit_player_advance_high"
+                            android:layout_alignTop="@+id/player_advance_medium_backward_start_split"
+                            android:layout_toEndOf="@+id/player_advance_medium_backward_start_split" />
+
+                        <ImageButton
+                            android:id="@+id/player_advance_high_forward_end_split"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="false"
+                            android:layout_centerVertical="true"
+                            android:padding="8dp"
+                            android:layout_gravity="end"
+                            android:background="@null"
+                            android:rotation="180"
+                            android:layout_toLeftOf="@+id/player_advance_medium_forward_end_split"
+                            android:src="@drawable/activity_edit_player_advance_high" />
 
 
-                    <ImageButton
-                        android:id="@+id/player_advance_medium_forward_end_split"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="false"
-                        android:layout_centerVertical="true"
-                        android:padding="8dp"
-                        android:layout_gravity="end"
-                        android:background="@null"
-                        android:rotation="180"
-                        android:layout_toLeftOf="@+id/player_advance_low_forward_end_split"
-                        android:src="@drawable/activity_edit_player_advance_medium" />
+                        <ImageButton
+                            android:id="@+id/player_advance_medium_forward_end_split"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="false"
+                            android:layout_centerVertical="true"
+                            android:padding="8dp"
+                            android:layout_gravity="end"
+                            android:background="@null"
+                            android:rotation="180"
+                            android:layout_toLeftOf="@+id/player_advance_low_forward_end_split"
+                            android:src="@drawable/activity_edit_player_advance_medium" />
 
-                    <ImageButton
-                        android:id="@+id/player_advance_low_forward_end_split"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:padding="8dp"
-                        android:layout_gravity="end"
-                        android:background="@null"
-                        android:rotation="180"
-                        android:src="@drawable/activity_edit_player_advance_low" />
-                </RelativeLayout>
+                        <ImageButton
+                            android:id="@+id/player_advance_low_forward_end_split"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:padding="8dp"
+                            android:layout_gravity="end"
+                            android:background="@null"
+                            android:rotation="180"
+                            android:src="@drawable/activity_edit_player_advance_low" />
+                    </RelativeLayout>
+                </LinearLayout>
 
             </android.support.v7.widget.CardView>
 
@@ -205,7 +242,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_margin="14dp">
+                android:layout_marginBottom="14dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp">
 
 
                 <ImageButton
