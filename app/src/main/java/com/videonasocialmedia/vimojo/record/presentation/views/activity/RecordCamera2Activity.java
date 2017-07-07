@@ -614,8 +614,18 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
+  public void showAdvancedAFSelection() {
+    afSelectionButton.setVisibility(View.VISIBLE);
+  }
+
+  @Override
   public void hideAdvancedAFSelection() {
     afSelectionButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void showISOSelection() {
+    isoButton.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -627,6 +637,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void setupISOSupportedModesButtons(Range<Integer> supportedISORange) {
     isoSettingAuto.setSelected(true);
     isoSettingAuto.setTextColor(getResources().getColor(R.color.button_selected));
+    clearISObuttons();
     isoButtons.put(isoSettingAuto, 0); // (jliarte): 27/06/17 convention for auto ISO setting
     setIsoModeOnClickListener(0, isoSettingAuto);
     int[] isoValues = {50, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200};
@@ -641,6 +652,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         isoSubmenuView.addView(isoModeButton);
       }
     }
+  }
+
+  private void clearISObuttons() {
+    isoSubmenuView.removeAllViews();
+    isoButtons.clear();
   }
 
   private void setIsoModeOnClickListener(final int isoValue, final TextView isoModeButton) {
@@ -662,6 +678,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       isoButton.setSelected(false);
       isoButton.setTextColor(getResources().getColor(R.color.button_color_record_activity));
     }
+  }
+
+  @Override
+  public void showWhiteBalanceSelection() {
+    whiteBalanceButton.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -834,6 +855,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       }
     });
     slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void showMetteringModeSelection() {
+    meteringModeButton.setVisibility(View.VISIBLE);
   }
 
   @Override
