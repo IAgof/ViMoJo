@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.record.presentation.views.activity;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -14,7 +15,6 @@ import android.os.StatFs;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Range;
 import android.view.MotionEvent;
@@ -25,6 +25,7 @@ import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -38,11 +39,11 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
-import com.videonasocialmedia.vimojo.presentation.views.broadcastreceiver.BatteryReceiver;
+import com.videonasocialmedia.vimojo.record.presentation.views.broadcastreceiver.BatteryReceiver;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
-import com.videonasocialmedia.vimojo.record.presentation.views.custom.AlertDialogWithInfoIntoCircle;
+import com.videonasocialmedia.vimojo.record.presentation.views.custom.dialogs.AlertDialogWithInfoIntoCircle;
 import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
@@ -199,6 +200,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageView batteryButton;
   @Bind(R.id.activity_record_icon_storage)
   ImageView storageButton;
+  @Bind(R.id.mic_plug_imageview)
+  ImageButton micPlugButton;
+  @Bind(R.id.picometer_progressbar)
+  ProgressBar picometerProgress;
 
   /**
    * An {@link AutoFitTextureView} for camera preview.
@@ -244,6 +249,16 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private PointF cameraShutterOffsetPoint;
   private HashMap<TextView, Integer> isoButtons = new HashMap<>();
 
+  BroadcastReceiver jackConnectorReceiver = new BroadcastReceiver(){
+    @Override
+    public void onReceive(Context context, Intent intent){
+      Bundle bundle = intent.getExtras();
+      if (bundle != null) {
+        updateMicrophoneStatus(intent);
+      }
+    }
+  };
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -262,6 +277,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     createAlertDialogBatteryAndStorage();
     initWhiteBalanceModesMap();
     initFocusSelectionModesMap();
+    initPicometer();
+
+  }
+
+  private void initPicometer() {
+    tintProgress(ColorStateList.valueOf(Color.GREEN));
+    picometerProgress.setScaleY(4f);
   }
 
   private void createProgressDialogAdaptVideo() {
@@ -331,6 +353,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
     tintButton(gridButton, button_color);
     tintButton(cameraAutoButton, button_color);
+
   }
 
   private void configChronometer() {
@@ -369,9 +392,18 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     presenter.initViews();
     hideSystemUi();
     registerReceiver(batteryReceiver,new IntentFilter(IntentConstants.BATTERY_NOTIFICATION));
+    registerReceiver(jackConnectorReceiver,new IntentFilter(Intent.ACTION_HEADSET_PLUG));
     updateBatteryStatus();
     updatePercentFreeStorage();
+  }
 
+  private void tintProgress(final ColorStateList tint) {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        picometerProgress.setProgressTintList(tint);
+      }
+    });
   }
 
   private void hideSystemUi() {
@@ -388,6 +420,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void onPause() {
     unregisterReceiver(batteryReceiver);
+    unregisterReceiver(jackConnectorReceiver);
     presenter.onPause();
     super.onPause();
   }
@@ -1094,6 +1127,22 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
+  public void showProgressPicometer(int progress, int color) {
+    tintProgress(ColorStateList.valueOf(color));
+    picometerProgress.setProgress(progress);
+  }
+
+  @Override
+  public void showMicrophoneConnected() {
+    micPlugButton.setImageResource(R.drawable.activity_record_ic_micro_activated);
+  }
+
+  @Override
+  public void showNotMicrophoneConnected() {
+    micPlugButton.setImageResource(R.drawable.activity_record_ic_phone_micro_activated);
+  }
+
+  @Override
   public void setFocusModeManual(MotionEvent event){
     customManualFocusView.onTouchEvent(event);
   }
@@ -1477,6 +1526,20 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private long getFreeStorage(StatFs statFs) {
     long   freeStorage   = (statFs.getAvailableBlocksLong() * statFs.getBlockSizeLong());
     return freeStorage;
+  }
+
+  private void updateMicrophoneStatus(Intent intent){
+    boolean isAMicrophone = false;
+    boolean isJackConnected = false;
+    if(intent.getIntExtra("state", -1) == 1 ){
+      isJackConnected = true;
+    }
+    if(isJackConnected) {
+      if (intent.getIntExtra("microphone", -1) == 1) {
+        isAMicrophone = true;
+      }
+    }
+    presenter.setMicrophoneStatus(isAMicrophone);
   }
 
   private class OrientationHelper extends OrientationEventListener {

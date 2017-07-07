@@ -15,7 +15,7 @@
 package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 
 import android.content.Context;
-import android.graphics.Rect;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.BatteryManager;
 import android.util.Log;
@@ -23,7 +23,6 @@ import android.view.MotionEvent;
 
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
-import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -43,6 +42,8 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
+import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerAmplitudeDbListener;
+import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoop;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
@@ -53,6 +54,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static java.lang.Math.log10;
+
 /**
  *  Created by alvaro on 16/01/17.
  */
@@ -60,6 +63,7 @@ import java.util.List;
 public class RecordCamera2Presenter implements Camera2WrapperListener,
     OnLaunchAVTransitionTempFileListener, TranscoderHelperListener {
   public static final int DEFAULT_CAMERA_ID = 0;
+  public static final int NORMALIZE_PICOMETER_VALUE = 60;
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private final String TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
@@ -84,10 +88,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public long ONE_KB = 1 *1024;
   public long ONE_MB = ONE_KB*1024;
   public long ONE_GB = ONE_MB*1024;
+  private PicometerSamplingLoop samplingThread;
 
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
-//                                AutoFitTextureView textureView,
-//                                String directorySaveVideos,
                                 UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
                                 LaunchTranscoderAddAVTransitionsUseCase
                                     launchTranscoderAddAVTransitionUseCase,
@@ -177,11 +180,61 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     showThumbAndNumber();
     Log.d(TAG, "resume presenter");
     camera.onResume();
+    reStartSamplingPicometerPreview();
+  }
+
+  private void reStartSamplingPicometerPreview() {
+    // Stop previous sampler if any.
+    if (samplingThread != null) {
+      samplingThread.finish();
+      try {
+        samplingThread.join();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      samplingThread = null;
+    }
+    // Start sampling
+    samplingThread = new PicometerSamplingLoop(new PicometerAmplitudeDbListener() {
+      @Override
+      public void setMaxAmplituedDb(double maxAmplituedDb) {
+        setPicometerProgressAndColor(maxAmplituedDb);
+      }
+    });
+    samplingThread.start();
+  }
+
+  private void setPicometerProgressAndColor(double maxAmplituedDb) {
+    int progress;
+    if(camera.isRecordingVideo()) {
+      progress = (int) ((maxAmplituedDb / 33.4) * 100 * -1);
+    } else {
+      progress = 100 - (int) ((maxAmplituedDb / NORMALIZE_PICOMETER_VALUE) * 100 * -1);
+    }
+    int color;
+    if(progress > 30){
+      if(progress > 50){
+        color = Color.RED;
+      } else {
+        color = Color.YELLOW;
+      }
+    } else {
+      color = Color.GREEN;
+    }
+    recordView.showProgressPicometer(progress, color);
+    Log.d(TAG, "PicometerSamplingLoop, amplitude DBs, progress " + progress);
+  }
+
+  private void stopSamplingPicometerPreview(){
+    if (samplingThread != null) {
+      samplingThread.finish();
+    }
   }
 
   public void onPause() {
     camera.onPause();
     recordView.stopMonitoringRotation();
+    stopSamplingPicometerPreview();
   }
 
   private void showThumbAndNumber() {
@@ -200,6 +253,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   public void startRecord() {
+    stopSamplingPicometerPreview();
     try {
       camera.startRecordingVideo(new Camera2Wrapper.RecordStartedCallback() {
         @Override
@@ -211,6 +265,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
           recordView.hideVideosRecordedNumber();
           recordView.hideRecordedVideoThumbWithText();
           recordView.hideChangeCamera();
+          startSamplingPicometerRecording();
         }
       });
     } catch (IllegalStateException illegalState) {
@@ -218,11 +273,33 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     }
   }
 
+  private void startSamplingPicometerRecording() {
+    Runnable run = new Runnable() {
+      @Override
+      public void run() {
+        while (camera.isRecordingVideo()) {
+          int maxAmplitude = camera.getMaxAmplitudeRecording();
+          double dBs = (float) (20 * Math.log10(maxAmplitude/700.0));
+          Log.d(TAG, "maxAmplitudeRecording " + maxAmplitude + " dBs " + dBs);
+          try {
+            Thread.sleep(100);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          setPicometerProgressAndColor(dBs);
+        }
+      }
+    };
+    Thread thread = new Thread(run);
+    thread.start();
+  }
+
   public void stopRecord() {
     try {
       camera.stopRecordVideo();
       updateStopVideoUI();
       onVideoRecorded(camera.getVideoPath());
+      reStartSamplingPicometerPreview();
       restartPreview();
     } catch (RuntimeException runtimeException) {
       // do nothing as it's already managed in camera wrapper
@@ -566,6 +643,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   public void setISO(Integer isoValue) {
     camera.setISO(isoValue);
+  }
+
+  public void setMicrophoneStatus(boolean isMicrophoneConnected) {
+    if(isMicrophoneConnected){
+      recordView.showMicrophoneConnected();
+    } else {
+      recordView.showNotMicrophoneConnected();
+    }
   }
 
   // --------------------------------------------------------------

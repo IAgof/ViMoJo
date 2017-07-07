@@ -129,4 +129,9 @@ public class MediaRecorderWrapper {
     return mediaRecorder.getSurface();
   }
 
+  // Call this only after the setAudioSource().
+  public int getMaxAmplitude(){
+    return mediaRecorder.getMaxAmplitude();
+  }
+
 }

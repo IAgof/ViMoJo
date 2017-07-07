@@ -119,4 +119,10 @@ public interface RecordCamera2View {
                               String freeMemoryInBytes, String totalMemoryInBytes);
 
     void showAlertDialogStorage();
+
+    void showProgressPicometer(int progress, int color);
+
+    void showMicrophoneConnected();
+
+    void showNotMicrophoneConnected();
 }

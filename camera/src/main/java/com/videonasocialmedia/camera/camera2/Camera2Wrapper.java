@@ -606,6 +606,18 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       }
   }
 
+  public int getMaxAmplitudeRecording(){
+    if(mediaRecorder!=null) {
+      return mediaRecorder.getMaxAmplitude();
+    }else {
+      return 0;
+    }
+  }
+
+  public boolean isMediaRecorderPrepare(){
+    return mediaRecorder != null;
+  }
+
   private void startRecordingSession(final RecordStartedCallback callback) {
     ((Activity) context).runOnUiThread(new Runnable() {
       @Override

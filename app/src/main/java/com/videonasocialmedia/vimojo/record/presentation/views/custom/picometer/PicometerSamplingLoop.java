@@ -160,9 +160,7 @@ public class PicometerSamplingLoop extends Thread {
         System.arraycopy(spectrumDB, 0, spectrumDBcopy, 0, spectrumDB.length);
 
         stft.calculatePeak();
-        //activity.maxAmpDB = stft.maxAmpDB;
         listener.setMaxAmplituedDb(stft.maxAmpDB);
-        //activity.updateUI();
         sleepWithoutInterrupt(100);
 
       }
