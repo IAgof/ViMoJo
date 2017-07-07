@@ -15,7 +15,6 @@
 package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.BatteryManager;
 import android.util.Log;
@@ -23,7 +22,6 @@ import android.view.MotionEvent;
 
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
-import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;

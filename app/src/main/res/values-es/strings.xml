@@ -204,7 +204,7 @@
     <string name="resolution">Resolución</string>
     <string name="quality">Calidad</string>
     <string name="cancelSettingsCamera">Cancelar</string>
-    <string name="preference_not_available">Ajuste no disponible</string>
+    <string name="preference_not_available">Ajuste no disponible con vídeos en el proyecto actual</string>
 
     <!-- Transition Settings -->
     <string name="title_fade_transition">Transiciones</string>

@@ -92,6 +92,7 @@ public class ProjectRealmRepository implements ProjectRepository {
 
   @Override
   public Project getCurrentProject() {
+    // TODO(jliarte): 6/07/17 fix No space left on device
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmProject> allRealmProjects = realm.where(RealmProject.class).findAll()
         .sort("lastModification", Sort.DESCENDING);
