@@ -48,6 +48,7 @@ public class Camera2MeteringModeHelperTest {
           throws Exception {
     setupCameraWrapper();
     Camera2MeteringModeHelper aeHelper = new Camera2MeteringModeHelper(mockedCameraWrapper);
+    aeHelper.setup();
 
     aeHelper.setExposureCompensation(2);
 

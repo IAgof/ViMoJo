@@ -48,11 +48,12 @@ public class Camera2FocusHelperTest {
   public void setFocusModeSelectiveIsNotCalledIfIsNotSupported() throws CameraAccessException {
     setupCameraWrapperSelectiveModeNotSupported();
     Camera2FocusHelper focusHelper = new Camera2FocusHelper(mockedCameraWrapper);
+    focusHelper.setup();
 
     CameraFeatures.SupportedValues supportedFocusSelectionValues = focusHelper
         .getSupportedFocusSelectionModes();
 
-    for(String focusMode: supportedFocusSelectionValues.values){
+    for (String focusMode : supportedFocusSelectionValues.values) {
       assertThat("Mode selective is not supported", focusMode, not(Camera2FocusHelper.AF_MODE_REGIONS));
     }
   }
@@ -61,6 +62,7 @@ public class Camera2FocusHelperTest {
   public void setFocusModeAutoSetsCameraSettingsAndUpdatesPreview() throws CameraAccessException {
     setupCameraWrapperAllModesSupported();
     Camera2FocusHelper focusHelper = new Camera2FocusHelper(mockedCameraWrapper);
+    focusHelper.setup();
 
     focusHelper.setFocusSelectionMode(Camera2FocusHelper.AF_MODE_AUTO);
 
@@ -75,6 +77,7 @@ public class Camera2FocusHelperTest {
   public void setFocusModeManualSetsCameraSettingsAndUpdatesPreview() throws CameraAccessException {
     setupCameraWrapperAllModesSupported();
     Camera2FocusHelper focusHelper = new Camera2FocusHelper(mockedCameraWrapper);
+    focusHelper.setup();
 
     focusHelper.setFocusSelectionMode(Camera2FocusHelper.AF_MODE_MANUAL);
 
@@ -89,6 +92,7 @@ public class Camera2FocusHelperTest {
   public void setFocusModeSelectiveSetsCameraSettingsAndUpdatesPreview() throws CameraAccessException {
     setupCameraWrapperAllModesSupported();
     Camera2FocusHelper focusHelper = new Camera2FocusHelper(mockedCameraWrapper);
+    focusHelper.setup();
     MeteringRectangle[] focusMeteringRectangle = mockedCameraWrapper.getFullSensorAreaMeteringRectangle();
 
     focusHelper.setFocusSelectionMode(Camera2FocusHelper.AF_MODE_REGIONS);
