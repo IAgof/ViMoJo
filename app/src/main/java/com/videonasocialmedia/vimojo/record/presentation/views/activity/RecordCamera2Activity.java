@@ -240,7 +240,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private int currentSeekbarZoom;
   private int touchEventX = 0;
   private int touchEventY = 0;
-  private PointF cameraShutterOffsetPoint;
   private HashMap<TextView, Integer> isoButtons = new HashMap<>();
 
   @Override
@@ -754,15 +753,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       meteringModeSpot.setVisibility(View.VISIBLE);
       final int windowWidth = customManualFocusView.getWidth();
       final int windowHeight = customManualFocusView.getHeight();
-      cameraShutterOffsetPoint = new PointF();
       cameraShutter.setOnTouchListener(new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
           switch(motionEvent.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-              cameraShutterOffsetPoint.x = motionEvent.getX();
-              cameraShutterOffsetPoint.y = motionEvent.getY();
-              break;
             case MotionEvent.ACTION_UP:
               onTouchSelectedArea(TOUCH_AREA_MODE_METERING_POINT, motionEvent);
               break;
@@ -771,8 +765,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
               touchEventY = (int) Math.max(motionEvent.getRawY(), windowHeight);
               cameraShutter.setX(touchEventX - cameraShutter.getMeasuredWidth() / 2);
               cameraShutter.setY(touchEventY - cameraShutter.getMeasuredHeight() / 2);
-              Log.d(LOG_TAG, "Move shutter to "+(int) (touchEventX - cameraShutterOffsetPoint.x)
-                      +" - "+(int) (touchEventY - cameraShutterOffsetPoint.y));
+              Log.d(LOG_TAG, "Move shutter to "+(int) (touchEventX - cameraShutter.getMeasuredWidth() / 2)
+                      +" - "+(int) (touchEventY - cameraShutter.getMeasuredHeight() / 2));
               break;
             default:
               break;
