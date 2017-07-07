@@ -69,12 +69,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         setContentView(R.layout.activity_video_split);
         ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-
         getActivityPresentersComponent().inject(this);
 
         splitSeekBar.setProgress(0);

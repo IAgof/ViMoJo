@@ -77,12 +77,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         setContentView(R.layout.activity_video_trim);
         ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-
         this.getActivityPresentersComponent().inject(this);
 
         trimmingRangeSeekBar.setOnRangeSeekBarChangeListener(this);
