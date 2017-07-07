@@ -64,8 +64,6 @@ public class SettingsActivity extends VimojoActivity {
         navigateTo("mailto:info@videona.com");
     }
 
-
-
     private void navigateTo(String url) {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
@@ -75,7 +73,6 @@ public class SettingsActivity extends VimojoActivity {
     @Override
     public void onBackPressed() {
         navigateTo(EditActivity.class, 0);
-
     }
 
     private void navigateTo(Class cls, int currentVideoIndex) {
@@ -83,6 +80,5 @@ public class SettingsActivity extends VimojoActivity {
         intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
         startActivity(intent);
     }
-
 
 }

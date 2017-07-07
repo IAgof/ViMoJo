@@ -1256,7 +1256,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @OnClick (R.id.button_camera_default)
   public void onClickCameraDefaultSettings() {
-    // TODO(jliarte): 6/07/17 should move this logic to presenter? 
+    // TODO(jliarte): 6/07/17 should move this logic to presenter?
     hideZoomSelectionSubmenu();
     slideSeekBar.setProgress(0);
     presenter.setZoom(0f);
