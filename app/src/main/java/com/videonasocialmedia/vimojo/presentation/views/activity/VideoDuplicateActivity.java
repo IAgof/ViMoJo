@@ -198,12 +198,20 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
 
     @Override
     public void initDuplicateView(String path) {
-        if (numDuplicateVideos > 2)
-            decrementVideoButton.setVisibility(View.VISIBLE);
-        else
-            decrementVideoButton.setVisibility(View.GONE);
+        updateDecrementVideoButton();
         showThumbVideo(imageThumbLeft);
         showThumbVideo(imageThumbRight);
+    }
+
+    private void updateDecrementVideoButton() {
+        if (numDuplicateVideos > 2) {
+            decrementVideoButton.setVisibility(View.VISIBLE);
+            decrementVideoButton.setEnabled(true);
+            decrementVideoButton.setAlpha(1f);
+        }else {
+            decrementVideoButton.setEnabled(false);
+            decrementVideoButton.setAlpha(0.5f);
+        }
     }
 
     @Override
@@ -252,15 +260,14 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     @OnClick(R.id.button_duplicate_increment_video)
     public void onClickIncrementVideo() {
         numDuplicateVideos++;
-        decrementVideoButton.setVisibility(View.VISIBLE);
+        updateDecrementVideoButton();
         textNumDuplicates.setText("x" + numDuplicateVideos);
     }
 
     @OnClick(R.id.button_duplicate_decrement_video)
     public void onClickDecrementVideo() {
         numDuplicateVideos--;
-        if (numDuplicateVideos <= 2)
-            decrementVideoButton.setVisibility(View.GONE);
+        updateDecrementVideoButton();
         textNumDuplicates.setText("x" + numDuplicateVideos);
     }
 
