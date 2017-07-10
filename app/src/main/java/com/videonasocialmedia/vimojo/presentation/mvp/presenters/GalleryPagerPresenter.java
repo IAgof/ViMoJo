@@ -25,16 +25,22 @@ import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjec
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
+import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -43,7 +49,7 @@ import javax.inject.Inject;
  * This class is used for adding new videos to the project.
  */
 public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
-    OnRemoveMediaFinishedListener, OnLaunchAVTransitionTempFileListener, TranscoderHelperListener {
+    OnRemoveMediaFinishedListener, OnLaunchAVTransitionTempFileListener, TranscoderHelperListener, NewClipImporter.ProjectVideoAdder {
     private final String LOG_TAG = "GalleryPagerPresenter";
 
     private final SharedPreferences preferences;
@@ -53,14 +59,15 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     protected final Project currentProject;
     private final ArrayList<Integer> listErrorVideoIds = new ArrayList<>();
     private final Context context;
-    private boolean differentVideoFormat;
-
-    private VideonaFormat videoFormat;
     private final UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
+    private final NewClipImporter newClipImporter;
     private final LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
+
+    private boolean differentVideoFormat;
     // TODO(jliarte): 3/05/17 init in constructor to inject it. Wrap android MMR with our own class
     MediaMetadataRetriever metadataRetriever;
     private final UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase;
+    private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
 
     /**
      * Constructor.
@@ -72,6 +79,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
             GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
             LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionsUseCase,
             UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase,
+            AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase,
             SharedPreferences preferences) {
         this.galleryPagerView = galleryPagerView;
         this.context = context;
@@ -83,6 +91,10 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         this.updateVideoResolutionToProjectUseCase = updateVideoResolutionToProjectUseCase;
         this.preferences = preferences;
         metadataRetriever = new MediaMetadataRetriever();
+        VideonaFormat videonaFormat = getVideonaFormatFromCurrentProjectUseCase
+                .getVideonaFormatToAdaptVideoRecordedAudioAndVideo();
+        newClipImporter = new NewClipImporter(this, videonaFormat,
+                adaptVideoRecordedToVideoFormatUseCase, galleryPagerView);;
     }
 
     private Project loadCurrentProject() {
@@ -144,9 +156,14 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     }
 
     private String getVideoWidth(Video video) {
-        metadataRetriever.setDataSource(video.getMediaPath());
-        return metadataRetriever.extractMetadata(
-                MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+        try {
+            metadataRetriever.setDataSource(video.getMediaPath());
+            return metadataRetriever.extractMetadata(
+                    MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            return "0";
+        }
     }
 
     private void setVideoDurationFromMediaMetadata(Video video) {
@@ -255,13 +272,58 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     @Override
     public void videoToLaunchAVTransitionTempFile(Video video,
                                                   String intermediatesTempAudioFadeDirectory) {
-
         video.setTempPath(currentProject.getProjectPathIntermediateFiles());
-
-        videoFormat = currentProject.getVMComposition().getVideoFormat();
+        VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
         Drawable drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
-
         launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
             intermediatesTempAudioFadeDirectory, this);
+    }
+
+    public void importVideo(String path) {
+        if (path.contains(Constants.PATH_APP_MASTERS) || path.contains(Constants.PATH_APP_EDITED)) {
+            Log.e(LOG_TAG, "Video already in vimojo!!");
+        } else {
+            newClipImporter.adaptVideoToVideonaFormat(
+                    path, currentProject.numberOfClips() - 1, 0, 0);
+        }
+//        NewClipImporter newClipImporter = new NewClipImporter(this,
+//                getVideoFormatFromCurrentProjectUseCase.getVideonaFormatToAdaptVideoRecordedAudioAndVideo(), )
+    }
+
+    @Override
+    public void addVideoToProject(NewClipImporter.VideoToAdapt videoToAdapt) {
+        final String destVideoImported = Constants.PATH_APP_MASTERS +
+                File.separator + new File(videoToAdapt.getVideo().getMediaPath()).getName();
+        if (videoToAdapt != null) {
+            addVideoToProjectUseCase.addVideoToProjectAtPosition(new Video(destVideoImported,
+                            Video.DEFAULT_VOLUME), videoToAdapt.getPosition() - 1,
+                    new OnAddMediaFinishedListener() {
+                        @Override
+                        public void onAddMediaItemToTrackError() {
+                            galleryPagerView.hideProgressAdaptingVideo();
+                            galleryPagerView.showError(context.getString(R.string.addMediaItemToTrackError));
+                        }
+
+                        @Override
+                        public void onAddMediaItemToTrackSuccess(Media media) {
+                            // TODO(jliarte): 6/07/17 should we copy this video to masters?
+                            // By now is just a workarround to recover videos not converted from Asturias trip :P
+                            try {
+                                Utils.copyFile(media.getMediaPath(), destVideoImported);
+                                loadVideoListToProject(Collections
+                                        .singletonList(new Video(destVideoImported,
+                                                Video.DEFAULT_VOLUME)));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            if (!newClipImporter.areTherePendingTranscodingTask()) {
+                                galleryPagerView.hideProgressAdaptingVideo();
+                            }
+                            // TODO(jliarte): 5/07/17 seems that sometimes (when navigate) this code is not reached!!!
+//                            checkIfVideoAddedNeedLaunchAVTransitionJob((Video) media);
+                        }
+                    });
+        }
+
     }
 }

@@ -23,6 +23,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.videonasocialmedia.videonamediaframework.utils.TimeUtils.*;
+
 /**
  * Created by jca on 14/5/15.
  */
@@ -33,8 +35,6 @@ public class VideoGalleryAdapter extends RecyclerView.Adapter<VideoGalleryAdapte
     private RecyclerViewClickListener recyclerViewClickListener;
     private OnTransitionClickListener onTransitionClickListener;
     private MultiItemSelectionSupport selectionSupport;
-
-    private int selectedVideoPosition = -1;
 
     public VideoGalleryAdapter(List<Video> videoList) {
         this.videoList = videoList;
@@ -64,11 +64,11 @@ public class VideoGalleryAdapter extends RecyclerView.Adapter<VideoGalleryAdapte
                 .centerCrop()
                 .error(R.drawable.fragment_gallery_no_image)
                 .into(holder.thumb);
-        if(selectionSupport!=null) {
+        if (selectionSupport != null) {
             holder.overlay.setActivated(selectionSupport.isItemChecked(position));
             holder.overlayIcon.setActivated(selectionSupport.isItemChecked(position));
         }
-        String duration = com.videonasocialmedia.videonamediaframework.utils.TimeUtils.toFormattedTimeHoursMinutesSecond(selectedVideo.getDuration());
+        String duration = toFormattedTimeHoursMinutesSecond(selectedVideo.getDuration());
         holder.duration.setText(duration);
     }
 

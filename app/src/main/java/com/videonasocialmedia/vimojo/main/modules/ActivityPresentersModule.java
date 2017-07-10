@@ -202,11 +202,12 @@ public class ActivityPresentersModule {
           GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
           LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionsUseCase,
           UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase,
+          AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase,
           SharedPreferences sharedPreferences) {
     return new GalleryPagerPresenter((GalleryActivity) activity, activity, addVideoToProjectUseCase,
             updateVideoRepositoryUseCase, getVideonaFormatFromCurrentProjectUseCase,
             launchTranscoderAddAVTransitionsUseCase, updateVideoResolutionToProjectUseCase,
-            sharedPreferences);
+            adaptVideoRecordedToVideoFormatUseCase, sharedPreferences);
   }
 
   @Provides @PerActivity

@@ -106,7 +106,20 @@
                 android:transitionGroup="false"
                 android:touchscreenBlocksFocus="false"/>
 
-        </android.support.v4.view.ViewPager>
 
+        </android.support.v4.view.ViewPager>
     </LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="59dp"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="24dp"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:src="@drawable/common_icon_add_white"/>
+    <!--android:layout_alignParentRight="true"-->
+
 </android.support.design.widget.CoordinatorLayout>

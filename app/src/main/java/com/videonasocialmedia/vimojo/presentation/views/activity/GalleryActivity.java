@@ -3,7 +3,11 @@ package com.videonasocialmedia.vimojo.presentation.views.activity;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
@@ -15,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -25,6 +30,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoGalleryPre
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.presentation.views.fragment.VideoGalleryFragment;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnSelectionModeListener;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,6 +61,8 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     ImageView galleryImageViewClips;
     @Bind(R.id.selection_mode)
     LinearLayout selectionMode;
+    @Bind(R.id.fab)
+    FloatingActionButton fab;
 
     private MyPagerAdapter adapterViewPager;
     private int selectedPage = 0;
@@ -144,16 +152,41 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         }
     }
 
-//    private List<Video> getSelectedVideosFromFragment(int selectedFragmentId) {
-//        VideoGalleryFragment selectedFragment = adapterViewPager.getItem(selectedFragmentId);
-//        return selectedFragment.getSelectedVideoList();
-//
-//    }
-//
-//    private List<Video> getSelectedVideosFromCurrentFragment() {
-//        VideoGalleryFragment selectedFragment = adapterViewPager.getItem(selectedPage);
-//        return selectedFragment.getSelectedVideoList();
-//    }
+    @OnClick(R.id.fab)
+    public void addVideo() {
+      Toast.makeText(this, "add video", Toast.LENGTH_SHORT);
+      Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+              MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+      startActivityForResult(galleryIntent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // When an Image is picked
+        if (requestCode == 1 && resultCode == RESULT_OK
+                && null != data) {
+            Uri videoImportedUri = data.getData();
+            Log.e(TAG, "-----------------------import videeo------------------");
+            Log.e(TAG, videoImportedUri.toString());
+            galleryPagerPresenter.importVideo(getRealPathFromURI(videoImportedUri));
+        }
+    }
+
+    public String getRealPathFromURI(Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
 
     @OnClick(R.id.button_cancel_gallery)
     public void goBack() {
@@ -166,7 +199,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         int numVideosSelected = videoList.size();
         if (numVideosSelected > 0) {
             String title;
-            if(numVideosSelected == 1) {
+            if (numVideosSelected == 1) {
                 title = getResources().getString(R.string.confirmDeleteTitle) + " " +
                         String.valueOf(numVideosSelected) + " " +
                         getResources().getString(R.string.confirmDeleteTitle1);
@@ -254,6 +287,16 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         });
 
         dialog.show();
+    }
+
+    @Override
+    public void hideProgressAdaptingVideo() {
+        // TODO(jliarte): 6/07/17 implement this method
+    }
+
+    @Override
+    public void showError(String string) {
+        // TODO(jliarte): 6/07/17 implement this method, better do it in parent class
     }
 
     @Override
