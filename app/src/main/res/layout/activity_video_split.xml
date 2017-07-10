@@ -123,21 +123,25 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/split_info_medium"
-                            android:text="300 ms"/>
+                            android:text="300 ms"
+                            android:textSize="12sp"/>
                         <TextView
                             android:id="@+id/split_info_medium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="60dp"
                             android:layout_marginLeft="60dp"
+                            android:text="600 ms"
+                            android:layout_alignParentTop="true"
                             android:layout_centerHorizontal="true"
-                            android:text="600 ms"/>
+                            android:textSize="12sp"/>
                         <TextView
                             android:id="@+id/split_info_high"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@+id/split_info_medium"
-                            android:text="1200 ms"/>
+                            android:text="1200 ms"
+                            android:textSize="12sp"/>
 
                     </RelativeLayout>
 
