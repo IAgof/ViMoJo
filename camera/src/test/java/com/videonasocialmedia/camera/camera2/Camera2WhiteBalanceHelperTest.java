@@ -45,6 +45,7 @@ public class Camera2WhiteBalanceHelperTest {
   public void setWhiteBalanceModeSetsCameraAWBModeAndUpdatesPreview() throws Exception {
     setupWrapper();
     Camera2WhiteBalanceHelper wbHelper = new Camera2WhiteBalanceHelper(mockedCameraWrapper);
+    wbHelper.setup();
 
     wbHelper.setWhiteBalanceMode(Camera2WhiteBalanceHelper.WB_MODE_AUTO);
 

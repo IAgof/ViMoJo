@@ -68,7 +68,15 @@ public interface RecordCamera2View {
 
     void hideSettingsCameraView();
 
+    // Focus settings
+
+    void showAdvancedAFSelection();
+
     void hideAdvancedAFSelection();
+
+    // ISO settings
+
+    void showISOSelection();
 
     void hideISOSelection();
 
@@ -76,15 +84,20 @@ public interface RecordCamera2View {
 
     // White balance settings
 
+    void showWhiteBalanceSelection();
+
     void hideWhiteBalanceSelection();
 
     void setupWhiteBalanceSupportedModesButtons(List<String> values);
 
     // Metering - exposure settings
 
+    void showMetteringModeSelection();
+
     void hideMetteringModeSelection();
 
     void setupFocusSelectionSupportedModesButtons(List<String> values);
+
 
     void setupMeteringModeSupportedModesButtons(List<String> values);
 
@@ -93,7 +106,6 @@ public interface RecordCamera2View {
     void setFlash(boolean on);
 
     void setFlashSupported(boolean state);
-
 
     void setResolutionSelected(int height);
 
@@ -119,4 +131,6 @@ public interface RecordCamera2View {
                               String freeMemoryInBytes, String totalMemoryInBytes);
 
     void showAlertDialogStorage();
+
+    void setCameraDefaultSettings();
 }

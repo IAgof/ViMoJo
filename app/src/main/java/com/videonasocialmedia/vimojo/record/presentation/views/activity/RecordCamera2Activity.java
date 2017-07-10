@@ -240,7 +240,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private int currentSeekbarZoom;
   private int touchEventX = 0;
   private int touchEventY = 0;
-  private PointF cameraShutterOffsetPoint;
   private HashMap<TextView, Integer> isoButtons = new HashMap<>();
 
   @Override
@@ -614,8 +613,18 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
+  public void showAdvancedAFSelection() {
+    afSelectionButton.setVisibility(View.VISIBLE);
+  }
+
+  @Override
   public void hideAdvancedAFSelection() {
     afSelectionButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void showISOSelection() {
+    isoButton.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -627,7 +636,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void setupISOSupportedModesButtons(Range<Integer> supportedISORange) {
     isoSettingAuto.setSelected(true);
     isoSettingAuto.setTextColor(getResources().getColor(R.color.button_selected));
+    clearISObuttons();
     isoButtons.put(isoSettingAuto, 0); // (jliarte): 27/06/17 convention for auto ISO setting
+    isoSubmenuView.addView(isoSettingAuto);
     setIsoModeOnClickListener(0, isoSettingAuto);
     int[] isoValues = {50, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200};
     for (final int isoValue : isoValues) {
@@ -641,6 +652,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         isoSubmenuView.addView(isoModeButton);
       }
     }
+  }
+
+  private void clearISObuttons() {
+    isoSubmenuView.removeAllViews();
+    isoButtons.clear();
   }
 
   private void setIsoModeOnClickListener(final int isoValue, final TextView isoModeButton) {
@@ -662,6 +678,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       isoButton.setSelected(false);
       isoButton.setTextColor(getResources().getColor(R.color.button_color_record_activity));
     }
+  }
+
+  @Override
+  public void showWhiteBalanceSelection() {
+    whiteBalanceButton.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -733,15 +754,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       meteringModeSpot.setVisibility(View.VISIBLE);
       final int windowWidth = customManualFocusView.getWidth();
       final int windowHeight = customManualFocusView.getHeight();
-      cameraShutterOffsetPoint = new PointF();
       cameraShutter.setOnTouchListener(new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
           switch(motionEvent.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-              cameraShutterOffsetPoint.x = motionEvent.getX();
-              cameraShutterOffsetPoint.y = motionEvent.getY();
-              break;
             case MotionEvent.ACTION_UP:
               onTouchSelectedArea(TOUCH_AREA_MODE_METERING_POINT, motionEvent);
               break;
@@ -750,8 +766,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
               touchEventY = (int) Math.max(motionEvent.getRawY(), windowHeight);
               cameraShutter.setX(touchEventX - cameraShutter.getMeasuredWidth() / 2);
               cameraShutter.setY(touchEventY - cameraShutter.getMeasuredHeight() / 2);
-              Log.d(LOG_TAG, "Move shutter to "+(int) (touchEventX - cameraShutterOffsetPoint.x)
-                      +" - "+(int) (touchEventY - cameraShutterOffsetPoint.y));
+              Log.d(LOG_TAG, "Move shutter to "+(int) (touchEventX - cameraShutter.getMeasuredWidth() / 2)
+                      +" - "+(int) (touchEventY - cameraShutter.getMeasuredHeight() / 2));
               break;
             default:
               break;
@@ -834,6 +850,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       }
     });
     slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void showMetteringModeSelection() {
+    meteringModeButton.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -1010,7 +1031,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void setColorProgressBarBattery(Constants.BATTERY_STATUS batteryStatus) {
-
     switch (batteryStatus) {
       case CHARGING:
       case FULL:
@@ -1255,7 +1275,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnClick (R.id.button_camera_default)
-  public void onClickCameraDefaultSettings() {
+  public void setCameraDefaultSettings() {
     // TODO(jliarte): 6/07/17 should move this logic to presenter?
     hideZoomSelectionSubmenu();
     slideSeekBar.setProgress(0);

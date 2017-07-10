@@ -35,10 +35,13 @@ public class Camera2MeteringModeHelper {
 
   public Camera2MeteringModeHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;
+  }
+
+  public void setup() {
     setupSupportedValues();
   }
 
-  private void setupSupportedValues() {
+  void setupSupportedValues() {
     ArrayList<String> aeStringArrayList = new ArrayList<>();
     aeStringArrayList.add(AE_MODE_ON);
     getCameraMeteringCapabilities();
