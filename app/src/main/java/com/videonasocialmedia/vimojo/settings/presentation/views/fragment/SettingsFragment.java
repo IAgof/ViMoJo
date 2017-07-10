@@ -43,7 +43,6 @@ import javax.inject.Inject;
  */
 public class SettingsFragment extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener, PreferencesView {
-
     @Inject PreferencesPresenter preferencesPresenter;
 
     protected PreferenceCategory cameraSettingsPref;
@@ -110,52 +109,58 @@ public class SettingsFragment extends PreferenceFragment implements
         emailPref=findPreference(ConfigPreferences.EMAIL);
     }
 
-    private void setupTransitions(){
-        transitionsVideoPref = (SwitchPreference) findPreference(ConfigPreferences.TRANSITION_VIDEO);
-        transitionsAudioPref = (SwitchPreference) findPreference(ConfigPreferences.TRANSITION_AUDIO);
-        if(!BuildConfig.FEATURE_AVTRANSTITION){
+    private void setupTransitions() {
+        transitionsVideoPref = (SwitchPreference)
+                findPreference(ConfigPreferences.TRANSITION_VIDEO);
+        transitionsAudioPref = (SwitchPreference)
+                findPreference(ConfigPreferences.TRANSITION_AUDIO);
+        if (!BuildConfig.FEATURE_AVTRANSTITION) {
             hideTransitions();
         }
     }
 
     private void hideTransitions() {
-        transitionCategory = (PreferenceCategory) findPreference(getString(R.string.title_fade_transition));
-        if(transitionCategory!=null)
+        transitionCategory = (PreferenceCategory)
+                findPreference(getString(R.string.title_fade_transition));
+        if (transitionCategory != null) {
             getPreferenceScreen().removePreference(transitionCategory);
+        }
     }
 
-    private void activeTransitions(){
+    private void activeTransitions() {
 
     }
 
-    private void setupWatermark(){
+    private void setupWatermark() {
         watermarkSwitchPref = (SwitchPreference) findPreference(ConfigPreferences.WATERMARK);
     }
 
     private void setupCameraSettings() {
+        cameraSettingsPref = (PreferenceCategory)
+                findPreference(getString(R.string.title_camera_section));
 
-        cameraSettingsPref = (PreferenceCategory) findPreference(getString(R.string.title_camera_section));
-
-        resolutionPref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION);
-        qualityPref = (ListPreference) findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY);
+        resolutionPref = (ListPreference)
+                findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION);
+        qualityPref = (ListPreference)
+                findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY);
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.list, null);
-        ListView listView = (ListView)v.findViewById(android.R.id.list);
+        View viewRoot = inflater.inflate(R.layout.list, null);
+        ListView listView = (ListView)viewRoot.findViewById(android.R.id.list);
 
         ViewGroup footer = (ViewGroup) inflater.inflate(R.layout.footer, listView, false);
         listView.addFooterView(footer, null, false);
 
-        TextView footerText = (TextView)v.findViewById(R.id.footerText);
+        TextView footerText = (TextView)viewRoot.findViewById(R.id.footerText);
         String text = getString(R.string.vimojo) + " v" + BuildConfig.VERSION_NAME + "\n" +
                 getString(R.string.madeIn);
         footerText.setText(text);
 
-        return v;
+        return viewRoot;
     }
 
     @Override
@@ -211,22 +216,22 @@ public class SettingsFragment extends PreferenceFragment implements
 
     @Override
     public void setTransitionsPref(String key, boolean value) {
-        if(key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0) {
+        if (key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0) {
             transitionsAudioPref.setChecked(value);
         }
-        if(key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0) {
+        if (key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0) {
             transitionsVideoPref.setChecked(value);
         }
     }
 
     @Override
-    public void setWatermarkSwitchPref(boolean value){
+    public void setWatermarkSwitchPref(boolean value) {
         watermarkSwitchPref.setChecked(value);
     }
 
     @Override
     public void setCameraSettingsAvailable(boolean isAvailable) {
-        if(isAvailable){
+        if (isAvailable) {
             resolutionPrefNotAvailable = findPreference(context.getString(R.string.resolution));
             resolutionPrefNotAvailable.setShouldDisableView(true);
         }
@@ -241,35 +246,45 @@ public class SettingsFragment extends PreferenceFragment implements
     public void setUserPropertyToMixpanel(String property, String value) {
         mixpanel.getPeople().identify(mixpanel.getDistinctId());
         mixpanel.getPeople().set(property,value);
-        if(property=="account_email")
+        if (property == "account_email") {
             mixpanel.getPeople().setOnce("$email", value);
+        }
     }
 
     @Override
     public void hideFtpsViews() {
         ftp1Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP1_Section));
-        if(ftp1Pref!=null)
+        if (ftp1Pref != null) {
             getPreferenceScreen().removePreference(ftp1Pref);
+        }
         ftp2Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP2_Section));
-        if(ftp2Pref!=null)
+        if (ftp2Pref != null) {
             getPreferenceScreen().removePreference(ftp2Pref);
+        }
     }
 
     @Override
     public void hideWatermarkView() {
-        watermarkPrefCategory = (PreferenceCategory) findPreference(getString(R.string.title_watermark_section));
-        if(watermarkPrefCategory!=null)
+        watermarkPrefCategory = (PreferenceCategory)
+                findPreference(getString(R.string.title_watermark_section));
+        if (watermarkPrefCategory != null) {
             getPreferenceScreen().removePreference(watermarkPrefCategory);
+        }
     }
 
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
         String property = null;
-        if(key.equals(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION))
-            property = AnalyticsConstants.RESOLUTION;
-        else if(key.equals(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY))
-            property = AnalyticsConstants.QUALITY;
-        else if(key.equals(ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE))
-            property = AnalyticsConstants.FRAME_RATE;
+        switch (key) {
+            case ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION:
+                property = AnalyticsConstants.RESOLUTION;
+                break;
+            case ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY:
+                property = AnalyticsConstants.QUALITY;
+                break;
+            case ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE:
+                property = AnalyticsConstants.FRAME_RATE;
+                break;
+        }
         mixpanel.getPeople().set(property, value.toLowerCase());
     }
 
@@ -277,17 +292,17 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                           String key) {
         Preference connectionPref = findPreference(key);
-        if(key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0 ||
-            key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0
-            || key.compareTo(ConfigPreferences.WATERMARK) == 0){
+        if (key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0
+                || key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0
+                || key.compareTo(ConfigPreferences.WATERMARK) == 0) {
             return;
         }
-        if(!key.equals(ConfigPreferences.PASSWORD_FTP) && !key.equals(ConfigPreferences.PASSWORD_FTP2)){
+        if (!key.equals(ConfigPreferences.PASSWORD_FTP)
+                && !key.equals(ConfigPreferences.PASSWORD_FTP2)) {
             connectionPref.setSummary(sharedPreferences.getString(key, ""));
             return;
         }
         trackQualityAndResolutionAndFrameRateUserTraits(key, sharedPreferences.getString(key, ""));
-
     }
 
     private void setupLegalNotice() {
@@ -349,6 +364,5 @@ public class SettingsFragment extends PreferenceFragment implements
         Intent intent = new Intent(VimojoApplication.getAppContext(), activity);
         startActivity(intent);
     }
-
 
 }
