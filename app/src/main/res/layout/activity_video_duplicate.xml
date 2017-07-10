@@ -29,7 +29,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="14dp"
-                android:layout_marginRight="14dp">
+                android:layout_marginRight="14dp"
+                android:layout_marginTop="8dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -62,7 +63,7 @@
                         <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
                             android:id="@+id/image_thumb_duplicate_video_left"
                             android:layout_width="90dp"
-                            android:layout_height="60dp"
+                            android:layout_height="90dp"
                             android:src="@drawable/fragment_gallery_no_image" />
 
                         <TextView
@@ -78,7 +79,7 @@
                         <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
                             android:id="@+id/image_thumb_duplicate_video_right"
                             android:layout_width="90dp"
-                            android:layout_height="60dp"
+                            android:layout_height="90dp"
                             android:src="@drawable/fragment_gallery_no_image" />
                     </LinearLayout>
                 </RelativeLayout>
@@ -102,7 +103,7 @@
                     android:layout_gravity="start"
                     android:layout_marginLeft="30dp"
                     android:background="@null"
-                    android:padding="8dp"
+                    android:padding="16dp"
                     app:srcCompat="@drawable/button_edit_increment_clip_normal" />
 
                 <ImageButton
@@ -115,7 +116,7 @@
                     android:layout_marginRight="30dp"
                     android:layout_toLeftOf="@+id/button_duplicate_increment_video"
                     android:background="@null"
-                    android:padding="8dp"
+                    android:padding="16dp"
                     app:srcCompat="@drawable/button_edit_decrement_clips_normal" />
             </android.support.v7.widget.CardView>
 

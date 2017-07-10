@@ -30,10 +30,10 @@
                 android:id="@+id/split_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginRight="14dp"
                 android:layout_marginLeft="14dp"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="8dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_above="@+id/advance_split_cardview"
                 >
@@ -85,6 +85,7 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:layout_marginBottom="60dp"
+                    android:layout_marginTop="16dp"
                     android:text="@string/text_edit_info_split"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                     android:visibility="visible"
@@ -96,10 +97,10 @@
                 android:id="@+id/advance_split_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp"
+                android:layout_marginTop="8dp"
                 android:layout_above="@+id/cancel_accept_split_cardview"
                 >
 
@@ -229,9 +230,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="14dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp">
 
 
                 <ImageButton
