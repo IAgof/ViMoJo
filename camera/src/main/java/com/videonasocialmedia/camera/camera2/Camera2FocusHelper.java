@@ -58,9 +58,9 @@ public class Camera2FocusHelper {
         if(focusSelectionSetting == CONTROL_AF_MODE_OFF) {
           focusSelectionStringArrayList.add(AF_MODE_MANUAL);
         }
-        if(focusSelectionSetting == CONTROL_AF_MODE_CONTINUOUS_VIDEO){
+        if (focusSelectionSetting == CONTROL_AF_MODE_CONTINUOUS_VIDEO) {
           focusSelectionStringArrayList.add(AF_MODE_AUTO);
-          if(isFocusModeSelectiveSupported()){
+          if (isFocusModeSelectiveSupported()) {
             focusSelectionStringArrayList.add(AF_MODE_REGIONS);
           }
         }

@@ -131,4 +131,6 @@ public interface RecordCamera2View {
                               String freeMemoryInBytes, String totalMemoryInBytes);
 
     void showAlertDialogStorage();
+
+    void setCameraDefaultSettings();
 }

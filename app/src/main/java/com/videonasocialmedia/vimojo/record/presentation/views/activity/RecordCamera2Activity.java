@@ -638,6 +638,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     isoSettingAuto.setTextColor(getResources().getColor(R.color.button_selected));
     clearISObuttons();
     isoButtons.put(isoSettingAuto, 0); // (jliarte): 27/06/17 convention for auto ISO setting
+    isoSubmenuView.addView(isoSettingAuto);
     setIsoModeOnClickListener(0, isoSettingAuto);
     int[] isoValues = {50, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200};
     for (final int isoValue : isoValues) {
@@ -1030,7 +1031,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void setColorProgressBarBattery(Constants.BATTERY_STATUS batteryStatus) {
-
     switch (batteryStatus) {
       case CHARGING:
       case FULL:
@@ -1275,7 +1275,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnClick (R.id.button_camera_default)
-  public void onClickCameraDefaultSettings() {
+  public void setCameraDefaultSettings() {
     // TODO(jliarte): 6/07/17 should move this logic to presenter?
     hideZoomSelectionSubmenu();
     slideSeekBar.setProgress(0);

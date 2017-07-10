@@ -27,7 +27,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -476,6 +475,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       isFrontCameraSelected = false;
     }
     resetViewSwitchCamera();
+    recordView.setCameraDefaultSettings();
     camera.switchCamera(isFrontCameraSelected);
     setupAdvancedCameraControls();
   }
