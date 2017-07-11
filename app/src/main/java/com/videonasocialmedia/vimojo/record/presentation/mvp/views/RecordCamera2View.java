@@ -92,6 +92,8 @@ public interface RecordCamera2View {
 
     // Metering - exposure settings
 
+    void resetSpotMeteringSelector();
+
     void showMetteringModeSelection();
 
     void hideMetteringModeSelection();
