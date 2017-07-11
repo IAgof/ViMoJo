@@ -31,7 +31,8 @@ import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.
  *         bewantbe@gmail.com
  */
 
-public class PicometerSamplingLoop extends Thread {
+public class PicometerSamplingLoopThread extends Thread {
+  public static final int SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE = 100;
   private final String TAG = "SamplingLoop";
   private volatile boolean isRunning = true;
   private STFT stft;   // use with care
@@ -41,13 +42,13 @@ public class PicometerSamplingLoop extends Thread {
 
   private PicometerAmplitudeDbListener listener;
 
-  public PicometerSamplingLoop(AnalyzerParameters analyzerParam, PicometerAmplitudeDbListener
+  public PicometerSamplingLoopThread(AnalyzerParameters analyzerParam, PicometerAmplitudeDbListener
       listener) {
     this.listener = listener;
     this.analyzerParam = analyzerParam;
   }
 
-  public PicometerSamplingLoop(PicometerAmplitudeDbListener listener) {
+  public PicometerSamplingLoopThread(PicometerAmplitudeDbListener listener) {
     this.listener = listener;
     this.analyzerParam = new AnalyzerParameters();
   }
@@ -161,11 +162,10 @@ public class PicometerSamplingLoop extends Thread {
 
         stft.calculatePeak();
         listener.setMaxAmplituedDb(stft.maxAmpDB);
-        sleepWithoutInterrupt(100);
+        sleepWithoutInterrupt(SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE);
 
       }
     }
-    //Log.i(TAG, "SamplingLoop::Run(): Actual sample rate: " + recorderMonitor.getSampleRate());
     Log.i(TAG, "SamplingLoop::Run(): Stopping and releasing recorder.");
     audioRecord.stop();
     audioRecord.release();

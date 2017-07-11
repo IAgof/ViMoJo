@@ -249,12 +249,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private PointF cameraShutterOffsetPoint;
   private HashMap<TextView, Integer> isoButtons = new HashMap<>();
 
+  // TODO:(alvaro.martinez) 10/07/17 Study unify broadcast receiver with batteryReceiver
   BroadcastReceiver jackConnectorReceiver = new BroadcastReceiver(){
     @Override
     public void onReceive(Context context, Intent intent){
       Bundle bundle = intent.getExtras();
-      if (bundle != null) {
-        updateMicrophoneStatus(intent);
+      if (bundle != null && intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+          updateMicrophoneStatus(intent);
       }
     }
   };
@@ -1133,12 +1134,12 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
-  public void showMicrophoneConnected() {
+  public void showExternalMicrophoneConnected() {
     micPlugButton.setImageResource(R.drawable.activity_record_ic_micro_activated);
   }
 
   @Override
-  public void showNotMicrophoneConnected() {
+  public void showSmartphoneMicrophoneWorking() {
     micPlugButton.setImageResource(R.drawable.activity_record_ic_phone_micro_activated);
   }
 
@@ -1529,17 +1530,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void updateMicrophoneStatus(Intent intent){
-    boolean isAMicrophone = false;
-    boolean isJackConnected = false;
-    if(intent.getIntExtra("state", -1) == 1 ){
-      isJackConnected = true;
-    }
-    if(isJackConnected) {
-      if (intent.getIntExtra("microphone", -1) == 1) {
-        isAMicrophone = true;
-      }
-    }
-    presenter.setMicrophoneStatus(isAMicrophone);
+    int state = intent.getIntExtra("state", -1);
+    int microphone = intent.getIntExtra("microphone", -1);
+    presenter.setMicrophoneStatus(state, microphone);
   }
 
   private class OrientationHelper extends OrientationEventListener {

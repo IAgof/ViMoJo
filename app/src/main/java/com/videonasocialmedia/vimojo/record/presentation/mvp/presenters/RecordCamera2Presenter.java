@@ -43,7 +43,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerAmplitudeDbListener;
-import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoop;
+import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoopThread;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
@@ -54,8 +54,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static java.lang.Math.log10;
-
 /**
  *  Created by alvaro on 16/01/17.
  */
@@ -63,7 +61,9 @@ import static java.lang.Math.log10;
 public class RecordCamera2Presenter implements Camera2WrapperListener,
     OnLaunchAVTransitionTempFileListener, TranscoderHelperListener {
   public static final int DEFAULT_CAMERA_ID = 0;
-  public static final int NORMALIZE_PICOMETER_VALUE = 60;
+  public static final int NORMALIZE_PICOMETER_VALUE = 108;
+  public static final double MAX_AMPLITUDE_VALUE_PICOMETER = 32768;
+  public static final int SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE = 100;
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private final String TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
@@ -88,7 +88,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public long ONE_KB = 1 *1024;
   public long ONE_MB = ONE_KB*1024;
   public long ONE_GB = ONE_MB*1024;
-  private PicometerSamplingLoop samplingThread;
+  private PicometerSamplingLoopThread picometerSamplingLoopThread;
 
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
                                 UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
@@ -180,37 +180,83 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     showThumbAndNumber();
     Log.d(TAG, "resume presenter");
     camera.onResume();
-    reStartSamplingPicometerPreview();
+    startSamplingPicometerPreview();
   }
 
-  private void reStartSamplingPicometerPreview() {
+  private void startSamplingPicometerPreview() {
     // Stop previous sampler if any.
-    if (samplingThread != null) {
-      samplingThread.finish();
+    if (picometerSamplingLoopThread != null) {
+      picometerSamplingLoopThread.finish();
       try {
-        samplingThread.join();
+        picometerSamplingLoopThread.join();
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
-      samplingThread = null;
+      picometerSamplingLoopThread = null;
     }
     // Start sampling
-    samplingThread = new PicometerSamplingLoop(new PicometerAmplitudeDbListener() {
+    picometerSamplingLoopThread = new PicometerSamplingLoopThread(
+        new PicometerAmplitudeDbListener() {
       @Override
       public void setMaxAmplituedDb(double maxAmplituedDb) {
-        setPicometerProgressAndColor(maxAmplituedDb);
+        Log.d(TAG, "maxAmplitudePreview Dbs " + maxAmplituedDb);
+        setPicometerProgressAndColor(getProgressPicometerPreview(maxAmplituedDb));
       }
     });
-    samplingThread.start();
+    picometerSamplingLoopThread.start();
   }
 
-  private void setPicometerProgressAndColor(double maxAmplituedDb) {
-    int progress;
-    if(camera.isRecordingVideo()) {
-      progress = (int) ((maxAmplituedDb / 33.4) * 100 * -1);
-    } else {
-      progress = 100 - (int) ((maxAmplituedDb / NORMALIZE_PICOMETER_VALUE) * 100 * -1);
+  private int getProgressPicometerPreview(double maxAmplituedDb) {
+    int progress = 100 - (int) ((maxAmplituedDb / NORMALIZE_PICOMETER_VALUE) * 100 * -1);
+    if(progress<100){
+      return progress;
+    }else{
+      return 0;
     }
+  }
+
+  private void stopSamplingPicometerPreview(){
+    if (picometerSamplingLoopThread != null) {
+      picometerSamplingLoopThread.finish();
+    }
+  }
+
+  private void startSamplingPicometerRecording() {
+    Runnable run = new Runnable() {
+      @Override
+      public void run() {
+        while (camera.isRecordingVideo()) {
+          int maxAmplitude = camera.getMaxAmplitudeRecording();
+          double dBs = getAmplitudePicometerFromRecorderDbs(maxAmplitude);
+          Log.d(TAG, "maxAmplitudeRecording " + maxAmplitude + " dBs " + dBs);
+          int progress = getProgressPicometerRecording(dBs);
+          sleepWithoutInterrupt(SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE);
+          if(maxAmplitude>0)
+            setPicometerProgressAndColor(progress);
+        }
+      }
+    };
+    Thread thread = new Thread(run);
+    thread.start();
+  }
+
+  private int getProgressPicometerRecording(double dBs) {
+    return (int) ((dBs / NORMALIZE_PICOMETER_VALUE) * 100 * -1 * 2);
+  }
+
+  private float getAmplitudePicometerFromRecorderDbs(int maxAmplitude) {
+    return (float) (20 * Math.log10(maxAmplitude/ MAX_AMPLITUDE_VALUE_PICOMETER));
+  }
+
+  private void sleepWithoutInterrupt(long millis) {
+    try {
+      Thread.sleep(millis);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void setPicometerProgressAndColor(int progress) {
     int color;
     if(progress > 30){
       if(progress > 50){
@@ -222,13 +268,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       color = Color.GREEN;
     }
     recordView.showProgressPicometer(progress, color);
-    Log.d(TAG, "PicometerSamplingLoop, amplitude DBs, progress " + progress);
-  }
-
-  private void stopSamplingPicometerPreview(){
-    if (samplingThread != null) {
-      samplingThread.finish();
-    }
+    Log.d(TAG, "Picometer progress " + progress + " isRecording " + camera.isRecordingVideo());
   }
 
   public void onPause() {
@@ -270,28 +310,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       });
     } catch (IllegalStateException illegalState) {
       // do nothing as it should be already managed in camera wrapper
+      startSamplingPicometerPreview();
     }
-  }
-
-  private void startSamplingPicometerRecording() {
-    Runnable run = new Runnable() {
-      @Override
-      public void run() {
-        while (camera.isRecordingVideo()) {
-          int maxAmplitude = camera.getMaxAmplitudeRecording();
-          double dBs = (float) (20 * Math.log10(maxAmplitude/700.0));
-          Log.d(TAG, "maxAmplitudeRecording " + maxAmplitude + " dBs " + dBs);
-          try {
-            Thread.sleep(100);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
-          setPicometerProgressAndColor(dBs);
-        }
-      }
-    };
-    Thread thread = new Thread(run);
-    thread.start();
   }
 
   public void stopRecord() {
@@ -299,7 +319,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       camera.stopRecordVideo();
       updateStopVideoUI();
       onVideoRecorded(camera.getVideoPath());
-      reStartSamplingPicometerPreview();
+      startSamplingPicometerPreview();
       restartPreview();
     } catch (RuntimeException runtimeException) {
       // do nothing as it's already managed in camera wrapper
@@ -645,12 +665,16 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     camera.setISO(isoValue);
   }
 
-  public void setMicrophoneStatus(boolean isMicrophoneConnected) {
-    if(isMicrophoneConnected){
-      recordView.showMicrophoneConnected();
+  public void setMicrophoneStatus(int state, int microphone) {
+    if(isAJackMicrophoneConnected(state, microphone)){
+      recordView.showExternalMicrophoneConnected();
     } else {
-      recordView.showNotMicrophoneConnected();
+      recordView.showSmartphoneMicrophoneWorking();
     }
+  }
+
+  private boolean isAJackMicrophoneConnected(int state, int microphone) {
+    return state == 1 && microphone == 1;
   }
 
   // --------------------------------------------------------------

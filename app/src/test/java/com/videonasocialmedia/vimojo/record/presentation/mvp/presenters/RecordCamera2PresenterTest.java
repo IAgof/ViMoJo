@@ -217,6 +217,28 @@ public class RecordCamera2PresenterTest {
     assertThat("Level will be CRITICAL", status, is(Constants.BATTERY_STATUS.CRITICAL));
   }
 
+  @Test
+  public void setMicrophoneStatusCallsRecordViewShowExternalMicrophoneConnected(){
+    int stateHeadSetPlug = 1; // jack connected
+    int microphone = 1; // microphone connected
+    presenter = getRecordCamera2Presenter();
+
+    presenter.setMicrophoneStatus(stateHeadSetPlug, microphone);
+
+    verify(mockedRecordView).showExternalMicrophoneConnected();
+  }
+
+  @Test
+  public void setMicrophoneStatusCallsRecordViewShowSmartPhoneMicrophoneConnected(){
+    int stateHeadSetPlug = 0; // jack is not connected
+    int microphone = 1; // microphone connected
+    presenter = getRecordCamera2Presenter();
+
+    presenter.setMicrophoneStatus(stateHeadSetPlug, microphone);
+
+    verify(mockedRecordView).showSmartphoneMicrophoneWorking();
+  }
+
   public Project getAProject() {
     return Project.getInstance("title", "/path",
         Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,

@@ -122,7 +122,7 @@ public interface RecordCamera2View {
 
     void showProgressPicometer(int progress, int color);
 
-    void showMicrophoneConnected();
+    void showExternalMicrophoneConnected();
 
-    void showNotMicrophoneConnected();
+    void showSmartphoneMicrophoneWorking();
 }
