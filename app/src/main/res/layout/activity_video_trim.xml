@@ -25,12 +25,11 @@
 
         <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_below="@+id/videona_player"
                 android:layout_alignEnd="@+id/videona_player"
                 android:clipChildren="false"
-                android:orientation="vertical"
-                android:layout_marginBottom="16dp">
+                android:orientation="vertical">
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/trim_cardview"
@@ -49,9 +48,10 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
                             android:layout_centerHorizontal="true"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="8dp"
                             android:layout_marginBottom="8dp"
-                            android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                            android:textSize="12sp"
+                            android:textColor="@color/textColorSecondary"
                             android:visibility="visible"
                             tools:text="00:00" />
 
@@ -96,7 +96,7 @@
                         android:id="@+id/advance_low_cardview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginBottom="4dp"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
                         android:layout_marginTop="4dp">
@@ -105,7 +105,8 @@
                             android:id="@+id/advance_low_relative"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingBottom="4dp"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp"
                             android:paddingLeft="8dp"
                             android:paddingRight="8dp"
                             >
@@ -117,7 +118,10 @@
                                 android:layout_alignParentLeft="true"
                                 android:layout_centerVertical="true"
                                 android:layout_marginRight="16dp"
-                                android:padding="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingLeft="8dp"
                                 android:background="@null"
                                 android:src="@drawable/activity_edit_player_advance_low" />
 
@@ -126,7 +130,10 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
-                                android:padding="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingLeft="8dp"
                                 android:layout_toRightOf="@+id/player_advance_low_backward_start_trim"
                                 android:background="@null"
                                 android:rotation="180"
@@ -139,7 +146,8 @@
                                 android:layout_centerHorizontal="true"
                                 android:layout_centerVertical="true"
                                 android:text="300 ms"
-                                android:textSize="12sp" />
+                                android:textSize="12sp"
+                                android:textColor="@color/textColorSecondary"/>
 
                             <ImageButton
                                 android:id="@+id/player_advance_low_backward_end_trim"
@@ -147,7 +155,10 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:layout_marginRight="16dp"
-                                android:padding="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingLeft="8dp"
                                 android:layout_toLeftOf="@+id/player_advance_low_forward_end_trim"
                                 android:background="@null"
                                 android:src="@drawable/activity_edit_player_advance_low" />
@@ -158,7 +169,10 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
-                                android:padding="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingLeft="8dp"
                                 android:layout_gravity="end"
                                 android:background="@null"
                                 android:rotation="180"
@@ -170,17 +184,18 @@
                         android:id="@+id/advance_medium_card_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginBottom="4dp"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
-                        android:layout_marginTop="8dp">
+                        android:layout_marginTop="4dp">
 
                         <RelativeLayout
                             android:id="@+id/advance_medium_relative"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_above="@+id/advance_high_relative"
-                            android:paddingBottom="4dp"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp"
                             android:paddingLeft="8dp"
                             android:paddingRight="8dp"
                             >
@@ -192,7 +207,10 @@
                                 android:layout_alignParentLeft="true"
                                 android:layout_centerVertical="true"
                                 android:layout_marginRight="16dp"
-                                android:padding="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingLeft="8dp"
                                 android:background="@null"
                                 android:src="@drawable/activity_edit_player_advance_medium" />
 
@@ -201,7 +219,10 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
-                                android:padding="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingLeft="8dp"
                                 android:layout_toRightOf="@+id/player_advance_medium_backward_start_trim"
                                 android:background="@null"
                                 android:rotation="180"
@@ -214,7 +235,8 @@
                                 android:layout_centerHorizontal="true"
                                 android:layout_centerVertical="true"
                                 android:text="600 ms"
-                                android:textSize="12sp" />
+                                android:textSize="12sp"
+                                android:textColor="@color/textColorSecondary"/>
 
                             <ImageButton
                                 android:id="@+id/player_advance_medium_backward_end_trim"
@@ -222,7 +244,10 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:layout_marginRight="16dp"
-                                android:padding="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingLeft="8dp"
                                 android:layout_toLeftOf="@+id/player_advance_medium_forward_end_trim"
                                 android:background="@null"
                                 android:src="@drawable/activity_edit_player_advance_medium" />
@@ -233,7 +258,10 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
-                                android:padding="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingLeft="8dp"
                                 android:layout_gravity="end"
                                 android:background="@null"
                                 android:rotation="180"
@@ -257,6 +285,7 @@
                             android:layout_height="wrap_content"
                             android:layout_above="@id/advance_medium_relative"
                             android:paddingBottom="8dp"
+                            android:paddingTop="8dp"
                             android:paddingLeft="8dp"
                             android:paddingRight="8dp"
                             >
@@ -268,7 +297,10 @@
                                 android:layout_alignParentLeft="true"
                                 android:layout_centerVertical="true"
                                 android:layout_marginRight="16dp"
-                                android:padding="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingLeft="8dp"
                                 android:background="@null"
                                 android:src="@drawable/activity_edit_player_advance_high" />
 
@@ -277,7 +309,10 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
-                                android:padding="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingLeft="8dp"
                                 android:layout_toRightOf="@+id/player_advance_high_backward_start_trim"
                                 android:background="@null"
                                 android:rotation="180"
@@ -290,7 +325,8 @@
                                 android:layout_centerHorizontal="true"
                                 android:layout_centerVertical="true"
                                 android:text="1200 ms"
-                                android:textSize="12sp" />
+                                android:textSize="12sp"
+                                android:textColor="@color/textColorSecondary"/>
 
                             <ImageButton
                                 android:id="@+id/player_advance_high_backward_end_trim"
@@ -298,7 +334,10 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:layout_marginRight="16dp"
-                                android:padding="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingLeft="8dp"
                                 android:layout_toLeftOf="@+id/player_advance_high_forward_end_trim"
                                 android:background="@null"
                                 android:src="@drawable/activity_edit_player_advance_high" />
@@ -309,7 +348,10 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
-                                android:padding="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingLeft="8dp"
                                 android:layout_gravity="end"
                                 android:background="@null"
                                 android:rotation="180"
