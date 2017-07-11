@@ -12,8 +12,6 @@ package com.videonasocialmedia.vimojo.trim.presentation.views.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -46,6 +44,13 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     public static final float MS_CORRECTION_FACTOR = 1000f;
     public static final float MIN_TRIM_OFFSET = 0.35f;
+
+    public static final int ADVANCE_PLAYER_PRECISION_LOW = 300;
+    public static final int ADVANCE_PLAYER_PRECISION_MEDIUM = 600;
+    public static final int ADVANCE_PLAYER_PRECISION_HIGH = 1200;
+
+    private float rangeSeekBarMinValue;
+    private float rangeSeekBarMaxValue;
 
     @Inject TrimPreviewPresenter presenter;
 
@@ -166,6 +171,104 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         super.onSaveInstanceState(outState);
     }
 
+    @OnClick(R.id.player_advance_low_backward_start_trim)
+    public void onClickAdvanceLowBackwardStart(){
+        advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_LOW);
+    }
+
+    @OnClick(R.id.player_advance_low_forward_start_trim)
+    public void onClickAdvanceLowForwardStart(){
+        advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_LOW);
+    }
+
+    @OnClick(R.id.player_advance_low_backward_end_trim)
+    public void onClickAdvanceLowBackwardEnd(){
+        advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_LOW);
+    }
+
+    @OnClick(R.id.player_advance_low_forward_end_trim)
+    public void onClickAdvanceLowForwardEnd(){
+        advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_LOW);
+    }
+
+    @OnClick(R.id.player_advance_medium_backward_start_trim)
+    public void onClickAdvanceMediumBackwardStart(){
+        advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM);
+    }
+
+    @OnClick(R.id.player_advance_medium_forward_start_trim)
+    public void onClickAdvanceMediumForwardStart(){
+        advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM);
+    }
+
+    @OnClick(R.id.player_advance_medium_backward_end_trim)
+    public void onClickAdvanceMediumBackwardEnd(){
+        advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM);
+    }
+
+    @OnClick(R.id.player_advance_medium_forward_end_trim)
+    public void onClickAdvanceMediumForwardEnd(){
+        advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM);
+    }
+
+    @OnClick(R.id.player_advance_high_backward_start_trim)
+    public void onClickAdvanceHighBackwardStart(){
+        advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_HIGH);
+    }
+
+    @OnClick(R.id.player_advance_high_forward_start_trim)
+    public void onClickAdvanceHighForwardStart(){
+        advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_HIGH);
+    }
+
+    @OnClick(R.id.player_advance_high_backward_end_trim)
+    public void onClickAdvanceHighBackwardEnd(){
+        advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_HIGH);
+    }
+
+    @OnClick(R.id.player_advance_high_forward_end_trim)
+    public void onClickAdvanceHighForwardEnd(){
+        advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_HIGH);
+    }
+
+    private void advanceBackwardStartTrimming(int advancePrecision) {
+        float adjustSeekBarMinPosition = (float) (startTimeMs - advancePrecision)
+            / MS_CORRECTION_FACTOR;
+        if(adjustSeekBarMinPosition < 0){
+            adjustSeekBarMinPosition = 0;
+        }
+        onRangeSeekBarValuesChanged(trimmingRangeSeekBar, adjustSeekBarMinPosition,
+            rangeSeekBarMaxValue);
+        trimmingRangeSeekBar.setSelectedMinValue(adjustSeekBarMinPosition);
+    }
+
+    private void advanceForwardStartTrimming(int advancePrecision) {
+        float adjustSeekBarMinPosition = (float) (startTimeMs + advancePrecision)
+            / MS_CORRECTION_FACTOR;
+        onRangeSeekBarValuesChanged(trimmingRangeSeekBar, adjustSeekBarMinPosition,
+            rangeSeekBarMaxValue);
+        trimmingRangeSeekBar.setSelectedMinValue(adjustSeekBarMinPosition);
+    }
+
+    private void advanceBackwardEndTrimming(int advancePrecision) {
+        float adjustSeekBarMaxPosition = (float) (finishTimeMs - advancePrecision)
+            / MS_CORRECTION_FACTOR;
+        if(adjustSeekBarMaxPosition > (float) videoDuration / MS_CORRECTION_FACTOR){
+            adjustSeekBarMaxPosition = (float) videoDuration / MS_CORRECTION_FACTOR;
+        }
+        onRangeSeekBarValuesChanged(trimmingRangeSeekBar, rangeSeekBarMinValue,
+            adjustSeekBarMaxPosition);
+        trimmingRangeSeekBar.setSelectedMaxValue(adjustSeekBarMaxPosition);
+    }
+
+    private void advanceForwardEndTrimming(int advancePrecision) {
+        float adjustSeekBarMaxPosition = (float) (finishTimeMs + advancePrecision)
+            / MS_CORRECTION_FACTOR;
+        onRangeSeekBarValuesChanged(trimmingRangeSeekBar, rangeSeekBarMinValue,
+            adjustSeekBarMaxPosition);
+        trimmingRangeSeekBar.setSelectedMaxValue(adjustSeekBarMaxPosition);
+    }
+
     @OnClick(R.id.button_trim_accept)
     public void onClickTrimAccept() {
         presenter.setTrim(startTimeMs, finishTimeMs);
@@ -260,6 +363,8 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 //        Log.d(TAG, " setRangeChangeListener " + minValue + " - " + maxValue);
         videonaPlayer.pausePreview();
         try {
+            this.rangeSeekBarMinValue = (float) minValue;
+            this.rangeSeekBarMaxValue = (float) maxValue;
             float minValueFloat = (float) minValue;
             float maxValueFloat = (float) maxValue;
             if (Math.abs(maxValueFloat - minValueFloat) <= MIN_TRIM_OFFSET) {
