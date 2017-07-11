@@ -28,7 +28,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -129,31 +128,30 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   private void setupAdvancedCameraControls() {
-    // TODO(jliarte): 26/05/17 temporal workarround to force showing buttons
-    if (BuildConfig.FEATURE_FORCE_PRO_CONTROLS_SHOW) {
-      return;
-    }
     if (!camera.ISOSelectionSupported()) {
       recordView.hideISOSelection();
     } else {
-      recordView.setupISOSupportedModesButtons(
-              camera.getSupportedISORange());
+      recordView.showISOSelection();
+      recordView.setupISOSupportedModesButtons(camera.getSupportedISORange());
     }
     if (!camera.focusSelectionSupported()) {
       recordView.hideAdvancedAFSelection();
     } else {
-      recordView.setupFocusSelectionSupportedModesButtons(camera.getSupportedFocusSelectionModes()
-          .values);
+      recordView.showAdvancedAFSelection();
+      recordView.setupFocusSelectionSupportedModesButtons(
+              camera.getSupportedFocusSelectionModes().values);
     }
     if (!camera.whiteBalanceSelectionSupported()) {
       recordView.hideWhiteBalanceSelection();
     } else {
+      recordView.showWhiteBalanceSelection();
       recordView.setupWhiteBalanceSupportedModesButtons(
               camera.getSupportedWhiteBalanceModes().values);
     }
     if (!camera.metteringModeSelectionSupported()) {
       recordView.hideMetteringModeSelection();
     } else {
+      recordView.showMetteringModeSelection();
       recordView.setupMeteringModeSupportedModesButtons(
               camera.getSupportedMeteringModes().values);
     }
@@ -467,8 +465,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   public void navigateToEditOrGallery() {
-
-    if(areTherePendingTranscodingTask()){
+    if (areTherePendingTranscodingTask()) {
       recordView.showProgressAdaptingVideo();
       isClickedNavigateToEditOrGallery = true;
       Log.d(TAG, "showProgressAdaptingVideo");
@@ -561,7 +558,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   @Override
   public void videoToLaunchAVTransitionTempFile(Video video,
                                                 String intermediatesTempAudioFadeDirectory) {
-
     video.setTempPath(currentProject.getProjectPathIntermediateFiles());
 
     videoFormat = currentProject.getVMComposition().getVideoFormat();
@@ -578,7 +574,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       isFrontCameraSelected = false;
     }
     resetViewSwitchCamera();
+    recordView.setCameraDefaultSettings();
     camera.switchCamera(isFrontCameraSelected);
+    setupAdvancedCameraControls();
   }
 
   private void resetViewSwitchCamera() {

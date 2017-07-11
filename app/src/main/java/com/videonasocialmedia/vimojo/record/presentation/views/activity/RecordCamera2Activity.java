@@ -183,8 +183,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Bind(R.id.metering_mode_spot)
   ImageButton meteringModeSpot;
 
-  @Bind(R.id.button_camera_auto)
-  ImageButton cameraAutoButton;
+  @Bind(R.id.button_camera_default)
+  ImageButton cameraDefaultSettingsButton;
   @Bind(R.id.button_resolution_indicator)
   ImageView resolutionIndicatorButton;
   @Bind(R.id.customManualFocusView)
@@ -246,7 +246,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private int currentSeekbarZoom;
   private int touchEventX = 0;
   private int touchEventY = 0;
-  private PointF cameraShutterOffsetPoint;
   private HashMap<TextView, Integer> isoButtons = new HashMap<>();
 
   // TODO:(alvaro.martinez) 10/07/17 Study unify broadcast receiver with batteryReceiver
@@ -353,8 +352,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
 
     tintButton(gridButton, button_color);
-    tintButton(cameraAutoButton, button_color);
 
+    tintButton(cameraDefaultSettingsButton, button_color);
   }
 
   private void configChronometer() {
@@ -649,8 +648,18 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
+  public void showAdvancedAFSelection() {
+    afSelectionButton.setVisibility(View.VISIBLE);
+  }
+
+  @Override
   public void hideAdvancedAFSelection() {
     afSelectionButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void showISOSelection() {
+    isoButton.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -662,7 +671,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void setupISOSupportedModesButtons(Range<Integer> supportedISORange) {
     isoSettingAuto.setSelected(true);
     isoSettingAuto.setTextColor(getResources().getColor(R.color.button_selected));
+    clearISObuttons();
     isoButtons.put(isoSettingAuto, 0); // (jliarte): 27/06/17 convention for auto ISO setting
+    isoSubmenuView.addView(isoSettingAuto);
     setIsoModeOnClickListener(0, isoSettingAuto);
     int[] isoValues = {50, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200};
     for (final int isoValue : isoValues) {
@@ -676,6 +687,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         isoSubmenuView.addView(isoModeButton);
       }
     }
+  }
+
+  private void clearISObuttons() {
+    isoSubmenuView.removeAllViews();
+    isoButtons.clear();
   }
 
   private void setIsoModeOnClickListener(final int isoValue, final TextView isoModeButton) {
@@ -697,6 +713,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       isoButton.setSelected(false);
       isoButton.setTextColor(getResources().getColor(R.color.button_color_record_activity));
     }
+  }
+
+  @Override
+  public void showWhiteBalanceSelection() {
+    whiteBalanceButton.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -768,15 +789,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       meteringModeSpot.setVisibility(View.VISIBLE);
       final int windowWidth = customManualFocusView.getWidth();
       final int windowHeight = customManualFocusView.getHeight();
-      cameraShutterOffsetPoint = new PointF();
       cameraShutter.setOnTouchListener(new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
           switch(motionEvent.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-              cameraShutterOffsetPoint.x = motionEvent.getX();
-              cameraShutterOffsetPoint.y = motionEvent.getY();
-              break;
             case MotionEvent.ACTION_UP:
               onTouchSelectedArea(TOUCH_AREA_MODE_METERING_POINT, motionEvent);
               break;
@@ -785,8 +801,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
               touchEventY = (int) Math.max(motionEvent.getRawY(), windowHeight);
               cameraShutter.setX(touchEventX - cameraShutter.getMeasuredWidth() / 2);
               cameraShutter.setY(touchEventY - cameraShutter.getMeasuredHeight() / 2);
-              Log.d(LOG_TAG, "Move shutter to "+(int) (touchEventX - cameraShutterOffsetPoint.x)
-                      +" - "+(int) (touchEventY - cameraShutterOffsetPoint.y));
+              Log.d(LOG_TAG, "Move shutter to "+(int) (touchEventX - cameraShutter.getMeasuredWidth() / 2)
+                      +" - "+(int) (touchEventY - cameraShutter.getMeasuredHeight() / 2));
               break;
             default:
               break;
@@ -869,6 +885,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       }
     });
     slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void showMetteringModeSelection() {
+    meteringModeButton.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -1045,7 +1066,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void setColorProgressBarBattery(Constants.BATTERY_STATUS batteryStatus) {
-
     switch (batteryStatus) {
       case CHARGING:
       case FULL:
@@ -1169,14 +1189,22 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnClick (R.id.button_grid)
-  public void onClickListenerGridButton(){
-    if(gridButton.isSelected()){
-          gridButton.setSelected(false);
-          imageViewGrid.setVisibility(View.INVISIBLE);
-      } else {
-          gridButton.setSelected(true);
-          imageViewGrid.setVisibility(View.VISIBLE);
-      }
+  public void onClickListenerGridButton() {
+    if (gridButton.isSelected()) {
+      disableGrid();
+    } else {
+      enableGrid();
+    }
+  }
+
+  private void enableGrid() {
+    gridButton.setSelected(true);
+    imageViewGrid.setVisibility(View.VISIBLE);
+  }
+
+  private void disableGrid() {
+    gridButton.setSelected(false);
+    imageViewGrid.setVisibility(View.INVISIBLE);
   }
 
   @OnClick(R.id.button_settings_camera)
@@ -1297,14 +1325,17 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
   }
 
-  @OnClick (R.id.button_camera_auto)
-  public void onClickCameraAutoListener() {
+  @OnClick (R.id.button_camera_default)
+  public void setCameraDefaultSettings() {
+    // TODO(jliarte): 6/07/17 should move this logic to presenter?
     hideZoomSelectionSubmenu();
     slideSeekBar.setProgress(0);
     presenter.setZoom(0f);
 
     hideISOSelectionSubmenu();
     setAutoISO();
+
+    disableGrid();
 
     hideAFSelectionSubmenu();
 

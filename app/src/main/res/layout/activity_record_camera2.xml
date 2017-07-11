@@ -555,13 +555,13 @@
                 />
 
             <ImageButton
-                android:id="@+id/button_camera_auto"
+                android:id="@+id/button_camera_default"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="#00ffffff"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_settings_auto"
+                android:src="@drawable/activity_record_ic_settings_default"
                 android:layout_margin="8dp"
                 />
 

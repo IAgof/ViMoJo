@@ -172,13 +172,23 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     this.directorySaveVideos = directorySaveVideos;
     this.videoCameraFormat = videoCameraFormat;
     getCameraManager(); // (jliarte): 19/06/17 manager is needed to ask for camera characteristics used in helpers
-    setupSensorParams();
     // TODO(jliarte): 26/05/17 inject the components
     camera2ZoomHelper = new Camera2ZoomHelper(this);
     camera2FocusHelper = new Camera2FocusHelper(this);
     camera2ISOHelper = new Camera2ISOHelper(this);
     camera2WhiteBalanceHelper = new Camera2WhiteBalanceHelper(this);
     camera2MeteringModeHelper = new Camera2MeteringModeHelper(this);
+
+    setupCamera();
+  }
+
+  private void setupCamera() {
+    setupSensorParams();
+    camera2ZoomHelper.setup();
+    camera2FocusHelper.setup();
+    camera2ISOHelper.setup();
+    camera2WhiteBalanceHelper.setup();
+    camera2MeteringModeHelper.setup();
   }
 
   public void setCameraListener(Camera2WrapperListener camera2WrapperListener) {
@@ -737,6 +747,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       cameraIdSelected = CAMERA_ID_REAR;
     }
     closeCamera();
+    setupCamera();
     checkTextureViewToOpenCamera();
   }
 
