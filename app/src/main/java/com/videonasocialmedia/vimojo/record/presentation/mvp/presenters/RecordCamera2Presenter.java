@@ -482,7 +482,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   private void resetViewSwitchCamera() {
     recordView.setZoom(0f);
-    recordView.setFlash(false);   
+    recordView.setFlash(false);
+    recordView.resetSpotMeteringSelector();
   }
 
   public void onSeekBarZoom(float zoomValue) {
@@ -550,6 +551,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public void setFocusSelectionModeSelective(int touchEventX, int touchEventY, int viewWidth,
                                              int viewHeight, MotionEvent event) {
     camera.setFocusModeSelective(touchEventX, touchEventY, viewWidth, viewHeight);
+    // TODO(jliarte): 10/07/17 what tries to do this invocation?
     recordView.setFocusModeManual(event);
   }
 
