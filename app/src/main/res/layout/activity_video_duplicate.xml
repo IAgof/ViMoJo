@@ -100,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/linear_layout_duplicate"
                     android:layout_centerHorizontal="true"
-                    android:layout_gravity="start"
+                    android:layout_gravity="end"
                     android:layout_marginLeft="30dp"
                     android:background="@null"
                     android:padding="16dp"
@@ -112,7 +112,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/linear_layout_duplicate"
                     android:layout_centerHorizontal="true"
-                    android:layout_gravity="end"
+                    android:layout_gravity="start"
                     android:layout_marginRight="30dp"
                     android:layout_toLeftOf="@+id/button_duplicate_increment_video"
                     android:background="@null"
@@ -138,8 +138,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:padding="12dp"
                     android:src="@drawable/activity_edit_common_icon_cancel"
-                    android:textColor="@color/colorAccent"
-                    android:tint="#f05228" />
+                    android:tint="#f05228"/>
 
 
                 <ImageButton
