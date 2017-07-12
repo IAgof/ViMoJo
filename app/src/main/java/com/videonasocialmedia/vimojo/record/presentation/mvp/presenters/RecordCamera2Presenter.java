@@ -256,8 +256,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   private void setPicometerProgressAndColor(int progress) {
     int color;
-    if(progress > 30){
-      if(progress > 50){
+    if(progress > 80){
+      if(progress > 98){
         color = Color.RED;
       } else {
         color = Color.YELLOW;
