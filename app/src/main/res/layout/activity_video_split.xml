@@ -174,7 +174,7 @@
                             android:src="@drawable/activity_edit_player_advance_medium" />
 
                         <ImageButton
-                            android:id="@+id/player_advance_high_backward_start_trim"
+                            android:id="@+id/player_advance_high_backward_start_split"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="8dp"

@@ -14,8 +14,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -45,6 +43,10 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         VideonaPlayer.VideonaPlayerListener, SeekBar.OnSeekBarChangeListener {
     private static final String SPLIT_POSITION = "split_position";
     private static final String SPLIT_VIDEO_POSITION = "split_video_position";
+
+    public static final int ADVANCE_PLAYER_PRECISION_LOW = 300;
+    public static final int ADVANCE_PLAYER_PRECISION_MEDIUM = 600;
+    public static final int ADVANCE_PLAYER_PRECISION_HIGH = 1200;
 
     @Inject SplitPreviewPresenter presenter;
 
@@ -155,6 +157,57 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         //finish();
     }
 
+    @OnClick(R.id.player_advance_low_backward_start_split)
+    public void onClickAdvanceLowBackwardStart(){
+        advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_LOW);
+    }
+
+    @OnClick(R.id.player_advance_medium_backward_start_split)
+    public void onClickAdvanceMediumBackwardStart(){
+        advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_MEDIUM);
+    }
+
+    @OnClick(R.id.player_advance_high_backward_start_split)
+    public void onClickAdvanceHighBackwardStart(){
+        advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_HIGH);
+    }
+
+    @OnClick(R.id.player_advance_low_forward_end_split)
+    public void onClickAdvanceLowForwardEnd(){
+        advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_LOW);
+    }
+
+    @OnClick(R.id.player_advance_medium_forward_end_split)
+    public void onClickAdvanceMediumForwardEnd(){
+        advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_MEDIUM);
+    }
+
+    @OnClick(R.id.player_advance_high_forward_end_split)
+    public void onClickAdvanceHighForwardEnd(){
+        advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_HIGH);
+    }
+
+    private void advanceBackwardStartSplitting(int advancePlayerPrecision) {
+        int progress = 0;
+        if(currentSplitPosition > advancePlayerPrecision) {
+            progress = currentSplitPosition - advancePlayerPrecision;
+        }
+        updateSplitSeekbar(progress);
+    }
+
+    private void advanceForwardEndSplitting(int advancePlayerPrecision) {
+        int progress = currentSplitPosition + advancePlayerPrecision;
+        if(progress > splitSeekBar.getMax()){
+            progress = splitSeekBar.getMax();
+        }
+        updateSplitSeekbar(progress);
+    }
+
+    private void updateSplitSeekbar(int progress) {
+        onProgressChanged(splitSeekBar, progress, true);
+        splitSeekBar.setProgress(currentSplitPosition);
+    }
+
     @OnClick(R.id.button_split_accept)
     public void onClickSplitAccept() {
         presenter.splitVideo(video, videoIndexOnTrack, currentSplitPosition);
@@ -172,7 +225,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
             currentSplitPosition = progress;
             //splitSeekBar.setProgress(progress);
             refreshTimeTag(currentSplitPosition);
-            videonaPlayer.seekToClip(video.getStartTime() + progress);
+            videonaPlayer.seekClipToTime(video.getStartTime() + progress);
             videonaPlayer.setSeekBarProgress(progress);
         }
     }
