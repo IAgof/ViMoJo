@@ -408,7 +408,6 @@
                         android:layout_marginLeft="16dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:padding="8dp"
-                        android:tint="#f05228"
                         android:src="@drawable/activity_edit_common_icon_cancel" />
 
                     <ImageButton
@@ -422,7 +421,6 @@
                         android:layout_marginRight="16dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:padding="8dp"
-                        android:tint="#6ac259"
                         android:src="@drawable/activity_edit_common_icon_accept" />
 
             </android.support.v7.widget.CardView>

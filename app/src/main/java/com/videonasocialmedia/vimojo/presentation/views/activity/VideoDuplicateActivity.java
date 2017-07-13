@@ -105,8 +105,6 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     private void tintVideoDuplicateButtons(int tintList) {
         tintButton(decrementVideoButton,tintList);
         tintButton(incrementVideoButton,tintList);
-        tintButton(duplicateAcceptButton,tintList);
-        tintButton(duplicateCancelButton,tintList);
     }
 
     @Override

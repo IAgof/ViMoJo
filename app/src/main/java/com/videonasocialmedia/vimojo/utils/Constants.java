@@ -85,4 +85,8 @@ public class Constants {
 
     public enum BATTERY_STATUS {CHARGING, CRITICAL, LOW, MEDIUM, FULL, UNKNOW}
     public enum MEMORY_STATUS {CRITICAL, MEDIUM, OKAY}
+
+    public static final int ADVANCE_PLAYER_PRECISION_LOW = 300;
+    public static final int ADVANCE_PLAYER_PRECISION_MEDIUM = 600;
+    public static final int ADVANCE_PLAYER_PRECISION_HIGH = 1200;
 }

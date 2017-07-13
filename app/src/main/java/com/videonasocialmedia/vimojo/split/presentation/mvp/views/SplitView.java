@@ -20,4 +20,7 @@ public interface SplitView {
     void showError(int stringResourceId);
 
     void showText(String text, String position);
+
+    void updateSplitSeekbar(int progress);
+
 }

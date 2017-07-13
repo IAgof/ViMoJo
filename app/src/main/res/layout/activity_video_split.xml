@@ -248,7 +248,6 @@
                     android:layout_alignParentLeft="true"
                     android:layout_marginBottom="4dp"
                     android:layout_marginLeft="16dp"
-                    android:tint="#f05228"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/activity_edit_common_icon_cancel"/>
 
@@ -262,7 +261,6 @@
                     android:layout_gravity="end"
                     android:layout_marginBottom="4dp"
                     android:layout_marginRight="16dp"
-                    android:tint="#6ac259"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/activity_edit_common_icon_accept"/>
 

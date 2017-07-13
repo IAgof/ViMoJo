@@ -29,4 +29,8 @@ public interface TrimView {
 
     void showError(String message);
 
+    void updateStartTrimmingRangeSeekBar(float minValue);
+
+    void updateFinishTrimmingRangeSeekBar(float maxValue);
+
 }
