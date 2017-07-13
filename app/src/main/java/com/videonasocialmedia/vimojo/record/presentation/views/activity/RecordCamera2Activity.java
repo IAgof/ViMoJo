@@ -74,6 +74,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public static final int SLIDE_SEEKBAR_MODE_EXPOSURE_COMPENSATION = 1;
   public static final int SLIDE_SEEKBAR_MODE_ZOOM = 2;
   public static final int SLIDE_SEEKBAR_MODE_FOCUS_MANUAL = 3;
+  private static final int SLIDE_SEEKBAR_MODE_AUDIO_GAIN = 4;
   private final String LOG_TAG = getClass().getSimpleName();
 
   @Inject
@@ -254,12 +255,29 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       }
     }
   };
+  public int audioGainSeekBarProgress = 100;
+  private final SeekBar.OnSeekBarChangeListener audioGainSeekbarListener = new SeekBar.OnSeekBarChangeListener() {
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int gainProgress, boolean b) {
+      // TODO(jliarte): 13/07/17 should we save these adjusts on activity pause???
+      audioGainSeekBarProgress = gainProgress;
+      presenter.setAudioGain(audioGainSeekBarProgress);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
+  };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
-    Log.d(LOG_TAG, "onCreate");
     setContentView(R.layout.activity_record_camera2);
     keepScreenOn();
     ButterKnife.bind(this);
@@ -274,7 +292,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     initWhiteBalanceModesMap();
     initFocusSelectionModesMap();
     initPicometer();
-
   }
 
   private void initPicometer() {
@@ -345,7 +362,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(meteringModeExposureCompensation, button_color);
     tintButton(meteringModeCenter, button_color);
     tintButton(meteringModeSpot, button_color);
-
 
     tintButton(gridButton, button_color);
 
@@ -1164,6 +1180,38 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void showAlertDialogStorage() {
     alertDialogStorage.show();
+  }
+
+
+  @OnClick(R.id.mic_plug_imageview)
+  public void clickAudioGainButton() {
+    if  (micPlugButton.isSelected()) {
+      hideAudioGainSeekBar();
+    } else {
+      showAudioGainSeekBar();
+    }
+  }
+
+  private void hideAudioGainSeekBar() {
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_UNACTIVE;
+    slideSeekBar.setOnSeekBarChangeListener(null);
+    micPlugButton.setSelected(false);
+    slideSeekbarSubmenuView.setVisibility(View.GONE);
+  }
+
+  public void showAudioGainSeekBar() {
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_AUDIO_GAIN;
+    slideSeekBar.setOnSeekBarChangeListener(null);
+    micPlugButton.setSelected(true);
+    slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
+    seekbarUpperText.setVisibility(View.VISIBLE);
+    seekbarLowerText.setVisibility(View.VISIBLE);
+    seekBarUpperImage.setVisibility(View.GONE);
+    seekBarLowerImage.setVisibility(View.GONE);
+    seekbarUpperText.setText("100%");
+    seekbarLowerText.setText("0%");
+    slideSeekBar.setProgress(audioGainSeekBarProgress);
+    slideSeekBar.setOnSeekBarChangeListener(audioGainSeekbarListener);
   }
 
   @Override

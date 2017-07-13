@@ -88,6 +88,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public long ONE_MB = ONE_KB*1024;
   public long ONE_GB = ONE_MB*1024;
   private PicometerSamplingLoopThread picometerSamplingLoopThread;
+  private int audioGain = 100;
 
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
                                 UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
@@ -256,14 +257,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   private void setPicometerProgressAndColor(int progress) {
     int color;
-    if(progress > 80){
-      if(progress > 98){
-        color = Color.RED;
-      } else {
-        color = Color.YELLOW;
-      }
-    } else {
-      color = Color.GREEN;
+    // TODO(jliarte): 13/07/17 should we check limits here?
+    progress = progress * audioGain / 100;
+    color = Color.GREEN;
+    if (progress > 80) {
+      color = Color.YELLOW;
+    }
+    if (progress > 98) {
+      color = Color.RED;
     }
     recordView.showProgressPicometer(progress, color);
     Log.d(TAG, "Picometer progress " + progress + " isRecording " + camera.isRecordingVideo());
@@ -675,6 +676,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   private boolean isAJackMicrophoneConnected(int state, int microphone) {
     return state == 1 && microphone == 1;
+  }
+
+  public void setAudioGain(int audioGain) {
+    this.audioGain = audioGain;
   }
 
   // --------------------------------------------------------------
