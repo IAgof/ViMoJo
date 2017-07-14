@@ -43,8 +43,9 @@ public class AdaptVideoRecordedToVideoFormatUseCaseTest {
 
   @Test
   public void adaptVideoRecordedCallsTranscoderAdaptVideoToFormat() throws IOException {
+    String tempDirectory = Project.getInstance(null, null, null)
+            .getProjectPathIntermediateAudioMixedFiles();
     injectedAdaptVideoRecordedToVideoFormatUseCase.transcoderHelper = mockedTranscoderHelper;
-    String tempDirectory = Project.getInstance(null, null, null).getProjectPathIntermediateFiles();
 
     injectedAdaptVideoRecordedToVideoFormatUseCase.adaptVideo(mockedVideo, mockedVideoFormat,
         destVideoPath, rotation, fadeTransition, isFadeActivated, mockedTranscoderHelperListener);
