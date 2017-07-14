@@ -239,7 +239,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     double dBs = getAmplitudePicometerFromRecorderDbs(maxAmplitude);
     Log.d(TAG, "maxAmplitudeRecording " + maxAmplitude + " dBs " + dBs);
     int progress = getProgressPicometerRecording(dBs);
-    sleepWithoutInterrupt(SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE);
     if(maxAmplitude>0)
       setPicometerProgressAndColor(progress);
 
@@ -255,14 +254,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   private float getAmplitudePicometerFromRecorderDbs(int maxAmplitude) {
     return (float) (20 * Math.log10(maxAmplitude/ MAX_AMPLITUDE_VALUE_PICOMETER));
-  }
-
-  private void sleepWithoutInterrupt(long millis) {
-    try {
-      Thread.sleep(millis);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
   }
 
   private void setPicometerProgressAndColor(int progress) {
