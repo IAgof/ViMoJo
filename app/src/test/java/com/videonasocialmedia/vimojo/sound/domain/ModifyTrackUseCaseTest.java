@@ -15,7 +15,6 @@ import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -91,11 +90,11 @@ public class ModifyTrackUseCaseTest {
   public void setTrackMuteUpdateTrack(){
     Project project = getAProject();
     AudioTrack track = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
-    assertThat("Default mute track is false", track.isMute(), is(false));
+    assertThat("Default mute track is false", track.isMuted(), is(false));
 
     injectedUseCase.setTrackMute(track, true);
 
-    assertThat("UseCase update track mute", track.isMute(), is(true));
+    assertThat("UseCase update track mute", track.isMuted(), is(true));
   }
 
   private Project getAProject() {

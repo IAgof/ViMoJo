@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.broadcastreceiver;
+package com.videonasocialmedia.vimojo.record.presentation.views.broadcastreceiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

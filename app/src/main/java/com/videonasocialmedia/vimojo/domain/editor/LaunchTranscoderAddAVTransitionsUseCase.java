@@ -58,12 +58,12 @@ public class LaunchTranscoderAddAVTransitionsUseCase {
                                     TranscoderHelperListener transcoderHelperListener) {
 
     if(isVideoFadeTransitionActivated) {
-      transcoderHelper.generateOutputVideoWithAVTransitions(drawableFadeTransition,
+      transcoderHelper.generateOutputVideoWithAVTransitionsAsync(drawableFadeTransition,
           isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
           videoTranscoderFormat, intermediatesTempAudioFadeDirectory, transcoderHelperListener);
     } else {
       if (isAudioFadeTransitionActivated) {
-        transcoderHelper.generateOutputVideoWithAudioTransition(videoToEdit,
+        transcoderHelper.generateOutputVideoWithAudioTransitionAsync(videoToEdit,
             intermediatesTempAudioFadeDirectory, transcoderHelperListener);
       }
     }
