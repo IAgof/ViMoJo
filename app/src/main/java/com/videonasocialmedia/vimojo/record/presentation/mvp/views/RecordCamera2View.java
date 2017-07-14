@@ -134,5 +134,11 @@ public interface RecordCamera2View {
 
     void showAlertDialogStorage();
 
+    void showProgressPicometer(int progress, int color);
+
+    void showExternalMicrophoneConnected();
+
+    void showSmartphoneMicrophoneWorking();
+
     void setCameraDefaultSettings();
 }
