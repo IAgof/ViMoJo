@@ -89,6 +89,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public long ONE_MB = ONE_KB*1024;
   public long ONE_GB = ONE_MB*1024;
   private PicometerSamplingLoopThread picometerSamplingLoopThread;
+  private int audioGain = 100;
   private Handler picometerRecordingUpdaterHandler = new Handler();
   private Runnable updatePicometerRecordingTask = new Runnable() {
     @Override
@@ -257,17 +258,17 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   private void setPicometerProgressAndColor(int progress) {
     int color;
-    if(progress > 80){
-      if(progress > 98){
-        color = Color.RED;
-      } else {
-        color = Color.YELLOW;
-      }
-    } else {
-      color = Color.GREEN;
+    // TODO(jliarte): 13/07/17 should we check limits here?
+    progress = progress * audioGain / 100;
+    color = Color.GREEN;
+    if (progress > 80) {
+      color = Color.YELLOW;
+    }
+    if (progress > 98) {
+      color = Color.RED;
     }
     recordView.showProgressPicometer(progress, color);
-    Log.d(TAG, "Picometer progress " + progress + " isRecording " + camera.isRecordingVideo());
+//    Log.d(TAG, "Picometer progress " + progress + " isRecording " + camera.isRecordingVideo());
   }
 
   public void onPause() {
@@ -306,6 +307,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
           recordView.hideRecordedVideoThumbWithText();
           recordView.hideChangeCamera();
           startSamplingPicometerRecording();
+          recordView.updateAudioGainSeekbarDisability();
         }
       });
     } catch (IllegalStateException illegalState) {
@@ -322,6 +324,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       picometerRecordingUpdaterHandler.removeCallbacksAndMessages(null);
       startSamplingPicometerPreview();
       restartPreview();
+      recordView.updateAudioGainSeekbarDisability();
     } catch (RuntimeException runtimeException) {
       // do nothing as it's already managed in camera wrapper
     }
@@ -357,7 +360,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     File tempPath = new File(origPath);
     String destVideoRecorded = Constants.PATH_APP_MASTERS + File.separator + tempPath.getName();
 
-    final Video videoToAdapt = new Video(origPath, Video.DEFAULT_VOLUME);
+    final Video videoToAdapt = new Video(origPath, (float) audioGain / 100f);
     videoListToAdaptAndPosition.add(new VideoToAdapt(videoToAdapt,recordedVideosNumber));
 
     // FIXME: 23/05/17 if rotation == 0, should be use getVideonaFormatToAdaptVideoRecordedAudio, more efficient.
@@ -368,7 +371,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     Drawable fadeTransition = context.getDrawable(R.drawable.alpha_transition_white);
     try {
       adaptVideoRecordedToVideoFormatUseCase.adaptVideo(videoToAdapt, videonaFormat,
-          destVideoRecorded, camera.getRotation(),fadeTransition, false,this);
+          destVideoRecorded, camera.getRotation(),fadeTransition, false, this);
     } catch (IOException e) {
       e.printStackTrace();
       onErrorTranscoding(videoToAdapt, "adaptVideoRecordedToVideoFormatUseCase");
@@ -678,6 +681,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   private boolean isAJackMicrophoneConnected(int state, int microphone) {
     return state == 1 && microphone == 1;
+  }
+
+  public void setAudioGain(int audioGain) {
+    this.audioGain = audioGain;
   }
 
   // --------------------------------------------------------------

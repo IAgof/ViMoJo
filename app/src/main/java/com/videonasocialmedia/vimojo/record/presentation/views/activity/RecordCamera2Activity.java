@@ -74,6 +74,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public static final int SLIDE_SEEKBAR_MODE_EXPOSURE_COMPENSATION = 1;
   public static final int SLIDE_SEEKBAR_MODE_ZOOM = 2;
   public static final int SLIDE_SEEKBAR_MODE_FOCUS_MANUAL = 3;
+  private static final int SLIDE_SEEKBAR_MODE_AUDIO_GAIN = 4;
+  public static final int DEFAULT_AUDIO_GAIN = 100;
   private final String LOG_TAG = getClass().getSimpleName();
 
   @Inject
@@ -254,12 +256,29 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       }
     }
   };
+  public int audioGainSeekBarProgress = DEFAULT_AUDIO_GAIN;
+  private final SeekBar.OnSeekBarChangeListener audioGainSeekbarListener = new SeekBar.OnSeekBarChangeListener() {
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int gainProgress, boolean b) {
+      // TODO(jliarte): 13/07/17 should we save these adjusts on activity pause???
+      audioGainSeekBarProgress = gainProgress;
+      presenter.setAudioGain(audioGainSeekBarProgress);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
+  };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
-    Log.d(LOG_TAG, "onCreate");
     setContentView(R.layout.activity_record_camera2);
     keepScreenOn();
     ButterKnife.bind(this);
@@ -274,7 +293,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     initWhiteBalanceModesMap();
     initFocusSelectionModesMap();
     initPicometer();
-
   }
 
   private void initPicometer() {
@@ -345,7 +363,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(meteringModeExposureCompensation, button_color);
     tintButton(meteringModeCenter, button_color);
     tintButton(meteringModeSpot, button_color);
-
 
     tintButton(gridButton, button_color);
 
@@ -887,6 +904,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to call the listener when setting up the progress bar to match the existing state
     slideSeekBar.setMax( presenter.getMaximumExposureCompensation() - minExposure );
     slideSeekBar.setProgress( presenter.getCurrentExposureCompensation() - minExposure );
+    slideSeekBar.setEnabled(true);
     slideSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
       @Override
       public void onProgressChanged(SeekBar seekBar, int seekbarProgress, boolean b) {
@@ -976,6 +994,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to call the listener when setting up the progress bar to match the existing state
     slideSeekBar.setMax(100);
     slideSeekBar.setProgress(50);
+    slideSeekBar.setEnabled(true);
     slideSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
       @Override
       public void onProgressChanged(SeekBar seekBar, int seekbarProgress, boolean b) {
@@ -1166,6 +1185,51 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     alertDialogStorage.show();
   }
 
+
+  @OnClick(R.id.mic_plug_imageview)
+  public void clickAudioGainButton() {
+    if  (micPlugButton.isSelected()) {
+      hideAudioGainSeekBar();
+    } else {
+      showAudioGainSeekBar();
+    }
+  }
+
+  private void hideAudioGainSeekBar() {
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_UNACTIVE;
+    slideSeekBar.setOnSeekBarChangeListener(null);
+    micPlugButton.setSelected(false);
+    slideSeekbarSubmenuView.setVisibility(View.GONE);
+  }
+
+  public void showAudioGainSeekBar() {
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_AUDIO_GAIN;
+    slideSeekBar.setOnSeekBarChangeListener(null);
+    micPlugButton.setSelected(true);
+    slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
+    seekbarUpperText.setVisibility(View.VISIBLE);
+    seekbarLowerText.setVisibility(View.VISIBLE);
+    seekBarUpperImage.setVisibility(View.GONE);
+    seekBarLowerImage.setVisibility(View.GONE);
+    seekbarUpperText.setText("100%");
+    seekbarLowerText.setText("0%");
+    slideSeekBar.setProgress(audioGainSeekBarProgress);
+    slideSeekBar.setOnSeekBarChangeListener(audioGainSeekbarListener);
+    updateAudioGainSeekbarDisability();
+  }
+
+  @Override
+  public void updateAudioGainSeekbarDisability() {
+    if (slideSeekBarMode != SLIDE_SEEKBAR_MODE_AUDIO_GAIN) {
+      return;
+    }
+    if (isRecording) {
+      slideSeekBar.setEnabled(false);
+    } else {
+      slideSeekBar.setEnabled(true);
+    }
+  }
+
   @Override
   public void showProgressPicometer(int progress, int color) {
     tintProgress(ColorStateList.valueOf(color));
@@ -1348,7 +1412,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void setCameraDefaultSettings() {
     // TODO(jliarte): 6/07/17 should move this logic to presenter?
     hideZoomSelectionSubmenu();
-    slideSeekBar.setProgress(0);
     presenter.setZoom(0f);
 
     hideISOSelectionSubmenu();
@@ -1367,6 +1430,12 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     setAutoSettingsFocusModeByDefault();
     setAutoExposure();
     hideMeteringModeSelectionSubmenu();
+
+    hideAudioGainSeekBar();
+    if (!isRecording) {
+      audioGainSeekBarProgress = DEFAULT_AUDIO_GAIN;
+      presenter.setAudioGain(audioGainSeekBarProgress);
+    }
   }
 
   private void setAutoSettingsFocusModeByDefault() {
@@ -1376,6 +1445,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private void showZoomSelectionSubmenu() {
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_ZOOM;
     slideSeekBar.setOnSeekBarChangeListener(null);
+    slideSeekBar.setEnabled(true);
     zoomButton.setSelected(true);
     slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
     seekbarUpperText.setVisibility(View.VISIBLE);
