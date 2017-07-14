@@ -154,6 +154,8 @@ public class Camera2FocusHelper {
       Log.e(TAG, "failed to get camera characteristics");
       Log.e(TAG, "reason: " + e.getReason());
       Log.e(TAG, "message: " + e.getMessage());
+    } catch (NullPointerException npe) {
+      Log.e(TAG, "failed to get minimun focus distance");
     }
     float num = (((float) (100 - seekbarProgress)) * minimumLens / 100);
 

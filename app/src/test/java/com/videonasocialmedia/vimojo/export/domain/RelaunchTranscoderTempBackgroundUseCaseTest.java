@@ -108,7 +108,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition,
         video, videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(
+    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimmingAsync(
         mockDrawableFadeTransition, isVideoFadeTransitionActivated, isAudioFadeTransitionActivated,
         video, videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
   }
@@ -139,7 +139,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
         videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithTrimming(mockDrawableFadeTransition,
+    verify(mockedTranscoderHelper).generateOutputVideoWithTrimmingAsync(mockDrawableFadeTransition,
         isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, video, videonaFormat,
         intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
   }
