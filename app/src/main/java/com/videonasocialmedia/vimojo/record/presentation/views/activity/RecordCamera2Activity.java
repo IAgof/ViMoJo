@@ -904,6 +904,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to call the listener when setting up the progress bar to match the existing state
     slideSeekBar.setMax( presenter.getMaximumExposureCompensation() - minExposure );
     slideSeekBar.setProgress( presenter.getCurrentExposureCompensation() - minExposure );
+    slideSeekBar.setEnabled(true);
     slideSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
       @Override
       public void onProgressChanged(SeekBar seekBar, int seekbarProgress, boolean b) {
@@ -993,6 +994,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to call the listener when setting up the progress bar to match the existing state
     slideSeekBar.setMax(100);
     slideSeekBar.setProgress(50);
+    slideSeekBar.setEnabled(true);
     slideSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
       @Override
       public void onProgressChanged(SeekBar seekBar, int seekbarProgress, boolean b) {
@@ -1213,6 +1215,19 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     seekbarLowerText.setText("0%");
     slideSeekBar.setProgress(audioGainSeekBarProgress);
     slideSeekBar.setOnSeekBarChangeListener(audioGainSeekbarListener);
+    updateAudioGainSeekbarDisability();
+  }
+
+  @Override
+  public void updateAudioGainSeekbarDisability() {
+    if (slideSeekBarMode != SLIDE_SEEKBAR_MODE_AUDIO_GAIN) {
+      return;
+    }
+    if (isRecording) {
+      slideSeekBar.setEnabled(false);
+    } else {
+      slideSeekBar.setEnabled(true);
+    }
   }
 
   @Override
@@ -1397,7 +1412,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void setCameraDefaultSettings() {
     // TODO(jliarte): 6/07/17 should move this logic to presenter?
     hideZoomSelectionSubmenu();
-    slideSeekBar.setProgress(0);
     presenter.setZoom(0f);
 
     hideISOSelectionSubmenu();
@@ -1417,9 +1431,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     setAutoExposure();
     hideMeteringModeSelectionSubmenu();
 
-    audioGainSeekBarProgress = DEFAULT_AUDIO_GAIN;
     hideAudioGainSeekBar();
-    presenter.setAudioGain(audioGainSeekBarProgress);
+    if (!isRecording) {
+      audioGainSeekBarProgress = DEFAULT_AUDIO_GAIN;
+      presenter.setAudioGain(audioGainSeekBarProgress);
+    }
   }
 
   private void setAutoSettingsFocusModeByDefault() {
@@ -1429,6 +1445,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private void showZoomSelectionSubmenu() {
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_ZOOM;
     slideSeekBar.setOnSeekBarChangeListener(null);
+    slideSeekBar.setEnabled(true);
     zoomButton.setSelected(true);
     slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
     seekbarUpperText.setVisibility(View.VISIBLE);

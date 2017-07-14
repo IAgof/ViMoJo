@@ -305,6 +305,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
           recordView.hideRecordedVideoThumbWithText();
           recordView.hideChangeCamera();
           startSamplingPicometerRecording();
+          recordView.updateAudioGainSeekbarDisability();
         }
       });
     } catch (IllegalStateException illegalState) {
@@ -320,6 +321,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       onVideoRecorded(camera.getVideoPath());
       startSamplingPicometerPreview();
       restartPreview();
+      recordView.updateAudioGainSeekbarDisability();
     } catch (RuntimeException runtimeException) {
       // do nothing as it's already managed in camera wrapper
     }
