@@ -161,7 +161,7 @@
                             android:layout_centerVertical="true"
                             android:padding="8dp"
                             android:background="@null"
-                            android:src="@drawable/activity_edit_player_advance_low" />
+                            app:srcCompat="@drawable/activity_edit_player_advance_low" />
 
                         <ImageButton
                             android:id="@+id/player_advance_medium_backward_start_split"

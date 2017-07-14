@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
@@ -42,6 +43,7 @@ import butterknife.OnClick;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_HIGH;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_LOW;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_MEDIUM;
+import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoTrimActivity extends VimojoActivity implements TrimView,
         RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayer.VideonaPlayerListener {
@@ -57,6 +59,30 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     RangeSeekBar trimmingRangeSeekBar;
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
+    @Bind(R.id.player_advance_low_backward_start_trim)
+    ImageButton playerAdvanceLowBackwardStartTrim;
+    @Bind(R.id.player_advance_low_forward_start_trim)
+    ImageButton playerAdvanceLowForwardStartTrim;
+    @Bind(R.id.player_advance_low_backward_end_trim)
+    ImageButton playerAdvanceLowBackwardEndTrim;
+    @Bind(R.id.player_advance_low_forward_end_trim)
+    ImageButton playerAdvanceLowForwardEndTrim;
+    @Bind(R.id.player_advance_medium_backward_start_trim)
+    ImageButton playerAdvanceMediumBackwardStartTrim;
+    @Bind(R.id.player_advance_medium_forward_start_trim)
+    ImageButton playerAdvanceMediumForwardStartTrim;
+    @Bind(R.id.player_advance_medium_backward_end_trim)
+    ImageButton playerAdvanceMediumBackwardEndTrim;
+    @Bind(R.id.player_advance_medium_forward_end_trim)
+    ImageButton playerAdvanceMediumForwardEndTrim;
+    @Bind(R.id.player_advance_high_backward_start_trim)
+    ImageButton playerAdvanceHighBackwardStartTrim;
+    @Bind(R.id.player_advance_high_forward_start_trim)
+    ImageButton playerAdvanceHighForwardStartTrim;
+    @Bind(R.id.player_advance_high_backward_end_trim)
+    ImageButton playerAdvanceHighBackwardEndTrim;
+    @Bind(R.id.player_advance_high_forward_end_trim)
+    ImageButton playerAdvanceHighForwardEndTrim;
 
     int videoIndexOnTrack;
 
@@ -83,7 +109,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         ButterKnife.bind(this);
 
         this.getActivityPresentersComponent().inject(this);
-
+        setupActivityButtons();
         trimmingRangeSeekBar.setOnRangeSeekBarChangeListener(this);
         trimmingRangeSeekBar.setNotifyWhileDragging(true);
         videonaPlayer.setListener(this);
@@ -91,6 +117,25 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
         restoreState(savedInstanceState);
+    }
+
+    private void setupActivityButtons() {
+        tintTrimButtons(R.color.button_color_trim_split_activity);
+    }
+
+    private void tintTrimButtons(int button_color) {
+        tintButton(playerAdvanceLowBackwardStartTrim, button_color);
+        tintButton(playerAdvanceLowForwardStartTrim, button_color);
+        tintButton(playerAdvanceLowBackwardEndTrim, button_color);
+        tintButton(playerAdvanceLowForwardEndTrim, button_color);
+        tintButton(playerAdvanceMediumBackwardStartTrim, button_color);
+        tintButton(playerAdvanceMediumForwardStartTrim, button_color);
+        tintButton(playerAdvanceMediumBackwardEndTrim, button_color);
+        tintButton(playerAdvanceMediumForwardEndTrim, button_color);
+        tintButton(playerAdvanceHighBackwardStartTrim, button_color);
+        tintButton(playerAdvanceHighForwardStartTrim, button_color);
+        tintButton(playerAdvanceHighBackwardEndTrim, button_color);
+        tintButton(playerAdvanceHighForwardEndTrim, button_color);
     }
 
     @Override

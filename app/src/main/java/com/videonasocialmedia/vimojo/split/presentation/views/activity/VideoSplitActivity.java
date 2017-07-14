@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.presentation.views.utils.UiUtils;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -42,6 +44,7 @@ import butterknife.OnClick;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_HIGH;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_LOW;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_MEDIUM;
+import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoSplitActivity extends VimojoActivity implements SplitView,
         VideonaPlayer.VideonaPlayerListener, SeekBar.OnSeekBarChangeListener {
@@ -58,6 +61,18 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     SeekBar splitSeekBar;
     @Bind(R.id.coordinator_layout_video_split)
     CoordinatorLayout coordinatorLayout;
+    @Bind(R.id.player_advance_low_backward_start_split)
+    ImageButton playerAdvanceLowBackwardStartSplit;
+    @Bind(R.id.player_advance_medium_backward_start_split)
+    ImageButton playerAdvanceMediumBackwardStartSplit;
+    @Bind(R.id.player_advance_high_backward_start_split)
+    ImageButton playerAdvanceHighBackwardStartSplit;
+    @Bind(R.id.player_advance_low_forward_end_split)
+    ImageButton playerAdanceLowForwardEndSplit;
+    @Bind(R.id.player_advance_medium_forward_end_split)
+    ImageButton playerAdanceMediumForwardEndSplit;
+    @Bind(R.id.player_advance_high_forward_end_split)
+    ImageButton playerAdanceHighForwardEndSplit;
 
     int videoIndexOnTrack;
     private Video video;
@@ -72,7 +87,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         ButterKnife.bind(this);
 
         getActivityPresentersComponent().inject(this);
-
+        setupActivityButtons();
         splitSeekBar.setProgress(0);
         splitSeekBar.setOnSeekBarChangeListener(this);
         timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(0));
@@ -81,6 +96,19 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
 
         restoreState(savedInstanceState);
+    }
+
+    public void setupActivityButtons() {
+      tintSplitButtons(R.color.button_color_trim_split_activity);
+    }
+
+    private void tintSplitButtons(int button_color) {
+        tintButton(playerAdvanceLowBackwardStartSplit, button_color);
+        tintButton(playerAdvanceMediumBackwardStartSplit, button_color);
+        tintButton(playerAdvanceHighBackwardStartSplit, button_color);
+        tintButton(playerAdanceLowForwardEndSplit, button_color);
+        tintButton(playerAdanceMediumForwardEndSplit, button_color);
+        tintButton(playerAdanceHighForwardEndSplit, button_color);
     }
 
     private void restoreState(Bundle savedInstanceState) {
