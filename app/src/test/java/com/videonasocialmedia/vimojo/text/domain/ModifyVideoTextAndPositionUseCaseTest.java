@@ -81,7 +81,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     injectedUseCase.addTextToVideo(mockDrawableFadeTransition, video, videonaFormat, video.getClipText(),
             video.getClipTextPosition(), intermediatesTempAudioFadeDirectory, mockedMediaTranscoderHelperListener);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimming(mockDrawableFadeTransition,
+    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimmingAsync(mockDrawableFadeTransition,
         isVideoFadeTransitionActivated,isAudioFadeTransitionActivated, video, videonaFormat,
         intermediatesTempAudioFadeDirectory, mockedMediaTranscoderHelperListener);
   }
@@ -116,7 +116,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
         video.getClipText(), video.getClipTextPosition(), intermediatesTempAudioFadeDirectory,
         mockedMediaTranscoderHelperListener);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImage(mockDrawableFadeTransition,
+    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAsync(mockDrawableFadeTransition,
         isVideoFadeTransitionActivated, isAudioFadeTransitionActivated,
         video, videonaFormat, intermediatesTempAudioFadeDirectory, mockedMediaTranscoderHelperListener);
   }

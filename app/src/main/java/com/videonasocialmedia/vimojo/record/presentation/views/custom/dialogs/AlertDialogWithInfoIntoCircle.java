@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.record.presentation.views.custom;
+package com.videonasocialmedia.vimojo.record.presentation.views.custom.dialogs;
 
 
 import android.app.Activity;
