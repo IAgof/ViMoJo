@@ -75,6 +75,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public static final int SLIDE_SEEKBAR_MODE_ZOOM = 2;
   public static final int SLIDE_SEEKBAR_MODE_FOCUS_MANUAL = 3;
   private static final int SLIDE_SEEKBAR_MODE_AUDIO_GAIN = 4;
+  public static final int DEFAULT_AUDIO_GAIN = 100;
   private final String LOG_TAG = getClass().getSimpleName();
 
   @Inject
@@ -255,7 +256,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       }
     }
   };
-  public int audioGainSeekBarProgress = 100;
+  public int audioGainSeekBarProgress = DEFAULT_AUDIO_GAIN;
   private final SeekBar.OnSeekBarChangeListener audioGainSeekbarListener = new SeekBar.OnSeekBarChangeListener() {
     @Override
     public void onProgressChanged(SeekBar seekBar, int gainProgress, boolean b) {
@@ -1415,6 +1416,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     setAutoSettingsFocusModeByDefault();
     setAutoExposure();
     hideMeteringModeSelectionSubmenu();
+
+    audioGainSeekBarProgress = DEFAULT_AUDIO_GAIN;
+    hideAudioGainSeekBar();
+    presenter.setAudioGain(audioGainSeekBarProgress);
   }
 
   private void setAutoSettingsFocusModeByDefault() {

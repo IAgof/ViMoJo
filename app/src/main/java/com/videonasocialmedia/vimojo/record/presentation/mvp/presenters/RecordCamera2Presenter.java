@@ -198,7 +198,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
         new PicometerAmplitudeDbListener() {
       @Override
       public void setMaxAmplituedDb(double maxAmplituedDb) {
-        Log.d(TAG, "maxAmplitudePreview Dbs " + maxAmplituedDb);
+//        Log.d(TAG, "maxAmplitudePreview Dbs " + maxAmplituedDb);
         setPicometerProgressAndColor(getProgressPicometerPreview(maxAmplituedDb));
       }
     });
@@ -267,7 +267,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       color = Color.RED;
     }
     recordView.showProgressPicometer(progress, color);
-    Log.d(TAG, "Picometer progress " + progress + " isRecording " + camera.isRecordingVideo());
+//    Log.d(TAG, "Picometer progress " + progress + " isRecording " + camera.isRecordingVideo());
   }
 
   public void onPause() {
@@ -355,7 +355,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     File tempPath = new File(origPath);
     String destVideoRecorded = Constants.PATH_APP_MASTERS + File.separator + tempPath.getName();
 
-    final Video videoToAdapt = new Video(origPath, Video.DEFAULT_VOLUME);
+    final Video videoToAdapt = new Video(origPath, (float) audioGain / 100f);
     videoListToAdaptAndPosition.add(new VideoToAdapt(videoToAdapt,recordedVideosNumber));
 
     // FIXME: 23/05/17 if rotation == 0, should be use getVideonaFormatToAdaptVideoRecordedAudio, more efficient.
@@ -366,7 +366,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     Drawable fadeTransition = context.getDrawable(R.drawable.alpha_transition_white);
     try {
       adaptVideoRecordedToVideoFormatUseCase.adaptVideo(videoToAdapt, videonaFormat,
-          destVideoRecorded, camera.getRotation(),fadeTransition, false,this);
+          destVideoRecorded, camera.getRotation(),fadeTransition, false, this);
     } catch (IOException e) {
       e.printStackTrace();
       onErrorTranscoding(videoToAdapt, "adaptVideoRecordedToVideoFormatUseCase");

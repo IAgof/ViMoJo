@@ -9,7 +9,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
-import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -257,7 +256,7 @@ public class RealmProjectToProjectMapperTest {
 
     MediaTrack mediaTrack = project.getMediaTrack();
     assertThat(mediaTrack.getVolume(), is(0.3f));
-    assertThat(mediaTrack.isMute(), is(false));
+    assertThat(mediaTrack.isMuted(), is(false));
     assertThat(mediaTrack.getPosition(), is(0));
   }
 
@@ -276,7 +275,7 @@ public class RealmProjectToProjectMapperTest {
 
     AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     assertThat(musicTrack.getVolume(), is(0.6f));
-    assertThat(musicTrack.isMute(), is(false));
+    assertThat(musicTrack.isMuted(), is(false));
     assertThat(musicTrack.getPosition(), is(1));
   }
 
@@ -303,7 +302,7 @@ public class RealmProjectToProjectMapperTest {
 
     AudioTrack voiceOverTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     assertThat(voiceOverTrack.getVolume(), is(0.9f));
-    assertThat(voiceOverTrack.isMute(), is(true));
+    assertThat(voiceOverTrack.isMuted(), is(true));
     assertThat(voiceOverTrack.getPosition(), is(2));
   }
 

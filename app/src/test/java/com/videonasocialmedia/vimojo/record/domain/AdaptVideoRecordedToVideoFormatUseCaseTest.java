@@ -7,6 +7,7 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,14 +43,14 @@ public class AdaptVideoRecordedToVideoFormatUseCaseTest {
 
   @Test
   public void adaptVideoRecordedCallsTranscoderAdaptVideoToFormat() throws IOException {
-
     injectedAdaptVideoRecordedToVideoFormatUseCase.transcoderHelper = mockedTranscoderHelper;
+    String tempDirectory = Project.getInstance(null, null, null).getProjectPathIntermediateFiles();
 
     injectedAdaptVideoRecordedToVideoFormatUseCase.adaptVideo(mockedVideo, mockedVideoFormat,
         destVideoPath, rotation, fadeTransition, isFadeActivated, mockedTranscoderHelperListener);
 
-    verify(mockedTranscoderHelper).adaptVideoWithRotationToDefaultFormat(mockedVideo,
+    verify(mockedTranscoderHelper).adaptVideoWithRotationToDefaultFormatAsync(mockedVideo,
         mockedVideoFormat, destVideoPath, rotation, fadeTransition, isFadeActivated,
-        mockedTranscoderHelperListener);
+        mockedTranscoderHelperListener, tempDirectory);
   }
 }

@@ -109,7 +109,7 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
 
   private void setupTrack(Track track) {
     soundView.bindTrack(track);
-    updatePlayerMute(track.getId(), track.isMute());
+    updatePlayerMute(track.getId(), track.isMuted());
   }
 
   private void checkAVTransitionsActivated() {
@@ -254,21 +254,21 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
     Track track = getTrackById(trackId);
     switch (trackId){
       case Constants.INDEX_MEDIA_TRACK:
-        if(track.isMute()){
+        if (track.isMuted()) {
           soundView.setVideoVolume(VOLUME_MUTE);
         } else {
           soundView.setVideoVolume(track.getVolume());
         }
         break;
       case Constants.INDEX_AUDIO_TRACK_MUSIC:
-        if(track.isMute()){
+        if (track.isMuted()) {
           soundView.setMusicVolume(VOLUME_MUTE);
         } else {
           soundView.setMusicVolume(track.getVolume());
         }
         break;
       case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
-        if(track.isMute()){
+        if (track.isMuted()) {
           soundView.setVoiceOverVolume(VOLUME_MUTE);
         } else {
           soundView.setVoiceOverVolume(track.getVolume());
