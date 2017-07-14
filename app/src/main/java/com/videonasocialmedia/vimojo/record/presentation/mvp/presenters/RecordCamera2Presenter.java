@@ -18,6 +18,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.BatteryManager;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -88,6 +89,13 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public long ONE_MB = ONE_KB*1024;
   public long ONE_GB = ONE_MB*1024;
   private PicometerSamplingLoopThread picometerSamplingLoopThread;
+  private Handler picometerRecordingUpdaterHandler = new Handler();
+  private Runnable updatePicometerRecordingTask = new Runnable() {
+    @Override
+    public void run() {
+      updatePicometerRecording();
+    }
+  };
 
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
                                 UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
@@ -183,15 +191,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   private void startSamplingPicometerPreview() {
     // Stop previous sampler if any.
-    if (picometerSamplingLoopThread != null) {
-      picometerSamplingLoopThread.finish();
-      try {
-        picometerSamplingLoopThread.join();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-      picometerSamplingLoopThread = null;
-    }
+    stopCurrentPicometerSamplingLoopThread();
     // Start sampling
     picometerSamplingLoopThread = new PicometerSamplingLoopThread(
         new PicometerAmplitudeDbListener() {
@@ -204,13 +204,22 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     picometerSamplingLoopThread.start();
   }
 
+  private void stopCurrentPicometerSamplingLoopThread() {
+    if (picometerSamplingLoopThread != null) {
+      picometerSamplingLoopThread.finish();
+      try {
+        picometerSamplingLoopThread.join();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      picometerSamplingLoopThread = null;
+    }
+  }
+
   private int getProgressPicometerPreview(double maxAmplituedDb) {
     int progress = 100 - (int) ((maxAmplituedDb / NORMALIZE_PICOMETER_VALUE) * 100 * -1);
-    if(progress<100){
-      return progress;
-    }else{
-      return 0;
-    }
+    progress = (progress<100) ? progress: 0;
+    return progress;
   }
 
   private void stopSamplingPicometerPreview(){
@@ -220,22 +229,23 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   private void startSamplingPicometerRecording() {
-    Runnable run = new Runnable() {
-      @Override
-      public void run() {
-        while (camera.isRecordingVideo()) {
-          int maxAmplitude = camera.getMaxAmplitudeRecording();
-          double dBs = getAmplitudePicometerFromRecorderDbs(maxAmplitude);
-          Log.d(TAG, "maxAmplitudeRecording " + maxAmplitude + " dBs " + dBs);
-          int progress = getProgressPicometerRecording(dBs);
-          sleepWithoutInterrupt(SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE);
-          if(maxAmplitude>0)
-            setPicometerProgressAndColor(progress);
-        }
-      }
-    };
-    Thread thread = new Thread(run);
-    thread.start();
+    picometerRecordingUpdaterHandler.postDelayed(updatePicometerRecordingTask,
+        SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE);
+  }
+
+  private void updatePicometerRecording() {
+    int maxAmplitude = camera.getMaxAmplitudeRecording();
+    double dBs = getAmplitudePicometerFromRecorderDbs(maxAmplitude);
+    Log.d(TAG, "maxAmplitudeRecording " + maxAmplitude + " dBs " + dBs);
+    int progress = getProgressPicometerRecording(dBs);
+    sleepWithoutInterrupt(SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE);
+    if(maxAmplitude>0)
+      setPicometerProgressAndColor(progress);
+
+    if(camera.isRecordingVideo()){
+      picometerRecordingUpdaterHandler.postDelayed(updatePicometerRecordingTask,
+          SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE);
+    }
   }
 
   private int getProgressPicometerRecording(double dBs) {
@@ -273,6 +283,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     camera.onPause();
     recordView.stopMonitoringRotation();
     stopSamplingPicometerPreview();
+    picometerRecordingUpdaterHandler.removeCallbacksAndMessages(null);
   }
 
   private void showThumbAndNumber() {
@@ -317,6 +328,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       camera.stopRecordVideo();
       updateStopVideoUI();
       onVideoRecorded(camera.getVideoPath());
+      picometerRecordingUpdaterHandler.removeCallbacksAndMessages(null);
       startSamplingPicometerPreview();
       restartPreview();
     } catch (RuntimeException runtimeException) {
