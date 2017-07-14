@@ -604,7 +604,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     @Override
     public void onCheckPathsAppSuccess() {
-        presenter.startLoadingProject(Constants.PATH_APP);
+        presenter.startLoadingProject(Constants.PATH_APP, BuildConfig.FEATURE_WATERMARK);
     }
 
     @Override

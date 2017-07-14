@@ -74,8 +74,8 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
     }
   }
 
-  public void createNewDefaultProject(String rootPath) {
-    createDefaultProjectUseCase.createProject(rootPath);
+  public void createNewDefaultProject(String rootPath, boolean isWatermarkFeatured) {
+    createDefaultProjectUseCase.createProject(rootPath, isWatermarkFeatured);
   }
 
   public void updateCurrentProject(Project project) {

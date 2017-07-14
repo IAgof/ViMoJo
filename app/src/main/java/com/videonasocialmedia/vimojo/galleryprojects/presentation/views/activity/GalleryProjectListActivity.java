@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -99,7 +100,7 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Override
   public void createDefaultProject() {
-    presenter.createNewDefaultProject(Constants.PATH_APP);
+    presenter.createNewDefaultProject(Constants.PATH_APP, BuildConfig.FEATURE_WATERMARK);
     //presenter.updateProjectList();
     navigateTo(GoToRecordOrGalleryActivity.class);
   }
