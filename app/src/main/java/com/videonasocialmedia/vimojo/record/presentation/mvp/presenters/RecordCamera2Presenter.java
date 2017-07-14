@@ -520,7 +520,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       if (videoToAdapt.getVideo().getUuid().compareTo(video.getUuid()) == 0) {
         videoListToAdaptAndPosition.remove(videoToAdapt);
         position = videoToAdapt.getPosition() - 1;
-        Log.d(TAG, "onSuccessTranscoding position " + position);
       }
     }
     videoRecordedAdapted(video.getMediaPath(), destVideoRecorded, position);

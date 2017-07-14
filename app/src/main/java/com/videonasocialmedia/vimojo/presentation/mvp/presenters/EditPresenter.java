@@ -44,7 +44,7 @@ import javax.inject.Inject;
 
 public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener {
     public static final float VOLUME_MUTE = 0f;
-    private final String LOG_TAG = getClass().getSimpleName();
+    private final String TAG = getClass().getSimpleName();
     private final Project currentProject;
     // TODO(jliarte): 2/05/17 inject delegate?
     final VideoListErrorCheckerDelegate videoListErrorCheckerDelegate
@@ -118,7 +118,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
             @Override
             public void onErrorReorderingMedia() {
                 //The reordering went wrong so we ask the project for the actual video list
-                Log.d(LOG_TAG, "timeline:  error reordering!!");
+                Log.d(TAG, "timeline:  error reordering!!");
                 obtainVideos();
             }
         });
@@ -155,6 +155,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
                 mediaToDeleteFromProject.add(video);
                 removeVideoFromProjectUseCase.removeMediaItemsFromProject(mediaToDeleteFromProject, this);
+                Log.d(TAG, video.getMediaPath() + "not found!! deleting from project");
             } else {
                 checkedVideoList.add(video);
             }
