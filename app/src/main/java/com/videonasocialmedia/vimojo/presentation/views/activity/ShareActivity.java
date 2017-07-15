@@ -22,6 +22,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -327,7 +328,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        presenter.newDefaultProject(Constants.PATH_APP);
+                        presenter.newDefaultProject(Constants.PATH_APP,
+                            BuildConfig.FEATURE_WATERMARK);
                         navigateTo(GoToRecordOrGalleryActivity.class);
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:

@@ -160,6 +160,34 @@ android {
             ext.fabricApiSecret = "08a85538f0c5c0811431392c62d603bb2d93bcf6102a3f85fe614decde8a03f2"
             manifestPlaceholders = [appName: "El País Digital", fabricApiKey: "9e2c54ec6e94c68364a80a8e511406d4b74285c8"]
         }
+        vimojowatermark {
+            "com.videonasocialmedia.vimojo.vimojowatermark"
+            versionCode 1
+            versionName "0.7.0-RC2.fVimojoWatermark"
+            resValue "string", "app_out_of_date", "2017-07-31"
+            resValue "string", "app_name", "Vimojo Videona"
+            buildConfigField "boolean", "FEATURE_FTP", "true"
+            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
+            buildConfigField "boolean", "FEATURE_WATERMARK", "true"
+            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
+            ext.fabricApiKey = "ef7283ce8f2da3b2c5dc022a1d7952f349f659c5"
+            ext.fabricApiSecret = "fdb53a8ca1d8e71f363963c0624f7606af4ed317c57340afc4a72303eef221b0"
+            manifestPlaceholders = [appName: "Vimojo Videona", fabricApiKey: "ef7283ce8f2da3b2c5dc022a1d7952f349f659c5"]
+        }
+        thomsonfoundation {
+            "com.videonasocialmedia.vimojo.thomsonfoundation"
+            versionCode 1
+            versionName "0.7.0-RC2.fThomsonFoundation"
+            resValue "string", "app_out_of_date", "2017-12-31"
+            resValue "string", "app_name", "Vimojo Thomson Foundation"
+            buildConfigField "boolean", "FEATURE_FTP", "true"
+            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
+            buildConfigField "boolean", "FEATURE_WATERMARK", "true"
+            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
+            ext.fabricApiKey = "c5e050918c143441f6b23e7936f7f83faa1330b4"
+            ext.fabricApiSecret = "2c2a5661adbf7258c3dfb8711f48b40ed43d5291f9474ba8e4cda6d05b917b55"
+            manifestPlaceholders = [appName: "Vimojo Thomson Foundation", fabricApiKey: "c5e050918c143441f6b23e7936f7f83faa1330b4"]
+        }
     }
 
     File fabricProperties = new File("${project.projectDir.absolutePath}/fabric.properties")
