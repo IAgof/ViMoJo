@@ -30,8 +30,8 @@
     <!-- Share Activity -->
     <string name="shareError">Ups, we couldn\'t share this video. Sorry</string>
     <string name="share_using">"Share video using "</string>
-    <string name="sharedWithVideona">"#videonatime"</string>
-    <string name="videonaTags">"#VideonaTime"</string>
+    <string name="sharedWithVideona">"#vimojotime"</string>
+    <string name="videonaTags">"#ViMoJoTime"</string>
     <string name="connectionFTPServerError">Error connecting FTP server. Please, check the host or internet connection</string>
     <string name="loginError">Invalid credentials for FTP server.</string>
     <string name="fileError">Error sending file to FTP server.File not found</string>

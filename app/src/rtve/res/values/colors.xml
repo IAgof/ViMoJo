@@ -28,6 +28,7 @@
 
     <color name="button_toolbar">@color/colorWhite</color>
     <color name="button_record">@color/colorWhite</color>
+    <color name="button_edit">@color/colorSecondary</color>
 
     <color name="textColorTitle">@color/textColorPrimary</color>
 
