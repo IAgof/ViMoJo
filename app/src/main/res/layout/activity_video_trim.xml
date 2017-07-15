@@ -8,142 +8,425 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:rsb="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
+        android:id="@+id/trim_main_linearlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:orientation="vertical">
 
-        <android.support.design.widget.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:popupTheme="@style/VideonaTheme.PopupOverlay"
-                app:theme="@style/VideonaDrawerIconStyle"/>
-
-        </android.support.design.widget.AppBarLayout>
-
-    <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
-        android:id="@+id/videona_player"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
+        <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
+            android:id="@id/videona_player"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <RelativeLayout
+            android:id="@+id/trim_main_relativelayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:clipChildren="false">
+            android:layout_below="@+id/videona_player"
+            android:clipChildren="false"
+            android:orientation="vertical">
 
-            <org.florescu.android.rangeseekbar.RangeSeekBar
-                android:id="@+id/trim_rangeSeekBar"
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.CardView
+                android:id="@+id/trim_cardview"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                rsb:textAboveThumbsColor="@color/textColorSecondary"
-                rsb:activeColor="@color/colorPrimary"
-                rsb:thumbNormal="@drawable/ic_circular_thumb_seekbar"
-                rsb:thumbPressed="@drawable/ic_circular_thumb_seekbar"
-                rsb:thumbDisabled="@drawable/ic_circular_thumb_seekbar"
-                app:background_color="@null"
-                app:bar_color="@color/colorPrimary"
-                app:bar_height="48dp"
-                app:selected_bar_color="@color/colorDivider"
-                app:showLabels="false"
-                />
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="16dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/text_time_trim"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/textColorSecondary"
+                        android:textSize="12sp"
+                        android:visibility="visible"
+                        tools:text="00:00" />
+
+                    <org.florescu.android.rangeseekbar.RangeSeekBar
+                        android:id="@+id/trim_rangeSeekBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginTop="30dp"
+                        rsb:activeColor="@color/colorPrimary"
+                        rsb:background_color="@null"
+                        rsb:bar_color="@color/colorPrimary"
+                        rsb:bar_height="48dp"
+                        rsb:selected_bar_color="@color/colorDivider"
+                        rsb:showLabels="false"
+                        rsb:textAboveThumbsColor="@color/textColorSecondary"
+                        rsb:thumbDisabled="@drawable/ic_circular_thumb_seekbar"
+                        rsb:thumbNormal="@drawable/ic_circular_thumb_seekbar"
+                        rsb:thumbPressed="@drawable/ic_circular_thumb_seekbar" />
+
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="1dp"
+                android:paddingTop="1dp"
+                android:layout_above="@+id/cancel_accept_trim_cardview"
+                android:layout_below="@+id/trim_cardview">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@id/trim_cardview"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/advance_low_cardview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="4dp">
+
+                        <RelativeLayout
+                            android:id="@+id/advance_low_relative"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="8dp"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="8dp"
+                            android:paddingTop="8dp">
+
+                            <ImageButton
+                                android:id="@+id/player_advance_low_backward_start_trim"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="16dp"
+                                android:background="@null"
+                                android:paddingBottom="8dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="0dp"
+                                android:paddingTop="8dp"
+                                android:src="@drawable/activity_edit_player_advance_low" />
+
+                            <ImageButton
+                                android:id="@+id/player_advance_low_forward_start_trim"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_toRightOf="@+id/player_advance_low_backward_start_trim"
+                                android:background="@null"
+                                android:paddingBottom="8dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="0dp"
+                                android:paddingTop="8dp"
+                                android:rotation="180"
+                                android:src="@drawable/activity_edit_player_advance_low" />
+
+                            <TextView
+                                android:id="@+id/player_advance_low_text_view"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:text="300 ms"
+                                android:textColor="@color/textColorSecondary"
+                                android:textSize="12sp" />
+
+                            <ImageButton
+                                android:id="@+id/player_advance_low_backward_end_trim"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="16dp"
+                                android:layout_toLeftOf="@+id/player_advance_low_forward_end_trim"
+                                android:background="@null"
+                                android:paddingBottom="8dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="0dp"
+                                android:paddingTop="8dp"
+                                android:src="@drawable/activity_edit_player_advance_low" />
+
+                            <ImageButton
+                                android:id="@+id/player_advance_low_forward_end_trim"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_gravity="end"
+                                android:background="@null"
+                                android:paddingBottom="8dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="0dp"
+                                android:paddingTop="8dp"
+                                android:rotation="180"
+                                android:src="@drawable/activity_edit_player_advance_low" />
+                        </RelativeLayout>
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/advance_medium_card_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="4dp">
+
+                        <RelativeLayout
+                            android:id="@+id/advance_medium_relative"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@+id/advance_high_relative"
+                            android:paddingBottom="8dp"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="8dp"
+                            android:paddingTop="8dp">
+
+                            <ImageButton
+                                android:id="@+id/player_advance_medium_backward_start_trim"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="16dp"
+                                android:background="@null"
+                                android:paddingBottom="8dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="0dp"
+                                android:paddingTop="8dp"
+                                android:src="@drawable/activity_edit_player_advance_medium" />
+
+                            <ImageButton
+                                android:id="@+id/player_advance_medium_forward_start_trim"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_toRightOf="@+id/player_advance_medium_backward_start_trim"
+                                android:background="@null"
+                                android:paddingBottom="8dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="0dp"
+                                android:paddingTop="8dp"
+                                android:rotation="180"
+                                android:src="@drawable/activity_edit_player_advance_medium" />
+
+                            <TextView
+                                android:id="@+id/player_advance_medium_text_view"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:text="600 ms"
+                                android:textColor="@color/textColorSecondary"
+                                android:textSize="12sp" />
+
+                            <ImageButton
+                                android:id="@+id/player_advance_medium_backward_end_trim"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="16dp"
+                                android:layout_toLeftOf="@+id/player_advance_medium_forward_end_trim"
+                                android:background="@null"
+                                android:paddingBottom="8dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="0dp"
+                                android:paddingTop="8dp"
+                                android:src="@drawable/activity_edit_player_advance_medium" />
+
+                            <ImageButton
+                                android:id="@+id/player_advance_medium_forward_end_trim"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_gravity="end"
+                                android:background="@null"
+                                android:paddingBottom="8dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="0dp"
+                                android:paddingTop="8dp"
+                                android:rotation="180"
+                                android:src="@drawable/activity_edit_player_advance_medium" />
+                        </RelativeLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/advance_high_card_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="4dp">
+
+                        <RelativeLayout
+                            android:id="@+id/advance_high_relative"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@id/advance_medium_relative"
+                            android:paddingBottom="8dp"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="8dp"
+                            android:paddingTop="8dp">
+
+                            <ImageButton
+                                android:id="@+id/player_advance_high_backward_start_trim"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="16dp"
+                                android:background="@null"
+                                android:paddingBottom="8dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="0dp"
+                                android:paddingTop="8dp"
+                                android:src="@drawable/activity_edit_player_advance_high" />
+
+                            <ImageButton
+                                android:id="@+id/player_advance_high_forward_start_trim"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_toRightOf="@+id/player_advance_high_backward_start_trim"
+                                android:background="@null"
+                                android:paddingBottom="8dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="0dp"
+                                android:paddingTop="8dp"
+                                android:rotation="180"
+                                android:src="@drawable/activity_edit_player_advance_high" />
+
+                            <TextView
+                                android:id="@+id/player_advance_high_text_view"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:text="1200 ms"
+                                android:textColor="@color/textColorSecondary"
+                                android:textSize="12sp" />
+
+                            <ImageButton
+                                android:id="@+id/player_advance_high_backward_end_trim"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="16dp"
+                                android:layout_toLeftOf="@+id/player_advance_high_forward_end_trim"
+                                android:background="@null"
+                                android:paddingBottom="8dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="0dp"
+                                android:paddingTop="8dp"
+                                android:src="@drawable/activity_edit_player_advance_high" />
+
+                            <ImageButton
+                                android:id="@+id/player_advance_high_forward_end_trim"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_gravity="end"
+                                android:background="@null"
+                                android:paddingBottom="8dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="0dp"
+                                android:paddingTop="8dp"
+                                android:rotation="180"
+                                android:src="@drawable/activity_edit_player_advance_high" />
+                        </RelativeLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                </LinearLayout>
+            </ScrollView>
 
 
             <!--<TextView-->
-                <!--android:id="@+id/text_start_trim"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_alignParentLeft="true"-->
-                <!--android:layout_below="@+id/trim_rangeSeekBar"-->
-                <!--android:gravity="center"-->
-                <!--android:paddingLeft="12dp"-->
-                <!--android:paddingTop="12dp"-->
-                <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"-->
-                <!--android:textColor="@color/colorAccent"-->
-                <!--tools:text="00:00"/>-->
+            <!--android:id="@+id/text_start_trim"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_below="@+id/trim_rangeSeekBar"-->
+            <!--android:gravity="center"-->
+            <!--android:paddingLeft="12dp"-->
+            <!--android:paddingTop="12dp"-->
+            <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"-->
+            <!--android:textColor="@color/colorAccent"-->
+            <!--tools:text="00:00"/>-->
 
             <!--<TextView-->
-                <!--android:id="@+id/text_end_trim"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_alignParentRight="true"-->
-                <!--android:layout_below="@+id/trim_rangeSeekBar"-->
-                <!--android:gravity="center"-->
-                <!--android:paddingRight="12dp"-->
-                <!--android:paddingTop="12dp"-->
-                <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"-->
-                <!--android:textColor="@color/colorAccent"-->
-                <!--tools:text="00:00"/>-->
+            <!--android:id="@+id/text_end_trim"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_below="@+id/trim_rangeSeekBar"-->
+            <!--android:gravity="center"-->
+            <!--android:paddingRight="12dp"-->
+            <!--android:paddingTop="12dp"-->
+            <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"-->
+            <!--android:textColor="@color/colorAccent"-->
+            <!--tools:text="00:00"/>-->
 
-            <TextView
-                android:id="@+id/text_time_trim"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/trim_rangeSeekBar"
-                android:layout_alignParentBottom="false"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="4dp"
-                android:gravity="center_vertical|center_horizontal"
-                android:paddingBottom="12dp"
-                android:paddingTop="12dp"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-                android:visibility="visible"
-                tools:text="00:00"
-                />
-
-            <TextView
-                android:id="@+id/text_info_trim"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/text_time_trim"
-                android:layout_alignParentBottom="false"
-                android:layout_centerHorizontal="true"
-                android:gravity="center_vertical|center_horizontal"
-                android:paddingTop="12dp"
-                android:text="@string/text_edit_info_trim"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                android:visibility="visible"
-                />
-
-            <ImageButton
-                android:id="@+id/button_trim_cancel"
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.CardView
+                android:id="@+id/cancel_accept_trim_cardview"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="12dp"
-                android:src="@drawable/activity_edit_common_icon_cancel"/>
+                android:layout_margin="16dp">
 
-            <ImageButton
-                android:id="@+id/button_trim_accept"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="4dp"
-                android:layout_marginRight="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="12dp"
-                android:src="@drawable/activity_edit_common_icon_accept"/>
+
+                <ImageButton
+                    android:id="@+id/button_trim_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
+                    android:src="@drawable/activity_edit_common_icon_cancel" />
+
+                <ImageButton
+                    android:id="@+id/button_trim_accept"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="end"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginRight="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
+                    android:src="@drawable/activity_edit_common_icon_accept" />
+
+            </android.support.v7.widget.CardView>
 
         </RelativeLayout>
+
+        <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
+            android:id="@+id/videona_player"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
