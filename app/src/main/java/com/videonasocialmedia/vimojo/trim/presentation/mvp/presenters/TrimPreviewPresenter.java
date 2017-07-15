@@ -31,6 +31,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import static com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity.MS_CORRECTION_FACTOR;
+
 /**
  * Created by vlf on 7/7/15.
  */
@@ -151,6 +153,37 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
         } else {
             //trimView.showError(message);
         }
+    }
+
+    public void advanceBackwardStartTrimming(int advancePrecision, int startTimeMs) {
+        float adjustSeekBarMinPosition = (float) (startTimeMs - advancePrecision)
+            / MS_CORRECTION_FACTOR;
+        if(adjustSeekBarMinPosition < 0){
+            adjustSeekBarMinPosition = 0;
+        }
+        trimView.updateStartTrimmingRangeSeekBar(adjustSeekBarMinPosition);
+    }
+
+    public void advanceForwardStartTrimming(int advancePrecision, int startTimeMs) {
+        float adjustSeekBarMinPosition = (float) (startTimeMs + advancePrecision)
+            / MS_CORRECTION_FACTOR;
+        trimView.updateStartTrimmingRangeSeekBar(adjustSeekBarMinPosition);
+    }
+
+    public void advanceBackwardEndTrimming(int advancePrecision, int finishTimeMs) {
+        float adjustSeekBarMaxPosition = (float) (finishTimeMs - advancePrecision)
+            / MS_CORRECTION_FACTOR;
+        trimView.updateFinishTrimmingRangeSeekBar(adjustSeekBarMaxPosition);
+    }
+
+    public void advanceForwardEndTrimming(int advancePrecision, int finishTimeMs) {
+        float adjustSeekBarMaxPosition = (float) (finishTimeMs + advancePrecision)
+            / MS_CORRECTION_FACTOR;
+        float maxRangeSeekBarValue = (float) videoToEdit.getFileDuration() / MS_CORRECTION_FACTOR;
+        if(adjustSeekBarMaxPosition > maxRangeSeekBarValue){
+            adjustSeekBarMaxPosition = maxRangeSeekBarValue;
+        }
+        trimView.updateFinishTrimmingRangeSeekBar(adjustSeekBarMaxPosition);
     }
 }
 

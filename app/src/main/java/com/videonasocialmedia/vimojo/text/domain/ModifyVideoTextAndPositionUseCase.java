@@ -68,12 +68,12 @@ public class ModifyVideoTextAndPositionUseCase {
                                     boolean isAudioFadeTransitionActivated) {
     // TODO(jliarte): 19/10/16 move this logic to TranscoderHelper?
     if (videoToEdit.isTrimmedVideo()) {
-      transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(
+      transcoderHelper.generateOutputVideoWithOverlayImageAndTrimmingAsync(
               drawableFadeTransition, isVideoFadeTransitionActivated,
               isAudioFadeTransitionActivated, videoToEdit, format,
               intermediatesTempAudioFadeDirectory, listener);
     } else {
-      transcoderHelper.generateOutputVideoWithOverlayImage(drawableFadeTransition,
+      transcoderHelper.generateOutputVideoWithOverlayImageAsync(drawableFadeTransition,
               isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
               format, intermediatesTempAudioFadeDirectory, listener);
     }

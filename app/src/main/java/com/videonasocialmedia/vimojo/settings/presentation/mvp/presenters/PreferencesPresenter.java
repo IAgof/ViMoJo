@@ -16,7 +16,6 @@ import android.graphics.drawable.Drawable;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
-import android.preference.SwitchPreference;
 import android.util.Log;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
@@ -31,6 +30,7 @@ import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProj
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.GetWatermarkPreferenceFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
@@ -142,23 +142,24 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     /**
      * Checks the available preferences on the device
      */
-    public void checkMailValid(){
+    public void checkMailValid() {
         emailPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if(android.util.Patterns.EMAIL_ADDRESS.matcher((CharSequence) newValue).matches())
+                if (android.util.Patterns.EMAIL_ADDRESS
+                        .matcher((CharSequence) newValue).matches()) {
                     return true;
-                else {
+                } else {
                     preferencesView.showError(R.string.invalid_email);
                     return false;
-                   }
+                }
             }
         });
     }
 
     public void checkAvailablePreferences() {
         checkUserAccountData();
-        if(BuildConfig.FEATURE_FTP) {
+        if (BuildConfig.FEATURE_FTP) {
             checkUserFTP1Data();
             checkUserFTP2Data();
         } else {
@@ -178,20 +179,20 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     }
 
     private void checkTransitionPreference(String key) {
-        boolean data =false;
-        if(key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0){
+        boolean data = false;
+        if (key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0) {
             data = getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
             preferencesView.setTransitionsPref(key, data);
         } else {
-            if(key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0){
+            if (key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0) {
                 data = getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
                 preferencesView.setTransitionsPref(key, data);
             }
         }
     }
 
-    private void checkWatermark(boolean isWatermarkActivated){
-        if(isWatermarkActivated) {
+    private void checkWatermark(boolean isWatermarkBuildConfigActivated) {
+        if (isWatermarkBuildConfigActivated) {
             boolean data = getWatermarkPreferenceFromProjectUseCase.isWatermarkActivated();
             preferencesView.setWatermarkSwitchPref(data);
         } else {
@@ -201,7 +202,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     private void checkCameraSettingsEnabled() {
         List<Media> media = getMediaListFromProjectUseCase.getMediaListFromProject();
-        if(media.size()>0) {
+        if (media.size() > 0) {
             cameraSettingsPref.setEnabled(false);
             isPreferenceAvailable = false;
         } else {
@@ -226,8 +227,9 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     private void checkUserFTPPreference(String key) {
         String data = sharedPreferences.getString(key, null);
-        if (data != null && !data.isEmpty())
+        if (data != null && !data.isEmpty()) {
             preferencesView.setSummary(key, data);
+        }
     }
 
     /**
@@ -248,12 +250,15 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     }
 
     private void sendPropertyToMixpanel(String key, String data) {
-        if(key.equals(ConfigPreferences.NAME))
-            preferencesView.setUserPropertyToMixpanel("$first_name",data);
-        if(key.equals(ConfigPreferences.USERNAME))
-            preferencesView.setUserPropertyToMixpanel("$username",data);
-        if(key.equals(ConfigPreferences.EMAIL))
-            preferencesView.setUserPropertyToMixpanel("$account_email",data);
+        if (key.equals(ConfigPreferences.NAME)) {
+            preferencesView.setUserPropertyToMixpanel("$first_name", data);
+        }
+        if (key.equals(ConfigPreferences.USERNAME)) {
+            preferencesView.setUserPropertyToMixpanel("$username", data);
+        }
+        if (key.equals(ConfigPreferences.EMAIL)) {
+            preferencesView.setUserPropertyToMixpanel("$account_email", data);
+        }
     }
 
 
@@ -264,7 +269,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         ArrayList<String> resolutionNames = new ArrayList<>();
         ArrayList<String> resolutionValues = new ArrayList<>();
         String defaultResolution = null;
-        String key = ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION; //"list_preference_resolution";
+        String key = ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION;
 
         if (!isPreferenceAvailable) {
             resolutionPref.setTitle(R.string.resolution);
@@ -294,7 +299,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             }
         }
         if (resolutionNames.size() > 0 && defaultResolution != null) {
-            preferencesView.setAvailablePreferences(resolutionPref, resolutionNames, resolutionValues);
+            preferencesView.setAvailablePreferences(resolutionPref, resolutionNames,
+                    resolutionValues);
             if (updateDefaultPreference(key, resolutionNames)) {
                 preferencesView.setDefaultPreference(resolutionPref, defaultResolution, key);
             } else {
@@ -303,7 +309,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         } else {
             resolutionNames.add(context.getResources().getString(R.string.good_resolution_name));
             resolutionValues.add(context.getResources().getString(R.string.good_resolution_value));
-            preferencesView.setAvailablePreferences(resolutionPref, resolutionNames, resolutionValues);
+            preferencesView.setAvailablePreferences(resolutionPref, resolutionNames,
+                    resolutionValues);
         }
     }
 
@@ -313,39 +320,30 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private void checkAvailableQuality() {
         ArrayList<String> qualityNames = new ArrayList<>();
         ArrayList<String> qualityValues = new ArrayList<>();
-        String defaultQuality = null;
-        String key = ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY; //"list_preference_quality";
+        String defaultQuality = context.getResources()
+                .getString(ProfileSharedPreferencesRepository.DEFAULT_VIDEO_QUALITY_NAME);
+        String qualityKey = ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY;
 
-        if(!isPreferenceAvailable){
+        if (!isPreferenceAvailable) {
             qualityPref.setTitle(R.string.quality);
             qualityPref.setSummary(R.string.preference_not_available);
             return;
         }
 
-        qualityNames.add(context.getResources().getString(R.string.good_quality_name));
-        qualityValues.add(context.getResources().getString(R.string.good_quality_value));
-        if (defaultQuality == null) {
-            defaultQuality = context.getResources().getString(R.string.good_quality_name);
-        }
-
-        qualityNames.add(context.getResources().getString(R.string.high_quality_name));
-        qualityValues.add(context.getResources().getString(R.string.high_quality_value));
-        if (defaultQuality == null) {
-            defaultQuality = context.getResources().getString(R.string.high_quality_name);
-        }
-
         qualityNames.add(context.getResources().getString(R.string.low_quality_name));
         qualityValues.add(context.getResources().getString(R.string.low_quality_value));
-        if (defaultQuality == null) {
-            defaultQuality = context.getResources().getString(R.string.low_quality_name);
-        }
+        qualityNames.add(context.getResources().getString(R.string.good_quality_name));
+        qualityValues.add(context.getResources().getString(R.string.good_quality_value));
+        qualityNames.add(context.getResources().getString(R.string.high_quality_name));
+        qualityValues.add(context.getResources().getString(R.string.high_quality_value));
 
-        if (qualityNames.size() > 0 && defaultQuality != null) {
+        if (qualityNames.size() > 0) {
             preferencesView.setAvailablePreferences(qualityPref, qualityNames, qualityValues);
-            if (updateDefaultPreference(key, qualityNames)) {
-                preferencesView.setDefaultPreference(qualityPref, defaultQuality, key);
+            if (updateDefaultPreference(qualityKey, qualityNames)) {
+                preferencesView.setDefaultPreference(qualityPref, defaultQuality, qualityKey);
             } else {
-                preferencesView.setPreference(qualityPref, sharedPreferences.getString(key, ""));
+                preferencesView.setPreference(qualityPref,
+                        sharedPreferences.getString(qualityKey, ""));
             }
         } else {
             qualityNames.add(context.getResources().getString(R.string.good_quality_name));
@@ -375,18 +373,20 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         switch (key) {
             case ConfigPreferences.TRANSITION_AUDIO:
                 boolean dataTransitionAudio = sharedPreferences.getBoolean(key,false);
-                updateAudioTransitionPreferenceToProjectUseCase.setAudioFadeTransitionActivated(dataTransitionAudio);
+                updateAudioTransitionPreferenceToProjectUseCase
+                        .setAudioFadeTransitionActivated(dataTransitionAudio);
                 updateIntermediateTemporalFilesTransitionsUseCase.execute(this);
                 break;
             case ConfigPreferences.TRANSITION_VIDEO:
                 boolean dataTransitionVideo = sharedPreferences.getBoolean(key, false);
-                updateVideoTransitionPreferenceToProjectUseCase.setVideoFadeTransitionActivated(dataTransitionVideo);
+                updateVideoTransitionPreferenceToProjectUseCase
+                        .setVideoFadeTransitionActivated(dataTransitionVideo);
                 updateIntermediateTemporalFilesTransitionsUseCase.execute(this);
                 break;
             case ConfigPreferences.WATERMARK:
                 boolean data = sharedPreferences.getBoolean(key, false);
-                if(data && !updateWatermarkPreferenceToProjectUseCase.
-                    isWatermarkResourceDownloaded(Constants.PATH_APP)){
+                if (data && !updateWatermarkPreferenceToProjectUseCase
+                        .isWatermarkResourceDownloaded(Constants.PATH_APP)) {
                     copyWatermarkResourceToDevice();
                 }
                 updateWatermarkPreferenceToProjectUseCase.setWatermarkActivated(data);
@@ -404,15 +404,13 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         }
     }
 
-
     @Override
     public void videoToRelaunch(String videoUuid, String intermediatesTempAudioFadeDirectory) {
         final Video video = getVideo(videoUuid);
-
-        relaunchTranscoderTempBackgroundUseCase.relaunchExport(context
-                .getDrawable(R.drawable.alpha_transition_white), video,
-            getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
-            intermediatesTempAudioFadeDirectory, this);
+        relaunchTranscoderTempBackgroundUseCase.relaunchExport(
+                context.getDrawable(R.drawable.alpha_transition_white), video,
+                getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
+                intermediatesTempAudioFadeDirectory, this);
     }
 
     private Video getVideo(String videoId) {
@@ -437,16 +435,16 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     @Override
     public void onErrorTranscoding(Video video, String message) {
         Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-       if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
+        if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
             video.increaseNumTriesToExportVideo();
             Project currentProject = Project.getInstance(null, null, null);
-            relaunchTranscoderTempBackgroundUseCase.relaunchExport(context
-                    .getDrawable(R.drawable.alpha_transition_white), video,
-                getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
-                currentProject.getProjectPathIntermediateFileAudioFade(), this);
+            relaunchTranscoderTempBackgroundUseCase.relaunchExport(
+                    context.getDrawable(R.drawable.alpha_transition_white), video,
+                    getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
+                    currentProject.getProjectPathIntermediateFileAudioFade(), this);
         } else {
             updateVideoRepositoryUseCase.errorTranscodingVideo(video,
-                Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
+                    Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
         }
     }
 }
