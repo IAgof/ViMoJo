@@ -20,6 +20,7 @@ import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProj
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
+import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
@@ -65,6 +66,7 @@ public class GalleryPagerPresenterTest {
   @Mock Context mockedContext;
   @Mock private SharedPreferences mockedSharedPreferences;
   @Mock private SharedPreferences.Editor mockedPreferencesEditor;
+  @Mock private AdaptVideoRecordedToVideoFormatUseCase mockedAdaptVideoRecordedToVideoFormatUseCase;
 
   @Before
   public void injectMocks() {
@@ -205,7 +207,7 @@ public class GalleryPagerPresenterTest {
             mockedAddVideoToProjectUseCase, mockedUpdateVideoRepositoryUseCase,
             mockedGetVideonaFormatFromCurrentProjectUseCase,
             mockedLaunchTranscoderAddAVTransitionsUseCase, mockedUpdateProjectResolution,
-            mockedSharedPreferences);
+            mockedAdaptVideoRecordedToVideoFormatUseCase, mockedSharedPreferences);
   }
 
   public Project getAProject() {
