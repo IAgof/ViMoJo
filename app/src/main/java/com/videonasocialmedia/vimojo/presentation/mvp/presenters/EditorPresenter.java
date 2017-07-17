@@ -91,8 +91,8 @@ public class EditorPresenter implements TranscoderHelperListener, OnVideosRetrie
 
   }
 
-  public void createNewProject(String roothPath){
-    createDefaultProjectUseCase.createProject(roothPath);
+  public void createNewProject(String roothPath, boolean isWatermarkFeatured){
+    createDefaultProjectUseCase.createProject(roothPath, isWatermarkFeatured);
     clearProjectDataFromSharedPreferences();
     editorActivityView.updateViewResetProject();
   }

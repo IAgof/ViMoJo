@@ -62,11 +62,11 @@ public class RelaunchTranscoderTempBackgroundUseCase {
                                     boolean isAudioFadeTransitionActivated) {
     // TODO(jliarte): 17/03/17 move this logic to TranscoderHelper?
     if (videoToEdit.hasText()) {
-      transcoderHelper.generateOutputVideoWithOverlayImageAndTrimming(drawableFadeTransition,
+      transcoderHelper.generateOutputVideoWithOverlayImageAndTrimmingAsync(drawableFadeTransition,
               isVideoFadeTransitionActivated,isAudioFadeTransitionActivated, videoToEdit,
               videonaFormat,intermediatesTempAudioFadeDirectory, transcoderHelperListener);
     } else {
-      transcoderHelper.generateOutputVideoWithTrimming(drawableFadeTransition,
+      transcoderHelper.generateOutputVideoWithTrimmingAsync(drawableFadeTransition,
               isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
               videonaFormat, intermediatesTempAudioFadeDirectory, transcoderHelperListener);
     }

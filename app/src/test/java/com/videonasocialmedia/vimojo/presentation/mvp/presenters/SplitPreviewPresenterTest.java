@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.media.MediaMetadataRetriever;
+import android.support.annotation.NonNull;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -33,6 +34,8 @@ import org.robolectric.annotation.Config;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.CoreMatchers.*;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by jliarte on 10/06/16.
@@ -78,10 +81,7 @@ public class SplitPreviewPresenterTest {
     @Test
     public void constructorSetsCurrentProject() {
         Project videonaProject = getAProject();
-        SplitPreviewPresenter presenter = new SplitPreviewPresenter(mockedSplitView,
-            mockedUserEventTracker, mockedContext, mockedSplitVideoUseCase,
-            mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
-            mockedUpdateVideoRepositoryUseCase);
+        SplitPreviewPresenter presenter = getSplitPreviewPresenter();
 
         assertThat(presenter.currentProject, is(videonaProject));
     }
@@ -89,16 +89,43 @@ public class SplitPreviewPresenterTest {
     @Test
     @Config(shadows = {MediaMetadataRetrieverShadow.class})
     public void splitVideoCallsUserTracking() {
-        SplitPreviewPresenter presenter = new SplitPreviewPresenter(mockedSplitView,
-            mockedUserEventTracker, mockedContext, mockedSplitVideoUseCase,
-            mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
-            mockedUpdateVideoRepositoryUseCase);
+        SplitPreviewPresenter presenter = getSplitPreviewPresenter();
         Project videonaProject = getAProject();
 
        // presenter.splitVideo(injectedVideo, 0, 10);
         presenter.trackSplitVideo();
 
-        Mockito.verify(mockedUserEventTracker).trackClipSplitted(videonaProject);
+        verify(mockedUserEventTracker).trackClipSplitted(videonaProject);
+    }
+
+    @Test
+    public void advanceForwardEndSplittingUpdateSplitSeekbar(){
+        SplitPreviewPresenter presenter = getSplitPreviewPresenter();
+        int advancePlayerPrecision = 1;
+        int currentSplitPosition = 2;
+
+        presenter.advanceForwardEndSplitting(advancePlayerPrecision, currentSplitPosition);
+
+        verify(mockedSplitView).updateSplitSeekbar(anyInt());
+    }
+
+    @Test
+    public void advanceBackwardStartSplittingUpdateSplitSeekbar(){
+        SplitPreviewPresenter presenter = getSplitPreviewPresenter();
+        int advancePlayerPrecision = 1;
+        int currentSplitPosition = 2;
+
+        presenter.advanceBackwardStartSplitting(advancePlayerPrecision, currentSplitPosition);
+
+        verify(mockedSplitView).updateSplitSeekbar(anyInt());
+    }
+
+    @NonNull
+    private SplitPreviewPresenter getSplitPreviewPresenter() {
+        return new SplitPreviewPresenter(mockedSplitView,
+            mockedUserEventTracker, mockedContext, mockedSplitVideoUseCase,
+            mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
+            mockedUpdateVideoRepositoryUseCase);
     }
 
     public Project getAProject() {

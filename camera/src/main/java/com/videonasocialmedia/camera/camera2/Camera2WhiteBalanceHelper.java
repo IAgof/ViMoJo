@@ -34,7 +34,6 @@ public class Camera2WhiteBalanceHelper {
   public Camera2WhiteBalanceHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;
     initWhiteBalanceMap();
-    setupSupportedValues();
   }
 
   private void initWhiteBalanceMap() {
@@ -52,11 +51,15 @@ public class Camera2WhiteBalanceHelper {
     this.whiteBalanceMap.put(CameraMetadata.CONTROL_AWB_MODE_OFF, WB_MODE_MANUAL);
   }
 
+  public void setup() {
+    setupSupportedValues();
+  }
+
   private String getDefaultWhiteBalanceSetting() {
     return whiteBalanceMap.get(DEFAULT_WHITE_BALANCE_MODE);
   }
 
-  private void setupSupportedValues() {
+  void setupSupportedValues() {
     try {
       ArrayList<String> whiteBalanceStringArrayList = new ArrayList<>();
       whiteBalanceStringArrayList.add(WB_MODE_OFF);

@@ -32,9 +32,6 @@ public class Camera2FocusHelper {
   public Camera2FocusHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;
     initFocusSelectionMap();
-    setupSupportedValues();
-    focusMeteringRectangle = camera2Wrapper.getFullSensorAreaMeteringRectangle();
-    seekBarProgress = 50;
   }
 
   private void initFocusSelectionMap() {
@@ -43,7 +40,13 @@ public class Camera2FocusHelper {
     this.focusSelectionMap.put(CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_VIDEO, AF_MODE_REGIONS);
   }
 
-  private void setupSupportedValues() {
+  public void setup() {
+    setupSupportedValues();
+    focusMeteringRectangle = camera2Wrapper.getFullSensorAreaMeteringRectangle();
+    seekBarProgress = 50;
+  }
+
+  void setupSupportedValues() {
     try {
       ArrayList<String> focusSelectionStringArrayList = new ArrayList<>();
       int[] returnedValues;
@@ -55,9 +58,9 @@ public class Camera2FocusHelper {
         if(focusSelectionSetting == CONTROL_AF_MODE_OFF) {
           focusSelectionStringArrayList.add(AF_MODE_MANUAL);
         }
-        if(focusSelectionSetting == CONTROL_AF_MODE_CONTINUOUS_VIDEO){
+        if (focusSelectionSetting == CONTROL_AF_MODE_CONTINUOUS_VIDEO) {
           focusSelectionStringArrayList.add(AF_MODE_AUTO);
-          if(isFocusModeSelectiveSupported()){
+          if (isFocusModeSelectiveSupported()) {
             focusSelectionStringArrayList.add(AF_MODE_REGIONS);
           }
         }
@@ -151,6 +154,8 @@ public class Camera2FocusHelper {
       Log.e(TAG, "failed to get camera characteristics");
       Log.e(TAG, "reason: " + e.getReason());
       Log.e(TAG, "message: " + e.getMessage());
+    } catch (NullPointerException npe) {
+      Log.e(TAG, "failed to get minimun focus distance");
     }
     float num = (((float) (100 - seekbarProgress)) * minimumLens / 100);
 

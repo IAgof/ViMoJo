@@ -191,8 +191,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         }
     }
 
-    private void checkWatermark(boolean isWatermarkActivated) {
-        if (isWatermarkActivated) {
+    private void checkWatermark(boolean isWatermarkBuildConfigActivated) {
+        if (isWatermarkBuildConfigActivated) {
             boolean data = getWatermarkPreferenceFromProjectUseCase.isWatermarkActivated();
             preferencesView.setWatermarkSwitchPref(data);
         } else {

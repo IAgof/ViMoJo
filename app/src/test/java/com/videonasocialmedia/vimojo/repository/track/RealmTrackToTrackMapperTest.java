@@ -33,7 +33,7 @@ public class RealmTrackToTrackMapperTest {
     assertThat(track.getUuid(), is("asdfsdf"));
     assertThat(track.getId(), is(1));
     assertThat(track.getVolume(), is(0.55f));
-    assertThat(track.isMute(), is(false));
+    assertThat(track.isMuted(), is(false));
     assertThat(track.getPosition(), is(1));
   }
 }

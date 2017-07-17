@@ -68,7 +68,7 @@ public class CreateDefaultProjectUseCaseTest {
     assert Project.INSTANCE == null;
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
-    injectedUseCase.loadOrCreateProject("root/path");
+    injectedUseCase.loadOrCreateProject("root/path", false);
 
     verify(mockedProjectRepository).getCurrentProject();
   }
@@ -77,7 +77,7 @@ public class CreateDefaultProjectUseCaseTest {
   public void startLoadingProjectDoesNotCallGetCurrentProjectIfNonNullInstance() {
     Project project = Project.INSTANCE = new Project(null, null, null);
 
-    injectedUseCase.loadOrCreateProject("root/path");
+    injectedUseCase.loadOrCreateProject("root/path", false);
 
     verify(mockedProjectRepository, never()).getCurrentProject();
     assertThat(Project.getInstance(null, null, null), is(project));
@@ -91,21 +91,21 @@ public class CreateDefaultProjectUseCaseTest {
     Project currentProject = new Project("current project title", "current/path", profile);
     doReturn(currentProject).when(mockedProjectRepository).getCurrentProject();
 
-    injectedUseCase.loadOrCreateProject("root/path");
+    injectedUseCase.loadOrCreateProject("root/path", false);
 
     assertThat(Project.getInstance(null, null, null), is(currentProject));
   }
 
   @Test
   public void loadOrCreateUpdateProjectRepository(){
-    injectedUseCase.loadOrCreateProject("root/path");
+    injectedUseCase.loadOrCreateProject("root/path", false);
     Project actualProject = Project.getInstance(null,null,null);
     verify(mockedProjectRepository).update(actualProject);
   }
 
   @Test
   public void createProjectUpdateProjectRepository(){
-    injectedUseCase.createProject("root/path");
+    injectedUseCase.createProject("root/path", false);
     Project actualProject = Project.getInstance(null,null,null);
     verify(mockedProjectRepository).update(actualProject);
   }
@@ -118,9 +118,30 @@ public class CreateDefaultProjectUseCaseTest {
     doReturn(profile).when(mockedProfileRepository).getCurrentProfile();
     Project currentProject = Project.getInstance("current project", "current/path", profile);
     assertThat(Project.getInstance(null,null,null), is(currentProject));*/
-    injectedUseCase.createProject("root/path");
+    injectedUseCase.createProject("root/path", false);
     Project actualProject = Project.getInstance(null,null,null);
+  }
 
+  @Test
+  public void createProjectActivateWatermarkIfIsFeatured(){
+
+    boolean isWatermarkFeatured = true;
+
+    injectedUseCase.createProject("root/path", isWatermarkFeatured);
+
+    assertThat("Watermark is activated", Project.getInstance(null,null,null).getVMComposition()
+        .hasWatermark(), is(true));
+  }
+
+  @Test
+  public void loadOrCreateProjectActivateWatermarkIfIsFeatured(){
+
+    boolean isWatermarkFeatured = true;
+
+    injectedUseCase.loadOrCreateProject("root/path", isWatermarkFeatured);
+
+    assertThat("Watermark is activated", Project.getInstance(null,null,null).getVMComposition()
+        .hasWatermark(), is(true));
   }
 
   }
