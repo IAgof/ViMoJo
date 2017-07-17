@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -215,7 +216,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
           case DialogInterface.BUTTON_POSITIVE:
            // drawerLayout.closeDrawers();
             if(resourceItemMenuId == R.id.menu_navview_delete_clip)
-                editorPresenter.createNewProject(Constants.PATH_APP);
+                editorPresenter.createNewProject(Constants.PATH_APP, BuildConfig.FEATURE_WATERMARK);
             if(resourceItemMenuId == R.id.menu_navview_mail)
               navigateTo(SettingsActivity.class);
             if(resourceItemMenuId == R.id.menu_navview_username)

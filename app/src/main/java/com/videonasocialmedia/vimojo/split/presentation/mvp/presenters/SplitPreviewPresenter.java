@@ -59,6 +59,8 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     public UserEventTracker userEventTracker;
     public Project currentProject;
 
+    private int maxSeekBarSplit;
+
     @Inject
     public SplitPreviewPresenter(SplitView splitView, UserEventTracker userEventTracker,
                                  Context context, SplitVideoUseCase splitVideoUseCase,
@@ -95,7 +97,8 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
         Video video = videoList.get(0);
         if(video.hasText())
             splitView.showText(video.getClipText(), video.getClipTextPosition());
-        splitView.initSplitView(video.getStartTime(), video.getStopTime() - video.getStartTime());
+        maxSeekBarSplit =  video.getStopTime() - video.getStartTime();
+        splitView.initSplitView(video.getStartTime(), maxSeekBarSplit);
     }
 
     @Override
@@ -148,6 +151,23 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
             updateVideoRepositoryUseCase.errorTranscodingVideo(video,
                 Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.SPLIT.name());
         }
+    }
+
+    public void advanceBackwardStartSplitting(int advancePlayerPrecision,
+                                              int currentSplitPosition) {
+        int progress = 0;
+        if(currentSplitPosition > advancePlayerPrecision) {
+            progress = currentSplitPosition - advancePlayerPrecision;
+        }
+        splitView.updateSplitSeekbar(progress);
+    }
+
+    public void advanceForwardEndSplitting(int advancePlayerPrecision, int currentSplitPosition) {
+        int progress = currentSplitPosition + advancePlayerPrecision;
+        if(progress > maxSeekBarSplit){
+            progress = maxSeekBarSplit;
+        }
+        splitView.updateSplitSeekbar(progress);
     }
 }
 

@@ -64,108 +64,129 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 46 // 20170629
-            versionName "0.7.0-RC2" // 20170629
+            versionCode 47 // 20170714
+            versionName "0.7.0-RC3" // 20170714
             resValue "string", "app_out_of_date", "2017-07-31" // 20170321
             resValue "string", "app_name", "Vimojo"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
             buildConfigField "boolean", "FEATURE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "FEATURE_FORCE_PRO_CONTROLS_SHOW", "false"
             ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
             ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
             manifestPlaceholders = [appName: "Vimojo", fabricApiKey: "1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
         }
         hispanopost {
             applicationId "com.videonasocialmedia.vimojo.hispanopost"
-            versionCode 26 // 20170629
-            versionName "0.7.0-RC2.fHispanopost" // 20170629
+            versionCode 27 // 20170714
+            versionName "0.7.0-RC3.fHispanopost" // 20170714
             resValue "string", "app_out_of_date", "2016-12-01"
             resValue "string", "app_name", "HispanoPost"
             buildConfigField "boolean", "FEATURE_FTP", "false"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "false"
             buildConfigField "boolean", "FEATURE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "FEATURE_FORCE_PRO_CONTROLS_SHOW", "false"
             ext.fabricApiKey = "3fc92dd8023e505ebab31a962e1eb284f37696bb"
             ext.fabricApiSecret = "f88950e831f1f8c6d7402b96e4e93c1c2f71f1e021dc68b183b8b3d2456b9b67"
             manifestPlaceholders = [appName: "HispanoPost", fabricApiKey: "3fc92dd8023e505ebab31a962e1eb284f37696bb"]
         }
         shoulderpod {
             applicationId "com.videonasocialmedia.vimojo.shoulderpod"
-            versionCode 26 // 20170629
-            versionName "0.7.0-RC2.fShoulderpod" // 20170629
+            versionCode 27 // 20170714
+            versionName "0.7.0-RC3.fShoulderpod" // 20170714
             resValue "string", "app_out_of_date", "2016-12-01"
             resValue "string", "app_name", "Shoulderpod"
             buildConfigField "boolean", "FEATURE_FTP", "false"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "false"
             buildConfigField "boolean", "FEATURE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "FEATURE_FORCE_PRO_CONTROLS_SHOW", "false"
             ext.fabricApiKey = "cee2254b437b99953c8a2a690fb3bf98cf36c343"
             ext.fabricApiSecret = "356b560c9fa95c84d8635ad0ab7049a664ebe2917dd954a5b97ebd95faee4fa8"
             manifestPlaceholders = [appName: "Shoulderpod", fabricApiKey: "cee2254b437b99953c8a2a690fb3bf98cf36c343"]
         }
         veinteminutos {
             applicationId "com.videonasocialmedia.vimojo.veinteminutos"
-            versionCode 26 // 20170629
-            versionName "0.7.0-RC2.f20minutos" // 20170629
+            versionCode 27 // 20170714
+            versionName "0.7.0-RC3.f20minutos" // 20170714
             resValue "string", "app_out_of_date", "2016-12-13"
             resValue "string", "app_name", "Video 20M"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
             buildConfigField "boolean", "FEATURE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "FEATURE_FORCE_PRO_CONTROLS_SHOW", "false"
             ext.fabricApiKey = "cf33bf18eadd90ff4f7f671588c2017052150cbf"
             ext.fabricApiSecret = "93b01a6ab712ca7229c35b072324a5e5e89a3c075e107932b0db61864e2ea880"
             manifestPlaceholders = [appName: "Video 20M", fabricApiKey: "cf33bf18eadd90ff4f7f671588c2017052150cbf"]
         }
         rtve {
             applicationId "com.videonasocialmedia.vimojo.rtve"
-            versionCode 26 // 20170629
-            versionName "0.7.0-RC2.fRtve" // 20170629
+            versionCode 27 // 20170714
+            versionName "0.7.0-RC3.fRtve" // 20170714
             resValue "string", "app_out_of_date", "2017-07-31" // 20170321
             resValue "string", "app_name", "Vimojo Rtve"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
             buildConfigField "boolean", "FEATURE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "FEATURE_FORCE_PRO_CONTROLS_SHOW", "false"
             ext.fabricApiKey = "9600ab9fda1b0c0991396ffc882a957bbcca8678"
             ext.fabricApiSecret = "b3bf19cf86f8075700885f47ec7cf2813b8d8b6832a78a008ed9b757e5a56d91"
             manifestPlaceholders = [appName: "Vimojo Rtve", fabricApiKey: "9600ab9fda1b0c0991396ffc882a957bbcca8678"]
         }
         ochoaldia {
             applicationId "com.videonasocialmedia.vimojo.ochoaldia"
-            versionCode 23 // 20170629
-            versionName "0.7.0-RC2.fOchoAlDia" // 20170629
+            versionCode 24 // 20170714
+            versionName "0.7.0-RC3.fOchoAlDia" // 20170714
             resValue "string", "app_out_of_date", "2017-07-31"
             resValue "string", "app_name", "8 al día"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
             buildConfigField "boolean", "FEATURE_WATERMARK", "true"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "FEATURE_FORCE_PRO_CONTROLS_SHOW", "false"
             ext.fabricApiKey = "636f0d9539c15314d7f540afdd251bec68edeb01"
             ext.fabricApiSecret = "13f8e6cd589173f4405844b46bc19b5d8acca736dc0c3d963ca8c16d48bc7137"
             manifestPlaceholders = [appName: "8 al día", fabricApiKey: "636f0d9539c15314d7f540afdd251bec68edeb01"]
         }
         elpaisdigital {
             applicationId "com.videonasocialmedia.vimojo.elpaisdigital"
-            versionCode 21 // 20170629
-            versionName "0.7.0-RC2.fElPaisDigial" // 20170629
+            versionCode 22 // 20170714
+            versionName "0.7.0-RC3.fElPaisDigial" // 20170714
             resValue "string", "app_out_of_date", "2017-07-31"
             resValue "string", "app_name", "El País Digital"
             buildConfigField "boolean", "FEATURE_FTP", "false"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "false"
             buildConfigField "boolean", "FEATURE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "FEATURE_FORCE_PRO_CONTROLS_SHOW", "false"
             ext.fabricApiKey = "9e2c54ec6e94c68364a80a8e511406d4b74285c8"
             ext.fabricApiSecret = "08a85538f0c5c0811431392c62d603bb2d93bcf6102a3f85fe614decde8a03f2"
             manifestPlaceholders = [appName: "El País Digital", fabricApiKey: "9e2c54ec6e94c68364a80a8e511406d4b74285c8"]
+        }
+        vimojowatermark {
+            "com.videonasocialmedia.vimojo.vimojowatermark"
+            versionCode 1
+            versionName "0.7.0-RC2.fVimojoWatermark"
+            resValue "string", "app_out_of_date", "2017-07-31"
+            resValue "string", "app_name", "Vimojo Videona"
+            buildConfigField "boolean", "FEATURE_FTP", "true"
+            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
+            buildConfigField "boolean", "FEATURE_WATERMARK", "true"
+            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
+            ext.fabricApiKey = "ef7283ce8f2da3b2c5dc022a1d7952f349f659c5"
+            ext.fabricApiSecret = "fdb53a8ca1d8e71f363963c0624f7606af4ed317c57340afc4a72303eef221b0"
+            manifestPlaceholders = [appName: "Vimojo Videona", fabricApiKey: "ef7283ce8f2da3b2c5dc022a1d7952f349f659c5"]
+        }
+        thomsonfoundation {
+            "com.videonasocialmedia.vimojo.thomsonfoundation"
+            versionCode 1
+            versionName "0.7.0-RC2.fThomsonFoundation"
+            resValue "string", "app_out_of_date", "2017-12-31"
+            resValue "string", "app_name", "Vimojo Thomson Foundation"
+            buildConfigField "boolean", "FEATURE_FTP", "true"
+            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
+            buildConfigField "boolean", "FEATURE_WATERMARK", "true"
+            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
+            ext.fabricApiKey = "c5e050918c143441f6b23e7936f7f83faa1330b4"
+            ext.fabricApiSecret = "2c2a5661adbf7258c3dfb8711f48b40ed43d5291f9474ba8e4cda6d05b917b55"
+            manifestPlaceholders = [appName: "Vimojo Thomson Foundation", fabricApiKey: "c5e050918c143441f6b23e7936f7f83faa1330b4"]
         }
     }
 

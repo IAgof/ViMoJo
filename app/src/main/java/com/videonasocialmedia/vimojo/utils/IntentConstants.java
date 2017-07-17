@@ -63,4 +63,7 @@ public class IntentConstants {
     public static final String BATTERY_STATUS = "battery_status";
     public static final String BATTERY_LEVEL = "battery_level";
     public static final String BATTERY_SCALE = "battery_scale" ;
+
+  public static final String JACK_PLUG_NOTIFICATION = "jack_plug_notifications";
+  public static final String MICROPHONE_STATUS = "microphone";
 }

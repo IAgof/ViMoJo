@@ -4,6 +4,7 @@ import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -37,7 +38,7 @@ public class CreateDefaultProjectUseCase {
     this.trackRepository = trackRepository;
   }
 
-  public void loadOrCreateProject(String rootPath) {
+  public void loadOrCreateProject(String rootPath, boolean isWatermarkFeatured) {
 
     // By default project title,
     String projectTitle = DateUtils.getDateRightNow();
@@ -50,13 +51,19 @@ public class CreateDefaultProjectUseCase {
 
     Project currentProject = Project.getInstance(projectTitle, rootPath,
         profileRepository.getCurrentProfile());
+    if(isWatermarkFeatured){
+      currentProject.setWatermarkActivated(true);
+    }
     projectRepository.update(currentProject);
   }
 
-  public void createProject(String rootPath){
+  public void createProject(String rootPath, boolean isWatermarkFeatured){
     String projectTitle = DateUtils.getDateRightNow();
     Project currentProject = new Project(projectTitle,rootPath,
         profileRepository.getCurrentProfile());
+    if(isWatermarkFeatured){
+      currentProject.setWatermarkActivated(true);
+    }
     Project.INSTANCE = currentProject;
     projectRepository.update(currentProject);
   }

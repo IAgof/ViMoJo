@@ -93,7 +93,7 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack,
     initUIComponentsById(track.getId());
     initAdapter(track);
     setSeekBar((int) (track.getVolume()*100));
-    setSwitchMuteMedia(track.isMute());
+    setSwitchMuteMedia(track.isMuted());
   }
 
   public void setListener(CardViewAudioTrackListener listener){

@@ -17,10 +17,17 @@ public class Camera2ZoomHelper {
 
   public Camera2ZoomHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;
+  }
+
+  public void setup() {
+    setupSupportedValues();
+  }
+
+  void setupSupportedValues() {
     try {
       maxZoom = (camera2Wrapper.getCurrentCameraCharacteristics()
               .get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM)) * 5;
-    } catch (CameraAccessException e) {
+    } catch (CameraAccessException | NullPointerException e) {
       maxZoom = 0;
     }
   }
@@ -71,5 +78,4 @@ public class Camera2ZoomHelper {
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.SCALER_CROP_REGION, zoom);
     camera2Wrapper.updatePreview();
   }
-
 }

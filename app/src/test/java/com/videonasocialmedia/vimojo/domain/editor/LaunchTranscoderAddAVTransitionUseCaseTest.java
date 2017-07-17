@@ -75,12 +75,12 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
         video, videonaFormat, project.getProjectPathIntermediateFileAudioFade(),
         mockedTranscoderHelperListener);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithAVTransitions(mockedDrawableFadeTransition,
+    verify(mockedTranscoderHelper).generateOutputVideoWithAVTransitionsAsync(mockedDrawableFadeTransition,
         project.isVideoFadeTransitionActivated(), project.isAudioFadeTransitionActivated(), video,
         videonaFormat, project.getProjectPathIntermediateFileAudioFade(),
         mockedTranscoderHelperListener);
 
-    verify(mockedTranscoderHelper, never()).generateOutputVideoWithAudioTransition(video,
+    verify(mockedTranscoderHelper, never()).generateOutputVideoWithAudioTransitionAsync(video,
         project.getProjectPathIntermediateFileAudioFade(), mockedTranscoderHelperListener);
 
   }
@@ -111,7 +111,7 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
         video, videonaFormat, project.getProjectPathIntermediateFileAudioFade(),
         mockedTranscoderHelperListener);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithAudioTransition(video,
+    verify(mockedTranscoderHelper).generateOutputVideoWithAudioTransitionAsync(video,
         project.getProjectPathIntermediateFileAudioFade(), mockedTranscoderHelperListener);
 
   }

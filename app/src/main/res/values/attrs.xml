@@ -31,6 +31,22 @@
         <attr name="thumb_image" format="reference"/>
         <attr name="thumb_image_max" format="reference"/>
     </declare-styleable>
+
+    <declare-styleable name="GoalProgressBar">
+        <attr name="goalIndicatorHeight" format="dimension"/>
+        <attr name="goalIndicatorThickness" format="dimension"/>
+        <attr name="firstGoalReachedColor" format="color"/>
+        <attr name="firstGoalNotReachedColor" format="color"/>
+        <attr name="secondGoalReachedColor" format="color"/>
+        <attr name="secondGoalNotReachedColor" format="color"/>
+        <attr name="unfilledSectionColor" format="color"/>
+        <attr name="barThickness" format="dimension"/>
+        <attr name="indicatorType" format="enum">
+            <enum name="line" value="0"/>
+            <enum name="circle" value="1"/>
+            <enum name="square" value="2"/>
+        </attr>
+    </declare-styleable>
     
 </resources>
 
