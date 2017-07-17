@@ -50,7 +50,6 @@ android {
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
     useLibrary 'org.apache.http.legacy'
-
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 25
@@ -60,7 +59,6 @@ android {
     }
     def FABRIC_VIDEONA_ORG_APIKEY = "eba78720f87307ca48dfa4200dd90914ff6653f2"
     def FABRIC_VIDEONA_ORG_APISECRET = "1636d8a8a8c633c8ba87f5a67ca26a5cc354c414b108ef565df202f07f393ae9"
-
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
@@ -161,7 +159,7 @@ android {
             manifestPlaceholders = [appName: "El País Digital", fabricApiKey: "9e2c54ec6e94c68364a80a8e511406d4b74285c8"]
         }
         vimojowatermark {
-            "com.videonasocialmedia.vimojo.vimojowatermark"
+            applicationId "com.videonasocialmedia.vimojo.vimojowatermark"
             versionCode 1
             versionName "0.7.0-RC2.fVimojoWatermark"
             resValue "string", "app_out_of_date", "2017-07-31"
@@ -175,7 +173,7 @@ android {
             manifestPlaceholders = [appName: "Vimojo Videona", fabricApiKey: "ef7283ce8f2da3b2c5dc022a1d7952f349f659c5"]
         }
         thomsonfoundation {
-            "com.videonasocialmedia.vimojo.thomsonfoundation"
+            applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
             versionCode 1
             versionName "0.7.0-RC2.fThomsonFoundation"
             resValue "string", "app_out_of_date", "2017-12-31"
@@ -189,7 +187,6 @@ android {
             manifestPlaceholders = [appName: "Vimojo Thomson Foundation", fabricApiKey: "c5e050918c143441f6b23e7936f7f83faa1330b4"]
         }
     }
-
     File fabricProperties = new File("${project.projectDir.absolutePath}/fabric.properties")
     applicationVariants.all { variant ->
         variant.productFlavors.each { flavor ->
@@ -217,7 +214,6 @@ android {
             crashlyticsUploadDistributionTask.dependsOn generatePropertiesTask
         }
     }
-
     buildTypes {
         release {
             buildConfigField "String", "MIXPANEL_TOKEN", "\"6f46145c03bf5cf5104bb3536059d994\""
@@ -229,8 +225,8 @@ android {
             applicationIdSuffix ".debug"
             versionNameSuffix '-DEBUG'
             resValue "string", "app_name", "ViMoJo Debug"
-            ext.betaDistributionGroupAliases="videona-dev-team"
-            ext.betaDistributionReleaseNotesFilePath="${project.rootDir}/RELEASE"
+            ext.betaDistributionGroupAliases = "videona-dev-team"
+            ext.betaDistributionReleaseNotesFilePath = "${project.rootDir}/RELEASE"
             buildConfigField "String", "MIXPANEL_TOKEN", "\"c6617213110cd2513dfc0ad97dbaee66\""
             ext.fabricApiKey = FABRIC_VIDEONA_ORG_APIKEY
             ext.fabricApiSecret = FABRIC_VIDEONA_ORG_APISECRET
@@ -257,13 +253,13 @@ android {
 }
 
 dependencies {
+
     // Dagger setup
     apt 'com.google.dagger:dagger-compiler:2.7' // needed for source code generation
     testApt 'com.google.dagger:dagger-compiler:2.7'
     compile 'com.google.dagger:dagger:2.7' // dagger itself
     testCompile 'com.google.dagger:dagger:2.7' // dagger itself
     provided 'org.glassfish:javax.annotation:10.0-b28' // needed to resolve compilation errors
-
     testCompile 'org.hamcrest:hamcrest-library:1.3'
     testCompile 'org.hamcrest:hamcrest-core:1.3'
     testCompile('junit:junit:4.12') {
@@ -278,7 +274,6 @@ dependencies {
 //    testCompile 'org.powermock:powermock-module-junit4-rule:1.6.4'
     testCompile 'org.powermock:powermock-module-junit4:1.6.4'
     testCompile 'org.json:json:20140107'
-
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':avrecorder')
     compile 'com.android.support:appcompat-v7:25.2.0'
@@ -304,23 +299,19 @@ dependencies {
     compile 'commons-net:commons-net:3.5'
     compile 'com.jcraft:jsch:0.1.53'
     // https://mvnrepository.com/artifact/com.jcraft/jzlib
-    compile group: 'com.jcraft', name: 'jzlib', version: '1.1.1'
+    compile 'com.jcraft:jzlib:1.1.1'
     compile 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
     compile 'io.realm:android-adapters:1.3.0'
     compile 'com.roughike:bottom-bar:2.0.2'
     compile 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:0.7.2'
     compile 'com.victor:lib:1.0.4'
-
 //    compile(name:'videona-sdk-v0.1.0',ext:'aar')
     compile project(':sdk')
-
     compile 'org.jcodec:jcodec:0.1.9'
-
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
-    testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
-
     androidTestCompile 'org.hamcrest:hamcrest-library:1.3'
     androidTestCompile 'org.hamcrest:hamcrest-core:1.3'
     androidTestCompile('junit:junit:4.12') {
@@ -334,12 +325,10 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.6.3@aar') {
         transitive = true;
     }
-
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'io.reactivex:rxjava:1.1.0'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support:support-annotations:25.2.0'
-
     compile project(path: ':camera')
 }
