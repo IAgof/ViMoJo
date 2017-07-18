@@ -39,13 +39,15 @@ public class CreateDefaultProjectUseCase {
     // TODO(jliarte): 22/10/16 we should store current project in other place than Project instance.
     //                This is done for convenience only as we should get rid of all
     //                Project.getInstance calls
+    boolean isProjectCreated = false;
     if (Project.INSTANCE == null) {
       Project.INSTANCE = projectRepository.getCurrentProject();
+      isProjectCreated = true;
     }
 
     Project currentProject = Project.getInstance(projectTitle, rootPath,
         profileRepository.getCurrentProfile());
-    if(isWatermarkFeatured || areWeIntoFlavorVimojo()){
+    if((isProjectCreated && isWatermarkFeatured) || areWeIntoFlavorVimojo()){
       currentProject.setWatermarkActivated(true);
     }
     projectRepository.update(currentProject);
