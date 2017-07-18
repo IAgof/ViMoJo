@@ -78,11 +78,11 @@ android {
             applicationId "com.videonasocialmedia.vimojo.hispanopost"
             versionCode 27 // 20170714
             versionName "0.7.0-RC3.fHispanopost" // 20170714
-            resValue "string", "app_out_of_date", "2016-12-01"
+            resValue "string", "app_out_of_date", "2017-12-01"
             resValue "string", "app_name", "HispanoPost"
-            buildConfigField "boolean", "FEATURE_FTP", "false"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "false"
-            buildConfigField "boolean", "FEATURE_WATERMARK", "false"
+            buildConfigField "boolean", "FEATURE_FTP", "true"
+            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
+            buildConfigField "boolean", "FEATURE_WATERMARK", "true"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
             ext.fabricApiKey = "3fc92dd8023e505ebab31a962e1eb284f37696bb"
             ext.fabricApiSecret = "f88950e831f1f8c6d7402b96e4e93c1c2f71f1e021dc68b183b8b3d2456b9b67"
