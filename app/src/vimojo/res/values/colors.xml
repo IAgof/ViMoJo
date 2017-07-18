@@ -2,7 +2,7 @@
 <resources>
     
     <color name="colorTransparent">#00000000</color>
-    <color name="colorGreyTransparent">#7F000000</color>
+    <color name="colorGreyTransparent">#3F000000</color>
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
 
