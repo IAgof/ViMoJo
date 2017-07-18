@@ -1,7 +1,5 @@
 package com.videonasocialmedia.vimojo.record.domain;
 
-import android.graphics.drawable.Drawable;
-
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -32,8 +30,6 @@ public class AdaptVideoRecordedToVideoFormatUseCaseTest {
   @Mock Video mockedVideo;
   String destVideoPath = "dcim/vimojo/masters";
   int rotation = 0;
-  Drawable fadeTransition;
-  boolean isFadeActivated;
   @Mock VideonaFormat mockedVideoFormat;
 
   @Before
@@ -48,10 +44,9 @@ public class AdaptVideoRecordedToVideoFormatUseCaseTest {
     injectedAdaptVideoRecordedToVideoFormatUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedAdaptVideoRecordedToVideoFormatUseCase.adaptVideo(mockedVideo, mockedVideoFormat,
-        destVideoPath, rotation, fadeTransition, isFadeActivated, mockedTranscoderHelperListener);
+        destVideoPath, rotation, mockedTranscoderHelperListener);
 
     verify(mockedTranscoderHelper).adaptVideoWithRotationToDefaultFormatAsync(mockedVideo,
-        mockedVideoFormat, destVideoPath, rotation, fadeTransition, isFadeActivated,
-        mockedTranscoderHelperListener, tempDirectory);
+        mockedVideoFormat, destVideoPath, rotation, mockedTranscoderHelperListener, tempDirectory);
   }
 }

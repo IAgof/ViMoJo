@@ -1,7 +1,5 @@
 package com.videonasocialmedia.vimojo.record.domain;
 
-import android.graphics.drawable.Drawable;
-
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -24,13 +22,12 @@ public class AdaptVideoRecordedToVideoFormatUseCase {
   }
 
   public void adaptVideo(final Video videoToAdapt, final VideonaFormat videoFormat,
-                         final String destVideoPath, int rotation, Drawable fadeTransition,
-                         boolean isFadeActivated, TranscoderHelperListener listener)
-      throws IOException {
+                         final String destVideoPath, int rotation,
+                         TranscoderHelperListener listener) throws IOException {
     Project currentProject = getCurrentProject();
     videoToAdapt.setTempPath(currentProject.getProjectPathIntermediateFiles());
     transcoderHelper.adaptVideoWithRotationToDefaultFormatAsync(videoToAdapt, videoFormat,
-            destVideoPath, rotation, fadeTransition, isFadeActivated, listener,
+            destVideoPath, rotation, listener,
             currentProject.getProjectPathIntermediateAudioMixedFiles());
   }
 

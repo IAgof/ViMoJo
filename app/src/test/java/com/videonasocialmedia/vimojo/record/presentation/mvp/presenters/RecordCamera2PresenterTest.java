@@ -2,7 +2,6 @@ package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
@@ -64,8 +63,6 @@ public class RecordCamera2PresenterTest {
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
   @Mock Camera2WrapperListener mockedCamera2WrapperListener;
   int rotation = 0;
-  Drawable fadeTransition;
-  boolean isFadeActivated;
   @Mock private Activity mockedActivity;
   @Mock private Camera2Wrapper mockedCamera2Wrapper;
 
@@ -132,28 +129,6 @@ public class RecordCamera2PresenterTest {
     presenter.navigateToEditOrGallery();
 
     verify(mockedRecordView).navigateTo(EditActivity.class);
-  }
-
-  @Ignore
-  @Test
-  public void navigateEditOrGalleryCallsShowProgressAdaptingVideoIfThereAreVideosPendingToAdapt()
-      throws IllegalItemOnTrack, IOException {
-    // TODO:(alvaro.martinez) 6/04/17  Prepare this test, i don't know how to mock adapting video process and fake futures.isDone to false.
-    Video video = new Video("dcim/fakeVideo", Video.DEFAULT_VOLUME);
-    Project project = getAProject();
-    MediaTrack track = project.getMediaTrack();
-    track.insertItem(video);
-    track.insertItem(video);
-    int numVideos = getAProject().getVMComposition().getMediaTrack().getNumVideosInProject();
-    assertThat("There are videos in project", numVideos, is(2));
-    mockedAdaptVideoRecordedToVideoFormatUseCase.adaptVideo(video, mockedVideoFormat,
-        directorySaveVideos, rotation, fadeTransition, isFadeActivated,
-        mockedTranscoderHelperListener);
-    presenter = getRecordCamera2Presenter();
-
-    presenter.navigateToEditOrGallery();
-
-    verify(mockedRecordView).showProgressAdaptingVideo();
   }
 
   @Test

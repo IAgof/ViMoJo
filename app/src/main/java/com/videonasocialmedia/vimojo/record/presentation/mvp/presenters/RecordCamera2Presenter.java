@@ -46,9 +46,7 @@ import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerAmplitudeDbListener;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoopThread;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.Utils;
 
-import java.io.File;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -57,11 +55,13 @@ import java.util.List;
  */
 
 public class RecordCamera2Presenter implements Camera2WrapperListener,
-    OnLaunchAVTransitionTempFileListener, NewClipImporter.ProjectVideoAdder {
+    OnLaunchAVTransitionTempFileListener
+//        , NewClipImporter.ProjectVideoAdder
+{
   public static final int DEFAULT_CAMERA_ID = 0;
-  public static final int NORMALIZE_PICOMETER_VALUE = 108;
-  public static final double MAX_AMPLITUDE_VALUE_PICOMETER = 32768;
-  public static final int SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE = 100;
+  private static final int NORMALIZE_PICOMETER_VALUE = 108;
+  private static final double MAX_AMPLITUDE_VALUE_PICOMETER = 32768;
+  private static final int SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE = 100;
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private static final String TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
@@ -70,19 +70,16 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   private AddVideoToProjectUseCase addVideoToProjectUseCase;
   private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
   private LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
-  private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
   private int videosRecorded = 0;
-  protected Project currentProject;
+  private Project currentProject;
   private Camera2Wrapper camera;
 
-  private Drawable drawableFadeTransitionVideo;
   private VideonaFormat videoFormat;
-  private boolean isClickedNavigateToEditOrGallery = false;
   private boolean isFrontCameraSelected = false;
 
-  public long ONE_KB = 1 *1024;
-  public long ONE_MB = ONE_KB*1024;
-  public long ONE_GB = ONE_MB*1024;
+  private long ONE_KB = 1024;
+  private long ONE_MB = ONE_KB * 1024;
+  private long ONE_GB = ONE_MB * 1024;
   private PicometerSamplingLoopThread picometerSamplingLoopThread;
   private int audioGain = 100;
   private Handler picometerRecordingUpdaterHandler = new Handler();
@@ -107,7 +104,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     this.recordView = recordView;
     this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
     this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;
-    this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
     this.currentProject = loadProject();
     // TODO:(alvaro.martinez) 25/01/17 Support camera1, api <21 or combine both. Make Camera1Wrapper
@@ -116,10 +112,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     this.camera = camera;
     camera.setCameraListener(this);
 
-    VideonaFormat videonaFormat = getVideoFormatFromCurrentProjectUseCase
-            .getVideonaFormatToAdaptVideoRecordedAudioAndVideo();
-    this.newClipImporter = new NewClipImporter(this, videonaFormat,
-            adaptVideoRecordedToVideoFormatUseCase, recordView);
+    this.newClipImporter = new NewClipImporter(getVideoFormatFromCurrentProjectUseCase,
+            adaptVideoRecordedToVideoFormatUseCase, updateVideoRepositoryUseCase);
   }
 
   private Project loadProject() {
@@ -197,7 +191,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
         new PicometerAmplitudeDbListener() {
       @Override
       public void setMaxAmplituedDb(double maxAmplituedDb) {
-        Log.d(TAG, "maxAmplitudePreview Dbs " + maxAmplituedDb);
+//        Log.d(TAG, "maxAmplitudePreview Dbs " + maxAmplituedDb);
         setPicometerProgressAndColor(getProgressPicometerPreview(maxAmplituedDb));
       }
     });
@@ -350,8 +344,53 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   private void onVideoRecorded(String path) {
     recordView.showRecordedVideoThumbWithText(path);
     recordView.showVideosRecordedNumber(++videosRecorded);
-    newClipImporter.adaptVideoToVideonaFormat(path, videosRecorded, camera.getRotation(), 0);
+    Video recordedVideo = new Video(path, (float) audioGain / 100f);
+    newClipImporter.adaptVideoToVideonaFormat(recordedVideo, videosRecorded, camera.getRotation(), 0);
+    addVideoToProject(recordedVideo);
   }
+
+  private void addVideoToProject(Video recordedVideo) {
+    addVideoToProjectUseCase.addVideoToProjectAtPosition(recordedVideo,
+            currentProject.numberOfClips(), new OnAddMediaFinishedListener() {
+              @Override
+              public void onAddMediaItemToTrackError() {
+                recordView.showError(context.getString(R.string.addMediaItemToTrackError));
+              }
+
+              @Override
+              public void onAddMediaItemToTrackSuccess(Media media) {
+                checkIfVideoAddedNeedLaunchAVTransitionJob((Video) media);
+              }
+            });
+  }
+
+//  @Override
+//  public void addVideoToProject(final NewClipImporter.VideoToAdapt videoToAdapt) {
+//    String destVideoRecorded = Constants.PATH_APP_MASTERS +
+//            File.separator + new File(videoToAdapt.getVideo().getMediaPath()).getName();
+//    addVideoToProjectUseCase.addVideoToProjectAtPosition(new Video(destVideoRecorded,
+//                    Video.DEFAULT_VOLUME), videoToAdapt.getPosition() - 1,
+//            new OnAddMediaFinishedListener() {
+//              @Override
+//              public void onAddMediaItemToTrackError() {
+//                recordView.hideProgressAdaptingVideo();
+//                recordView.showError(context.getString(R.string.addMediaItemToTrackError));
+//              }
+//
+//              @Override
+//              public void onAddMediaItemToTrackSuccess(Media media) {
+//                Utils.removeVideo(videoToAdapt.getVideo().getMediaPath());
+//                if (!newClipImporter.areTherePendingTranscodingTask()) {
+//                  recordView.hideProgressAdaptingVideo();
+//                  if (isClickedNavigateToEditOrGallery) {
+//                    navigateToEditOrGallery();
+//                  }
+//                }
+//                // TODO(jliarte): 5/07/17 seems that sometimes (when navigate) this code is not reached!!!
+//                checkIfVideoAddedNeedLaunchAVTransitionJob((Video) media);
+//              }
+//            });
+//  }
 
   private void checkIfVideoAddedNeedLaunchAVTransitionJob(Video video) {
     if (currentProject.isAudioFadeTransitionActivated()
@@ -371,8 +410,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     //recordView.showError(message);
   }
 
-  public void restartPreview(){
-    if(!camera.isRecordingVideo()) {
+  public void restartPreview() {
+    if (!camera.isRecordingVideo()) {
       camera.reStartPreview();
     }
   }
@@ -413,7 +452,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   public void buttonSettingsCamera(boolean isSelected) {
-    if(isSelected) {
+    if (isSelected) {
       recordView.hideSettingsCameraView();
     } else {
       recordView.showSettingsCameraView();
@@ -421,51 +460,21 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   public void navigateToEditOrGallery() {
-    if(newClipImporter.areTherePendingTranscodingTask()){
-      recordView.showProgressAdaptingVideo();
-      isClickedNavigateToEditOrGallery = true;
-      Log.d(TAG, "showProgressAdaptingVideo");
-    } else {
-      if(areThereVideosInProject()){
+//    if (newClipImporter.areTherePendingTranscodingTask()) {
+//      recordView.showProgressAdaptingVideo();
+////      boolean isClickedNavigateToEditOrGallery = true;
+//      Log.d(TAG, "showProgressAdaptingVideo");
+//    } else {
+      if (areThereVideosInProject()) {
         recordView.navigateTo(EditActivity.class);
       } else {
         recordView.navigateTo(GalleryActivity.class);
       }
-    }
+//    }
   }
 
   private boolean areThereVideosInProject() {
     return currentProject.getVMComposition().hasVideos();
-  }
-
-  @Override
-  public void addVideoToProject(final NewClipImporter.VideoToAdapt videoToAdapt) {
-    String destVideoRecorded = Constants.PATH_APP_MASTERS +
-        File.separator + new File(videoToAdapt.getVideo().getMediaPath()).getName();
-    if (videoToAdapt != null) {
-      addVideoToProjectUseCase.addVideoToProjectAtPosition(new Video(destVideoRecorded,
-                      Video.DEFAULT_VOLUME), videoToAdapt.getPosition() - 1,
-              new OnAddMediaFinishedListener() {
-                @Override
-                public void onAddMediaItemToTrackError() {
-                  recordView.hideProgressAdaptingVideo();
-                  recordView.showError(context.getString(R.string.addMediaItemToTrackError));
-                }
-
-                @Override
-                public void onAddMediaItemToTrackSuccess(Media media) {
-                  Utils.removeVideo(videoToAdapt.getVideo().getMediaPath());
-                  if (!newClipImporter.areTherePendingTranscodingTask()) {
-                    recordView.hideProgressAdaptingVideo();
-                    if (isClickedNavigateToEditOrGallery) {
-                      navigateToEditOrGallery();
-                    }
-                  }
-                  // TODO(jliarte): 5/07/17 seems that sometimes (when navigate) this code is not reached!!!
-                  checkIfVideoAddedNeedLaunchAVTransitionJob((Video) media);
-                }
-              });
-    }
   }
 
   @Override
@@ -474,7 +483,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     video.setTempPath(currentProject.getProjectPathIntermediateFiles());
 
     videoFormat = currentProject.getVMComposition().getVideoFormat();
-    drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
+    Drawable drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
 
     launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video,
             videoFormat, intermediatesTempAudioFadeDirectory, new TranscoderHelperListener() {
@@ -491,10 +500,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
                 if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
                   video.increaseNumTriesToExportVideo();
                   Project currentProject = Project.getInstance(null, null, null);
-                  launchTranscoderAddAVTransitionUseCase.launchExportTempFile(context
-                                  .getDrawable(R.drawable.alpha_transition_white), video,
-                          getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
-                          currentProject.getProjectPathIntermediateFileAudioFade(), this);
+                  launchTranscoderAddAVTransitionUseCase.launchExportTempFile(
+                          context.getDrawable(R.drawable.alpha_transition_white), video,
+                          videoFormat, currentProject.getProjectPathIntermediateFileAudioFade(),
+                          this);
                 } else {
                   updateVideoRepositoryUseCase.errorTranscodingVideo(video,
                           Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
@@ -504,11 +513,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   public void switchCamera() {
-    if (!isFrontCameraSelected) {
-      isFrontCameraSelected = true;
-    } else {
-      isFrontCameraSelected = false;
-    }
+    isFrontCameraSelected = !isFrontCameraSelected;
     resetViewSwitchCamera();
     recordView.setCameraDefaultSettings();
     camera.switchCamera(isFrontCameraSelected);
@@ -659,21 +664,23 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     recordView.showFreeStorageSpace(memoryStatus, memoryFreePercent, freeMemoryInBytes, totalMemoryInBytes);
   }
 
-  public int getPercentFreeBattery(long totalMemory, long freeMemory) {
-    return Math.round(freeMemory / (float) totalMemory *100);
+  private int getPercentFreeBattery(long totalMemory, long freeMemory) {
+    return Math.round(freeMemory / (float) totalMemory * 100);
   }
 
-  public Constants.MEMORY_STATUS getMemoryStatus(int freeMemoryPercent) {
-    Constants.MEMORY_STATUS memoryStatus= Constants.MEMORY_STATUS.OKAY;
-    if (freeMemoryPercent<25)
-      memoryStatus= Constants.MEMORY_STATUS.CRITICAL;
-    else if (freeMemoryPercent>=25 && freeMemoryPercent<75)
-      memoryStatus= Constants.MEMORY_STATUS.MEDIUM;
-    else  memoryStatus= Constants.MEMORY_STATUS.OKAY;
+  private Constants.MEMORY_STATUS getMemoryStatus(int freeMemoryPercent) {
+    Constants.MEMORY_STATUS memoryStatus;
+    if (freeMemoryPercent < 25) {
+      memoryStatus = Constants.MEMORY_STATUS.CRITICAL;
+    } else if (freeMemoryPercent >= 25 && freeMemoryPercent < 75) {
+      memoryStatus = Constants.MEMORY_STATUS.MEDIUM;
+    } else {
+      memoryStatus = Constants.MEMORY_STATUS.OKAY;
+    }
     return memoryStatus;
   }
 
-  public String toFormattedMemorySpaceWithBytes(long memorySpace) {
+  private String toFormattedMemorySpaceWithBytes(long memorySpace) {
     double memorySpaceInBytes;
     if (memorySpace<ONE_KB) {
       memorySpaceInBytes = memorySpace;
