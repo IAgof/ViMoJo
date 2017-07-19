@@ -668,6 +668,13 @@
                     android:layout_alignEnd="@+id/hud_cardview"
                     android:layout_margin="8dp"
                     >
+                    <!-- Borrar este linear layout primero en java -->
+                    <LinearLayout
+                        android:id="@+id/controls"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+
 
                     <ImageButton
                         android:id="@+id/button_record"
