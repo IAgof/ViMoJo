@@ -86,6 +86,7 @@
                         android:src="@drawable/activity_record_ic_settings"
                         />
 
+                <!--delete button settings camera in java code-->
                     <ImageButton
                         android:id="@+id/button_settings_camera"
                         android:layout_width="24dp"
@@ -95,7 +96,8 @@
                         android:scaleType="fitCenter"
                         android:layout_toRightOf="@+id/button_navigate_settings"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/activity_record_ic_controls"/>
+                        android:src="@drawable/activity_record_ic_controls"
+                        android:visibility="invisible"/>
 
                 <ImageView
                     android:id="@+id/activity_record_icon_battery"
@@ -103,9 +105,8 @@
                     android:layout_height="24dp"
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginStart="32dp"
-                    android:layout_toEndOf="@+id/button_settings_camera"
+                    android:layout_marginStart="16dp"
+                    android:layout_toRightOf="@+id/activity_record_icon_storage"
                     android:scaleType="fitCenter"
                     android:src="@drawable/activity_record_ic_battery_full"
                     android:visibility="visible" />
@@ -119,7 +120,7 @@
                         android:layout_gravity="center"
                         android:visibility="visible"
                         android:src="@drawable/activity_record_ic_storage"
-                        android:layout_toRightOf="@+id/activity_record_icon_battery"
+                        android:layout_toRightOf="@+id/button_navigate_settings"
                         android:layout_centerVertical="true"/>
 
                     <LinearLayout
@@ -196,7 +197,7 @@
                     <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
                         android:id="@+id/button_navigate_edit_or_gallery"
                         android:layout_width="36dp"
-                        android:layout_height="36dp"
+                        android:layout_height="38dp"
                         android:layout_weight="1"
                         android:background="@drawable/circle_background"
                         android:scaleType="fitCenter"
@@ -794,6 +795,7 @@
             android:id="@+id/button_to_hide_controls"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:padding="4dp"
             android:background="@drawable/circle_background"
             android:src="@drawable/activity_record_ic_show_menu_normal"
             android:scaleType="fitCenter"
@@ -805,9 +807,10 @@
             android:id="@+id/button_to_show_controls_right"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:padding="6dp"
             android:background="@drawable/circle_background"
             android:scaleType="fitCenter"
-            android:src="@drawable/activity_record_ic_hide_menu_normal"
+            android:src="@drawable/activity_record_ic_controls"
             android:visibility="visible"
             android:layout_alignBottom="@+id/settings_bar_cardview"
             android:layout_alignStart="@+id/button_to_hide_controls"
