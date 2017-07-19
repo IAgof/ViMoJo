@@ -158,10 +158,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
     public void advanceBackwardStartTrimming(int advancePrecision, int startTimeMs) {
         float adjustSeekBarMinPosition = (float) (startTimeMs - advancePrecision)
             / MS_CORRECTION_FACTOR;
-        if(adjustSeekBarMinPosition < 0){
-            adjustSeekBarMinPosition = 0;
-        }
-        trimView.updateStartTrimmingRangeSeekBar(adjustSeekBarMinPosition);
+        trimView.updateStartTrimmingRangeSeekBar(Math.max(0, adjustSeekBarMinPosition));
     }
 
     public void advanceForwardStartTrimming(int advancePrecision, int startTimeMs) {
@@ -183,7 +180,8 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
         if(adjustSeekBarMaxPosition > maxRangeSeekBarValue){
             adjustSeekBarMaxPosition = maxRangeSeekBarValue;
         }
-        trimView.updateFinishTrimmingRangeSeekBar(adjustSeekBarMaxPosition);
+        trimView.updateFinishTrimmingRangeSeekBar(Math.min(maxRangeSeekBarValue,
+            adjustSeekBarMaxPosition));
     }
 }
 
