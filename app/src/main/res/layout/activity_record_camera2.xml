@@ -44,8 +44,8 @@
             android:layout_alignParentEnd="true"
             android:text="@string/recordTextGallery"
             android:textColor="@android:color/white"
-            android:textSize="10sp"
-            android:layout_marginRight="24dp" />
+            android:textSize="8sp"
+            android:layout_marginRight="36dp" />
 
         <android.support.v7.widget.CardView
             android:id="@+id/hud_cardview"
@@ -149,14 +149,14 @@
                             android:paddingRight="4dp"
                             android:text="00:00"
                             android:textColor="@android:color/white"
-                            android:textSize="24sp"
+                            android:textSize="20sp"
                             android:visibility="visible" />
                     </LinearLayout>
 
                     <ImageView
                         android:id="@+id/button_resolution_indicator"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
                         android:scaleType="fitCenter"
                         android:layout_gravity="center"
                         android:visibility="visible"
@@ -167,7 +167,7 @@
 
                     <ImageButton
                         android:id="@+id/mic_plug_imageview"
-                        android:layout_width="24dp"
+                        android:layout_width="18dp"
                         android:layout_height="24dp"
                         android:layout_marginRight="8dp"
                         android:scaleType="fitCenter"
@@ -204,7 +204,7 @@
                         android:visibility="visible"
                         android:layout_centerVertical="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginRight="16dp"
+                        android:layout_marginRight="14dp"
                          />
 
                     <TextView
@@ -272,7 +272,7 @@
             android:src="@drawable/activity_record_ic_shrink"
             android:background="@drawable/circle_background"
             android:scaleType="fitCenter"
-            android:layout_margin="24dp"
+            android:layout_margin="16dp"
             android:layout_alignParentBottom="true"             />
 
         <android.support.v7.widget.CardView
@@ -523,10 +523,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_alignParentBottom="true"
             android:layout_centerInParent="true"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginBottom="8dp"
+
             android:backgroundTint="@color/colorGreyTransparent"
             app:cardCornerRadius="8dp"
             app:cardElevation="@null">
@@ -538,7 +536,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
-
                 android:visibility="visible"
                 android:layout_toLeftOf="@+id/button_to_show_controls_right"
                 >
@@ -703,10 +700,11 @@
                             android:orientation="vertical"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
+                            android:layout_gravity="center"
                             android:layout_above="@+id/button_record"
                             android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true"
-                            android:visibility="invisible"
+                            android:visibility="visible"
                             >
 
                             <TextView
@@ -717,9 +715,11 @@
                                 android:layout_height="wrap_content"
                                 android:background="#00ffffff"
                                 android:gravity="center"
+                                android:textSize="8sp"
+                                android:padding="4dp"
                                 android:textColor="@color/colorWhite"
                                 android:layout_marginTop="4dp"
-                                tools:visibility="gone"/>
+                                tools:visibility="visible"/>
 
                             <ImageView
                                 android:id="@+id/seekBar_upper_image"
@@ -728,6 +728,7 @@
                                 android:layout_alignParentTop="true"
                                 android:layout_gravity="center"
                                 android:layout_marginTop="4dp"
+                                android:padding="4dp"
                                 android:background="#00ffffff"
                                 android:text="100%"
                                 tools:src="@drawable/activity_record_ic_focus_macro" />
@@ -745,12 +746,15 @@
                                     android:thumbTint="@color/colorWhite"
                                     android:progressTint="@color/colorWhite"
                                     android:splitTrack="false"
+                                    android:gravity="center"
                                     app:seekBarRotation="CW270" /> <!-- Rotation: CW90 or CW270 -->
                             </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
 
                             <TextView
                                 android:id="@+id/seekBar_lower_text"
                                 android:text="0%"
+                                android:textSize="8sp"
+                                android:padding="4dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentBottom="true"
@@ -758,11 +762,12 @@
                                 android:layout_gravity="center"
                                 android:gravity="center"
                                 android:textColor="@color/colorWhite"
-                                tools:visibility="gone"/>
+                                tools:visibility="visible"/>
 
                             <ImageView
                                 android:id="@+id/seekBar_lower_image"
                                 android:text="100%"
+                                android:padding="4dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentBottom="true"
@@ -775,21 +780,8 @@
 
                 </android.support.v7.widget.CardView>
 
-            <LinearLayout
-                android:id="@+id/controls"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible"
-                android:padding="2dp"
-                android:background="@color/colorGreyTransparent"
-                android:layout_above="@+id/button_record"
-                android:layout_marginBottom="12dp"
-                android:layout_centerHorizontal="true">
-
-            </LinearLayout>
-
         </RelativeLayout>
+
 
         <ImageButton
             android:id="@+id/button_to_hide_controls"
@@ -799,10 +791,8 @@
             android:src="@drawable/activity_record_ic_show_menu_normal"
             android:scaleType="fitCenter"
             android:visibility="visible"
-            android:layout_above="@+id/button_to_show_controls_right"
-            android:layout_toLeftOf="@+id/relativeLayout"
-
-            />
+            android:layout_alignTop="@+id/button_to_show_controls_right"
+            android:layout_toStartOf="@+id/relativeLayout" />
 
         <ImageButton
             android:id="@+id/button_to_show_controls_right"
