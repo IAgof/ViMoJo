@@ -106,7 +106,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     CircleImageView buttonThumbClipRecorded;
     @Bind(R.id.text_view_num_videos)
     TextView numVideosRecorded;
-    @Bind(R.id.record_text_view_edit_or_gallery)
+    @Bind(R.id.edit_or_gallery_text_view)
     TextView editText;
     @Bind(R.id.imageRecPoint)
     ImageView recordingIndicator;

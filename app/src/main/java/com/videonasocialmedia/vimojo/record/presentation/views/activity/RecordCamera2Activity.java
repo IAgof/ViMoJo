@@ -99,7 +99,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   Chronometer chronometer;
   @Bind(R.id.text_view_num_videos)
   TextView numVideosRecordedTextView;
-  @Bind(R.id.record_text_view_edit_or_gallery)
+  @Bind(R.id.edit_or_gallery_text_view)
   TextView editText;
   @Bind(R.id.button_navigate_edit_or_gallery)
   CircleImageView thumbClipRecordedButton;
