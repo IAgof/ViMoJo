@@ -46,6 +46,7 @@ import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerAmplitudeDbListener;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoopThread;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -62,6 +63,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   private static final int NORMALIZE_PICOMETER_VALUE = 108;
   private static final double MAX_AMPLITUDE_VALUE_PICOMETER = 32768;
   private static final int SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE = 100;
+  public static final int PREVIEW_RECORD_PICOMETER_SCALE_CORRECTION_RATIO = 2;
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private static final String TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
@@ -212,7 +214,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   private int getProgressPicometerPreview(double maxAmplituedDb) {
     int progress = 100 - (int) ((maxAmplituedDb / NORMALIZE_PICOMETER_VALUE) * 100 * -1);
-    progress = (progress<100) ? progress: 0;
+    progress = (progress < 100) ? progress : 0;
     return progress;
   }
 
@@ -232,21 +234,23 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     double dBs = getAmplitudePicometerFromRecorderDbs(maxAmplitude);
     Log.d(TAG, "maxAmplitudeRecording " + maxAmplitude + " dBs " + dBs);
     int progress = getProgressPicometerRecording(dBs);
-    if(maxAmplitude>0)
+    if (maxAmplitude > 0) {
       setPicometerProgressAndColor(progress);
+    }
 
-    if(camera.isRecordingVideo()){
+    if (camera.isRecordingVideo()) {
       picometerRecordingUpdaterHandler.postDelayed(updatePicometerRecordingTask,
           SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE);
     }
   }
 
-  private int getProgressPicometerRecording(double dBs) {
-    return (int) ((dBs / NORMALIZE_PICOMETER_VALUE) * 100 * -1 * 2);
+  private float getAmplitudePicometerFromRecorderDbs(int maxAmplitude) {
+    return (float) (20 * Math.log10(maxAmplitude / MAX_AMPLITUDE_VALUE_PICOMETER));
   }
 
-  private float getAmplitudePicometerFromRecorderDbs(int maxAmplitude) {
-    return (float) (20 * Math.log10(maxAmplitude/ MAX_AMPLITUDE_VALUE_PICOMETER));
+  private int getProgressPicometerRecording(double dBs) {
+    return (int) (100 - ((dBs / NORMALIZE_PICOMETER_VALUE) * 100 * -1
+            * PREVIEW_RECORD_PICOMETER_SCALE_CORRECTION_RATIO));
   }
 
   private void setPicometerProgressAndColor(int progress) {
@@ -267,6 +271,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public void onPause() {
     camera.onPause();
     recordView.stopMonitoringRotation();
+    stopSamplingPicometerPreview();
+    picometerRecordingUpdaterHandler.removeCallbacksAndMessages(null);
   }
 
   private void showThumbAndNumber() {

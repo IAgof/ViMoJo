@@ -131,7 +131,7 @@ public class MediaRecorderWrapper {
   }
 
   // Call this only after the setAudioSource().
-  public int getMaxAmplitude(){
+  public int getMaxAmplitude() {
     return mediaRecorder.getMaxAmplitude();
   }
 
