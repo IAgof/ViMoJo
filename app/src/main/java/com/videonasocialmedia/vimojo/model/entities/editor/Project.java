@@ -13,19 +13,20 @@ package com.videonasocialmedia.vimojo.model.entities.editor;
 
 import android.support.annotation.NonNull;
 
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ChangeNotifier;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -35,7 +36,9 @@ import java.util.UUID;
  * opens a project all previous changes must be accessible to him or her. However there can be only
  * one
  */
-public class Project {
+public class Project implements ElementChangedListener {
+  private final ChangeNotifier changeNotifier = new ChangeNotifier();
+
   public static final String INTERMEDIATE_FILES = "intermediate_files";
   public static final String INTERMEDIATE_FILES_TEMP_AUDIO_FADE = "tempAudioFade";
   // TODO:(alvaro.martinez) 23/12/16 Change VideonaSDK, receive path temo from app, folder name ".tempAudio";
@@ -335,5 +338,22 @@ public class Project {
 
   private void createFolder(String projectPath) {
     FileUtils.createFolder(projectPath);
+  }
+
+  public void addListener(ElementChangedListener listener) {
+    changeNotifier.addListener(listener);
+  }
+
+  public void removeListener(ElementChangedListener listener) {
+    changeNotifier.removeListener(listener);
+  }
+
+  public void notifyChanges() {
+    changeNotifier.notifyChanges();
+  }
+
+  @Override
+  public void onObjectUpdated() {
+    notifyChanges();
   }
 }

@@ -94,6 +94,7 @@ public class AddVideoToProjectUseCase {
             Project currentProject = getCurrentProject();
             Track mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItemAt(position, video);
+            video.addListener(currentProject);
             projectRepository.update(currentProject);
             listener.onAddMediaItemToTrackSuccess(video);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {

@@ -413,6 +413,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         cameraDevice = null;
       }
       if (null != mediaRecorder) {
+        mediaRecorder.reset();
         mediaRecorder.release();
         mediaRecorder = null;
       }

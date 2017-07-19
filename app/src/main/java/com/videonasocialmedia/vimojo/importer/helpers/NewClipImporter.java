@@ -66,9 +66,10 @@ public class NewClipImporter implements TranscoderHelperListener {
 
   private void saveVideoToAdapt(Video video, String destVideoPath, int videoPosition,
                                 int cameraRotation, int retries) {
+    // TODO(jliarte): 18/07/17 move this to a realm repo
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destVideoPath, videoPosition,
             cameraRotation, retries);
-    videoListToAdaptAndPosition.put(video.getUuid(), videoToAdapt);
+    videoListToAdaptAndPosition.put(video.getMediaPath(), videoToAdapt);
   }
 
 //  private void handleViewCall() {
@@ -102,13 +103,14 @@ public class NewClipImporter implements TranscoderHelperListener {
   public void onSuccessTranscoding(Video video) {
 //      if (isAVideoAdaptedToFormat(video)) {
     Log.d(TAG, "onSuccessTranscoding adapting video " + video.getMediaPath());
-    VideoToAdapt videoToAdapt = videoListToAdaptAndPosition.remove(video.getUuid());
+    VideoToAdapt videoToAdapt = videoListToAdaptAndPosition.remove(video.getMediaPath());
     FileUtils.removeFile(video.getMediaPath());
     Log.e(TAG, "deleting " + video.getMediaPath());
     video.setMediaPath(videoToAdapt.destVideoPath);
     video.setVolume(Video.DEFAULT_VOLUME);
     video.setStopTime(FileUtils.getDuration(video.getMediaPath()));
     video.resetTempPath();
+    video.notifyChanges();
     updateVideoRepositoryUseCase.updateVideo(video);
     // (jliarte): 18/07/17 now we should move the file, notify changes, and launch AV transitions
 
@@ -133,9 +135,12 @@ public class NewClipImporter implements TranscoderHelperListener {
   public void onErrorTranscoding(Video video, String message) {
 //      if (newClipImporter.isAVideoAdaptedToFormat(video)) {
     Log.d(TAG, "onErrorTranscoding adapting video " + video.getMediaPath() + " - " + message);
-    VideoToAdapt videoToAdapt = videoListToAdaptAndPosition.get(video.getUuid());
+    VideoToAdapt videoToAdapt = videoListToAdaptAndPosition.get(video.getMediaPath());
+    if (videoToAdapt == null) {
+      return;
+    }
     if (videoToAdapt.numTriesAdaptingVideo < MAX_NUM_TRIES_ADAPTING_VIDEO) {
-      videoListToAdaptAndPosition.remove(video.getUuid());
+      videoListToAdaptAndPosition.remove(video.getMediaPath());
       // TODO(jliarte): 18/07/17 check if video still has volume
       adaptVideoToVideonaFormat(video, videoToAdapt.getPosition(),
               videoToAdapt.getRotation(), ++videoToAdapt.numTriesAdaptingVideo);
