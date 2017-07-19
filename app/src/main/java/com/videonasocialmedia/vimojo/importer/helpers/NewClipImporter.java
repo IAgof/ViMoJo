@@ -104,8 +104,8 @@ public class NewClipImporter implements TranscoderHelperListener {
 //      if (isAVideoAdaptedToFormat(video)) {
     Log.d(TAG, "onSuccessTranscoding adapting video " + video.getMediaPath());
     VideoToAdapt videoToAdapt = videoListToAdaptAndPosition.remove(video.getMediaPath());
-    FileUtils.removeFile(video.getMediaPath());
-    Log.e(TAG, "deleting " + video.getMediaPath());
+//    FileUtils.removeFile(video.getMediaPath());
+    Log.e(TAG, "not deleting " + video.getMediaPath());
     video.setMediaPath(videoToAdapt.destVideoPath);
     video.setVolume(Video.DEFAULT_VOLUME);
     video.setStopTime(FileUtils.getDuration(video.getMediaPath()));

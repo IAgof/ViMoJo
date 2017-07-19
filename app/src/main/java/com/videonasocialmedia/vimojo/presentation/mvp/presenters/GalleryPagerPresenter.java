@@ -283,14 +283,14 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         if (path.contains(Constants.PATH_APP_MASTERS) || path.contains(Constants.PATH_APP_EDITED)) {
             Log.e(LOG_TAG, "Video already in vimojo!!");
         } else {
-            final Video video = new Video(path, Video.DEFAULT_VOLUME);
+            final Video video = new Video(path, 0.99f);
             video.addListener(new ElementChangedListener() {
                 @Override
                 public void onObjectUpdated() {
                     final String destVideoImported = Constants.PATH_APP_MASTERS +
                             File.separator + new File(path).getName();
                     try {
-                        Utils.moveFile(video.getMediaPath(), destVideoImported);
+                        Utils.copyFile(video.getMediaPath(), destVideoImported);
                         loadVideoListToProject(Collections.singletonList(
                                 new Video(destVideoImported, Video.DEFAULT_VOLUME)));
 //                        checkIfVideoAddedNeedLaunchAVTransitionJob((Video) media);
