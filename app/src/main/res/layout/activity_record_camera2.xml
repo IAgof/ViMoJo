@@ -755,6 +755,8 @@
                             <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
                                 android:layout_above="@+id/seekBar_lower_text"
                                 android:layout_below="@+id/seekBar_upper_text"
                                 >
