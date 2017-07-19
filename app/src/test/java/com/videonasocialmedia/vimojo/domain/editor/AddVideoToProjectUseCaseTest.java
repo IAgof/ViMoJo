@@ -13,7 +13,6 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinis
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnLaunchAVTransitionTempFileListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,33 +56,6 @@ public class AddVideoToProjectUseCaseTest {
     EventBus mockedEventBus = PowerMockito.mock(EventBus.class);
     PowerMockito.when(EventBus.getDefault()).thenReturn(mockedEventBus);
     this.mockedEventBus = mockedEventBus;
-  }
-
-/**
- * Borrar test , addVideoToTrack not in use, delete.
- * @Test
-  public void testAddVideoToTrackCallsUpdateProject() {
-    Project currentProject = Project.getInstance(null, null, null);
-    Video video = new Video("media/path", 1f);
-
-    injectedUseCase.addVideoToTrack(video);
-
-    verify(mockedProjectRepository).update(currentProject);
-  }
- */
-
-// Borrar test , addVideoToTrack not in use, delete.
-  @Test
-  public void testAddVideoToTrackWithListenerCallsUpdateProject() {
-    Project currentProject = Project.getInstance(null, null, null);
-    Video video = new Video("media/path", 1f);
-    OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
-    OnLaunchAVTransitionTempFileListener avTransitionTempFileListener =
-        getOnLaunchAVTransitionTempFileListener();
-
-    injectedUseCase.addVideoToTrack(video, listener, avTransitionTempFileListener);
-
-    verify(mockedProjectRepository).update(currentProject);
   }
 
   @Test

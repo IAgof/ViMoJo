@@ -290,11 +290,6 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     }
 
     @Override
-    public void hideProgressAdaptingVideo() {
-        // TODO(jliarte): 6/07/17 implement this method
-    }
-
-    @Override
     public void showError(String string) {
         // TODO(jliarte): 6/07/17 implement this method, better do it in parent class
     }

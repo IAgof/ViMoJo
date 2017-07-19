@@ -17,6 +17,7 @@ import android.util.Log;
 
 
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -42,7 +43,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener {
+public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener, ElementChangedListener {
     public static final float VOLUME_MUTE = 0f;
     private final String TAG = getClass().getSimpleName();
     private final Project currentProject;
@@ -86,6 +87,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         this.userEventTracker = userEventTracker;
 
         this.currentProject = loadCurrentProject();
+        currentProject.addListener(this);
     }
 
     public Project loadCurrentProject() {
@@ -266,5 +268,10 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 }
             });
         }
+    }
+
+    @Override
+    public void onObjectUpdated() {
+        editActivityView.updateProject();
     }
 }

@@ -6,12 +6,13 @@ import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 /**
  * Created by alvaro on 22/02/17.
  */
-
+// TODO(jliarte): 18/07/17 remove this UC
+@Deprecated
 public class UpdateVideoRepositoryUseCase {
 
   private final VideoRepository videoRepository;
 
-  public UpdateVideoRepositoryUseCase(VideoRepository videoRepository){
+  public UpdateVideoRepositoryUseCase(VideoRepository videoRepository) {
     this.videoRepository = videoRepository;
   }
 

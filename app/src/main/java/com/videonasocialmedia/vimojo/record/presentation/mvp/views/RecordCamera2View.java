@@ -20,8 +20,7 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
 
-public interface RecordCamera2View extends NewClipImporter.View {
-
+public interface RecordCamera2View {
 
     // Start/Stop record view
 
@@ -120,9 +119,9 @@ public interface RecordCamera2View extends NewClipImporter.View {
 
     void showError(String message);
 
-    void showProgressAdaptingVideo();
-
-    void hideProgressAdaptingVideo();
+//    void showProgressAdaptingVideo();
+//
+//    void hideProgressAdaptingVideo();
 
     void navigateTo(Class cls);
 
@@ -137,6 +136,11 @@ public interface RecordCamera2View extends NewClipImporter.View {
 
     void updateAudioGainSeekbarDisability();
 
+    /**
+     * Sets recordview picometer value and color
+     * @param progress value of picometer progress meassured from 0 to 100
+     * @param color android color for picometer seekbar
+     */
     void showProgressPicometer(int progress, int color);
 
     void showExternalMicrophoneConnected();

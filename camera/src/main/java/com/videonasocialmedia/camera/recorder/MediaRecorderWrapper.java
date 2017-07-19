@@ -95,6 +95,7 @@ public class MediaRecorderWrapper {
       mediaRecorder.start();
     } catch (RuntimeException e) {
       new File(videoPath).delete();
+      reset();
       release();
     }
   }
@@ -117,7 +118,7 @@ public class MediaRecorderWrapper {
     }
   }
 
-  public void reset(){
+  public void reset() {
     mediaRecorder.reset();
   }
 
@@ -130,7 +131,7 @@ public class MediaRecorderWrapper {
   }
 
   // Call this only after the setAudioSource().
-  public int getMaxAmplitude(){
+  public int getMaxAmplitude() {
     return mediaRecorder.getMaxAmplitude();
   }
 

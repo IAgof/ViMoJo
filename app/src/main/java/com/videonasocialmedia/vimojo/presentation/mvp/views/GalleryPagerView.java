@@ -10,14 +10,12 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
-import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
-
 import java.util.ArrayList;
 
 /**
  * This interface is used to update the track view in the editor activity.
  */
-public interface GalleryPagerView extends NewClipImporter.View {
+public interface GalleryPagerView {
 
     /**
      * Navigates to other activity.
@@ -25,9 +23,6 @@ public interface GalleryPagerView extends NewClipImporter.View {
     void navigate();
 
     void showDialogVideosNotAddedFromGallery(ArrayList<Integer> listVideoId);
-
-  @Override
-  void hideProgressAdaptingVideo();
 
   void showError(String string);
 }

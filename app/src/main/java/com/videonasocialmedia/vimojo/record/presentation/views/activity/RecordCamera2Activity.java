@@ -221,7 +221,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private final int RESOLUTION_SELECTED_HD4K = 2160;
   private OrientationHelper orientationHelper;
 
-  private ProgressDialog progressDialogAdaptVideo;
+//  private ProgressDialog progressDialogAdaptVideo;
 
   private BatteryReceiver batteryReceiver = new BatteryReceiver(){
     @Override
@@ -288,7 +288,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
     this.getActivityPresentersComponent().inject(this);
 
-    createProgressDialogAdaptVideo();
+//    createProgressDialogAdaptVideo();
     createAlertDialogBatteryAndStorage();
     initWhiteBalanceModesMap();
     initFocusSelectionModesMap();
@@ -299,15 +299,15 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintProgress(ColorStateList.valueOf(Color.GREEN));
     picometerProgress.setScaleY(4f);
   }
-
-  private void createProgressDialogAdaptVideo() {
-    progressDialogAdaptVideo = new ProgressDialog(this);
-    progressDialogAdaptVideo.setTitle(getString(R.string.dialog_title_record_adapting_video));
-    progressDialogAdaptVideo.setMessage(getString(R.string.dialog_message_record_adapting_video));
-    progressDialogAdaptVideo.setIndeterminate(false);
-    progressDialogAdaptVideo.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-  }
+//
+//  private void createProgressDialogAdaptVideo() {
+//    progressDialogAdaptVideo = new ProgressDialog(this);
+//    progressDialogAdaptVideo.setTitle(getString(R.string.dialog_title_record_adapting_video));
+//    progressDialogAdaptVideo.setMessage(getString(R.string.dialog_message_record_adapting_video));
+//    progressDialogAdaptVideo.setIndeterminate(false);
+//    progressDialogAdaptVideo.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+//        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+//  }
 
   private void createAlertDialogBatteryAndStorage() {
     alertDialogBattery = new AlertDialogWithInfoIntoCircle(this, getString(R.string.battery));
@@ -541,15 +541,15 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     showMessage(message);
   }
 
-  @Override
-  public void showProgressAdaptingVideo() {
-    progressDialogAdaptVideo.show();
-  }
-
-  @Override
-  public void hideProgressAdaptingVideo() {
-    progressDialogAdaptVideo.dismiss();
-  }
+//  @Override
+//  public void showProgressAdaptingVideo() {
+//    progressDialogAdaptVideo.show();
+//  }
+//
+//  @Override
+//  public void hideProgressAdaptingVideo() {
+//    progressDialogAdaptVideo.dismiss();
+//  }
 
   @Override
   public void hidePrincipalViews() {

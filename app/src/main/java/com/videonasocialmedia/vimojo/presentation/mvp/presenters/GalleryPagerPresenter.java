@@ -18,6 +18,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
@@ -49,7 +50,7 @@ import javax.inject.Inject;
  * This class is used for adding new videos to the project.
  */
 public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
-    OnRemoveMediaFinishedListener, OnLaunchAVTransitionTempFileListener, TranscoderHelperListener, NewClipImporter.ProjectVideoAdder {
+    OnRemoveMediaFinishedListener, OnLaunchAVTransitionTempFileListener, TranscoderHelperListener {
     private final String LOG_TAG = "GalleryPagerPresenter";
 
     private final SharedPreferences preferences;
@@ -67,7 +68,6 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     // TODO(jliarte): 3/05/17 init in constructor to inject it. Wrap android MMR with our own class
     MediaMetadataRetriever metadataRetriever;
     private final UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase;
-    private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
 
     /**
      * Constructor.
@@ -91,10 +91,8 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         this.updateVideoResolutionToProjectUseCase = updateVideoResolutionToProjectUseCase;
         this.preferences = preferences;
         metadataRetriever = new MediaMetadataRetriever();
-        VideonaFormat videonaFormat = getVideonaFormatFromCurrentProjectUseCase
-                .getVideonaFormatToAdaptVideoRecordedAudioAndVideo();
-        newClipImporter = new NewClipImporter(this, videonaFormat,
-                adaptVideoRecordedToVideoFormatUseCase, galleryPagerView);;
+        newClipImporter = new NewClipImporter(getVideonaFormatFromCurrentProjectUseCase,
+                adaptVideoRecordedToVideoFormatUseCase, updateVideoRepositoryUseCase);
     }
 
     private Project loadCurrentProject() {
@@ -274,56 +272,35 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
                                                   String intermediatesTempAudioFadeDirectory) {
         video.setTempPath(currentProject.getProjectPathIntermediateFiles());
         VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
-        Drawable drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
-        launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
+        Drawable drawableFadeTransitionVideo =
+                context.getDrawable(R.drawable.alpha_transition_white);
+        launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo,
+                video, videoFormat,
             intermediatesTempAudioFadeDirectory, this);
     }
 
-    public void importVideo(String path) {
+    public void importVideo(final String path) {
         if (path.contains(Constants.PATH_APP_MASTERS) || path.contains(Constants.PATH_APP_EDITED)) {
             Log.e(LOG_TAG, "Video already in vimojo!!");
         } else {
-            newClipImporter.adaptVideoToVideonaFormat(
-                    path, currentProject.numberOfClips() - 1, 0, 0);
+            final Video video = new Video(path, Video.DEFAULT_VOLUME);
+            video.addListener(new ElementChangedListener() {
+                @Override
+                public void onObjectUpdated() {
+                    final String destVideoImported = Constants.PATH_APP_MASTERS +
+                            File.separator + new File(path).getName();
+                    try {
+                        Utils.moveFile(video.getMediaPath(), destVideoImported);
+                        loadVideoListToProject(Collections.singletonList(
+                                new Video(destVideoImported, Video.DEFAULT_VOLUME)));
+//                        checkIfVideoAddedNeedLaunchAVTransitionJob((Video) media);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            newClipImporter.adaptVideoToVideonaFormat(video, currentProject.numberOfClips(), 0, 0);
         }
-//        NewClipImporter newClipImporter = new NewClipImporter(this,
-//                getVideoFormatFromCurrentProjectUseCase.getVideonaFormatToAdaptVideoRecordedAudioAndVideo(), )
     }
 
-    @Override
-    public void addVideoToProject(NewClipImporter.VideoToAdapt videoToAdapt) {
-        final String destVideoImported = Constants.PATH_APP_MASTERS +
-                File.separator + new File(videoToAdapt.getVideo().getMediaPath()).getName();
-        if (videoToAdapt != null) {
-            addVideoToProjectUseCase.addVideoToProjectAtPosition(new Video(destVideoImported,
-                            Video.DEFAULT_VOLUME), videoToAdapt.getPosition() - 1,
-                    new OnAddMediaFinishedListener() {
-                        @Override
-                        public void onAddMediaItemToTrackError() {
-                            galleryPagerView.hideProgressAdaptingVideo();
-                            galleryPagerView.showError(context.getString(R.string.addMediaItemToTrackError));
-                        }
-
-                        @Override
-                        public void onAddMediaItemToTrackSuccess(Media media) {
-                            // TODO(jliarte): 6/07/17 should we copy this video to masters?
-                            // By now is just a workarround to recover videos not converted from Asturias trip :P
-                            try {
-                                Utils.copyFile(media.getMediaPath(), destVideoImported);
-                                loadVideoListToProject(Collections
-                                        .singletonList(new Video(destVideoImported,
-                                                Video.DEFAULT_VOLUME)));
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            if (!newClipImporter.areTherePendingTranscodingTask()) {
-                                galleryPagerView.hideProgressAdaptingVideo();
-                            }
-                            // TODO(jliarte): 5/07/17 seems that sometimes (when navigate) this code is not reached!!!
-//                            checkIfVideoAddedNeedLaunchAVTransitionJob((Video) media);
-                        }
-                    });
-        }
-
-    }
 }
