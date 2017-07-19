@@ -608,6 +608,17 @@
                     />
 
                 <ImageButton
+                    android:id="@+id/button_sound_volume"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_sound_volume"
+                    android:layout_margin="8dp"
+                    />
+
+                <ImageButton
                     android:id="@+id/button_toggle_flash"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
