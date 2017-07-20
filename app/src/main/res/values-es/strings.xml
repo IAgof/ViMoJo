@@ -245,52 +245,34 @@
     <!-- About Activity -->
 
     <string name="aboutUsContent">
-        Hola! \n\n
-
-        Lo primero agradecerte tu participación en ViMoJo, todo el equipo te deseamos la mejor
-        experiencias posible. \n\n
-
-        Nuestra compañía se llama Videona y tenemos muchisimas ganas de construir la mejor app
-        MOJO (Movile Journalism) junto a ti, ¿nos ayudas?. \n\n
-
-        La mejor manera de conocernos un poco más es compartiendo tu experiencia con nosotros
-        participando en nuestro canal vimojo.slack.com, lo usamos fundamentalmente para que
-        conozcais más sobre nosotros y para atender mejor vuestras peticiones, millones de gracias a
-        todos los que ya estais participando, ¡sois los mejorer!. \n\n
-
-        En Videona estamos dedicados al desarrollo de aplicaciones de video para dispositivos Android e iOS. \n\n
-
-        VIMOJO, LA ERA DEL PERIODISMO MOVIL \n\n
-
-        ViMoJo (Videona para Periodismo Móvil) permite a los periodistas y cámaras profesionales
-        contar la historia que quieren en el momento que necesitan. Estamos aquí para cambiar el
-        modo en que profesionales de la comunicación utilizan la tecnología móvil en su flujo de
-        trabajo, rompiendo la barrera de edición de vídeo. \n\n
-
+        ¡Hola! \n\nLo primero agradecerte tu participación en ViMoJo, todo el equipo te deseamos la mejor
+        experiencia posible. \n\nNuestra compañía se llama Videona y tenemos muchísimas ganas de
+        construir la mejor app MOJO (Movile Journalism) junto a ti, ¿nos ayudas? \n\nLa mejor
+        manera de conocernos un poco más es compartiendo tu experiencia con nosotros participando
+        en nuestro canal VIMOJO.SLACK.COM, lo usamos fundamentalmente para que conozcáis más sobre
+        nosotros y para atender mejor vuestras peticiones, millones de gracias a todos los que ya
+        estais participando, ¡sois los mejores! \n\nEn Videona estamos dedicados al desarrollo de
+        aplicaciones de video para dispositivos Android e iOS. \n\nVIMOJO, LA ERA DEL
+        PERIODISMO MÓVIL \n\nViMoJo (Videona para Periodismo Móvil) os permite, a los periodistas
+        y cámaras profesionales, contar la historia que quieren en el momento que necesitan.
+        Estamos aquí para cambiar el modo en que profesionales de la comunicación utilizan
+        la tecnología móvil en su flujo de trabajo, rompiendo la barrera de edición de vídeo. \n\n
         Detrás de esta aplicación estamos un equipo formado por jóvenes emprendedores españoles que
         se ha propuesto crear el mejor editor de vídeo para smartphones. Nuestra app pretende romper
         la barrera de la edición y revolucionar el mundo audiovisual en los terminales móviles. \n\n
-
-        ¿Nos ayudas? \n\n
-
-        Te necesitamos para construir y mejorar, la herramienta con la que estamos revolucionando
-        el periodismo. \n\n
-
-        Todo el equipo te agradece que participes de la experiencia. \n\n
-
-        P.D.: Si estas pensando en contratar el producto no duden en contactarnos.\n\n
-
-        Videona Socialmedia S.L \n
-        CIF: B-87047171 \n
-        España - Madrid \n\n
-
-        Copyright 2017. Videona Socialmedia S.L. Todos los derechos reservados.
+        ¿Nos ayudas? \n\nTe necesitamos para construir y mejorar la herramienta con la que estamos
+        revolucionando el periodismo. \n\nTodo el equipo te agradece que participes de la experiencia.
+        \n\nP.D.: Si estas pensando en contratar el producto, no duden en contactarnos.\n\nVideona
+        Socialmedia S.L \nCIF: B-87047171 \nEspaña - Madrid \n\nCopyright 2017. Videona
+        Socialmedia S.L. Todos los derechos reservados.
 
     </string>
     <string name="videona_web">http://www.videona.es</string>
     <string name="contactUsTitle"><u>Contacto</u></string>
     <string name="contactUsContent">Visita nuestra página web:</string>
-    <string name="videonaWeb">http://www.videona.es\n</string>
+        <string name="videonaWeb">http://www.videona.es\n</string>
+    <string name="joinOurCommunity">Únete a nuestro canal de Slack web:</string>
+    <string name="vimojoslackWeb">http://vimojo.slack.com\n</string>
     <string name="versionTitle"><u>Versión</u></string>
     <string name="videona">Videona</string>
     <string name="versionContent">beta </string>
