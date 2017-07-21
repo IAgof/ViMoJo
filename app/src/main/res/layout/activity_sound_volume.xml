@@ -73,16 +73,15 @@
                     android:id="@+id/seekBar_volume_sound"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minHeight="16dp"
-                    android:layout_weight="1"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="0dp"
-                    android:indeterminate="false"
                     android:layout_gravity="center_horizontal"
-                    android:progressTint="@color/colorPrimary"
+                    android:layout_marginBottom="0dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_weight="1"
+                    android:indeterminate="false"
+                    android:minHeight="16dp"
                     android:progressBackgroundTint="@color/button_color"
-                    android:thumb="@drawable/ic_circular_thumb_seekbar"
-                    />
+                    android:progressTint="@color/colorPrimary"
+                    android:thumb="@drawable/ic_circular_thumb_seekbar" />
 
                 <TextView
                     android:layout_width="24dp"
