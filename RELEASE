@@ -9,3 +9,4 @@ v0.7.0-RC3
 - Added audio gain for recording videos
 - Updated split and trimming views with fine advance buttons
 - Added flavours for thomson foundation and vimojo with videona watermark
+- Fix bug if user exit record screen while he is recording a video.
