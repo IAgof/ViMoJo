@@ -431,6 +431,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     //recordView.showError(message);
   }
 
+  public void resetZoom(){
+    camera.resetZoom();
+  }
+
   public void restartPreview(){
     if(!camera.isRecordingVideo()) {
       camera.reStartPreview();
