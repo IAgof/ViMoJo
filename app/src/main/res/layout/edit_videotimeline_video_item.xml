@@ -50,6 +50,17 @@
             android:src="@drawable/activity_edit_clip_delete"
             android:visibility="gone"
             />
+        <ImageView
+            android:id="@+id/image_video_warning"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorAccent"
+            android:padding="3dp"
+            android:src="@android:drawable/stat_sys_warning"
+            android:visibility="gone"
+            />
     </RelativeLayout>
 
     <RelativeLayout
@@ -73,7 +84,8 @@
             android:layout_alignParentRight="true"
             android:textColor="@color/colorWhite"/>
 
-       <!-- <ImageButton
+       <!--
+       <ImageButton
             android:id="@+id/gallery_preview_button"
             android:layout_centerInParent="true"
             android:layout_width="18dp"

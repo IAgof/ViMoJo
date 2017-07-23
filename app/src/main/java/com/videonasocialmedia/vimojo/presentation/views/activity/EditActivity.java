@@ -24,6 +24,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -56,6 +57,7 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.FabUtils;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -529,8 +531,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         dialog.show();
     }
 
-
-
   @Override
   public void enableFabText(boolean enableFabText) {
     isEnableFabText = enableFabText;
@@ -558,7 +558,11 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   }
 
   @Override
-  public void showWarningTempFile() {
+  public void showWarningTempFile(ArrayList<Video> failedVideos) {
+    timeLineAdapter.setFailedVideos(failedVideos);
+    for (Video failedVideo : failedVideos) {
+      Log.e(TAG, "failed video " + videoList.indexOf(failedVideo));
+    }
     warningTranscodingFilesButton.setVisibility(View.VISIBLE);
   }
 
@@ -566,7 +570,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   public void setWarningMessageTempFile(String messageTempFile) {
     warningTranscodingFilesMessage = messageTempFile;
   }
-
 
   @Override
     public void newClipPlayed(int currentClipIndex) {
@@ -578,12 +581,10 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         }
     }
 
-
     @Override
     public void onBackPressed() {
         navigateTo(RecordCamera2Activity.class);
     }
-
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {

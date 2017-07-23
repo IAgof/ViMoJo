@@ -11,6 +11,7 @@ import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.FileDescriptorBitmapDecoder;
 import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
+import com.videonasocialmedia.transcoder.video.overlay.Image;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -38,6 +39,8 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
   TextView textDurationClip;
   @Bind(R.id.image_remove_video)
   ImageView removeVideo;
+  @Bind(R.id.image_video_warning)
+  ImageView videoWarning;
   private int selectedColor;
 
   public TimeLineVideoViewHolder(VideoTimeLineAdapter videoTimeLineAdapter, View videoItem,
@@ -97,6 +100,14 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
   public void disableDeleteIcon() {
     removeVideo.setVisibility(View.GONE);
     removeVideo.setClickable(false);
+  }
+
+  public void enableWarningIcon() {
+    videoWarning.setVisibility(View.VISIBLE);
+  }
+
+  public void diableWarningIcon() {
+    videoWarning.setVisibility(View.GONE);
   }
 
   @OnClick(R.id.timeline_video_thumb)

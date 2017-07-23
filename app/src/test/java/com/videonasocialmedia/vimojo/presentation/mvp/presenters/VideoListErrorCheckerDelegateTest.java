@@ -14,6 +14,7 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -25,6 +26,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -53,12 +55,10 @@ public class VideoListErrorCheckerDelegateTest {
 
   @Test
   public void ifProjectHasSomeVideoWithErrorsCallsShowWarningTempFile() throws IllegalItemOnTrack {
-
     Project project = getAProject();
     Video video = new Video("somePath", Video.DEFAULT_VOLUME);
     project.getMediaTrack().insertItem(video);
     assertThat("Project has video", project.getVMComposition().hasVideos(), is(true));
-
     Video video1 = new Video("video/path", Video.DEFAULT_VOLUME);
     Video video2 = new Video("video/path", Video.DEFAULT_VOLUME);
     List<Video> videoList = new ArrayList<>();
@@ -71,13 +71,20 @@ public class VideoListErrorCheckerDelegateTest {
     video1.setTranscodingTask(mockedTranscodingTask);
     video2.setTranscodingTask(mockedTranscodingTask);
     when(mockedTranscodingTask.isCancelled()).thenReturn(true);
+    ArrayList<Video> failedVideos = new ArrayList<>();
 
     VideoListErrorCheckerDelegate videoListErrorCheckerDelegate = new VideoListErrorCheckerDelegate();
     videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(videoList,
         mockedVideoTranscodingErrorNotifier);
 
-    verify(mockedVideoTranscodingErrorNotifier).showWarningTempFile();
+    ArgumentCaptor<ArrayList> failedVideosCaptor = ArgumentCaptor.forClass(ArrayList.class);
+    verify(mockedVideoTranscodingErrorNotifier).showWarningTempFile(failedVideosCaptor.capture());
     verify(mockedVideoTranscodingErrorNotifier).setWarningMessageTempFile(anyString());
+    assertThat(failedVideosCaptor.getValue().size(), is(2));
+    Video failedVideo1 = (Video) failedVideosCaptor.getValue().get(0);
+    Video failedVideo2 = (Video) failedVideosCaptor.getValue().get(1);
+    assertThat(failedVideo1, is(video1));
+    assertThat(failedVideo2, is(video2));
   }
 
   public Project getAProject() {

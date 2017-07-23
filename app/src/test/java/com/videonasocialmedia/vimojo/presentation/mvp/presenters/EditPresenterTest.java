@@ -27,6 +27,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -38,7 +39,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -118,31 +118,32 @@ public class EditPresenterTest {
     Video video1 = new Video("video/path", Video.DEFAULT_VOLUME);
     Video video2 = new Video("video/path", Video.DEFAULT_VOLUME);
     video2.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
-
     assertThat("video1 has not error", video1.getVideoError() == null, is(true));
     assertThat("video2 has error", video2.getVideoError() == null, is(false));
-
-
     video1.setTranscodingTask(mockedTranscodingTask);
     video2.setTranscodingTask(mockedTranscodingTask);
-
     when(mockedTranscodingTask.isCancelled()).thenReturn(true);
-
     List<Video> videoList = new ArrayList<>();
     videoList.add(video1);
     videoList.add(video2);
     MediaTrack mediaTrack = project.getMediaTrack();
     mediaTrack.insertItem(video1);
-
     EditPresenter presenter = new EditPresenter(mockedEditorView,
             mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
             mockedVideoRemover, mockedMediaItemReorderer, mockedGetAudioFromProjectUseCase,
             mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);
+    ArrayList<Video> failedVideos = new ArrayList<>();
 
     presenter.videoListErrorCheckerDelegate
             .checkWarningMessageVideosRetrieved(videoList, mockedVideoTranscodingErrorNotifier);
 
-    verify(mockedVideoTranscodingErrorNotifier).showWarningTempFile();
+    ArgumentCaptor<ArrayList> failedVideosCaptor = ArgumentCaptor.forClass(ArrayList.class);
+    verify(mockedVideoTranscodingErrorNotifier).showWarningTempFile(failedVideosCaptor.capture());
+    assertThat(failedVideosCaptor.getValue().size(), is(2));
+    Video failedVideo = (Video) failedVideosCaptor.getValue().get(0);
+    Video failedVideo2 = (Video) failedVideosCaptor.getValue().get(1);
+    assertThat(failedVideo, is(video1));
+    assertThat(failedVideo2, is(video2));
   }
 
   public Project getAProject() {

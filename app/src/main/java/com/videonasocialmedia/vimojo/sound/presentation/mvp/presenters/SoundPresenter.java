@@ -241,7 +241,8 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
   }
 
   @Override
-  public void showWarningTempFile() {
+  public void showWarningTempFile(ArrayList<Video> failedVideos) {
+    // TODO(jliarte): 23/07/17 should modify view with failed clips?
     soundView.showWarningTempFile();
   }
 
