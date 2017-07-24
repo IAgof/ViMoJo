@@ -85,9 +85,9 @@ public class AddVideoToProjectUseCaseTest {
   @Test
   public void ifAudioTransitionActivatedAddVideoToProjectCallVideoToLaunchAVTransitionTempFile() {
     Project project = getAProject();
-    project.setAudioFadeTransitionActivated(true);
-    assertThat("Audio transition is activated ", project.isAudioFadeTransitionActivated(), is(true));
-
+    project.getVMComposition().setAudioFadeTransitionActivated(true);
+    assertThat("Audio transition is activated ",
+            project.getVMComposition().isAudioFadeTransitionActivated(), is(true));
     Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
@@ -101,9 +101,9 @@ public class AddVideoToProjectUseCaseTest {
   @Test
   public void ifVideoTransitionActivatedAddVideoToProjectCallVideoToLaunchAVTransitionTempFile() {
     Project project = getAProject();
-    project.setVideoFadeTransitionActivated(true);
-    assertThat("Video transition is activated ", project.isVideoFadeTransitionActivated(), is(true));
-
+    project.getVMComposition().setVideoFadeTransitionActivated(true);
+    assertThat("Video transition is activated ",
+            project.getVMComposition().isVideoFadeTransitionActivated(), is(true));
     Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
@@ -118,9 +118,10 @@ public class AddVideoToProjectUseCaseTest {
   public void ifAVTransitionNotActivatedAddVideoToProjectNotCallVideoToLaunchAVTransitionTempFile() {
     getAProject().clear();
     Project project = getAProject();
-    assertThat("Audio transition is not activated ", project.isAudioFadeTransitionActivated(), is(false));
-    assertThat("Video transition is not activated ", project.isVideoFadeTransitionActivated(), is(false));
-
+    assertThat("Audio transition is not activated ",
+            project.getVMComposition().isAudioFadeTransitionActivated(), is(false));
+    assertThat("Video transition is not activated ",
+            project.getVMComposition().isVideoFadeTransitionActivated(), is(false));
     Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();

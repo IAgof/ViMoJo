@@ -67,8 +67,10 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
     currentProject.setUuid(realmProject.uuid);
     currentProject.setLastModification(realmProject.lastModification);
     currentProject.setDuration(realmProject.duration);
-    currentProject.setAudioFadeTransitionActivated(realmProject.isAudioFadeTransitionActivated);
-    currentProject.setVideoFadeTransitionActivated(realmProject.isVideoFadeTransitionActivated);
+    currentProject.getVMComposition().setAudioFadeTransitionActivated(
+            realmProject.isAudioFadeTransitionActivated);
+    currentProject.getVMComposition().setVideoFadeTransitionActivated(
+            realmProject.isVideoFadeTransitionActivated);
     currentProject.setWatermarkActivated(realmProject.isWatermarkActivated);
 
     return currentProject;

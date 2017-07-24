@@ -15,7 +15,6 @@ import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -109,6 +108,8 @@ public class EditorPresenter implements TranscoderHelperListener, OnVideosRetrie
       // Condition to relaunch transcoding job.
       if(transcodingJob == null && !video.isTranscodingTempFileFinished()) {
         relaunchTranscoderTempFileJob(video);
+        Log.d(LOG_TAG, "Need to relaunch video " + videoList.indexOf(video)
+                + " - " + video.getMediaPath());
       }
     }
   }
@@ -117,11 +118,10 @@ public class EditorPresenter implements TranscoderHelperListener, OnVideosRetrie
     Project currentProject = Project.getInstance(null, null, null);
     VideonaFormat videoFormat = getVideonaFormatFromCurrentProjectUseCase
         .getVideonaFormatFromCurrentProject();
-    Drawable drawableFadeTransitionVideo = VimojoApplication.getAppContext()
-        .getDrawable(R.drawable.alpha_transition_white);
-
-    relaunchTranscoderTempBackgroundUseCase.relaunchExport(drawableFadeTransitionVideo,
-        video, videoFormat, currentProject.getProjectPathIntermediateFileAudioFade(), this);
+    Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
+            .getDrawableFadeTransitionVideo();
+    relaunchTranscoderTempBackgroundUseCase.relaunchExport(drawableVideoFadeTransition, video,
+            videoFormat, currentProject.getProjectPathIntermediateFileAudioFade(), this);
   }
 
   @Override
@@ -133,7 +133,7 @@ public class EditorPresenter implements TranscoderHelperListener, OnVideosRetrie
   @Override
   public void onErrorTranscoding(Video video, String message) {
     Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-    if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
+    if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
       video.increaseNumTriesToExportVideo();
       relaunchTranscoderTempFileJob(video);
     } else {

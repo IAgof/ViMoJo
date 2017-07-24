@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
@@ -44,14 +45,14 @@ public class UpdateAudioTransitionPreferenceToProjectUseCaseTest {
     Project project = getAProject();
     boolean audioTransitionActivated = true;
     assertThat("project videoTransitionPreference false by default ",
-        project.isAudioFadeTransitionActivated(), CoreMatchers.is(false));
+        project.getVMComposition().isAudioFadeTransitionActivated(), is(false));
 
     injectedUseCase.setAudioFadeTransitionActivated(audioTransitionActivated);
 
     project = Project.getInstance(null,null,null);
 
     assertThat("project videoTransitionPreference is value injected",
-        project.isAudioFadeTransitionActivated(), CoreMatchers.is(audioTransitionActivated));
+        project.getVMComposition().isAudioFadeTransitionActivated(), is(audioTransitionActivated));
   }
 
   private Project getAProject() {

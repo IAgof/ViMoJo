@@ -19,8 +19,6 @@ import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFro
 
 public class RelaunchTranscoderTempBackgroundUseCase {
   protected TextToDrawable drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
-  //@Inject
-  //protected TextToDrawable drawableGenerator;
   protected MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator,
           mediaTranscoder);

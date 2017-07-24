@@ -407,10 +407,17 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     @Override
     public void videoToRelaunch(String videoUuid, String intermediatesTempAudioFadeDirectory) {
         final Video video = getVideo(videoUuid);
+        Project currentProject = loadCurrentProject();
+        Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
+                .getDrawableFadeTransitionVideo();
         relaunchTranscoderTempBackgroundUseCase.relaunchExport(
-                context.getDrawable(R.drawable.alpha_transition_white), video,
+                drawableVideoFadeTransition, video,
                 getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
                 intermediatesTempAudioFadeDirectory, this);
+    }
+
+    private Project loadCurrentProject() {
+        return Project.getInstance(null, null, null);
     }
 
     private Video getVideo(String videoId) {
@@ -437,9 +444,11 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
         if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
             video.increaseNumTriesToExportVideo();
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = loadCurrentProject();
+            Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
+                    .getDrawableFadeTransitionVideo();
             relaunchTranscoderTempBackgroundUseCase.relaunchExport(
-                    context.getDrawable(R.drawable.alpha_transition_white), video,
+                    drawableVideoFadeTransition, video,
                     getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
                     currentProject.getProjectPathIntermediateFileAudioFade(), this);
         } else {

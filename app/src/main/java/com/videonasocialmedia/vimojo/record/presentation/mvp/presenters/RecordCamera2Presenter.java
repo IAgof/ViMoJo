@@ -406,8 +406,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 //  }
 
   private void checkIfVideoAddedNeedLaunchAVTransitionJob(Video video) {
-    if (currentProject.isAudioFadeTransitionActivated()
-            || currentProject.isVideoFadeTransitionActivated()) {
+    if (currentProject.getVMComposition().isAudioFadeTransitionActivated()
+            || currentProject.getVMComposition().isVideoFadeTransitionActivated()) {
       videoToLaunchAVTransitionTempFile(video,
           currentProject.getProjectPathIntermediateFileAudioFade());
     }

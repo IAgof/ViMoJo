@@ -90,12 +90,11 @@ public class RecordPresenterTest {
   public void videoToLaunchAVTransitionTempFileUpdateVideoTempPath(){
     getAProject().clear();
     Project project = getAProject();
-    project.setAudioFadeTransitionActivated(true);
+    project.getVMComposition().setAudioFadeTransitionActivated(true);
     String path = "media/path";
-    assertThat("Audio transition is activated ", project.isAudioFadeTransitionActivated(), is(true));
-
+    assertThat("Audio transition is activated ",
+            project.getVMComposition().isAudioFadeTransitionActivated(), is(true));
     recordPresenter = getRecordPresenter();
-
     Video video = new Video(path, 1f);
     String tempPath = video.getTempPath();
 
@@ -124,7 +123,6 @@ public class RecordPresenterTest {
     int percentBattery;
     recordPresenter = getRecordPresenter();
 
-
     percentBattery = recordPresenter.getPercentLevel(levelBattery, scaleBattery);
 
     assertThat("percentLevel will be 20", percentBattery, is(20));
@@ -138,7 +136,6 @@ public class RecordPresenterTest {
     Constants.BATTERY_STATUS status;
     recordPresenter = getRecordPresenter();
 
-
     status = recordPresenter.getBatteryStatus(statusBattery, percentBattery);
 
     assertNotEquals("Status is not charging", status, is(Constants.BATTERY_STATUS.CHARGING));
@@ -150,7 +147,6 @@ public class RecordPresenterTest {
     int statusBattery = 2; // BatteryManager.BATTERY_STATUS_CHARGING
     Constants.BATTERY_STATUS status;
     recordPresenter = getRecordPresenter();
-
 
     status = recordPresenter.getBatteryStatus(statusBattery, percentBattery);
 
