@@ -270,7 +270,7 @@
     <string name="videona_web">http://www.videona.es</string>
     <string name="contactUsTitle"><u>Contacto</u></string>
     <string name="contactUsContent">Visita nuestra página web:</string>
-        <string name="videonaWeb">http://www.videona.es\n</string>
+    <string name="videonaWeb">http://www.videona.es\n</string>
     <string name="joinOurCommunity">Únete a nuestro canal de Slack web:</string>
     <string name="vimojoslackWeb">http://vimojo.slack.com\n</string>
     <string name="versionTitle"><u>Versión</u></string>
