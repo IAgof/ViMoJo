@@ -267,21 +267,30 @@
     <!-- About Activity -->
 
     <string name="aboutUsContent">
-        Record, edit, share…Three simple things you will like to do as soon as you have the new
-        Videona App in your smartphone. From now you can enjoy the perfect tool to create videos
-        with super cool effects and filters, add music and share your creations with your favorites
-        socials networks. \n\n
-
-        Before Videona, there are a group of spanish young enterpreneurs with the will of building
-        the best smartphone video editor application. Our application want to break the edition
-        barrier and be a change in the audiovisual world and smartphones. \n\n
-
-        Copyright 2015. Videona Socialmedia S.L. Todos los derechos reservados. \n
+    Hello! \n\nOur company is called Videona and we are willing to build the best MoJo app ever,
+        just by your side. Will you help us?\n\nThe best way to do this is sharing your experience
+        with us through our channel vimojo.slack.com. We use it essentially to communicate information
+        about us and understand more thoroughly your needs and petitions. Many thanks to all of you
+        whom are participating. You are the best! \n\nIn Videona we design video apps for
+        Android and iOS mobile devices.\n\nVIMOJO, THE MOBILE JOURNALISM ERA.\n\n ViMoJo
+        (Videona for Mobile Journalism) enables journalists and professional cameramen to tell
+        the story they want to, at the moment they need to do so. We are here to change the way media
+        professionals use mobile technology in their information stream, breaking the editing barrier.\n\n
+        Behind this app there is a young and talented group of entrepreneurs that is trying to create
+        the best video editor ever for smartphones. Our app tries to break the editing barrier
+        and shake the audiovisual world within smartphones. Will you help us? \n\n
+        We need you to build and improve the tool with which we are stirring up journalism. \n\n
+        All the team thanks you for participating in the experience. \n\n
+        P.D. If you are interested in hiring the products please don\'t hesitate to contact us. \n\n
+        Videona Socialmedia S.L \nCIF: B-87047171 \nSpain- Madrid \n\nCopyright 2017. Videona
+        Socialmedia S.L. All rights reserved.\n\n
     </string>
     <string name="videona_web">http://www.videona.com</string>
     <string name="contactUsTitle"><u>Contact us</u></string>
     <string name="contactUsContent">Visit our web page:</string>
     <string name="videonaWeb">http://www.videona.com\n</string>
+    <string name="joinOurCommunity">Join our Slack web channel:</string>
+    <string name="vimojoslackWeb">http://vimojo.slack.com\n</string>
     <string name="versionTitle"><u>Version</u></string>
     <string name="videona">Videona</string>
     <string name="vimojo">ViMoJo</string>
