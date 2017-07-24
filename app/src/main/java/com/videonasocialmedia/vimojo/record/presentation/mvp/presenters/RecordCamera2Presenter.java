@@ -232,7 +232,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   private void updatePicometerRecording() {
     int maxAmplitude = camera.getMaxAmplitudeRecording();
     double dBs = getAmplitudePicometerFromRecorderDbs(maxAmplitude);
-    Log.d(TAG, "maxAmplitudeRecording " + maxAmplitude + " dBs " + dBs);
+    //Log.d(TAG, "maxAmplitudeRecording " + maxAmplitude + " dBs " + dBs);
     int progress = getProgressPicometerRecording(dBs);
     if (maxAmplitude > 0) {
       setPicometerProgressAndColor(progress);
@@ -269,6 +269,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   public void onPause() {
+    if(camera.isRecordingVideo()){
+      stopVideoRecording();
+    }
     camera.onPause();
     recordView.stopMonitoringRotation();
     stopSamplingPicometerPreview();
@@ -315,9 +318,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   public void stopRecord() {
     try {
-      camera.stopRecordVideo();
-      updateStopVideoUI();
-      onVideoRecorded(camera.getVideoPath());
+      stopVideoRecording();
       picometerRecordingUpdaterHandler.removeCallbacksAndMessages(null);
       startSamplingPicometerPreview();
       restartPreview();
@@ -325,6 +326,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     } catch (RuntimeException runtimeException) {
       // do nothing as it's already managed in camera wrapper
     }
+  }
+
+  protected void stopVideoRecording() {
+    camera.stopRecordVideo();
+    updateStopVideoUI();
+    onVideoRecorded(camera.getVideoPath());
   }
 
   private void updateStopVideoUI() {
@@ -414,6 +421,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   @Override
   public void setError(String message) {
     //recordView.showError(message);
+  }
+
+  public void resetZoom(){
+    camera.resetZoom();
   }
 
   public void restartPreview() {

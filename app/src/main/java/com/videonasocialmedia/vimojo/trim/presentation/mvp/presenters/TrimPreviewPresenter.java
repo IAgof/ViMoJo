@@ -141,27 +141,27 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
 
     @Override
     public void onSuccessTranscoding(Video video) {
-        updateVideoRepositoryUseCase.updateVideo(video);
+        Log.d(LOG_TAG, "onSuccessTranscoding after trim " + video.getTempPath());
+        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
     }
 
     @Override
     public void onErrorTranscoding(Video video, String message) {
         Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-        if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
+        if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
             video.increaseNumTriesToExportVideo();
             setTrim(video.getStartTime(), video.getStopTime());
         } else {
             //trimView.showError(message);
+            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
+                    Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
         }
     }
 
     public void advanceBackwardStartTrimming(int advancePrecision, int startTimeMs) {
         float adjustSeekBarMinPosition = (float) (startTimeMs - advancePrecision)
             / MS_CORRECTION_FACTOR;
-        if(adjustSeekBarMinPosition < 0){
-            adjustSeekBarMinPosition = 0;
-        }
-        trimView.updateStartTrimmingRangeSeekBar(adjustSeekBarMinPosition);
+        trimView.updateStartTrimmingRangeSeekBar(Math.max(0, adjustSeekBarMinPosition));
     }
 
     public void advanceForwardStartTrimming(int advancePrecision, int startTimeMs) {
@@ -180,10 +180,11 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, TranscoderHelper
         float adjustSeekBarMaxPosition = (float) (finishTimeMs + advancePrecision)
             / MS_CORRECTION_FACTOR;
         float maxRangeSeekBarValue = (float) videoToEdit.getFileDuration() / MS_CORRECTION_FACTOR;
-        if(adjustSeekBarMaxPosition > maxRangeSeekBarValue){
+        if (adjustSeekBarMaxPosition > maxRangeSeekBarValue) {
             adjustSeekBarMaxPosition = maxRangeSeekBarValue;
         }
-        trimView.updateFinishTrimmingRangeSeekBar(adjustSeekBarMaxPosition);
+        trimView.updateFinishTrimmingRangeSeekBar(Math.min(maxRangeSeekBarValue,
+            adjustSeekBarMaxPosition));
     }
 }
 

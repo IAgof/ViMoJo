@@ -78,4 +78,9 @@ public class Camera2ZoomHelper {
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.SCALER_CROP_REGION, zoom);
     camera2Wrapper.updatePreview();
   }
+
+  public void resetZoom() throws CameraAccessException {
+    currentZoomLevel = 0;
+    setCurrentZoom();
+  }
 }

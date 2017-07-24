@@ -1412,7 +1412,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void setCameraDefaultSettings() {
     // TODO(jliarte): 6/07/17 should move this logic to presenter?
     hideZoomSelectionSubmenu();
-    presenter.setZoom(0f);
+    setZoom(0f);
+    presenter.resetZoom();
 
     hideISOSelectionSubmenu();
     setAutoISO();
