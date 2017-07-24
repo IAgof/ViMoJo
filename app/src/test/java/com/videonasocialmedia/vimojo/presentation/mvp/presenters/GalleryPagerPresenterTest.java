@@ -88,13 +88,12 @@ public class GalleryPagerPresenterTest {
   public void videoToLaunchAVTransitionTempFileUpdateVideoTempPath(){
     getAProject().clear();
     Project project = getAProject();
-    project.setAudioFadeTransitionActivated(true);
+    project.getVMComposition().setAudioFadeTransitionActivated(true);
     String path = "media/path";
-    assertThat("Audio transition is activated", project.isAudioFadeTransitionActivated(), is(true));
+    assertThat("Audio transition is activated",
+            project.getVMComposition().isAudioFadeTransitionActivated(), is(true));
     Video video = new Video(path, Video.DEFAULT_VOLUME);
-
     GalleryPagerPresenter galleryPagerPresenter = getGalleryPresenter();
-
     String tempPath = video.getTempPath();
 
     galleryPagerPresenter.videoToLaunchAVTransitionTempFile(video,

@@ -14,7 +14,6 @@ import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -131,12 +130,11 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
     @Override
     public void onErrorTranscoding(Video video, String message) {
         Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-        if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
+        if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
             videoToEdit.increaseNumTriesToExportVideo();
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = loadCurrentProject();
             VideonaFormat videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
-            Drawable drawableFadeTransitionVideo = VimojoApplication.getAppContext()
-                .getDrawable(R.drawable.alpha_transition_white);
+            Drawable drawableFadeTransitionVideo = currentProject.getVMComposition().getDrawableFadeTransitionVideo();
 
             relaunchTranscoderTempBackgroundUseCase.relaunchExport(drawableFadeTransitionVideo,
                 video, videoFormat, currentProject.getProjectPathIntermediateFileAudioFade(), this);

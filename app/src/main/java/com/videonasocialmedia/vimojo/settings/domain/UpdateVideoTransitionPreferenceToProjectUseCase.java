@@ -18,7 +18,7 @@ public class UpdateVideoTransitionPreferenceToProjectUseCase {
 
   public void setVideoFadeTransitionActivated(boolean data) {
       currentProject = Project.getInstance(null,null,null);
-      currentProject.setVideoFadeTransitionActivated(data);
+      currentProject.getVMComposition().setVideoFadeTransitionActivated(data);
       projectRepository.update(currentProject);
   }
 }

@@ -122,8 +122,8 @@ public class AddVideoToProjectUseCase {
     private void checkIfVideoNeedAVTransitionTempFile(
             Video videoToAdd, OnLaunchAVTransitionTempFileListener listener) {
         currentProject = getCurrentProject();
-        if (currentProject.isAudioFadeTransitionActivated()
-                || currentProject.isVideoFadeTransitionActivated()) {
+        if (currentProject.getVMComposition().isAudioFadeTransitionActivated()
+                || currentProject.getVMComposition().isVideoFadeTransitionActivated()) {
             listener.videoToLaunchAVTransitionTempFile(videoToAdd,
                     currentProject.getProjectPathIntermediateFileAudioFade());
         }

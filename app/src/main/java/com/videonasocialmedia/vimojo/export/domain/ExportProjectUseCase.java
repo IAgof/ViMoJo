@@ -32,8 +32,9 @@ public class ExportProjectUseCase implements ExportListener {
     String tempPathIntermediateAudioFilesDirectory =
             project.getProjectPathIntermediateAudioMixedFiles();
     String outputFilesDirectory = Constants.PATH_APP;
+    String tempAudioPath = project.getProjectPathIntermediateFileAudioFade();
     VMCompositionExportSession = new VMCompositionExportSessionImpl(project.getVMComposition(),
-        outputFilesDirectory, tempPathIntermediateAudioFilesDirectory, this);
+        outputFilesDirectory, tempPathIntermediateAudioFilesDirectory, tempAudioPath, this);
   }
 
   /**
