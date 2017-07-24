@@ -164,10 +164,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
 
     public void advanceForwardEndSplitting(int advancePlayerPrecision, int currentSplitPosition) {
         int progress = currentSplitPosition + advancePlayerPrecision;
-        if(progress > maxSeekBarSplit){
-            progress = maxSeekBarSplit;
-        }
-        splitView.updateSplitSeekbar(progress);
+        splitView.updateSplitSeekbar(Math.min(maxSeekBarSplit, progress));
     }
 }
 

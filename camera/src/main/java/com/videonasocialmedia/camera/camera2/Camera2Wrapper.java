@@ -752,6 +752,15 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     checkTextureViewToOpenCamera();
   }
 
+  public void resetZoom(){
+    try{
+    camera2ZoomHelper.resetZoom();
+    } catch (CameraAccessException e) {
+      e.printStackTrace();
+      Log.e(TAG, "Error reset zooming - camera access", e);
+    }
+  }
+
   public boolean ISOSelectionSupported() {
     return camera2ISOHelper.ISOSelectionSupported();
   }

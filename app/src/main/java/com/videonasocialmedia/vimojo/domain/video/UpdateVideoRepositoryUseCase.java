@@ -23,6 +23,7 @@ public class UpdateVideoRepositoryUseCase {
   public void succesTranscodingVideo(Video video){
     video.resetNumTriesToExportVideo();
     video.setTranscodingTempFileFinished(true);
+    video.setVideoError(null);
     videoRepository.update(video);
   }
 
