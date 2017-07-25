@@ -12,7 +12,7 @@ import java.util.List;
  * Created by jliarte on 24/07/17.
  */
 
-public class VideoToAdaptRepositoryMemory implements VideoToAdaptRepository {
+public class VideoToAdaptMemoryRepository implements VideoToAdaptRepository {
   private HashMap<String, VideoToAdapt> videoListToAdaptAndPosition = new HashMap<>();
 
   @Override

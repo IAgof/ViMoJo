@@ -4,11 +4,14 @@ import android.graphics.drawable.Drawable;
 
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
+
 
 import javax.inject.Inject;
 
@@ -43,25 +46,30 @@ public class CreateDefaultProjectUseCase {
     // TODO(jliarte): 22/10/16 we should store current project in other place than Project instance.
     //                This is done for convenience only as we should get rid of all
     //                Project.getInstance calls
+    boolean isProjectCreated = false;
     if (Project.INSTANCE == null) {
       Project.INSTANCE = projectRepository.getCurrentProject();
+      isProjectCreated = true;
     }
 
     Project currentProject = Project.getInstance(projectTitle, rootPath,
         profileRepository.getCurrentProfile());
     currentProject.getVMComposition().setDrawableFadeTransitionVideo(drawableFadeTransitionVideo);
-    if (isWatermarkFeatured) {
+    if ((isProjectCreated && isWatermarkFeatured) || areWeIntoFlavorVimojo()) {
       currentProject.setWatermarkActivated(true);
     }
     projectRepository.update(currentProject);
   }
 
+  private boolean areWeIntoFlavorVimojo() {
+    return BuildConfig.FLAVOR.compareTo(Constants.FLAVOR_VIMOJO) == 0;
+  }
+
   public void createProject(String rootPath, boolean isWatermarkFeatured) {
     String projectTitle = DateUtils.getDateRightNow();
     Project currentProject = new Project(projectTitle, rootPath,
-            profileRepository.getCurrentProfile());
-    currentProject.getVMComposition().setDrawableFadeTransitionVideo(drawableFadeTransitionVideo);
-    if (isWatermarkFeatured) {
+        profileRepository.getCurrentProfile());
+    if (isWatermarkFeatured || areWeIntoFlavorVimojo()) {
       currentProject.setWatermarkActivated(true);
     }
     Project.INSTANCE = currentProject;
