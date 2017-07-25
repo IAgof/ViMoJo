@@ -477,17 +477,11 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   public void navigateToEditOrGallery() {
-//    if (newClipImporter.areTherePendingTranscodingTask()) {
-//      recordView.showProgressAdaptingVideo();
-////      boolean isClickedNavigateToEditOrGallery = true;
-//      Log.d(TAG, "showProgressAdaptingVideo");
-//    } else {
       if (areThereVideosInProject()) {
         recordView.navigateTo(EditActivity.class);
       } else {
         recordView.navigateTo(GalleryActivity.class);
       }
-//    }
   }
 
   private boolean areThereVideosInProject() {
@@ -500,8 +494,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     video.setTempPath(currentProject.getProjectPathIntermediateFiles());
 
     videoFormat = currentProject.getVMComposition().getVideoFormat();
-    Drawable drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
-
+    Drawable drawableFadeTransitionVideo = currentProject.getVMComposition()
+            .getDrawableFadeTransitionVideo();
     launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video,
             videoFormat, intermediatesTempAudioFadeDirectory, new TranscoderHelperListener() {
               // TODO(jliarte): 5/07/17 check these two listener, code is the else {} part
