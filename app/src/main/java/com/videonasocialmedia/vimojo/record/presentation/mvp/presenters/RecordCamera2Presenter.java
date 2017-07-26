@@ -129,7 +129,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   public void initViews() {
     recordView.setResolutionSelected(getResolutionHeight(currentProject));
-    recordView.hideChronometer();
     recordView.showPrincipalViews();
     recordView.showRightControlsView();
     recordView.showSettingsCameraView();
@@ -301,7 +300,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
         public void onRecordStarted() {
           recordView.showStopButton();
           recordView.startChronometer();
-          recordView.showChronometer();
           recordView.hideNavigateToSettingsActivity();
           recordView.hideVideosRecordedNumber();
           recordView.hideRecordedVideoThumbWithText();
@@ -334,7 +332,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     recordView.showRecordButton();
     recordView.showNavigateToSettingsActivity();
     recordView.stopChronometer();
-    recordView.hideChronometer();
+    recordView.resetChronometer();
     recordView.showChangeCamera();
 //    setFlashOff();
   }

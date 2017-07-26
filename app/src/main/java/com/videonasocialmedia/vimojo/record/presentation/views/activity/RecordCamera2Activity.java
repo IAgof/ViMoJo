@@ -107,8 +107,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton recordButton;
   @Bind(R.id.control_chronometer_and_rec_point)
   View chronometerAndRecPointView;
-  @Bind(R.id.imageRecPoint)
-  ImageView recordingIndicator;
   @Bind(R.id.clear_button)
   ImageButton clearButton;
   @Bind(R.id.hud)
@@ -453,36 +451,20 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
-  public void showChronometer() {
-    chronometerAndRecPointView.setVisibility(View.VISIBLE);
-  }
-
-  @Override
-  public void hideChronometer() {
-    chronometerAndRecPointView.setVisibility(View.INVISIBLE);
-  }
-
-  @Override
   public void startChronometer() {
     resetChronometer();
     chronometer.start();
-    showRecordingIndicator();
-  }
-
-  private void resetChronometer() {
-    chronometer.setBase(SystemClock.elapsedRealtime());
-    chronometer.setText("00:00");
-  }
-
-  private void showRecordingIndicator() {
-    recordingIndicator.setVisibility(View.VISIBLE);
   }
 
   @Override
   public void stopChronometer() {
     chronometer.stop();
-    hideRecordingIndicator();
   }
+
+  @Override
+  public void resetChronometer() {
+    chronometer.setBase(SystemClock.elapsedRealtime());
+    chronometer.setText("00:00");  }
 
   @Override
   public void showNavigateToSettingsActivity() {
@@ -492,10 +474,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void hideNavigateToSettingsActivity() {
     navigateSettingsButtons.setEnabled(false);
-  }
-
-  private void hideRecordingIndicator() {
-    recordingIndicator.setVisibility(View.INVISIBLE);
   }
 
   @Override
