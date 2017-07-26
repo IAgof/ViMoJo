@@ -387,20 +387,11 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                 boolean data = sharedPreferences.getBoolean(key, false);
                 if (data && !updateWatermarkPreferenceToProjectUseCase
                         .isWatermarkResourceDownloaded(Constants.PATH_APP)) {
-                    copyWatermarkResourceToDevice();
+                    Utils.copyWatermarkResourceToDevice();
                 }
                 updateWatermarkPreferenceToProjectUseCase.setWatermarkActivated(data);
                 preferencesView.setWatermarkSwitchPref(data);
             default:
-        }
-    }
-
-    private void copyWatermarkResourceToDevice() {
-        try {
-            Utils.copyResourceToTemp(VimojoApplication.getAppContext(),
-                "watermark", R.raw.watermark, ".png");
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

@@ -315,6 +315,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         File privateDataFolderModel = getDir(Constants.FOLDER_VIDEONA_PRIVATE_MODEL, Context.MODE_PRIVATE);
         String privatePath = privateDataFolderModel.getAbsolutePath();
         editor.putString(ConfigPreferences.PRIVATE_PATH, privatePath).commit();
+        Utils.copyWatermarkResourceToDevice();
     }
 
     private void trackAppStartupProperties(boolean state) {
