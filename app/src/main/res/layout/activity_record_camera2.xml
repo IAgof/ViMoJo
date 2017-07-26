@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/hud_cardview"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="22dp"
             android:backgroundTint="@color/colorGreyTransparent"
             app:cardElevation="@null">
 
@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@+id/hud_cardview"
+                android:padding="4dp"
                 android:text="@string/recordTextGallery"
                 android:textColor="@android:color/white"
                 android:textSize="8sp" />
@@ -168,11 +168,12 @@
 
                     <ImageView
                         android:id="@+id/button_resolution_indicator"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
+                        android:layout_width="24dp"
+                        android:layout_height="23dp"
                         android:scaleType="fitCenter"
                         android:layout_gravity="center"
                         android:visibility="visible"
+                        android:layout_marginLeft="8dp"
                         android:src="@drawable/activity_record_ic_resolution_720"
                         android:layout_toRightOf="@+id/control_chronometer_and_rec_point"
                         android:layout_centerVertical="true"
@@ -180,7 +181,7 @@
 
                     <ImageButton
                         android:id="@+id/mic_plug_imageview"
-                        android:layout_width="18dp"
+                        android:layout_width="20dp"
                         android:layout_height="24dp"
                         android:layout_marginRight="8dp"
                         android:scaleType="fitCenter"
@@ -221,9 +222,9 @@
 
                     <ImageButton
                         android:id="@+id/button_navigate_gallery"
-                        android:layout_width="36dp"
-                        android:layout_height="38dp"
-                        android:src="@drawable/activity_record_ic_galery"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/activity_record_ic_gallery"
                         android:scaleType="fitCenter"
                         android:background="@null"
                         android:layout_centerVertical="true"
@@ -287,14 +288,15 @@
 
                 <ImageButton
                     android:id="@+id/clear_button"
+                    android:src="@drawable/activity_record_ic_expand"
+                    android:layout_toEndOf="@+id/activity_record_icon_battery"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:background="@drawable/circle_background"
+                    android:background="@null"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/activity_record_ic_shrink"
-                    android:layout_toEndOf="@+id/activity_record_icon_battery"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="16dp" />
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="16dp"
+                    android:layout_centerVertical="true" />
 
             </RelativeLayout>
 
