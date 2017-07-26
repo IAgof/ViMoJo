@@ -110,8 +110,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   View chronometerAndRecPointView;
   @Bind(R.id.clear_button)
   ImageButton clearButton;
-  @Bind(R.id.hud)
-  View hudView;
+  @Bind(R.id.hud_cardview)
+  CardView hudCardView;
   @Bind(R.id.picometer)
   View picometerView;
   @Bind(R.id.seekBar_slide_left)
@@ -124,8 +124,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageView seekBarLowerImage;
   @Bind(R.id.seekBar_upper_image)
   ImageView seekBarUpperImage;
-  @Bind(R.id.settings_bar)
-  View settingsCameraBarView;
+  @Bind(R.id.settings_bar_cardview)
+  CardView settingsCameraCardView;
   @Bind(R.id.button_zoom)
   ImageButton zoomButton;
   @Bind(R.id.slide_seekbar_submenu_cardview)
@@ -133,15 +133,17 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Bind(R.id.button_iso)
   ImageButton isoButton;
+  @Bind(R.id.iso_submenu_cardview)
+  CardView isoSubmenuCardView;
   @Bind(R.id.iso_submenu)
-  LinearLayout isoSubmenuView;
+  LinearLayout isoSubmenunLinearLayout;
   @Bind(R.id.iso_auto)
   TextView isoSettingAuto;
 
   @Bind(R.id.button_af_selection)
   ImageButton afSelectionButton;
-  @Bind(R.id.af_selection_submenu)
-  View afSelectionSubmenuView;
+  @Bind(R.id.af_selection_submenu_cardview)
+  CardView afSelectionSubmenuCardView;
   @Bind(R.id.af_setting_auto)
   ImageButton afSettingAuto;
   @Bind(R.id.af_setting_manual)
@@ -150,8 +152,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton afSettingSelective;
   @Bind(R.id.button_white_balance)
   ImageButton whiteBalanceButton;
-  @Bind(R.id.white_balance_submenu)
-  View whiteBalanceSubmenuView;
+  @Bind(R.id.white_balance_submenu_cardview)
+  CardView whiteBalanceSubmenuCardView;
   @Bind(R.id.wb_setting_auto)
   ImageButton wbSettingAuto;
   @Bind(R.id.wb_setting_cloudy)
@@ -167,8 +169,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Bind(R.id.button_metering_mode)
   ImageButton meteringModeButton;
-  @Bind(R.id.metering_mode_submenu)
-  View meteringModeSubmenuView;
+  @Bind(R.id.metering_mode_submenu_cardview)
+  CardView meteringModeSubmenuCardView;
   @Bind(R.id.metering_mode_auto)
   ImageButton meteringModeAuto;
   @Bind(R.id.metering_mode_exposure_compensation)
@@ -532,15 +534,15 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void hidePrincipalViews() {
     clearButton.setImageResource(R.drawable.activity_record_ic_expand);
     clearButton.setActivated(true);
-    hudView.setVisibility(View.INVISIBLE);
+    hudCardView.setVisibility(View.INVISIBLE);
     hideControlsViewButton.setVisibility(View.INVISIBLE);
     showControlsButton.setVisibility(View.INVISIBLE);
     slideSeekbarSubmenuView.setVisibility(View.INVISIBLE);
-    isoSubmenuView.setVisibility(View.INVISIBLE);
-    afSelectionSubmenuView.setVisibility(View.INVISIBLE);
-    whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
-    meteringModeSubmenuView.setVisibility(View.INVISIBLE);
-    settingsCameraBarView.setVisibility(View.INVISIBLE);
+    isoSubmenuCardView.setVisibility(View.INVISIBLE);
+    afSelectionSubmenuCardView.setVisibility(View.INVISIBLE);
+    whiteBalanceSubmenuCardView.setVisibility(View.INVISIBLE);
+    meteringModeSubmenuCardView.setVisibility(View.INVISIBLE);
+    settingsCameraCardView.setVisibility(View.INVISIBLE);
     slideSeekbarSubmenuView.setVisibility(View.INVISIBLE);
   }
 
@@ -549,7 +551,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     clearButton.setImageResource(R.drawable.activity_record_ic_shrink);
     clearButton.setBackground(getResources().getDrawable(R.drawable.circle_background));
     clearButton.setActivated(false);
-    hudView.setVisibility(View.VISIBLE);
+    hudCardView.setVisibility(View.VISIBLE);
     showControlsButton.setVisibility(View.VISIBLE);
   }
 
@@ -557,14 +559,14 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void hideRightControlsView() {
     hideControlsViewButton.setVisibility(View.INVISIBLE);
     showControlsButton.setVisibility(View.VISIBLE);
-    settingsCameraBarView.setVisibility(View.INVISIBLE);
+    settingsCameraCardView.setVisibility(View.INVISIBLE);
 
-    settingsCameraBarView.setVisibility(View.INVISIBLE);
+    settingsCameraCardView.setVisibility(View.INVISIBLE);
     slideSeekbarSubmenuView.setVisibility(View.INVISIBLE);
-    isoSubmenuView.setVisibility(View.INVISIBLE);
-    afSelectionSubmenuView.setVisibility(View.INVISIBLE);
-    whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
-    meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+    isoSubmenuCardView.setVisibility(View.INVISIBLE);
+    afSelectionSubmenuCardView.setVisibility(View.INVISIBLE);
+    whiteBalanceSubmenuCardView.setVisibility(View.INVISIBLE);
+    meteringModeSubmenuCardView.setVisibility(View.INVISIBLE);
   }
 
   @Override
@@ -572,66 +574,66 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     showControlsButton.setVisibility(View.INVISIBLE);
     hideControlsViewButton.setVisibility(View.VISIBLE);
     if (settingsCameraButton.isSelected()) {
-      settingsCameraBarView.setVisibility(View.VISIBLE);
+      settingsCameraCardView.setVisibility(View.VISIBLE);
     }
     if (zoomButton.isSelected()) {
       slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
       return;
     }
     if (isoButton.isSelected()) {
-      isoSubmenuView.setVisibility(View.VISIBLE);
+      isoSubmenuCardView.setVisibility(View.VISIBLE);
       return;
     }
     if (afSelectionButton.isSelected()) {
-      afSelectionSubmenuView.setVisibility(View.VISIBLE);
+      afSelectionSubmenuCardView.setVisibility(View.VISIBLE);
       return;
     }
     if (whiteBalanceButton.isSelected()) {
-      whiteBalanceSubmenuView.setVisibility(View.VISIBLE);
+      whiteBalanceSubmenuCardView.setVisibility(View.VISIBLE);
       return;
     }
     if (meteringModeButton.isSelected()) {
-      meteringModeSubmenuView.setVisibility(View.VISIBLE);
+      meteringModeSubmenuCardView.setVisibility(View.VISIBLE);
       return;
     }
   }
 
   @Override
   public void showSettingsCameraView() {
-    settingsCameraBarView.setVisibility(View.VISIBLE);
+    settingsCameraCardView.setVisibility(View.VISIBLE);
     settingsCameraButton.setSelected(true);
     if (zoomButton.isSelected()) {
       slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
       return;
     }
     if (isoButton.isSelected()) {
-      isoSubmenuView.setVisibility(View.VISIBLE);
+      isoSubmenuCardView.setVisibility(View.VISIBLE);
       return;
     }
     if (afSelectionButton.isSelected()) {
-      afSelectionSubmenuView.setVisibility(View.VISIBLE);
+      afSelectionSubmenuCardView.setVisibility(View.VISIBLE);
       return;
     }
     if (whiteBalanceButton.isSelected()) {
-      whiteBalanceSubmenuView.setVisibility(View.VISIBLE);
+      whiteBalanceSubmenuCardView.setVisibility(View.VISIBLE);
       return;
     }
     if (meteringModeButton.isSelected()) {
-      meteringModeSubmenuView.setVisibility(View.VISIBLE);
+      meteringModeSubmenuCardView.setVisibility(View.VISIBLE);
       return;
     }
   }
 
   @Override
   public void hideSettingsCameraView() {
-    settingsCameraBarView.setVisibility(View.INVISIBLE);
+    settingsCameraCardView.setVisibility(View.INVISIBLE);
     settingsCameraButton.setSelected(false);
 
     slideSeekbarSubmenuView.setVisibility(View.INVISIBLE);
-    isoSubmenuView.setVisibility(View.INVISIBLE);
-    afSelectionSubmenuView.setVisibility(View.INVISIBLE);
-    whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
-    meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+    isoSubmenuCardView.setVisibility(View.INVISIBLE);
+    afSelectionSubmenuCardView.setVisibility(View.INVISIBLE);
+    whiteBalanceSubmenuCardView.setVisibility(View.INVISIBLE);
+    meteringModeSubmenuCardView.setVisibility(View.INVISIBLE);
   }
 
   @Override
@@ -660,7 +662,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     isoSettingAuto.setTextColor(getResources().getColor(R.color.button_selected));
     clearISObuttons();
     isoButtons.put(isoSettingAuto, 0); // (jliarte): 27/06/17 convention for auto ISO setting
-    isoSubmenuView.addView(isoSettingAuto);
+    isoSubmenunLinearLayout.addView(isoSettingAuto);
     setIsoModeOnClickListener(0, isoSettingAuto);
     int[] isoValues = {50, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200};
     for (final int isoValue : isoValues) {
@@ -671,13 +673,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         isoModeButton.setTextColor(getResources().getColor(R.color.button_color_record_activity));
         setIsoModeOnClickListener(isoValue, isoModeButton);
         isoButtons.put(isoModeButton, isoValue);
-        isoSubmenuView.addView(isoModeButton);
+        isoSubmenunLinearLayout.addView(isoModeButton);
       }
     }
   }
 
   private void clearISObuttons() {
-    isoSubmenuView.removeAllViews();
+    isoSubmenunLinearLayout.removeAllViews();
     isoButtons.clear();
   }
 
@@ -1455,12 +1457,12 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private void showISOSelectionSubmenu() {
     isoButton.setSelected(true);
-    isoSubmenuView.setVisibility(View.VISIBLE);
+    isoSubmenuCardView.setVisibility(View.VISIBLE);
   }
 
   private void hideISOSelectionSubmenu() {
     isoButton.setSelected(false);
-    isoSubmenuView.setVisibility(View.INVISIBLE);
+    isoSubmenuCardView.setVisibility(View.INVISIBLE);
   }
 
   private void setAutoISO() {
@@ -1472,7 +1474,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private void showAFSelectionSubmenu() {
     afSelectionButton.setSelected(true);
-    afSelectionSubmenuView.setVisibility(View.VISIBLE);
+    afSelectionSubmenuCardView.setVisibility(View.VISIBLE);
     if(afSettingManual.isSelected()){
       showFocusModeManualSlider();
     }
@@ -1480,13 +1482,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private void hideAFSelectionSubmenu() {
     afSelectionButton.setSelected(false);
-    afSelectionSubmenuView.setVisibility(View.INVISIBLE);
+    afSelectionSubmenuCardView.setVisibility(View.INVISIBLE);
     hideFocusModeManualSlider();
   }
 
   private void showMeteringModeSelectionSubmenu() {
     meteringModeButton.setSelected(true);
-    meteringModeSubmenuView.setVisibility(View.VISIBLE);
+    meteringModeSubmenuCardView.setVisibility(View.VISIBLE);
     if (meteringModeExposureCompensation.isSelected()) {
       showExposureCompensationSubmenu();
     }
@@ -1494,18 +1496,18 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private void hideMeteringModeSelectionSubmenu() {
     meteringModeButton.setSelected(false);
-    meteringModeSubmenuView.setVisibility(View.INVISIBLE);
+    meteringModeSubmenuCardView.setVisibility(View.INVISIBLE);
     hideExposureCompensationSubmenu();
   }
 
   private void showWhiteBalanceSubmenu() {
     whiteBalanceButton.setSelected(true);
-    whiteBalanceSubmenuView.setVisibility(View.VISIBLE);
+    whiteBalanceSubmenuCardView.setVisibility(View.VISIBLE);
   }
 
   private void hideWhiteBalanceSubmenu() {
     whiteBalanceButton.setSelected(false);
-    whiteBalanceSubmenuView.setVisibility(View.INVISIBLE);
+    whiteBalanceSubmenuCardView.setVisibility(View.INVISIBLE);
   }
 
   @OnClick(R.id.button_record)

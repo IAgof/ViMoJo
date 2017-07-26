@@ -289,8 +289,16 @@
 
         </android.support.v7.widget.CardView>
 
+        <ImageView
+            android:id="@+id/camera_shutter"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/activity_record_ic_metering_shutter"
+            android:visibility="gone"/>
+
         <android.support.v7.widget.CardView
-            android:id="@+id/metering_mode_submenu_cardview"
+            android:id="@+id/iso_submenu_cardview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -302,15 +310,8 @@
             android:layout_marginBottom="4dp"
             android:backgroundTint="@color/colorGreyTransparent"
             app:cardCornerRadius="8dp"
-            app:cardElevation="@null">
-
-            <ImageView
-                android:id="@+id/camera_shutter"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_centerInParent="true"
-                android:src="@drawable/activity_record_ic_metering_shutter"
-                android:visibility="invisible"/>
+            app:cardElevation="@null"
+            android:visibility="invisible">
 
             <LinearLayout
                 android:id="@+id/iso_submenu"
@@ -318,43 +319,43 @@
                 android:layout_centerHorizontal="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="invisible"
-                >
+            >
 
-                <TextView
-                    android:id="@+id/iso_auto"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="#00ffffff"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center_vertical"
-                    android:text="Auto"
-                    android:textColor="@color/colorWhite"
-                    android:layout_margin="8dp"
-                    />
+            <TextView
+                android:id="@+id/iso_auto"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00ffffff"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center_vertical"
+                android:text="Auto"
+                android:textColor="@color/colorWhite"
+                android:layout_margin="8dp"
+                />
+         </LinearLayout>
+        </android.support.v7.widget.CardView>
 
-                <!--<TextView-->
-                    <!--android:id="@+id/iso_max"-->
-                    <!--android:layout_width="32dp"-->
-                    <!--android:layout_height="32dp"-->
-                    <!--android:background="#00ffffff"-->
-                    <!--android:scaleType="fitCenter"-->
-                    <!--android:layout_gravity="center"-->
-                    <!--android:text="Max"-->
-                    <!--android:textColor="@color/colorWhite"-->
-                    <!--android:layout_marginRight="16dp"-->
-                    <!--android:layout_marginLeft="16dp"/>-->
-
-            </LinearLayout>
-
+        <android.support.v7.widget.CardView
+            android:id="@+id/af_selection_submenu_cardview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_above="@+id/settings_bar_cardview"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/colorGreyTransparent"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="@null"
+            android:visibility="invisible">
             <LinearLayout
                 android:id="@+id/af_selection_submenu"
                 android:layout_above="@+id/settings_bar_cardview"
                 android:layout_centerHorizontal="true"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                >
+                android:layout_height="wrap_content">
 
                 <ImageButton
                     android:id="@+id/af_setting_selective"
@@ -389,17 +390,30 @@
                     android:src="@drawable/activity_record_ic_focus_adjust"
                     android:layout_margin="8dp"
                     android:visibility="gone"/>
-
             </LinearLayout>
+        </android.support.v7.widget.CardView>
 
+        <android.support.v7.widget.CardView
+            android:id="@+id/white_balance_submenu_cardview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_above="@+id/settings_bar_cardview"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/colorGreyTransparent"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="@null"
+            android:visibility="invisible">
             <LinearLayout
                 android:id="@+id/white_balance_submenu"
                 android:layout_above="@+id/settings_bar_cardview"
                 android:layout_centerHorizontal="true"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                >
+                android:layout_height="wrap_content">
 
                 <ImageButton
                     android:id="@+id/wb_setting_auto"
@@ -468,18 +482,30 @@
                     android:src="@drawable/activity_record_ic_white_balance_tungsten"
                     android:visibility="gone"
                     android:layout_margin="8dp"/>
-
             </LinearLayout>
+        </android.support.v7.widget.CardView>
 
-
+        <android.support.v7.widget.CardView
+            android:id="@+id/metering_mode_submenu_cardview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_above="@+id/settings_bar_cardview"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/colorGreyTransparent"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="@null"
+            android:visibility="invisible">
             <LinearLayout
                 android:id="@+id/metering_mode_submenu"
                 android:layout_above="@+id/settings_bar_cardview"
                 android:layout_centerHorizontal="true"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                >
+                android:layout_height="wrap_content">
 
                 <ImageButton
                     android:id="@+id/metering_mode_auto"
@@ -524,11 +550,8 @@
                     android:visibility="invisible"
                     android:layout_margin="8dp"
                     />
-
             </LinearLayout>
-
         </android.support.v7.widget.CardView>
-
 
         <android.support.v7.widget.CardView
             android:id="@+id/settings_bar_cardview"
