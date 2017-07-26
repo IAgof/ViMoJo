@@ -101,7 +101,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Bind(R.id.text_view_num_videos)
   TextView numVideosRecordedTextView;
   @Bind(R.id.edit_or_gallery_text_view)
-  TextView editText;
+  TextView editOrGalleryTextView;
+  @Bind(R.id.edit_or_gallery_cardview)
+  CardView editOrGalleryTextCardView;
   @Bind(R.id.button_navigate_edit_or_gallery)
   CircleImageView thumbClipRecordedButton;
   @Bind(R.id.button_record)
@@ -110,6 +112,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   View chronometerAndRecPointView;
   @Bind(R.id.clear_button)
   ImageButton clearButton;
+  @Bind(R.id.show_all_controls_button)
+  ImageButton showAllControlsButton;
   @Bind(R.id.hud_cardview)
   CardView hudCardView;
   @Bind(R.id.picometer)
@@ -532,8 +536,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void hidePrincipalViews() {
-    clearButton.setImageResource(R.drawable.activity_record_ic_expand);
-    clearButton.setActivated(true);
+    showAllControlsButton.setVisibility(View.VISIBLE);
     hudCardView.setVisibility(View.INVISIBLE);
     hideControlsViewButton.setVisibility(View.INVISIBLE);
     showControlsButton.setVisibility(View.INVISIBLE);
@@ -544,15 +547,15 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     meteringModeSubmenuCardView.setVisibility(View.INVISIBLE);
     settingsCameraCardView.setVisibility(View.INVISIBLE);
     slideSeekbarSubmenuView.setVisibility(View.INVISIBLE);
+    editOrGalleryTextCardView.setVisibility(View.INVISIBLE);
   }
 
   @Override
   public void showPrincipalViews() {
-    clearButton.setImageResource(R.drawable.activity_record_ic_shrink);
-    clearButton.setBackground(getResources().getDrawable(R.drawable.circle_background));
-    clearButton.setActivated(false);
+    showAllControlsButton.setVisibility(View.GONE);
     hudCardView.setVisibility(View.VISIBLE);
     showControlsButton.setVisibility(View.VISIBLE);
+    editOrGalleryTextCardView.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -1000,20 +1003,20 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void showRecordedVideoThumbWithText(String path) {
     thumbClipRecordedButton.setVisibility(View.VISIBLE);
     Glide.with(this).load(path).into(thumbClipRecordedButton);
-    editText.setVisibility(View.VISIBLE);
+    editOrGalleryTextCardView.setVisibility(View.VISIBLE);
   }
 
   @Override
   public void hideRecordedVideoThumbWithText() {
     thumbClipRecordedButton.setVisibility(View.INVISIBLE);
-    editText.setVisibility(View.INVISIBLE);
+    editOrGalleryTextCardView.setVisibility(View.INVISIBLE);
   }
 
   @Override
   public void showVideosRecordedNumber(int numberOfVideos) {
     numVideosRecordedTextView.setVisibility(View.VISIBLE);
     numVideosRecordedTextView.setText(String.valueOf(numberOfVideos));
-    editText.setText(getString(R.string.recordTextEdit));
+    editOrGalleryTextView.setText(getString(R.string.recordTextEdit));
   }
 
   @Override
@@ -1280,12 +1283,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @OnClick(R.id.clear_button)
   public void clearAndShrinkScreen() {
-    if (clearButton.isActivated() == true) {
-      showPrincipalViews();
-      showRightControlsView();
-    } else {
-      hidePrincipalViews();
-    }
+    hidePrincipalViews();
+  }
+
+  @OnClick(R.id.show_all_controls_button)
+  public void showAllControlsInCamera(){
+    showPrincipalViews();
+    showRightControlsView();
   }
 
   @OnClick(R.id.button_to_show_controls_right)

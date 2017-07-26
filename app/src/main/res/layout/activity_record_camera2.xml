@@ -729,6 +729,21 @@
                 android:src="@drawable/activity_record_ic_rec"
                 android:visibility="visible" />
 
+            <ImageButton
+                android:id="@+id/show_all_controls_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/activity_record_ic_expand"
+                android:background="@drawable/circle_background"
+                android:scaleType="fitCenter"
+                android:layout_above="@+id/button_record"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:visibility="gone"
+                />
+
             <android.support.v7.widget.CardView
                 android:id="@+id/slide_seekbar_submenu_cardview"
                 android:layout_width="wrap_content"
