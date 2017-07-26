@@ -205,6 +205,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton micPlugButton;
   @Bind(R.id.picometer_progressbar)
   ProgressBar picometerProgress;
+  @Bind(R.id.button_sound_volume)
+  ImageButton soundVolumeButton;
 
   /**
    * An {@link AutoFitTextureView} for camera preview.
@@ -370,6 +372,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(gridButton, button_color);
 
     tintButton(cameraDefaultSettingsButton, button_color);
+    tintButton(soundVolumeButton, button_color);
   }
 
   private void configChronometer() {
@@ -1164,39 +1167,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     alertDialogStorage.show();
   }
 
-
-  @OnClick(R.id.mic_plug_imageview)
-  public void clickAudioGainButton() {
-    if  (micPlugButton.isSelected()) {
-      hideAudioGainSeekBar();
-    } else {
-      showAudioGainSeekBar();
-    }
-  }
-
-  private void hideAudioGainSeekBar() {
-    slideSeekBarMode = SLIDE_SEEKBAR_MODE_UNACTIVE;
-    slideSeekBar.setOnSeekBarChangeListener(null);
-    micPlugButton.setSelected(false);
-    slideSeekbarSubmenuView.setVisibility(View.GONE);
-  }
-
-  public void showAudioGainSeekBar() {
-    slideSeekBarMode = SLIDE_SEEKBAR_MODE_AUDIO_GAIN;
-    slideSeekBar.setOnSeekBarChangeListener(null);
-    micPlugButton.setSelected(true);
-    slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
-    seekbarUpperText.setVisibility(View.VISIBLE);
-    seekbarLowerText.setVisibility(View.VISIBLE);
-    seekBarUpperImage.setVisibility(View.GONE);
-    seekBarLowerImage.setVisibility(View.GONE);
-    seekbarUpperText.setText("100%");
-    seekbarLowerText.setText("0%");
-    slideSeekBar.setProgress(audioGainSeekBarProgress);
-    slideSeekBar.setOnSeekBarChangeListener(audioGainSeekbarListener);
-    updateAudioGainSeekbarDisability();
-  }
-
   @Override
   public void updateAudioGainSeekbarDisability() {
     if (slideSeekBarMode != SLIDE_SEEKBAR_MODE_AUDIO_GAIN) {
@@ -1332,6 +1302,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       hideAFSelectionSubmenu();
       hideWhiteBalanceSubmenu();
       hideMeteringModeSelectionSubmenu();
+      hideSoundVolumeSubmenu();
       showZoomSelectionSubmenu();
     }
   }
@@ -1345,6 +1316,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       hideAFSelectionSubmenu();
       hideWhiteBalanceSubmenu();
       hideMeteringModeSelectionSubmenu();
+      hideSoundVolumeSubmenu();
       showISOSelectionSubmenu();
     }
   }
@@ -1358,6 +1330,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       hideISOSelectionSubmenu();
       hideWhiteBalanceSubmenu();
       hideMeteringModeSelectionSubmenu();
+      hideSoundVolumeSubmenu();
       showAFSelectionSubmenu();
     }
   }
@@ -1371,6 +1344,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       hideISOSelectionSubmenu();
       hideAFSelectionSubmenu();
       hideMeteringModeSelectionSubmenu();
+      hideSoundVolumeSubmenu();
       showWhiteBalanceSubmenu();
     }
   }
@@ -1384,7 +1358,22 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       hideISOSelectionSubmenu();
       hideAFSelectionSubmenu();
       hideWhiteBalanceSubmenu();
+      hideSoundVolumeSubmenu();
       showMeteringModeSelectionSubmenu();
+    }
+  }
+
+  @OnClick(R.id.button_sound_volume)
+  public void onClickAudioGainButton() {
+    if  (soundVolumeButton.isSelected()) {
+      hideSoundVolumeSubmenu();
+    } else {
+      hideZoomSelectionSubmenu();
+      hideISOSelectionSubmenu();
+      hideWhiteBalanceSubmenu();
+      hideMeteringModeSelectionSubmenu();
+      hideAFSelectionSubmenu();
+      showSoundVolumeSubmenu();
     }
   }
 
@@ -1411,10 +1400,14 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     setAutoExposure();
     hideMeteringModeSelectionSubmenu();
 
-    hideAudioGainSeekBar();
+    hideSoundVolumeSubmenu();
     if (!isRecording) {
       audioGainSeekBarProgress = DEFAULT_AUDIO_GAIN;
       presenter.setAudioGain(audioGainSeekBarProgress);
+    }
+
+    if(flashButton.isSelected()){
+      presenter.setFlashOff();
     }
   }
 
@@ -1512,6 +1505,29 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private void hideWhiteBalanceSubmenu() {
     whiteBalanceButton.setSelected(false);
     whiteBalanceSubmenuCardView.setVisibility(View.INVISIBLE);
+  }
+
+  private void showSoundVolumeSubmenu(){
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_AUDIO_GAIN;
+    slideSeekBar.setOnSeekBarChangeListener(null);
+    soundVolumeButton.setSelected(true);
+    slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
+    seekbarUpperText.setVisibility(View.VISIBLE);
+    seekbarLowerText.setVisibility(View.VISIBLE);
+    seekBarUpperImage.setVisibility(View.GONE);
+    seekBarLowerImage.setVisibility(View.GONE);
+    seekbarUpperText.setText("100%");
+    seekbarLowerText.setText("0%");
+    slideSeekBar.setProgress(audioGainSeekBarProgress);
+    slideSeekBar.setOnSeekBarChangeListener(audioGainSeekbarListener);
+    updateAudioGainSeekbarDisability();
+  }
+
+  private void hideSoundVolumeSubmenu(){
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_UNACTIVE;
+    slideSeekBar.setOnSeekBarChangeListener(null);
+    soundVolumeButton.setSelected(false);
+    slideSeekbarSubmenuView.setVisibility(View.GONE);
   }
 
   @OnClick(R.id.button_record)
