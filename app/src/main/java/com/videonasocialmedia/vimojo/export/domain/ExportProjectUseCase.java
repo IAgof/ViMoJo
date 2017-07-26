@@ -7,6 +7,8 @@
 
 package com.videonasocialmedia.vimojo.export.domain;
 
+import android.util.Log;
+
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession.ExportListener;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSessionImpl;
@@ -18,6 +20,7 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import java.util.NoSuchElementException;
 
 public class ExportProjectUseCase implements ExportListener {
+  private static final String TAG = ExportProjectUseCase.class.getCanonicalName();
   private OnExportFinishedListener onExportFinishedListener;
   private VMCompositionExportSession VMCompositionExportSession;
   private Project project;
@@ -56,6 +59,7 @@ public class ExportProjectUseCase implements ExportListener {
 
   @Override
   public void onExportProgress(String progressMsg, int exportStage) {
+    Log.d(TAG, progressMsg);
     onExportFinishedListener.onExportProgress(progressMsg, exportStage);
   }
 

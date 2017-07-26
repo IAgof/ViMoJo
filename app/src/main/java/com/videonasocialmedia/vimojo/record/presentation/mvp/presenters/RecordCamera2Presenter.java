@@ -46,7 +46,6 @@ import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerAmplitudeDbListener;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoopThread;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -56,9 +55,7 @@ import java.util.List;
  */
 
 public class RecordCamera2Presenter implements Camera2WrapperListener,
-    OnLaunchAVTransitionTempFileListener
-//        , NewClipImporter.ProjectVideoAdder
-{
+    OnLaunchAVTransitionTempFileListener {
   public static final int DEFAULT_CAMERA_ID = 0;
   private static final int NORMALIZE_PICOMETER_VALUE = 108;
   private static final double MAX_AMPLITUDE_VALUE_PICOMETER = 32768;
@@ -358,8 +355,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     recordView.showRecordedVideoThumbWithText(path);
     recordView.showVideosRecordedNumber(++videosRecorded);
     Video recordedVideo = new Video(path, (float) audioGain / 100f);
-    newClipImporter.adaptVideoToVideonaFormat(recordedVideo, videosRecorded, camera.getRotation(), 0);
     addVideoToProject(recordedVideo);
+    Log.d("Importer", "Adding video to project " + recordedVideo.getMediaPath());
+    newClipImporter.adaptVideoToVideonaFormat(recordedVideo, videosRecorded, camera.getRotation(), 0);
   }
 
   private void addVideoToProject(Video recordedVideo) {

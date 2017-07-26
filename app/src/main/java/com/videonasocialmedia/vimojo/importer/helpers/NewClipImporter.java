@@ -40,7 +40,8 @@ public class NewClipImporter implements TranscoderHelperListener {
     this.videoToAdaptRepository = new VideoToAdaptRealmRepository();
   }
 
-  public void adaptVideoToVideonaFormat(Video video, int videoPosition, int cameraRotation, int retries) {
+  public void adaptVideoToVideonaFormat(Video video, int videoPosition, int cameraRotation,
+                                        int retries) {
     Log.d(TAG, "Adapt video at position " + videoPosition);
     String destVideoRecorded = Constants.PATH_APP_MASTERS + File.separator
             + new File(video.getMediaPath()).getName();

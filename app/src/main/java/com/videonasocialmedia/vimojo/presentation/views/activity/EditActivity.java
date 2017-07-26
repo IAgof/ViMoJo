@@ -475,7 +475,12 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void updateProject() {
-        editPresenter.init();
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          editPresenter.init();
+        }
+      });
     }
 
     @Override

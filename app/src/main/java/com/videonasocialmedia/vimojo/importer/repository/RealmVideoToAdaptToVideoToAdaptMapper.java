@@ -22,6 +22,9 @@ class RealmVideoToAdaptToVideoToAdaptMapper implements Mapper<RealmVideoToAdapt,
 
   @Override
   public VideoToAdapt map(RealmVideoToAdapt realmVideoToAdapt) {
+    if (realmVideoToAdapt == null) {
+      return null;
+    }
     List<Video> retrievedVideos = videoRepository
             .query(new VideoUUIDSpecification(realmVideoToAdapt.getVideo_uuid()));
     Video video = retrievedVideos.size() > 0 ? retrievedVideos.get(0) : null;
