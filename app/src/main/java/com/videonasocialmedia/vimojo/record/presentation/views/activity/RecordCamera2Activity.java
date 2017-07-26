@@ -39,6 +39,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
+import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.record.presentation.views.broadcastreceiver.BatteryReceiver;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
@@ -104,8 +105,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   TextView editOrGalleryTextView;
   @Bind(R.id.edit_or_gallery_cardview)
   CardView editOrGalleryTextCardView;
-  @Bind(R.id.button_navigate_edit_or_gallery)
+  @Bind(R.id.button_navigate_edit)
   CircleImageView thumbClipRecordedButton;
+  @Bind(R.id.button_navigate_gallery)
+  ImageButton navigateGalleryButton;
   @Bind(R.id.button_record)
   ImageButton recordButton;
   @Bind(R.id.control_chronometer_and_rec_point)
@@ -1004,6 +1007,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void showRecordedVideoThumbWithText(String path) {
+    navigateGalleryButton.setVisibility(View.INVISIBLE);
     thumbClipRecordedButton.setVisibility(View.VISIBLE);
     Glide.with(this).load(path).into(thumbClipRecordedButton);
     editOrGalleryTextCardView.setVisibility(View.VISIBLE);
@@ -1013,6 +1017,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void hideRecordedVideoThumbWithText() {
     thumbClipRecordedButton.setVisibility(View.INVISIBLE);
     editOrGalleryTextCardView.setVisibility(View.INVISIBLE);
+    navigateGalleryButton.setVisibility(View.INVISIBLE);
   }
 
   @Override
@@ -1212,12 +1217,17 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
    presenter.switchCamera();
   }
 
-  @OnClick (R.id.button_navigate_edit_or_gallery)
-  public void navigateToEditOrGallery() {
+  @OnClick (R.id.button_navigate_edit)
+  public void onClickNavigateToEdit() {
     if (!isRecording) {
       presenter.setFlashOff();
-      presenter.navigateToEditOrGallery();
+      presenter.navigateToEdit();
     }
+  }
+
+  @OnClick(R.id.button_navigate_gallery)
+  public void onClickNavigateGallery(){
+    navigateTo(GalleryActivity.class);
   }
 
   @OnClick (R.id.button_grid)

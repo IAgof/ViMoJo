@@ -362,7 +362,7 @@
             android:id="@+id/button_record_slider_relativeLayout">
 
             <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
-                android:id="@+id/button_navigate_edit_or_gallery"
+                android:id="@+id/button_navigate_edit"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/circle_background"
@@ -377,7 +377,7 @@
                 android:padding="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/button_navigate_edit_or_gallery"
+                android:layout_below="@+id/button_navigate_edit"
                 android:layout_centerInParent="true"
                 android:text="@string/recordTextGallery"
                 android:textSize="12sp"
@@ -396,7 +396,7 @@
                 tools:text="0"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_alignBottom="@+id/button_navigate_edit_or_gallery" />
+                android:layout_alignBottom="@+id/button_navigate_edit" />
 
             <LinearLayout
                 android:id="@+id/controls"

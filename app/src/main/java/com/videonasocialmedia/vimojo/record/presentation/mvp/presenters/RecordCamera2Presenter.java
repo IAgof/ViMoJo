@@ -393,7 +393,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
         if (!areTherePendingTranscodingTask() || videoListToAdaptAndPosition.size() == 0) {
           recordView.hideProgressAdaptingVideo();
           if(isClickedNavigateToEditOrGallery){
-            navigateToEditOrGallery();
+            navigateToEdit();
           }
         }
         checkIfVideoAddedNeedLaunchAVTransitionJob((Video) media);
@@ -468,7 +468,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     }
   }
 
-  public void navigateToEditOrGallery() {
+  public void navigateToEdit() {
     if (areTherePendingTranscodingTask()) {
       recordView.showProgressAdaptingVideo();
       isClickedNavigateToEditOrGallery = true;

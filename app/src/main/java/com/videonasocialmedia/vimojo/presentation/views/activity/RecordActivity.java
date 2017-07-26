@@ -102,7 +102,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     ImageButton settingsCameraButton;
     @Bind(R.id.button_grid)
     ImageButton gridButton;
-    @Bind(R.id.button_navigate_edit_or_gallery)
+    @Bind(R.id.button_navigate_edit)
     CircleImageView buttonThumbClipRecorded;
     @Bind(R.id.text_view_num_videos)
     TextView numVideosRecorded;
@@ -883,7 +883,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         recordPresenter.changeCamera();
     }
 
-    @OnClick (R.id.button_navigate_edit_or_gallery)
+    @OnClick (R.id.button_navigate_edit)
     public void navigateToEditOrGallery() {
         if (!recording) {
             //TODO(alvaro 130616) Save flash state

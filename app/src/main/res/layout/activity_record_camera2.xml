@@ -201,24 +201,35 @@
                         android:layout_marginRight="16dp"
                         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                         android:indeterminate="false"
-                        android:layout_toLeftOf="@+id/button_navigate_edit_or_gallery"
+                        android:layout_toLeftOf="@+id/button_navigate_gallery"
                         android:layout_centerVertical="true"
                         />
 
-
                     <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
-                        android:id="@+id/button_navigate_edit_or_gallery"
+                        android:id="@+id/button_navigate_edit"
                         android:layout_width="36dp"
                         android:layout_height="38dp"
                         android:layout_weight="1"
                         android:background="@drawable/circle_background"
                         android:scaleType="fitCenter"
                         android:src="@drawable/activity_record_ic_galery"
-                        android:visibility="visible"
+                        android:visibility="invisible"
                         android:layout_centerVertical="true"
                         android:layout_alignParentEnd="true"
                         android:layout_marginRight="14dp"
                          />
+
+                    <ImageButton
+                        android:id="@+id/button_navigate_gallery"
+                        android:layout_width="36dp"
+                        android:layout_height="38dp"
+                        android:src="@drawable/activity_record_ic_galery"
+                        android:scaleType="fitCenter"
+                        android:background="@null"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginRight="14dp"
+                        />
 
                     <TextView
                         android:id="@+id/text_view_num_videos"
