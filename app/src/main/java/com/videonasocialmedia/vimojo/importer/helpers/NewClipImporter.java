@@ -99,7 +99,7 @@ public class NewClipImporter implements TranscoderHelperListener {
 //    VideoToAdapt videoToAdapt = videoListToAdaptAndPosition.remove(video.getMediaPath());
     VideoToAdapt videoToAdapt = videoToAdaptRepository.remove(video.getMediaPath());
     FileUtils.removeFile(video.getMediaPath());
-    Log.e(TAG, "deleting " + video.getMediaPath());
+    Log.d(TAG, "deleting " + video.getMediaPath());
     video.setMediaPath(videoToAdapt.getDestVideoPath());
     video.setVolume(Video.DEFAULT_VOLUME);
     video.setStopTime(FileUtils.getDuration(video.getMediaPath()));
@@ -107,8 +107,6 @@ public class NewClipImporter implements TranscoderHelperListener {
     video.notifyChanges();
     updateVideoRepositoryUseCase.updateVideo(video);
     // (jliarte): 18/07/17 now we should move the file, notify changes, and launch AV transitions
-
-//    hadleClipAdderCall(videoToAdapt);
 
 
 //      } else {

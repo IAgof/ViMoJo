@@ -276,6 +276,14 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public void stopRecordVideo() {
     try {
+      try {
+        // (jliarte): 26/07/17 fix for some Android 5.x devices as seen in
+        // https://stackoverflow.com/a/35739021
+        previewSession.stopRepeating();
+        previewSession.abortCaptures();
+      } catch (CameraAccessException e) {
+        e.printStackTrace();
+      }
       mediaRecorder.stop();
       isRecordingVideo = false;
     } catch (RuntimeException runtimeException) {
