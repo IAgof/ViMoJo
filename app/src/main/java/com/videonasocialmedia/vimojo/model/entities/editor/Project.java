@@ -19,6 +19,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
@@ -90,7 +91,7 @@ public class Project {
      */
     public Project(String title, String rootPath, Profile profile) {
         this.title = title;
-        this.vmComposition = new VMComposition(getResourceWatermarkFilePath(rootPath), profile);
+        this.vmComposition = new VMComposition(Constants.PATH_WATERMARK, profile);
         this.profile = profile;
         this.duration = 0;
         this.isAudioFadeTransitionActivated = false;
@@ -102,10 +103,8 @@ public class Project {
     }
 
   @NonNull
-  public String getResourceWatermarkFilePath(String rootPath) {
-
-    return rootPath + File.separator + Constants.FOLDER_NAME_VIMOJO_TEMP + File.separator +
-        Constants.RESOURCE_WATERMARK_NAME;
+  public String getResourceWatermarkFilePath() {
+    return Constants.PATH_WATERMARK;
   }
 
   public Project(Project project) throws IllegalItemOnTrack {

@@ -25,9 +25,9 @@ public class UpdateWatermarkPreferenceToProjectUseCase {
     projectRepository.update(currentProject);
   }
 
-  public boolean isWatermarkResourceDownloaded(String rootPath){
+  public boolean isWatermarkResourceDownloaded(){
     currentProject = Project.getInstance(null,null,null);
-    File f = new File(currentProject.getResourceWatermarkFilePath(rootPath));
+    File f = new File(currentProject.getResourceWatermarkFilePath());
     return f.exists();
   }
 

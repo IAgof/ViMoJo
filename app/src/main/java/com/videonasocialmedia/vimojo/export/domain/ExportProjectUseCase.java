@@ -14,7 +14,9 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.io.File;
 import java.util.NoSuchElementException;
 
 public class ExportProjectUseCase implements ExportListener {
@@ -40,11 +42,19 @@ public class ExportProjectUseCase implements ExportListener {
    * Main use case method.
    */
   public void export(OnExportFinishedListener onExportFinishedListener) {
+    checkWatermarkResource();
     this.onExportFinishedListener = onExportFinishedListener;
     try {
       VMCompositionExportSession.exportAsyncronously();
     } catch (NoSuchElementException exception) {
       onExportError(String.valueOf(exception));
+    }
+  }
+
+  private void checkWatermarkResource() {
+    File watermarkResource = new File(project.getResourceWatermarkFilePath());
+    if(!watermarkResource.exists()){
+      Utils.copyWatermarkResourceToDevice(Constants.PATH_APP_PRIVATE);
     }
   }
 

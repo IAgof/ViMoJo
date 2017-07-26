@@ -386,7 +386,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             case ConfigPreferences.WATERMARK:
                 boolean data = sharedPreferences.getBoolean(key, false);
                 if (data && !updateWatermarkPreferenceToProjectUseCase
-                        .isWatermarkResourceDownloaded(Constants.PATH_APP)) {
+                        .isWatermarkResourceDownloaded()) {
                     Utils.copyWatermarkResourceToDevice();
                 }
                 updateWatermarkPreferenceToProjectUseCase.setWatermarkActivated(data);
