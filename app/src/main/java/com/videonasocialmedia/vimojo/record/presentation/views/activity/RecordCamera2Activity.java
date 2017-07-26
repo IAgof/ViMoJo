@@ -14,6 +14,7 @@ import android.os.StatFs;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.util.Range;
 import android.view.MotionEvent;
@@ -111,8 +112,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton clearButton;
   @Bind(R.id.hud)
   View hudView;
-  @Bind(R.id.controls)
-  View controlsView;
   @Bind(R.id.picometer)
   View picometerView;
   @Bind(R.id.seekBar_slide_left)
@@ -129,8 +128,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   View settingsCameraBarView;
   @Bind(R.id.button_zoom)
   ImageButton zoomButton;
-  @Bind(R.id.slide_seekbar_submenu)
-  View slideSeekbarSubmenuView;
+  @Bind(R.id.slide_seekbar_submenu_cardview)
+  CardView slideSeekbarSubmenuView;
 
   @Bind(R.id.button_iso)
   ImageButton isoButton;
@@ -534,7 +533,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     clearButton.setImageResource(R.drawable.activity_record_ic_expand);
     clearButton.setActivated(true);
     hudView.setVisibility(View.INVISIBLE);
-    controlsView.setVisibility(View.INVISIBLE);
     hideControlsViewButton.setVisibility(View.INVISIBLE);
     showControlsButton.setVisibility(View.INVISIBLE);
     slideSeekbarSubmenuView.setVisibility(View.INVISIBLE);
@@ -559,7 +557,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void hideRightControlsView() {
     hideControlsViewButton.setVisibility(View.INVISIBLE);
     showControlsButton.setVisibility(View.VISIBLE);
-    controlsView.setVisibility(View.INVISIBLE);
     settingsCameraBarView.setVisibility(View.INVISIBLE);
 
     settingsCameraBarView.setVisibility(View.INVISIBLE);
@@ -574,7 +571,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void showRightControlsView() {
     showControlsButton.setVisibility(View.INVISIBLE);
     hideControlsViewButton.setVisibility(View.VISIBLE);
-    controlsView.setVisibility(View.VISIBLE);
     if (settingsCameraButton.isSelected()) {
       settingsCameraBarView.setVisibility(View.VISIBLE);
     }

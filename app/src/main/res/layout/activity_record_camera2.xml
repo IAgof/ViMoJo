@@ -693,13 +693,6 @@
             android:layout_alignEnd="@+id/hud_cardview"
             android:layout_below="@+id/edit_or_gallery_cardview"
             android:layout_margin="8dp">
-            <!-- Borrar este linear layout primero en java -->
-            <LinearLayout
-                android:id="@+id/controls"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
-
 
             <ImageButton
                 android:id="@+id/button_record"
@@ -724,6 +717,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
                 android:backgroundTint="@color/colorGreyTransparent"
+                android:visibility="invisible"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="@null">
 
