@@ -5,3 +5,4 @@ v0.7.0-RC4
 - Enabled watermark for vimojo flavour
 - Enabled FTP, voice over and watermark features for hispanopost flavour
 - Added cardview design to ShareActivity.
+- Update text About us. Make portrait screen about, privacy, service, license and legal.

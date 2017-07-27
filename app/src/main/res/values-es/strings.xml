@@ -245,27 +245,36 @@
     <!-- About Activity -->
 
     <string name="aboutUsContent">
-        Graba, edita, comparte… Tres sencillos pasos para convertir tu vida en una película.Una
-        aventura audiovisual en la que vas a adentrarte tras instalar Videona en tu smartphone.
-        A partir de ahora dispones de la herramienta perfecta para crear vídeos con efectos y
-        filtros súper molones, añadirles música… y compartirlos con tu entorno a través de tus redes
-        sociales favoritas.\n\n
-
-        Detrás de esta aplicación hay un equipo formado por jóvenes emprendedores españoles que se
-        ha propuesto crear el mejor editor de vídeo para smartphones. Nuestra app pretende romper la
-        barrera de la edición y revolucionar el mundo audiovisual en los terminales móviles. \n\n
-
-        Copyright 2015. Videona Socialmedia S.L. Todos los derechos reservados. \n\n
-
+        ¡Hola! \n\nPrimeramente nos gustaría agradecerte tu participación en ViMoJo. Todo el equipo
+        te deseamos la mejor experiencia posible durante su uso. \n\nNuestra compañía se llama Videona
+        y tenemos muchísimas ganas de construir junto a ti la app MOJO (Mobile Journalism) más puntera,
+        ¿nos ayudas?\n\nLa manera de conocernos mejor es compartiendo tu experiencia con nosotros
+        y participando en nuestro canal VIMOJO.SLACK.COM. Su uso está dedicado fundamentalmente
+        a que todos vosotros conozcáis más a fondo quiénes somos y atender mejor vuestras peticiones.
+        Millones de gracias a todos los que ya estáis participando activamente, ¡sois los mejores!\n\nEn
+        Videona nos dedicamos al desarrollo de aplicaciones de vídeo para dispositivos Android e iOS. \n\nVIMOJO,
+        LA ERA DEL PERIODISMO MÓVIL HA LLEGADO.\n\nViMoJo (Videona para Periodismo Móvil) os permite
+        a los periodistas y a los cámaras profesionales contar los hechos en el preciso momento
+        en el que están sucediendo. Estamos aquí para cambiar el modo en que los profesionales
+        de la comunicación adaptan la tecnología móvil a su flujo de trabajo, rompiendo la barrera
+        de la edición de vídeo.\n\nDetrás de esta aplicación, hay un equipo formado por jóvenes emprendedores
+        españoles que se ha propuesto crear el mejor editor de vídeo para smartphones. Nuestra app pretende
+        romper la barrera de la edición y revolucionar el mundo audiovisual haciendo uso de los
+        terminales móviles. \n\n¿Nos ayudas?\n\nTe necesitamos para construir y mejorar la herramienta con la que estamos
+        revolucionando el periodismo.\n\nTodo el equipo te agradece que participes de la experiencia.\n\nP.D.:
+        Si estás pensando en contratar el producto, no dudes en contactarnos.\n\nVideona
+        Socialmedia S.L \nCIF: B-87047171 \nEspaña - Madrid \n\nCopyright 2017. Videona Socialmedia S.L. Todos los derechos reservados./n
     </string>
     <string name="videona_web">http://www.videona.es</string>
     <string name="contactUsTitle"><u>Contacto</u></string>
     <string name="contactUsContent">Visita nuestra página web:</string>
     <string name="videonaWeb">http://www.videona.es\n</string>
+    <string name="joinOurCommunity">Únete a nuestro canal de Slack web:</string>
+    <string name="vimojoslackWeb">http://vimojo.slack.com\n</string>
     <string name="versionTitle"><u>Versión</u></string>
     <string name="videona">Videona</string>
     <string name="versionContent">beta </string>
-    <string name="madeIn">Hecho en Madrid</string>
+    <string name="madeIn">Hecho con amor Madrid - España</string>
     <string name="licenseTitle"><u>Licencias de Software libre</u></string>
     <string name="licenseContent">
         Copyright &#169; 2013 Jake Wharton\nLicensed under the Apache License, Version 2.0 (the
