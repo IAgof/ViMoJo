@@ -588,13 +588,15 @@ public class Utils {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
-    public static void copyWatermarkResourceToDevice() {
+    public static boolean copyWatermarkResourceToDevice() {
         try {
             copyResourceToPrivateFolder(Constants.PATH_APP_PRIVATE, VimojoApplication.getAppContext(),
                 "watermark", R.raw.watermark, ".png");
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
 }

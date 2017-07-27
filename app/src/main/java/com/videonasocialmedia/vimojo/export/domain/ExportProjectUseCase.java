@@ -10,6 +10,8 @@ package com.videonasocialmedia.vimojo.export.domain;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession.ExportListener;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSessionImpl;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
@@ -42,8 +44,8 @@ public class ExportProjectUseCase implements ExportListener {
    * Main use case method.
    */
   public void export(OnExportFinishedListener onExportFinishedListener) {
-    checkWatermarkResource();
     this.onExportFinishedListener = onExportFinishedListener;
+    checkWatermarkResource();
     try {
       VMCompositionExportSession.exportAsyncronously();
     } catch (NoSuchElementException exception) {
@@ -54,7 +56,9 @@ public class ExportProjectUseCase implements ExportListener {
   private void checkWatermarkResource() {
     File watermarkResource = new File(project.getResourceWatermarkFilePath());
     if(!watermarkResource.exists()){
-      Utils.copyWatermarkResourceToDevice(Constants.PATH_APP_PRIVATE);
+      if(!Utils.copyWatermarkResourceToDevice()) {
+        onExportError(VimojoApplication.getAppContext().getString(R.string.export_error_watermark));
+      }
     }
   }
 
