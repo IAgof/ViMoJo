@@ -78,6 +78,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public static final int SLIDE_SEEKBAR_MODE_FOCUS_MANUAL = 3;
   private static final int SLIDE_SEEKBAR_MODE_AUDIO_GAIN = 4;
   public static final int DEFAULT_AUDIO_GAIN = 100;
+  public static final float SCALE_Y_PICOMETER_PROGRESS = 2f;
   private final String LOG_TAG = getClass().getSimpleName();
 
   @Inject
@@ -121,8 +122,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton showAllControlsButton;
   @Bind(R.id.hud_cardview)
   CardView hudCardView;
-  @Bind(R.id.picometer)
-  View picometerView;
   @Bind(R.id.seekBar_slide_left)
   SeekBar slideSeekBar;
   @Bind(R.id.seekBar_upper_text)
@@ -307,7 +306,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private void initPicometer() {
     tintProgress(ColorStateList.valueOf(getResources().getColor(R.color.recordActivityInfoGreen)));
-    picometerProgress.setScaleY(4f);
+    picometerProgress.setScaleY(SCALE_Y_PICOMETER_PROGRESS);
   }
 
   private void createProgressDialogAdaptVideo() {
@@ -340,9 +339,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void setupActivityButtons() {
     // TODO:(alvaro.martinez) 7/11/16 implement this functionality, use case check support camera
     tintRecordButtons(R.color.button_color_record_activity);
-
-    // Disable until implement camera pro
-    picometerView.setVisibility(View.INVISIBLE);
   }
 
   private void tintRecordButtons(int button_color) {
@@ -399,8 +395,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void configShowThumbAndNumberClips() {
-    thumbClipRecordedButton.setBorderWidth(5);
-    thumbClipRecordedButton.setBorderColor(Color.WHITE);
     numVideosRecordedTextView.setVisibility(View.GONE);
   }
 

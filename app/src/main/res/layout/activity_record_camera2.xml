@@ -194,7 +194,7 @@
 
                     <ProgressBar
                         android:id="@+id/picometer_progressbar"
-                        android:layout_width="108dp"
+                        android:layout_width="98dp"
                         android:max="100"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -208,9 +208,8 @@
 
                     <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
                         android:id="@+id/button_navigate_edit"
-                        android:layout_width="36dp"
-                        android:layout_height="38dp"
-                        android:layout_weight="1"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:background="@drawable/circle_background"
                         android:scaleType="fitCenter"
                         android:src="@drawable/activity_record_ic_galery"
@@ -234,36 +233,16 @@
 
                     <TextView
                         android:id="@+id/text_view_num_videos"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:gravity="center"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginRight="28dp"
-                        android:layout_weight="1"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/white"
                         android:textSize="16sp"
-                        tools:text="0"
+                        android:layout_marginRight="14dp"
+                        tools:text="00"
                          />
-
-                    <LinearLayout
-                        android:id="@+id/picometer"
-                        android:orientation="horizontal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@color/colorGreyTransparent"
-                        android:layout_marginTop="8dp"
-                        android:layout_alignParentStart="false"
-                        android:layout_marginLeft="24dp">
-
-                        <SeekBar
-                            android:layout_width="200dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_brightness_5_white_48px"
-                            android:indeterminate="false"
-                            android:visibility="gone" />
-
-                    </LinearLayout>
 
                     <ImageView
                         android:id="@+id/activity_record_icon_geolocation"
