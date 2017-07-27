@@ -262,12 +262,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     int color;
     // TODO(jliarte): 13/07/17 should we check limits here?
     progress = progress * audioGain / 100;
-    color = Color.GREEN;
+    color = R.color.recordActivityInfoGreen;
     if (progress > 80) {
-      color = Color.YELLOW;
+      color = R.color.recordActivityInfoYellow;
     }
     if (progress > 98) {
-      color = Color.RED;
+      color = R.color.recordActivityInfoRed;
     }
     recordView.showProgressPicometer(progress, color);
 //    Log.d(TAG, "Picometer progress " + progress + " isRecording " + camera.isRecordingVideo());

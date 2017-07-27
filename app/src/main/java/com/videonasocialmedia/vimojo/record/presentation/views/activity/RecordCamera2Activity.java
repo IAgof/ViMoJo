@@ -306,7 +306,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void initPicometer() {
-    tintProgress(ColorStateList.valueOf(Color.GREEN));
+    tintProgress(ColorStateList.valueOf(getResources().getColor(R.color.recordActivityInfoGreen)));
     picometerProgress.setScaleY(4f);
   }
 
@@ -1106,15 +1106,15 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     switch (batteryStatus) {
       case CHARGING:
       case FULL:
-        alertDialogBattery.setPercentColor(getResources().getColor(R.color.recordAlertInfoGreen));
+        alertDialogBattery.setPercentColor(getResources().getColor(R.color.recordActivityInfoGreen));
         break;
       case MEDIUM:
-        alertDialogBattery.setPercentColor(getResources().getColor(R.color.recordAlertInfoYellow));
+        alertDialogBattery.setPercentColor(getResources().getColor(R.color.recordActivityInfoYellow));
         break;
       case LOW:
       case CRITICAL:
       default:
-        alertDialogBattery.setPercentColor(getResources().getColor(R.color.recordAlertInfoRed));
+        alertDialogBattery.setPercentColor(getResources().getColor(R.color.recordActivityInfoRed));
         break;
     }
   }
@@ -1130,15 +1130,15 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     switch (storageStatus) {
       case MEDIUM:
         storageButton.setImageTintList(ColorStateList.valueOf(getResources()
-            .getColor(R.color.recordAlertInfoYellow)));
+            .getColor(R.color.recordActivityInfoYellow)));
         break;
       case CRITICAL:
         storageButton.setImageTintList(ColorStateList.valueOf(getResources()
-            .getColor(R.color.recordAlertInfoRed)));
+            .getColor(R.color.recordActivityInfoRed)));
         break;
       case OKAY:
         storageButton.setImageTintList(ColorStateList.valueOf(getResources()
-            .getColor(R.color.recordAlertInfoGreen)));
+            .getColor(R.color.recordActivityInfoGreen)));
         break;
       default:
         storageButton.setImageTintList(ColorStateList.valueOf(Color.WHITE));
@@ -1166,13 +1166,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private void setColorProgressBarMemory(Constants.MEMORY_STATUS memoryStatus) {
     switch (memoryStatus) {
       case OKAY:
-        alertDialogStorage.setPercentColor(getResources().getColor(R.color.recordAlertInfoGreen));
+        alertDialogStorage.setPercentColor(getResources().getColor(R.color.recordActivityInfoGreen));
         break;
       case MEDIUM:
-        alertDialogStorage.setPercentColor(getResources().getColor(R.color.recordAlertInfoYellow));
+        alertDialogStorage.setPercentColor(getResources().getColor(R.color.recordActivityInfoYellow));
         break;
       case CRITICAL:
-        alertDialogStorage.setPercentColor(getResources().getColor(R.color.recordAlertInfoRed));
+        alertDialogStorage.setPercentColor(getResources().getColor(R.color.recordActivityInfoRed));
         break;
       default:
         alertDialogStorage.setPercentColor(Color.WHITE);
@@ -1198,7 +1198,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void showProgressPicometer(int progress, int color) {
-    tintProgress(ColorStateList.valueOf(color));
+    tintProgress(ColorStateList.valueOf(getResources().getColor(color)));
     picometerProgress.setProgress(progress);
   }
 
