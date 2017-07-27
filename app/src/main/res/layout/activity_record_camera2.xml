@@ -180,7 +180,7 @@
                         android:scaleType="fitCenter"
                         android:layout_gravity="center"
                         android:visibility="visible"
-                        android:src="@drawable/activity_record_ic_storage"
+                        android:src="@drawable/activity_record_ic_storage_normal"
                         android:layout_toRightOf="@+id/button_navigate_settings"
                         android:layout_centerVertical="true"/>
 

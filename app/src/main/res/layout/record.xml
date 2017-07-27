@@ -100,7 +100,7 @@
                     android:layout_gravity="center"
                     android:visibility="visible"
                     android:background="@null"
-                    app:srcCompat="@drawable/activity_record_ic_storage"
+                    app:srcCompat="@drawable/activity_record_ic_storage_normal"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"/>
 

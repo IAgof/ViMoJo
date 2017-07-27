@@ -1123,19 +1123,16 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
                                    String freeMemoryInBytes, String totalMemoryInBytes) {
     switch (storageStatus) {
       case MEDIUM:
-        storageButton.setImageTintList(ColorStateList.valueOf(getResources()
-            .getColor(R.color.recordActivityInfoYellow)));
+        storageButton.setImageResource(R.drawable.activity_record_ic_storage_medium);
         break;
       case CRITICAL:
-        storageButton.setImageTintList(ColorStateList.valueOf(getResources()
-            .getColor(R.color.recordActivityInfoRed)));
+        storageButton.setImageResource(R.drawable.activity_record_ic_storage_low);
         break;
       case OKAY:
-        storageButton.setImageTintList(ColorStateList.valueOf(getResources()
-            .getColor(R.color.recordActivityInfoGreen)));
+        storageButton.setImageResource(R.drawable.activity_record_ic_storage_normal);
         break;
       default:
-        storageButton.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+        storageButton.setImageResource(R.drawable.activity_record_ic_storage_full);
     }
     updateMessageStorage(freeMemoryInBytes, totalMemoryInBytes);
     updateProgressBarStorage(storageStatus, storagePercent);
