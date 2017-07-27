@@ -738,6 +738,7 @@
                 android:layout_marginTop="8dp"
                 android:backgroundTint="@color/colorGreyTransparent"
                 android:visibility="invisible"
+                tools:visibility="visible"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="@null">
 
@@ -752,76 +753,80 @@
                     android:orientation="vertical"
                     android:visibility="visible">
 
-                    <TextView
-                        android:id="@+id/seekBar_upper_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginTop="4dp"
-                        android:background="#00ffffff"
-                        android:gravity="center"
-                        android:padding="4dp"
-                        android:text="100%"
-                        android:textColor="@color/colorWhite"
-                        android:textSize="8sp"
-                        tools:visibility="visible" />
+                        <TextView
+                            android:id="@+id/seekBar_upper_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_marginTop="4dp"
+                            android:background="#00ffffff"
+                            android:gravity="center"
+                            android:padding="4dp"
+                            android:text="100%"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="8sp"
+                            tools:visibility="visible" />
 
-                    <ImageView
-                        android:id="@+id/seekBar_upper_image"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="4dp"
-                        android:background="#00ffffff"
-                        android:padding="4dp"
-                        android:text="100%"
-                        tools:src="@drawable/activity_record_ic_focus_macro" />
+                        <ImageView
+                            android:id="@+id/seekBar_upper_image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="4dp"
+                            android:background="#00ffffff"
+                            android:paddingLeft="4dp"
+                            android:paddingTop="4dp"
+                            android:paddingRight="4dp"
+                            android:text="100%"
+                            tools:src="@drawable/activity_record_ic_focus_macro" />
 
                     <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_above="@+id/seekBar_lower_text"
-                        android:layout_below="@+id/seekBar_upper_text"
+                        android:layout_above="@+id/seekBar_lower_image"
+                        android:layout_below="@+id/seekBar_upper_image"
+                        android:layout_marginTop="16dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true">
-
                         <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
                             android:id="@+id/seekBar_slide_left"
-                            android:layout_width="0dp"
-                            android:layout_height="132dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:gravity="center"
                             android:progressTint="@color/colorWhite"
                             android:splitTrack="false"
                             android:thumbTint="@color/colorWhite"
                             app:seekBarRotation="CW270" /> <!-- Rotation: CW90 or CW270 -->
                     </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
+                        <TextView
+                            android:id="@+id/seekBar_lower_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="#00ffffff"
+                            android:gravity="center"
+                            android:padding="4dp"
+                            android:text="0%"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="8sp"
+                            tools:visibility="visible"
+                            android:layout_alignParentBottom="true"
+                            android:layout_centerHorizontal="true"
+                            />
 
-                    <TextView
-                        android:id="@+id/seekBar_lower_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_gravity="center"
-                        android:background="#00ffffff"
-                        android:gravity="center"
-                        android:padding="4dp"
-                        android:text="0%"
-                        android:textColor="@color/colorWhite"
-                        android:textSize="8sp"
-                        tools:visibility="visible" />
-
-                    <ImageView
-                        android:id="@+id/seekBar_lower_image"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_gravity="center"
-                        android:background="#00ffffff"
-                        android:padding="4dp"
-                        android:src="@drawable/activity_record_ic_focus_infinite"
-                        android:text="100%"
-                        tools:visibility="visible" />
+                        <ImageView
+                            android:id="@+id/seekBar_lower_image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_gravity="center"
+                            android:background="#00ffffff"
+                            android:paddingLeft="4dp"
+                            android:paddingBottom="4dp"
+                            android:paddingRight="4dp"
+                            android:src="@drawable/activity_record_ic_focus_infinite"
+                            android:text="100%"
+                            tools:visibility="visible" />
 
                 </RelativeLayout>
 
