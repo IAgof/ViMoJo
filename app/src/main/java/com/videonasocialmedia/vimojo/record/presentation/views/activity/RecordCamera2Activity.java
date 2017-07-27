@@ -99,6 +99,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton navigateSettingsButtons;
   @Bind(R.id.chronometer_record)
   Chronometer chronometer;
+  @Bind(R.id.imageRecPoint)
+  ImageView recPointImage;
   @Bind(R.id.text_view_num_videos)
   TextView numVideosRecordedTextView;
   @Bind(R.id.edit_or_gallery_text_view)
@@ -476,6 +478,16 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void resetChronometer() {
     chronometer.setBase(SystemClock.elapsedRealtime());
     chronometer.setText("00:00");  }
+
+  @Override
+  public void showRecordPointIndicator() {
+    recPointImage.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void hideRecordPointIndicator() {
+    recPointImage.setVisibility(View.INVISIBLE);
+  }
 
   @Override
   public void showNavigateToSettingsActivity() {

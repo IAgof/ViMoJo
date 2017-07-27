@@ -86,7 +86,7 @@ public class RecordCamera2PresenterTest {
 
     presenter.initViews();
 
-    verify(mockedRecordView).hideChronometer();
+    verify(mockedRecordView).hideRecordPointIndicator();
     verify(mockedRecordView).setResolutionSelected(720);
     verify(mockedRecordView).showPrincipalViews();
     verify(mockedRecordView).showRightControlsView();
@@ -98,7 +98,7 @@ public class RecordCamera2PresenterTest {
 
     presenter.initViews();
 
-    verify(mockedRecordView).hideChronometer();
+    verify(mockedRecordView).hideRecordPointIndicator();
     verify(mockedRecordView).setResolutionSelected(720);
     verify(mockedRecordView).showPrincipalViews();
     verify(mockedRecordView).showRightControlsView();

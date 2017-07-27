@@ -34,6 +34,10 @@ public interface RecordCamera2View {
 
     void resetChronometer();
 
+    void showRecordPointIndicator();
+
+    void hideRecordPointIndicator();
+
     void showNavigateToSettingsActivity();
 
     void hideNavigateToSettingsActivity();
