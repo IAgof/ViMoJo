@@ -38,23 +38,73 @@
 
         <android.support.v7.widget.CardView
             android:id="@+id/edit_or_gallery_cardview"
-            android:layout_width="wrap_content"
+            android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_below="@+id/hud_cardview"
-            android:layout_marginRight="22dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
             android:backgroundTint="@color/colorGreyTransparent"
+            app:cardCornerRadius="8dp"
             app:cardElevation="@null">
 
-            <TextView
-                android:id="@+id/edit_or_gallery_text_view"
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:padding="4dp"
-                android:text="@string/recordTextGallery"
-                android:textColor="@android:color/white"
-                android:textSize="8sp" />
+                android:orientation="vertical"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp">
+
+                <RelativeLayout
+                    android:id="@+id/edit_or_gallery_relative"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
+                        android:id="@+id/button_navigate_edit"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:background="@drawable/circle_background"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/activity_record_ic_galery"
+                        android:visibility="invisible"
+                        android:layout_marginStart="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        />
+
+                    <ImageButton
+                        android:id="@+id/button_navigate_gallery"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/activity_record_ic_gallery"
+                        android:background="@null"
+                        android:layout_centerInParent="true"
+                        />
+
+                    <TextView
+                        android:id="@+id/text_view_num_videos"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        tools:text="00"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/edit_or_gallery_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/recordTextGallery"
+                    android:textColor="@android:color/white"
+                    android:layout_below="@+id/edit_or_gallery_relative"
+                    android:textSize="8sp"
+                    tools:text="Gallery"/>
+            </RelativeLayout>
 
         </android.support.v7.widget.CardView>
 
@@ -65,9 +115,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
             android:layout_marginTop="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="100dp"
             android:layout_marginLeft="8dp"
             android:layout_marginBottom="4dp"
             android:backgroundTint="@color/colorGreyTransparent"
@@ -197,73 +246,14 @@
                         android:layout_width="98dp"
                         android:max="100"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
                         android:layout_gravity="center"
                         android:maxHeight="2dp"
                         android:layout_marginRight="16dp"
                         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                         android:indeterminate="false"
-                        android:layout_toLeftOf="@+id/button_navigate_gallery"
                         android:layout_centerVertical="true"
                         />
-
-                    <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
-                        android:id="@+id/button_navigate_edit"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:background="@drawable/circle_background"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/activity_record_ic_galery"
-                        android:visibility="invisible"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginRight="14dp"
-                         />
-
-                    <ImageButton
-                        android:id="@+id/button_navigate_gallery"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/activity_record_ic_gallery"
-                        android:scaleType="fitCenter"
-                        android:background="@null"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginRight="14dp"
-                        />
-
-                    <TextView
-                        android:id="@+id/text_view_num_videos"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:gravity="center"
-                        android:layout_alignParentEnd="true"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@android:color/white"
-                        android:textSize="16sp"
-                        android:layout_marginRight="14dp"
-                        tools:text="00"
-                         />
-
-                    <ImageView
-                        android:id="@+id/activity_record_icon_geolocation"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:scaleType="fitCenter"
-                        android:layout_gravity="center"
-                        android:visibility="gone"
-                        android:src="@drawable/activity_record_ic_geolocation_normal"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp" />
-
-                    <ImageView
-                        android:id="@+id/activity_record_icon_microphone_"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:visibility="gone"
-                        android:src="@drawable/activity_record_ic_microphone_pressed"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp" />
 
                 <ImageButton
                     android:id="@+id/clear_button"
@@ -705,7 +695,7 @@
             android:id="@+id/button_record_slider_relativeLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/hud_cardview"
+            android:layout_alignParentEnd="true"
             android:layout_below="@+id/edit_or_gallery_cardview"
             android:layout_margin="8dp">
 
