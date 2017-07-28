@@ -10,9 +10,7 @@ import android.view.MenuItem;
 
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.settings.presentation.views.fragment.SettingsFragment;
-import com.videonasocialmedia.vimojo.utils.Constants;
 
 import butterknife.ButterKnife;
 
@@ -68,17 +66,6 @@ public class SettingsActivity extends VimojoActivity {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
         startActivity(i);
-    }
-
-    @Override
-    public void onBackPressed() {
-        navigateTo(EditActivity.class, 0);
-    }
-
-    private void navigateTo(Class cls, int currentVideoIndex) {
-        Intent intent = new Intent(this, cls);
-        intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
-        startActivity(intent);
     }
 
 }

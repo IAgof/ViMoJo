@@ -21,7 +21,7 @@
     <string name="giftOverlayDialogTitle">Your present</string>
     <string name="giftOverlayDialogMessage">Enjoy your new Bollywood filter</string>
     <string name="recordTextGallery">Gallery</string>
-    <string name="recordTextEdit">Go to edit</string>
+    <string name="recordTextEdit">Edit</string>
 
     <string name="dialog_title_record_adapting_video">Adapting video</string>
     <string name="dialog_message_record_adapting_video">Working ...</string>

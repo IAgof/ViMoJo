@@ -130,10 +130,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
 
   public void initViews() {
     recordView.setResolutionSelected(getResolutionHeight(currentProject));
-    recordView.hideChronometer();
     recordView.showPrincipalViews();
     recordView.showRightControlsView();
     recordView.showSettingsCameraView();
+    recordView.hideRecordPointIndicator();
     setupAdvancedCameraControls();
   }
 
@@ -263,12 +263,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     int color;
     // TODO(jliarte): 13/07/17 should we check limits here?
     progress = progress * audioGain / 100;
-    color = Color.GREEN;
+    color = R.color.recordActivityInfoGreen;
     if (progress > 80) {
-      color = Color.YELLOW;
+      color = R.color.recordActivityInfoYellow;
     }
     if (progress > 98) {
-      color = Color.RED;
+      color = R.color.recordActivityInfoRed;
     }
     recordView.showProgressPicometer(progress, color);
 //    Log.d(TAG, "Picometer progress " + progress + " isRecording " + camera.isRecordingVideo());
@@ -307,7 +307,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
         public void onRecordStarted() {
           recordView.showStopButton();
           recordView.startChronometer();
-          recordView.showChronometer();
+          recordView.showRecordPointIndicator();
           recordView.hideNavigateToSettingsActivity();
           recordView.hideVideosRecordedNumber();
           recordView.hideRecordedVideoThumbWithText();
@@ -344,7 +344,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     recordView.showRecordButton();
     recordView.showNavigateToSettingsActivity();
     recordView.stopChronometer();
-    recordView.hideChronometer();
+    recordView.hideRecordPointIndicator();
+    recordView.resetChronometer();
     recordView.showChangeCamera();
 //    setFlashOff();
   }
@@ -405,7 +406,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
         if (!areTherePendingTranscodingTask() || videoListToAdaptAndPosition.size() == 0) {
           recordView.hideProgressAdaptingVideo();
           if(isClickedNavigateToEditOrGallery){
-            navigateToEditOrGallery();
+            navigateToEdit();
           }
         }
         checkIfVideoAddedNeedLaunchAVTransitionJob((Video) media);
@@ -484,7 +485,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     }
   }
 
-  public void navigateToEditOrGallery() {
+  public void navigateToEdit() {
     if (areTherePendingTranscodingTask()) {
       recordView.showProgressAdaptingVideo();
       isClickedNavigateToEditOrGallery = true;
