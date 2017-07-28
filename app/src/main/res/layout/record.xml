@@ -100,7 +100,7 @@
                     android:layout_gravity="center"
                     android:visibility="visible"
                     android:background="@null"
-                    app:srcCompat="@drawable/activity_record_ic_storage"
+                    app:srcCompat="@drawable/activity_record_ic_storage_normal"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"/>
 
@@ -359,10 +359,10 @@
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
             android:layout_alignTop="@+id/control_chronometer_and_rec_point"
-            android:id="@+id/relativeLayout">
+            android:id="@+id/button_record_slider_relativeLayout">
 
             <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
-                android:id="@+id/button_navigate_edit_or_gallery"
+                android:id="@+id/button_navigate_edit"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/circle_background"
@@ -373,11 +373,11 @@
                 android:layout_centerHorizontal="true" />
 
             <TextView
-                android:id="@+id/record_text_view_edit_or_gallery"
+                android:id="@+id/edit_or_gallery_text_view"
                 android:padding="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/button_navigate_edit_or_gallery"
+                android:layout_below="@+id/button_navigate_edit"
                 android:layout_centerInParent="true"
                 android:text="@string/recordTextGallery"
                 android:textSize="12sp"
@@ -396,7 +396,7 @@
                 tools:text="0"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_alignBottom="@+id/button_navigate_edit_or_gallery" />
+                android:layout_alignBottom="@+id/button_navigate_edit" />
 
             <LinearLayout
                 android:id="@+id/controls"
@@ -484,8 +484,8 @@
             android:src="@drawable/activity_record_ic_show_menu_normal"
             android:scaleType="fitCenter"
             android:visibility="visible"
-            android:layout_alignBottom="@+id/relativeLayout"
-            android:layout_toStartOf="@+id/relativeLayout"
+            android:layout_alignBottom="@+id/button_record_slider_relativeLayout"
+            android:layout_toStartOf="@+id/button_record_slider_relativeLayout"
             android:layout_marginBottom="68dp"
             android:layout_marginEnd="19dp"/>
 

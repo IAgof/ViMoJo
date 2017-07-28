@@ -2,7 +2,7 @@
 <resources>
     
     <color name="colorTransparent">#00000000</color>
-    <color name="colorGreyTransparent">#7F000000</color>
+    <color name="colorGreyTransparent">#4F000000</color>
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
 
@@ -36,8 +36,8 @@
     <color name="book_loading_background">#00ffffff</color>
     <color name="book_loading_book">@color/colorAccent</color>
 
-    <color name="recordAlertInfoGreen">#37c151</color>
-    <color name="recordAlertInfoYellow">#ffcb00</color>
-    <color name="recordAlertInfoRed">#ff2232</color>
+    <color name="recordActivityInfoGreen">#37c151</color>
+    <color name="recordActivityInfoYellow">#ffcb00</color>
+    <color name="recordActivityInfoRed">#ff2232</color>
 
 </resources>

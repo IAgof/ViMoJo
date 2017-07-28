@@ -28,13 +28,15 @@ public interface RecordCamera2View {
 
     void showStopButton();
 
-    void showChronometer();
-
-    void hideChronometer();
-
     void startChronometer();
 
     void stopChronometer();
+
+    void resetChronometer();
+
+    void showRecordPointIndicator();
+
+    void hideRecordPointIndicator();
 
     void showNavigateToSettingsActivity();
 
