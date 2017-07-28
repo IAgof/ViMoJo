@@ -351,9 +351,13 @@ public class RecordCamera2PresenterTest {
   }
 
   public Project getAProject() {
-    return Project.getInstance("title", "/path",
-        Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
-            VideoFrameRate.FrameRate.FPS25));
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+        VideoFrameRate.FrameRate.FPS25);
+    Project project = Project.getInstance("title", "/path", profile);
+    if(project.getVMComposition().getProfile() == null){
+      project.setProfile(profile);
+    }
+    return project;
   }
 
   @NonNull
