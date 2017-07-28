@@ -21,7 +21,7 @@
     <string name="giftOverlayDialogTitle">Your present</string>
     <string name="giftOverlayDialogMessage">Enjoy your new Bollywood filter</string>
     <string name="recordTextGallery">Gallery</string>
-    <string name="recordTextEdit">Go to edit</string>
+    <string name="recordTextEdit">Edit</string>
 
     <string name="dialog_title_record_adapting_video">Adapting video</string>
     <string name="dialog_message_record_adapting_video">Working ...</string>
@@ -267,26 +267,39 @@
     <!-- About Activity -->
 
     <string name="aboutUsContent">
-        Record, edit, share…Three simple things you will like to do as soon as you have the new
-        Videona App in your smartphone. From now you can enjoy the perfect tool to create videos
-        with super cool effects and filters, add music and share your creations with your favorites
-        socials networks. \n\n
-
-        Before Videona, there are a group of spanish young enterpreneurs with the will of building
-        the best smartphone video editor application. Our application want to break the edition
-        barrier and be a change in the audiovisual world and smartphones. \n\n
-
-        Copyright 2015. Videona Socialmedia S.L. Todos los derechos reservados. \n
+    Hello! \n\nFirst of all I would like to thank you for your participation in ViMoJo,
+        all the members of the team wish you the best user experience.\n\nOur company is called
+        Videona and we are willing to build the best MoJo app ever,
+        just by your side. Will you help us?\n\nThe best way to do this is sharing your experience
+        with us through our channel vimojo.slack.com. We use it essentially to communicate information
+        about us and understand more thoroughly your needs and petitions. Many thanks to all of you
+        whom are participating. You are the best! \n\nIn Videona we design video apps for
+        Android and iOS mobile devices.\n\nVIMOJO, THE MOBILE JOURNALISM ERA.\n\nViMoJo
+        (Videona for Mobile Journalism) enables journalists and professional cameramen to tell
+        the story they want to, at the moment they need to do so. We are here to change the way media
+        professionals use mobile technology in their information stream, breaking the editing barrier.\n\nBehind
+        this app there is a young and talented group of entrepreneurs that is trying to create
+        the best video editor ever for smartphones. Our app tries to break the editing barrier
+        and shake the audiovisual world within smartphones. Will you help us? \n\nWe need you to build
+        and improve the tool with which we are stirring up journalism. \n\nAll the team thanks
+        you for participating in the experience. \n\nP.D.: If you are interested in hiring the products
+        please don\'t hesitate to contact us. \n\nVideona Socialmedia S.L \nCIF: B-87047171 \nSpain - Madrid \n\nCopyright 2017.
+        Videona Socialmedia S.L. All rights reserved.\n
     </string>
     <string name="videona_web">http://www.videona.com</string>
     <string name="contactUsTitle"><u>Contact us</u></string>
     <string name="contactUsContent">Visit our web page:</string>
     <string name="videonaWeb">http://www.videona.com\n</string>
+    <string name="joinOurCommunity">Join our Slack web channel:</string>
+    <string name="vimojoslackWeb">http://vimojo.slack.com\n</string>
     <string name="versionTitle"><u>Version</u></string>
     <string name="videona">Videona</string>
     <string name="vimojo">ViMoJo</string>
     <string name="versionContent">beta </string>
-    <string name="madeIn">Made in Madrid</string>
+    <string name="madeIn">With love from in Madrid - Spain</string>
+
+    <!-- Licences -->
+
     <string name="licenseTitle"><u>Free software licenses</u></string>
     <string name="licenseContent">
         Copyright &#169; 2013 Jake Wharton\nLicensed under the Apache License, Version 2.0 (the
@@ -393,6 +406,8 @@ limitations under the License. \n
         http://freemusicarchive.org/music/Josh_Woodward/The_Beautiful_Machine/JoshWoodward-TheLastSliceOfPecanPie-NoVox,
         icono clave de sol, CC BY 4.0\n
     </string>
+
+    <!-- Legal Notice -->
 
     <string name="legacyAdviceContent">
         1. WEBSITE OWNERSHIP\n\n
@@ -935,9 +950,12 @@ arising out of its acceptance. Each party hereby irrevocably consents to the exc
 
 jurisdiction of such courts.\n\n
 
-© 2015 VIDEONA SOCIALMEDIA, S.L. All rights reserved.\n\n
+© 2017 VIDEONA SOCIALMEDIA, S.L. All rights reserved.\n\n
 
     </string>
+
+    <!-- Privacy policy -->
+
     <string name="privacyPolicyTitle"><u>Privacy Policy</u></string>
     <string name="privacyPolicyContent">
 
@@ -1093,9 +1111,12 @@ legal@videona.com, attaching a copy of User’s DNI/Passport. The communication
 
 must be sent with the subject “Ref. Privacy”,\n\n
 
-© 2015 VIDEONA SOCIALMEDIA S.L. All rights reserved.
+© 2017 VIDEONA SOCIALMEDIA S.L. All rights reserved.
 
     </string>
+
+    <!-- Terms of service -->
+
     <string name="termsOfServiceTitle"><u>Terms of Service</u></string>
     <string name="termsOfServiceContent">
         PLEASE READ CAREFULLY THE FOLLOWING GUIDELINES. THE USE OF THE
@@ -1256,7 +1277,7 @@ users must indicate the reasons why they consider that there is an infringement 
 
 these Guidelines.\n\n
 
-© 2015 VIDEONA SOCIALMEDIA S.L. All rights reserved.
+© 2017 VIDEONA SOCIALMEDIA S.L. All rights reserved.
 
 
     </string>
@@ -1704,7 +1725,7 @@ works exclusively for the creation and sale of Features, under these Particular 
 
 and Conditions.\n\n
 
-© 2015 VIDEONA SOCIALMEDIA S.L. All rights reserved.
+© 2017 VIDEONA SOCIALMEDIA S.L. All rights reserved.
 
     </string>
 

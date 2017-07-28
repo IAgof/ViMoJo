@@ -27,231 +27,282 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/camera_shutter"
-            android:layout_width="50dip"
-            android:layout_height="50dip"
-            android:layout_centerInParent="true"
-            android:src="@drawable/activity_record_ic_metering_shutter"
-            android:visibility="invisible"/>
-
-        <ImageView
             android:id="@+id/image_view_grid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:src="@drawable/activity_record_background_grid"
-            android:visibility="invisible"/>
+            android:visibility="invisible"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/rotateDeviceHint" />
 
-        <ImageButton
-            android:id="@+id/clear_button"
+        <android.support.v7.widget.CardView
+            android:id="@+id/edit_or_gallery_cardview"
             android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/activity_record_ic_shrink"
-            android:background="@drawable/circle_background"
-            android:scaleType="fitCenter"
-            android:layout_marginBottom="16dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="16dp"
-            />
-
-        <LinearLayout
-            android:id="@+id/picometer"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorGreyTransparent"
+            android:layout_alignParentEnd="true"
             android:layout_marginTop="8dp"
-            android:layout_alignParentStart="false"
-            android:layout_toEndOf="@id/clear_button"
-            android:layout_marginLeft="24dp">
+            android:layout_marginRight="8dp"
+            android:backgroundTint="@color/colorGreyTransparent"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="@null">
 
-            <SeekBar
-                android:layout_width="200dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_brightness_5_white_48px"
-                android:indeterminate="false"
-                android:visibility="gone" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="16dp"
-            android:id="@+id/linearLayout">
-
-            <LinearLayout
-                android:id="@+id/hud"
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@color/colorGreyTransparent">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp">
 
-                <ImageButton
-                    android:id="@+id/mic_plug_imageview"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center"
-                    android:background="@null"
-                    android:src="@drawable/activity_record_ic_phone_micro_activated"
-                    android:visibility="visible"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp" />
+                <RelativeLayout
+                    android:id="@+id/edit_or_gallery_relative"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
+                        android:id="@+id/button_navigate_edit"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:background="@drawable/circle_background"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/activity_record_ic_galery"
+                        android:visibility="invisible"
+                        android:layout_marginStart="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        />
 
-                <ProgressBar
-                    android:id="@+id/picometer_progressbar"
-                    android:layout_width="60dp"
-                    android:max="100"
+                    <ImageButton
+                        android:id="@+id/button_navigate_gallery"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/activity_record_ic_gallery"
+                        android:background="@null"
+                        android:layout_centerInParent="true"
+                        />
+
+                    <TextView
+                        android:id="@+id/text_view_num_videos"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        tools:text="00"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/edit_or_gallery_text_view"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:maxHeight="4dp"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:indeterminate="false"
-                    />
+                    android:gravity="center"
+                    android:text="@string/recordTextGallery"
+                    android:textColor="@android:color/white"
+                    android:layout_below="@+id/edit_or_gallery_relative"
+                    android:textSize="8sp"
+                    tools:text="Gallery"/>
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/hud_cardview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="100dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/colorGreyTransparent"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="@null">
+
+            <RelativeLayout
+                    android:id="@+id/hud"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@null">
+
+                    <ImageButton
+                        android:id="@+id/button_navigate_settings"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@null"
+                        android:scaleType="fitCenter"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="16dp"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/activity_record_ic_settings"
+                        />
+
+                <!--delete button settings camera in java code-->
+                    <ImageButton
+                        android:id="@+id/button_settings_camera"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginLeft="16dp"
+                        android:background="@null"
+                        android:scaleType="fitCenter"
+                        android:layout_toRightOf="@+id/button_navigate_settings"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/activity_record_ic_controls"
+                        android:visibility="invisible"/>
 
                 <ImageView
                     android:id="@+id/activity_record_icon_battery"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:scaleType="fitCenter"
+                    android:layout_centerVertical="true"
                     android:layout_gravity="center"
+                    android:layout_marginStart="16dp"
+                    android:layout_toRightOf="@+id/activity_record_icon_storage"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/activity_record_ic_battery_full"
-                    android:visibility="visible"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp" />
+                    android:visibility="visible" />
 
-                <ImageView
-                    android:id="@+id/activity_record_icon_storage"
+                    <ImageView
+                        android:id="@+id/activity_record_icon_storage"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginLeft="16dp"
+                        android:scaleType="fitCenter"
+                        android:layout_gravity="center"
+                        android:visibility="visible"
+                        android:src="@drawable/activity_record_ic_storage_normal"
+                        android:layout_toRightOf="@+id/button_navigate_settings"
+                        android:layout_centerVertical="true"/>
+
+                    <LinearLayout
+                        android:id="@+id/control_chronometer_and_rec_point"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true">
+
+                        <ImageView
+                            android:id="@+id/imageRecPoint"
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_gravity="center_vertical"
+                            android:paddingLeft="4dp"
+                            android:src="@drawable/activity_record_drawable_rec_progress"
+                            android:visibility="invisible"
+                            />
+
+                        <Chronometer
+                            android:id="@+id/chronometer_record"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="4dp"
+                            android:text="00:00"
+                            android:textColor="@android:color/white"
+                            android:textSize="20sp"
+                            android:visibility="visible" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/button_resolution_indicator"
+                        android:layout_width="24dp"
+                        android:layout_height="23dp"
+                        android:scaleType="fitCenter"
+                        android:layout_gravity="center"
+                        android:visibility="visible"
+                        android:layout_marginLeft="8dp"
+                        android:src="@drawable/activity_record_ic_resolution_720"
+                        android:layout_toRightOf="@+id/control_chronometer_and_rec_point"
+                        android:layout_centerVertical="true"
+                        />
+
+                    <ImageButton
+                        android:id="@+id/mic_plug_imageview"
+                        android:layout_width="20dp"
+                        android:layout_height="24dp"
+                        android:layout_marginRight="8dp"
+                        android:scaleType="fitCenter"
+                        android:layout_gravity="center"
+                        android:background="@null"
+                        android:src="@drawable/activity_record_ic_phone_micro_activated"
+                        android:visibility="visible"
+                        android:layout_toLeftOf="@+id/picometer_progressbar"
+                        android:layout_centerVertical="true"/>
+
+                    <ProgressBar
+                        android:id="@+id/picometer_progressbar"
+                        android:layout_width="98dp"
+                        android:max="100"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_gravity="center"
+                        android:maxHeight="2dp"
+                        android:layout_marginRight="16dp"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:indeterminate="false"
+                        android:layout_centerVertical="true"
+                        />
+
+                <ImageButton
+                    android:id="@+id/clear_button"
+                    android:src="@drawable/activity_record_ic_expand"
+                    android:layout_toEndOf="@+id/activity_record_icon_battery"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:background="@null"
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
-                    android:visibility="visible"
-                    android:src="@drawable/activity_record_ic_storage"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"/>
+                    android:layout_marginLeft="16dp"
+                    android:layout_centerVertical="true"
+                    android:visibility="invisible"/>
 
-                <ImageView
-                    android:id="@+id/button_resolution_indicator"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center"
-                    android:visibility="visible"
-                    android:src="@drawable/activity_record_ic_resolution_720"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"/>
+            </RelativeLayout>
 
-                <ImageView
-                    android:id="@+id/activity_record_icon_geolocation"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center"
-                    android:visibility="gone"
-                    android:src="@drawable/activity_record_ic_geolocation_normal"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp" />
+        </android.support.v7.widget.CardView>
 
-                <ImageView
-                    android:id="@+id/activity_record_icon_microphone_"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:visibility="gone"
-                    android:src="@drawable/activity_record_ic_microphone_pressed"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp" />
+        <ImageView
+            android:id="@+id/camera_shutter"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/activity_record_ic_metering_shutter"
+            android:visibility="gone"/>
 
-            </LinearLayout>
-
-        </LinearLayout>
-
-
-        <!-- Zoom -->
-
-        <LinearLayout
-            android:id="@+id/slide_seekbar_submenu"
-            android:orientation="vertical"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="205dp"
-            android:background="@color/colorGreyTransparent"
-            android:visibility="invisible"
-            android:padding="2dp"
-            android:layout_marginLeft="16dp"
-            >
-
-            <TextView
-                android:id="@+id/seekBar_upper_text"
-                android:text="100%"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#00ffffff"
-                android:layout_gravity="center"
-                android:textColor="@color/colorWhite"
-                android:layout_marginTop="4dp"
-                tools:visibility="gone"/>
-
-            <ImageView
-                android:id="@+id/seekBar_upper_image"
-                android:text="100%"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#00ffffff"
-                android:layout_gravity="center"
-                tools:src="@drawable/activity_record_ic_focus_macro"
-                android:layout_marginTop="4dp"
-                />
-
-            <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
-                android:layout_width="wrap_content"
-                android:layout_height="150dp"
-                android:layout_gravity="center_horizontal">
-                <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
-                    android:id="@+id/seekBar_slide_left"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:splitTrack="false"
-                    app:seekBarRotation="CW270" /> <!-- Rotation: CW90 or CW270 -->
-            </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
-            <TextView
-                android:id="@+id/seekBar_lower_text"
-                android:text="0%"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#00ffffff"
-                android:layout_gravity="center"
-                android:textColor="@color/colorWhite"
-                tools:visibility="gone"/>
-            <ImageView
-                android:id="@+id/seekBar_lower_image"
-                android:text="100%"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#00ffffff"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_focus_infinite"
-                tools:visibility="visible"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/iso_submenu"
-            android:layout_above="@+id/settings_bar"
-            android:layout_centerHorizontal="true"
+        <android.support.v7.widget.CardView
+            android:id="@+id/iso_submenu_cardview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorGreyTransparent"
-            android:visibility="invisible"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:layout_marginBottom="4dp">
+            android:layout_gravity="center_horizontal"
+            android:layout_above="@+id/settings_bar_cardview"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/colorGreyTransparent"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="@null"
+            android:visibility="invisible">
+
+            <LinearLayout
+                android:id="@+id/iso_submenu"
+                android:layout_above="@+id/settings_bar_cardview"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+            >
 
             <TextView
                 android:id="@+id/iso_auto"
@@ -264,308 +315,364 @@
                 android:textColor="@color/colorWhite"
                 android:layout_margin="8dp"
                 />
+         </LinearLayout>
+        </android.support.v7.widget.CardView>
 
-            <!--<TextView-->
-                <!--android:id="@+id/iso_max"-->
-                <!--android:layout_width="32dp"-->
-                <!--android:layout_height="32dp"-->
-                <!--android:background="#00ffffff"-->
-                <!--android:scaleType="fitCenter"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:text="Max"-->
-                <!--android:textColor="@color/colorWhite"-->
-                <!--android:layout_marginRight="16dp"-->
-                <!--android:layout_marginLeft="16dp"/>-->
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/af_selection_submenu"
-            android:layout_above="@+id/settings_bar"
-            android:layout_centerHorizontal="true"
+        <android.support.v7.widget.CardView
+            android:id="@+id/af_selection_submenu_cardview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorGreyTransparent"
-            android:visibility="invisible"
-            android:layout_marginBottom="4dp"
-            android:paddingRight="16dp">
-
-            <ImageButton
-                android:id="@+id/af_setting_selective"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_focus_touch"
-                android:layout_marginLeft="16dp"
-                android:visibility="gone"
-                />
-
-            <ImageButton
-                android:id="@+id/af_setting_auto"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_focus_auto"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:visibility="gone"/>
-
-            <ImageButton
-                android:id="@+id/af_setting_manual"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_focus_adjust"
-                android:layout_marginLeft="16dp"
-                android:visibility="gone"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/white_balance_submenu"
-            android:layout_above="@+id/settings_bar"
-            android:layout_centerHorizontal="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorGreyTransparent"
-            android:visibility="invisible"
-            android:layout_marginBottom="4dp">
-
-            <ImageButton
-                android:id="@+id/wb_setting_auto"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_white_balance_auto"
-                android:visibility="gone"
-
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp" />
-
-            <ImageButton
-                android:id="@+id/wb_setting_cloudy"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_white_balance_cloudy"
-                android:visibility="gone"
-
-                android:layout_marginLeft="16dp" />
-
-            <ImageButton
-                android:id="@+id/wb_setting_daylight"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_white_balance_daylight"
-                android:visibility="gone"
-
-                android:layout_marginLeft="16dp" />
-
-            <ImageButton
-                android:id="@+id/wb_setting_flash"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_flash"
-                android:visibility="gone"
-
-                android:layout_marginLeft="16dp" />
-
-            <ImageButton
-                android:id="@+id/wb_setting_fluorescent"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_white_balance_fluorescent"
-                android:visibility="gone"
-
-                android:layout_marginLeft="16dp" />
-
-            <ImageButton
-                android:id="@+id/wb_setting_incandescent"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_white_balance_tungsten"
-                android:visibility="gone"
-
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"/>
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/metering_mode_submenu"
-            android:layout_above="@+id/settings_bar"
-            android:layout_centerHorizontal="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorGreyTransparent"
-            android:visibility="invisible"
-            android:layout_marginBottom="4dp">
-
-            <ImageButton
-                android:id="@+id/metering_mode_auto"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_brightness_auto"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp" />
-
-            <ImageButton
-                android:id="@+id/metering_mode_exposure_compensation"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_metering_manual"
-                android:visibility="invisible"
-                android:layout_marginLeft="16dp" />
-
-            <ImageButton
-                android:id="@+id/metering_mode_center"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_metering_center"
-                android:visibility="invisible"
-                android:layout_marginLeft="16dp" />
-
-            <ImageButton
-                android:id="@+id/metering_mode_spot"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_brightness_manual"
-                android:visibility="invisible"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_alignParentBottom="true"
-            android:id="@+id/settings_bar"
+            android:layout_gravity="center_horizontal"
+            android:layout_above="@+id/settings_bar_cardview"
             android:layout_centerInParent="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/colorGreyTransparent"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="@null"
+            android:visibility="invisible">
+            <LinearLayout
+                android:id="@+id/af_selection_submenu"
+                android:layout_above="@+id/settings_bar_cardview"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/af_setting_selective"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_focus_touch"
+                    android:layout_margin="8dp"
+                    android:visibility="gone"
+                    />
+
+                <ImageButton
+                    android:id="@+id/af_setting_auto"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_focus_auto"
+                    android:layout_margin="8dp"
+                    android:visibility="gone"/>
+
+                <ImageButton
+                    android:id="@+id/af_setting_manual"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_focus_adjust"
+                    android:layout_margin="8dp"
+                    android:visibility="gone"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/white_balance_submenu_cardview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorGreyTransparent"
+            android:layout_gravity="center_horizontal"
+            android:layout_above="@+id/settings_bar_cardview"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/colorGreyTransparent"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="@null"
+            android:visibility="invisible">
+            <LinearLayout
+                android:id="@+id/white_balance_submenu"
+                android:layout_above="@+id/settings_bar_cardview"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/wb_setting_auto"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_white_balance_auto"
+                    android:visibility="gone"
+
+                    android:layout_margin="8dp" />
+
+                <ImageButton
+                    android:id="@+id/wb_setting_cloudy"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_white_balance_cloudy"
+                    android:visibility="gone"
+
+                    android:layout_margin="8dp" />
+
+                <ImageButton
+                    android:id="@+id/wb_setting_daylight"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_white_balance_daylight"
+                    android:visibility="gone"
+                    android:layout_margin="8dp" />
+
+                <ImageButton
+                    android:id="@+id/wb_setting_flash"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_flash"
+                    android:visibility="gone"
+                    android:layout_margin="8dp" />
+
+                <ImageButton
+                    android:id="@+id/wb_setting_fluorescent"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_white_balance_fluorescent"
+                    android:visibility="gone"
+                    android:layout_margin="8dp" />
+
+                <ImageButton
+                    android:id="@+id/wb_setting_incandescent"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_white_balance_tungsten"
+                    android:visibility="gone"
+                    android:layout_margin="8dp"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/metering_mode_submenu_cardview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_above="@+id/settings_bar_cardview"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/colorGreyTransparent"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="@null"
+            android:visibility="invisible">
+            <LinearLayout
+                android:id="@+id/metering_mode_submenu"
+                android:layout_above="@+id/settings_bar_cardview"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/metering_mode_auto"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_brightness_auto"
+                    android:layout_margin="8dp" />
+
+                <ImageButton
+                    android:id="@+id/metering_mode_exposure_compensation"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_metering_manual"
+                    android:visibility="invisible"
+                    android:layout_margin="8dp" />
+
+                <ImageButton
+                    android:id="@+id/metering_mode_center"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_metering_center"
+                    android:visibility="invisible"
+                    android:layout_margin="8dp" />
+
+                <ImageButton
+                    android:id="@+id/metering_mode_spot"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_brightness_manual"
+                    android:visibility="invisible"
+                    android:layout_margin="8dp"
+                    />
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/settings_bar_cardview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
             android:layout_marginBottom="8dp"
-            android:visibility="visible"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp">
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_toLeftOf="@+id/button_to_show_controls_right"
+            android:backgroundTint="@color/colorGreyTransparent"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="@null">
 
-            <ImageButton
-                android:id="@+id/button_grid"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitXY"
-                android:src="@drawable/activity_record_ic_grid"
-                android:layout_gravity="center"
-                android:layout_margin="8dp"
-                />
+            <LinearLayout
+                android:layout_alignParentBottom="true"
+                android:id="@+id/settings_bar"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:visibility="visible"
+                android:layout_toLeftOf="@+id/button_to_show_controls_right"
+                >
 
-            <ImageButton
-                android:id="@+id/button_zoom"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitXY"
-                android:src="@drawable/activity_record_ic_zoom"
-                android:layout_marginLeft="16dp"
-                android:layout_gravity="center"
-                android:layout_margin="8dp"
-                />
+                <ImageButton
+                    android:id="@+id/button_camera_default"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_settings_default"
+                    android:layout_margin="8dp"
+                    />
 
-            <ImageButton
-                android:id="@+id/button_iso"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitXY"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_iso"
-                android:layout_margin="8dp"
-                />
+                <ImageButton
+                    android:id="@+id/button_grid"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/activity_record_ic_grid"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    />
 
-            <ImageButton
-                android:id="@+id/button_af_selection"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitXY"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_focus"
-                android:layout_margin="8dp"
-                />
+                <ImageButton
+                    android:id="@+id/button_iso"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_iso"
+                    android:layout_margin="8dp"
+                    />
 
-            <ImageButton
-                android:id="@+id/button_white_balance"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitXY"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_white_balance"
-                android:layout_margin="8dp"
-                />
+                <ImageButton
+                    android:id="@+id/button_white_balance"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_white_balance"
+                    android:layout_margin="8dp"
+                    />
 
-            <ImageButton
-                android:id="@+id/button_metering_mode"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitXY"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_metering_evaluative"
-                android:layout_margin="8dp"
-                />
+                <ImageButton
+                    android:id="@+id/button_af_selection"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_focus"
+                    android:layout_margin="8dp"
+                    />
 
-            <ImageButton
-                android:id="@+id/button_camera_default"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="#00ffffff"
-                android:scaleType="fitXY"
-                android:layout_gravity="center"
-                android:src="@drawable/activity_record_ic_settings_default"
-                android:layout_margin="8dp"
-                />
+                <ImageButton
+                    android:id="@+id/button_metering_mode"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_metering_evaluative"
+                    android:layout_margin="8dp"
+                    />
 
-        </LinearLayout>
+                <ImageButton
+                    android:id="@+id/button_sound_volume"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_sound_volume"
+                    android:layout_margin="8dp"
+                    />
+
+                <ImageButton
+                    android:id="@+id/button_toggle_flash"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/activity_record_ic_flash" />
+
+                <ImageButton
+                    android:id="@+id/button_change_camera"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/activity_record_ic_rotate" />
+
+                <ImageButton
+                    android:id="@+id/button_zoom"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/activity_record_ic_zoom" />
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
 
         <!-- esta es la copia de la barra principal, Submenu -->
 
@@ -579,177 +686,181 @@
 
         <!-- Picometro -->
 
-        <LinearLayout
-            android:id="@+id/control_chronometer_and_rec_point"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorGreyTransparent"
-            android:layout_marginTop="12dp"
-            android:layout_centerHorizontal="true">
 
-            <ImageView
-                android:id="@+id/imageRecPoint"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center_vertical"
-                android:alpha="0.5"
-                android:paddingLeft="4dp"
-                android:src="@drawable/activity_record_drawable_rec_progress"
-                android:visibility="invisible"
-                />
 
-            <Chronometer
-                android:id="@+id/chronometer_record"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center_vertical"
-                android:alpha="0.5"
-                android:gravity="center_vertical"
-                android:paddingLeft="8dp"
-                android:paddingRight="16dp"
-                android:text="00:00"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:visibility="visible" />
-        </LinearLayout>
+
+            <!-- Zoom -->
+
 
         <RelativeLayout
+            android:id="@+id/button_record_slider_relativeLayout"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_alignTop="@+id/control_chronometer_and_rec_point"
-            android:id="@+id/relativeLayout">
-
-            <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
-                android:id="@+id/button_navigate_edit_or_gallery"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/circle_background"
-                android:scaleType="fitCenter"
-                android:src="@drawable/activity_record_ic_galery"
-                android:visibility="visible"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true" />
-
-            <TextView
-                android:id="@+id/record_text_view_edit_or_gallery"
-                android:padding="2dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/button_navigate_edit_or_gallery"
-                android:layout_centerInParent="true"
-                android:text="@string/recordTextGallery"
-                android:textSize="12sp"
-                android:textColor="@android:color/white"
-            />
-
-            <TextView
-                android:id="@+id/text_view_num_videos"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical|center_horizontal"
-                android:scaleType="fitCenter"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/white"
-                android:textSize="27sp"
-                tools:text="0"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_alignBottom="@+id/button_navigate_edit_or_gallery" />
-
-
-            <LinearLayout
-                android:id="@+id/controls"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible"
-                android:padding="2dp"
-                android:background="@color/colorGreyTransparent"
-                android:layout_above="@+id/button_record"
-                android:layout_marginBottom="12dp"
-                android:layout_centerHorizontal="true">
-
-                <ImageButton
-                    android:id="@+id/button_change_camera"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:layout_margin="6dp"
-                    android:background="@null"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/activity_record_ic_rotate"/>
-
-                <ImageButton
-                    android:id="@+id/button_toggle_flash"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:background="@null"
-                    android:layout_gravity="center"
-                    android:scaleType="fitCenter"
-                    android:layout_margin="6dp"
-                    app:srcCompat="@drawable/activity_record_ic_flash"/>
-
-                <ImageButton
-                android:id="@+id/button_settings_camera"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="6dp"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                android:src="@drawable/activity_record_ic_controls"/>
-
-                <ImageButton
-                    android:id="@+id/button_navigate_settings"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:layout_margin="6dp"
-                    android:background="@null"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/activity_record_ic_settings"
-                    />
-            </LinearLayout>
-
-            <ImageButton
-                android:id="@+id/button_to_show_controls_right"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="@drawable/circle_background"
-                android:scaleType="fitCenter"
-                android:src="@drawable/activity_record_ic_hide_menu_normal"
-                android:visibility="visible"
-                android:layout_alignBottom="@+id/controls"
-                android:layout_centerHorizontal="true" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/edit_or_gallery_cardview"
+            android:layout_margin="8dp">
 
             <ImageButton
                 android:id="@+id/button_record"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:background="@null"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:alpha="0.5"
+                android:background="@null"
                 android:scaleType="fitCenter"
                 android:src="@drawable/activity_record_ic_rec"
-                android:visibility="visible"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"/>
+                android:visibility="visible" />
+
+            <ImageButton
+                android:id="@+id/show_all_controls_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/activity_record_ic_expand"
+                android:background="@drawable/circle_background"
+                android:scaleType="fitCenter"
+                android:layout_above="@+id/button_record"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:visibility="gone"
+                />
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/slide_seekbar_submenu_cardview"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/button_record"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/colorGreyTransparent"
+                android:visibility="invisible"
+                tools:visibility="visible"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="@null">
+
+                <RelativeLayout
+                    android:id="@+id/slide_seekbar_submenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_above="@+id/button_record"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                        <TextView
+                            android:id="@+id/seekBar_upper_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_marginTop="4dp"
+                            android:background="#00ffffff"
+                            android:gravity="center"
+                            android:padding="4dp"
+                            android:text="100%"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="8sp"
+                            tools:visibility="visible" />
+
+                        <ImageView
+                            android:id="@+id/seekBar_upper_image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="4dp"
+                            android:background="#00ffffff"
+                            android:paddingLeft="4dp"
+                            android:paddingTop="4dp"
+                            android:paddingRight="4dp"
+                            android:text="100%"
+                            tools:src="@drawable/activity_record_ic_focus_macro" />
+
+                    <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_above="@+id/seekBar_lower_image"
+                        android:layout_below="@+id/seekBar_upper_image"
+                        android:layout_marginTop="16dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true">
+                        <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
+                            android:id="@+id/seekBar_slide_left"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:progressTint="@color/colorWhite"
+                            android:splitTrack="false"
+                            android:thumbTint="@color/colorWhite"
+                            app:seekBarRotation="CW270" /> <!-- Rotation: CW90 or CW270 -->
+                    </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
+                        <TextView
+                            android:id="@+id/seekBar_lower_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="#00ffffff"
+                            android:gravity="center"
+                            android:padding="4dp"
+                            android:text="0%"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="8sp"
+                            tools:visibility="visible"
+                            android:layout_alignParentBottom="true"
+                            android:layout_centerHorizontal="true"
+                            />
+
+                        <ImageView
+                            android:id="@+id/seekBar_lower_image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_gravity="center"
+                            android:background="#00ffffff"
+                            android:paddingLeft="4dp"
+                            android:paddingBottom="4dp"
+                            android:paddingRight="4dp"
+                            android:src="@drawable/activity_record_ic_focus_infinite"
+                            android:text="100%"
+                            tools:visibility="visible" />
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
 
         </RelativeLayout>
+
 
         <ImageButton
             android:id="@+id/button_to_hide_controls"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:padding="4dp"
             android:background="@drawable/circle_background"
             android:src="@drawable/activity_record_ic_show_menu_normal"
             android:scaleType="fitCenter"
             android:visibility="visible"
-            android:layout_alignBottom="@+id/relativeLayout"
-            android:layout_toStartOf="@+id/relativeLayout"
-            android:layout_marginBottom="68dp"
-            android:layout_marginEnd="19dp"/>
+            android:layout_alignTop="@+id/button_to_show_controls_right"
+            android:layout_toStartOf="@+id/button_record_slider_relativeLayout" />
+
+        <ImageButton
+            android:id="@+id/button_to_show_controls_right"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="6dp"
+            android:background="@drawable/circle_background"
+            android:scaleType="fitCenter"
+            android:src="@drawable/activity_record_ic_controls"
+            android:visibility="visible"
+            android:layout_alignBottom="@+id/settings_bar_cardview"
+            android:layout_alignStart="@+id/button_to_hide_controls"
+            android:layout_toLeftOf="@+id/button_record_slider_relativeLayout"
+            />
 
     </RelativeLayout>
 

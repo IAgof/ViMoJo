@@ -110,7 +110,7 @@ public class RecordCamera2PresenterTest {
 
     presenter.initViews();
 
-    verify(mockedRecordView).hideChronometer();
+    verify(mockedRecordView).hideRecordPointIndicator();
     verify(mockedRecordView).setResolutionSelected(720);
     verify(mockedRecordView).showPrincipalViews();
     verify(mockedRecordView).showRightControlsView();
@@ -122,7 +122,7 @@ public class RecordCamera2PresenterTest {
 
     presenter.initViews();
 
-    verify(mockedRecordView).hideChronometer();
+    verify(mockedRecordView).hideRecordPointIndicator();
     verify(mockedRecordView).setResolutionSelected(720);
     verify(mockedRecordView).showPrincipalViews();
     verify(mockedRecordView).showRightControlsView();
@@ -135,7 +135,7 @@ public class RecordCamera2PresenterTest {
     assertThat("There is not videos in project ", numVideosInProject, is(0));
     presenter = getRecordCamera2Presenter();
 
-    presenter.navigateToEditOrGallery();
+    presenter.navigateToEdit();
 
     verify(mockedRecordView).navigateTo(GalleryActivity.class);
   }
@@ -153,7 +153,7 @@ public class RecordCamera2PresenterTest {
     // TODO:(alvaro.martinez) 6/04/17 Assert also there are not videos pending to adapt, transcoding
     presenter = getRecordCamera2Presenter();
 
-    presenter.navigateToEditOrGallery();
+    presenter.navigateToEdit();
 
     verify(mockedRecordView).navigateTo(EditActivity.class);
   }
@@ -175,7 +175,7 @@ public class RecordCamera2PresenterTest {
         mockedTranscoderHelperListener);
     presenter = getRecordCamera2Presenter();
 
-    presenter.navigateToEditOrGallery();
+    presenter.navigateToEdit();
 
     verify(mockedRecordView).showProgressAdaptingVideo();
   }
