@@ -133,6 +133,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     recordView.showPrincipalViews();
     recordView.showRightControlsView();
     recordView.showSettingsCameraView();
+    recordView.hideRecordPointIndicator();
     setupAdvancedCameraControls();
   }
 
