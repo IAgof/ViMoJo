@@ -10,7 +10,9 @@ import android.preference.SwitchPreference;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
+import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
+import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
@@ -147,6 +149,16 @@ public class FragmentPresentersModule {
   @Provides
   GetVideoFormatFromCurrentProjectUseCase provideoGetVideonaFormat(){
     return new GetVideoFormatFromCurrentProjectUseCase();
+  }
+
+  @Provides
+  NewClipImporter clipImporterProvider(
+          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+          AdaptVideoRecordedToVideoFormatUseCase adaptVideosUseCase,
+          RelaunchTranscoderTempBackgroundUseCase relaunchTranscodingUseCase,
+          VideoRepository videoRepository) {
+    return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase, adaptVideosUseCase,
+            relaunchTranscodingUseCase, videoRepository);
   }
 
 }

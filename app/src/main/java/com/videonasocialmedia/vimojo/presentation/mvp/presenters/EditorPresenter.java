@@ -11,8 +11,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
+import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -37,24 +37,24 @@ public class EditorPresenter {
   private SharedPreferences.Editor preferencesEditor;
   private Context context;
   private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+  private final NewClipImporter newClipImporter;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
-  private GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
 
   @Inject
   public EditorPresenter(
           EditorActivityView editorActivityView, SharedPreferences sharedPreferences,
           Context context, CreateDefaultProjectUseCase createDefaultProjectUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
-          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase) {
+          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+          NewClipImporter newClipImporter) {
     this.editorActivityView = editorActivityView;
     this.sharedPreferences = sharedPreferences;
     this.context = context;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
-    this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.currentProject = loadCurrentProject();
+    this.newClipImporter = newClipImporter;
   }
 
   public Project loadCurrentProject() {
@@ -92,27 +92,27 @@ public class EditorPresenter {
     preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS, 0);
   }
 
-  private void checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(List<Video> videoList) {
-    for (Video video : videoList) {
-      ListenableFuture transcodingJob = video.getTranscodingTask();
-      // Condition to relaunch transcoding job.
-      if (transcodingJob == null && !video.isTranscodingTempFileFinished()) {
-        relaunchTranscoderTempFileJob(video);
-        Log.d(LOG_TAG, "Need to relaunch video " + videoList.indexOf(video)
-                + " - " + video.getMediaPath());
-      }
-    }
-  }
-
-  private void relaunchTranscoderTempFileJob(Video video) {
-    Project currentProject = Project.getInstance(null, null, null);
-    VideonaFormat videoFormat = getVideonaFormatFromCurrentProjectUseCase
-        .getVideonaFormatFromCurrentProject();
-    Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
-            .getDrawableFadeTransitionVideo();
-    relaunchTranscoderTempBackgroundUseCase.relaunchExport(drawableVideoFadeTransition, video,
-            videoFormat, currentProject.getProjectPathIntermediateFileAudioFade());
-  }
+//  private void checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(List<Video> videoList) {
+//    for (Video video : videoList) {
+//      ListenableFuture transcodingJob = video.getTranscodingTask();
+//      // Condition to relaunch transcoding job.
+//      if (transcodingJob == null && !video.isTranscodingTempFileFinished()) {
+//        relaunchTranscoderTempFileJob(video);
+//        Log.d(LOG_TAG, "Need to relaunch video " + videoList.indexOf(video)
+//                + " - " + video.getMediaPath());
+//      }
+//    }
+//  }
+//
+//  private void relaunchTranscoderTempFileJob(Video video) {
+//    Project currentProject = Project.getInstance(null, null, null);
+//    VideonaFormat videoFormat = getVideonaFormatFromCurrentProjectUseCase
+//        .getVideonaFormatFromCurrentProject();
+//    Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
+//            .getDrawableFadeTransitionVideo();
+//    relaunchTranscoderTempBackgroundUseCase.relaunchExport(drawableVideoFadeTransition, video,
+//            videoFormat, currentProject.getProjectPathIntermediateFileAudioFade());
+//  }
 
 //  @Override
 //  public void onSuccessTranscoding(Video video) {
@@ -133,6 +133,7 @@ public class EditorPresenter {
 //  }
 
   public void init() {
+    newClipImporter.relaunchUnfinishedAdaptTasks();
     obtainVideos();
   }
 
@@ -148,5 +149,26 @@ public class EditorPresenter {
 
       }
     });
+  }
+
+  public void checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(List<Video> videoList) {
+    for (Video video : videoList) {
+      ListenableFuture transcodingJob = video.getTranscodingTask();
+      // Condition to relaunch transcoding job.
+      if (transcodingJob == null && !video.isTranscodingTempFileFinished()) {
+        relaunchTranscoderTempFileJob(video);
+        Log.d(LOG_TAG, "Need to relaunch video " + videoList.indexOf(video)
+                + " - " + video.getMediaPath());
+      }
+    }
+  }
+
+  private void relaunchTranscoderTempFileJob(Video video) {
+    Project currentProject = Project.getInstance(null, null, null);
+    VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
+    Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
+            .getDrawableFadeTransitionVideo();
+    relaunchTranscoderTempBackgroundUseCase.relaunchExport(drawableVideoFadeTransition, video,
+            videoFormat, currentProject.getProjectPathIntermediateFileAudioFade());
   }
 }

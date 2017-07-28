@@ -1,14 +1,18 @@
 package com.videonasocialmedia.vimojo.importer.helpers;
 
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmRepository;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -16,6 +20,7 @@ import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by jliarte on 6/07/17.
@@ -25,16 +30,18 @@ public class NewClipImporter implements TranscoderHelperListener {
   private final VideoRepository videoRepository;
   private final VideoToAdaptRepository videoToAdaptRepository;
   private AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase;
-//  private HashMap<String, VideoToAdapt> videoListToAdaptAndPosition = new HashMap<>();
   private static final int MAX_NUM_TRIES_ADAPTING_VIDEO = 3;
   private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
+  private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
 
   public NewClipImporter(
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase,
+          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           VideoRepository videoRepository) {
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     this.adaptVideoRecordedToVideoFormatUseCase = adaptVideoRecordedToVideoFormatUseCase;
+    this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.videoRepository = videoRepository;
     // TODO(jliarte): 24/07/17 inject this
     this.videoToAdaptRepository = new VideoToAdaptRealmRepository();
@@ -68,23 +75,7 @@ public class NewClipImporter implements TranscoderHelperListener {
     // TODO(jliarte): 18/07/17 move this to a realm repo
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destVideoPath, videoPosition,
             cameraRotation, retries);
-    videoToAdaptRepository.add(videoToAdapt);
-//    videoListToAdaptAndPosition.put(video.getMediaPath(), videoToAdapt);
-  }
-
-  public boolean areTherePendingTranscodingTask() {
-//    if (videoListToAdaptAndPosition.size() == 0) {
-    return videoToAdaptRepository.getItemCount() != 0;
-//    for (Map.Entry<String, VideoToAdapt> videoToAdaptHashMap :
-//            videoToAdaptRepository.getAllVideos().entrySet()) {
-////            videoListToAdaptAndPosition.entrySet()) {
-//      VideoToAdapt video = videoToAdaptHashMap.getValue();
-//      if ((video.getVideo().getTranscodingTask() == null)
-//              || (!video.getVideo().getTranscodingTask().isDone())) {
-//        return true;
-//      }
-//    }
-//    return false;
+    videoToAdaptRepository.update(videoToAdapt);
   }
 
 //    private boolean isAVideoAdaptedToFormat(Video video) {
@@ -96,7 +87,6 @@ public class NewClipImporter implements TranscoderHelperListener {
   public void onSuccessTranscoding(Video video) {
 //      if (isAVideoAdaptedToFormat(video)) {
     Log.d(TAG, "onSuccessTranscoding adapting video " + video.getMediaPath());
-//    VideoToAdapt videoToAdapt = videoListToAdaptAndPosition.remove(video.getMediaPath());
     VideoToAdapt videoToAdapt = videoToAdaptRepository.remove(video.getMediaPath());
     FileUtils.removeFile(video.getMediaPath());
     Log.d(TAG, "deleting " + video.getMediaPath());
@@ -128,20 +118,17 @@ public class NewClipImporter implements TranscoderHelperListener {
   public void onErrorTranscoding(Video video, String message) {
 //      if (newClipImporter.isAVideoAdaptedToFormat(video)) {
     Log.d(TAG, "onErrorTranscoding adapting video " + video.getMediaPath() + " - " + message);
-//    VideoToAdapt videoToAdapt = videoListToAdaptAndPosition.get(video.getMediaPath());
     VideoToAdapt videoToAdapt = videoToAdaptRepository.getByMediaPath(video.getMediaPath());
     if (videoToAdapt == null) {
       return;
     }
     if (videoToAdapt.numTriesAdaptingVideo < MAX_NUM_TRIES_ADAPTING_VIDEO) {
-//      videoListToAdaptAndPosition.remove(video.getMediaPath());
       videoToAdaptRepository.remove(video.getMediaPath());
       // TODO(jliarte): 18/07/17 check if video still has volume
       adaptVideoToVideonaFormat(video, videoToAdapt.getPosition(),
               videoToAdapt.getRotation(), ++videoToAdapt.numTriesAdaptingVideo);
     } else {
       // TODO:(alvaro.martinez) 24/05/17 How to manage this error adapting video ¿?
-//      hadleClipAdderCall(videoListToAdaptAndPosition.remove(video.getUuid()));
     }
 //      } else {
 //        Log.d(TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
@@ -157,6 +144,24 @@ public class NewClipImporter implements TranscoderHelperListener {
 //                  Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
 //        }
 //      }
+  }
+
+  public void relaunchUnfinishedAdaptTasks() {
+    List<VideoToAdapt> videosToAdapt = videoToAdaptRepository.getAllVideos();
+    Log.d(TAG, "There are " + videosToAdapt.size() + " videos to adapt in repository");
+    for (VideoToAdapt videoToAdapt : videosToAdapt) {
+      if (videoToAdapt.getVideo() == null) {
+        Log.e(TAG, "Orphan video to adapt " + videoToAdapt);
+//        videoToAdaptRepository.remove(videoToAdapt);
+      } else {
+        if (videoToAdapt.getVideo().getTranscodingTask() == null) {
+          Log.d(TAG, "Relaunching video adapt task for video "
+                  + videoToAdapt.getVideo().getMediaPath());
+          adaptVideoToVideonaFormat(videoToAdapt.getVideo(), videoToAdapt.getPosition(),
+                  videoToAdapt.getRotation(), ++videoToAdapt.numTriesAdaptingVideo);
+        }
+      }
+    }
   }
 
 }

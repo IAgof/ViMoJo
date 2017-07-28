@@ -53,6 +53,7 @@ public class RelaunchTranscoderTempBackgroundUseCase implements TranscoderHelper
     boolean isAudioFadeTransitionActivated = currentProject.getVMComposition()
             .isAudioFadeTransitionActivated();
     videoToEdit.setTranscodingTempFileFinished(false);
+    // TODO(jliarte): 28/07/17 wait for adapt video tasks to end
     updateGeneratedVideo(drawableFadeTransition, videoToEdit, videonaFormat,
             intermediatesTempAudioFadeDirectory, this,
             isVideoFadeTransitionActivated, isAudioFadeTransitionActivated);

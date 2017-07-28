@@ -33,14 +33,12 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnLaunchAVTransitionTempFileListener;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerAmplitudeDbListener;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoopThread;
@@ -92,9 +90,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   public RecordCamera2Presenter(
           Context context, RecordCamera2View recordView, VideoRepository videoRepository,
           LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase,
-          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-          AddVideoToProjectUseCase addVideoToProjectUseCase,
-          AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase,
+          AddVideoToProjectUseCase addVideoToProjectUseCase, NewClipImporter newClipImporter,
           Camera2Wrapper camera) {
     this.context = context;
     this.recordView = recordView;
@@ -108,8 +104,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     this.camera = camera;
     camera.setCameraListener(this);
 
-    this.newClipImporter = new NewClipImporter(getVideoFormatFromCurrentProjectUseCase,
-            adaptVideoRecordedToVideoFormatUseCase, videoRepository);
+    this.newClipImporter = newClipImporter;
+//    this.newClipImporter = new NewClipImporter(getVideoFormatFromCurrentProjectUseCase,
+//            adaptVideoRecordedToVideoFormatUseCase, relaunchTranscoderTempBackgroundUseCase,
+//            videoRepository);
   }
 
   private Project loadProject() {
