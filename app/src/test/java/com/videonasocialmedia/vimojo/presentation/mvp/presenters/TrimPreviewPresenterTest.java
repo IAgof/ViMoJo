@@ -62,7 +62,7 @@ public class TrimPreviewPresenterTest {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(mockedTrimView,
             userEventTracker, mockedGetMediaListFromProjectUseCase,
-            mockedModifyVideoDurationUseCase, mockedUpdateVideoRepositoryUseCase);
+            mockedModifyVideoDurationUseCase);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -138,7 +138,7 @@ public class TrimPreviewPresenterTest {
     private TrimPreviewPresenter getTrimPreviewPresenter() {
         return new TrimPreviewPresenter(mockedTrimView,
             mockedUserEventTracker, mockedGetMediaListFromProjectUseCase,
-            mockedModifyVideoDurationUseCase, mockedUpdateVideoRepositoryUseCase);
+            mockedModifyVideoDurationUseCase);
     }
 
     public Project getAProject() {

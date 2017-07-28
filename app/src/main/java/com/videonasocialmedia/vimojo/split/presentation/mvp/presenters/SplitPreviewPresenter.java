@@ -124,8 +124,8 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
             ContextCompat.getDrawable(VimojoApplication.getAppContext(), R.drawable.alpha_transition_white);
 
         modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, video, videoFormat,
-            startTimeMs, finishTimeMs, currentProject.getProjectPathIntermediateFileAudioFade(),
-            this);
+            startTimeMs, finishTimeMs, currentProject.getProjectPathIntermediateFileAudioFade()
+        );
     }
 
     @Override

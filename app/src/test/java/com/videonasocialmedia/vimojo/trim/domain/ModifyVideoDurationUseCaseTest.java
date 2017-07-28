@@ -65,7 +65,7 @@ public class ModifyVideoDurationUseCaseTest {
             mockedMediaTranscoder);
 
     injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
-        intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+        intermediatesTempAudioFadeDirectory);
 
     verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
         eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()),
@@ -81,7 +81,7 @@ public class ModifyVideoDurationUseCaseTest {
     injectedUseCase.transcoderHelper= mockedTranscoderHelper;
 
     injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
-        intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+        intermediatesTempAudioFadeDirectory);
 
     verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimmingAsync(
         mockDrawableFadeTransition, isVideoFadeTransitionActivated, isAudioFadeTransitionActivated,
@@ -98,7 +98,7 @@ public class ModifyVideoDurationUseCaseTest {
             mockedMediaTranscoder);
 
     injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
-        intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+        intermediatesTempAudioFadeDirectory);
 
     verify(mockedMediaTranscoder).transcodeAndTrimVideo(eq(mockDrawableFadeTransition),
         eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()),eq(video.getTempPath()),
@@ -114,7 +114,7 @@ public class ModifyVideoDurationUseCaseTest {
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
-        intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+        intermediatesTempAudioFadeDirectory);
 
     verify(mockedTranscoderHelper).generateOutputVideoWithTrimmingAsync(mockDrawableFadeTransition,
         isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, video, videonaFormat,
@@ -127,7 +127,7 @@ public class ModifyVideoDurationUseCaseTest {
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
       injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 2, 10,
-          intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+          intermediatesTempAudioFadeDirectory);
 
     verify(mockedVideoRepository).update(video);
   }
@@ -140,7 +140,7 @@ public class ModifyVideoDurationUseCaseTest {
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 2, 10,
-        intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+        intermediatesTempAudioFadeDirectory);
 
     assertThat(video.getStartTime(), is(2));
     assertThat(video.getStopTime(), is(10));
