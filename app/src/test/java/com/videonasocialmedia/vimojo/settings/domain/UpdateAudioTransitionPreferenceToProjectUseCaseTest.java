@@ -34,7 +34,7 @@ public class UpdateAudioTransitionPreferenceToProjectUseCaseTest {
 
   @Test
   public void updateVideoTransitionPreferenceCallsUpdateRepository(){
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     injectedUseCase.setAudioFadeTransitionActivated(false);
     verify(mockedProjectRepository).update(currentProject);
   }
@@ -48,14 +48,15 @@ public class UpdateAudioTransitionPreferenceToProjectUseCaseTest {
 
     injectedUseCase.setAudioFadeTransitionActivated(audioTransitionActivated);
 
-    project = Project.getInstance(null,null,null);
+    project = Project.getInstance(null,null,null,null);
 
     assertThat("project videoTransitionPreference is value injected",
         project.isAudioFadeTransitionActivated(), CoreMatchers.is(audioTransitionActivated));
   }
 
   private Project getAProject() {
-    return new Project("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+    return new Project("title", "/path","private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 }

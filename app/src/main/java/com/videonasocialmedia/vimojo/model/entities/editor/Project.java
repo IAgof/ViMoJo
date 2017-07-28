@@ -82,6 +82,7 @@ public class Project {
   private boolean isAudioFadeTransitionActivated;
   private boolean isVideoFadeTransitionActivated;
 
+
     /**
      * Constructor of minimum number of parameters. This is the Default constructor.
      *
@@ -89,9 +90,9 @@ public class Project {
      * @param rootPath - Path to root folder for the current project.
      * @param profile  - Define some characteristics and limitations of the current project.
      */
-    public Project(String title, String rootPath, Profile profile) {
+    public Project(String title, String rootPath, String privatePath, Profile profile) {
         this.title = title;
-        this.vmComposition = new VMComposition(Constants.PATH_WATERMARK, profile);
+        this.vmComposition = new VMComposition(getResourceWatermarkFilePath(privatePath), profile);
         this.profile = profile;
         this.duration = 0;
         this.isAudioFadeTransitionActivated = false;
@@ -103,9 +104,11 @@ public class Project {
     }
 
   @NonNull
-  public String getResourceWatermarkFilePath() {
-    return Constants.PATH_WATERMARK;
+  public String getResourceWatermarkFilePath(String privatePath) {
+    return privatePath + File.separator + Constants.RESOURCE_WATERMARK_NAME;
   }
+
+
 
   public Project(Project project) throws IllegalItemOnTrack {
 
@@ -134,9 +137,10 @@ public class Project {
      * @return - Singleton instance of the current project.
      */
     @Deprecated
-    public static Project getInstance(String title, String rootPath, Profile profile) {
+    public static Project getInstance(String title, String rootPath, String privatePath,
+                                      Profile profile) {
         if (INSTANCE == null) {
-            INSTANCE = new Project(title, rootPath, profile);
+            INSTANCE = new Project(title, rootPath, privatePath, profile);
         }
         return INSTANCE;
     }

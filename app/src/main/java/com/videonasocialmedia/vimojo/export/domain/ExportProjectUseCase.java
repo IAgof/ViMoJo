@@ -7,6 +7,7 @@
 
 package com.videonasocialmedia.vimojo.export.domain;
 
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession.ExportListener;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSessionImpl;
@@ -30,7 +31,7 @@ public class ExportProjectUseCase implements ExportListener {
    * Project VMCompositionExportSession use case.
    */
   public ExportProjectUseCase() {
-    project = Project.getInstance(null, null, null);
+    project = Project.getInstance(null, null,null, null);
 
     // TODO(jliarte): 28/04/17 move to export method?
     String tempPathIntermediateAudioFilesDirectory =
@@ -43,9 +44,9 @@ public class ExportProjectUseCase implements ExportListener {
   /**
    * Main use case method.
    */
-  public void export(OnExportFinishedListener onExportFinishedListener) {
+  public void export(String pathWatermark, OnExportFinishedListener onExportFinishedListener) {
     this.onExportFinishedListener = onExportFinishedListener;
-    checkWatermarkResource();
+    checkWatermarkResource(pathWatermark);
     try {
       VMCompositionExportSession.exportAsyncronously();
     } catch (NoSuchElementException exception) {
@@ -53,8 +54,8 @@ public class ExportProjectUseCase implements ExportListener {
     }
   }
 
-  private void checkWatermarkResource() {
-    File watermarkResource = new File(project.getResourceWatermarkFilePath());
+  private void checkWatermarkResource(String pathWatermark) {
+    File watermarkResource = new File(pathWatermark);
     if(!watermarkResource.exists()){
       if(!Utils.copyWatermarkResourceToDevice()) {
         onExportError(VimojoApplication.getAppContext().getString(R.string.export_error_watermark));

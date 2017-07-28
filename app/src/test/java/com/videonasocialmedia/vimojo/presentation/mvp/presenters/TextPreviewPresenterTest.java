@@ -26,10 +26,11 @@ public class TextPreviewPresenterTest {
 
     @After
     public void tearDown() {
-        Project.getInstance(null, null, null).clear();
+        Project.getInstance(null, null, null, null).clear();
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", Profile.getInstance(null, null, null));
+        return Project.getInstance("title", "/path", "private/path",
+            Profile.getInstance(null, null, null));
     }
 }

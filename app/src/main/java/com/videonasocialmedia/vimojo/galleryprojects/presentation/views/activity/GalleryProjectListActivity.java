@@ -100,7 +100,8 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Override
   public void createDefaultProject() {
-    presenter.createNewDefaultProject(Constants.PATH_APP, BuildConfig.FEATURE_WATERMARK);
+    presenter.createNewDefaultProject(Constants.PATH_APP, Constants.PATH_APP_PRIVATE,
+        BuildConfig.FEATURE_WATERMARK);
     //presenter.updateProjectList();
     navigateTo(GoToRecordOrGalleryActivity.class);
   }

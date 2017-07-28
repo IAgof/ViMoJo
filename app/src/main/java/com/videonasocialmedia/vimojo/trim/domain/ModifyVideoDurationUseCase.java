@@ -61,7 +61,7 @@ public class ModifyVideoDurationUseCase{
             getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
     videoToEdit.setStartTime(startTimeMs);
     videoToEdit.setStopTime(finishTimeMs);
-    Project project = Project.getInstance(null,null,null);
+    Project project = Project.getInstance(null,null,null,null);
     videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
     videoToEdit.setTrimmedVideo(true);
     videoToEdit.setTranscodingTempFileFinished(false);

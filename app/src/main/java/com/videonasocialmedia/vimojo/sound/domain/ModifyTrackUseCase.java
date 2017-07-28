@@ -18,7 +18,7 @@ public class ModifyTrackUseCase {
   }
 
   public void setTrackVolume(Track track, float volume){
-    currentProject = Project.getInstance(null, null, null);
+    currentProject = Project.getInstance(null, null, null, null);
     for(Media item: track.getItems()){
       item.setVolume(volume);
     }
@@ -27,7 +27,7 @@ public class ModifyTrackUseCase {
   }
 
   public void setTrackMute(Track track, boolean isMute){
-    currentProject = Project.getInstance(null, null, null);
+    currentProject = Project.getInstance(null, null, null, null);
     track.setMute(isMute);
     updateProject();
   }

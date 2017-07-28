@@ -22,7 +22,7 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCase {
   }
 
   public void execute(OnRelaunchTemporalFileListener listener) {
-    Project project = Project.getInstance(null, null, null);
+    Project project = Project.getInstance(null, null, null, null);
     List<Media> items = getMediaListFromProjectUseCase.getMediaListFromProject();
     if (items.size() > 0)    {
       for (Media media : items) {

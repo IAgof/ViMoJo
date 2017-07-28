@@ -52,7 +52,7 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
     public void removeMediaItemsFromProject(ArrayList<Media> mediaList,
                                             OnRemoveMediaFinishedListener listener) {
         boolean correct = false;
-        Project currentProject = Project.getInstance(null, null, null);
+        Project currentProject = Project.getInstance(null, null, null, null);
         Track mediaTrack = currentProject.getMediaTrack();
         for (Media media : mediaList) {
             correct = removeVideoItemFromTrack(media, mediaTrack);
@@ -80,7 +80,7 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
         try {
             mediaTrack.deleteItem(video);
             // TODO(jliarte): 23/10/16 get rid of EventBus?
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = Project.getInstance(null, null, null, null);
             EventBus.getDefault().post(
                     new UpdateProjectDurationEvent(currentProject.getDuration()));
             EventBus.getDefault().post(

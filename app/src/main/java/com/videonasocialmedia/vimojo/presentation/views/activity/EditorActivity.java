@@ -216,7 +216,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
           case DialogInterface.BUTTON_POSITIVE:
            // drawerLayout.closeDrawers();
             if(resourceItemMenuId == R.id.menu_navview_delete_clip)
-                editorPresenter.createNewProject(Constants.PATH_APP, BuildConfig.FEATURE_WATERMARK);
+                editorPresenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_PRIVATE,
+                    BuildConfig.FEATURE_WATERMARK);
             if(resourceItemMenuId == R.id.menu_navview_mail)
               navigateTo(SettingsActivity.class);
             if(resourceItemMenuId == R.id.menu_navview_username)
