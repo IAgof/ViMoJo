@@ -16,19 +16,14 @@ import android.graphics.drawable.Drawable;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
-import android.util.Log;
 
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
@@ -43,7 +38,6 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,9 +45,9 @@ import java.util.List;
  * This class is used to show the setting menu.
  */
 public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenceChangeListener,
-    OnRelaunchTemporalFileListener, TranscoderHelperListener {
+    OnRelaunchTemporalFileListener {
 
-    private static final String LOG_TAG = "PreferencesPresenter";
+    private static final String LOG_TAG = PreferencesPresenter.class.getSimpleName();
     private Context context;
     private SharedPreferences sharedPreferences;
     private PreferencesView preferencesView;
@@ -75,13 +69,11 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         updateIntermediateTemporalFilesTransitionsUseCase;
     private GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase;
     private UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase;
-    private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
     private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
     private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
 
-    private Drawable drawableFadeTransitionVideo;
-    private VideonaFormat videoFormat;
-    private String TAG = "PreferencesPresenter";
+//    private Drawable drawableFadeTransitionVideo;
+//    private VideonaFormat videoFormat;
 
     /**
      * Constructor
@@ -109,7 +101,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                                         updateIntermediateTemporalFilesTransitionsUseCase,
             GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
             UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-            UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
             RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
             GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase) {
 
@@ -134,7 +125,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             updateIntermediateTemporalFilesTransitionsUseCase;
         this.getWatermarkPreferenceFromProjectUseCase = getWatermarkPreferenceFromProjectUseCase;
         this.updateWatermarkPreferenceToProjectUseCase = updateWatermarkPreferenceToProjectUseCase;
-        this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
         this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     }
@@ -404,7 +394,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         relaunchTranscoderTempBackgroundUseCase.relaunchExport(
                 drawableVideoFadeTransition, video,
                 getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
-                intermediatesTempAudioFadeDirectory, this);
+                intermediatesTempAudioFadeDirectory);
     }
 
     private Project loadCurrentProject() {
@@ -424,27 +414,27 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         return null;
     }
 
-    @Override
-    public void onSuccessTranscoding(Video video) {
-        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
-        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
-    }
-
-    @Override
-    public void onErrorTranscoding(Video video, String message) {
-        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-        if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
-            video.increaseNumTriesToExportVideo();
-            Project currentProject = loadCurrentProject();
-            Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
-                    .getDrawableFadeTransitionVideo();
-            relaunchTranscoderTempBackgroundUseCase.relaunchExport(
-                    drawableVideoFadeTransition, video,
-                    getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
-                    currentProject.getProjectPathIntermediateFileAudioFade(), this);
-        } else {
-            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
-                    Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
-        }
-    }
+//    @Override
+//    public void onSuccessTranscoding(Video video) {
+//        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
+//        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
+//    }
+//
+//    @Override
+//    public void onErrorTranscoding(Video video, String message) {
+//        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
+//        if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
+//            video.increaseNumTriesToExportVideo();
+//            Project currentProject = loadCurrentProject();
+//            Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
+//                    .getDrawableFadeTransitionVideo();
+//            relaunchTranscoderTempBackgroundUseCase.relaunchExport(
+//                    drawableVideoFadeTransition, video,
+//                    getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
+//                    currentProject.getProjectPathIntermediateFileAudioFade());
+//        } else {
+//            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
+//                    Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
+//        }
+//    }
 }

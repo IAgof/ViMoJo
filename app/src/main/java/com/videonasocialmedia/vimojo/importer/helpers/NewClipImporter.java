@@ -5,12 +5,12 @@ import android.util.Log;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmRepository;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
@@ -22,7 +22,7 @@ import java.io.IOException;
  */
 public class NewClipImporter implements TranscoderHelperListener {
   private static final String TAG = NewClipImporter.class.getCanonicalName();
-  private final UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
+  private final VideoRepository videoRepository;
   private final VideoToAdaptRepository videoToAdaptRepository;
   private AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase;
 //  private HashMap<String, VideoToAdapt> videoListToAdaptAndPosition = new HashMap<>();
@@ -32,10 +32,10 @@ public class NewClipImporter implements TranscoderHelperListener {
   public NewClipImporter(
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase,
-          UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase) {
+          VideoRepository videoRepository) {
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     this.adaptVideoRecordedToVideoFormatUseCase = adaptVideoRecordedToVideoFormatUseCase;
-    this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
+    this.videoRepository = videoRepository;
     // TODO(jliarte): 24/07/17 inject this
     this.videoToAdaptRepository = new VideoToAdaptRealmRepository();
   }
@@ -105,7 +105,8 @@ public class NewClipImporter implements TranscoderHelperListener {
     video.setStopTime(FileUtils.getDuration(video.getMediaPath()));
     video.resetTempPath();
     video.notifyChanges();
-    updateVideoRepositoryUseCase.updateVideo(video);
+
+    videoRepository.update(video);
     // (jliarte): 18/07/17 now we should move the file, notify changes, and launch AV transitions
 
 

@@ -14,12 +14,12 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
@@ -57,7 +57,6 @@ public class GalleryPagerPresenterTest {
   @Mock OnLaunchAVTransitionTempFileListener mockedLaunchAVTransitionTempFileListener;
   @Mock Video mockedVideo;
   @Mock GalleryPagerView mockedGalleryPagerView;
-  @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
   @Mock LaunchTranscoderAddAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionsUseCase;
   @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
   @Mock private MediaMetadataRetriever mockedMetadataRetriever;
@@ -65,6 +64,7 @@ public class GalleryPagerPresenterTest {
   @Mock Context mockedContext;
   @Mock private SharedPreferences mockedSharedPreferences;
   @Mock private SharedPreferences.Editor mockedPreferencesEditor;
+  @Mock private VideoRepository mockedVideoRepository;
 
   @Before
   public void injectMocks() {
@@ -201,10 +201,9 @@ public class GalleryPagerPresenterTest {
 
   private GalleryPagerPresenter getGalleryPresenter() {
     return new GalleryPagerPresenter(mockedGalleryPagerView, mockedContext,
-            mockedAddVideoToProjectUseCase, mockedUpdateVideoRepositoryUseCase,
-            mockedGetVideonaFormatFromCurrentProjectUseCase,
+            mockedAddVideoToProjectUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
             mockedLaunchTranscoderAddAVTransitionsUseCase, mockedUpdateProjectResolution,
-            mockedSharedPreferences);
+            mockedVideoRepository, mockedSharedPreferences);
   }
 
   public Project getAProject() {

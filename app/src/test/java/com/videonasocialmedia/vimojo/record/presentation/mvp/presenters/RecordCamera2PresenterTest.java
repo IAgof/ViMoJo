@@ -18,18 +18,17 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -53,8 +52,6 @@ public class RecordCamera2PresenterTest {
   @Mock RecordCamera2View mockedRecordView;
   @Mock Context mockedContext;
   @Mock AutoFitTextureView mockedTextureView;
-  String directorySaveVideos;
-  @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
   @Mock LaunchTranscoderAddAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionUseCase;
   @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideoFormatFromCurrentProjectUseCase;
   @Mock AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
@@ -62,9 +59,9 @@ public class RecordCamera2PresenterTest {
   @Mock VideonaFormat mockedVideoFormat;
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
   @Mock Camera2WrapperListener mockedCamera2WrapperListener;
-  int rotation = 0;
   @Mock private Activity mockedActivity;
   @Mock private Camera2Wrapper mockedCamera2Wrapper;
+  @Mock private VideoRepository mockedVideoRepository;
 
   @Before
   public void injectMocks() {
@@ -223,7 +220,7 @@ public class RecordCamera2PresenterTest {
   @NonNull
   private RecordCamera2Presenter getRecordCamera2Presenter() {
     return new RecordCamera2Presenter(mockedActivity,
-            mockedRecordView, mockedUpdateVideoRepositoryUseCase,
+            mockedRecordView, mockedVideoRepository,
             mockedLaunchTranscoderAddAVTransitionUseCase,
             mockedGetVideoFormatFromCurrentProjectUseCase,
             mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase,

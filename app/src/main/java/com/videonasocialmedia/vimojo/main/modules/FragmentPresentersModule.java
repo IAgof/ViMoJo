@@ -8,7 +8,6 @@ import android.preference.PreferenceCategory;
 import android.preference.SwitchPreference;
 
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
@@ -85,7 +84,6 @@ public class FragmentPresentersModule {
               updateIntermediateTemporalFilesTransitionsUseCase,
              GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
              UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-             UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
              RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
              GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase){
 
@@ -98,7 +96,6 @@ public class FragmentPresentersModule {
         updateIntermediateTemporalFilesTransitionsUseCase,
         getWatermarkPreferenceFromProjectUseCase,
         updateWatermarkPreferenceToProjectUseCase,
-        updateVideoRepositoryUseCase,
         relaunchTranscoderTempBackgroundUseCase,
         getVideonaFormatFromCurrentProjectUseCase);
   }
@@ -132,11 +129,6 @@ public class FragmentPresentersModule {
   }
 
   @Provides
-  UpdateVideoRepositoryUseCase provideUpdateVideoRepositoryUseCase(VideoRepository videoRepository){
-    return new UpdateVideoRepositoryUseCase(videoRepository);
-  }
-
-  @Provides
   UpdateWatermarkPreferenceToProjectUseCase provideUpdateWatermarkPreference(ProjectRepository
                                                                              projectRepository){
     return new UpdateWatermarkPreferenceToProjectUseCase(projectRepository);
@@ -148,8 +140,8 @@ public class FragmentPresentersModule {
   }
 
   @Provides
-  RelaunchTranscoderTempBackgroundUseCase provideGetRelaunchTranscoder(){
-    return new RelaunchTranscoderTempBackgroundUseCase();
+  RelaunchTranscoderTempBackgroundUseCase provideGetRelaunchTranscoder(VideoRepository videoRepository) {
+    return new RelaunchTranscoderTempBackgroundUseCase(videoRepository);
   }
 
   @Provides

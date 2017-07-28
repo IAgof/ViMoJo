@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.export.domain;
 
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
@@ -9,26 +10,33 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 /**
  * Created by alvaro on 28/09/16.
  */
 
-public class RelaunchTranscoderTempBackgroundUseCase {
-  protected TextToDrawable drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
+public class RelaunchTranscoderTempBackgroundUseCase implements TranscoderHelperListener {
+  private static final String LOG_TAG = RelaunchTranscoderTempBackgroundUseCase.class
+          .getSimpleName();
+  protected TextToDrawable drawableGenerator =
+          new TextToDrawable(VimojoApplication.getAppContext());
   protected MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator,
           mediaTranscoder);
   protected VideoRepository videoRepository;
 
-  private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
+  private final Project currentProject;
 
-  public RelaunchTranscoderTempBackgroundUseCase(){
-      getPreferencesTransitionFromProjectUseCase = new GetPreferencesTransitionFromProjectUseCase();
-      videoRepository = new VideoRealmRepository();
+  public RelaunchTranscoderTempBackgroundUseCase(VideoRepository videoRepository) {
+    this.videoRepository = videoRepository;
+    currentProject = getCurrentProject();
+  }
+
+  private Project getCurrentProject() {
+    return Project.getInstance(null, null, null);
   }
 
   /**
@@ -37,17 +45,16 @@ public class RelaunchTranscoderTempBackgroundUseCase {
    * @param videonaFormat output format for the clip transcoding
    * @param intermediatesTempAudioFadeDirectory
    */
-  public void relaunchExport(Drawable drawableFadeTransition, Video videoToEdit,
-                             VideonaFormat videonaFormat, String intermediatesTempAudioFadeDirectory,
-                             final TranscoderHelperListener
-                                 transcoderHelperListener){
-    boolean isVideoFadeTransitionActivated =
-        getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
-    boolean isAudioFadeTransitionActivated =
-        getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
+  public void relaunchExport(
+          Drawable drawableFadeTransition, Video videoToEdit, VideonaFormat videonaFormat,
+          String intermediatesTempAudioFadeDirectory) {
+    boolean isVideoFadeTransitionActivated = currentProject.getVMComposition()
+            .isVideoFadeTransitionActivated();
+    boolean isAudioFadeTransitionActivated = currentProject.getVMComposition()
+            .isAudioFadeTransitionActivated();
     videoToEdit.setTranscodingTempFileFinished(false);
     updateGeneratedVideo(drawableFadeTransition, videoToEdit, videonaFormat,
-            intermediatesTempAudioFadeDirectory, transcoderHelperListener,
+            intermediatesTempAudioFadeDirectory, this,
             isVideoFadeTransitionActivated, isAudioFadeTransitionActivated);
     videoRepository.update(videoToEdit);
   }
@@ -70,4 +77,25 @@ public class RelaunchTranscoderTempBackgroundUseCase {
     }
   }
 
+  @Override
+  public void onSuccessTranscoding(Video video) {
+    Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
+    videoRepository.setSuccessTranscodingVideo(video);
+  }
+
+  @Override
+  public void onErrorTranscoding(Video video, String message) {
+    Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
+    if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
+      video.increaseNumTriesToExportVideo();
+      Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
+              .getDrawableFadeTransitionVideo();
+      relaunchExport(drawableVideoFadeTransition, video,
+              currentProject.getVMComposition().getVideoFormat(),
+              currentProject.getProjectPathIntermediateFileAudioFade());
+    } else {
+      videoRepository.setErrorTranscodingVideo(video,
+              Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
+    }
+  }
 }

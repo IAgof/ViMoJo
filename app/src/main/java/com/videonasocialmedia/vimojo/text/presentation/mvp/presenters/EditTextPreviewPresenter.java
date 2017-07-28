@@ -4,16 +4,13 @@ package com.videonasocialmedia.vimojo.text.presentation.mvp.presenters;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -21,7 +18,6 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetriev
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
-import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -33,7 +29,7 @@ import javax.inject.Inject;
  * Created by ruth on 1/09/16.
  */
 
-public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHelperListener {
+public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
     private final String LOG_TAG = getClass().getSimpleName();
 
@@ -44,8 +40,6 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
     private GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
-    private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
-    private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
 
 
     private EditTextView editTextView;
@@ -61,18 +55,13 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
                                     ModifyVideoTextAndPositionUseCase
                                             modifyVideoTextAndPositionUseCase,
                                     GetVideoFormatFromCurrentProjectUseCase
-                                            getVideonaFormatFromCurrentProjectUseCase,
-                                    UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
-                                    RelaunchTranscoderTempBackgroundUseCase
-                                            relaunchTranscoderTempBackgroundUseCase) {
+                                            getVideonaFormatFromCurrentProjectUseCase) {
         this.editTextView = editTextView;
         this.context = context;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
         this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
-        this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
-        this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
         this.currentProject = loadCurrentProject();
     }
 
@@ -116,33 +105,33 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, TranscoderHe
 
         modifyVideoTextAndPositionUseCase.addTextToVideo(drawableFadeTransitionVideo, videoToEdit,
             videoFormat, text, textPositionSelected.name(),
-            currentProject.getProjectPathIntermediateFileAudioFade(), this);
+            currentProject.getProjectPathIntermediateFileAudioFade());
 
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
     }
 
-    @Override
-    public void onSuccessTranscoding(Video video) {
-        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
-        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
-    }
-
-    @Override
-    public void onErrorTranscoding(Video video, String message) {
-        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-        if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
-            videoToEdit.increaseNumTriesToExportVideo();
-            Project currentProject = loadCurrentProject();
-            VideonaFormat videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
-            Drawable drawableFadeTransitionVideo = currentProject.getVMComposition().getDrawableFadeTransitionVideo();
-
-            relaunchTranscoderTempBackgroundUseCase.relaunchExport(drawableFadeTransitionVideo,
-                video, videoFormat, currentProject.getProjectPathIntermediateFileAudioFade(), this);
-        } else {
-
-            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
-                Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TEXT.name());
-        }
-    }
+//    @Override
+//    public void onSuccessTranscoding(Video video) {
+//        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
+//        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
+//    }
+//
+//    @Override
+//    public void onErrorTranscoding(Video video, String message) {
+//        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
+//        if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
+//            videoToEdit.increaseNumTriesToExportVideo();
+//            Project currentProject = loadCurrentProject();
+//            VideonaFormat videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
+//            Drawable drawableFadeTransitionVideo = currentProject.getVMComposition().getDrawableFadeTransitionVideo();
+//
+//            relaunchTranscoderTempBackgroundUseCase.relaunchExport(drawableFadeTransitionVideo,
+//                video, videoFormat, currentProject.getProjectPathIntermediateFileAudioFade(), this);
+//        } else {
+//
+//            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
+//                Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TEXT.name());
+//        }
+//    }
 }
 

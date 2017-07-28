@@ -73,9 +73,9 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assertThat(video.getClipText(), is(nullValue()));
 
-    new RelaunchTranscoderTempBackgroundUseCase().relaunchExport(mockDrawableFadeTransition, video,
-        videonaFormat, intermediatesTempAudioFadeDirectory,
-        mockedTranscoderHelperListener);
+    new RelaunchTranscoderTempBackgroundUseCase(mockedVideoRepository)
+            .relaunchExport(mockDrawableFadeTransition, video, videonaFormat,
+                    intermediatesTempAudioFadeDirectory);
   }
 
   @Ignore
@@ -91,8 +91,8 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
             new TranscoderHelper(mockedDrawableGenerator, mockedMediaTranscoder);
 
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
-        videonaFormat, currentProject.getProjectPathIntermediateFileAudioFade(),
-        mockedTranscoderHelperListener);
+        videonaFormat, currentProject.getProjectPathIntermediateFileAudioFade()
+    );
 
     verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
         eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()),
@@ -106,7 +106,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     Video video = getVideoWithText();
     assert video.hasText();
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition,
-        video, videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+        video, videonaFormat, intermediatesTempAudioFadeDirectory);
 
     verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimmingAsync(
         mockDrawableFadeTransition, isVideoFadeTransitionActivated, isAudioFadeTransitionActivated,
@@ -122,8 +122,8 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
             new TranscoderHelper(mockedDrawableGenerator, mockedMediaTranscoder);
     Project currentProject = getAProject();
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
-        videonaFormat, currentProject.getProjectPathIntermediateFileAudioFade(),
-        mockedTranscoderHelperListener);
+        videonaFormat, currentProject.getProjectPathIntermediateFileAudioFade()
+    );
 
     verify(mockedMediaTranscoder).transcodeAndTrimVideo(eq(mockDrawableFadeTransition),
         eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()), eq(video.getTempPath()),
@@ -137,7 +137,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     assert ! video.hasText();
 
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
-        videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+        videonaFormat, intermediatesTempAudioFadeDirectory);
 
     verify(mockedTranscoderHelper).generateOutputVideoWithTrimmingAsync(mockDrawableFadeTransition,
         isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, video, videonaFormat,
@@ -149,7 +149,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
 
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
-        videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+        videonaFormat, intermediatesTempAudioFadeDirectory);
 
     verify(mockedVideoRepository).update(video);
   }
@@ -160,7 +160,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     assert video.isTranscodingTempFileFinished();
 
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
-        videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+        videonaFormat, intermediatesTempAudioFadeDirectory);
 
     assertThat(video.isTranscodingTempFileFinished(), is(false));
   }

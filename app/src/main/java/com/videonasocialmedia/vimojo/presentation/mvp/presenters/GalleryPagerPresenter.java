@@ -22,7 +22,6 @@ import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperLis
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -31,6 +30,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -53,10 +53,10 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     protected final Project currentProject;
     private final ArrayList<Integer> listErrorVideoIds = new ArrayList<>();
     private final Context context;
+    private final VideoRepository videoRepository;
     private boolean differentVideoFormat;
 
     private VideonaFormat videoFormat;
-    private final UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
     private final LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
     // TODO(jliarte): 3/05/17 init in constructor to inject it. Wrap android MMR with our own class
     MediaMetadataRetriever metadataRetriever;
@@ -68,19 +68,18 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     @Inject public GalleryPagerPresenter(
             GalleryPagerView galleryPagerView, Context context,
             AddVideoToProjectUseCase addVideoToProjectUseCase,
-            UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
             GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
             LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionsUseCase,
             UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase,
-            SharedPreferences preferences) {
+            VideoRepository videoRepository, SharedPreferences preferences) {
         this.galleryPagerView = galleryPagerView;
         this.context = context;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-        this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionsUseCase;
         this.currentProject = loadCurrentProject();
         this.updateVideoResolutionToProjectUseCase = updateVideoResolutionToProjectUseCase;
+        this.videoRepository = videoRepository;
         this.preferences = preferences;
         metadataRetriever = new MediaMetadataRetriever();
     }
@@ -233,7 +232,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     @Override
     public void onSuccessTranscoding(Video video) {
         Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
-        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
+        videoRepository.setSuccessTranscodingVideo(video);
     }
 
     @Override
@@ -247,21 +246,22 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
                 getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
                 currentProject.getProjectPathIntermediateFileAudioFade(), this);
         } else {
-            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
-                Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
+            videoRepository.setErrorTranscodingVideo(video,
+                    Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
         }
     }
 
     @Override
-    public void videoToLaunchAVTransitionTempFile(Video video,
-                                                  String intermediatesTempAudioFadeDirectory) {
-
+    public void videoToLaunchAVTransitionTempFile(
+            Video video, String intermediatesTempAudioFadeDirectory) {
         video.setTempPath(currentProject.getProjectPathIntermediateFiles());
 
         videoFormat = currentProject.getVMComposition().getVideoFormat();
-        Drawable drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
+        Drawable drawableFadeTransitionVideo = currentProject.getVMComposition()
+                .getDrawableFadeTransitionVideo();
 
-        launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
+        launchTranscoderAddAVTransitionUseCase
+                .launchExportTempFile(drawableFadeTransitionVideo, video, videoFormat,
             intermediatesTempAudioFadeDirectory, this);
     }
 }

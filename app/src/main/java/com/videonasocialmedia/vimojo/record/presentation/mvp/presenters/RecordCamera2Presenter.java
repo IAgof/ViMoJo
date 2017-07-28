@@ -33,7 +33,6 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -45,6 +44,7 @@ import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoForm
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerAmplitudeDbListener;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoopThread;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.text.DecimalFormat;
@@ -65,9 +65,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   private static final String TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
   private final NewClipImporter newClipImporter;
+  private final VideoRepository videoRepository;
   private RecordCamera2View recordView;
   private AddVideoToProjectUseCase addVideoToProjectUseCase;
-  private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
   private LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
   private int videosRecorded = 0;
   private Project currentProject;
@@ -89,19 +89,16 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     }
   };
 
-  public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
-                                UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
-                                LaunchTranscoderAddAVTransitionsUseCase
-                                    launchTranscoderAddAVTransitionUseCase,
-                                GetVideoFormatFromCurrentProjectUseCase
-                                    getVideoFormatFromCurrentProjectUseCase,
-                                AddVideoToProjectUseCase addVideoToProjectUseCase,
-                                AdaptVideoRecordedToVideoFormatUseCase
-                                    adaptVideoRecordedToVideoFormatUseCase,
-                                Camera2Wrapper camera) {
+  public RecordCamera2Presenter(
+          Context context, RecordCamera2View recordView, VideoRepository videoRepository,
+          LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase,
+          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+          AddVideoToProjectUseCase addVideoToProjectUseCase,
+          AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase,
+          Camera2Wrapper camera) {
     this.context = context;
     this.recordView = recordView;
-    this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
+    this.videoRepository = videoRepository;
     this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
     this.currentProject = loadProject();
@@ -112,7 +109,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     camera.setCameraListener(this);
 
     this.newClipImporter = new NewClipImporter(getVideoFormatFromCurrentProjectUseCase,
-            adaptVideoRecordedToVideoFormatUseCase, updateVideoRepositoryUseCase);
+            adaptVideoRecordedToVideoFormatUseCase, videoRepository);
   }
 
   private Project loadProject() {
@@ -500,7 +497,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
               @Override
               public void onSuccessTranscoding(Video video) {
                 Log.d(TAG, "onSuccessTranscoding " + video.getTempPath());
-                updateVideoRepositoryUseCase.succesTranscodingVideo(video);
+                videoRepository.setSuccessTranscodingVideo(video);
               }
 
               @Override
@@ -514,7 +511,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
                           videoFormat, currentProject.getProjectPathIntermediateFileAudioFade(),
                           this);
                 } else {
-                  updateVideoRepositoryUseCase.errorTranscodingVideo(video,
+                  videoRepository.setErrorTranscodingVideo(video,
                           Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
                 }
               }

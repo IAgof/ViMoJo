@@ -11,11 +11,11 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -34,28 +34,17 @@ import static org.mockito.Mockito.verify;
  */
 
 public class RecordPresenterTest {
-
-  @Mock
-  Context mockedContext;
-  @Mock
-  RecordView mockedRecordView;
-  @Mock
-  UserEventTracker mockedUserEventTracker;
-  @Mock
-  GLCameraView mockedGLCameraview;
-  @Mock
-  SharedPreferences mockedSharedPreferences;
-  @Mock
-  AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
-  @Mock
-  UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
-  @Mock
-  LaunchTranscoderAddAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionsUseCase;
-  @Mock
-  GetVideoFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
+  @Mock Context mockedContext;
+  @Mock RecordView mockedRecordView;
+  @Mock UserEventTracker mockedUserEventTracker;
+  @Mock GLCameraView mockedGLCameraview;
+  @Mock SharedPreferences mockedSharedPreferences;
+  @Mock AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
+  @Mock LaunchTranscoderAddAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionsUseCase;
+  @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
+  @Mock private VideoRepository mockedVideoRepository;
 
   boolean externalIntent;
-
   private RecordPresenter recordPresenter;
 
   @Before
@@ -65,7 +54,6 @@ public class RecordPresenterTest {
 
   @Test
   public void constructorSetsCurrentProject() {
-
     recordPresenter = getRecordPresenter();
 
     Project project = getAProject();
@@ -77,7 +65,7 @@ public class RecordPresenterTest {
   private RecordPresenter getRecordPresenter() {
     return new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
         mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
-        mockedUpdateVideoRepositoryUseCase, mockedLaunchTranscoderAddAVTransitionsUseCase,
+        mockedVideoRepository, mockedLaunchTranscoderAddAVTransitionsUseCase,
         mockedGetVideonaFormatFromCurrentProjectUseCase);
   }
 

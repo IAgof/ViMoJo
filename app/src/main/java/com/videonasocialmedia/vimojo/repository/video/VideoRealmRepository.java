@@ -57,6 +57,21 @@ public class VideoRealmRepository implements VideoRepository {
   }
 
   @Override
+  public void setSuccessTranscodingVideo(Video video) {
+    video.resetNumTriesToExportVideo();
+    video.setTranscodingTempFileFinished(true);
+    video.setVideoError(null);
+    update(video);
+  }
+
+  @Override
+  public void setErrorTranscodingVideo(Video video, String message) {
+    video.setVideoError(message);
+    video.setTranscodingTempFileFinished(true);
+    update(video);
+  }
+
+  @Override
   public void add(Iterable<Video> items) {
 
   }

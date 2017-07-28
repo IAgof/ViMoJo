@@ -32,13 +32,13 @@ import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperLis
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessEvent;
 import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -77,6 +77,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
     public static final long ONE_GB = ONE_MB*1024;
     private static final String LOG_TAG = "RecordPresenter";
     private final UserEventTracker userEventTracker;
+    private final VideoRepository videoRepository;
     private boolean firstTimeRecording;
     private RecordView recordView;
     private SessionConfig config;
@@ -96,20 +97,16 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
 
     private Drawable drawableFadeTransitionVideo;
     private VideonaFormat videoFormat;
-    private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
     private LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
     private GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
 
     @Inject
-    public RecordPresenter(Context context, RecordView recordView, UserEventTracker userEventTracker,
-                           GLCameraView cameraPreview, SharedPreferences sharedPreferences,
-                           boolean externalIntent,
-                           AddVideoToProjectUseCase addVideoToProjectUseCase,
-                           UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
-                           LaunchTranscoderAddAVTransitionsUseCase
-                                   launchTranscoderAddAVTransitionsUseCase,
-                           GetVideoFormatFromCurrentProjectUseCase
-                                   getVideonaFormatFromCurrentProjectUseCase) {
+    public RecordPresenter(
+            Context context, RecordView recordView, UserEventTracker userEventTracker,
+            GLCameraView cameraPreview, SharedPreferences sharedPreferences, boolean externalIntent,
+            AddVideoToProjectUseCase addVideoToProjectUseCase, VideoRepository videoRepository,
+            LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionsUseCase,
+            GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase) {
         this.context = context;
         this.recordView = recordView;
         this.userEventTracker = userEventTracker;
@@ -117,7 +114,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         this.sharedPreferences = sharedPreferences;
         this.externalIntent = externalIntent;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-        this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
+        this.videoRepository = videoRepository;
         this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionsUseCase;
         this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.currentProject = loadCurrentProject();
@@ -474,7 +471,6 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
 
     @Override
     public void videoToLaunchAVTransitionTempFile(Video video, String intermediatesTempAudioFadeDirectory) {
-
         video.setTempPath(currentProject.getProjectPathIntermediateFiles());
 
         videoFormat = currentProject.getVMComposition().getVideoFormat();
@@ -487,7 +483,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
     @Override
     public void onSuccessTranscoding(Video video) {
         Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
-        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
+        videoRepository.setSuccessTranscodingVideo(video);
     }
 
     @Override
@@ -501,8 +497,8 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
                 getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
                 currentProject.getProjectPathIntermediateFileAudioFade(), this);
         } else {
-            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
-                Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
+            videoRepository.setErrorTranscodingVideo(video,
+                    Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
         }
     }
 

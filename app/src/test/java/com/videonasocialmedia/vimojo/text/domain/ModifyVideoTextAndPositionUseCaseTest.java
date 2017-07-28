@@ -63,7 +63,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             mockedMediaTranscoder);
 
     injectedUseCase.addTextToVideo(mockDrawableFadeTransition, video, videonaFormat, video.getClipText(),
-            video.getClipTextPosition(), intermediatesTempAudioFadeDirectory, mockedMediaTranscoderHelperListener);
+            video.getClipTextPosition(), intermediatesTempAudioFadeDirectory);
 
     verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(eq(mockDrawableFadeTransition),
         eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()), eq(video.getTempPath()),
@@ -79,7 +79,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedUseCase.addTextToVideo(mockDrawableFadeTransition, video, videonaFormat, video.getClipText(),
-            video.getClipTextPosition(), intermediatesTempAudioFadeDirectory, mockedMediaTranscoderHelperListener);
+            video.getClipTextPosition(), intermediatesTempAudioFadeDirectory);
 
     verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimmingAsync(mockDrawableFadeTransition,
         isVideoFadeTransitionActivated,isAudioFadeTransitionActivated, video, videonaFormat,
@@ -97,7 +97,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             mockedMediaTranscoder);
 
     injectedUseCase.addTextToVideo(mockDrawableFadeTransition, video, videonaFormat, video.getClipText(),
-            video.getClipTextPosition(), intermediatesTempAudioFadeDirectory, mockedMediaTranscoderHelperListener);
+            video.getClipTextPosition(), intermediatesTempAudioFadeDirectory);
 
     verify(mockedMediaTranscoder).transcodeAndOverlayImageToVideo(eq(mockDrawableFadeTransition),
         eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()), eq(video.getTempPath()),
@@ -113,8 +113,8 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedUseCase.addTextToVideo(mockDrawableFadeTransition, video, videonaFormat,
-        video.getClipText(), video.getClipTextPosition(), intermediatesTempAudioFadeDirectory,
-        mockedMediaTranscoderHelperListener);
+        video.getClipText(), video.getClipTextPosition(), intermediatesTempAudioFadeDirectory
+    );
 
     verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAsync(mockDrawableFadeTransition,
         isVideoFadeTransitionActivated, isAudioFadeTransitionActivated,
@@ -128,7 +128,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
 
       injectedUseCase.addTextToVideo(mockDrawableFadeTransition, video, videonaFormat, "text",
-          textPosition, intermediatesTempAudioFadeDirectory, mockedMediaTranscoderHelperListener);
+          textPosition, intermediatesTempAudioFadeDirectory);
 
     verify(mockedVideoRepository).update(video);
     assertThat(video.getClipText(), is("text"));

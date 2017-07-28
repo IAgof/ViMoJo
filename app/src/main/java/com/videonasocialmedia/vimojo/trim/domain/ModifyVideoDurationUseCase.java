@@ -96,10 +96,7 @@ public class ModifyVideoDurationUseCase {
           @Override
           public void onSuccessTranscoding(Video video) {
             Log.d(TAG, "onSuccessTranscoding after trim " + video.getTempPath());
-            video.resetNumTriesToExportVideo();
-            video.setTranscodingTempFileFinished(true);
-            video.setVideoError(null);
-            videoRepository.update(video);
+            videoRepository.setSuccessTranscodingVideo(video);
           }
 
           @Override
