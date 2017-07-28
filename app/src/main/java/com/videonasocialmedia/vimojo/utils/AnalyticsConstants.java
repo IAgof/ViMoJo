@@ -97,7 +97,16 @@ public class AnalyticsConstants {
     public static final String SOURCE_APP_VIDEONA = "Videona";
     public static final String DESTINATION_KAMARADA_PLAY = "Kamarada Google Play";
 
-
+    /**
+     * Record Events properties and values
+     */
+    public static final String RECORD_ACTION = "recordAction";
+    public static final String RECORD_ACTION_CHANGE_CAMERA_BACK = "Change camera back";
+    public static final String RECORD_ACTION_CHANGE_CAMERA_FRONT = "Change camera front";
+    public static final String RECORD_ACTION_CHANGE_FLASH_ON = "Change flash ON";
+    public static final String RECORD_ACTION_CHANGE_FLASH_OFF = "Change flash OFF";
+    public static final String RECORD_ACTION_START_RECORDING = "Start";
+    public static final String RECORD_ACTION_STOP_RECORDING = "Stop";
     /**
      * Edit Events properties and values
      */
