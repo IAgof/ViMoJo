@@ -62,7 +62,7 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
   @NonNull
   private Project mapProject(RealmProject realmProject){
     Project currentProject = new Project(realmProject.title, Constants.PATH_APP,
-        Constants.PATH_APP_PRIVATE, mapProfile(realmProject));
+        Constants.PATH_APP_ANDROID, mapProfile(realmProject));
     currentProject.setProjectPath(realmProject.projectPath);
     currentProject.setUuid(realmProject.uuid);
     currentProject.setLastModification(realmProject.lastModification);

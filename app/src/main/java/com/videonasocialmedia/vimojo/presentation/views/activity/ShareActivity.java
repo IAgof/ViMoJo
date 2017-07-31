@@ -328,7 +328,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        presenter.newDefaultProject(Constants.PATH_APP, Constants.PATH_APP_PRIVATE,
+                        presenter.newDefaultProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
                             BuildConfig.FEATURE_WATERMARK);
                         navigateTo(GoToRecordOrGalleryActivity.class);
                         break;

@@ -104,6 +104,10 @@ public class Utils {
             if (!file.isFile())
                 file.delete();
             InputStream in = ctx.getResources().openRawResource(resourceId);
+            String parentPath = privatePath;
+            if(!new File(parentPath).exists()) {
+                new File(parentPath).mkdir();
+            }
             try {
                 FileOutputStream out = new FileOutputStream(privatePath + File.separator +
                     nameFile + fileTypeExtensionConstant);
@@ -115,6 +119,7 @@ public class Utils {
                 out.close();
             } catch (FileNotFoundException e) {
                 //TODO show error message
+                e.printStackTrace();
             } finally {
                 in.close();
             }
@@ -590,7 +595,7 @@ public class Utils {
 
     public static boolean copyWatermarkResourceToDevice() {
         try {
-            copyResourceToPrivateFolder(Constants.PATH_APP_PRIVATE, VimojoApplication.getAppContext(),
+            copyResourceToPrivateFolder(Constants.PATH_APP_ANDROID, VimojoApplication.getAppContext(),
                 "watermark", R.raw.watermark, ".png");
         } catch (IOException e) {
             e.printStackTrace();
