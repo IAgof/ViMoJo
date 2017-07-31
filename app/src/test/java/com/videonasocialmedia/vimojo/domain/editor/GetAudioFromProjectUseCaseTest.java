@@ -46,7 +46,7 @@ public class GetAudioFromProjectUseCaseTest {
     @After
     public void tearDown() throws Exception {
         // FIXME: tests are not independent as Project keeps state between tests
-        Project singletonProject = Project.getInstance(null, null, null);
+        Project singletonProject = Project.getInstance(null, null, null, null);
         singletonProject.clear();
     }
 
@@ -103,8 +103,9 @@ public class GetAudioFromProjectUseCaseTest {
     private Project getAProject() {
         String title = "project title";
         String rootPath = "project/root/path";
+        String privatePath = "private/path";
         Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-        return Project.getInstance(title, rootPath, profile);
+        return Project.getInstance(title, rootPath, privatePath, profile);
     }
 }

@@ -54,7 +54,7 @@ public class TrimPreviewPresenterTest {
 
     @After
     public void tearDown() {
-        Project.getInstance(null, null, null).clear();
+        Project.getInstance(null, null, null, null).clear();
     }
 
     @Test
@@ -142,7 +142,8 @@ public class TrimPreviewPresenterTest {
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+        return Project.getInstance("title", "/path", "private/path",
+            Profile.getInstance(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
     }
 }

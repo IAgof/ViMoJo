@@ -209,6 +209,6 @@ public class RemoveAudioUseCaseTest {
   private Project getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.GOOD,
         VideoFrameRate.FrameRate.FPS25);
-    return Project.getInstance("project title", "root/path", profile);
+    return Project.getInstance("project title", "root/path", "private/path", profile);
   }
 }

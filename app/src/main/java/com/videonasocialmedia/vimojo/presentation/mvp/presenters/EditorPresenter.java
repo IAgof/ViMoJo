@@ -69,7 +69,7 @@ public class EditorPresenter implements TranscoderHelperListener, OnVideosRetrie
 
   public Project loadCurrentProject() {
     // TODO(jliarte): this should make use of a repository or use case to load the Project
-    return Project.getInstance(null, null, null);
+    return Project.getInstance(null, null, null, null);
   }
 
   public void getPreferenceUserName() {
@@ -91,8 +91,8 @@ public class EditorPresenter implements TranscoderHelperListener, OnVideosRetrie
 
   }
 
-  public void createNewProject(String roothPath, boolean isWatermarkFeatured){
-    createDefaultProjectUseCase.createProject(roothPath, isWatermarkFeatured);
+  public void createNewProject(String roothPath, String privatePath, boolean isWatermarkFeatured){
+    createDefaultProjectUseCase.createProject(roothPath, privatePath, isWatermarkFeatured);
     clearProjectDataFromSharedPreferences();
     editorActivityView.updateViewResetProject();
   }
@@ -114,7 +114,7 @@ public class EditorPresenter implements TranscoderHelperListener, OnVideosRetrie
   }
 
   private void relaunchTranscoderTempFileJob(Video video) {
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     VideonaFormat videoFormat = getVideonaFormatFromCurrentProjectUseCase
         .getVideonaFormatFromCurrentProject();
     Drawable drawableFadeTransitionVideo = VimojoApplication.getAppContext()

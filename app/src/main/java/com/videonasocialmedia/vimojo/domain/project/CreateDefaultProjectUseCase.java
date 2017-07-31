@@ -32,7 +32,7 @@ public class CreateDefaultProjectUseCase {
     this.trackRepository = trackRepository;
   }
 
-  public void loadOrCreateProject(String rootPath, boolean isWatermarkFeatured) {
+  public void loadOrCreateProject(String rootPath, String privatePath, boolean isWatermarkFeatured) {
 
     // By default project title,
     String projectTitle = DateUtils.getDateRightNow();
@@ -45,7 +45,7 @@ public class CreateDefaultProjectUseCase {
       isProjectCreated = true;
     }
 
-    Project currentProject = Project.getInstance(projectTitle, rootPath,
+    Project currentProject = Project.getInstance(projectTitle, rootPath, privatePath,
         profileRepository.getCurrentProfile());
     if((isProjectCreated && isWatermarkFeatured) || areWeIntoFlavorVimojo()){
       currentProject.setWatermarkActivated(true);
@@ -57,9 +57,9 @@ public class CreateDefaultProjectUseCase {
     return BuildConfig.FLAVOR.compareTo(Constants.FLAVOR_VIMOJO) == 0;
   }
 
-  public void createProject(String rootPath, boolean isWatermarkFeatured){
+  public void createProject(String rootPath, String privatePath, boolean isWatermarkFeatured){
     String projectTitle = DateUtils.getDateRightNow();
-    Project currentProject = new Project(projectTitle,rootPath,
+    Project currentProject = new Project(projectTitle,rootPath,privatePath,
         profileRepository.getCurrentProfile());
     if(isWatermarkFeatured || areWeIntoFlavorVimojo()){
       currentProject.setWatermarkActivated(true);

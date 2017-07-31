@@ -7,14 +7,19 @@
 
 package com.videonasocialmedia.vimojo.export.domain;
 
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession.ExportListener;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSessionImpl;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.io.File;
 import java.util.NoSuchElementException;
 
 public class ExportProjectUseCase implements ExportListener {
@@ -26,7 +31,7 @@ public class ExportProjectUseCase implements ExportListener {
    * Project VMCompositionExportSession use case.
    */
   public ExportProjectUseCase() {
-    project = Project.getInstance(null, null, null);
+    project = Project.getInstance(null, null,null, null);
 
     // TODO(jliarte): 28/04/17 move to export method?
     String tempPathIntermediateAudioFilesDirectory =
@@ -39,12 +44,22 @@ public class ExportProjectUseCase implements ExportListener {
   /**
    * Main use case method.
    */
-  public void export(OnExportFinishedListener onExportFinishedListener) {
+  public void export(String pathWatermark, OnExportFinishedListener onExportFinishedListener) {
     this.onExportFinishedListener = onExportFinishedListener;
+    checkWatermarkResource(pathWatermark);
     try {
       VMCompositionExportSession.exportAsyncronously();
     } catch (NoSuchElementException exception) {
       onExportError(String.valueOf(exception));
+    }
+  }
+
+  private void checkWatermarkResource(String pathWatermark) {
+    File watermarkResource = new File(pathWatermark);
+    if(!watermarkResource.exists()){
+      if(!Utils.copyWatermarkResourceToDevice()) {
+        onExportError(VimojoApplication.getAppContext().getString(R.string.export_error_watermark));
+      }
     }
   }
 

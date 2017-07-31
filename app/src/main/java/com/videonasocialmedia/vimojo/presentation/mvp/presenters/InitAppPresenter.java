@@ -20,7 +20,7 @@ public class InitAppPresenter {
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
   }
 
-  public void startLoadingProject(String rootPath, boolean isWatermarkFeatured) {
-    createDefaultProjectUseCase.loadOrCreateProject(rootPath, isWatermarkFeatured);
+  public void startLoadingProject(String rootPath, String privatePath, boolean isWatermarkFeatured) {
+    createDefaultProjectUseCase.loadOrCreateProject(rootPath, privatePath, isWatermarkFeatured);
   }
 }

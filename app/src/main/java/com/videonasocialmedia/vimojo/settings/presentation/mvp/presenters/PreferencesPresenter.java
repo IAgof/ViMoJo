@@ -43,6 +43,7 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -385,8 +386,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                 break;
             case ConfigPreferences.WATERMARK:
                 boolean data = sharedPreferences.getBoolean(key, false);
-                if (data && !updateWatermarkPreferenceToProjectUseCase
-                        .isWatermarkResourceDownloaded(Constants.PATH_APP)) {
+                if (data && !(new File(Constants.PATH_WATERMARK).exists())) {
                     Utils.copyWatermarkResourceToDevice();
                 }
                 updateWatermarkPreferenceToProjectUseCase.setWatermarkActivated(data);
@@ -428,7 +428,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
         if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
             video.increaseNumTriesToExportVideo();
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = Project.getInstance(null, null, null, null);
             relaunchTranscoderTempBackgroundUseCase.relaunchExport(
                     context.getDrawable(R.drawable.alpha_transition_white), video,
                     getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),

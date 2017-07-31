@@ -35,7 +35,7 @@ public class UpdateTitleProjectUseCaseTest {
 
   @Test
   public void setTitleProjectCallsUpdateProjectRepository(){
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     injectedUseCase.setTitle(currentProject, "some title");
     verify(mockedProjectRepository).update(currentProject);
   }
@@ -53,7 +53,8 @@ public class UpdateTitleProjectUseCaseTest {
   }
 
   private Project getAProject() {
-    return new Project("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+    return new Project("title", "/path", "private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 

@@ -47,7 +47,7 @@ public class DetailProjectPresenterTest {
   @After
   public void tearDown() throws Exception {
     // FIXME: tests are not independent as Project keeps state between tests
-    Project singletonProject = Project.getInstance(null, null, null);
+    Project singletonProject = Project.getInstance(null, null, null, null);
     singletonProject.clear();
   }
 
@@ -72,7 +72,8 @@ public class DetailProjectPresenterTest {
   }
 
   private Project getAProject() {
-    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+    return Project.getInstance("title", "/path", "private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 

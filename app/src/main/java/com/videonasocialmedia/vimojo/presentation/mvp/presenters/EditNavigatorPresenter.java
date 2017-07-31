@@ -15,7 +15,7 @@ public class EditNavigatorPresenter {
 
     public EditNavigatorPresenter(EditNavigatorView navigatorView) {
         this.navigatorView = navigatorView;
-        project = Project.getInstance(null, null, null);
+        project = Project.getInstance(null, null, null, null);
         areThereVideosInProject();
     }
 
