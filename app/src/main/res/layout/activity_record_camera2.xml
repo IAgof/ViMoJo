@@ -500,17 +500,6 @@
                     android:layout_margin="8dp" />
 
                 <ImageButton
-                    android:id="@+id/metering_mode_exposure_compensation"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="#00ffffff"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center"
-                    android:src="@drawable/activity_record_ic_metering_manual"
-                    android:visibility="invisible"
-                    android:layout_margin="8dp" />
-
-                <ImageButton
                     android:id="@+id/metering_mode_center"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -530,8 +519,18 @@
                     android:layout_gravity="center"
                     android:src="@drawable/activity_record_ic_brightness_manual"
                     android:visibility="invisible"
-                    android:layout_margin="8dp"
-                    />
+                    android:layout_margin="8dp" />
+
+                <ImageButton
+                    android:id="@+id/metering_mode_exposure_compensation"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_metering_manual"
+                    android:visibility="invisible"
+                    android:layout_margin="8dp" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
