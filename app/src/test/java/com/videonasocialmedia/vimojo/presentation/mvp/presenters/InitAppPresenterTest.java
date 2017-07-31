@@ -28,8 +28,8 @@ public class InitAppPresenterTest {
 
   @Test
   public void startLoadingProjectCallsLoadOrCreateProject() {
-    injectedPresenter.startLoadingProject("root/path", false);
+    injectedPresenter.startLoadingProject("root/path", "private/path", false);
 
-    verify(mockedUseCase).loadOrCreateProject("root/path", false);
+    verify(mockedUseCase).loadOrCreateProject("root/path","private/path", false);
   }
 }

@@ -13,6 +13,8 @@ package com.videonasocialmedia.vimojo.utils;
 
 import android.os.Environment;
 
+import com.videonasocialmedia.vimojo.BuildConfig;
+
 import java.io.File;
 
 public class Constants {
@@ -32,6 +34,12 @@ public class Constants {
 
     final public static String RESOURCE_WATERMARK_NAME = "watermark.png";
 //    final public static String FOLDER_NAME_VIMOJO_TEMP_AUDIO = ".tempAudio";
+
+    final public static String PATH_APP_ANDROID = Environment.getExternalStorageDirectory()
+        .getPath() + "/Android/data/" + BuildConfig.APPLICATION_ID;
+
+    final public static String PATH_WATERMARK = PATH_APP_ANDROID + File.separator +
+        Constants.RESOURCE_WATERMARK_NAME;
 
     final public static String PATH_APP = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DCIM) + File.separator + FOLDER_NAME_VIMOJO;
@@ -71,11 +79,7 @@ public class Constants {
     public static final int DEFAULT_VIMOJO_BITRATE = 10*1000*1000;
     public static final int DEFAULT_VIMOJO_FRAME_RATE = 25;
 
-    final public static String FLAVOR_RTVE = "rtve";
     final public static String FLAVOR_VIMOJO = "vimojo";
-    final public static String FLAVOR_HISPANOPOST = "hispanopost";
-    final public static String FLAVOR_20_MINUTOS = "veinteminutos";
-    final public static String FLAVOR_SHOULDERPOD = "shoulderpod";
 
     public static final String USER_THUMB = "userThumb.jpg";
 
@@ -89,4 +93,5 @@ public class Constants {
     public static final int ADVANCE_PLAYER_PRECISION_LOW = 300;
     public static final int ADVANCE_PLAYER_PRECISION_MEDIUM = 600;
     public static final int ADVANCE_PLAYER_PRECISION_HIGH = 1200;
+
 }

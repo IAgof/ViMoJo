@@ -94,6 +94,38 @@ public class Utils {
         }
     }
 
+    public static void copyResourceToPrivateFolder(String privatePath, Context ctx, String name, int resourceId,
+                                          String fileTypeExtensionConstant) throws IOException {
+        String nameFile = String.valueOf(name);
+        File file = new File(privatePath + File.separator + nameFile +
+            fileTypeExtensionConstant);
+
+        if (!file.exists() || !file.isFile()) {
+            if (!file.isFile())
+                file.delete();
+            InputStream in = ctx.getResources().openRawResource(resourceId);
+            String parentPath = privatePath;
+            if(!new File(parentPath).exists()) {
+                new File(parentPath).mkdir();
+            }
+            try {
+                FileOutputStream out = new FileOutputStream(privatePath + File.separator +
+                    nameFile + fileTypeExtensionConstant);
+                byte[] buff = new byte[1024];
+                int read = 0;
+                while ((read = in.read(buff)) > 0) {
+                    out.write(buff, 0, read);
+                }
+                out.close();
+            } catch (FileNotFoundException e) {
+                //TODO show error message
+                e.printStackTrace();
+            } finally {
+                in.close();
+            }
+        }
+    }
+
     public static void copyMusicResourceToTemp(Context ctx, String name, int musicResourceId) throws IOException {
         copyResourceToTemp(ctx, name, musicResourceId, Constants.AUDIO_MUSIC_FILE_EXTENSION);
     }
@@ -561,6 +593,15 @@ public class Utils {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
-
+    public static boolean copyWatermarkResourceToDevice() {
+        try {
+            copyResourceToPrivateFolder(Constants.PATH_APP_ANDROID, VimojoApplication.getAppContext(),
+                "watermark", R.raw.watermark, ".png");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 
 }

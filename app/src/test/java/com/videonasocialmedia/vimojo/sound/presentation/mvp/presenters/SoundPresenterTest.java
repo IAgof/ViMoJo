@@ -95,7 +95,7 @@ public class SoundPresenterTest {
     project.getVMComposition().getAudioTracks().get(com.videonasocialmedia.videonamediaframework
         .model.Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
 
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     assertThat("Current project has music", currentProject.hasMusic(), is(true));
 
     injectedSoundPresenter.init();
@@ -144,7 +144,7 @@ public class SoundPresenterTest {
         .insertItem(music);
     GetAudioFromProjectUseCase getAudioFromProjectUseCase = new GetAudioFromProjectUseCase();
 
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     assertThat("Current project has music", currentProject.hasMusic(), is(true));
 
     SoundPresenter soundPresenter = getSoundPresenter(getAudioFromProjectUseCase);
@@ -180,7 +180,7 @@ public class SoundPresenterTest {
         .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
         .insertItem(voiceOver);
     GetAudioFromProjectUseCase getAudioFromProjectUseCase = new GetAudioFromProjectUseCase();
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     assertThat("Current project has voiceOver", currentProject.hasVoiceOver(), is(true));
     SoundPresenter soundPresenter = getSoundPresenter(getAudioFromProjectUseCase);
     soundPresenter.init();
@@ -232,7 +232,7 @@ public class SoundPresenterTest {
   public Project getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
-    return Project.getInstance("title", "/path", profile);
+    return Project.getInstance("title", "/path","private/path", profile);
   }
 
 }

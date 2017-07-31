@@ -22,6 +22,7 @@ import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
@@ -70,7 +71,7 @@ public class ShareVideoPresenter {
     }
 
     private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null, null, null, null);
     }
 
     public void init() {
@@ -150,9 +151,9 @@ public class ShareVideoPresenter {
         userEventTracker.trackVideoSharedUserTraits();
     }
 
-    public void newDefaultProject(String rootPath, boolean isWatermarkFeatured){
+    public void newDefaultProject(String rootPath, String privatePath, boolean isWatermarkFeatured){
         clearProjectDataFromSharedPreferences();
-        createDefaultProjectUseCase.createProject(rootPath, isWatermarkFeatured);
+        createDefaultProjectUseCase.createProject(rootPath, privatePath, isWatermarkFeatured);
     }
 
     // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?
@@ -172,7 +173,7 @@ public class ShareVideoPresenter {
     }
 
     public void startExport() {
-        exportUseCase.export(new OnExportFinishedListener() {
+        exportUseCase.export(Constants.PATH_WATERMARK, new OnExportFinishedListener() {
             @Override
             public void onExportError(String error) {
                 Crashlytics.log("Error exportando: " + error);

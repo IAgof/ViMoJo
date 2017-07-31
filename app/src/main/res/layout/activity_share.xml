@@ -10,21 +10,30 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".presentation.views.activity.ShareActivity">
 
-       <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
-            android:id="@+id/videona_player"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/videonaPlayerExo_marginTop"
-            />
+    <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
+        android:id="@+id/videona_player"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/videonaPlayerExo_marginTop" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/share_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/videona_player"
+        android:layout_above="@+id/bottomBar">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/options_to_share_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="4dp"
-            android:layout_below="@+id/videona_player"
-            android:layout_marginBottom="@dimen/bb_height"
-            />
+            android:layout_marginBottom="4dp"/>
+    </android.support.v7.widget.CardView>
 
     <com.roughike.bottombar.BottomBar
         android:id="@+id/bottomBar"
@@ -32,8 +41,7 @@
         android:layout_height="56dp"
         app:bb_tabXmlResource="@xml/bottombar_tabs"
         android:layout_alignParentBottom="true"
-        android:background="@color/colorTransparent"
-        />
+        android:background="@color/colorTransparent" />
 
 
     <android.support.design.widget.FloatingActionButton
@@ -44,7 +52,7 @@
         app:backgroundTint="@color/colorAccent"
         android:layout_above="@+id/bottomBar"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginRight="24dp"/>
 
 </RelativeLayout>

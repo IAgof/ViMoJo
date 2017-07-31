@@ -28,13 +28,15 @@ public interface RecordCamera2View {
 
     void showStopButton();
 
-    void showChronometer();
-
-    void hideChronometer();
-
     void startChronometer();
 
     void stopChronometer();
+
+    void resetChronometer();
+
+    void showRecordPointIndicator();
+
+    void hideRecordPointIndicator();
 
     void showNavigateToSettingsActivity();
 
@@ -136,6 +138,11 @@ public interface RecordCamera2View {
 
     void updateAudioGainSeekbarDisability();
 
+    /**
+     * Sets recordview picometer value and color
+     * @param progress value of picometer progress meassured from 0 to 100
+     * @param color android color for picometer seekbar
+     */
     void showProgressPicometer(int progress, int color);
 
     void showExternalMicrophoneConnected();

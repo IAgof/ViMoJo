@@ -78,7 +78,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     }
 
     private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null, null, null, null);
     }
 
     public void loadProjectVideo(int videoToTrimIndex) {
@@ -164,10 +164,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
 
     public void advanceForwardEndSplitting(int advancePlayerPrecision, int currentSplitPosition) {
         int progress = currentSplitPosition + advancePlayerPrecision;
-        if(progress > maxSeekBarSplit){
-            progress = maxSeekBarSplit;
-        }
-        splitView.updateSplitSeekbar(progress);
+        splitView.updateSplitSeekbar(Math.min(maxSeekBarSplit, progress));
     }
 }
 

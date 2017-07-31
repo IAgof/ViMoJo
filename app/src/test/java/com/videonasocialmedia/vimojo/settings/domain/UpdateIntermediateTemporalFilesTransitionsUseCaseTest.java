@@ -34,7 +34,7 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
   @Before
   public void init(){
     MockitoAnnotations.initMocks(this);
-    Project project = Project.getInstance(null, null, null);
+    Project project = Project.getInstance(null, null, null, null);
     project.clear();
   }
 
@@ -58,7 +58,7 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
   }
 
   private Project getAProject() {
-    return Project.getInstance("title", "/path", Profile.getInstance(
+    return Project.getInstance("title", "/path", "private/path", Profile.getInstance(
             VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25));
   }

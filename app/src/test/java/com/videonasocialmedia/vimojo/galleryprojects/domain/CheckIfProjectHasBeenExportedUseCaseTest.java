@@ -64,7 +64,8 @@ public class CheckIfProjectHasBeenExportedUseCaseTest {
   private Project getAProjectWithVideoExportedAndSameDates() {
 
     Project project =
-        Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+        Project.getInstance("title", "/path", "private/path",
+            Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
 
     String date = DateUtils.getDateRightNow();

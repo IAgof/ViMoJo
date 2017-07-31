@@ -39,13 +39,13 @@ public class UpdateCurrentProjectUseCaseTest {
 
   @Test
   public void updateCurrentProjectUpdateLastModificationDate(){
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     currentProject.setLastModification("FakeDate");
     String oldLastModification = currentProject.getLastModification();
 
     injectedUseCase.updateLastModificationAndProjectInstance(currentProject);
 
-    Project actualProject = Project.getInstance(null, null, null);
+    Project actualProject = Project.getInstance(null, null, null, null);
     String newLastModification = actualProject.getLastModification();
 
     assertEquals(currentProject,actualProject);
@@ -54,7 +54,7 @@ public class UpdateCurrentProjectUseCaseTest {
 
   @Test
   public void updateCurrentProjectCallsUpdateProjectRepository(){
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     injectedUseCase.updateLastModificationAndProjectInstance(currentProject);
     verify(mockedProjectRepository).update(currentProject);
   }
@@ -63,12 +63,13 @@ public class UpdateCurrentProjectUseCaseTest {
   public void shouldUpdateProjectInstanceIfProjectIsUpdate(){
     Project project = getAProject();
     injectedUseCase.updateLastModificationAndProjectInstance(project);
-    Project currentProject = Project.getInstance(null,null,null);
+    Project currentProject = Project.getInstance(null,null,null,null);
     assertThat("currentProject is different", currentProject, CoreMatchers.is(project));
   }
 
   private Project getAProject() {
-    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+    return Project.getInstance("title", "/path", "private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 

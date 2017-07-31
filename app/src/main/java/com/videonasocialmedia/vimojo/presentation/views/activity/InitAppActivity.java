@@ -13,11 +13,9 @@ import android.hardware.camera2.CameraAccessException;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -315,6 +313,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         File privateDataFolderModel = getDir(Constants.FOLDER_VIDEONA_PRIVATE_MODEL, Context.MODE_PRIVATE);
         String privatePath = privateDataFolderModel.getAbsolutePath();
         editor.putString(ConfigPreferences.PRIVATE_PATH, privatePath).commit();
+        Utils.copyWatermarkResourceToDevice();
     }
 
     private void trackAppStartupProperties(boolean state) {
@@ -604,7 +603,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     @Override
     public void onCheckPathsAppSuccess() {
-        presenter.startLoadingProject(Constants.PATH_APP, BuildConfig.FEATURE_WATERMARK);
+        presenter.startLoadingProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
+            BuildConfig.FEATURE_WATERMARK);
     }
 
     @Override

@@ -165,7 +165,7 @@ public class SoundVolumePresenterTest {
   }
 
   public Project getAProject() {
-    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.
+    return Project.getInstance("title", "/path", "private/path", Profile.getInstance(VideoResolution.
             Resolution.HD720, VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 

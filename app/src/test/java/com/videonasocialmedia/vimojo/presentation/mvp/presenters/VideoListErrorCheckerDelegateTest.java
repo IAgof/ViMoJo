@@ -83,7 +83,7 @@ public class VideoListErrorCheckerDelegateTest {
   public Project getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
-    return Project.getInstance("title", "/path", profile);
+    return Project.getInstance("title", "/path", "private/path", profile);
   }
 }
 

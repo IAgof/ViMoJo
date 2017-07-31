@@ -40,7 +40,7 @@ public class ReorderMediaItemUseCaseTest {
 
   @Before
   public void setProject() {
-    currentProject = Project.getInstance(null, null, null);
+    currentProject = Project.getInstance(null, null, null, null);
   }
 
   @After

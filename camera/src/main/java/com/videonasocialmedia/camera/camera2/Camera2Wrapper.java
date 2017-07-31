@@ -616,10 +616,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       }
   }
 
-  public int getMaxAmplitudeRecording(){
-    if(isMediaRecorderPrepared()) {
+  public int getMaxAmplitudeRecording() {
+    if (isMediaRecorderPrepared()) {
       return mediaRecorder.getMaxAmplitude();
-    }else {
+    } else {
       return 0;
     }
   }
@@ -749,6 +749,15 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     closeCamera();
     setupCamera();
     checkTextureViewToOpenCamera();
+  }
+
+  public void resetZoom(){
+    try{
+    camera2ZoomHelper.resetZoom();
+    } catch (CameraAccessException e) {
+      e.printStackTrace();
+      Log.e(TAG, "Error reset zooming - camera access", e);
+    }
   }
 
   public boolean ISOSelectionSupported() {

@@ -75,7 +75,7 @@ public class AddVideoToProjectUseCaseTest {
 // Borrar test , addVideoToTrack not in use, delete.
   @Test
   public void testAddVideoToTrackWithListenerCallsUpdateProject() {
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     Video video = new Video("media/path", 1f);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
     OnLaunchAVTransitionTempFileListener avTransitionTempFileListener =
@@ -88,7 +88,7 @@ public class AddVideoToProjectUseCaseTest {
 
   @Test
   public void testAddVideoToProjectAtPositionCallsUpdateProject() {
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     Video video = new Video("media/path", 1f);
 
     injectedUseCase.addVideoToProjectAtPosition(video, 0, mockedOnAddMediaFinishedListener);
@@ -98,7 +98,7 @@ public class AddVideoToProjectUseCaseTest {
 
   @Test
   public void testAddVideoListToTrackCallsUpdateProject() {
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
@@ -186,7 +186,8 @@ public class AddVideoToProjectUseCaseTest {
   }
 
   public Project getAProject() {
-    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+    return Project.getInstance("title", "/path", "private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 }

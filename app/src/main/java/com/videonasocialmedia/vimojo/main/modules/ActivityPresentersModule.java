@@ -225,16 +225,18 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   RecordCamera2Presenter provideRecordCamera2Presenter(
+          UserEventTracker userEventTracker,
+          SharedPreferences sharedPreferences,
           UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
           LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionsUseCase,
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           AddVideoToProjectUseCase addVideoToProjectUseCase,
           AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase,
           Camera2Wrapper camera2wrapper) {
-    return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity,
-            updateVideoRepositoryUseCase, launchTranscoderAddAVTransitionsUseCase,
-            getVideoFormatFromCurrentProjectUseCase, addVideoToProjectUseCase,
-            adaptVideoRecordedToVideoFormatUseCase, camera2wrapper);
+    return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity, userEventTracker,
+            sharedPreferences, updateVideoRepositoryUseCase,
+            launchTranscoderAddAVTransitionsUseCase, getVideoFormatFromCurrentProjectUseCase,
+            addVideoToProjectUseCase, adaptVideoRecordedToVideoFormatUseCase, camera2wrapper);
   }
 
   @Provides @PerActivity

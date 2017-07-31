@@ -36,7 +36,7 @@ public class UpdateVideoTransitionPreferenceToProjectUseCaseTest {
 
   @Test
   public void updateVideoTransitionPreferenceCallsUpdateRepository(){
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     injectedUseCase.setVideoFadeTransitionActivated(false);
     verify(mockedProjectRepository).update(currentProject);
   }
@@ -50,7 +50,7 @@ public class UpdateVideoTransitionPreferenceToProjectUseCaseTest {
 
     injectedUseCase.setVideoFadeTransitionActivated(videoTransitionActivated);
 
-    project = Project.getInstance(null,null,null);
+    project = Project.getInstance(null,null,null,null);
 
     assertThat("project videoTransitionPreference is value injected",
         project.isVideoFadeTransitionActivated(), CoreMatchers.is(videoTransitionActivated));
@@ -59,7 +59,8 @@ public class UpdateVideoTransitionPreferenceToProjectUseCaseTest {
 
 
   private Project getAProject() {
-    return new Project("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+    return new Project("title", "/path","private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 }

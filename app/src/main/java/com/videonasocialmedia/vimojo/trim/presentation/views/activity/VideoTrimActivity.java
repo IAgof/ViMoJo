@@ -99,9 +99,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     private String STOP_TIME_TAG = "stop_time_tag";
     private boolean activityStateHasChanged = false;
 
-    private float rangeSeekBarMinValue;
-    private float rangeSeekBarMaxValue;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -362,13 +359,13 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void updateStartTrimmingRangeSeekBar(float minValue) {
-        onRangeSeekBarValuesChanged(trimmingRangeSeekBar, minValue, rangeSeekBarMaxValue);
+        onRangeSeekBarValuesChanged(trimmingRangeSeekBar, minValue, seekBarMaxPosition);
         trimmingRangeSeekBar.setSelectedMinValue(minValue);
     }
 
     @Override
     public void updateFinishTrimmingRangeSeekBar(float maxValue) {
-        onRangeSeekBarValuesChanged(trimmingRangeSeekBar, rangeSeekBarMinValue, maxValue);
+        onRangeSeekBarValuesChanged(trimmingRangeSeekBar, seekBarMinPosition, maxValue);
         trimmingRangeSeekBar.setSelectedMaxValue(maxValue);
     }
 
@@ -382,8 +379,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 //        Log.d(TAG, " setRangeChangeListener " + minValue + " - " + maxValue);
         videonaPlayer.pausePreview();
         try {
-            this.rangeSeekBarMinValue = (float) minValue;
-            this.rangeSeekBarMaxValue = (float) maxValue;
             float minValueFloat = (float) minValue;
             float maxValueFloat = (float) maxValue;
             if (Math.abs(maxValueFloat - minValueFloat) <= MIN_TRIM_OFFSET) {
