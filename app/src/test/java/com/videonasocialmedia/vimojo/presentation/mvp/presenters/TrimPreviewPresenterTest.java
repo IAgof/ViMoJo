@@ -102,6 +102,7 @@ public class TrimPreviewPresenterTest {
         verify(mockedTrimView).updateStartTrimmingRangeSeekBar(anyFloat());
     }
 
+    @Test
     public void advanceForwardStartTrimmingCallsUpdateStartTrimmingRangeSeekBar(){
         TrimPreviewPresenter presenter = getTrimPreviewPresenter();
         int advancePrecision = 600; //ms
@@ -120,7 +121,7 @@ public class TrimPreviewPresenterTest {
 
         presenter.advanceBackwardEndTrimming(advancePrecision, endTimeMs);
 
-        verify(mockedTrimView).updateFinishTrimmingRangeSeekBar(anyFloat());
+        verify(mockedTrimView).updateFinishTrimmingRangeSeekBar(0.6f);
     }
 
     @Test
