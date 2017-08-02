@@ -5,85 +5,95 @@
   ~ All rights reserved
   -->
 
-<RelativeLayout android:id="@+id/container"
+
+<RelativeLayout
+    android:id="@+id/container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:gravity="center">
 
-    <ImageView
-        android:id="@+id/timeline_video_thumb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="false"
-        android:layout_centerVertical="true"
-        android:background="@drawable/timeline_video_selector"
-        android:padding="3dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/fragment_gallery_no_image"/>
-
-    <RelativeLayout
-        android:id="@+id/relative_video_thumb"
-        android:layout_width="match_parent"
-        android:layout_height="24dp"
-        android:layout_marginLeft="5dp">
-
-        <TextView
-            android:id="@+id/text_clip_order"
+        <android.support.v7.widget.CardView
+            android:id="@+id/edit_or_video_item_cardview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/colorWhite"
-            tools:text="55"/>
+            android:backgroundTint="@color/colorWhite"
+            >
 
         <ImageView
-            android:id="@+id/image_remove_video"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:background="@color/colorAccent"
+            android:id="@+id/timeline_video_thumb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/timeline_video_selector"
             android:padding="3dp"
-            android:src="@drawable/activity_edit_clip_delete"
-            android:visibility="gone"
-            />
-    </RelativeLayout>
+            android:scaleType="fitXY"
+            android:src="@drawable/fragment_gallery_no_image"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_margin="3dp"
-        android:background="#aa333333"
-        android:layout_alignBottom="@+id/timeline_video_thumb"
-        android:layout_alignStart="@+id/timeline_video_thumb">
+        <RelativeLayout
+            android:id="@+id/relative_video_thumb"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_marginLeft="5dp">
 
-        <TextView
-            android:id="@+id/text_duration_clip"
-            android:layout_width="45dp"
-            android:layout_height="18dp"
-            android:text="00:00"
-            android:paddingRight="2dp"
-            android:gravity="end"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:textColor="@color/colorWhite"/>
+            <TextView
+                android:id="@+id/text_clip_order"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/colorWhite"
+                tools:text="55"/>
 
-       <!-- <ImageButton
-            android:id="@+id/gallery_preview_button"
-            android:layout_centerInParent="true"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginLeft="2dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:background="@drawable/activity_gallery_icon_play_normal" />
-            -->
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/image_remove_video"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@color/colorAccent"
+                android:padding="3dp"
+                android:src="@drawable/activity_edit_clip_delete"
+                android:visibility="gone"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_margin="3dp"
+            android:background="#ffffff"
+            android:layout_alignBottom="@+id/timeline_video_thumb"
+            android:layout_alignStart="@+id/timeline_video_thumb">
+
+            <TextView
+                android:id="@+id/text_duration_clip"
+                android:layout_width="45dp"
+                android:layout_height="18dp"
+                android:text="00:00"
+                android:paddingRight="2dp"
+                android:gravity="center"
+                android:layout_alignParentBottom="true"
+                android:textColor="@color/colorGreyTransparent"/>
+
+           <!-- <ImageButton
+                android:id="@+id/gallery_preview_button"
+                android:layout_centerInParent="true"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginLeft="2dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/activity_gallery_icon_play_normal" />
+                -->
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 
 
 </RelativeLayout>
+
