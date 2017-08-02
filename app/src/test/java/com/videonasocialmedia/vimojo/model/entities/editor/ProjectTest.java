@@ -29,14 +29,14 @@ import static org.hamcrest.Matchers.nullValue;
 public class ProjectTest {
     @Before
     public void setup() {
-        Project.getInstance(null, null, null).clear();
+        Project.getInstance(null, null, null, null).clear();
     }
 
     @Test
     public void getInstanceCallsProjectRepositoryGetCurrentProjectIfInstanceIsNull() {
         assert Project.INSTANCE == null;
 
-        Project.getInstance(null, null, null);
+        Project.getInstance(null, null, null, null);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class ProjectTest {
         Project videonaProject = getAProject();
 
         videonaProject.clear();
-        Project projectInstance = Project.getInstance(null, null, null);
+        Project projectInstance = Project.getInstance(null, null, null, null);
 
         assertThat(videonaProject, not(projectInstance));
         assertThat(projectInstance.getTitle(), nullValue());
@@ -132,7 +132,8 @@ public class ProjectTest {
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+        return Project.getInstance("title", "/path", "private/path",
+            Profile.getInstance(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
     }
 }

@@ -35,7 +35,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class ProjectToRealmProjectMapperTest {
   @Test
   public void testMapReturnsRealmProjectInstance() {
-    Project project = new Project(null, null, Profile.getInstance(VideoResolution.Resolution.HD720,
+    Project project = new Project(null, null, null, Profile.getInstance(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
@@ -49,7 +49,7 @@ public class ProjectToRealmProjectMapperTest {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
 
-    Project project = new Project("Project title", "root/path", profile);
+    Project project = new Project("Project title", "root/path","private/path", profile);
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
     RealmProject realmProject = mapper.map(project);
@@ -140,7 +140,7 @@ public class ProjectToRealmProjectMapperTest {
   @Test
   public void testMapReturnsNullRealmProjectIfNullProjectProfile() {
 
-    Project project = new Project("title", "root/path", null);
+    Project project = new Project("title", "root/path", "private/path", null);
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
     RealmProject realmProject = mapper.map(project);
@@ -152,7 +152,7 @@ public class ProjectToRealmProjectMapperTest {
   private Project getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
-    return new Project("Project title", "root/path", profile);
+    return new Project("Project title", "root/path", "private/path", profile);
   }
 
 }

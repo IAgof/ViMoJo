@@ -32,7 +32,7 @@ public class LaunchTranscoderAddAVTransitionsUseCase {
 
 
   private Project loadCurrentProject() {
-    return Project.getInstance(null, null, null);
+    return Project.getInstance(null, null, null, null);
   }
 
   public void launchExportTempFile(Drawable drawableFadeTransition, Video videoToEdit,

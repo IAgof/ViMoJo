@@ -11,7 +11,7 @@ public class GetWatermarkPreferenceFromProjectUseCase {
   private Project currentProject;
 
   public GetWatermarkPreferenceFromProjectUseCase(){
-    currentProject = Project.getInstance(null, null, null);
+    currentProject = Project.getInstance(null, null, null, null);
   }
 
   public boolean isWatermarkActivated() {

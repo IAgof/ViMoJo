@@ -15,6 +15,7 @@
 package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.BatteryManager;
@@ -44,7 +45,9 @@ import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoForm
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerAmplitudeDbListener;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoopThread;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
@@ -68,6 +71,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private final String TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
+  private SharedPreferences sharedPreferences;
+  protected UserEventTracker userEventTracker;
   private RecordCamera2View recordView;
   private AddVideoToProjectUseCase addVideoToProjectUseCase;
   private AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase;
@@ -100,6 +105,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   };
 
   public RecordCamera2Presenter(Context context, RecordCamera2View recordView,
+                                UserEventTracker userEventTracker,
+                                SharedPreferences sharedPreferences,
                                 UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
                                 LaunchTranscoderAddAVTransitionsUseCase
                                     launchTranscoderAddAVTransitionUseCase,
@@ -111,6 +118,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
                                 Camera2Wrapper camera) {
     this.context = context;
     this.recordView = recordView;
+    this.userEventTracker = userEventTracker;
+    this.sharedPreferences = sharedPreferences;
     this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
     this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;
     this.getVideonaFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
@@ -125,7 +134,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
   }
 
   private Project loadProject() {
-    return Project.getInstance(null,null,null);
+    return Project.getInstance(null,null,null,null);
   }
 
   public void initViews() {
@@ -312,8 +321,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
           recordView.hideVideosRecordedNumber();
           recordView.hideRecordedVideoThumbWithText();
           recordView.hideChangeCamera();
-          startSamplingPicometerRecording();
           recordView.updateAudioGainSeekbarDisability();
+          userEventTracker.trackVideoStartRecording();
+          startSamplingPicometerRecording();
         }
       });
     } catch (IllegalStateException illegalState) {
@@ -332,6 +342,29 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     } catch (RuntimeException runtimeException) {
       // do nothing as it's already managed in camera wrapper
     }
+    incrementSharedPreferencesTotalVideosRecorded();
+    trackVideoRecorded();
+  }
+
+  private void trackVideoRecorded() {
+    userEventTracker.trackVideoStopRecording();
+    userEventTracker.trackTotalVideosRecordedSuperProperty();
+    userEventTracker.trackVideoRecorded(currentProject, getSharedPreferencesTotalVideosRecorded());
+    userEventTracker.trackVideoRecordedUserTraits();
+  }
+
+  // TODO:(alvaro.martinez) 25/07/17 Update/Get this data with RealmProject, not SharedPreferences
+  private void incrementSharedPreferencesTotalVideosRecorded() {
+    int numTotalVideosRecorded = getSharedPreferencesTotalVideosRecorded();
+    SharedPreferences.Editor preferenceEditor = sharedPreferences.edit();
+    preferenceEditor.putInt(ConfigPreferences.TOTAL_VIDEOS_RECORDED,
+        ++numTotalVideosRecorded);
+    preferenceEditor.commit();
+  }
+
+  private int getSharedPreferencesTotalVideosRecorded() {
+    return sharedPreferences
+          .getInt(ConfigPreferences.TOTAL_VIDEOS_RECORDED, 0);
   }
 
   protected void stopVideoRecording() {
@@ -455,6 +488,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       camera.setFlashOn();
       recordView.setFlash(true);
     }
+    userEventTracker.trackChangeFlashMode(isSelected);
   }
 
   public void onTouchZoom(MotionEvent event) {
@@ -563,7 +597,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
       Log.d(TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
       if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
         video.increaseNumTriesToExportVideo();
-        Project currentProject = Project.getInstance(null, null, null);
+        Project currentProject = Project.getInstance(null, null, null, null);
         launchTranscoderAddAVTransitionUseCase.launchExportTempFile(context
                 .getDrawable(R.drawable.alpha_transition_white), video,
             getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
@@ -597,6 +631,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener,
     recordView.setCameraDefaultSettings();
     camera.switchCamera(isFrontCameraSelected);
     setupAdvancedCameraControls();
+    userEventTracker.trackChangeCamera(isFrontCameraSelected);
   }
 
   private void resetViewSwitchCamera() {

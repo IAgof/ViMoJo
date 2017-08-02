@@ -63,7 +63,7 @@ public class SoundVolumePresenter implements OnVideosRetrieved {
     }
 
     private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null, null, null, null);
     }
 
     public void init() {

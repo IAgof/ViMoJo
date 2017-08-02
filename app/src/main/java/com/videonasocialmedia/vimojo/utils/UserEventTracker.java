@@ -174,6 +174,102 @@ public class UserEventTracker {
                 new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date()));
     }
 
+    public void trackVideoStartRecording() {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.RECORD_ACTION,
+                AnalyticsConstants.RECORD_ACTION_START_RECORDING);
+            Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(TAG, "trackVideoStartRecording: error sending mixpanel USER_INTERACTED start " +
+                "event");
+            e.printStackTrace();
+        }
+    }
+
+    public void trackVideoStopRecording() {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.RECORD_ACTION,
+                AnalyticsConstants.RECORD_ACTION_STOP_RECORDING);
+            Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(TAG, "trackVideoStopRecording: error sending mixpanel USER_INTERACTED stop " +
+                "event");
+            e.printStackTrace();
+        }
+    }
+
+    public void trackChangeCamera(boolean isFrontCameraSelected) {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.RECORD_ACTION, isFrontCameraSelected ?
+                AnalyticsConstants.RECORD_ACTION_CHANGE_CAMERA_BACK
+                : AnalyticsConstants.RECORD_ACTION_CHANGE_CAMERA_FRONT);
+            Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(TAG, "trackChangeCamera: error sending mixpanel USER_INTERACTED flash " +
+                "event");
+            e.printStackTrace();
+        }
+    }
+    public void trackChangeFlashMode(boolean isFlashCameraSelected){
+      JSONObject eventProperties = new JSONObject();
+      try {
+        eventProperties.put(AnalyticsConstants.RECORD_ACTION, isFlashCameraSelected ?
+            AnalyticsConstants.RECORD_ACTION_CHANGE_FLASH_OFF
+            : AnalyticsConstants.RECORD_ACTION_CHANGE_FLASH_ON);
+        Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
+        this.trackEvent(trackingEvent);
+      } catch (JSONException e) {
+        Log.d(TAG, "trackChangeFlashMode: error sending mixpanel USER_INTERACTED change camera " +
+            "event");
+        e.printStackTrace();
+      }
+    }
+
+    public void trackTotalVideosRecordedSuperProperty() {
+        JSONObject totalVideoRecordedSuperProperty = new JSONObject();
+        int numPreviousVideosRecorded;
+        try {
+            numPreviousVideosRecorded =
+                mixpanel.getSuperProperties().getInt(AnalyticsConstants.TOTAL_VIDEOS_RECORDED);
+        } catch (JSONException e) {
+            numPreviousVideosRecorded = 0;
+        }
+        try {
+            totalVideoRecordedSuperProperty.put(AnalyticsConstants.TOTAL_VIDEOS_RECORDED,
+                ++numPreviousVideosRecorded);
+            mixpanel.registerSuperProperties(totalVideoRecordedSuperProperty);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void trackVideoRecorded(Project currentProject, int totalVideosRecorded) {
+        JSONObject videoRecordedProperties = new JSONObject();
+        VideoResolution.Resolution resolution = currentProject.getProfile().getResolution();
+        try {
+            videoRecordedProperties.put(AnalyticsConstants.VIDEO_LENGTH, currentProject.getDuration());
+            videoRecordedProperties.put(AnalyticsConstants.RESOLUTION, resolution.name());
+            videoRecordedProperties.put(AnalyticsConstants.TOTAL_VIDEOS_RECORDED,
+                totalVideosRecorded);
+            Event trackingEvent = new Event(AnalyticsConstants.VIDEO_RECORDED, videoRecordedProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void trackVideoRecordedUserTraits() {
+        mixpanel.getPeople().increment(AnalyticsConstants.TOTAL_VIDEOS_RECORDED, 1);
+        mixpanel.getPeople().set(AnalyticsConstants.LAST_VIDEO_RECORDED,
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date()));
+    }
+
     public static class Event {
         private String name;
         private JSONObject properties;

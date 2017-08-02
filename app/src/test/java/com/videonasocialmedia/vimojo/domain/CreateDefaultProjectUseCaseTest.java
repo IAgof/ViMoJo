@@ -1,14 +1,19 @@
 package com.videonasocialmedia.vimojo.domain;
 
 
+import android.content.Context;
+import android.os.Environment;
+
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.doReturn;
@@ -24,6 +30,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by jliarte on 23/10/16.
@@ -33,11 +40,11 @@ public class CreateDefaultProjectUseCaseTest {
 
   @Mock ProjectRepository mockedProjectRepository;
   @Mock ProfileRepository mockedProfileRepository;
-  @InjectMocks
-  CreateDefaultProjectUseCase injectedUseCase;
+  @Mock VimojoApplication mockedVimojoApplication;
+  @InjectMocks CreateDefaultProjectUseCase injectedUseCase;
 
   @Before
-  public void injectDoubles(){
+  public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
   }
 
@@ -68,19 +75,20 @@ public class CreateDefaultProjectUseCaseTest {
     assert Project.INSTANCE == null;
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
-    injectedUseCase.loadOrCreateProject("root/path", false);
+
+    injectedUseCase.loadOrCreateProject("root/path", "private/path", false);
 
     verify(mockedProjectRepository).getCurrentProject();
   }
 
   @Test
   public void startLoadingProjectDoesNotCallGetCurrentProjectIfNonNullInstance() {
-    Project project = Project.INSTANCE = new Project(null, null, null);
+    Project project = Project.INSTANCE = new Project(null, null, null, null);
 
-    injectedUseCase.loadOrCreateProject("root/path", false);
+    injectedUseCase.loadOrCreateProject("root/path", "private/path", false);
 
     verify(mockedProjectRepository, never()).getCurrentProject();
-    assertThat(Project.getInstance(null, null, null), is(project));
+    assertThat(Project.getInstance(null, null, null, null), is(project));
   }
 
   @Test
@@ -88,25 +96,26 @@ public class CreateDefaultProjectUseCaseTest {
     assert Project.INSTANCE == null;
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
-    Project currentProject = new Project("current project title", "current/path", profile);
+    Project currentProject = new Project("current project title", "current/path", "private/path",
+        profile);
     doReturn(currentProject).when(mockedProjectRepository).getCurrentProject();
 
-    injectedUseCase.loadOrCreateProject("root/path", false);
+    injectedUseCase.loadOrCreateProject("root/path", "private/path", false);
 
-    assertThat(Project.getInstance(null, null, null), is(currentProject));
+    assertThat(Project.getInstance(null, null, null, null), is(currentProject));
   }
 
   @Test
   public void loadOrCreateUpdateProjectRepository(){
-    injectedUseCase.loadOrCreateProject("root/path", false);
-    Project actualProject = Project.getInstance(null,null,null);
+    injectedUseCase.loadOrCreateProject("root/path", "private/path", false);
+    Project actualProject = Project.getInstance(null,null,null,null);
     verify(mockedProjectRepository).update(actualProject);
   }
 
   @Test
   public void createProjectUpdateProjectRepository(){
-    injectedUseCase.createProject("root/path", false);
-    Project actualProject = Project.getInstance(null,null,null);
+    injectedUseCase.createProject("root/path","private/path", false);
+    Project actualProject = Project.getInstance(null,null,null,null);
     verify(mockedProjectRepository).update(actualProject);
   }
 
@@ -118,8 +127,8 @@ public class CreateDefaultProjectUseCaseTest {
     doReturn(profile).when(mockedProfileRepository).getCurrentProfile();
     Project currentProject = Project.getInstance("current project", "current/path", profile);
     assertThat(Project.getInstance(null,null,null), is(currentProject));*/
-    injectedUseCase.createProject("root/path", false);
-    Project actualProject = Project.getInstance(null,null,null);
+    injectedUseCase.createProject("root/path", "private/path", false);
+    Project actualProject = Project.getInstance(null,null,null,null);
   }
 
   @Test
@@ -127,9 +136,9 @@ public class CreateDefaultProjectUseCaseTest {
 
     boolean isWatermarkFeatured = true;
 
-    injectedUseCase.createProject("root/path", isWatermarkFeatured);
+    injectedUseCase.createProject("root/path","private/path", isWatermarkFeatured);
 
-    assertThat("Watermark is activated", Project.getInstance(null,null,null).getVMComposition()
+    assertThat("Watermark is activated", Project.getInstance(null,null,null,null).getVMComposition()
         .hasWatermark(), is(true));
   }
 
@@ -138,9 +147,9 @@ public class CreateDefaultProjectUseCaseTest {
 
     boolean isWatermarkFeatured = true;
 
-    injectedUseCase.loadOrCreateProject("root/path", isWatermarkFeatured);
+    injectedUseCase.loadOrCreateProject("root/path", "private/path", isWatermarkFeatured);
 
-    assertThat("Watermark is activated", Project.getInstance(null,null,null).getVMComposition()
+    assertThat("Watermark is activated", Project.getInstance(null,null,null,null).getVMComposition()
         .hasWatermark(), is(true));
   }
 

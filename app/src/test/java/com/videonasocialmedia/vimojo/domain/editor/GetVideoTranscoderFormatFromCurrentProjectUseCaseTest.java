@@ -25,7 +25,7 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
   @Before
   public void setUp() throws Exception {
     // FIXME: tests are not independent as Project keeps state between tests
-    Project.getInstance(null, null, null).clear();
+    Project.getInstance(null, null, null, null).clear();
     MockitoAnnotations.initMocks(this);
   }
 
@@ -75,9 +75,10 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
   private Project getAProject() {
     String title = "project title";
     String rootPath = "project/root/path";
+    String privatePath = "private/path";
     Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
-    return Project.getInstance(title, rootPath, profile);
+    return Project.getInstance(title, rootPath, privatePath, profile);
   }
 
 }

@@ -35,7 +35,7 @@ public class ExportProjectService extends IntentService implements OnExportFinis
     @Override
     protected void onHandleIntent(Intent intent) {
         exportUseCase = new ExportProjectUseCase();
-        exportUseCase.export(this);
+        exportUseCase.export(Constants.PATH_WATERMARK, this);
     }
 
     @Override

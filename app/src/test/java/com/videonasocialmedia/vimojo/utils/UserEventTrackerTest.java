@@ -41,7 +41,7 @@ public class UserEventTrackerTest {
 
     @After
     public void tearDown() {
-        Project.getInstance(null, null, null).clear();
+        Project.getInstance(null, null, null, null).clear();
         UserEventTracker.clear();
     }
 
@@ -81,6 +81,84 @@ public class UserEventTrackerTest {
 
     @Captor
     ArgumentCaptor<UserEventTracker.Event> eventCaptor;
+
+    @Test
+    public void trackVideoStartRecordingCallsTrackWithEventNameAndProperties() throws JSONException {
+        UserEventTracker userEventTracker = Mockito
+            .spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+
+        userEventTracker.trackVideoStartRecording();
+
+        Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
+        UserEventTracker.Event trackedEvent = eventCaptor.getValue();
+        assertThat(trackedEvent.getName(), is(AnalyticsConstants.USER_INTERACTED));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.RECORD_ACTION),
+            is(AnalyticsConstants.RECORD_ACTION_START_RECORDING));
+    }
+
+    @Test
+    public void trackVideoStopRecordingCallsTrackWithEventNameAndProperties() throws JSONException {
+        UserEventTracker userEventTracker = Mockito
+            .spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+
+        userEventTracker.trackVideoStopRecording();
+
+        Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
+        UserEventTracker.Event trackedEvent = eventCaptor.getValue();
+        assertThat(trackedEvent.getName(), is(AnalyticsConstants.USER_INTERACTED));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.RECORD_ACTION),
+            is(AnalyticsConstants.RECORD_ACTION_STOP_RECORDING));
+    }
+
+    @Test
+    public void trackChangeCameraCallsTrackWithEventNameAndProperties() throws JSONException {
+        UserEventTracker userEventTracker = Mockito
+            .spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+        boolean isFrontCameraSelected = false;
+
+        userEventTracker.trackChangeCamera(isFrontCameraSelected);
+
+        Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
+        UserEventTracker.Event trackedEvent = eventCaptor.getValue();
+        assertThat(trackedEvent.getName(), is(AnalyticsConstants.USER_INTERACTED));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.RECORD_ACTION),
+            is(AnalyticsConstants.RECORD_ACTION_CHANGE_CAMERA_FRONT));
+    }
+
+    @Test
+    public void trackChangeFlashModeCallsTrackWithEventNameAndProperties() throws JSONException {
+        UserEventTracker userEventTracker = Mockito
+            .spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+        boolean isFlashSelected = false;
+
+        userEventTracker.trackChangeFlashMode(isFlashSelected);
+
+        Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
+        UserEventTracker.Event trackedEvent = eventCaptor.getValue();
+        assertThat(trackedEvent.getName(), is(AnalyticsConstants.USER_INTERACTED));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.RECORD_ACTION),
+            is(AnalyticsConstants.RECORD_ACTION_CHANGE_FLASH_ON));
+    }
+
+    @Test
+    public void trackVideoRecordedCallsTrackWithEventNameAndProperties() throws JSONException {
+        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
+            .getInstance(mockedMixpanelAPI));
+        Project project = getAProject();
+        int totalVideosRecorded = 2;
+
+        userEventTracker.trackVideoRecorded(project, totalVideosRecorded);
+
+        Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
+        UserEventTracker.Event trackedEvent = eventCaptor.getValue();
+        assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.VIDEO_LENGTH),
+            is(project.getDuration()));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.RESOLUTION),
+            is(project.getProfile().getResolution().name()));
+        assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.TOTAL_VIDEOS_RECORDED),
+            is(totalVideosRecorded));
+
+    }
 
     @Test
     public void trackClipsReorderedCallsTrackWithEventNameAndProperties() throws JSONException {
@@ -216,7 +294,8 @@ public class UserEventTrackerTest {
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+        return Project.getInstance("title", "/path", "private/path",
+            Profile.getInstance(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
     }
 }

@@ -13,6 +13,8 @@ package com.videonasocialmedia.vimojo.utils;
 
 import android.os.Environment;
 
+import com.videonasocialmedia.vimojo.BuildConfig;
+
 import java.io.File;
 
 public class Constants {
@@ -32,6 +34,12 @@ public class Constants {
 
     final public static String RESOURCE_WATERMARK_NAME = "watermark.png";
 //    final public static String FOLDER_NAME_VIMOJO_TEMP_AUDIO = ".tempAudio";
+
+    final public static String PATH_APP_ANDROID = Environment.getExternalStorageDirectory()
+        .getPath() + "/Android/data/" + BuildConfig.APPLICATION_ID;
+
+    final public static String PATH_WATERMARK = PATH_APP_ANDROID + File.separator +
+        Constants.RESOURCE_WATERMARK_NAME;
 
     final public static String PATH_APP = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DCIM) + File.separator + FOLDER_NAME_VIMOJO;
@@ -85,4 +93,5 @@ public class Constants {
     public static final int ADVANCE_PLAYER_PRECISION_LOW = 300;
     public static final int ADVANCE_PLAYER_PRECISION_MEDIUM = 600;
     public static final int ADVANCE_PLAYER_PRECISION_HIGH = 1200;
+
 }

@@ -27,7 +27,7 @@ public class AddAudioUseCase {
   @Inject
   public AddAudioUseCase(ProjectRepository projectRepository) {
     this.projectRepository = projectRepository;
-    currentProject = Project.getInstance(null,null,null);
+    currentProject = Project.getInstance(null,null,null,null);
   }
 
   public void addMusic(Music music, int trackIndex, OnAddMediaFinishedListener listener) {
