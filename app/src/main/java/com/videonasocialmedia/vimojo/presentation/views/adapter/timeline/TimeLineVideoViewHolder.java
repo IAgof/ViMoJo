@@ -21,6 +21,7 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRe
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 import jp.wasabeef.glide.transformations.MaskTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
@@ -77,8 +78,8 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
             DecodeFormat.PREFER_ARGB_8888);
     String path = currentVideo.getIconPath() != null
             ? currentVideo.getIconPath() : currentVideo.getMediaPath();
-    int radius = 50;
-    int margin = 100;
+    int radius = 70;
+    int margin = 70;
     Glide.with(context)
             .load(path)
             .bitmapTransform(new RoundedCornersTransformation(context, radius, margin))
@@ -91,6 +92,7 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
   public void enableDeleteIcon() {
     removeVideo.setVisibility(View.VISIBLE);
     removeVideo.setClickable(true);
+
   }
 
   public void disableDeleteIcon() {
@@ -104,6 +106,12 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
     videoTimeLineAdapter.updateSelection(adapterPosition);
     enableDeleteIcon();
     videoTimeLineListener.onClipClicked(adapterPosition);
+  }
+
+  @OnLongClick(R.id.timeline_video_thumb)
+  public boolean onClipLongClick() {
+    videoTimeLineAdapter.updateSelection(getAdapterPosition());
+    return true;
   }
 
   @Override
