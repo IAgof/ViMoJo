@@ -100,7 +100,7 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
     removeVideo.setClickable(false);
   }
 
-  @OnClick(R.id.timeline_video_thumb)
+  @OnClick(R.id.video_timeline_container)
   public void onClipClick() {
     int adapterPosition = getAdapterPosition();
     videoTimeLineAdapter.updateSelection(adapterPosition);
@@ -108,7 +108,7 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
     videoTimeLineListener.onClipClicked(adapterPosition);
   }
 
-  @OnLongClick(R.id.timeline_video_thumb)
+  @OnLongClick(R.id.video_timeline_container)
   public boolean onClipLongClick() {
     videoTimeLineAdapter.updateSelection(getAdapterPosition());
     return true;
