@@ -2,18 +2,8 @@
 <manifest package="com.videonasocialmedia.vimojo"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true"/>
-    <uses-feature
-        android:name="android.hardware.camera.autofocus"/>
-    <uses-feature android:name="com.android.hardware.camera2.full"/>
-
-    <supports-screens
-        android:largeScreens="true"
-        android:normalScreens="true"
-        android:smallScreens="false"
-        android:xlargeScreens="false"/>
+    <!-- https://stackoverflow.com/questions/14020237/android-app-is-supported-by-0-devices/32607502#32607502 -->
+    <uses-feature android:name="android.hardware.camera2" android:required="false" />
 
     <permission
         android:name="${applicationId}.C2D_MESSAGE"
@@ -114,13 +104,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".presentation.views.activity.RecordActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/app_name"
-            android:launchMode="singleTop"
-            android:screenOrientation="sensorLandscape">
-        </activity>
 
         <activity android:name=".record.presentation.views.activity.RecordCamera2Activity"
                   android:screenOrientation="sensorLandscape">
