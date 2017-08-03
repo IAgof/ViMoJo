@@ -21,6 +21,8 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRe
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import jp.wasabeef.glide.transformations.MaskTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 import static com.videonasocialmedia.videonamediaframework.utils.TimeUtils.toFormattedTimeHoursMinutesSecond;
 
@@ -75,18 +77,15 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
             DecodeFormat.PREFER_ARGB_8888);
     String path = currentVideo.getIconPath() != null
             ? currentVideo.getIconPath() : currentVideo.getMediaPath();
-
+    int radius = 50;
+    int margin = 100;
     Glide.with(context)
             .load(path)
-            .asBitmap()
-            .override(thumbnailView.getMaxWidth(), thumbnailView.getMaxHeight())
-            // TODO(jliarte): 24/04/17 this seems not to work
-            .override(100, 100)
-//                .override(thumbnailView.getMeasuredWidth(), thumbnailView.getMeasuredHeight())
-            .videoDecoder(decoder)
-            .centerCrop()
+            .bitmapTransform(new RoundedCornersTransformation(context, radius, margin))
+            //.videoDecoder(decoder)
             .error(R.drawable.fragment_gallery_no_image)
             .into(thumbnailView);
+
   }
 
   public void enableDeleteIcon() {

@@ -227,6 +227,7 @@ dependencies {
     compile 'com.android.support:percent:25.2.0'
     compile 'com.android.support:support-v13:25.2.0'
     compile 'com.github.bumptech.glide:glide:3.6.0'
+    compile 'jp.wasabeef:glide-transformations:2.0.2'
 //    compile 'com.googlecode.mp4parser:isoparser:1.0.5.4'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
