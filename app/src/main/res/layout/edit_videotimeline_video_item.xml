@@ -24,33 +24,32 @@
             app:cardElevation="@null"
             >
 
-        <ImageView
-            android:id="@+id/timeline_video_thumb"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/timeline_video_selector"
-            android:padding="3dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/fragment_gallery_no_image"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
-
-
+            <ImageView
+                android:id="@+id/timeline_video_thumb"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/timeline_video_selector"
+                android:padding="3dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/fragment_gallery_no_image"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true" />
 
             <RelativeLayout
                 android:id="@+id/relative_video_thumb"
                 android:layout_width="match_parent"
-                android:layout_height="24dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp">
 
                 <android.support.v7.widget.CardView
-                    android:id="@+id/edit_or_clip_number_cardview"
+                    android:id="@+id/clip_order_cardview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="4dp"
                     android:layout_alignParentLeft="true"
-                    android:backgroundTint="@color/colorWhite">
+                    android:backgroundTint="@color/colorWhite"
+                    app:cardCornerRadius="6dp">
 
                         <TextView
                         android:id="@+id/text_clip_order"
@@ -60,7 +59,9 @@
                         android:paddingRight="4dp"
                         android:gravity="center"
                         android:textColor="@color/colorGreyTransparent"
+                        android:textSize="@dimen/text_small"
                         tools:text="55"/>
+
                 </android.support.v7.widget.CardView>
 
                 <android.support.v7.widget.CardView
@@ -68,9 +69,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
-                    android:backgroundTint="@color/colorWhite"
-                    android:layout_alignParentRight="true"
-                    >
+                    android:backgroundTint="@color/colorAccent"
+                    android:layout_alignParentRight="true">
 
                     <ImageView
                         android:id="@+id/image_remove_video"
@@ -78,58 +78,54 @@
                         android:layout_height="24dp"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentTop="true"
-                        android:background="@color/colorAccent"
+                        android:layout_gravity="center"
                         android:padding="3dp"
                         android:src="@drawable/activity_edit_clip_delete"
-                        android:visibility="gone"
-                        />
+                        android:visibility="gone"/>
+
                 </android.support.v7.widget.CardView>
+
             </RelativeLayout>
 
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/edit_or_video_timer_cardview"
+            <RelativeLayout
+                android:id="@+id/edit_or_video_timer_cardview_relative"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="16dp"
-                android:gravity="center"
-                android:backgroundTint="@color/colorWhite"
-                app:cardCornerRadius="8dp">
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp">
 
-                <RelativeLayout
+                <android.support.v7.widget.CardView
+                    android:id="@+id/edit_or_video_timer_cardview"
                     android:layout_width="wrap_content"
-                    android:layout_height="20dp"
-                    android:layout_alignBottom="@+id/timeline_video_thumb"
-                    android:layout_alignStart="@+id/timeline_video_thumb"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    >
-
-                    <TextView
-                        android:id="@+id/text_duration_clip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="00:00"
-                        android:paddingLeft="4dp"
-                        android:paddingRight="4dp"
-                        android:textAlignment="center"
-                        android:gravity="center"
-                        android:textColor="@color/colorGreyTransparent" />
-
-                    <!-- <ImageButton
-                    android:id="@+id/gallery_preview_button"
-                    android:layout_centerInParent="true"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_marginLeft="2dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/colorWhite"
                     android:layout_alignParentBottom="true"
-                    android:layout_alignParentLeft="true"
-                    android:background="@drawable/activity_gallery_icon_play_normal" />
-                    -->
-                </RelativeLayout>
-            </android.support.v7.widget.CardView>
+                    app:cardCornerRadius="6dp">
+
+                        <TextView
+                            android:id="@+id/text_duration_clip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="00:00"
+                            android:paddingLeft="4dp"
+                            android:paddingRight="4dp"
+                            android:textAlignment="center"
+                            android:gravity="center"
+                            android:textSize="@dimen/text_small"
+                            android:textColor="@color/colorGreyTransparent" />
+
+                        <!-- <ImageButton
+                        android:id="@+id/gallery_preview_button"
+                        android:layout_centerInParent="true"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentLeft="true"
+                        android:background="@drawable/activity_gallery_icon_play_normal" />
+                        -->
+                </android.support.v7.widget.CardView>
+            </RelativeLayout>
         </android.support.v7.widget.CardView>
 
 
