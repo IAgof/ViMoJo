@@ -31,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitXY"
+            android:alpha="0.2"
             android:src="@drawable/activity_record_background_grid"
             android:visibility="invisible"
             android:layout_alignParentTop="true"
@@ -38,7 +39,7 @@
 
         <android.support.v7.widget.CardView
             android:id="@+id/edit_or_gallery_cardview"
-            android:layout_width="48dp"
+            android:layout_width="38dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="8dp"
@@ -50,9 +51,7 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp">
+                android:orientation="vertical">
 
                 <RelativeLayout
                     android:id="@+id/edit_or_gallery_relative"
@@ -62,11 +61,10 @@
                         android:id="@+id/button_navigate_edit"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
-                        android:background="@drawable/circle_background"
                         android:scaleType="fitCenter"
                         android:src="@drawable/activity_record_ic_galery"
                         android:visibility="invisible"
-                        android:layout_marginStart="24dp"
+                        android:layout_margin="4dp"
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
                         />
@@ -103,6 +101,7 @@
                     android:textColor="@android:color/white"
                     android:layout_below="@+id/edit_or_gallery_relative"
                     android:textSize="8sp"
+                    android:layout_marginBottom="4dp"
                     tools:text="Gallery"/>
             </RelativeLayout>
 
@@ -116,8 +115,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_alignParentTop="true"
             android:layout_marginTop="8dp"
-            android:layout_marginRight="100dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginRight="65dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginBottom="4dp"
             android:backgroundTint="@color/colorGreyTransparent"
             app:cardCornerRadius="8dp"
@@ -137,8 +136,8 @@
 
                     <ImageButton
                         android:id="@+id/button_navigate_settings"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:background="@null"
                         android:scaleType="fitCenter"
                         android:layout_gravity="center"
@@ -162,11 +161,11 @@
 
                 <ImageView
                     android:id="@+id/activity_record_icon_battery"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="24dp"
                     android:layout_toRightOf="@+id/activity_record_icon_storage"
                     android:scaleType="fitCenter"
                     android:src="@drawable/activity_record_ic_battery_full"
@@ -174,9 +173,9 @@
 
                     <ImageView
                         android:id="@+id/activity_record_icon_storage"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginLeft="16dp"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginLeft="24dp"
                         android:scaleType="fitCenter"
                         android:layout_gravity="center"
                         android:visibility="visible"
@@ -222,16 +221,16 @@
                         android:scaleType="fitCenter"
                         android:layout_gravity="center"
                         android:visibility="visible"
-                        android:layout_marginLeft="8dp"
+                        android:layout_marginLeft="24dp"
                         android:src="@drawable/activity_record_ic_resolution_720"
-                        android:layout_toRightOf="@+id/control_chronometer_and_rec_point"
+                        android:layout_toRightOf="@+id/activity_record_icon_battery"
                         android:layout_centerVertical="true"
                         />
 
                     <ImageButton
                         android:id="@+id/mic_plug_imageview"
                         android:layout_width="20dp"
-                        android:layout_height="24dp"
+                        android:layout_height="20dp"
                         android:layout_marginRight="8dp"
                         android:scaleType="fitCenter"
                         android:layout_gravity="center"
@@ -258,7 +257,7 @@
                 <ImageButton
                     android:id="@+id/clear_button"
                     android:src="@drawable/activity_record_ic_expand"
-                    android:layout_toEndOf="@+id/activity_record_icon_battery"
+                    android:layout_toEndOf="@+id/button_resolution_indicator"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:background="@null"
@@ -501,17 +500,6 @@
                     android:layout_margin="8dp" />
 
                 <ImageButton
-                    android:id="@+id/metering_mode_exposure_compensation"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="#00ffffff"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center"
-                    android:src="@drawable/activity_record_ic_metering_manual"
-                    android:visibility="invisible"
-                    android:layout_margin="8dp" />
-
-                <ImageButton
                     android:id="@+id/metering_mode_center"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -531,8 +519,18 @@
                     android:layout_gravity="center"
                     android:src="@drawable/activity_record_ic_brightness_manual"
                     android:visibility="invisible"
-                    android:layout_margin="8dp"
-                    />
+                    android:layout_margin="8dp" />
+
+                <ImageButton
+                    android:id="@+id/metering_mode_exposure_compensation"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/activity_record_ic_metering_manual"
+                    android:visibility="invisible"
+                    android:layout_margin="8dp" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
@@ -787,13 +785,13 @@
                         android:layout_height="match_parent"
                         android:layout_above="@+id/seekBar_lower_image"
                         android:layout_below="@+id/seekBar_upper_image"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="24dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true">
                         <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
                             android:id="@+id/seekBar_slide_left"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="133dp"
                             android:gravity="center"
                             android:progressTint="@color/colorWhite"
                             android:splitTrack="false"
@@ -825,6 +823,7 @@
                             android:paddingLeft="4dp"
                             android:paddingBottom="4dp"
                             android:paddingRight="4dp"
+                            android:layout_marginBottom="4dp"
                             android:src="@drawable/activity_record_ic_focus_infinite"
                             android:text="100%"
                             tools:visibility="visible" />
