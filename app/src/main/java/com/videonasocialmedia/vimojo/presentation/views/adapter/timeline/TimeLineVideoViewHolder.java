@@ -21,6 +21,9 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRe
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
+import jp.wasabeef.glide.transformations.MaskTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 import static com.videonasocialmedia.videonamediaframework.utils.TimeUtils.toFormattedTimeHoursMinutesSecond;
 
@@ -75,23 +78,21 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
             DecodeFormat.PREFER_ARGB_8888);
     String path = currentVideo.getIconPath() != null
             ? currentVideo.getIconPath() : currentVideo.getMediaPath();
-
+    int radius = 70;
+    int margin = 70;
     Glide.with(context)
             .load(path)
-            .asBitmap()
-            .override(thumbnailView.getMaxWidth(), thumbnailView.getMaxHeight())
-            // TODO(jliarte): 24/04/17 this seems not to work
-            .override(100, 100)
-//                .override(thumbnailView.getMeasuredWidth(), thumbnailView.getMeasuredHeight())
-            .videoDecoder(decoder)
-            .centerCrop()
+            .bitmapTransform(new RoundedCornersTransformation(context, radius, margin))
+            //.videoDecoder(decoder)
             .error(R.drawable.fragment_gallery_no_image)
             .into(thumbnailView);
+
   }
 
   public void enableDeleteIcon() {
     removeVideo.setVisibility(View.VISIBLE);
     removeVideo.setClickable(true);
+
   }
 
   public void disableDeleteIcon() {
@@ -99,12 +100,18 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
     removeVideo.setClickable(false);
   }
 
-  @OnClick(R.id.timeline_video_thumb)
+  @OnClick(R.id.video_timeline_container)
   public void onClipClick() {
     int adapterPosition = getAdapterPosition();
     videoTimeLineAdapter.updateSelection(adapterPosition);
     enableDeleteIcon();
     videoTimeLineListener.onClipClicked(adapterPosition);
+  }
+
+  @OnLongClick(R.id.video_timeline_container)
+  public boolean onClipLongClick() {
+    videoTimeLineAdapter.updateSelection(getAdapterPosition());
+    return true;
   }
 
   @Override
