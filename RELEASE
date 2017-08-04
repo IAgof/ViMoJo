@@ -1,4 +1,4 @@
-v0.7.0-RC5
-- Update record screen design. New user interface.
-- Added tracking to record screen. First tracking implementation.
-- Improved watermark exportation.
+v0.7.0-RC6
+-Redesign size in some icons in activity record
+-Fixed problem manifest and Google Play.
+-Added corner radius to thumbs in Edit Activity, timeline.

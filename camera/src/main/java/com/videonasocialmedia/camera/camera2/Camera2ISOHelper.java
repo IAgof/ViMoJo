@@ -34,7 +34,7 @@ class Camera2ISOHelper {
   }
 
   void setupSupportedValues() {
-    try {
+    try { 
       apertureRange = camera2Wrapper.getCurrentCameraCharacteristics()
               .get(CameraCharacteristics.LENS_INFO_AVAILABLE_APERTURES);
       exposureTimeRange = camera2Wrapper.getCurrentCameraCharacteristics()
