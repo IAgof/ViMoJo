@@ -62,7 +62,7 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 54 // 20170803
+            versionCode 55 // 20170804
             versionName "0.7.0-RC6" // 20170802
             resValue "string", "app_out_of_date", "2017-08-31" // 20170731
             resValue "string", "app_name", "Vimojo"
@@ -76,7 +76,7 @@ android {
         }
         hispanopost {
             applicationId "com.videonasocialmedia.vimojo.hispanopost"
-            versionCode 34 // 20170803
+            versionCode 35 // 20170804
             versionName "0.7.0-RC6.fHispanopost" // 20170802
             resValue "string", "app_out_of_date", "2017-12-01"
             resValue "string", "app_name", "HispanoPost"
@@ -90,7 +90,7 @@ android {
         }
         rtve {
             applicationId "com.videonasocialmedia.vimojo.rtve"
-            versionCode 33 // 20170803
+            versionCode 34 // 20170804
             versionName "0.7.0-RC6.fRtve" // 20170802
             resValue "string", "app_out_of_date", "2017-08-31" // 20170731
             resValue "string", "app_name", "Vimojo Rtve"
@@ -104,7 +104,7 @@ android {
         }
         vimojowatermark {
             applicationId "com.videonasocialmedia.vimojo.vimojowatermark"
-            versionCode 7 // 20170803
+            versionCode 8 // 20170804
             versionName "0.7.0-RC6.fVimojoWatermark" // 20170802
             resValue "string", "app_out_of_date", "2017-08-31" //20170731
             resValue "string", "app_name", "Vimojo Videona"
@@ -118,7 +118,7 @@ android {
         }
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 7 // 20170803
+            versionCode 8 // 20170804
             versionName "0.7.0-RC6.fThomsonFoundation" // 20170802
             resValue "string", "app_out_of_date", "2017-12-31"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
