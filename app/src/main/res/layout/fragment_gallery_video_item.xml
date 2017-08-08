@@ -6,10 +6,12 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/video_item"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:padding="2dp">
+    android:padding="2dp"
+    >
 
     <ImageView
         android:id="@+id/gallery_thumb"
@@ -29,8 +31,8 @@
 
         <ImageView
             android:id="@+id/gallery_overlay_icon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_marginRight="4dp"
@@ -42,23 +44,36 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_alignStart="@+id/gallery_thumb"
-        android:layout_alignBottom="@+id/gallery_thumb"
-        android:background="#aa333333">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp">
 
-        <TextView
-            android:id="@+id/gallery_duration"
-            android:layout_width="45dp"
-            android:layout_height="18dp"
-            android:text="00:00"
-            android:gravity="right"
-            android:layout_marginRight="2dp"
-            android:layout_alignParentRight="true"
-            android:textColor="@color/colorWhite"/>
+        <android.support.v7.widget.CardView
+            android:id="@+id/clip_gallery_video_timer_cardview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:backgroundTint="@color/colorWhite"
+            app:cardCornerRadius="6dp"
+            >
+
+            <TextView
+                android:id="@+id/gallery_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="00:00"
+                android:textAlignment="center"
+                android:textColor="@color/colorGreyTransparent"
+                android:textSize="@dimen/text_small" />
+
+        </android.support.v7.widget.CardView>
     </RelativeLayout>
+
 
 </RelativeLayout>
