@@ -46,7 +46,7 @@
                 android:id="@+id/detail_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="4dp"
                 android:padding="8dp"
                 >
 
@@ -75,18 +75,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="18sp"
-                    tools:text="El título de la canción"
-                    />
-
-                <TextView
-                    android:id="@+id/music_author"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@color/colorSecondaryLight"
-                    android:textSize="14sp"
-                    tools:text="El autor de la canción"
-                    />
+                    tools:text="El título de la canción"/>
 
                 <TextView
                     android:id="@+id/music_duration"
@@ -95,8 +84,18 @@
                     android:layout_marginTop="4dp"
                     android:textColor="@color/colorSecondary"
                     android:textSize="14sp"
-                    tools:text="La duración de la canción"
-                    />
+                    tools:text="La duración de la canción"/>
+
+                <TextView
+                    android:id="@+id/music_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/colorSecondaryLight"
+                    android:textSize="12sp"
+                    tools:text="El autor de la canción"/>
+
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -105,7 +104,7 @@
                     android:id="@+id/linear_layout_seekBar_volume_sound"
                     android:layout_below="@+id/music_image"
                     android:orientation="horizontal"
-                    android:layout_marginTop="36dp"
+                    android:layout_marginTop="48dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginLeft="8dp">
 
