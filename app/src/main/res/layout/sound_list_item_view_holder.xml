@@ -5,33 +5,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="5dp"
-    android:padding="4dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginLeft="16dp"
+    android:padding="8dp"
     app:cardCornerRadius="4dp"
     app:cardElevation="4dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="2dp">
 
         <ImageView
             android:id="@+id/music_image"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_centerVertical="true"
             android:layout_margin="8dp"
             tools:src="@drawable/fragment_gallery_no_image"/>
 
-        <TextView
-            android:id="@+id/music_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="8dp"
-            android:textColor="@color/textColorSecondary"
-            android:textSize="8sp"
-            tools:text="Lenght"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -39,7 +33,6 @@
             android:orientation="vertical"
             android:layout_centerInParent="true"
             android:layout_toRightOf="@+id/music_image"
-            android:layout_below="@+id/music_duration"
             android:layout_margin="4dp"
             android:minHeight="45dp">
 
@@ -50,17 +43,27 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:textColor="@color/textColorPrimary"
-                android:textSize="12sp"
+                android:textSize="16sp"
                 tools:text="Guitarra"/>
+
+            <TextView
+                android:id="@+id/music_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:textColor="@color/textColorSecondary"
+                android:textSize="12sp"
+                tools:text="Lenght"/>
 
             <TextView
                 android:id="@+id/music_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:textColor="@color/colorSecondaryLight"
-                android:textSize="12sp"
+                android:textSize="10sp"
                 tools:text="Guitarra"/>
 
         </LinearLayout>
