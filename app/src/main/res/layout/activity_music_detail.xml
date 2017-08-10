@@ -107,11 +107,10 @@
                     android:layout_marginTop="48dp">
 
                     <TextView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:scaleType="fitXY"
-                        android:textSize="9sp"
                         android:gravity="center"
                         android:text="@string/minVolume"
                         />
@@ -131,11 +130,10 @@
                         android:thumb="@drawable/ic_circular_thumb_seekbar" />
 
                     <TextView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="right"
                         android:scaleType="fitXY"
-                        android:textSize="9sp"
                         android:text="@string/maxVolume"
                         android:gravity="center"
                         />
