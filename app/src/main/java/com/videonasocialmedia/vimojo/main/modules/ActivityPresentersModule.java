@@ -55,6 +55,11 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.domain.GetLicenseVimojoListUseCase;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseDetailPresenter;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseListPresenter;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseDetailView;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseListView;
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.MergeVoiceOverAudiosUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
@@ -186,6 +191,18 @@ public class ActivityPresentersModule {
     return new MusicListPresenter((MusicListView) activity, activity, getMusicListUseCase,
         getMediaListFromProjectUseCase, getAudioFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase);
+  }
+
+  @Provides @PerActivity
+  LicenseListPresenter provideLicenseListPresenter(GetLicenseVimojoListUseCase
+                                                       getLicenseVimojoListUseCase) {
+    return new LicenseListPresenter((LicenseListView) activity, activity, getLicenseVimojoListUseCase);
+  }
+
+  @Provides @PerActivity
+  LicenseDetailPresenter provideLicenseDetailPresenter(GetLicenseVimojoListUseCase
+                                                       getLicenseVimojoListUseCase) {
+    return  new LicenseDetailPresenter((LicenseDetailView) activity, activity, getLicenseVimojoListUseCase);
   }
 
   @Provides @PerActivity
@@ -357,6 +374,10 @@ public class ActivityPresentersModule {
 
   @Provides GetMusicListUseCase provideMusicListUseCase() {
     return new GetMusicListUseCase(activity);
+  }
+
+  @Provides GetLicenseVimojoListUseCase provideLicenseListUseCase() {
+    return new GetLicenseVimojoListUseCase(activity);
   }
 
   @Provides GetMediaListFromProjectUseCase provideMediaListRetriever() {

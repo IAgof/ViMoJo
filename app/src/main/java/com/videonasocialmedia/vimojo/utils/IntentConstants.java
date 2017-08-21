@@ -66,4 +66,10 @@ public class IntentConstants {
 
   public static final String JACK_PLUG_NOTIFICATION = "jack_plug_notifications";
   public static final String MICROPHONE_STATUS = "microphone";
+
+  /**
+   * LicenseVimojo Activity
+   */
+
+  public static final String LICENSE_SELECTED = "license_selected";
 }

@@ -27,7 +27,7 @@ import com.videonasocialmedia.vimojo.settings.presentation.mvp.presenters.Prefer
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.AboutActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.LegalNoticeActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.LicensesActivity;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.activity.LicensesActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity;
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;

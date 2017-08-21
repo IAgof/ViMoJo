@@ -240,7 +240,7 @@
     <string name="moreInformation">More information</string>
     <string name="privacyPolicy">Privacy policy</string>
     <string name="termsOfService">Terms of service</string>
-    <string name="licenses">Licenses</string>
+    <string name="licenses">Open Source Licenses</string>
     <string name="legacyAdviceTitle">Legal Notice</string>
 
     <!-- Contact Settings, not in use -->
