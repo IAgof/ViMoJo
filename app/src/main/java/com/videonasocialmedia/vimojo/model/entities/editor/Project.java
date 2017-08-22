@@ -41,7 +41,8 @@ public class Project implements ElementChangedListener {
 
   public static final String INTERMEDIATE_FILES = "intermediate_files";
   public static final String INTERMEDIATE_FILES_TEMP_AUDIO_FADE = "tempAudioFade";
-  // TODO:(alvaro.martinez) 23/12/16 Change VideonaSDK, receive path temo from app, folder name ".tempAudio";
+  // TODO:(alvaro.martinez) 23/12/16 Change VideonaSDK, receive path temo from app,
+  // folder name ".tempAudio";
   public static final String TEMP_FILES_AUDIO_MIXED = "tempMixedAudio";
   public static final String TEMP_FILES_AUDIO_MIXED_VOICE_OVER_RECORD = "voiceOverRecord";
   private final String TAG = getClass().getCanonicalName();
@@ -87,9 +88,9 @@ public class Project implements ElementChangedListener {
      * @param rootPath - Path to root folder for the current project.
      * @param profile  - Define some characteristics and limitations of the current project.
      */
-    public Project(String title, String rootPath, Profile profile) {
+    public Project(String title, String rootPath, String privatePath, Profile profile) {
         this.title = title;
-        this.vmComposition = new VMComposition(getResourceWatermarkFilePath(rootPath), profile);
+        this.vmComposition = new VMComposition(getResourceWatermarkFilePath(privatePath), profile);
         this.profile = profile;
         this.duration = 0;
         this.vmComposition.setAudioFadeTransitionActivated(false);
@@ -101,10 +102,8 @@ public class Project implements ElementChangedListener {
     }
 
   @NonNull
-  public String getResourceWatermarkFilePath(String rootPath) {
-
-    return rootPath + File.separator + Constants.FOLDER_NAME_VIMOJO_TEMP + File.separator +
-        Constants.RESOURCE_WATERMARK_NAME;
+  public String getResourceWatermarkFilePath(String privatePath) {
+    return privatePath + File.separator + Constants.RESOURCE_WATERMARK_NAME;
   }
 
   public Project(Project project) throws IllegalItemOnTrack {
@@ -132,9 +131,10 @@ public class Project implements ElementChangedListener {
      * @return - Singleton instance of the current project.
      */
     @Deprecated
-    public static Project getInstance(String title, String rootPath, Profile profile) {
+    public static Project getInstance(String title, String rootPath, String privatePath,
+                                      Profile profile) {
         if (INSTANCE == null) {
-            INSTANCE = new Project(title, rootPath, profile);
+            INSTANCE = new Project(title, rootPath, privatePath, profile);
         }
         return INSTANCE;
     }

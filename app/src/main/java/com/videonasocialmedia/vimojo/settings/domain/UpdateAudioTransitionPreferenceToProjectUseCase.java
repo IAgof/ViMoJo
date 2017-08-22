@@ -12,12 +12,12 @@ public class UpdateAudioTransitionPreferenceToProjectUseCase {
   private Project currentProject;
   private ProjectRepository projectRepository;
 
-  public UpdateAudioTransitionPreferenceToProjectUseCase(ProjectRepository projectRepository){
+  public UpdateAudioTransitionPreferenceToProjectUseCase(ProjectRepository projectRepository) {
     this.projectRepository = projectRepository;
   }
 
   public void setAudioFadeTransitionActivated(boolean data) {
-    currentProject = Project.getInstance(null,null,null);
+    currentProject = Project.getInstance(null, null, null, null);
     currentProject.getVMComposition().setAudioFadeTransitionActivated(data);
     projectRepository.update(currentProject);
   }

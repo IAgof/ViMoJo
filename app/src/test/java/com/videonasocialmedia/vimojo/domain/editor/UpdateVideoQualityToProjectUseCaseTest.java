@@ -30,7 +30,7 @@ public class UpdateVideoQualityToProjectUseCaseTest {
   @Before
   public void setUp() throws Exception {
     // FIXME: tests are not independent as Project keeps state between tests
-    Project singletonProject = Project.getInstance(null, null, null);
+    Project singletonProject = Project.getInstance(null, null, null, null);
     singletonProject.clear();
     currentProject = getAProject();
     MockitoAnnotations.initMocks(this);
@@ -57,7 +57,8 @@ public class UpdateVideoQualityToProjectUseCaseTest {
   }
 
   private Project getAProject() {
-    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+    return Project.getInstance("title", "/path", "private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 

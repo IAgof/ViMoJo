@@ -7,10 +7,8 @@ import android.support.v4.content.ContextCompat;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
-import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -30,7 +28,6 @@ import javax.inject.Inject;
  */
 
 public class EditTextPreviewPresenter implements OnVideosRetrieved {
-
     private final String LOG_TAG = getClass().getSimpleName();
 
     private TextToDrawable drawableGenerator;
@@ -39,7 +36,6 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
-    private GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
 
 
     private EditTextView editTextView;
@@ -49,25 +45,21 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
 
     @Inject
-    public EditTextPreviewPresenter(EditTextView editTextView, Context context,
-                                    UserEventTracker userEventTracker,
-                                    GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                                    ModifyVideoTextAndPositionUseCase
-                                            modifyVideoTextAndPositionUseCase,
-                                    GetVideoFormatFromCurrentProjectUseCase
-                                            getVideonaFormatFromCurrentProjectUseCase) {
+    public EditTextPreviewPresenter(
+            EditTextView editTextView, Context context, UserEventTracker userEventTracker,
+            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+            ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase) {
         this.editTextView = editTextView;
         this.context = context;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
-        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.currentProject = loadCurrentProject();
     }
 
     private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null,null,null);
+        return Project.getInstance(null, null, null, null);
     }
 
     public void init(int videoToEditTextIndex) {
@@ -109,29 +101,5 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
     }
-
-//    @Override
-//    public void onSuccessTranscoding(Video video) {
-//        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
-//        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
-//    }
-//
-//    @Override
-//    public void onErrorTranscoding(Video video, String message) {
-//        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-//        if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
-//            videoToEdit.increaseNumTriesToExportVideo();
-//            Project currentProject = loadCurrentProject();
-//            VideonaFormat videoFormat = getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject();
-//            Drawable drawableFadeTransitionVideo = currentProject.getVMComposition().getDrawableFadeTransitionVideo();
-//
-//            relaunchTranscoderTempBackgroundUseCase.relaunchExport(drawableFadeTransitionVideo,
-//                video, videoFormat, currentProject.getProjectPathIntermediateFileAudioFade(), this);
-//        } else {
-//
-//            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
-//                Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TEXT.name());
-//        }
-//    }
 }
 

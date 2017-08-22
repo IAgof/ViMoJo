@@ -72,7 +72,8 @@ public class VideoListErrorCheckerDelegateTest {
     video2.setTranscodingTask(mockedTranscodingTask);
     when(mockedTranscodingTask.isCancelled()).thenReturn(true);
 
-    VideoListErrorCheckerDelegate videoListErrorCheckerDelegate = new VideoListErrorCheckerDelegate();
+    VideoListErrorCheckerDelegate videoListErrorCheckerDelegate =
+            new VideoListErrorCheckerDelegate();
     videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(videoList,
         mockedVideoTranscodingErrorNotifier);
 
@@ -83,7 +84,7 @@ public class VideoListErrorCheckerDelegateTest {
   public Project getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
-    return Project.getInstance("title", "/path", profile);
+    return Project.getInstance("title", "/path", "private/path", profile);
   }
 }
 

@@ -32,6 +32,6 @@ public class AdaptVideoRecordedToVideoFormatUseCase {
   }
 
   private Project getCurrentProject() {
-    return Project.getInstance(null, null, null);
+    return Project.getInstance(null, null, null, null);
   }
 }

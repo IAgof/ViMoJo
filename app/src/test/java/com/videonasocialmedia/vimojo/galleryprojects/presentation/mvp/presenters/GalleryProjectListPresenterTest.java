@@ -22,12 +22,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
-
 
 /**
  * Created by alvaro on 22/12/16.
@@ -52,31 +48,34 @@ public class GalleryProjectListPresenterTest {
   }
 
   @Test
-  public void updateCurrentProjectCallsUpdateLastModificationAndProjectInstance(){
+  public void updateCurrentProjectCallsUpdateLastModificationAndProjectInstance() {
     Project project = getAProject();
     injectedPresenter.updateCurrentProject(project);
     verify(mockedUpdateCurrentProjectUseCase).updateLastModificationAndProjectInstance(project);
   }
 
   @Test
-  public void ifProjectRepositoryHasProjectsUpdateProjectListCallsGalleryProjectListViewShow(){
+  public void ifProjectRepositoryHasProjectsUpdateProjectListCallsGalleryProjectListViewShow() {
     List<Project> projectList = new ArrayList<>();
     projectList.add(getAProject());
-    doReturn(projectList).when(mockedProjectRepository).getListProjectsByLastModificationDescending();
+    doReturn(projectList).when(mockedProjectRepository)
+            .getListProjectsByLastModificationDescending();
     injectedPresenter.updateProjectList();
     verify(mockedGalleryProjectListView).showProjectList(projectList);
   }
 
   @Test
-  public void ifProjectRepositoryHasNotProjectAfterDeleteCreateNewDefaultProject(){
+  public void ifProjectRepositoryHasNotProjectAfterDeleteCreateNewDefaultProject() {
     List<Project> projectList = new ArrayList<>();
-    doReturn(projectList).when(mockedProjectRepository).getListProjectsByLastModificationDescending();
+    doReturn(projectList).when(mockedProjectRepository)
+            .getListProjectsByLastModificationDescending();
     injectedPresenter.updateProjectList();
     verify(mockedGalleryProjectListView).createDefaultProject();
   }
 
   private Project getAProject() {
-    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+    return Project.getInstance("title", "/path", "private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 }

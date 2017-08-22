@@ -56,7 +56,7 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
     }
 
     private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null, null, null, null);
     }
 
     public void loadProjectVideo(int videoIndex) {
@@ -87,7 +87,8 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
                 new OnAddMediaFinishedListener() {
                     @Override
                     public void onAddMediaItemToTrackError() {
-                        duplicateView.showError(String.valueOf(R.string.addMediaItemToTrackError));
+                        duplicateView.showError(String
+                                .valueOf(R.string.addMediaItemToTrackError));
                     }
 
                     @Override

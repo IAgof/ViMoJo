@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.main;
 
 import android.content.SharedPreferences;
 
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
@@ -25,6 +26,7 @@ import dagger.Component;
 public interface SystemComponent {
   ProjectRepository getProjectRepository();
   VideoRepository getVideoRepository();
+  VideoToAdaptRepository getVideoToAdaptRepository();
   TrackRepository getTrackRepository();
   MusicRepository getMusicRepository();
   UserEventTracker getUserEventTracker();

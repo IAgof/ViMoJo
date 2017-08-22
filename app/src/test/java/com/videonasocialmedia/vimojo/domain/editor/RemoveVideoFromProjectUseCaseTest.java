@@ -24,7 +24,6 @@ import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -54,7 +53,7 @@ public class RemoveVideoFromProjectUseCaseTest {
 
   @Test
   public void testRemoveMediaItemsFromProjectCallsUpdateProject() {
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     currentProject.setMediaTrack(mockedMediaTrack);
     Video video = new Video("media/path", 1f);
     ArrayList<Media> videos = new ArrayList<Media>();

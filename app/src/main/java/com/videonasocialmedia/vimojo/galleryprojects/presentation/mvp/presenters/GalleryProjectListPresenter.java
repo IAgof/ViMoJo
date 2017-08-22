@@ -11,7 +11,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.utils.Constants;
+
 
 import java.util.List;
 
@@ -74,8 +74,9 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
     }
   }
 
-  public void createNewDefaultProject(String rootPath, boolean isWatermarkFeatured) {
-    createDefaultProjectUseCase.createProject(rootPath, isWatermarkFeatured);
+  public void createNewDefaultProject(String rootPath, String privatePath,
+                                      boolean isWatermarkFeatured) {
+    createDefaultProjectUseCase.createProject(rootPath, privatePath, isWatermarkFeatured);
   }
 
   public void updateCurrentProject(Project project) {

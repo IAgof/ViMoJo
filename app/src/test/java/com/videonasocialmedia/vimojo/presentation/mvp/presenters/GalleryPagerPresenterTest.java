@@ -73,7 +73,7 @@ public class GalleryPagerPresenterTest {
 
   @After
   public void clearProject() {
-    Project.getInstance(null, null, null).clear();
+    Project.getInstance(null, null, null, null).clear();
   }
 
   @Test
@@ -109,7 +109,7 @@ public class GalleryPagerPresenterTest {
     VideoResolution videoResolution720 = new VideoResolution(VideoResolution.Resolution.HD720);
     Profile profile = new Profile(VideoResolution.Resolution.HD1080, VideoQuality.Quality.GOOD,
             VideoFrameRate.FrameRate.FPS30);
-    Project project = new Project("newproject", "root/path", profile);
+    Project project = new Project("newproject", "root/path","private/path", profile);
     Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
     List<Video> videoList = Collections.singletonList(video1);
     assertThat(project.getVMComposition().getMediaTrack().getItems().size(), is(0));
@@ -139,7 +139,7 @@ public class GalleryPagerPresenterTest {
     galleryPagerPresenter.metadataRetriever = mockedMetadataRetriever;
     Profile profile = new Profile(VideoResolution.Resolution.HD1080, VideoQuality.Quality.GOOD,
             VideoFrameRate.FrameRate.FPS30);
-    Project project = new Project("newproject", "root/path", profile);
+    Project project = new Project("newproject", "root/path", "private/path", profile);
     Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
     List<Video> videoList = Collections.singletonList(video1);
     assertThat(project.getVMComposition().getMediaTrack().getItems().size(), is(0));
@@ -207,7 +207,8 @@ public class GalleryPagerPresenterTest {
   }
 
   public Project getAProject() {
-    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+    return Project.getInstance("title", "/path", "private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 }

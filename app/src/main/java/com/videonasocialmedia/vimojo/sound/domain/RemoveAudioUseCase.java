@@ -5,7 +5,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
-import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
@@ -34,11 +33,11 @@ public class RemoveAudioUseCase {
     this.projectRepository = projectRepository;
     this.trackRepository = trackRepository;
     this.musicRepository = musicRepository;
-    currentProject = Project.getInstance(null,null,null);
+    currentProject = Project.getInstance(null,null,null,null);
   }
 
   // Remove audio only delete track if it is not music track.
-  public void removeMusic(Music music, int trackIndex, OnRemoveMediaFinishedListener listener){
+  public void removeMusic(Music music, int trackIndex, OnRemoveMediaFinishedListener listener) {
     Track audioTrack = currentProject.getAudioTracks().get(trackIndex);
     updateTrackPosition(audioTrack, trackIndex);
     removeMusicInTrack(music, listener, audioTrack);

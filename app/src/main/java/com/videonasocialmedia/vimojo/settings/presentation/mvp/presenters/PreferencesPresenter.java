@@ -38,6 +38,7 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -375,8 +376,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                 break;
             case ConfigPreferences.WATERMARK:
                 boolean data = sharedPreferences.getBoolean(key, false);
-                if (data && !updateWatermarkPreferenceToProjectUseCase
-                        .isWatermarkResourceDownloaded(Constants.PATH_APP)) {
+                if (data && !(new File(Constants.PATH_WATERMARK).exists())) {
                     Utils.copyWatermarkResourceToDevice();
                 }
                 updateWatermarkPreferenceToProjectUseCase.setWatermarkActivated(data);
@@ -398,11 +398,12 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     }
 
     private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null, null, null, null);
     }
 
     private Video getVideo(String videoId) {
-        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
+                new GetMediaListFromProjectUseCase();
         List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
         if (videoList != null) {
             for (Media video : videoList) {
@@ -413,28 +414,4 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         }
         return null;
     }
-
-//    @Override
-//    public void onSuccessTranscoding(Video video) {
-//        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
-//        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
-//    }
-//
-//    @Override
-//    public void onErrorTranscoding(Video video, String message) {
-//        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-//        if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
-//            video.increaseNumTriesToExportVideo();
-//            Project currentProject = loadCurrentProject();
-//            Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
-//                    .getDrawableFadeTransitionVideo();
-//            relaunchTranscoderTempBackgroundUseCase.relaunchExport(
-//                    drawableVideoFadeTransition, video,
-//                    getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
-//                    currentProject.getProjectPathIntermediateFileAudioFade());
-//        } else {
-//            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
-//                    Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
-//        }
-//    }
 }

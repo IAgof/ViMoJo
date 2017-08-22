@@ -14,14 +14,18 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession.ExportListener;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSessionImpl;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmRepository;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -38,7 +42,7 @@ public class ExportProjectUseCase implements ExportListener {
    * Project VMCompositionExportSession use case.
    */
   public ExportProjectUseCase() {
-    project = Project.getInstance(null, null, null);
+    project = Project.getInstance(null, null, null, null);
 
     // TODO(jliarte): 28/04/17 move to export method?
     String tempPathIntermediateAudioFilesDirectory =
@@ -54,8 +58,9 @@ public class ExportProjectUseCase implements ExportListener {
   /**
    * Main use case method.
    */
-  public void export(OnExportFinishedListener onExportFinishedListener) {
+  public void export(String pathWatermark, OnExportFinishedListener onExportFinishedListener) {
     this.onExportFinishedListener = onExportFinishedListener;
+    checkWatermarkResource(pathWatermark);
     try {
       waitForAdaptJobsToFinish();
       VMCompositionExportSession.exportAsyncronously();
@@ -65,6 +70,15 @@ public class ExportProjectUseCase implements ExportListener {
       Log.e(TAG, "Error waiting for adapting jobs to finish before exporting");
       e.printStackTrace();
       onExportError(String.valueOf(e));
+    }
+  }
+
+  private void checkWatermarkResource(String pathWatermark) {
+    File watermarkResource = new File(pathWatermark);
+    if (!watermarkResource.exists()) {
+      if (!Utils.copyWatermarkResourceToDevice()) {
+        onExportError(VimojoApplication.getAppContext().getString(R.string.export_error_watermark));
+      }
     }
   }
 

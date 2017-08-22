@@ -60,7 +60,7 @@ public class AddVideoToProjectUseCaseTest {
 
   @Test
   public void testAddVideoToProjectAtPositionCallsUpdateProject() {
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     Video video = new Video("media/path", 1f);
 
     injectedUseCase.addVideoToProjectAtPosition(video, 0, mockedOnAddMediaFinishedListener);
@@ -70,7 +70,7 @@ public class AddVideoToProjectUseCaseTest {
 
   @Test
   public void testAddVideoListToTrackCallsUpdateProject() {
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
@@ -92,7 +92,8 @@ public class AddVideoToProjectUseCaseTest {
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
 
-    injectedUseCase.addVideoListToTrack(videoList, listener, mockedLaunchAVTransitionTempFileListener);
+    injectedUseCase.addVideoListToTrack(videoList, listener,
+            mockedLaunchAVTransitionTempFileListener);
 
     verify(mockedLaunchAVTransitionTempFileListener).videoToLaunchAVTransitionTempFile(video,
         project.getProjectPathIntermediateFileAudioFade());
@@ -108,7 +109,8 @@ public class AddVideoToProjectUseCaseTest {
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
 
-    injectedUseCase.addVideoListToTrack(videoList, listener, mockedLaunchAVTransitionTempFileListener);
+    injectedUseCase.addVideoListToTrack(videoList, listener,
+            mockedLaunchAVTransitionTempFileListener);
 
     verify(mockedLaunchAVTransitionTempFileListener).videoToLaunchAVTransitionTempFile(video,
         project.getProjectPathIntermediateFileAudioFade());
@@ -126,10 +128,12 @@ public class AddVideoToProjectUseCaseTest {
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
 
-    injectedUseCase.addVideoListToTrack(videoList, listener, mockedLaunchAVTransitionTempFileListener);
+    injectedUseCase.addVideoListToTrack(videoList, listener,
+            mockedLaunchAVTransitionTempFileListener);
 
-    verify(mockedLaunchAVTransitionTempFileListener, never()).videoToLaunchAVTransitionTempFile(video,
-        project.getProjectPathIntermediateFileAudioFade());
+    verify(mockedLaunchAVTransitionTempFileListener, never())
+            .videoToLaunchAVTransitionTempFile(video,
+                    project.getProjectPathIntermediateFileAudioFade());
   }
 
   @NonNull
@@ -159,7 +163,8 @@ public class AddVideoToProjectUseCaseTest {
   }
 
   public Project getAProject() {
-    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+    return Project.getInstance("title", "/path", "private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 }

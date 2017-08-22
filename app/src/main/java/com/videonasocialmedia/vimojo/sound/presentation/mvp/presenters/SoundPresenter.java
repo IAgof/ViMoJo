@@ -47,19 +47,21 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
         this.currentProject = loadCurrentProject();
-        this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
+        this.getPreferencesTransitionFromProjectUseCase =
+                getPreferencesTransitionFromProjectUseCase;
         this.modifyTrackUseCase = modifyTrackUseCase;
         this.videoListErrorCheckerDelegate = videoListErrorCheckerDelegate;
     }
 
     public Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null, null, null, null);
     }
 
     public void init() {
       checkVoiceOverFeatureToggle(BuildConfig.FEATURE_VOICE_OVER);
-      // TODO:(alvaro.martinez) 22/03/17 Player should be in charge of these checks from VMComposition 
+      // TODO:(alvaro.martinez) 22/03/17 Player should be in charge of these checks from
+      // VMComposition
       checkAVTransitionsActivated();
       retrieveTracks();
     }

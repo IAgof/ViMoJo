@@ -15,7 +15,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -68,7 +67,7 @@ public class LoadCurrentProjectUseCaseTest {
   public void loadCurrentProjectInjectsProjectRepositoryCurrentProjectIntoProjectInstanceIfNull() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
-    Project currentProject = new Project("title", "root/path", profile);
+    Project currentProject = new Project("title", "root/path", "private/path", profile);
     assert Project.INSTANCE == null;
     doReturn(currentProject).when(mockedProjectRepository).getCurrentProject();
 
@@ -81,7 +80,7 @@ public class LoadCurrentProjectUseCaseTest {
 
   @Test
   public void loadCurrentProjectDoesNotChangeNonNullProjectInstance() {
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     assert Project.INSTANCE != null;
 
     Project retrievedProject = injectedUseCase.loadCurrentProject();

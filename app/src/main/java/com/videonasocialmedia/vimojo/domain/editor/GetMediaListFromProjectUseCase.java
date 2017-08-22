@@ -19,7 +19,7 @@ import javax.inject.Inject;
 public class GetMediaListFromProjectUseCase {
 
     @Inject
-    public GetMediaListFromProjectUseCase(){
+    public GetMediaListFromProjectUseCase() {
 
     }
 
@@ -45,6 +45,6 @@ public class GetMediaListFromProjectUseCase {
 
     // TODO:(alvaro.martinez) 3/01/17 project should be passed as a parameter?
     public Project getCurrentProject() {
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null, null, null, null);
     }
 }

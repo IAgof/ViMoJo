@@ -7,7 +7,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -37,7 +36,7 @@ public class UpdateVideoTransitionPreferenceToProjectUseCaseTest {
 
   @Test
   public void updateVideoTransitionPreferenceCallsUpdateRepository(){
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     injectedUseCase.setVideoFadeTransitionActivated(false);
     verify(mockedProjectRepository).update(currentProject);
   }
@@ -51,16 +50,15 @@ public class UpdateVideoTransitionPreferenceToProjectUseCaseTest {
 
     injectedUseCase.setVideoFadeTransitionActivated(videoTransitionActivated);
 
-    project = Project.getInstance(null,null,null);
+    project = Project.getInstance(null,null,null,null);
 
     assertThat("project videoTransitionPreference is value injected",
         project.getVMComposition().isVideoFadeTransitionActivated(), is(videoTransitionActivated));
   }
 
-
-
   private Project getAProject() {
-    return new Project("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+    return new Project("title", "/path","private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 }

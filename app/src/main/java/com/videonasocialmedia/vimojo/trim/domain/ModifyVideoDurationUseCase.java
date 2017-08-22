@@ -9,7 +9,6 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmRepository;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -34,7 +33,7 @@ public class ModifyVideoDurationUseCase {
           new TranscoderHelper(drawableGenerator, mediaTranscoder);
   protected VideoRepository videoRepository;
 
-  private final VideoToAdaptRepository videoToAdaptRepository;
+  VideoToAdaptRepository videoToAdaptRepository;
   private Drawable drawableFadeTransition;
   private VideonaFormat videoFormat;
   private String intermediatesTempAudioFadeDirectory;
@@ -43,11 +42,13 @@ public class ModifyVideoDurationUseCase {
    * Default constructor with video repository argument.
    *
    * @param videoRepository the video repository.
+   * @param videoToAdaptRepository
    */
-  @Inject public ModifyVideoDurationUseCase(VideoRepository videoRepository) {
+  @Inject public ModifyVideoDurationUseCase(VideoRepository videoRepository,
+                                            VideoToAdaptRepository videoToAdaptRepository) {
     this.videoRepository = videoRepository;
     // TODO(jliarte): 27/07/17 inject this field
-    this.videoToAdaptRepository = new VideoToAdaptRealmRepository();
+    this.videoToAdaptRepository = videoToAdaptRepository;
   }
 
   /**
@@ -66,6 +67,7 @@ public class ModifyVideoDurationUseCase {
     videoToEdit.setStopTime(finishTimeMs);
     videoToEdit.setTempPath(currentProject.getProjectPathIntermediateFiles());
     videoToEdit.setTrimmedVideo(true);
+    videoRepository.update(videoToEdit);
 
     this.drawableFadeTransition = drawableFadeTransition;
     this.videoFormat = format;
@@ -117,14 +119,13 @@ public class ModifyVideoDurationUseCase {
         };
         updateGeneratedVideo(videoToEdit, transcoderHelperListener,
                 isVideoFadeTransitionActivated, isAudioFadeTransitionActivated);
-        videoRepository.update(videoToEdit);
       }
     };
     new Thread(useCaseRunnable, "trimVideo Use Case").start();
   }
 
   private Project getCurrentProject() {
-    return Project.getInstance(null,null,null);
+    return Project.getInstance(null, null, null, null);
   }
 
   private void updateGeneratedVideo(Video videoToEdit,

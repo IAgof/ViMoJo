@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -38,7 +37,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -55,7 +54,8 @@ public class EditPresenterTest {
   @Mock private UserEventTracker mockedUserEventTracker;
   @Mock private RemoveVideoFromProjectUseCase mockedVideoRemover;
   @Mock private ReorderMediaItemUseCase mockedMediaItemReorderer;
-  @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
+  @Mock private GetPreferencesTransitionFromProjectUseCase
+          mockedGetPreferencesTransitionsFromProject;
   @Mock private GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
   @Mock ListenableFuture<Void> mockedTranscodingTask;
   @Mock private VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
@@ -81,7 +81,8 @@ public class EditPresenterTest {
   public void loadProjectCallsGetMediaListFromProjectUseCase() {
     injectedEditPresenter.obtainVideos();
 
-    verify(mockedGetMediaListFromProjectUseCase).getMediaListFromProject(Mockito.any(OnVideosRetrieved.class));
+    verify(mockedGetMediaListFromProjectUseCase)
+            .getMediaListFromProject(any(OnVideosRetrieved.class));
   }
 
   // TODO(jliarte): 27/04/17 FIXME fix this test
@@ -148,6 +149,6 @@ public class EditPresenterTest {
   public Project getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
-    return Project.getInstance("title", "/path", profile);
+    return Project.getInstance("title", "/path", "private/path", profile);
   }
 }

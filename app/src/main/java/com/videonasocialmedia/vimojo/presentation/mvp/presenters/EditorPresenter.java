@@ -59,7 +59,7 @@ public class EditorPresenter {
 
   public Project loadCurrentProject() {
     // TODO(jliarte): this should make use of a repository or use case to load the Project
-    return Project.getInstance(null, null, null);
+    return Project.getInstance(null, null, null, null);
   }
 
   public void getPreferenceUserName() {
@@ -80,8 +80,8 @@ public class EditorPresenter {
     }
   }
 
-  public void createNewProject(String roothPath, boolean isWatermarkFeatured) {
-    createDefaultProjectUseCase.createProject(roothPath, isWatermarkFeatured);
+  public void createNewProject(String roothPath, String privatePath, boolean isWatermarkFeatured) {
+    createDefaultProjectUseCase.createProject(roothPath, privatePath, isWatermarkFeatured);
     clearProjectDataFromSharedPreferences();
     editorActivityView.updateViewResetProject();
   }
@@ -91,46 +91,6 @@ public class EditorPresenter {
     preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION, 0);
     preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS, 0);
   }
-
-//  private void checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(List<Video> videoList) {
-//    for (Video video : videoList) {
-//      ListenableFuture transcodingJob = video.getTranscodingTask();
-//      // Condition to relaunch transcoding job.
-//      if (transcodingJob == null && !video.isTranscodingTempFileFinished()) {
-//        relaunchTranscoderTempFileJob(video);
-//        Log.d(LOG_TAG, "Need to relaunch video " + videoList.indexOf(video)
-//                + " - " + video.getMediaPath());
-//      }
-//    }
-//  }
-//
-//  private void relaunchTranscoderTempFileJob(Video video) {
-//    Project currentProject = Project.getInstance(null, null, null);
-//    VideonaFormat videoFormat = getVideonaFormatFromCurrentProjectUseCase
-//        .getVideonaFormatFromCurrentProject();
-//    Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
-//            .getDrawableFadeTransitionVideo();
-//    relaunchTranscoderTempBackgroundUseCase.relaunchExport(drawableVideoFadeTransition, video,
-//            videoFormat, currentProject.getProjectPathIntermediateFileAudioFade());
-//  }
-
-//  @Override
-//  public void onSuccessTranscoding(Video video) {
-//    Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
-//    updateVideoRepositoryUseCase.succesTranscodingVideo(video);
-//  }
-//
-//  @Override
-//  public void onErrorTranscoding(Video video, String message) {
-//    Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-//    if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
-//      video.increaseNumTriesToExportVideo();
-//      relaunchTranscoderTempFileJob(video);
-//    } else {
-//      updateVideoRepositoryUseCase.errorTranscodingVideo(video,
-//          Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.APP_CRASH.name());
-//    }
-//  }
 
   public void init() {
     newClipImporter.relaunchUnfinishedAdaptTasks();
@@ -164,7 +124,7 @@ public class EditorPresenter {
   }
 
   private void relaunchTranscoderTempFileJob(Video video) {
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
     Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
             .getDrawableFadeTransitionVideo();

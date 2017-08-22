@@ -13,11 +13,9 @@ import android.hardware.camera2.CameraAccessException;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -139,10 +137,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         endOfBeta.setTime(dateBeta);
         today.setTime(new Date());
 
-        if(today.after(endOfBeta) ){
-            return true;
-        }
-        return false;
+        return today.after(endOfBeta);
     }
 
     private void showDialogOutOfDate() {
@@ -171,13 +166,15 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     }
 
     private void createPermissionListeners() {
-        SnackbarOnAnyDeniedMultiplePermissionsListener snackBarPermissionsDeniedListenerWithSettings =
+        SnackbarOnAnyDeniedMultiplePermissionsListener
+                snackBarPermissionsDeniedListenerWithSettings =
                 SnackbarOnAnyDeniedMultiplePermissionsListener.Builder
                         .with(initRootView, R.string.permissions_denied_snackbar_message)
                         .withOpenSettingsButton(R.string.permissions_denied_go_to_settings_button)
                         .build();
         MultiplePermissionsListener corePermissionsListener = new CorePermissionListener(this);
-        compositePermissionsListener = new CompositeMultiplePermissionsListener(corePermissionsListener,
+        compositePermissionsListener =
+                new CompositeMultiplePermissionsListener(corePermissionsListener,
                 snackBarPermissionsDeniedListenerWithSettings);
     }
 
@@ -206,8 +203,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     protected void onStart() {
         super.onStart();
         startTime = System.currentTimeMillis();
-        sharedPreferences = getSharedPreferences(ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
-                Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(
+                ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         requestPermissionsAndPerformSetup();
@@ -282,7 +279,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         }
     }
 
-
     private void trackUserProfileGeneralTraits() {
         mixpanel.getPeople().increment(AnalyticsConstants.APP_USE_COUNT, 1);
         JSONObject userProfileProperties = new JSONObject();
@@ -312,7 +308,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         checkAndInitPath(Constants.PATH_APP_PROJECTS);
         checkAndInitPath(Constants.PATH_APP_MASTERS);
 
-        File privateDataFolderModel = getDir(Constants.FOLDER_VIDEONA_PRIVATE_MODEL, Context.MODE_PRIVATE);
+        File privateDataFolderModel = getDir(Constants.FOLDER_VIDEONA_PRIVATE_MODEL,
+                Context.MODE_PRIVATE);
         String privatePath = privateDataFolderModel.getAbsolutePath();
         editor.putString(ConfigPreferences.PRIVATE_PATH, privatePath).commit();
         Utils.copyWatermarkResourceToDevice();
@@ -464,17 +461,20 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
             if (supportedVideoSizes != null) {
                 for (Camera.Size size : supportedVideoSizes) {
                     if (size.width == 1280 && size.height == 720) {
-                        editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, true).commit();
+                        editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, true)
+                                .commit();
                         frontCameraResolutionSupported = true;
                         Log.d(LOG_TAG, "FRONT_CAMERA_720P_SUPPORTED");
                     }
                     if (size.width == 1920 && size.height == 1080) {
-                        editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, true).commit();
+                        editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, true)
+                                .commit();
                         frontCameraResolutionSupported = true;
                         Log.d(LOG_TAG, "FRONT_CAMERA_1080P_SUPPORTED");
                     }
                     if (size.width == 3840 && size.height == 2160) {
-                        editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, true).commit();
+                        editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, true)
+                                .commit();
                         frontCameraResolutionSupported = true;
                         Log.d(LOG_TAG, "FRONT_CAMERA_2160P_SUPPORTED");
                     }
@@ -484,22 +484,28 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
                 if (supportedVideoSizes != null) {
                     for (Camera.Size size : supportedVideoSizes) {
                         if (size.width == 1280 && size.height == 720) {
-                            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, true).commit();
+                            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, true)
+                                    .commit();
                             frontCameraResolutionSupported = true;
                         }
                         if (size.width == 1920 && size.height == 1080) {
-                            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, true).commit();
+                            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, true)
+                                    .commit();
                             frontCameraResolutionSupported = true;
                         }
                         if (size.width == 3840 && size.height == 2160) {
-                            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, true).commit();
+                            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, true)
+                                    .commit();
                             frontCameraResolutionSupported = true;
                         }
                     }
                 } else {
-                    editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, false).commit();
-                    editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, false).commit();
-                    editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, false).commit();
+                    editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, false)
+                            .commit();
+                    editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, false)
+                            .commit();
+                    editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, false)
+                            .commit();
                 }
             }
             if (!frontCameraResolutionSupported) {
@@ -527,13 +533,16 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
             if (supportedVideoSizes != null) {
                 for (Camera.Size size : camera.getParameters().getSupportedPreviewSizes()) {
                     if (size.width == 1280 && size.height == 720) {
-                        editor.putBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, true).commit();
+                        editor.putBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, true)
+                                .commit();
                     }
                     if (size.width == 1920 && size.height == 1080) {
-                        editor.putBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, true).commit();
+                        editor.putBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, true)
+                                .commit();
                     }
                     if (size.width == 3840 && size.height == 2160) {
-                        editor.putBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, true).commit();
+                        editor.putBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, true)
+                                .commit();
                     }
                 }
             } else {
@@ -556,14 +565,17 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         if (supportedFrameRates != null) {
             editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_SUPPORTED, true).commit();
             for (int  frameRate : supportedFrameRates) {
-                if(frameRate == 24){
-                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, true).commit();
+                if(frameRate == 24) {
+                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, true)
+                            .commit();
                 }
-                if(frameRate == 25){
-                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, true).commit();
+                if(frameRate == 25) {
+                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, true)
+                            .commit();
                 }
-                if(frameRate == 30){
-                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, true).commit();
+                if(frameRate == 30) {
+                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, true)
+                            .commit();
                 }
             }
         } else {
@@ -605,7 +617,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     @Override
     public void onCheckPathsAppSuccess() {
-        presenter.startLoadingProject(Constants.PATH_APP, BuildConfig.FEATURE_WATERMARK);
+        presenter.startLoadingProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
+            BuildConfig.FEATURE_WATERMARK);
     }
 
     @Override
@@ -689,8 +702,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
         private boolean areCriticalPermissionsGranted() {
             boolean granted = ContextCompat.checkSelfPermission(InitAppActivity.this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(InitAppActivity.this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(InitAppActivity.this,
                             Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
                     ContextCompat.checkSelfPermission(InitAppActivity.this,
                             Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;

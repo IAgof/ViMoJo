@@ -13,6 +13,8 @@ package com.videonasocialmedia.vimojo.utils;
 
 import android.os.Environment;
 
+import com.videonasocialmedia.vimojo.BuildConfig;
+
 import java.io.File;
 
 public class Constants {
@@ -20,8 +22,10 @@ public class Constants {
     //TODO cambiar el endpoint a la dirección de producción
     public static final String API_ENDPOINT = "http://192.168.0.22/Videona/web/app_dev.php/api";
     //OAuth
-    public static final String OAUTH_CLIENT_ID = "4_6c1bbez44j0okk8sckcssk4wocsgks044wsw0sogkw4gwc8gg0";
-    public static final String OAUTH_CLIENT_SECRET = "64a2br3oixwk0kkw4wwscoocssss0cwg0og8g0ssggcs80owww";
+    public static final String OAUTH_CLIENT_ID
+            = "4_6c1bbez44j0okk8sckcssk4wocsgks044wsw0sogkw4gwc8gg0";
+    public static final String OAUTH_CLIENT_SECRET
+            = "64a2br3oixwk0kkw4wwscoocssss0cwg0og8g0ssggcs80owww";
 
 
     // Folders
@@ -32,6 +36,12 @@ public class Constants {
 
     final public static String RESOURCE_WATERMARK_NAME = "watermark.png";
 //    final public static String FOLDER_NAME_VIMOJO_TEMP_AUDIO = ".tempAudio";
+
+    final public static String PATH_APP_ANDROID = Environment.getExternalStorageDirectory()
+        .getPath() + "/Android/data/" + BuildConfig.APPLICATION_ID;
+
+    final public static String PATH_WATERMARK = PATH_APP_ANDROID + File.separator +
+        Constants.RESOURCE_WATERMARK_NAME;
 
     final public static String PATH_APP = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DCIM) + File.separator + FOLDER_NAME_VIMOJO;
@@ -58,10 +68,12 @@ public class Constants {
     final public static String CURRENT_VIDEO_INDEX = "current_video_index";
     final public static String VIDEO_TO_SHARE_PATH = "video_to_share_path";
     final public static String MUSIC_SELECTED_TITLE = "music_selected";
-    final public static String OUTPUT_FILE_MIXED_AUDIO = PATH_APP_TEMP + File.separator + com.videonasocialmedia.videonamediaframework.model.Constants.MIXED_AUDIO_FILE_NAME;
+    final public static String OUTPUT_FILE_MIXED_AUDIO = PATH_APP_TEMP + File.separator
+            + com.videonasocialmedia.videonamediaframework.model.Constants.MIXED_AUDIO_FILE_NAME;
 
 
-    public static final String NOTIFICATION_EXPORT_SERVICES_RECEIVER = "com.videonasocialmedia.vimojo";
+    public static final String NOTIFICATION_EXPORT_SERVICES_RECEIVER =
+            "com.videonasocialmedia.vimojo";
 
     public static final int DEFAULT_VIMOJO_WIDTH = 1280;
     public static final int DEFAULT_VIMOJO_HEIGHT = 720;

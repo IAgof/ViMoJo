@@ -1,6 +1,8 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
 
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.repository.music.MusicRealmRepository;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
@@ -38,5 +40,10 @@ public class DataRepositoriesModule {
   @Provides @Singleton
   MusicRepository provideDefaultMusicRepository(){
     return new MusicRealmRepository();
+  }
+
+  @Provides @Singleton
+  VideoToAdaptRepository provideDefaultVideoToAdaptRepository() {
+    return new VideoToAdaptRealmRepository();
   }
 }

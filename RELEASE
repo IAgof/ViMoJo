@@ -1,6 +1,4 @@
-v0.7.0-RC4
-- Fix bug advance range seek bar step by step in trimming screen.
-- Fix bug if user exit record screen while he is recording a video.
-- Fix bug default button or change camera did not reset zoom.
-- Enabled watermark for vimojo flavour
-- Enabled FTP, voice over and watermark features for hispanopost flavour
+v0.7.0-RC6
+-Redesign size in some icons in activity record
+-Fixed problem manifest and Google Play.
+-Added corner radius to thumbs in Edit Activity, timeline.

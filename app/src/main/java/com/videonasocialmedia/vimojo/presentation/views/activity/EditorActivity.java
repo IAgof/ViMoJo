@@ -216,7 +216,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
           case DialogInterface.BUTTON_POSITIVE:
            // drawerLayout.closeDrawers();
             if(resourceItemMenuId == R.id.menu_navview_delete_clip)
-                editorPresenter.createNewProject(Constants.PATH_APP, BuildConfig.FEATURE_WATERMARK);
+                editorPresenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
+                    BuildConfig.FEATURE_WATERMARK);
             if(resourceItemMenuId == R.id.menu_navview_mail)
               navigateTo(SettingsActivity.class);
             if(resourceItemMenuId == R.id.menu_navview_username)
@@ -283,7 +284,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   public void showDialogUserAddThumb() {
       // dialog pick or take photo
-    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+    final DialogInterface.OnClickListener dialogClickListener =
+            new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         File file = new File(userThumbPath);

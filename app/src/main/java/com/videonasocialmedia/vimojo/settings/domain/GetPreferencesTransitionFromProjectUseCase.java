@@ -25,7 +25,7 @@ public class GetPreferencesTransitionFromProjectUseCase {
     */
   @Deprecated
   public boolean isAudioFadeTransitionActivated() {
-    currentProject = Project.getInstance(null, null, null);
+    currentProject = Project.getInstance(null, null, null, null);
     return currentProject.getVMComposition().isAudioFadeTransitionActivated();
   }
 
@@ -34,7 +34,7 @@ public class GetPreferencesTransitionFromProjectUseCase {
    */
   @Deprecated
   public boolean isVideoFadeTransitionActivated() {
-    currentProject = Project.getInstance(null, null, null);
+    currentProject = Project.getInstance(null, null, null, null);
     return currentProject.getVMComposition().isVideoFadeTransitionActivated();
   }
 }

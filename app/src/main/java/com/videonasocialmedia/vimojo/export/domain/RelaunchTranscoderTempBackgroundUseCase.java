@@ -36,7 +36,7 @@ public class RelaunchTranscoderTempBackgroundUseCase implements TranscoderHelper
   }
 
   private Project getCurrentProject() {
-    return Project.getInstance(null, null, null);
+    return Project.getInstance(null, null, null, null);
   }
 
   /**

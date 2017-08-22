@@ -78,7 +78,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     }
 
     private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null, null, null, null);
     }
 
     public void loadProjectVideo(int videoToTrimIndex) {
@@ -121,7 +121,8 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
         VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
         // TODO:(alvaro.martinez) 22/02/17 This drawable saved in app or sdk?
         Drawable drawableFadeTransitionVideo =
-            ContextCompat.getDrawable(VimojoApplication.getAppContext(), R.drawable.alpha_transition_white);
+            ContextCompat.getDrawable(VimojoApplication.getAppContext(),
+                    R.drawable.alpha_transition_white);
 
         modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, video, videoFormat,
             startTimeMs, finishTimeMs, currentProject.getProjectPathIntermediateFileAudioFade()

@@ -27,7 +27,6 @@ import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,7 +57,8 @@ public class MusicDetailPresenterTest {
     @Mock private Context mockedContext;
     @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock private GetAudioFromProjectUseCase mockedGetMusicFromProject;
-    @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
+    @Mock private GetPreferencesTransitionFromProjectUseCase
+            mockedGetPreferencesTransitionsFromProject;
     @Mock private AddAudioUseCase mockedAddAudioUseCase;
     @Mock private RemoveAudioUseCase mockedRemoveAudioUseCase;
     @Mock private ModifyTrackUseCase mockedModifyTrackUseCase;
@@ -76,7 +76,7 @@ public class MusicDetailPresenterTest {
 
     @After
     public void tearDown() {
-        Project.getInstance(null, null, null).clear();
+        Project.getInstance(null, null, null, null).clear();
     }
 
     @Test
@@ -99,7 +99,7 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void addMusicCallsGoToSoundActivityOnAddMediaItemFromTrackSuccess(){
+    public void addMusicCallsGoToSoundActivityOnAddMediaItemFromTrackSuccess() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         Project videonaProject = getAProject();
@@ -124,7 +124,7 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void addMusicCallsGoToSoundActivityOnAddMediaItemFromTrackError(){
+    public void addMusicCallsGoToSoundActivityOnAddMediaItemFromTrackError() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         Project videonaProject = getAProject();
@@ -148,7 +148,7 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void removeMusicCallsGoToSoundActivityOnRemoveMediaItemFromTrackSuccess(){
+    public void removeMusicCallsGoToSoundActivityOnRemoveMediaItemFromTrackSuccess() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         Project videonaProject = getAProject();
@@ -172,7 +172,7 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void removeMusicCallsShowErrorOnRemoveMediaItemFromTrackError(){
+    public void removeMusicCallsShowErrorOnRemoveMediaItemFromTrackError() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
@@ -221,7 +221,8 @@ public class MusicDetailPresenterTest {
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+        return Project.getInstance("title", "/path", "private/path",
+            Profile.getInstance(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
     }
 

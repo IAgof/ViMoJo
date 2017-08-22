@@ -72,16 +72,17 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null, null, null, null);
     }
 
     public void init(String musicPath) {
         musicSelected = retrieveLocalMusic(musicPath);
-        // TODO:(alvaro.martinez) 12/04/17 Delete this force of volume when Vimojo support more than one music, at this moment, music track same as music volume
+        // TODO:(alvaro.martinez) 12/04/17 Delete this force of volume when Vimojo support more
+        // than one music, at this moment, music track same as music volume
         musicSelected.setVolume(currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume());
         obtainMusicsAndVideos();
-        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()) {
             musicDetailView.setVideoFadeTransitionAmongVideos();
         }
     }
@@ -155,7 +156,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
         if (musicOnProject!= null && musicOnProject.getMediaPath()
                 .compareTo(musicSelected.getMediaPath()) == 0) {
-            // TODO:(alvaro.martinez) 12/04/17 Delete this force of volume when Vimojo support more than one music, at this moment, music track same as music volume
+            // TODO:(alvaro.martinez) 12/04/17 Delete this force of volume when Vimojo support
+            // more than one music, at this moment, music track same as music volume
             musicOnProject.setVolume(currentProject.getAudioTracks()
                 .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume());
             musicDetailView.setMusic(musicOnProject, true);

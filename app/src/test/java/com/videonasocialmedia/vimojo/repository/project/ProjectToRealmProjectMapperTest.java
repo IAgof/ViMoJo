@@ -3,11 +3,8 @@ package com.videonasocialmedia.vimojo.repository.project;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.videonamediaframework.model.Constants;
-import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
-import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
-import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -19,9 +16,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -35,8 +29,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class ProjectToRealmProjectMapperTest {
   @Test
   public void testMapReturnsRealmProjectInstance() {
-    Project project = new Project(null, null, Profile.getInstance(VideoResolution.Resolution.HD720,
-            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+    Project project = new Project(null, null, null, Profile.getInstance(
+            VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+            VideoFrameRate.FrameRate.FPS25));
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
     RealmProject realmProject = mapper.map(project);
@@ -49,7 +44,7 @@ public class ProjectToRealmProjectMapperTest {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
 
-    Project project = new Project("Project title", "root/path", profile);
+    Project project = new Project("Project title", "root/path","private/path", profile);
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
     RealmProject realmProject = mapper.map(project);
@@ -140,7 +135,7 @@ public class ProjectToRealmProjectMapperTest {
   @Test
   public void testMapReturnsNullRealmProjectIfNullProjectProfile() {
 
-    Project project = new Project("title", "root/path", null);
+    Project project = new Project("title", "root/path", "private/path", null);
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
     RealmProject realmProject = mapper.map(project);
@@ -152,7 +147,7 @@ public class ProjectToRealmProjectMapperTest {
   private Project getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
-    return new Project("Project title", "root/path", profile);
+    return new Project("Project title", "root/path", "private/path", profile);
   }
 
 }

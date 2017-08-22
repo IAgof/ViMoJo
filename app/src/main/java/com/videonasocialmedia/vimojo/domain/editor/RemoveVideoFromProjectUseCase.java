@@ -18,7 +18,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
@@ -52,7 +51,7 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
     public void removeMediaItemsFromProject(ArrayList<Media> mediaList,
                                             OnRemoveMediaFinishedListener listener) {
         boolean correct = false;
-        Project currentProject = Project.getInstance(null, null, null);
+        Project currentProject = Project.getInstance(null, null, null, null);
         Track mediaTrack = currentProject.getMediaTrack();
         for (Media media : mediaList) {
             correct = removeVideoItemFromTrack(media, mediaTrack);
@@ -80,7 +79,7 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
         try {
             mediaTrack.deleteItem(video);
             // TODO(jliarte): 23/10/16 get rid of EventBus?
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = Project.getInstance(null, null, null, null);
             EventBus.getDefault().post(
                     new UpdateProjectDurationEvent(currentProject.getDuration()));
             EventBus.getDefault().post(

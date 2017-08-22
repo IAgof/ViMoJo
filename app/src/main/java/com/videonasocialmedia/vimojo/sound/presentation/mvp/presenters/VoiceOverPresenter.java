@@ -22,7 +22,7 @@ import javax.inject.Inject;
 /**
  * Created by ruth on 15/09/16.
  */
-public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAudiosListener{
+public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAudiosListener {
 
     /**
      * LOG_TAG
@@ -96,7 +96,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     }
 
     private Project loadCurrentProject() {
-        return Project.getInstance(null,null, null);
+        return Project.getInstance(null,null,null,null);
     }
 
     @Override

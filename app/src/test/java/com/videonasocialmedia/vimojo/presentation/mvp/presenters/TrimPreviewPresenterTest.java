@@ -51,7 +51,7 @@ public class TrimPreviewPresenterTest {
 
     @After
     public void tearDown() {
-        Project.getInstance(null, null, null).clear();
+        Project.getInstance(null, null, null, null).clear();
     }
 
     @Test
@@ -84,12 +84,12 @@ public class TrimPreviewPresenterTest {
     }
 
     @Test
-    public void setTrimUpdateVideoTimes(){
+    public void setTrimUpdateVideoTimes() {
 
     }
 
     @Test
-    public void advanceBackwardStartTrimmingCallsUpdateStartTrimmingRangeSeekBar(){
+    public void advanceBackwardStartTrimmingCallsUpdateStartTrimmingRangeSeekBar() {
         TrimPreviewPresenter presenter = getTrimPreviewPresenter();
         int advancePrecision = 600; //ms
         int startTimeMs = 1200; //ms
@@ -99,7 +99,7 @@ public class TrimPreviewPresenterTest {
         verify(mockedTrimView).updateStartTrimmingRangeSeekBar(anyFloat());
     }
 
-    public void advanceForwardStartTrimmingCallsUpdateStartTrimmingRangeSeekBar(){
+    public void advanceForwardStartTrimmingCallsUpdateStartTrimmingRangeSeekBar() {
         TrimPreviewPresenter presenter = getTrimPreviewPresenter();
         int advancePrecision = 600; //ms
         int startTimeMs = 1200; //ms
@@ -110,7 +110,7 @@ public class TrimPreviewPresenterTest {
     }
 
     @Test
-    public void advanceBackwardEndTrimmingCallsUpdateFinishTrimmingRangeSeekBar(){
+    public void advanceBackwardEndTrimmingCallsUpdateFinishTrimmingRangeSeekBar() {
         TrimPreviewPresenter presenter = getTrimPreviewPresenter();
         int advancePrecision = 600; //ms
         int endTimeMs = 1200; //ms
@@ -139,7 +139,8 @@ public class TrimPreviewPresenterTest {
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+        return Project.getInstance("title", "/path", "private/path",
+            Profile.getInstance(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
     }
 }

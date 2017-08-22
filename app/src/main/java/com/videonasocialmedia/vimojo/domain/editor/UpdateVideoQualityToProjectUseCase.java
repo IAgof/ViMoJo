@@ -25,7 +25,7 @@ public class UpdateVideoQualityToProjectUseCase {
     }
 
     public void updateQuality(VideoQuality.Quality quality) {
-        currentProject = Project.getInstance(null, null, null);
+        currentProject = Project.getInstance(null, null, null, null);
         currentProject.getProfile().setQuality(quality);
         projectRepository.update(currentProject);
     }

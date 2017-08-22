@@ -86,12 +86,13 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
 
     private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null, null, null, null);
     }
 
     public void loadVideoListToProject(List<Video> videoList) {
         try {
-            List<Video> checkedVideoList = filterVideosWithResolutionDifferentFromProjectResolution(videoList);
+            List<Video> checkedVideoList =
+                    filterVideosWithResolutionDifferentFromProjectResolution(videoList);
             if (listErrorVideoIds.size() > 0) {
                 galleryPagerView.showDialogVideosNotAddedFromGallery(listErrorVideoIds);
                 differentVideoFormat = true;
@@ -104,7 +105,8 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
             // so this is a workarround while discovering the origin of the bug
             errorLoadingVideoList.printStackTrace();
             Log.e(LOG_TAG, "Error while loading videos from gallery", errorLoadingVideoList);
-            Crashlytics.log("Error in GalleryPagerPresenter.filterVideosWithResolutionDifferentFromProjectResolution");
+            Crashlytics.log("Error in GalleryPagerPresenter." +
+                    "filterVideosWithResolutionDifferentFromProjectResolution");
             Crashlytics.logException(errorLoadingVideoList);
         }
     }
@@ -113,7 +115,8 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         addVideoToProjectUseCase.addVideoListToTrack(checkedVideoList, this, this);
     }
 
-    private List<Video> filterVideosWithResolutionDifferentFromProjectResolution(List<Video> videoList) {
+    private List<Video> filterVideosWithResolutionDifferentFromProjectResolution(
+            List<Video> videoList) {
         List<Video> filteredVideoList = new ArrayList<>();
         updateProfileForEmptyProject(currentProject, videoList);
         VideoResolution projectProfileVideoResolution
@@ -121,7 +124,8 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         for (int index = 0; index < videoList.size(); index++) {
             Video video = videoList.get(index);
             try {
-                // TODO(jliarte): 13/06/17 this is not the responsibility stated in the name of the method!
+                // TODO(jliarte): 13/06/17 this is not the responsibility stated in the name of
+                // the method!
                 setVideoDurationFromMediaMetadata(video);
 
                 String videoWidth = getVideoWidth(video);
@@ -132,10 +136,12 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
                     filteredVideoList.add(video);
                 }
             } catch (Exception e) {
-                // FIXME(jliarte): 13/06/17 if exception is triggered comparing videoWidths video duration should not be set to 0
+                // FIXME(jliarte): 13/06/17 if exception is triggered comparing videoWidths video
+                // duration should not be set to 0
                 video.setDuration(0);
                 e.printStackTrace();
-                Crashlytics.log("Error in GalleryPagerPresenter.filterVideosWithResolutionDifferentFromProjectResolution");
+                Crashlytics.log("Error in GalleryPagerPresenter." +
+                        "filterVideosWithResolutionDifferentFromProjectResolution");
                 Crashlytics.logException(e);
             }
         }
@@ -240,7 +246,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
         if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
             video.increaseNumTriesToExportVideo();
-            Project currentProject = Project.getInstance(null, null, null);
+            Project currentProject = Project.getInstance(null, null, null, null);
             launchTranscoderAddAVTransitionUseCase.launchExportTempFile(context
                     .getDrawable(R.drawable.alpha_transition_white), video,
                 getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),

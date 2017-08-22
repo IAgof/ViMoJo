@@ -25,14 +25,14 @@ public class LaunchTranscoderAddAVTransitionsUseCase {
 
   private Project currentProject;
 
-  public LaunchTranscoderAddAVTransitionsUseCase(VideoRepository videoRepository){
+  public LaunchTranscoderAddAVTransitionsUseCase(VideoRepository videoRepository) {
     this.currentProject = loadCurrentProject();
     this.videoRepository = videoRepository;
   }
 
 
   private Project loadCurrentProject() {
-    return Project.getInstance(null, null, null);
+    return Project.getInstance(null, null, null, null);
   }
 
   public void launchExportTempFile(Drawable drawableFadeTransition, Video videoToEdit,

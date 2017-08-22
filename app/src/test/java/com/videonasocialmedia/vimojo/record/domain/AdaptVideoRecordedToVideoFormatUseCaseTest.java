@@ -23,7 +23,8 @@ import static org.mockito.Mockito.verify;
 
 public class AdaptVideoRecordedToVideoFormatUseCaseTest {
 
-  @InjectMocks AdaptVideoRecordedToVideoFormatUseCase injectedAdaptVideoRecordedToVideoFormatUseCase;
+  @InjectMocks AdaptVideoRecordedToVideoFormatUseCase
+          injectedAdaptVideoRecordedToVideoFormatUseCase;
   @Mock TranscoderHelper mockedTranscoderHelper;
   @Mock MediaTranscoder mockedMediaTranscoder;
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
@@ -39,7 +40,7 @@ public class AdaptVideoRecordedToVideoFormatUseCaseTest {
 
   @Test
   public void adaptVideoRecordedCallsTranscoderAdaptVideoToFormat() throws IOException {
-    String tempDirectory = Project.getInstance(null, null, null)
+    String tempDirectory = Project.getInstance(null, null, null, null)
             .getProjectPathIntermediateAudioMixedFiles();
     injectedAdaptVideoRecordedToVideoFormatUseCase.transcoderHelper = mockedTranscoderHelper;
 

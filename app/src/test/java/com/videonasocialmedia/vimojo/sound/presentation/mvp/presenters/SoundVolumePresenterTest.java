@@ -40,10 +40,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.calls;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
@@ -59,7 +56,8 @@ public class SoundVolumePresenterTest {
   @Mock private MusicRepository mockedMusicRepository;
   @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock private GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
-  @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
+  @Mock private GetPreferencesTransitionFromProjectUseCase
+          mockedGetPreferencesTransitionsFromProject;
   @Mock private AddAudioUseCase mockedAddAudioUseCase;
   @Mock private RemoveAudioUseCase mockedRemoveAudioUseCase;
   @Mock Music mockedMusic;
@@ -77,7 +75,7 @@ public class SoundVolumePresenterTest {
   }
 
   @Test
-  public void addVoiceOverCallsGoToSoundActivityOnAddMediaItemToTrackSuccess(){
+  public void addVoiceOverCallsGoToSoundActivityOnAddMediaItemToTrackSuccess() {
     final float defaultVolume = 0.5f;
     int defaultDuration = 100;
     final Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
@@ -99,7 +97,7 @@ public class SoundVolumePresenterTest {
   }
 
   @Test
-  public void addVoiceOverCallsShowErrorOnAddMediaItemToTrackError(){
+  public void addVoiceOverCallsShowErrorOnAddMediaItemToTrackError() {
     final float defaultVolume = 0.5f;
     int defaultDuration = 100;
     final Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
@@ -121,7 +119,8 @@ public class SoundVolumePresenterTest {
   }
 
   @Test
-  public void removePreviousVoiceOverCallsShowErrorOnRemoveMediaItemFromTrackError() throws IllegalItemOnTrack {
+  public void removePreviousVoiceOverCallsShowErrorOnRemoveMediaItemFromTrackError()
+          throws IllegalItemOnTrack {
     Project project = getAProject();
     final float defaultVolume = 0.5f;
     int defaultDuration = 100;
@@ -147,8 +146,7 @@ public class SoundVolumePresenterTest {
   }
 
   @Test
-  public void getVoiceOverAsMusicCreateVoiceOverObject(){
-
+  public void getVoiceOverAsMusicCreateVoiceOverObject() {
     Music voiceOver = injectedPresenter.getVoiceOverAsMusic("media/path", 0.55f);
 
     assertThat("Voice over has correct title", voiceOver.getMusicTitle(),
@@ -165,8 +163,9 @@ public class SoundVolumePresenterTest {
   }
 
   public Project getAProject() {
-    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.
-            Resolution.HD720, VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+    return Project.getInstance("title", "/path", "private/path",
+            Profile.getInstance(VideoResolution.Resolution.HD720,
+                    VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 
 }
