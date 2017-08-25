@@ -160,7 +160,6 @@ public class UserEventTrackerTest {
             is(project.getProfile().getResolution().name()));
         assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.TOTAL_VIDEOS_RECORDED),
             is(totalVideosRecorded));
-
     }
 
     @Test

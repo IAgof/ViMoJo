@@ -403,8 +403,9 @@ public class ActivityPresentersModule {
     return new RelaunchTranscoderTempBackgroundUseCase(videoRepository);
   }
 
-  @Provides ExportProjectUseCase provideProjectExporter() {
-    return new ExportProjectUseCase();
+  @Provides ExportProjectUseCase provideProjectExporter(
+          VideoToAdaptRepository videoToAdaptRepository) {
+    return new ExportProjectUseCase(videoToAdaptRepository);
   }
 
   @Provides ModifyTrackUseCase providesModifyTrackUseCase(ProjectRepository projectRepository) {
@@ -440,9 +441,9 @@ public class ActivityPresentersModule {
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          VideoRepository videoRepository) {
+          VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository) {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase,
             adaptVideoRecordedToVideoFormatUseCase, relaunchTranscoderTempBackgroundUseCase,
-            videoRepository);
+            videoRepository, videoToAdaptRepository);
   }
 }

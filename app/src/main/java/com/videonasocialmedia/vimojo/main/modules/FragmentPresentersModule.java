@@ -11,6 +11,7 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -156,9 +157,9 @@ public class FragmentPresentersModule {
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           AdaptVideoRecordedToVideoFormatUseCase adaptVideosUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscodingUseCase,
-          VideoRepository videoRepository) {
+          VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository) {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase, adaptVideosUseCase,
-            relaunchTranscodingUseCase, videoRepository);
+            relaunchTranscodingUseCase, videoRepository, videoToAdaptRepository);
   }
 
 }

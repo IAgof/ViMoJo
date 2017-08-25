@@ -16,7 +16,6 @@ import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExport
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSessionImpl;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmRepository;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -41,7 +40,7 @@ public class ExportProjectUseCase implements ExportListener {
   /**
    * Project VMCompositionExportSession use case.
    */
-  public ExportProjectUseCase() {
+  public ExportProjectUseCase(VideoToAdaptRepository videoToAdaptRepository) {
     project = Project.getInstance(null, null, null, null);
 
     // TODO(jliarte): 28/04/17 move to export method?
@@ -51,8 +50,7 @@ public class ExportProjectUseCase implements ExportListener {
     String tempAudioPath = project.getProjectPathIntermediateFileAudioFade();
     VMCompositionExportSession = new VMCompositionExportSessionImpl(project.getVMComposition(),
         outputFilesDirectory, tempPathIntermediateAudioFilesDirectory, tempAudioPath, this);
-    // TODO(jliarte): 28/07/17 inject this field?
-    videoToAdaptRepository = new VideoToAdaptRealmRepository();
+    this.videoToAdaptRepository = videoToAdaptRepository;
   }
 
   /**

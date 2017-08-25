@@ -1,18 +1,14 @@
 package com.videonasocialmedia.vimojo.importer.helpers;
 
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmRepository;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -38,13 +34,12 @@ public class NewClipImporter implements TranscoderHelperListener {
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          VideoRepository videoRepository) {
+          VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository) {
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     this.adaptVideoRecordedToVideoFormatUseCase = adaptVideoRecordedToVideoFormatUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.videoRepository = videoRepository;
-    // TODO(jliarte): 24/07/17 inject this
-    this.videoToAdaptRepository = new VideoToAdaptRealmRepository();
+    this.videoToAdaptRepository = videoToAdaptRepository;
   }
 
   public void adaptVideoToVideonaFormat(Video video, int videoPosition, int cameraRotation,
@@ -88,9 +83,11 @@ public class NewClipImporter implements TranscoderHelperListener {
 //      if (isAVideoAdaptedToFormat(video)) {
     Log.d(TAG, "onSuccessTranscoding adapting video " + video.getMediaPath());
     VideoToAdapt videoToAdapt = videoToAdaptRepository.remove(video.getMediaPath());
-    FileUtils.removeFile(video.getMediaPath());
-    Log.d(TAG, "deleting " + video.getMediaPath());
-    video.setMediaPath(videoToAdapt.getDestVideoPath());
+    if (videoToAdapt != null) {
+      FileUtils.removeFile(video.getMediaPath());
+      Log.d(TAG, "deleting " + video.getMediaPath());
+      video.setMediaPath(videoToAdapt.getDestVideoPath());
+    }
     video.setVolume(Video.DEFAULT_VOLUME);
     video.setStopTime(FileUtils.getDuration(video.getMediaPath()));
     video.resetTempPath();
@@ -98,7 +95,6 @@ public class NewClipImporter implements TranscoderHelperListener {
 
     videoRepository.update(video);
     // (jliarte): 18/07/17 now we should move the file, notify changes, and launch AV transitions
-
 
 //      } else {
 //        // TODO(jliarte): 3/07/17 don't get the meaning of this case
@@ -148,6 +144,9 @@ public class NewClipImporter implements TranscoderHelperListener {
 
   public void relaunchUnfinishedAdaptTasks() {
     List<VideoToAdapt> videosToAdapt = videoToAdaptRepository.getAllVideos();
+    // (jliarte): 24/08/17 videos are reconstructed from repository, so they are not the same
+    // instance that where previously stored. Thus some fields differs or are missing, such as
+    // queried transcodingTask!!! Thus, we're included a in memory cache in the repo
     Log.d(TAG, "There are " + videosToAdapt.size() + " videos to adapt in repository");
     for (VideoToAdapt videoToAdapt : videosToAdapt) {
       if (videoToAdapt.getVideo() == null) {

@@ -104,7 +104,6 @@ public class VimojoApplication extends Application {
         return dataRepositoriesModule;
     }
 
-
     private void setupGoogleAnalytics() {
         GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
         if (BuildConfig.DEBUG)

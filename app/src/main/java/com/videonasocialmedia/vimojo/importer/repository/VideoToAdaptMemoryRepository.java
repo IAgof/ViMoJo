@@ -29,7 +29,7 @@ public class VideoToAdaptMemoryRepository implements VideoToAdaptRepository {
 
   @Override
   public void update(VideoToAdapt item) {
-
+    videoListToAdaptAndPosition.put(item.getVideo().getMediaPath(), item);
   }
 
   @Override

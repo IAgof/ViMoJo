@@ -19,11 +19,13 @@ import io.realm.RealmResults;
 public class VideoToAdaptRealmRepository implements VideoToAdaptRepository {
   protected Mapper<RealmVideoToAdapt, VideoToAdapt> toVideoToAdaptMapper;
   protected Mapper<VideoToAdapt, RealmVideoToAdapt> toRealmVideoToAdaptMapper;
+  private VideoToAdaptMemoryRepository cache;
 
   public VideoToAdaptRealmRepository() {
     VideoRepository videoRepository = new VideoRealmRepository();
     this.toVideoToAdaptMapper = new RealmVideoToAdaptToVideoToAdaptMapper(videoRepository);
     this.toRealmVideoToAdaptMapper = new VideoToAdaptToRealmVideoToAdaptMapper();
+    this.cache = new VideoToAdaptMemoryRepository();
   }
 
   @Override
@@ -37,6 +39,7 @@ public class VideoToAdaptRealmRepository implements VideoToAdaptRepository {
       }
     });
     realm.close();
+    cache.add(item);
   }
 
   @Override
@@ -47,21 +50,31 @@ public class VideoToAdaptRealmRepository implements VideoToAdaptRepository {
   }
 
   @Override
-  public void update(VideoToAdapt item) {
-
-  }
-
-  @Override
-  public void remove(final VideoToAdapt item) {
+  public void update(final VideoToAdapt item) {
     Realm realm = Realm.getDefaultInstance();
     realm.executeTransaction(new Realm.Transaction() {
       @Override
       public void execute(Realm realm) {
-        RealmResults<RealmVideoToAdapt> result = realm.where(RealmVideoToAdapt.class).
-                equalTo("mediaPath", item.getVideo().getMediaPath()).findAll();
-        result.deleteAllFromRealm();
+        realm.copyToRealmOrUpdate(toRealmVideoToAdaptMapper.map(item));
       }
     });
+    cache.update(item);
+  }
+
+  @Override
+  public void remove(final VideoToAdapt item) {
+    if (item.getVideo() != null) {
+      Realm realm = Realm.getDefaultInstance();
+      realm.executeTransaction(new Realm.Transaction() {
+        @Override
+        public void execute(Realm realm) {
+          RealmResults<RealmVideoToAdapt> result = realm.where(RealmVideoToAdapt.class).
+                  equalTo("mediaPath", item.getVideo().getMediaPath()).findAll();
+          result.deleteAllFromRealm();
+        }
+      });
+    }
+    cache.remove(item);
   }
 
   @Override
@@ -88,18 +101,37 @@ public class VideoToAdaptRealmRepository implements VideoToAdaptRepository {
     for(RealmVideoToAdapt realmVideoToAdapt: realmResults){
       videoList.add(toVideoToAdaptMapper.map(realm.copyFromRealm(realmVideoToAdapt)));
     }
+    replaceCachedItems(videoList);
     return videoList;
+  }
+
+  private void replaceCachedItems(List<VideoToAdapt> videoList) {
+    int index = 0;
+    while (index < videoList.size()) {
+      VideoToAdapt retrievedItem = videoList.get(index);
+      VideoToAdapt cachedItem = cache.getByMediaPath(retrievedItem.getVideo().getMediaPath());
+      if (cachedItem != null) {
+        videoList.set(index, cachedItem);
+      }
+      index++;
+    }
   }
 
   @Override
   public VideoToAdapt remove(String mediaPath) {
     VideoToAdapt videoToAdapt = getByMediaPath(mediaPath);
-    remove(videoToAdapt);
+    if (videoToAdapt != null) {
+      remove(videoToAdapt);
+    }
+    cache.remove(mediaPath);
     return videoToAdapt;
   }
 
   @Override
   public VideoToAdapt getByMediaPath(String mediaPath) {
+    if (cache.getByMediaPath(mediaPath) != null) {
+      return cache.getByMediaPath(mediaPath);
+    }
     Realm realm = Realm.getDefaultInstance();
     RealmVideoToAdapt result = realm.where(RealmVideoToAdapt.class).
             equalTo("mediaPath", mediaPath).findFirst();

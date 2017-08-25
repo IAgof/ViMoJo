@@ -13,6 +13,8 @@ import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 /**
  * Created by  on 26/05/16.
  */
@@ -21,7 +23,7 @@ public class ExportProjectService extends IntentService implements OnExportFinis
     public static final String FILEPATH = "filepath";
     public static final String RESULT = "result";
     private static final String TAG = "ExportProjectService";
-    private ExportProjectUseCase exportUseCase;
+    @Inject ExportProjectUseCase exportUseCase;
 
     //TODO Add persistence. Needed to navigate for ShareActivity if service has finished.
 
@@ -34,7 +36,6 @@ public class ExportProjectService extends IntentService implements OnExportFinis
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        exportUseCase = new ExportProjectUseCase();
         exportUseCase.export(Constants.PATH_WATERMARK, this);
     }
 
