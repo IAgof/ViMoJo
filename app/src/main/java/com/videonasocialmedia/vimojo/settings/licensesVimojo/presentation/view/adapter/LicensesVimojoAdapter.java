@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicensesVimojoClickListener;
-import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.model.LicenseVimojo;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.model.LicenseVimojo;
 import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;

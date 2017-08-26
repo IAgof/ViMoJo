@@ -21,7 +21,7 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.pr
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseListView;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicensesVimojoClickListener;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.adapter.LicensesVimojoAdapter;
-import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.model.LicenseVimojo;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.model.LicenseVimojo;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;

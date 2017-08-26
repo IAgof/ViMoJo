@@ -3,7 +3,7 @@ package com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.p
 import android.content.Context;
 
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.domain.GetLicenseVimojoListUseCase;
-import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.model.LicenseVimojo;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.model.LicenseVimojo;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseDetailView;
 
 import java.util.List;
@@ -30,12 +30,11 @@ public class LicenseDetailPresenter {
   public void init(String idLicense) {
     licenseSelected = retrieveLicense(idLicense);
     if (licenseSelected!=null){
-      licenseDetailView.setContentLicense(licenseSelected);
-      licenseDetailView.setTitleToolbar (licenseSelected);
+      setContentAndTitleLicense(licenseSelected);
     }
   }
 
-  private LicenseVimojo retrieveLicense(String idLicense) {
+  public LicenseVimojo retrieveLicense(String idLicense) {
     LicenseVimojo result = null;
     for (LicenseVimojo license : licenseList) {
       if (idLicense.equals(license.getIdLicenseVimojo())) {
@@ -43,6 +42,11 @@ public class LicenseDetailPresenter {
       }
     }
     return result;
+  }
+
+  public void setContentAndTitleLicense(LicenseVimojo licenseSelected) {
+    licenseDetailView.setContentLicense(licenseSelected);
+    licenseDetailView.setTitleToolbar (licenseSelected);
   }
 
 }

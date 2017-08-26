@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.model;
+package com.videonasocialmedia.vimojo.settings.licensesVimojo.model;
 
 
 /**

@@ -1,9 +1,9 @@
-package com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.source;
+package com.videonasocialmedia.vimojo.settings.licensesVimojo.source;
 
 import android.content.Context;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.model.LicenseVimojo;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.model.LicenseVimojo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +12,12 @@ import java.util.List;
  *
  */
 
-public class VimojoLicencesRepository {
+public class VimojoLicensesProvider {
 
   private final Context context;
   private List<LicenseVimojo> licenseList = new ArrayList();
 
-  public VimojoLicencesRepository(Context context) {
+  public VimojoLicensesProvider(Context context) {
     this.context = context;
     populateLicenseList();
   }
@@ -26,7 +26,7 @@ public class VimojoLicencesRepository {
     return licenseList;
   }
 
-  private void populateLicenseList() {
+  public void populateLicenseList() {
     licenseList.add(new LicenseVimojo("License 1", context.getString(R.string.licenseContent)));
     licenseList.add(new LicenseVimojo("License 2", context.getString(R.string.licenseContent)));
     }
