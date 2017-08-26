@@ -90,7 +90,6 @@ public class LicensesActivity extends VimojoActivity implements LicenseListView,
     Intent intent = new Intent (this, LicenseDetailActivity.class);
     intent.putExtra(IntentConstants.LICENSE_SELECTED,idLicense);
     startActivity(intent);
-    finish();
   }
 
   @Override

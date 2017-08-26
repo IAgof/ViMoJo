@@ -75,18 +75,6 @@ public class LicenseDetailActivity extends VimojoActivity implements LicenseDeta
     toolbarTitle.setText(license.getIdLicenseVimojo());
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        navigateTo(LicensesActivity.class);
-        return true;
-      default:
-    }
-    return super.onOptionsItemSelected(item);
-  }
-
   public void navigateTo(Class cls) {
     Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
     startActivity(intent);
