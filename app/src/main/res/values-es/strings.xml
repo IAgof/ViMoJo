@@ -220,7 +220,7 @@
     <string name="moreInformation">Más información</string>
     <string name="privacyPolicy">Política de privacidad</string>
     <string name="termsOfService">Condiciones de servicio</string>
-    <string name="licenses">Licencias de código abierto</string>
+    <string name="licenses">Licencias</string>
     <string name="legacyAdviceTitle">Aviso legal</string>
 
     <!-- Contact Settings, not in use -->
