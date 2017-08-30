@@ -26,8 +26,10 @@ public class VimojoLicensesProvider {
     return licenseList;
   }
 
-  public void populateLicenseList() {
-    licenseList.add(new LicenseVimojo("License 1", context.getString(R.string.licenseContent)));
-    licenseList.add(new LicenseVimojo("License 2", context.getString(R.string.licenseContent)));
-    }
+  private void populateLicenseList() {
+    licenseList.add(new LicenseVimojo("Licencias de código abierto", context.getString(R.string.licenseContent)));
+    licenseList.add(new LicenseVimojo("Licencias de diseño", context.getString(R.string.licenseDesign)));
+    licenseList.add(new LicenseVimojo("Licencias de música", context.getString(R.string.licenseMusic)));
+
+  }
 }
