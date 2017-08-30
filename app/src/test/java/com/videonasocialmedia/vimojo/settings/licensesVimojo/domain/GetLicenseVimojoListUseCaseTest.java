@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.settings.licensesVimojo.domain;
 
-import android.content.Context;
+
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.source.VimojoLicensesProvider;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -8,18 +9,16 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by ruth on 24/08/17.
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class GetLicenseVimojoListUseCaseTest {
-  @Mock Context mockedContext;
+  @Mock VimojoLicensesProvider mockedLicenseProvider;
 
   @InjectMocks GetLicenseVimojoListUseCase injectedUseCase;
 
@@ -29,21 +28,10 @@ public class GetLicenseVimojoListUseCaseTest {
   }
 
   @Test
-  public void getLicenseListFromRepositoryAndIsNotNull() {
-    GetLicenseVimojoListUseCase getLicenseVimojoListUseCase = new GetLicenseVimojoListUseCase(mockedContext);
+  public void getLicenseListCallsVimojoLicenseProviderGetAll() {
+    injectedUseCase.getLicenceList();
 
-    getLicenseVimojoListUseCase.getLicenceList();
-
-    assertThat("licenses are not null",getLicenseVimojoListUseCase.getLicenceList().size(), notNullValue());
-  }
-
-  @Test
-  public void getLicenseListReturnSizeProperly() {
-    GetLicenseVimojoListUseCase getLicenseVimojoListUseCase = new GetLicenseVimojoListUseCase(mockedContext);
-
-    getLicenseVimojoListUseCase.getLicenceList();
-
-    assertThat("licenses in Vimojo are two",getLicenseVimojoListUseCase.getLicenceList().size(), is(2));
+    verify(mockedLicenseProvider).getAll();
   }
 
 }

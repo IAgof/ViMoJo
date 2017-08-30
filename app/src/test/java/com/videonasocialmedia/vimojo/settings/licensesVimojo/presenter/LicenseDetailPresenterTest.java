@@ -12,7 +12,6 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.source.VimojoLicens
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -22,7 +21,9 @@ import java.util.ArrayList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -36,7 +37,7 @@ public class LicenseDetailPresenterTest {
   @Mock private GetLicenseVimojoListUseCase getLicenseVimojoListUseCase;
   @Mock private VimojoLicensesProvider vimojoLicencesRepository;
   @Mock private LicenseVimojo licenseVimojo;
-  @Mock @Parameterized.Parameter ArrayList<LicenseVimojo> licenseVimojoList;
+  ArrayList<LicenseVimojo> licenseVimojoList;
 
   @InjectMocks LicenseDetailPresenter licenseDetailPresenter;
 
@@ -52,7 +53,7 @@ public class LicenseDetailPresenterTest {
   }
 
   @Test
-  public void testGetLicenseIfIdCoPassedIsEqualToIdLicenseOfList(){
+  public void testGetLicenseIfIdPassedIsEqualToIdLicenseOfList(){
     licenseDetailPresenter=getLicenseDetailPresenter();
     String idLicense = "1";
     licenseVimojoList = new ArrayList<>();
@@ -62,9 +63,9 @@ public class LicenseDetailPresenterTest {
     licenseVimojoList.add(license2);
     when(getLicenseVimojoListUseCase.getLicenceList()).thenReturn(licenseVimojoList);
 
-    licenseVimojo= getLicenseDetailPresenter().retrieveLicense(idLicense);
+    licenseVimojo = getLicenseDetailPresenter().retrieveLicense(idLicense);
 
-    assertThat(licenseVimojo.getIdLicenseVimojo(), is("1"));
+    assertThat(licenseVimojo, is(license1));
   }
 
   @Test
@@ -76,6 +77,35 @@ public class LicenseDetailPresenterTest {
     verify(licenseDetailView).setContentLicense(licenseVimojo);
     verify(licenseDetailView).setTitleToolbar(licenseVimojo);
   }
+
+  @Test
+  public void testInitCallsLicenseDetailViewWhenLicenseIsNotNUll() {
+    licenseVimojoList=new ArrayList<>();
+    LicenseVimojo license1= new LicenseVimojo("id","content");
+    licenseVimojoList.add(license1);
+    when(getLicenseVimojoListUseCase.getLicenceList()).thenReturn(licenseVimojoList);
+    licenseDetailPresenter=getLicenseDetailPresenter();
+
+    licenseDetailPresenter.init("id");
+
+    verify(licenseDetailView).setContentLicense(license1);
+    verify(licenseDetailView).setTitleToolbar(license1);
+  }
+
+  @Test
+  public void testInitNotCallsLicenseDetailViewWhenLicenseIsNull() {
+    licenseVimojoList=new ArrayList<>();
+    LicenseVimojo license1= new LicenseVimojo("id","content");
+    licenseVimojoList.add(license1);
+    when(getLicenseVimojoListUseCase.getLicenceList()).thenReturn(licenseVimojoList);
+    licenseDetailPresenter=getLicenseDetailPresenter();
+
+    licenseDetailPresenter.init("otherId");
+
+    verify(licenseDetailView, never()).setTitleToolbar(license1);
+    verify(licenseDetailView, never()).setContentLicense(license1);
+  }
+
 
   @NonNull LicenseDetailPresenter getLicenseDetailPresenter (){
     return new LicenseDetailPresenter(licenseDetailView, mockedContext, getLicenseVimojoListUseCase);
