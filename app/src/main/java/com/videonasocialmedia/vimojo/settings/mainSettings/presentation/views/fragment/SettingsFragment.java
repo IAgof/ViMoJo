@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.settings.presentation.views.fragment;
+package com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,8 +23,8 @@ import com.videonasocialmedia.vimojo.main.DaggerFragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.FragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.FragmentPresentersModule;
-import com.videonasocialmedia.vimojo.settings.presentation.mvp.presenters.PreferencesPresenter;
-import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.PreferencesView;
+import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
+import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.AboutActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.LegalNoticeActivity;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.activity.LicensesActivity;

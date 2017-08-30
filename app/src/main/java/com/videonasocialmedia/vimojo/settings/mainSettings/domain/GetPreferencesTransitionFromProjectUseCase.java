@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.settings.domain;
+package com.videonasocialmedia.vimojo.settings.mainSettings.domain;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 

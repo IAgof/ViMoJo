@@ -54,7 +54,8 @@ import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.source.VimojoLicensesProvider;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.domain.GetLicenseVimojoListUseCase;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseDetailPresenter;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseListPresenter;
@@ -376,8 +377,9 @@ public class ActivityPresentersModule {
     return new GetMusicListUseCase(activity);
   }
 
-  @Provides GetLicenseVimojoListUseCase provideLicenseListUseCase() {
-    return new GetLicenseVimojoListUseCase(activity);
+  @Provides GetLicenseVimojoListUseCase provideLicenseListUseCase(
+      VimojoLicensesProvider vimojoLicencesProvider) {
+    return new GetLicenseVimojoListUseCase(vimojoLicencesProvider);
   }
 
   @Provides GetMediaListFromProjectUseCase provideMediaListRetriever() {
@@ -477,5 +479,9 @@ public class ActivityPresentersModule {
             directorySaveVideos,
             getVideoFormatFromCurrentProjectUseCase
                     .getVideoRecordedFormatFromCurrentProjectUseCase());
+  }
+
+  @Provides VimojoLicensesProvider provideLicenseProvider() {
+    return new VimojoLicensesProvider(activity);
   }
 }
