@@ -11,7 +11,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
@@ -40,7 +40,8 @@ public class RecordPresenterTest {
   @Mock GLCameraView mockedGLCameraview;
   @Mock SharedPreferences mockedSharedPreferences;
   @Mock AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
-  @Mock LaunchTranscoderAddAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionsUseCase;
+  @Mock
+  ApplyAVTransitionsUseCase mockedApplyAVTransitionsUseCase;
   @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
   @Mock private VideoRepository mockedVideoRepository;
 
@@ -65,7 +66,7 @@ public class RecordPresenterTest {
   private RecordPresenter getRecordPresenter() {
     return new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
         mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
-        mockedVideoRepository, mockedLaunchTranscoderAddAVTransitionsUseCase,
+        mockedVideoRepository, mockedApplyAVTransitionsUseCase,
         mockedGetVideonaFormatFromCurrentProjectUseCase);
   }
 

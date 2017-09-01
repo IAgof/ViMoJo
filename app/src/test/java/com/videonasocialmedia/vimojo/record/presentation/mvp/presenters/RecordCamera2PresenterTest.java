@@ -18,7 +18,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -65,7 +65,8 @@ public class RecordCamera2PresenterTest {
   @Mock SharedPreferences mockedSharedPreferences;
   @Mock SharedPreferences.Editor mockedEditor;
   @Mock AutoFitTextureView mockedTextureView;
-  @Mock LaunchTranscoderAddAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionUseCase;
+  @Mock
+  ApplyAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionUseCase;
   @Mock AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
   @Mock VideonaFormat mockedVideoFormat;
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
@@ -335,8 +336,6 @@ public class RecordCamera2PresenterTest {
   private RecordCamera2Presenter getRecordCamera2Presenter() {
     return new RecordCamera2Presenter(mockedActivity,
             mockedRecordView, mockedUserEventTracker, mockedSharedPreferences,
-            mockedVideoRepository,
-            mockedLaunchTranscoderAddAVTransitionUseCase,
             mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper);
   }
 }

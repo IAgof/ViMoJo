@@ -7,6 +7,7 @@ import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
@@ -16,7 +17,6 @@ import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjec
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
@@ -43,7 +43,6 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.ShareVideoPrese
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
@@ -198,11 +197,11 @@ public class ActivityPresentersModule {
   GalleryPagerPresenter provideGalleryPagerPresenter(
           AddVideoToProjectUseCase addVideoToProjectUseCase,
           GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
-          LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionsUseCase,
+          ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
           UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase,
           SharedPreferences sharedPreferences, VideoRepository videoRepository) {
     return new GalleryPagerPresenter((GalleryActivity) activity, activity, addVideoToProjectUseCase,
-            getVideonaFormatFromCurrentProjectUseCase, launchTranscoderAddAVTransitionsUseCase,
+            getVideonaFormatFromCurrentProjectUseCase, applyAVTransitionsUseCase,
             updateVideoResolutionToProjectUseCase, videoRepository, sharedPreferences);
   }
 
@@ -210,24 +209,21 @@ public class ActivityPresentersModule {
   RecordPresenter provideRecordPresenter(
           UserEventTracker userEventTracker, SharedPreferences sharedPreferences,
           AddVideoToProjectUseCase addVideoToProjectUseCase,
-          LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionsUseCase,
+          ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
           GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
           VideoRepository videoRepository) {
     return new RecordPresenter(activity, (RecordActivity) activity, userEventTracker, cameraView,
         sharedPreferences, externalIntent, addVideoToProjectUseCase, videoRepository,
-        launchTranscoderAddAVTransitionsUseCase, getVideonaFormatFromCurrentProjectUseCase);
+            applyAVTransitionsUseCase, getVideonaFormatFromCurrentProjectUseCase);
   }
 
   @Provides @PerActivity
   RecordCamera2Presenter provideRecordCamera2Presenter(
-          UserEventTracker userEventTracker,
-          SharedPreferences sharedPreferences,
-          LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionsUseCase,
+          UserEventTracker userEventTracker, SharedPreferences sharedPreferences,
           AddVideoToProjectUseCase addVideoToProjectUseCase, Camera2Wrapper camera2wrapper,
-          VideoRepository videoRepository, NewClipImporter newClipImporter) {
+          NewClipImporter newClipImporter) {
     return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity, userEventTracker,
-            sharedPreferences, videoRepository, launchTranscoderAddAVTransitionsUseCase,
-            addVideoToProjectUseCase, newClipImporter, camera2wrapper);
+            sharedPreferences, addVideoToProjectUseCase, newClipImporter, camera2wrapper);
   }
 
   @Provides @PerActivity
@@ -313,8 +309,10 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  AddVideoToProjectUseCase provideVideoAdder(ProjectRepository projectRepository) {
-    return new AddVideoToProjectUseCase(projectRepository);
+  AddVideoToProjectUseCase provideVideoAdder(
+          ProjectRepository projectRepository,
+          ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase) {
+    return new AddVideoToProjectUseCase(projectRepository, launchTranscoderAddAVTransitionUseCase);
   }
 
   @Provides
@@ -385,17 +383,19 @@ public class ActivityPresentersModule {
             relaunchTranscoderTempBackgroundUseCase);
   }
 
-  @Provides LaunchTranscoderAddAVTransitionsUseCase provideLaunchTranscoderAddAVTransition(
+  @Provides
+  ApplyAVTransitionsUseCase provideLaunchTranscoderAddAVTransition(
       VideoRepository videoRepository){
-   return  new LaunchTranscoderAddAVTransitionsUseCase(videoRepository);
+   return  new ApplyAVTransitionsUseCase(videoRepository);
   }
 
   @Provides GetVideoFormatFromCurrentProjectUseCase provideVideoFormatFromCurrentProjectUseCase() {
     return new GetVideoFormatFromCurrentProjectUseCase();
   }
 
-  @Provides AdaptVideoRecordedToVideoFormatUseCase provideAdaptVideoRecordedToVideoFormatUseCase() {
-    return new AdaptVideoRecordedToVideoFormatUseCase();
+  @Provides AdaptVideoRecordedToVideoFormatUseCase provideAdaptVideoRecordedToVideoFormatUseCase(
+          VideoToAdaptRepository videoToAdaptRepository, VideoRepository videoRepository) {
+    return new AdaptVideoRecordedToVideoFormatUseCase(videoToAdaptRepository, videoRepository);
   }
 
   @Provides RelaunchTranscoderTempBackgroundUseCase provideRelaunchTranscoderTempBackgroundUseCase(
@@ -441,9 +441,10 @@ public class ActivityPresentersModule {
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository) {
+          VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository,
+          ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase) {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase,
-            adaptVideoRecordedToVideoFormatUseCase, relaunchTranscoderTempBackgroundUseCase,
-            videoRepository, videoToAdaptRepository);
+            adaptVideoRecordedToVideoFormatUseCase, launchTranscoderAddAVTransitionUseCase,
+            relaunchTranscoderTempBackgroundUseCase, videoRepository, videoToAdaptRepository);
   }
 }

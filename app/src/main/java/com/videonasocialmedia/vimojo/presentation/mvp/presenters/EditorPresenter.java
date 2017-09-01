@@ -93,7 +93,7 @@ public class EditorPresenter {
   }
 
   public void init() {
-    newClipImporter.relaunchUnfinishedAdaptTasks();
+    newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
     obtainVideos();
   }
 

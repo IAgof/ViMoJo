@@ -28,12 +28,11 @@ import com.videonasocialmedia.avrecorder.event.CameraOpenedEvent;
 import com.videonasocialmedia.avrecorder.event.MuxerFinishedEvent;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
-import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessEvent;
-import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -66,16 +65,13 @@ import de.greenrobot.event.EventBus;
  * @deprecated RecordPresenter use camera1, avrecorder.
  */
 
-public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
-    TranscoderHelperListener {
-
-    /**
-     * LOG_TAG
-     */
+public class RecordPresenter implements OnLaunchAVTransitionTempFileListener
+//        , TranscoderHelperListener
+{
+    private static final String LOG_TAG = RecordPresenter.class.getSimpleName();
     public static final long ONE_KB = 1 *1024;
     public static final long ONE_MB = ONE_KB*1024;
     public static final long ONE_GB = ONE_MB*1024;
-    private static final String LOG_TAG = "RecordPresenter";
     private final UserEventTracker userEventTracker;
     private final VideoRepository videoRepository;
     private boolean firstTimeRecording;
@@ -97,7 +93,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
 
     private Drawable drawableFadeTransitionVideo;
     private VideonaFormat videoFormat;
-    private LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
+    private ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
     private GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
 
     @Inject
@@ -105,7 +101,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
             Context context, RecordView recordView, UserEventTracker userEventTracker,
             GLCameraView cameraPreview, SharedPreferences sharedPreferences, boolean externalIntent,
             AddVideoToProjectUseCase addVideoToProjectUseCase, VideoRepository videoRepository,
-            LaunchTranscoderAddAVTransitionsUseCase launchTranscoderAddAVTransitionsUseCase,
+            ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
             GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase) {
         this.context = context;
         this.recordView = recordView;
@@ -115,7 +111,7 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         this.externalIntent = externalIntent;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.videoRepository = videoRepository;
-        this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionsUseCase;
+        this.launchTranscoderAddAVTransitionUseCase = applyAVTransitionsUseCase;
         this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.currentProject = loadCurrentProject();
         preferencesEditor = sharedPreferences.edit();
@@ -321,12 +317,11 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         if (externalIntent) {
             recordView.finishActivityForResult(finalPath);
         } else {
-            addVideoToProjectUseCase.addVideoToTrack(finalPath, this);
+            addVideoToProjectUseCase.addVideoToTrack(finalPath);
         }
     }
 
     private String moveVideoToMastersFolder() {
-
         String originalFile = config.getOutputPath();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String fileName = "VID_" + timeStamp + ".mp4";
@@ -480,31 +475,42 @@ public class RecordPresenter implements OnLaunchAVTransitionTempFileListener,
         videoFormat = currentProject.getVMComposition().getVideoFormat();
         drawableFadeTransitionVideo = context.getDrawable(R.drawable.alpha_transition_white);
 
-        launchTranscoderAddAVTransitionUseCase.launchExportTempFile(drawableFadeTransitionVideo,
-                video, videoFormat, intermediatesTempAudioFadeDirectory, this);
+        launchTranscoderAddAVTransitionUseCase.applyAVTransitions(drawableFadeTransitionVideo,
+                video, videoFormat, intermediatesTempAudioFadeDirectory,
+                new ApplyAVTransitionsUseCase.AVTransitionsApplierListener() {
+                    @Override
+                    public void onSuccessApplyAVTransitions(Video video) {
+                        // TODO(jliarte): 31/08/17 implement this method or maybe delete the listener
+                    }
+
+                    @Override
+                    public void onErrorApplyAVTransitions(Video video, String message) {
+                        // TODO(jliarte): 31/08/17 implement this method or maybe delete the listener
+                    }
+                });
     }
 
-    @Override
-    public void onSuccessTranscoding(Video video) {
-        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
-        videoRepository.setSuccessTranscodingVideo(video);
-    }
-
-    @Override
-    public void onErrorTranscoding(Video video, String message) {
-        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-        if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
-            video.increaseNumTriesToExportVideo();
-            Project currentProject = Project.getInstance(null,null, null, null);
-            launchTranscoderAddAVTransitionUseCase.launchExportTempFile(context
-                    .getDrawable(R.drawable.alpha_transition_white), video,
-                getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
-                currentProject.getProjectPathIntermediateFileAudioFade(), this);
-        } else {
-            videoRepository.setErrorTranscodingVideo(video,
-                    Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
-        }
-    }
+//    @Override
+//    public void onSuccessTranscoding(Video video) {
+//        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
+//        videoRepository.setSuccessTranscodingVideo(video);
+//    }
+//
+//    @Override
+//    public void onErrorTranscoding(Video video, String message) {
+//        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
+//        if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
+//            video.increaseNumTriesToExportVideo();
+//            Project currentProject = Project.getInstance(null,null, null, null);
+//            launchTranscoderAddAVTransitionUseCase.applyAVTransitions(context
+//                    .getDrawable(R.drawable.alpha_transition_white), video,
+//                getVideonaFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
+//                currentProject.getProjectPathIntermediateFileAudioFade(), this);
+//        } else {
+//            videoRepository.setErrorTranscodingVideo(video,
+//                    Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
+//        }
+//    }
 
     public void updateBatteryStatus(int batteryStatus, int batteryLevel, int batteryScale) {
         int batteryPercent= getPercentLevel(batteryLevel, batteryScale);

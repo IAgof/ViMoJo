@@ -15,6 +15,8 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -32,6 +34,7 @@ public class AdaptVideoRecordedToVideoFormatUseCaseTest {
   String destVideoPath = "dcim/vimojo/masters";
   int rotation = 0;
   @Mock VideonaFormat mockedVideoFormat;
+  @Mock private AdaptVideoRecordedToVideoFormatUseCase.AdaptListener mockedAdaptListener;
 
   @Before
   public void injectDoubles() throws Exception {
@@ -45,9 +48,10 @@ public class AdaptVideoRecordedToVideoFormatUseCaseTest {
     injectedAdaptVideoRecordedToVideoFormatUseCase.transcoderHelper = mockedTranscoderHelper;
 
     injectedAdaptVideoRecordedToVideoFormatUseCase.adaptVideo(mockedVideo, mockedVideoFormat,
-        destVideoPath, rotation, mockedTranscoderHelperListener);
+            destVideoPath, rotation, mockedAdaptListener);
 
-    verify(mockedTranscoderHelper).adaptVideoWithRotationToDefaultFormatAsync(mockedVideo,
-        mockedVideoFormat, destVideoPath, rotation, mockedTranscoderHelperListener, tempDirectory);
+    verify(mockedTranscoderHelper).adaptVideoWithRotationToDefaultFormatAsync(eq(mockedVideo),
+        eq(mockedVideoFormat), eq(destVideoPath), eq(rotation), any(TranscoderHelperListener.class),
+            eq(tempDirectory));
   }
 }
