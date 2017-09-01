@@ -6,6 +6,10 @@ node {
   // Checkout code from repository and update any submodules
 //  checkout scm
 //  sh 'git submodule update --init'
+  sh '''
+  git config user.email "jenkins@videona.com"
+  git config user.name "Jenkins (Videona release job)"
+  '''
   checkout([
           $class: 'GitSCM',
           branches: scm.branches,
