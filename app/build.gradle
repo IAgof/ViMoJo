@@ -64,7 +64,7 @@ android {
             applicationId "com.videonasocialmedia.vimojo.main"
             versionCode 55 // 20170804
             versionName "0.7.0-RC6" // 20170802
-            resValue "string", "app_out_of_date", "2017-08-31" // 20170731
+            resValue "string", "app_out_of_date", "2017-09-31" // 20170731
             resValue "string", "app_name", "Vimojo"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -92,7 +92,7 @@ android {
             applicationId "com.videonasocialmedia.vimojo.rtve"
             versionCode 34 // 20170804
             versionName "0.7.0-RC6.fRtve" // 20170802
-            resValue "string", "app_out_of_date", "2017-08-31" // 20170731
+            resValue "string", "app_out_of_date", "2017-09-31" // 20170731
             resValue "string", "app_name", "Vimojo Rtve"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -106,7 +106,7 @@ android {
             applicationId "com.videonasocialmedia.vimojo.vimojowatermark"
             versionCode 8 // 20170804
             versionName "0.7.0-RC6.fVimojoWatermark" // 20170802
-            resValue "string", "app_out_of_date", "2017-08-31" //20170731
+            resValue "string", "app_out_of_date", "2017-09-31" //20170731
             resValue "string", "app_name", "Vimojo Videona"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
