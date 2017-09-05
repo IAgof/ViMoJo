@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/menu_navview_username"
@@ -34,6 +35,19 @@
             android:icon="@drawable/editor_activity_drawer_ic_mail"
             android:title="@string/drawerSuggestions"/>
     </group>
+
+    <item
+        android:id="@+id/section_menu_navview_style_dark"
+        android:title="">
+        <menu>
+            <item
+                android:id="@+id/switch_theme_dark"
+                android:title="@string/section_navview_style"
+                app:actionLayout="@layout/switch_theme_dark">
+            </item>
+        </menu>
+
+    </item>
 
 
 </menu>

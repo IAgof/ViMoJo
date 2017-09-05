@@ -16,5 +16,7 @@ public interface EditorActivityView {
 
   void showMessage(int stringToast);
 
+  void showPreferenceTheme (boolean isChecked);
+
   void expandFabMenu();
 }

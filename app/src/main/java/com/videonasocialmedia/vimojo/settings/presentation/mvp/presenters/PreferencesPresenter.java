@@ -64,6 +64,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private Preference transitionVideoPref;
     private Preference transitionAudioPref;
     private Preference watermarkPref;
+    private Preference themeApp;
     private Preference emailPref;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private boolean isPreferenceAvailable = false;
@@ -98,7 +99,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             SharedPreferences sharedPreferences,
             PreferenceCategory cameraSettingsPref,
             ListPreference resolutionPref, ListPreference qualityPref,
-            Preference transitionVideoPref,
+            Preference transitionVideoPref, Preference themeApp,
             Preference transitionAudioPref, Preference watermarkPref, Preference emailPref,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
@@ -124,6 +125,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.transitionAudioPref = transitionAudioPref;
         this.watermarkPref = watermarkPref;
         this.emailPref = emailPref;
+        this.themeApp = themeApp;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase =
             getPreferencesTransitionFromProjectUseCase;
@@ -172,6 +174,11 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         checkAvailableQuality();
         checkTransitions();
         checkWatermark(BuildConfig.FEATURE_WATERMARK);
+        checkThemeApp(ConfigPreferences.THEME_APP);
+    }
+
+    private void checkThemeApp(String key) {
+        preferencesView.setThemeDarkAppPref(key, sharedPreferences.getBoolean(key,false));
     }
 
     private void checkTransitions() {

@@ -248,6 +248,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
+  public void showPreferenceTheme(boolean checked) {
+    Menu menu = navigationView.getMenu();
+    menu.findItem(R.id.drawer_switch).setChecked(checked);
+  }
+
+  @Override
   public void showPreferenceUserName(String data) {
     Menu menu = navigationView.getMenu();
     menu.findItem(R.id.menu_navview_username).setTitle(data);

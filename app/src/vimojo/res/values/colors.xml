@@ -40,4 +40,10 @@
     <color name="recordActivityInfoYellow">#ffcb00</color>
     <color name="recordActivityInfoRed">#ff2232</color>
 
+    <color name="colorPrimaryThemeDark">#212121</color>
+    <color name="colorPrimaryDarkThemeDark">#000000</color>
+    <color name="colorPrimaryLightThemeDark">#303030</color>
+
+    <color name="colorAccentThemeDarK">#212121</color>
+
 </resources>

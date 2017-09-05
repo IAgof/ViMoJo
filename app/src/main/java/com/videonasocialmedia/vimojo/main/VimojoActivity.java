@@ -12,6 +12,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -38,6 +39,8 @@ import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,6 +63,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
     protected MultiplePermissionsListener dialogMultiplePermissionsListener;
     @Inject protected LoadCurrentProjectUseCase loadCurrentProjectUseCase;
     @Inject ProjectRepository projectRepository;
+    @Inject SharedPreferences sharedPreferences;
 
     public SystemComponent getSystemComponent() {
         return ((VimojoApplication)getApplication()).getSystemComponent();
@@ -70,6 +74,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSystemComponent().inject(this);
         loadCurrentProjectUseCase.loadCurrentProject();
+        updateThemeApp();
         if (getIntent().getBooleanExtra("EXIT", false)) {
             finish();
         }
@@ -77,6 +82,15 @@ public abstract class VimojoActivity extends AppCompatActivity {
         trackerDelegate.onCreate();
 
         View root = findViewById(android.R.id.content);
+    }
+
+    public void updateThemeApp() {
+        boolean isActivateDarkTheme = sharedPreferences.getBoolean(ConfigPreferences.THEME_APP,false);
+        if(isActivateDarkTheme) {
+            setTheme(R.style.VideonaThemeDark);
+        } else {
+            setTheme(R.style.VideonaTheme);
+        }
     }
 
     private void configPermissions() {

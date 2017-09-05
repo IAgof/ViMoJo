@@ -44,11 +44,59 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <style name="VideonaThemeDark" parent="Theme.AppCompat">
+
+        <!-- Animations -->
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
+        <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
+
+        <item name="android:colorPrimary">@color/colorPrimaryThemeDark</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDarkThemeDark</item>
+        <item name="android:colorAccent">@color/colorAccentThemeDarK</item>
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+        <item name="android:textColorSecondary">@color/colorDivider</item>
+        <item name="android:textColorPrimaryInverse">@color/colorAccentThemeDarK</item>
+        <item name="android:colorControlNormal">@color/colorWhite</item>
+
+        <!-- Hide scrollbar in scrollViews -->
+        <item name="android:scrollbarThumbHorizontal">@color/colorTransparent</item>
+        <item name="android:scrollbarThumbVertical">@color/colorTransparent</item>
+
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@color/colorTransparent</item>
+
+        <item name="android:alertDialogTheme">@style/VideonaAlertDialogThemeDark</item>
+        <item name="android:preferenceCategoryStyle">@style/VideonaCategoryPreference</item>
+        <item name="drawerArrowStyle">@style/VideonaDrawerIconStyle</item>
+
+        <item name="android:editTextStyle">@style/VideonaEditText</item>
+        <item name="colorAccent">@color/colorAccentThemeDarK</item>
+        <item name="colorPrimary">@color/colorPrimaryThemeDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkThemeDark</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+
+
     <style name="VideonaAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:colorPrimary">@color/colorPrimary</item>
         <item name="android:textColorAlertDialogListItem">@color/textColorPrimary</item>
         <item name="colorControlActivated">@color/colorAccent</item>
         <item name="android:colorAccent">@color/colorPrimary</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="VideonaAlertDialogThemeDark" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:colorPrimary">@color/colorPrimaryThemeDark</item>
+        <item name="android:textColorAlertDialogListItem">@color/colorWhite</item>
+        <item name="colorControlActivated">@color/colorAccentThemeDarK</item>
+        <item name="android:colorAccent">@color/colorPrimaryThemeDark</item>
         <item name="textAllCaps">false</item>
     </style>
 

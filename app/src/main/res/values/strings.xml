@@ -1801,6 +1801,8 @@ and Conditions.\n\n
     <string name="title_track_clip_voice_over">Voice over track volume</string>
     <string name="mute">Mute</string>
     <string name="solo">Solo</string>
+    <string name="title_theme_app_preference">ThemeApp</string>
+    <string name="title_theme_app_section">Activate Theme Dark</string>
 
 
 </resources>
