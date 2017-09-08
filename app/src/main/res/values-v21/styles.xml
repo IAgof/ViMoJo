@@ -7,7 +7,7 @@
 
     <!-- AppTheme Videona -->
     <style name="VideonaTheme" parent="Theme.AppCompat.Light.NoActionBar">
-
+        <item name="themeName">light</item>
         <!-- Animations -->
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAllowEnterTransitionOverlap">true</item>
@@ -45,6 +45,7 @@
     </style>
 
     <style name="VideonaThemeDark" parent="Theme.AppCompat">
+        <item name="themeName">dark</item>
 
         <!-- Animations -->
         <item name="android:windowContentTransitions">true</item>

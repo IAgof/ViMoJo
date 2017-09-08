@@ -8,6 +8,7 @@
 
 <resources>
 
+    <attr name="themeName" format="string"/>
     <attr name="ic_settings_videona" format="reference"/>
     
     <declare-styleable name="CircleImageView">

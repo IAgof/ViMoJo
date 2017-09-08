@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,6 +66,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   CircleImageView imageUserThumb;
   String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_THUMB;
   private int REQUEST_ICON_USER = 100;
+  private final String THEME_DARK = "dark";
+  private final String THEME_LIGHT = "light";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +135,39 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       editorPresenter.getPreferenceEmail();
     }
     editorPresenter.init();
+    updateTheme();
+  }
+
+  private void updateTheme() {
+    boolean isDark= checkIfThemeDarkIsSelected();
+    String themeActually= getThemeActuallyInActivity();
+    if(isDark && themeActually.equals(THEME_LIGHT) || !isDark && themeActually.equals(THEME_DARK)) {
+      restartActivity();
+    }
+
+  }
+
+  private String getThemeActuallyInActivity() {
+    String themeActually;
+    TypedValue outValue = new TypedValue();
+    getTheme().resolveAttribute(R.attr.themeName, outValue, true);
+    if ("dark".equals(outValue.string)) {
+      themeActually= THEME_DARK;
+    }else{
+      themeActually= THEME_LIGHT;
+    }
+    return themeActually;
+  }
+
+  private boolean checkIfThemeDarkIsSelected() {
+    boolean isDark = editorPresenter.getPreferenceThemeApp();
+    return isDark;
+  }
+
+  private void restartActivity() {
+    finish();
+    Intent intent = getIntent();
+    startActivity(intent);
   }
 
   @Override

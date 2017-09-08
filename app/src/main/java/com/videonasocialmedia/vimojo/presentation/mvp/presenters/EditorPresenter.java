@@ -91,6 +91,11 @@ public class EditorPresenter implements TranscoderHelperListener, OnVideosRetrie
 
   }
 
+  public boolean getPreferenceThemeApp() {
+    boolean isActivateDarkTheme= sharedPreferences.getBoolean(ConfigPreferences.THEME_APP,false);
+    return isActivateDarkTheme;
+  }
+
   public void createNewProject(String roothPath, String privatePath, boolean isWatermarkFeatured){
     createDefaultProjectUseCase.createProject(roothPath, privatePath, isWatermarkFeatured);
     clearProjectDataFromSharedPreferences();
