@@ -37,7 +37,7 @@ public class VideoListErrorCheckerDelegateTest {
   @Mock
   VideoListErrorCheckerDelegate mockedVideoListErrorCheckerDelegate;
   @Mock
-  ListenableFuture<Void> mockedTranscodingTask;
+  ListenableFuture<Video> mockedTranscodingTask;
   @Mock
   VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
 

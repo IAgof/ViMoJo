@@ -80,32 +80,16 @@ public class ModifyVideoTextAndPositionUseCase {
           }
         }
       };
-      updateGeneratedVideo(drawableFadeTransition, videoToEdit, format,
-              intermediatesTempAudioFadeDirectory, listener, isVideoFadeTransitionActivated,
-              isAudioFadeTransitionActivated);
+      // TODO(jliarte): 18/09/17 add callback!
+      transcoderHelper.updateIntermediateFile(drawableFadeTransition,
+              isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit, format,
+              intermediatesTempAudioFadeDirectory);
 
       videoRepository.update(videoToEdit);
     }
 
   private Project getCurrentProject() {
     return Project.getInstance(null, null, null, null);
-  }
-
-  private void updateGeneratedVideo(
-          Drawable drawableFadeTransition, Video videoToEdit, VideonaFormat format,
-          String intermediatesTempAudioFadeDirectory, TranscoderHelperListener listener,
-          boolean isVideoFadeTransitionActivated, boolean isAudioFadeTransitionActivated) {
-    // TODO(jliarte): 19/10/16 move this logic to TranscoderHelper?
-    if (videoToEdit.isTrimmedVideo()) {
-      transcoderHelper.generateOutputVideoWithOverlayImageAndTrimmingAsync(
-              drawableFadeTransition, isVideoFadeTransitionActivated,
-              isAudioFadeTransitionActivated, videoToEdit, format,
-              intermediatesTempAudioFadeDirectory, listener);
-    } else {
-      transcoderHelper.generateOutputVideoWithOverlayImageAsync(drawableFadeTransition,
-              isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit,
-              format, intermediatesTempAudioFadeDirectory, listener);
-    }
   }
 }
 

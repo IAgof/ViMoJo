@@ -56,6 +56,7 @@ android {
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
     def FABRIC_VIDEONA_ORG_APIKEY = "eba78720f87307ca48dfa4200dd90914ff6653f2"
     def FABRIC_VIDEONA_ORG_APISECRET = "1636d8a8a8c633c8ba87f5a67ca26a5cc354c414b108ef565df202f07f393ae9"
@@ -209,14 +210,13 @@ dependencies {
     testCompile('junit:junit:4.12') {
         exclude group: "org.hamcrest"
     }
-    testCompile('org.mockito:mockito-core:1.10.19') {
+    testCompile('org.mockito:mockito-core:2.6.3') {
         exclude group: "org.hamcrest"
     }
     testCompile 'org.robolectric:robolectric:3.1.2'
-    testCompile 'org.powermock:powermock-api-mockito:1.6.4'
-    testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.6.4'
-//    testCompile 'org.powermock:powermock-module-junit4-rule:1.6.4'
-    testCompile 'org.powermock:powermock-module-junit4:1.6.4'
+    testCompile 'org.powermock:powermock-api-mockito2:1.7.1'
+    testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.7.1'
+    testCompile 'org.powermock:powermock-module-junit4:1.7.1'
     testCompile 'org.json:json:20140107'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':avrecorder')
@@ -260,11 +260,15 @@ dependencies {
     androidTestCompile('junit:junit:4.12') {
         exclude group: "org.hamcrest"
     }
-    androidTestCompile('org.mockito:mockito-core:1.10.19') {
+//    androidTestCompile('org.mockito:mockito-core:1.10.19') {
+//        exclude group: "org.hamcrest"
+//    }
+//    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
+//    androidTestCompile 'com.linkedin.dexmaker:dexmaker-mockito:2.2.0'
+    androidTestCompile('org.mockito:mockito-core:2.6.3') {
         exclude group: "org.hamcrest"
     }
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
+    androidTestCompile 'org.mockito:mockito-android:2.6.3'
     compile('com.crashlytics.sdk.android:crashlytics:2.6.3@aar') {
         transitive = true;
     }

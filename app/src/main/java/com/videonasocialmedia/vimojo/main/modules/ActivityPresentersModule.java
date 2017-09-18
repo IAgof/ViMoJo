@@ -46,8 +46,8 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity
 import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
+import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
-import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
@@ -393,9 +393,10 @@ public class ActivityPresentersModule {
     return new GetVideoFormatFromCurrentProjectUseCase();
   }
 
-  @Provides AdaptVideoRecordedToVideoFormatUseCase provideAdaptVideoRecordedToVideoFormatUseCase(
+  @Provides
+  AdaptVideoToFormatUseCase provideAdaptVideoRecordedToVideoFormatUseCase(
           VideoToAdaptRepository videoToAdaptRepository, VideoRepository videoRepository) {
-    return new AdaptVideoRecordedToVideoFormatUseCase(videoToAdaptRepository, videoRepository);
+    return new AdaptVideoToFormatUseCase(videoToAdaptRepository, videoRepository);
   }
 
   @Provides RelaunchTranscoderTempBackgroundUseCase provideRelaunchTranscoderTempBackgroundUseCase(
@@ -439,12 +440,12 @@ public class ActivityPresentersModule {
   @Provides
   NewClipImporter provideClipImporter(
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-          AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase,
+          AdaptVideoToFormatUseCase adaptVideoToFormatUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository,
           ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase) {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase,
-            adaptVideoRecordedToVideoFormatUseCase, launchTranscoderAddAVTransitionUseCase,
+            adaptVideoToFormatUseCase, launchTranscoderAddAVTransitionUseCase,
             relaunchTranscoderTempBackgroundUseCase, videoRepository, videoToAdaptRepository);
   }
 }

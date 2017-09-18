@@ -54,7 +54,7 @@ public class VideoToAdaptMemoryRepository implements VideoToAdaptRepository {
 
   @Override
   public List<VideoToAdapt> getAllVideos() {
-    return new ArrayList<>((Collection<? extends VideoToAdapt>) videoListToAdaptAndPosition);
+    return new ArrayList<>(videoListToAdaptAndPosition.values());
   }
 
   @Override

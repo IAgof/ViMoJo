@@ -14,7 +14,7 @@ import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgro
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
-import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
+import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
@@ -157,7 +157,7 @@ public class FragmentPresentersModule {
   @Provides
   NewClipImporter clipImporterProvider(
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-          AdaptVideoRecordedToVideoFormatUseCase adaptVideosUseCase,
+          AdaptVideoToFormatUseCase adaptVideosUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscodingUseCase,
           VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository,
           ApplyAVTransitionsUseCase launchAVTranscoderAddAVTransitionUseCase) {

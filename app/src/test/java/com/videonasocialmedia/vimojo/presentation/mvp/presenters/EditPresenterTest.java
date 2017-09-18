@@ -57,7 +57,7 @@ public class EditPresenterTest {
   @Mock private GetPreferencesTransitionFromProjectUseCase
           mockedGetPreferencesTransitionsFromProject;
   @Mock private GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
-  @Mock ListenableFuture<Void> mockedTranscodingTask;
+  @Mock ListenableFuture<Video> mockedTranscodingTask;
   @Mock private VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
 
   @InjectMocks private EditPresenter injectedEditPresenter;

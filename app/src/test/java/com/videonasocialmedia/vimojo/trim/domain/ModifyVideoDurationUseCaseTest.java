@@ -59,7 +59,7 @@ public class ModifyVideoDurationUseCaseTest {
   // TODO(jliarte): 22/08/17 cant make this pass when invoked all class tests
   @Ignore
   @Test
-  public void testTrimVideoCallsGenerateOutputVideoWithOverlayImageAndTrimmingIfVideoHasText()
+  public void testTrimVideoCallsUpdateIntermediateFileIfVideoHasText()
           throws IOException {
     Video video = getVideoWithText();
     assert video.hasText();
@@ -69,10 +69,10 @@ public class ModifyVideoDurationUseCaseTest {
     injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
         intermediatesTempAudioFadeDirectory);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimmingAsync(
+    verify(mockedTranscoderHelper).updateIntermediateFile(
             eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated),
             eq(isAudioFadeTransitionActivated), eq(video), eq(videonaFormat),
-            eq(intermediatesTempAudioFadeDirectory), any(TranscoderHelperListener.class));
+            eq(intermediatesTempAudioFadeDirectory));
   }
 
   // TODO(jliarte): 22/08/17 cant make this pass when invoked all class tests
@@ -92,7 +92,7 @@ public class ModifyVideoDurationUseCaseTest {
     verify(mockedTranscoderHelper).generateOutputVideoWithTrimmingAsync(
             eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated),
             eq(isAudioFadeTransitionActivated), eq(video), eq(videonaFormat),
-            eq(intermediatesTempAudioFadeDirectory), any(TranscoderHelperListener.class));
+            eq(intermediatesTempAudioFadeDirectory));
   }
 
   @Test

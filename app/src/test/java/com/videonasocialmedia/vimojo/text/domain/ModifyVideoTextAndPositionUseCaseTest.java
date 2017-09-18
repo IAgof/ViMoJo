@@ -72,7 +72,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
   }
 
   @Test
-  public void testAddTextToVideoCallsGenerateOutputVideoWithOverlayImageAndTrimmingIfVideoIsTrimmed()
+  public void testAddTextToVideoCallsUpdateIntermediateFileIfVideoIsTrimmed()
           throws IOException {
     Video video = getVideoTrimmedWithText();
     assert video.isTrimmedVideo();
@@ -82,10 +82,10 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     injectedUseCase.addTextToVideo(mockDrawableFadeTransition, video, videonaFormat,
             video.getClipText(), video.getClipTextPosition(), intermediatesTempAudioFadeDirectory);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimmingAsync(
+    verify(mockedTranscoderHelper).updateIntermediateFile(
             eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated),
             eq(isAudioFadeTransitionActivated), eq(video), eq(videonaFormat),
-            eq(intermediatesTempAudioFadeDirectory), any(TranscoderHelperListener.class));
+            eq(intermediatesTempAudioFadeDirectory));
   }
 
   @Ignore
@@ -121,7 +121,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAsync(
             eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated),
             eq(isAudioFadeTransitionActivated), eq(video), eq(videonaFormat),
-            eq(intermediatesTempAudioFadeDirectory), any(TranscoderHelperListener.class));
+            eq(intermediatesTempAudioFadeDirectory));
   }
 
   @Test

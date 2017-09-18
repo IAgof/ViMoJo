@@ -7,8 +7,10 @@
 
 package com.videonasocialmedia.vimojo.export.domain;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
@@ -33,7 +35,7 @@ import java.util.concurrent.ExecutionException;
 public class ExportProjectUseCase implements ExportListener {
   private static final String TAG = ExportProjectUseCase.class.getCanonicalName();
   private OnExportFinishedListener onExportFinishedListener;
-  private VMCompositionExportSession VMCompositionExportSession;
+  private VMCompositionExportSession vmCompositionExportSession;
   private Project project;
   private final VideoToAdaptRepository videoToAdaptRepository;
 
@@ -48,7 +50,7 @@ public class ExportProjectUseCase implements ExportListener {
             project.getProjectPathIntermediateAudioMixedFiles();
     String outputFilesDirectory = Constants.PATH_APP;
     String tempAudioPath = project.getProjectPathIntermediateFileAudioFade();
-    VMCompositionExportSession = new VMCompositionExportSessionImpl(project.getVMComposition(),
+    vmCompositionExportSession = new VMCompositionExportSessionImpl(project.getVMComposition(),
         outputFilesDirectory, tempPathIntermediateAudioFilesDirectory, tempAudioPath, this);
     this.videoToAdaptRepository = videoToAdaptRepository;
   }
@@ -60,8 +62,15 @@ public class ExportProjectUseCase implements ExportListener {
     this.onExportFinishedListener = onExportFinishedListener;
     checkWatermarkResource(pathWatermark);
     try {
-      waitForAdaptJobsToFinish();
-      VMCompositionExportSession.exportAsyncronously();
+      ListenableFuture<List<Video>> adaptVideoTasks = getAdaptingVideoTasks();
+      Futures.transform(adaptVideoTasks, new Function<List<Video>, Object>() {
+        @Nullable
+        @Override
+        public Object apply(List<Video> input) {
+          vmCompositionExportSession.exportAsyncronously();
+          return null;
+        }
+      });
     } catch (NoSuchElementException exception) {
       onExportError(String.valueOf(exception));
     } catch (InterruptedException | ExecutionException e) {
@@ -80,19 +89,20 @@ public class ExportProjectUseCase implements ExportListener {
     }
   }
 
-  private void waitForAdaptJobsToFinish() throws ExecutionException, InterruptedException {
+  private ListenableFuture<List<Video>> getAdaptingVideoTasks() throws ExecutionException, InterruptedException {
+    ArrayList<ListenableFuture<Video>> adaptTasks = new ArrayList<>();
     List<VideoToAdapt> videosBeingAdapted = videoToAdaptRepository.getAllVideos();
     if (videosBeingAdapted.size() > 0) {
-      ArrayList<ListenableFuture<Void>> adaptTasks = new ArrayList<>();
       for (VideoToAdapt videoToAdapt : videosBeingAdapted) {
         if ((videoToAdapt.getVideo() != null)
-                && (videoToAdapt.getVideo().getTranscodingTask() != null)) {
+                && (videoToAdapt.getVideo().getTranscodingTask() != null)
+                && (!videoToAdapt.getVideo().getTranscodingTask().isDone())) {
           adaptTasks.add(videoToAdapt.getVideo().getTranscodingTask());
         }
       }
-      ListenableFuture<List<Void>> adapCombinedTask = Futures.allAsList(adaptTasks);
-      adapCombinedTask.get();
     }
+    ListenableFuture<List<Video>> adaptCombinedTask = Futures.allAsList(adaptTasks);
+    return adaptCombinedTask;
   }
 
   @Override

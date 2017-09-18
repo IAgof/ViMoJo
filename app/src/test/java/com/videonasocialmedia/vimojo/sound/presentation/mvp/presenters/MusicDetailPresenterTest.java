@@ -108,8 +108,7 @@ public class MusicDetailPresenterTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                OnAddMediaFinishedListener listener =
-                    invocation.getArgumentAt(2, OnAddMediaFinishedListener.class);
+                OnAddMediaFinishedListener listener = invocation.getArgument(2);
                 listener.onAddMediaItemToTrackSuccess(music);
                 return null;
             }
@@ -133,8 +132,7 @@ public class MusicDetailPresenterTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                OnAddMediaFinishedListener listener =
-                    invocation.getArgumentAt(2, OnAddMediaFinishedListener.class);
+                OnAddMediaFinishedListener listener = invocation.getArgument(2);
                 listener.onAddMediaItemToTrackError();
                 return null;
             }
@@ -144,7 +142,7 @@ public class MusicDetailPresenterTest {
 
         musicDetailPresenter.addMusic(music, volumeMusic);
 
-        verify(musicDetailView).showError(anyString());
+        verify(musicDetailView).showError(null);
     }
 
     @Test
@@ -156,8 +154,7 @@ public class MusicDetailPresenterTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                OnRemoveMediaFinishedListener listener =
-                    invocation.getArgumentAt(2, OnRemoveMediaFinishedListener.class);
+                OnRemoveMediaFinishedListener listener = invocation.getArgument(2);
                 listener.onRemoveMediaItemFromTrackSuccess();
                 return null;
             }
@@ -179,8 +176,7 @@ public class MusicDetailPresenterTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                OnRemoveMediaFinishedListener listener =
-                    invocation.getArgumentAt(2, OnRemoveMediaFinishedListener.class);
+                OnRemoveMediaFinishedListener listener = invocation.getArgument(2);
                 listener.onRemoveMediaItemFromTrackError();
                 return null;
             }
@@ -190,7 +186,7 @@ public class MusicDetailPresenterTest {
 
         musicDetailPresenter.removeMusic(music);
 
-        verify(musicDetailView).showError(anyString());
+        verify(musicDetailView).showError(null);
     }
 
     @Test

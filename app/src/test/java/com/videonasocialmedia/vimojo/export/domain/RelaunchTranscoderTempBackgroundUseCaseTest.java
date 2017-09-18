@@ -102,7 +102,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
   }
 
   @Test
-  public void testRelaunchExportCallsgenerateOutputVideoWithOverlayImageAndTrimmingIfVideoHasText()
+  public void testRelaunchExportCallsUpdateIntermediateFileIfVideoHasText()
           throws Exception {
     Video video = getVideoWithText();
     assert video.hasText();
@@ -111,10 +111,10 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition,
         video, videonaFormat, intermediatesTempAudioFadeDirectory);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimmingAsync(
+    verify(mockedTranscoderHelper).updateIntermediateFile(
             eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated),
             eq(isAudioFadeTransitionActivated), eq(video), eq(videonaFormat),
-            eq(intermediatesTempAudioFadeDirectory), any(TranscoderHelperListener.class));
+            eq(intermediatesTempAudioFadeDirectory));
   }
 
   @Ignore
@@ -148,7 +148,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     verify(mockedTranscoderHelper).generateOutputVideoWithTrimmingAsync(
             eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated),
             eq(isAudioFadeTransitionActivated), eq(video), eq(videonaFormat),
-            eq(intermediatesTempAudioFadeDirectory), any(TranscoderHelperListener.class));
+            eq(intermediatesTempAudioFadeDirectory));
   }
 
   @Test

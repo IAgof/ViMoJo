@@ -2,13 +2,18 @@ package com.videonasocialmedia.vimojo.trim.domain;
 
 
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.common.base.Function;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -47,7 +52,6 @@ public class ModifyVideoDurationUseCase {
   @Inject public ModifyVideoDurationUseCase(VideoRepository videoRepository,
                                             VideoToAdaptRepository videoToAdaptRepository) {
     this.videoRepository = videoRepository;
-    // TODO(jliarte): 27/07/17 inject this field
     this.videoToAdaptRepository = videoToAdaptRepository;
   }
 
@@ -63,84 +67,116 @@ public class ModifyVideoDurationUseCase {
                         final int startTimeMs, final int finishTimeMs,
                         final String intermediatesTempAudioFadeDirectory) {
     final Project currentProject = getCurrentProject();
-    videoToEdit.setStartTime(startTimeMs);
-    videoToEdit.setStopTime(finishTimeMs);
-    videoToEdit.setTempPath(currentProject.getProjectPathIntermediateFiles());
-    videoToEdit.setTrimmedVideo(true);
+    setVideoTrimParams(videoToEdit, startTimeMs, finishTimeMs, currentProject);
     videoRepository.update(videoToEdit);
 
     this.drawableFadeTransition = drawableFadeTransition;
     this.videoFormat = format;
     this.intermediatesTempAudioFadeDirectory = intermediatesTempAudioFadeDirectory;
-
-    runTrimTranscoding(videoToEdit, currentProject);
+    if (videoIsBeingAdapted(videoToEdit)) {
+      ListenableFuture<Video> videoAdaptTask = videoToEdit.getTranscodingTask();
+      videoToEdit.setTranscodingTask(Futures.transform(videoAdaptTask,
+              applyTrim(currentProject, videoToEdit, startTimeMs, finishTimeMs)));
+    } else {
+      // TODO(jliarte): 18/09/17 in this case, we don't want to wait for task to finish
+      runTrimTranscodingTask(videoToEdit, currentProject);
+    }
   }
 
-  private void runTrimTranscoding(final Video videoToEdit, final Project currentProject) {
-    Runnable useCaseRunnable = new Runnable() {
+  private void setVideoTrimParams(Video videoToEdit, int startTimeMs, int finishTimeMs, Project currentProject) {
+    videoToEdit.setTempPath(currentProject.getProjectPathIntermediateFiles());
+    videoToEdit.setStartTime(startTimeMs);
+    videoToEdit.setStopTime(finishTimeMs);
+    videoToEdit.setTrimmedVideo(true);
+  }
+
+  private Function<Video, Video> applyTrim(final Project currentProject, final Video videoToEdit,
+                                           final int startTimeMs, final int finishTimeMs) {
+    return new Function<Video, Video>() {
+      @Nullable
       @Override
-      public void run() {
-        boolean isVideoFadeTransitionActivated = currentProject.getVMComposition()
-                .isVideoFadeTransitionActivated();
-        boolean isAudioFadeTransitionActivated = currentProject.getVMComposition()
-                .isAudioFadeTransitionActivated();
-        if (videoToAdaptRepository.getByMediaPath(videoToEdit.getMediaPath()) != null) {
-          try {
-            videoToEdit.getTranscodingTask().get();
-          } catch (InterruptedException | ExecutionException e) {
-            // TODO(jliarte): 27/07/17 handle error
-            Log.e(TAG, "Error waiting for adapt job to finish");
-            e.printStackTrace();
-          }
+      public Video apply(Video input) {
+        // (jliarte): 18/09/17 when this function is applied, start and stop times could have been
+        // modified, as done after adapting video, so we have to store them as parameters here
+        setVideoTrimParams(videoToEdit, startTimeMs, finishTimeMs, currentProject);
+        videoRepository.update(videoToEdit);
+        ListenableFuture<Video> task = runTrimTranscodingTask(videoToEdit, currentProject);
+        // TODO(jliarte): 15/09/17 check this and error propagation
+        try {
+          return task.get();
+        } catch (InterruptedException | ExecutionException ex) {
+          // TODO(jliarte): 18/09/17 create an util class to log errors
+          Log.e(TAG, "Caught exception while applying trim after adapting video");
+          Crashlytics.log("Caught exception while applying trim after adapting video");
+          Crashlytics.logException(ex);
+          ex.printStackTrace();
+          throw new RuntimeException(ex);
         }
-        videoToEdit.setTranscodingTempFileFinished(false);
-        TranscoderHelperListener transcoderHelperListener = new TranscoderHelperListener() {
-          @Override
-          public void onSuccessTranscoding(Video video) {
-            Log.d(TAG, "onSuccessTranscoding after trim " + video.getTempPath());
-            videoRepository.setSuccessTranscodingVideo(video);
-          }
-
-          @Override
-          public void onErrorTranscoding(Video video, String message) {
-            Log.d(TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-            if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
-              video.increaseNumTriesToExportVideo();
-              runTrimTranscoding(videoToEdit, currentProject);
-//              setTrim(video.getStartTime(), video.getStopTime());
-            } else {
-              //trimView.showError(message);
-              video.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
-              video.setTranscodingTempFileFinished(true);
-              videoRepository.update(video);
-            }
-          }
-
-        };
-        updateGeneratedVideo(videoToEdit, transcoderHelperListener,
-                isVideoFadeTransitionActivated, isAudioFadeTransitionActivated);
       }
     };
-    new Thread(useCaseRunnable, "trimVideo Use Case").start();
+  }
+
+
+  private boolean videoIsBeingAdapted(Video videoToEdit) {
+    return videoToAdaptRepository.getByMediaPath(videoToEdit.getMediaPath()) != null;
+  }
+
+  private ListenableFuture<Video> runTrimTranscodingTask(Video videoToEdit,
+                                                         Project currentProject) {
+    // (jliarte): 18/09/17 after adapting a video, tmpPath is reset calling video.resetTempPath(),
+    // so we have to set it again before we call runTrimTranscoding in the futures chaining
+    // TODO(jliarte): 18/09/17 I guess this method should work independent of the video object
+    // state, so we move here the setting of tempPath right after transcoderHelper call
+    videoToEdit.setTempPath(currentProject.getProjectPathIntermediateFiles());
+    videoToEdit.setTranscodingTempFileFinished(false);
+    ListenableFuture<Video> trimTask = transcoderHelper.updateIntermediateFile(drawableFadeTransition,
+            currentProject.getVMComposition().isVideoFadeTransitionActivated(),
+            currentProject.getVMComposition().isAudioFadeTransitionActivated(), videoToEdit,
+            videoFormat, intermediatesTempAudioFadeDirectory);
+    Futures.addCallback(trimTask, new TrimTaskCallback(videoToEdit, currentProject));
+    return trimTask;
   }
 
   private Project getCurrentProject() {
     return Project.getInstance(null, null, null, null);
   }
 
-  private void updateGeneratedVideo(Video videoToEdit,
-                                    TranscoderHelperListener transcoderHelperListener,
-                                    boolean isVideoFadeTransitionActivated,
-                                    boolean isAudioFadeTransitionActivated) {
-    // TODO(jliarte): 17/03/17 move this logic to TranscoderHelper?
-    if (videoToEdit.hasText()) {
-      transcoderHelper.generateOutputVideoWithOverlayImageAndTrimmingAsync(drawableFadeTransition,
-          isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit, videoFormat,
-          intermediatesTempAudioFadeDirectory, transcoderHelperListener);
+  private void handleTaskSuccess(Video video) {
+    Log.d(TAG, "onSuccessTranscoding after trim " + video.getTempPath());
+    videoRepository.setSuccessTranscodingVideo(video);
+  }
+
+  private void handleTaskError(Video video, String message, Project currentProject) {
+    Log.d(TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
+    if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
+      video.increaseNumTriesToExportVideo();
+      runTrimTranscodingTask(video, currentProject);
     } else {
-      transcoderHelper.generateOutputVideoWithTrimmingAsync(drawableFadeTransition,
-          isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, videoToEdit, videoFormat,
-          intermediatesTempAudioFadeDirectory, transcoderHelperListener);
+      //trimView.showError(message);
+      video.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
+      video.setTranscodingTempFileFinished(true);
+      videoRepository.update(video);
+    }
+  }
+
+  private class TrimTaskCallback implements FutureCallback<Video> {
+    private Video video;
+    private Project currentProject;
+
+    private TrimTaskCallback(Video video, Project currentProject) {
+      this.video = video;
+      this.currentProject = currentProject;
+    }
+
+    @Override
+    public void onSuccess(Video result) {
+      handleTaskSuccess(result);
+    }
+
+    @Override
+    public void onFailure(Throwable t) {
+      handleTaskError(video, t.getMessage(), currentProject);
     }
   }
 }
+

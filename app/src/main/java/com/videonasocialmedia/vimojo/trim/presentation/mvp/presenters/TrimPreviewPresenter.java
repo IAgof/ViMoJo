@@ -99,11 +99,8 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
 
     public void setTrim(int startTimeMs, int finishTimeMs) {
         VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
-
-        // TODO:(alvaro.martinez) 22/02/17 This drawable saved in app or sdk?
-        Drawable drawableFadeTransitionVideo =
-            ContextCompat.getDrawable(VimojoApplication.getAppContext(),
-                R.drawable.alpha_transition_white);
+        Drawable drawableFadeTransitionVideo = currentProject
+                .getVMComposition().getDrawableFadeTransitionVideo();
 
         modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, videoToEdit, videoFormat,
                 startTimeMs, finishTimeMs,

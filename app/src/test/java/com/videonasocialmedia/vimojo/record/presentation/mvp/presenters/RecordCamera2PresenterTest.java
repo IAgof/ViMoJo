@@ -242,8 +242,7 @@ public class RecordCamera2PresenterTest {
     doAnswer(new Answer() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
-        Camera2Wrapper.RecordStartedCallback listener = invocation
-            .getArgumentAt(0, Camera2Wrapper.RecordStartedCallback.class);
+        Camera2Wrapper.RecordStartedCallback listener = invocation.getArgument(0);
         listener.onRecordStarted();
         return null;
       }

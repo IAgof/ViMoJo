@@ -109,9 +109,13 @@ public class VideoToAdaptRealmRepository implements VideoToAdaptRepository {
     int index = 0;
     while (index < videoList.size()) {
       VideoToAdapt retrievedItem = videoList.get(index);
-      VideoToAdapt cachedItem = cache.getByMediaPath(retrievedItem.getVideo().getMediaPath());
-      if (cachedItem != null) {
-        videoList.set(index, cachedItem);
+      if (retrievedItem.getVideo() == null) {
+        remove(retrievedItem);
+      } else {
+        VideoToAdapt cachedItem = cache.getByMediaPath(retrievedItem.getVideo().getMediaPath());
+        if (cachedItem != null) {
+          videoList.set(index, cachedItem);
+        }
       }
       index++;
     }

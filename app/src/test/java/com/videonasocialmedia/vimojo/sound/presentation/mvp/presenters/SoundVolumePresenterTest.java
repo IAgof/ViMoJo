@@ -82,8 +82,7 @@ public class SoundVolumePresenterTest {
     doAnswer(new Answer() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
-        OnAddMediaFinishedListener listener =
-            invocation.getArgumentAt(2, OnAddMediaFinishedListener.class);
+        OnAddMediaFinishedListener listener = invocation.getArgument(2);
         listener.onAddMediaItemToTrackSuccess(voiceOver);
         return null;
       }
@@ -104,8 +103,7 @@ public class SoundVolumePresenterTest {
     doAnswer(new Answer() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
-        OnAddMediaFinishedListener listener =
-            invocation.getArgumentAt(2, OnAddMediaFinishedListener.class);
+        OnAddMediaFinishedListener listener = invocation.getArgument(2);
         listener.onAddMediaItemToTrackError();
         return null;
       }
@@ -115,7 +113,7 @@ public class SoundVolumePresenterTest {
 
     injectedPresenter.addVoiceOver(voiceOver);
 
-    verify(mockedSoundVolumeView).showError(anyString());
+    verify(mockedSoundVolumeView).showError(null);
   }
 
   @Test
@@ -131,8 +129,7 @@ public class SoundVolumePresenterTest {
     doAnswer(new Answer() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
-        OnRemoveMediaFinishedListener listener =
-            invocation.getArgumentAt(2, OnRemoveMediaFinishedListener.class);
+        OnRemoveMediaFinishedListener listener = invocation.getArgument(2);
         listener.onRemoveMediaItemFromTrackError();
         return null;
       }
@@ -142,7 +139,7 @@ public class SoundVolumePresenterTest {
 
     injectedPresenter.deletePreviousVoiceOver();
 
-    verify(mockedSoundVolumeView).showError(anyString());
+    verify(mockedSoundVolumeView).showError(null);
   }
 
   @Test
