@@ -8,8 +8,6 @@
 package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 
@@ -17,7 +15,6 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -119,14 +116,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     @Override
     public void trimVideo(Video video, int startTimeMs, int finishTimeMs) {
         VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
-        // TODO:(alvaro.martinez) 22/02/17 This drawable saved in app or sdk?
-        Drawable drawableFadeTransitionVideo =
-            ContextCompat.getDrawable(VimojoApplication.getAppContext(),
-                    R.drawable.alpha_transition_white);
-
-        modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, video, videoFormat,
-            startTimeMs, finishTimeMs, currentProject.getProjectPathIntermediateFileAudioFade()
-        );
+        modifyVideoDurationUseCase.trimVideo(video, startTimeMs, finishTimeMs, currentProject);
     }
 
     @Override

@@ -12,7 +12,6 @@ package com.videonasocialmedia.vimojo.settings.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
@@ -389,12 +388,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     public void videoToRelaunch(String videoUuid, String intermediatesTempAudioFadeDirectory) {
         final Video video = getVideo(videoUuid);
         Project currentProject = loadCurrentProject();
-        Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
-                .getDrawableFadeTransitionVideo();
-        relaunchTranscoderTempBackgroundUseCase.relaunchExport(
-                drawableVideoFadeTransition, video,
-                getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
-                intermediatesTempAudioFadeDirectory);
+        relaunchTranscoderTempBackgroundUseCase.relaunchExport(video, currentProject);
     }
 
     private Project loadCurrentProject() {

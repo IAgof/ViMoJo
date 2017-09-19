@@ -3,11 +3,9 @@ package com.videonasocialmedia.vimojo.text.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
@@ -28,7 +26,7 @@ import javax.inject.Inject;
  */
 
 public class EditTextPreviewPresenter implements OnVideosRetrieved {
-    private final String LOG_TAG = getClass().getSimpleName();
+    private final String LOG_TAG = EditTextPreviewPresenter.class.getSimpleName();
 
     private TextToDrawable drawableGenerator;
 
@@ -91,13 +89,9 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
 
     public void setTextToVideo(String text, TextEffect.TextPosition textPositionSelected) {
         VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
-        // TODO:(alvaro.martinez) 22/02/17 This drawable saved in app or sdk?
-        Drawable drawableFadeTransitionVideo =
-            ContextCompat.getDrawable(context, R.drawable.alpha_transition_white);
 
-        modifyVideoTextAndPositionUseCase.addTextToVideo(drawableFadeTransitionVideo, videoToEdit,
-            videoFormat, text, textPositionSelected.name(),
-            currentProject.getProjectPathIntermediateFileAudioFade());
+        modifyVideoTextAndPositionUseCase.addTextToVideo(videoToEdit, text,
+                textPositionSelected.name(), currentProject);
 
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
     }

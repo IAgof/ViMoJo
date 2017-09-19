@@ -28,6 +28,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptMemoryRepository;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
@@ -378,9 +379,10 @@ public class ActivityPresentersModule {
 
   @Provides ModifyVideoTextAndPositionUseCase provideModifyVideoTextAndPositionUseCase(
           VideoRepository videoRepository,
-          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase) {
+          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+          VideoToAdaptRepository videoToAdaptRepository) {
     return new ModifyVideoTextAndPositionUseCase(videoRepository,
-            relaunchTranscoderTempBackgroundUseCase);
+            relaunchTranscoderTempBackgroundUseCase, videoToAdaptRepository);
   }
 
   @Provides

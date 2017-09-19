@@ -230,8 +230,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
     video2.setTempPath(testPath);
     video.setTempPath(testPath);
-    modifyVideoDurationUseCase.trimVideo(null, video, videoFormat, 0, 500,
-            project.getProjectPathIntermediateFileAudioFade());
+    modifyVideoDurationUseCase.trimVideo(video, 0, 500, project);
     exportProjectUseCase.export(Constants.PATH_WATERMARK, mockedExportListener);
 
     ListenableFuture<Video> transcodingTask_b = video.getTranscodingTask();

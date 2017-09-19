@@ -1,12 +1,15 @@
 package com.videonasocialmedia.vimojo.trim.domain;
 
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
@@ -43,13 +46,8 @@ public class ModifyVideoDurationUseCaseTest {
   @Mock MediaTranscoder mockedMediaTranscoder;
   @Mock TranscoderHelper mockedTranscoderHelper;
   @Mock VideoRepository mockedVideoRepository;
-  @Mock Drawable mockDrawableFadeTransition;
   @Mock ListenableFuture mockedFuture;
-  String intermediatesTempAudioFadeDirectory;
-  boolean isVideoFadeTransitionActivated;
-  boolean isAudioFadeTransitionActivated;
   @InjectMocks ModifyVideoDurationUseCase injectedUseCase;
-  private final VideonaFormat videonaFormat = new VideonaFormat();
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
   @Mock private VideoToAdaptRepository mockedVideoToAdaptRepository;
 
@@ -64,18 +62,20 @@ public class ModifyVideoDurationUseCaseTest {
   @Test
   public void testTrimVideoCallsUpdateIntermediateFileIfVideoHasText()
           throws IOException {
+    Project currentProject = getAProject();
     Video video = getVideoWithText();
     assert video.hasText();
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
     injectedUseCase.videoToAdaptRepository = mockedVideoToAdaptRepository;
 
-    injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
-        intermediatesTempAudioFadeDirectory);
+    injectedUseCase.trimVideo(video, 0, 10, currentProject);
 
     verify(mockedTranscoderHelper).updateIntermediateFile(
-            eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated),
-            eq(isAudioFadeTransitionActivated), eq(video), eq(videonaFormat),
-            eq(intermediatesTempAudioFadeDirectory));
+            eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
+            eq(currentProject.getVMComposition().isVideoFadeTransitionActivated()),
+            eq(currentProject.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
+            eq(currentProject.getVMComposition().getVideoFormat()),
+            eq(currentProject.getProjectPathIntermediateFileAudioFade()));
   }
 
   // TODO(jliarte): 22/08/17 cant make this pass when invoked all class tests
@@ -83,19 +83,21 @@ public class ModifyVideoDurationUseCaseTest {
   @Test
   public void testTrimVideoCallsGenerateOutputVideoWithTrimmingIfVideoHasntText()
           throws IOException {
+    Project currentProject = getAProject();
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     // TODO(jliarte): 19/10/16 should check if video is trimmed?
     assert ! video.hasText();
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
     injectedUseCase.videoToAdaptRepository = mockedVideoToAdaptRepository;
 
-    injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 0, 10,
-        intermediatesTempAudioFadeDirectory);
+    injectedUseCase.trimVideo(video, 0, 10, currentProject);
 
     verify(mockedTranscoderHelper).generateOutputVideoWithTrimmingAsync(
-            eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated),
-            eq(isAudioFadeTransitionActivated), eq(video), eq(videonaFormat),
-            eq(intermediatesTempAudioFadeDirectory));
+            eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
+            eq(currentProject.getVMComposition().isVideoFadeTransitionActivated()),
+            eq(currentProject.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
+            eq(currentProject.getVMComposition().getVideoFormat()),
+            eq(currentProject.getProjectPathIntermediateFileAudioFade()));
   }
 
   @Test
@@ -103,21 +105,18 @@ public class ModifyVideoDurationUseCaseTest {
     Project currentProject = getAProject();
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
+    // TODO(jliarte): 19/09/17 dunno why automatically injected video repo is not mockedVideoRepository
+    injectedUseCase.videoRepository = mockedVideoRepository;
     ListenableFuture<Video> mockedTask = Mockito.mock(ListenableFuture.class);
     doReturn(mockedTask).when(mockedTranscoderHelper).updateIntermediateFile(
-            mockDrawableFadeTransition,
-            currentProject.getVMComposition().isVideoFadeTransitionActivated(),
-            currentProject.getVMComposition().isAudioFadeTransitionActivated(), video,
-            videonaFormat, intermediatesTempAudioFadeDirectory);
+            eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
+            eq(currentProject.getVMComposition().isVideoFadeTransitionActivated()),
+            eq(currentProject.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
+            any(VideonaFormat.class), eq(currentProject.getProjectPathIntermediateFileAudioFade()));
 
-      injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 2, 10,
-          intermediatesTempAudioFadeDirectory);
+    injectedUseCase.trimVideo(video, 2, 10, currentProject);
 
     verify(mockedVideoRepository).update(video);
-  }
-
-  private Project getAProject() {
-    return Project.getInstance(null, null, null, null);
   }
 
   @Test
@@ -128,13 +127,12 @@ public class ModifyVideoDurationUseCaseTest {
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
     ListenableFuture<Video> mockedTask = Mockito.mock(ListenableFuture.class);
     doReturn(mockedTask).when(mockedTranscoderHelper).updateIntermediateFile(
-            mockDrawableFadeTransition,
-            currentProject.getVMComposition().isVideoFadeTransitionActivated(),
-            currentProject.getVMComposition().isAudioFadeTransitionActivated(), video,
-            videonaFormat, intermediatesTempAudioFadeDirectory);
+            eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
+            eq(currentProject.getVMComposition().isVideoFadeTransitionActivated()),
+            eq(currentProject.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
+            any(VideonaFormat.class), eq(currentProject.getProjectPathIntermediateFileAudioFade()));
 
-    injectedUseCase.trimVideo(mockDrawableFadeTransition, video, videonaFormat, 2, 10,
-        intermediatesTempAudioFadeDirectory);
+    injectedUseCase.trimVideo(video, 2, 10, currentProject);
 
     assertThat(video.getStartTime(), is(2));
     assertThat(video.getStopTime(), is(10));
@@ -150,6 +148,18 @@ public class ModifyVideoDurationUseCaseTest {
     video.setClipText("text");
     video.setClipTextPosition(TextEffect.TextPosition.CENTER.name());
     return video;
+  }
+
+  private Project getAProject() {
+    clearProject();
+    return Project.getInstance(null, null, null, new Profile(VideoResolution.Resolution.HD720,
+            VideoQuality.Quality.GOOD, VideoFrameRate.FrameRate.FPS30));
+  }
+
+  private void clearProject() {
+    if (Project.INSTANCE != null) {
+      Project.INSTANCE.clear();
+    }
   }
 
 }

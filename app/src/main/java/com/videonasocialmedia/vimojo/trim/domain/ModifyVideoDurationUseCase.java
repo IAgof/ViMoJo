@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.trim.domain;
 
 
-import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -11,7 +11,6 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
@@ -30,24 +29,21 @@ import javax.inject.Inject;
  * Created by jca on 27/5/15.
  */
 public class ModifyVideoDurationUseCase {
-  private String TAG = ModifyVideoDurationUseCase.class.getName();
+  private final String TAG = ModifyVideoDurationUseCase.class.getName();
 
-  private TextToDrawable drawableGenerator = new TextToDrawable(VimojoApplication.getAppContext());
-  private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
+  VideoRepository videoRepository;
+  VideoToAdaptRepository videoToAdaptRepository;
+  private final TextToDrawable drawableGenerator =
+          new TextToDrawable(VimojoApplication.getAppContext());
+  private final MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper =
           new TranscoderHelper(drawableGenerator, mediaTranscoder);
-  protected VideoRepository videoRepository;
-
-  VideoToAdaptRepository videoToAdaptRepository;
-  private Drawable drawableFadeTransition;
-  private VideonaFormat videoFormat;
-  private String intermediatesTempAudioFadeDirectory;
 
   /**
    * Default constructor with video repository argument.
    *
    * @param videoRepository the video repository.
-   * @param videoToAdaptRepository
+   * @param videoToAdaptRepository the video to adapt repository.
    */
   @Inject public ModifyVideoDurationUseCase(VideoRepository videoRepository,
                                             VideoToAdaptRepository videoToAdaptRepository) {
@@ -58,21 +54,15 @@ public class ModifyVideoDurationUseCase {
   /**
    * Main method for video trimming use case.
    * @param videoToEdit video to trim
-   * @param format
-   * @param startTimeMs
-   * @param finishTimeMs
+   * @param startTimeMs trim start time in milliseconds
+   * @param finishTimeMs trim stop time in milliseconds
+   * @param currentProject the project where the video belongs
    */
-  public void trimVideo(final Drawable drawableFadeTransition, final Video videoToEdit,
-                        final VideonaFormat format,
-                        final int startTimeMs, final int finishTimeMs,
-                        final String intermediatesTempAudioFadeDirectory) {
-    final Project currentProject = getCurrentProject();
+  public void trimVideo(final Video videoToEdit,
+                        final int startTimeMs, final int finishTimeMs, Project currentProject) {
     setVideoTrimParams(videoToEdit, startTimeMs, finishTimeMs, currentProject);
     videoRepository.update(videoToEdit);
 
-    this.drawableFadeTransition = drawableFadeTransition;
-    this.videoFormat = format;
-    this.intermediatesTempAudioFadeDirectory = intermediatesTempAudioFadeDirectory;
     if (videoIsBeingAdapted(videoToEdit)) {
       ListenableFuture<Video> videoAdaptTask = videoToEdit.getTranscodingTask();
       videoToEdit.setTranscodingTask(Futures.transform(videoAdaptTask,
@@ -83,7 +73,8 @@ public class ModifyVideoDurationUseCase {
     }
   }
 
-  private void setVideoTrimParams(Video videoToEdit, int startTimeMs, int finishTimeMs, Project currentProject) {
+  private void setVideoTrimParams(Video videoToEdit, int startTimeMs, int finishTimeMs,
+                                  Project currentProject) {
     videoToEdit.setTempPath(currentProject.getProjectPathIntermediateFiles());
     videoToEdit.setStartTime(startTimeMs);
     videoToEdit.setStopTime(finishTimeMs);
@@ -116,7 +107,6 @@ public class ModifyVideoDurationUseCase {
     };
   }
 
-
   private boolean videoIsBeingAdapted(Video videoToEdit) {
     return videoToAdaptRepository.getByMediaPath(videoToEdit.getMediaPath()) != null;
   }
@@ -129,16 +119,14 @@ public class ModifyVideoDurationUseCase {
     // state, so we move here the setting of tempPath right after transcoderHelper call
     videoToEdit.setTempPath(currentProject.getProjectPathIntermediateFiles());
     videoToEdit.setTranscodingTempFileFinished(false);
-    ListenableFuture<Video> trimTask = transcoderHelper.updateIntermediateFile(drawableFadeTransition,
+    ListenableFuture<Video> trimTask = transcoderHelper.updateIntermediateFile(
+            currentProject.getVMComposition().getDrawableFadeTransitionVideo(),
             currentProject.getVMComposition().isVideoFadeTransitionActivated(),
             currentProject.getVMComposition().isAudioFadeTransitionActivated(), videoToEdit,
-            videoFormat, intermediatesTempAudioFadeDirectory);
+            currentProject.getVMComposition().getVideoFormat(),
+            currentProject.getProjectPathIntermediateFileAudioFade());
     Futures.addCallback(trimTask, new TrimTaskCallback(videoToEdit, currentProject));
     return trimTask;
-  }
-
-  private Project getCurrentProject() {
-    return Project.getInstance(null, null, null, null);
   }
 
   private void handleTaskSuccess(Video video) {
@@ -160,8 +148,8 @@ public class ModifyVideoDurationUseCase {
   }
 
   private class TrimTaskCallback implements FutureCallback<Video> {
-    private Video video;
-    private Project currentProject;
+    private final Video video;
+    private final Project currentProject;
 
     private TrimTaskCallback(Video video, Project currentProject) {
       this.video = video;
@@ -174,7 +162,7 @@ public class ModifyVideoDurationUseCase {
     }
 
     @Override
-    public void onFailure(Throwable t) {
+    public void onFailure(@NonNull Throwable t) {
       handleTaskError(video, t.getMessage(), currentProject);
     }
   }

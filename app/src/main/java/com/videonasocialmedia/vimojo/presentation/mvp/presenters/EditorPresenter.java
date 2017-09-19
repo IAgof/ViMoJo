@@ -2,7 +2,6 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -53,11 +52,11 @@ public class EditorPresenter {
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
-    this.currentProject = loadCurrentProject();
+    this.currentProject = getCurrentProject();
     this.newClipImporter = newClipImporter;
   }
 
-  public Project loadCurrentProject() {
+  public Project getCurrentProject() {
     // TODO(jliarte): this should make use of a repository or use case to load the Project
     return Project.getInstance(null, null, null, null);
   }
@@ -124,11 +123,8 @@ public class EditorPresenter {
   }
 
   private void relaunchTranscoderTempFileJob(Video video) {
-    Project currentProject = Project.getInstance(null, null, null, null);
+    Project currentProject = getCurrentProject();
     VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
-    Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
-            .getDrawableFadeTransitionVideo();
-    relaunchTranscoderTempBackgroundUseCase.relaunchExport(drawableVideoFadeTransition, video,
-            videoFormat, currentProject.getProjectPathIntermediateFileAudioFade());
+    relaunchTranscoderTempBackgroundUseCase.relaunchExport(video, currentProject);
   }
 }

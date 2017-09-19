@@ -1,16 +1,14 @@
 package com.videonasocialmedia.vimojo.export.domain;
 
-import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -21,15 +19,15 @@ import com.videonasocialmedia.vimojo.utils.Constants;
  * Created by alvaro on 28/09/16.
  */
 
-public class RelaunchTranscoderTempBackgroundUseCase implements TranscoderHelperListener {
+public class RelaunchTranscoderTempBackgroundUseCase {
   private static final String LOG_TAG = RelaunchTranscoderTempBackgroundUseCase.class
           .getSimpleName();
-  protected TextToDrawable drawableGenerator =
+  private final VideoRepository videoRepository;
+  private final TextToDrawable drawableGenerator =
           new TextToDrawable(VimojoApplication.getAppContext());
-  protected MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
+  private final MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator,
           mediaTranscoder);
-  protected VideoRepository videoRepository;
 
   private final Project currentProject;
 
@@ -45,28 +43,25 @@ public class RelaunchTranscoderTempBackgroundUseCase implements TranscoderHelper
   /**
    * Launch clip transcoding to generate intermediate video file for final export process.
    * @param videoToEdit video to apply operations with
-   * @param videonaFormat output format for the clip transcoding
-   * @param intermediatesTempAudioFadeDirectory
+   * @param currentProject the project where the video belongs
    */
-  public void relaunchExport(
-          Drawable drawableFadeTransition, Video videoToEdit, VideonaFormat videonaFormat,
-          String intermediatesTempAudioFadeDirectory) {
-    boolean isVideoFadeTransitionActivated = currentProject.getVMComposition()
-            .isVideoFadeTransitionActivated();
-    boolean isAudioFadeTransitionActivated = currentProject.getVMComposition()
-            .isAudioFadeTransitionActivated();
+  public void relaunchExport(Video videoToEdit, Project currentProject) {
+    // TODO(jliarte): 19/09/17 should we also wait for adapting jobs here?
+    runTranscodingTask(videoToEdit, currentProject);
+  }
+
+  private void runTranscodingTask(Video videoToEdit, Project project) {
+    videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
     videoToEdit.setTranscodingTempFileFinished(false);
     videoRepository.update(videoToEdit);
     // TODO(jliarte): 28/07/17 wait for adapt video tasks to end
     ListenableFuture<Video> transcodingTask = transcoderHelper.updateIntermediateFile(
-            drawableFadeTransition, isVideoFadeTransitionActivated, isAudioFadeTransitionActivated,
-            videoToEdit, videonaFormat, intermediatesTempAudioFadeDirectory);
+            project.getVMComposition().getDrawableFadeTransitionVideo(),
+            project.getVMComposition().isVideoFadeTransitionActivated(),
+            project.getVMComposition().isAudioFadeTransitionActivated(),
+            videoToEdit, project.getVMComposition().getVideoFormat(),
+            project.getProjectPathIntermediateFileAudioFade());
     Futures.addCallback(transcodingTask, new TranscodingTaskCallback(videoToEdit));
-  }
-
-  @Override
-  public void onSuccessTranscoding(Video video) {
-    handleTranscodingSuccess(video);
   }
 
   private void handleTranscodingSuccess(Video video) {
@@ -74,20 +69,11 @@ public class RelaunchTranscoderTempBackgroundUseCase implements TranscoderHelper
     videoRepository.setSuccessTranscodingVideo(video);
   }
 
-  @Override
-  public void onErrorTranscoding(Video video, String message) {
-    handleTranscodingError(video, message);
-  }
-
   private void handleTranscodingError(Video video, String message) {
     Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
     if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
       video.increaseNumTriesToExportVideo();
-      Drawable drawableVideoFadeTransition = currentProject.getVMComposition()
-              .getDrawableFadeTransitionVideo();
-      relaunchExport(drawableVideoFadeTransition, video,
-              currentProject.getVMComposition().getVideoFormat(),
-              currentProject.getProjectPathIntermediateFileAudioFade());
+      relaunchExport(video, currentProject);
     } else {
       videoRepository.setErrorTranscodingVideo(video,
               Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
@@ -95,7 +81,7 @@ public class RelaunchTranscoderTempBackgroundUseCase implements TranscoderHelper
   }
 
   private class TranscodingTaskCallback implements FutureCallback<Video> {
-    private Video video;
+    private final Video video;
 
     private TranscodingTaskCallback(Video video) {
       this.video = video;
@@ -107,7 +93,7 @@ public class RelaunchTranscoderTempBackgroundUseCase implements TranscoderHelper
     }
 
     @Override
-    public void onFailure(Throwable t) {
+    public void onFailure(@NonNull Throwable t) {
       handleTranscodingError(video, t.getMessage());
     }
   }

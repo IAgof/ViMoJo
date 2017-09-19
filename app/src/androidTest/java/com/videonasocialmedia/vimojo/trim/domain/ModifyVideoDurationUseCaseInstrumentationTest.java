@@ -60,8 +60,7 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
     ModifyVideoDurationUseCase modifyVideoDurationUseCase =
             new ModifyVideoDurationUseCase(videoRepo, videoToAdaptRepo);
 
-    modifyVideoDurationUseCase.trimVideo(null, video, videoFormat, 0, 500,
-            project.getProjectPathIntermediateFileAudioFade());
+    modifyVideoDurationUseCase.trimVideo(video, 0, 500, project);
 
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
     transcodingTask.get();
@@ -94,8 +93,7 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
 
     adaptVideoToFormatUseCase.adaptVideo(videoToAdapt, videoFormat, mockedAdaptListener);
     ListenableFuture<Video> adaptTask = video.getTranscodingTask();
-    modifyVideoDurationUseCase.trimVideo(null, video, videoFormat, 0, 500,
-            project.getProjectPathIntermediateFileAudioFade());
+    modifyVideoDurationUseCase.trimVideo(video, 0, 500, project);
 
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
     adaptTask.get();

@@ -7,13 +7,8 @@
 
 package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -99,12 +94,9 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
 
     public void setTrim(int startTimeMs, int finishTimeMs) {
         VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
-        Drawable drawableFadeTransitionVideo = currentProject
-                .getVMComposition().getDrawableFadeTransitionVideo();
 
-        modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, videoToEdit, videoFormat,
-                startTimeMs, finishTimeMs,
-                currentProject.getProjectPathIntermediateFileAudioFade());
+        modifyVideoDurationUseCase.trimVideo(videoToEdit, startTimeMs, finishTimeMs,
+                currentProject);
 
         trackVideoTrimmed();
     }
