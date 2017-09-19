@@ -9,7 +9,6 @@ import com.videonasocialmedia.transcoder.video.overlay.Image;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 
@@ -45,7 +44,6 @@ public class ModifyVideoTextAndPositionUseCaseTest {
   boolean isAudioFadeTransitionActivated;
   @InjectMocks ModifyVideoTextAndPositionUseCase injectedUseCase;
   private final VideonaFormat videonaFormat = new VideonaFormat();
-  private TranscoderHelperListener mockedMediaTranscoderHelperListener;
 
   @Before
   public void injectDoubles() throws Exception {
@@ -62,8 +60,8 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     injectedUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
             mockedMediaTranscoder);
 
-    injectedUseCase.addTextToVideo(mockDrawableFadeTransition, video, videonaFormat, video.getClipText(),
-            video.getClipTextPosition(), intermediatesTempAudioFadeDirectory);
+    injectedUseCase.addTextToVideo(mockDrawableFadeTransition, video, videonaFormat,
+            video.getClipText(), video.getClipTextPosition(), intermediatesTempAudioFadeDirectory);
 
     verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
             eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated),
@@ -107,7 +105,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
   }
 
   @Test
-  public void testAddTextToVideoCallsGenerateOutputVideoWithOverlayImageIfVideoIsNotTrimmed()
+  public void testAddTextToVideoCallsUpdateIntermediateFileIfVideoIsNotTrimmed()
           throws IOException {
     Video video = getVideoUntrimmedWithText();
     assert video.hasText();
@@ -118,7 +116,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
         video.getClipText(), video.getClipTextPosition(), intermediatesTempAudioFadeDirectory
     );
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAsync(
+    verify(mockedTranscoderHelper).updateIntermediateFile(
             eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated),
             eq(isAudioFadeTransitionActivated), eq(video), eq(videonaFormat),
             eq(intermediatesTempAudioFadeDirectory));

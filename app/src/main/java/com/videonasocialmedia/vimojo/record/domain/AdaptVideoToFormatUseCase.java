@@ -52,7 +52,7 @@ public class AdaptVideoToFormatUseCase {
     return Project.getInstance(null, null, null, null);
   }
 
-  private class AdaptVideoListener implements TranscoderHelperListener {
+  class AdaptVideoListener implements TranscoderHelperListener {
     private final VideonaFormat videonaFormat;
     private final String destVideoPath;
     private final int rotation;
