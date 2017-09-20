@@ -178,9 +178,16 @@ public class ShareVideoPresenter {
         exportUseCase.export(Constants.PATH_WATERMARK, new OnExportFinishedListener() {
             @Override
             public void onExportError(String error) {
-                Crashlytics.log("Error exportando: " + error);
+                Crashlytics.log("Error exporting: " + error);
                 // TODO(jliarte): 28/04/17 pass the string?
-                shareVideoView.showVideoExportError();
+                // known strings
+                switch (error) {
+                    case "No space left on device":
+                        shareVideoView.showVideoExportError(Constants.EXPORT_ERROR_NO_SPACE_LEFT);
+                        break;
+                    default:
+                        shareVideoView.showVideoExportError(Constants.EXPORT_ERROR_UNKNOWN);
+                }
             }
             @Override
             public void onExportSuccess(Video video) {

@@ -100,7 +100,10 @@ public class NewClipImporter {
                 new ApplyAVTransitionsUseCase.AVTransitionsApplierListener() {
                   @Override
                   public void onSuccessApplyAVTransitions(Video video) {
-                    // TODO(jliarte): 31/08/17 implement this method
+                    video.setTranscodingTask(null);
+                    VideoToAdapt adaptedVideo = videoToAdaptRepository
+                            .getByMediaPath(video.getMediaPath());
+                    videoToAdaptRepository.remove(adaptedVideo);
                   }
 
                   @Override
@@ -135,8 +138,9 @@ public class NewClipImporter {
         if (videoToAdapt.getVideo().getTranscodingTask() == null) {
           Log.d(TAG, "Relaunching video adapt task for video "
                   + videoToAdapt.getVideo().getMediaPath());
-          adaptVideoToVideonaFormat(currentProject, videoToAdapt.getVideo(), videoToAdapt.getPosition(),
-                  videoToAdapt.getRotation(), ++videoToAdapt.numTriesAdaptingVideo);
+          adaptVideoToVideonaFormat(currentProject, videoToAdapt.getVideo(),
+                  videoToAdapt.getPosition(), videoToAdapt.getRotation(),
+                  ++videoToAdapt.numTriesAdaptingVideo);
         }
       }
     }
