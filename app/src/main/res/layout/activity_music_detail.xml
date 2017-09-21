@@ -82,7 +82,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:textColor="@color/colorSecondary"
+                    android:textColor="@color/textColorPrimary"
                     android:textSize="14sp"
                     tools:text="La duración de la canción"/>
 
@@ -104,7 +104,8 @@
                     android:id="@+id/linear_layout_seekBar_volume_sound"
                     android:layout_below="@+id/music_image"
                     android:orientation="horizontal"
-                    android:layout_marginTop="48dp">
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="16dp">
 
                     <TextView
                         android:layout_width="wrap_content"
