@@ -101,7 +101,7 @@
                 android:layout_gravity="top"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
-                android:background="@color/colorPrimaryLight"
+                android:background="@color/colorWhite"
                 android:transitionGroup="false"
                 android:touchscreenBlocksFocus="false"/>
 
