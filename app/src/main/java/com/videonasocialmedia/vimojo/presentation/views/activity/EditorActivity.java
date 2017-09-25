@@ -284,7 +284,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   public void showDialogUserAddThumb() {
       // dialog pick or take photo
-    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+    final DialogInterface.OnClickListener dialogClickListener =
+            new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         File file = new File(userThumbPath);

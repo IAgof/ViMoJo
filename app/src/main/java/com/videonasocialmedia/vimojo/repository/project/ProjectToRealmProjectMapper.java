@@ -28,7 +28,8 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
             project.getLastModification(), project.getProjectPath(),
             project.getProfile().getQuality().name(), project.getProfile().getResolution().name(),
             project.getProfile().getFrameRate().name(), project.getDuration(),
-            project.isAudioFadeTransitionActivated(), project.isVideoFadeTransitionActivated(),
+            project.getVMComposition().isAudioFadeTransitionActivated(),
+            project.getVMComposition().isVideoFadeTransitionActivated(),
             project.hasWatermark());
 
     if (project.hasVideoExported()) {

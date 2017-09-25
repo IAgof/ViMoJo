@@ -13,20 +13,20 @@ package com.videonasocialmedia.vimojo.model.entities.editor;
 
 import android.support.annotation.NonNull;
 
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ChangeNotifier;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
-import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -36,10 +36,13 @@ import java.util.UUID;
  * opens a project all previous changes must be accessible to him or her. However there can be only
  * one
  */
-public class Project {
+public class Project implements ElementChangedListener {
+  private final ChangeNotifier changeNotifier = new ChangeNotifier();
+
   public static final String INTERMEDIATE_FILES = "intermediate_files";
   public static final String INTERMEDIATE_FILES_TEMP_AUDIO_FADE = "tempAudioFade";
-  // TODO:(alvaro.martinez) 23/12/16 Change VideonaSDK, receive path temo from app, folder name ".tempAudio";
+  // TODO:(alvaro.martinez) 23/12/16 Change VideonaSDK, receive path temo from app,
+  // folder name ".tempAudio";
   public static final String TEMP_FILES_AUDIO_MIXED = "tempMixedAudio";
   public static final String TEMP_FILES_AUDIO_MIXED_VOICE_OVER_RECORD = "voiceOverRecord";
   private final String TAG = getClass().getCanonicalName();
@@ -78,11 +81,6 @@ public class Project {
      */
     private int duration;
 
-
-  private boolean isAudioFadeTransitionActivated;
-  private boolean isVideoFadeTransitionActivated;
-
-
     /**
      * Constructor of minimum number of parameters. This is the Default constructor.
      *
@@ -95,8 +93,8 @@ public class Project {
         this.vmComposition = new VMComposition(getResourceWatermarkFilePath(privatePath), profile);
         this.profile = profile;
         this.duration = 0;
-        this.isAudioFadeTransitionActivated = false;
-        this.isVideoFadeTransitionActivated = false;
+        this.vmComposition.setAudioFadeTransitionActivated(false);
+        this.vmComposition.setVideoFadeTransitionActivated(false);
         this.lastModification = DateUtils.getDateRightNow();
         this.projectPath = rootPath + File.separator + Constants.FOLDER_NAME_VIMOJO_PROJECTS +
             File.separator + uuid; //todo probablemente necesitemos un slugify de ese title.
@@ -108,16 +106,12 @@ public class Project {
     return privatePath + File.separator + Constants.RESOURCE_WATERMARK_NAME;
   }
 
-
-
   public Project(Project project) throws IllegalItemOnTrack {
 
     title = DateUtils.getDateRightNow();
     vmComposition = new VMComposition(project.getVMComposition());
     profile = new Profile(project.getProfile());
     duration = project.getDuration();
-    isAudioFadeTransitionActivated = project.isAudioFadeTransitionActivated();
-    isVideoFadeTransitionActivated = project.isVideoFadeTransitionActivated();
     lastModification = project.getLastModification();
     projectPath = new File(project.getProjectPath()).getParent() + File.separator + uuid;
     createFolder(projectPath);
@@ -193,7 +187,6 @@ public class Project {
     }
 
     public void clear() {
-//        INSTANCE = new Project(null, null, null);
         if (INSTANCE != null) {
             Profile projectProfile = INSTANCE.getProfile();
             if (projectProfile != null) {
@@ -225,21 +218,6 @@ public class Project {
       return vmComposition.hasVoiceOver();
     }
 
-  public boolean isAudioFadeTransitionActivated() {
-    return isAudioFadeTransitionActivated;
-  }
-
-  public void setAudioFadeTransitionActivated(boolean audioFadeTransitionActivated) {
-    isAudioFadeTransitionActivated = audioFadeTransitionActivated;
-  }
-
-  public boolean isVideoFadeTransitionActivated() {
-    return isVideoFadeTransitionActivated;
-  }
-
-  public void setVideoFadeTransitionActivated(boolean videoFadeTransitionActivated) {
-    isVideoFadeTransitionActivated = videoFadeTransitionActivated;
-  }
   public String getLastModification() {
     return lastModification;
   }
@@ -338,5 +316,22 @@ public class Project {
 
   private void createFolder(String projectPath) {
     FileUtils.createFolder(projectPath);
+  }
+
+  public void addListener(ElementChangedListener listener) {
+    changeNotifier.addListener(listener);
+  }
+
+  public void removeListener(ElementChangedListener listener) {
+    changeNotifier.removeListener(listener);
+  }
+
+  public void notifyChanges() {
+    changeNotifier.notifyChanges();
+  }
+
+  @Override
+  public void onObjectUpdated() {
+    notifyChanges();
   }
 }

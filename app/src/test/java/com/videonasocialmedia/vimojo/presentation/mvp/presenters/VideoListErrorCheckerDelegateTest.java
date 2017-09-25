@@ -37,7 +37,7 @@ public class VideoListErrorCheckerDelegateTest {
   @Mock
   VideoListErrorCheckerDelegate mockedVideoListErrorCheckerDelegate;
   @Mock
-  ListenableFuture<Void> mockedTranscodingTask;
+  ListenableFuture<Video> mockedTranscodingTask;
   @Mock
   VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
 
@@ -72,7 +72,8 @@ public class VideoListErrorCheckerDelegateTest {
     video2.setTranscodingTask(mockedTranscodingTask);
     when(mockedTranscodingTask.isCancelled()).thenReturn(true);
 
-    VideoListErrorCheckerDelegate videoListErrorCheckerDelegate = new VideoListErrorCheckerDelegate();
+    VideoListErrorCheckerDelegate videoListErrorCheckerDelegate =
+            new VideoListErrorCheckerDelegate();
     videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(videoList,
         mockedVideoTranscodingErrorNotifier);
 

@@ -106,7 +106,7 @@ public class FileUtils {
   }
 
   public static int getDuration(String path) {
-      MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+    MediaMetadataRetriever retriever = new MediaMetadataRetriever();
 
     int fileDuration;
     try {
@@ -117,6 +117,11 @@ public class FileUtils {
     } catch (Exception e) {
       fileDuration = 0;
     }
-      return fileDuration;
-    }
+    return fileDuration;
+  }
+
+  public static void removeFile(String mediaPath) {
+    File f = new File(mediaPath);
+    f.delete();
+  }
 }

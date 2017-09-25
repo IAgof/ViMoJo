@@ -34,6 +34,7 @@ import static org.mockito.Mockito.verify;
  * This class tests the add video to project use case.
  */
 public class AddVideoToProjectUseCaseAndroidTest extends AndroidTestCase {
+    @Mock private ApplyAVTransitionsUseCase mockedApplyAVTransitionsUseCase;
     @Mock private ProjectRepository mockedProjectRepository;
     AddVideoToProjectUseCase useCase;
     OnAddMediaFinishedListener listener;
@@ -44,7 +45,8 @@ public class AddVideoToProjectUseCaseAndroidTest extends AndroidTestCase {
     }
 
     public AddVideoToProjectUseCaseAndroidTest() {
-        useCase = new AddVideoToProjectUseCase(mockedProjectRepository);
+        useCase = new AddVideoToProjectUseCase(mockedProjectRepository,
+                mockedApplyAVTransitionsUseCase);
         listener = mock(OnAddMediaFinishedListener.class);
     }
 

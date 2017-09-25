@@ -39,7 +39,7 @@ public class AddLastVideoExportedToProjectUseCaseTest {
 
 
   @Test
-  public void ifAddLastVideoExportedToProjectLastModificationAndVideoExportedDateAreEqual(){
+  public void ifAddLastVideoExportedToProjectLastModificationAndVideoExportedDateAreEqual() {
 
     String date = DateUtils.getDateRightNow();
     injectedUseCase.addLastVideoExportedToProject("newVideoExported", date);
@@ -51,7 +51,7 @@ public class AddLastVideoExportedToProjectUseCaseTest {
   }
 
   @Test
-  public void testAddLastVideoExportedToProjectUpdateProjectRepository(){
+  public void testAddLastVideoExportedToProjectUpdateProjectRepository() {
 
     Project currentProject = Project.getInstance(null, null, null, null);
     String date = DateUtils.getDateRightNow();
@@ -65,5 +65,4 @@ public class AddLastVideoExportedToProjectUseCaseTest {
         .getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25));
   }
-
 }

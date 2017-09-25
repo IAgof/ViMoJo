@@ -8,7 +8,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -23,7 +22,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -45,7 +43,6 @@ public class TrimPreviewPresenterTest {
 
     @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock ModifyVideoDurationUseCase mockedModifyVideoDurationUseCase;
-    @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
 
     @Before
     public void injectMocks() {
@@ -62,7 +59,7 @@ public class TrimPreviewPresenterTest {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(mockedTrimView,
             userEventTracker, mockedGetMediaListFromProjectUseCase,
-            mockedModifyVideoDurationUseCase, mockedUpdateVideoRepositoryUseCase);
+            mockedModifyVideoDurationUseCase);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -87,12 +84,12 @@ public class TrimPreviewPresenterTest {
     }
 
     @Test
-    public void setTrimUpdateVideoTimes(){
+    public void setTrimUpdateVideoTimes() {
 
     }
 
     @Test
-    public void advanceBackwardStartTrimmingCallsUpdateStartTrimmingRangeSeekBar(){
+    public void advanceBackwardStartTrimmingCallsUpdateStartTrimmingRangeSeekBar() {
         TrimPreviewPresenter presenter = getTrimPreviewPresenter();
         int advancePrecision = 600; //ms
         int startTimeMs = 1200; //ms
@@ -102,7 +99,7 @@ public class TrimPreviewPresenterTest {
         verify(mockedTrimView).updateStartTrimmingRangeSeekBar(anyFloat());
     }
 
-    public void advanceForwardStartTrimmingCallsUpdateStartTrimmingRangeSeekBar(){
+    public void advanceForwardStartTrimmingCallsUpdateStartTrimmingRangeSeekBar() {
         TrimPreviewPresenter presenter = getTrimPreviewPresenter();
         int advancePrecision = 600; //ms
         int startTimeMs = 1200; //ms
@@ -113,7 +110,7 @@ public class TrimPreviewPresenterTest {
     }
 
     @Test
-    public void advanceBackwardEndTrimmingCallsUpdateFinishTrimmingRangeSeekBar(){
+    public void advanceBackwardEndTrimmingCallsUpdateFinishTrimmingRangeSeekBar() {
         TrimPreviewPresenter presenter = getTrimPreviewPresenter();
         int advancePrecision = 600; //ms
         int endTimeMs = 1200; //ms
@@ -138,7 +135,7 @@ public class TrimPreviewPresenterTest {
     private TrimPreviewPresenter getTrimPreviewPresenter() {
         return new TrimPreviewPresenter(mockedTrimView,
             mockedUserEventTracker, mockedGetMediaListFromProjectUseCase,
-            mockedModifyVideoDurationUseCase, mockedUpdateVideoRepositoryUseCase);
+            mockedModifyVideoDurationUseCase);
     }
 
     public Project getAProject() {

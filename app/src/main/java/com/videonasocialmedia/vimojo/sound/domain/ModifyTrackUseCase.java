@@ -13,11 +13,11 @@ public class ModifyTrackUseCase {
   ProjectRepository projectRepository;
   Project currentProject;
 
-  public ModifyTrackUseCase(ProjectRepository projectRepository){
+  public ModifyTrackUseCase(ProjectRepository projectRepository) {
     this.projectRepository = projectRepository;
   }
 
-  public void setTrackVolume(Track track, float volume){
+  public void setTrackVolume(Track track, float volume) {
     currentProject = Project.getInstance(null, null, null, null);
     for(Media item: track.getItems()){
       item.setVolume(volume);
@@ -26,7 +26,7 @@ public class ModifyTrackUseCase {
     updateProject();
   }
 
-  public void setTrackMute(Track track, boolean isMute){
+  public void setTrackMute(Track track, boolean isMute) {
     currentProject = Project.getInstance(null, null, null, null);
     track.setMute(isMute);
     updateProject();
