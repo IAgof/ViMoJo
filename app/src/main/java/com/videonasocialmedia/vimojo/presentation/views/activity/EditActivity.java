@@ -169,12 +169,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   }
 
    private void setupFabMenu() {
-
-     TypedValue typedValue = new TypedValue();
-     this.getTheme().resolveAttribute(R.attr.colorBackgroundFloating, typedValue, false);
-     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.common_navigate_record, typedValue.data);
-     addAndConfigurateFabButton(ID_BUTTON_FAB_CENTER, R.drawable.common_navigate_gallery, typedValue.data);
-     addAndConfigurateFabButton(ID_BUTTON_FAB_BOTTOM, R.drawable.activity_edit_clip_text_normal, typedValue.data);
+     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.common_navigate_record, R.color.colorWhite);
+     addAndConfigurateFabButton(ID_BUTTON_FAB_CENTER, R.drawable.common_navigate_gallery, R.color.colorWhite);
+     addAndConfigurateFabButton(ID_BUTTON_FAB_BOTTOM, R.drawable.activity_edit_clip_text_normal, R.color.colorWhite );
   }
 
   private void addAndConfigurateFabButton(int id, int icon, int color) {
