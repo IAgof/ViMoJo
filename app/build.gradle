@@ -63,8 +63,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 55 // 20170804
-            versionName "0.7.0-RC6" // 20170802
+            versionCode 56 // 20170925
+            versionName "0.7.0-RC7" // 20170925
             resValue "string", "app_out_of_date", "2017-12-31" // 20170731
             resValue "string", "app_name", "Vimojo"
             buildConfigField "boolean", "FEATURE_FTP", "true"
@@ -77,8 +77,8 @@ android {
         }
         hispanopost {
             applicationId "com.videonasocialmedia.vimojo.hispanopost"
-            versionCode 35 // 20170804
-            versionName "0.7.0-RC6.fHispanopost" // 20170802
+            versionCode 36 // 20170925
+            versionName "0.7.0-RC7.fHispanopost" // 20170925
             resValue "string", "app_out_of_date", "2017-12-01"
             resValue "string", "app_name", "HispanoPost"
             buildConfigField "boolean", "FEATURE_FTP", "true"
@@ -91,8 +91,8 @@ android {
         }
         rtve {
             applicationId "com.videonasocialmedia.vimojo.rtve"
-            versionCode 34 // 20170804
-            versionName "0.7.0-RC6.fRtve" // 20170802
+            versionCode 35 // 20170925
+            versionName "0.7.0-RC7.fRtve" // 20170925
             resValue "string", "app_out_of_date", "2017-12-31" // 20170731
             resValue "string", "app_name", "Vimojo Rtve"
             buildConfigField "boolean", "FEATURE_FTP", "true"
@@ -105,8 +105,8 @@ android {
         }
         vimojowatermark {
             applicationId "com.videonasocialmedia.vimojo.vimojowatermark"
-            versionCode 8 // 20170804
-            versionName "0.7.0-RC6.fVimojoWatermark" // 20170802
+            versionCode 9 // 20170925
+            versionName "0.7.0-RC7.fVimojoWatermark" // 20170925
             resValue "string", "app_out_of_date", "2017-12-31" //20170731
             resValue "string", "app_name", "Vimojo Videona"
             buildConfigField "boolean", "FEATURE_FTP", "true"
@@ -119,8 +119,8 @@ android {
         }
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 8 // 20170804
-            versionName "0.7.0-RC6.fThomsonFoundation" // 20170802
+            versionCode 9 // 20170925
+            versionName "0.7.0-RC7.fThomsonFoundation" // 20170925
             resValue "string", "app_out_of_date", "2017-12-31"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             buildConfigField "boolean", "FEATURE_FTP", "true"
