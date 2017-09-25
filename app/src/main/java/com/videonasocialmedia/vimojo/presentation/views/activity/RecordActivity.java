@@ -283,7 +283,7 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     }
 
   private void createProgressDialogBatteryOrMemory() {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
+    AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaDialog);
     View dialogView = getLayoutInflater().inflate(R.layout.alert_dialog_with_info_into_circle, null);
     progressBarBatteryOrMemory = (ProgressBar) dialogView.findViewById(R.id.progressBar_level);
     percentLevel = (TextView) dialogView.findViewById(R.id.text_percent_level);

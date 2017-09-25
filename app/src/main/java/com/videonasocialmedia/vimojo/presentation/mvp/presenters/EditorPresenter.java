@@ -164,4 +164,10 @@ public class EditorPresenter implements TranscoderHelperListener, OnVideosRetrie
   public void onNoVideosRetrieved() {
 
   }
+
+  public void switchTheme(final boolean isDarkThemeChecked) {
+    preferencesEditor = sharedPreferences.edit();
+    preferencesEditor.putBoolean(ConfigPreferences.THEME_APP, isDarkThemeChecked);
+    preferencesEditor.apply();
+  }
 }

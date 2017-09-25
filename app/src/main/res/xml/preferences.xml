@@ -29,7 +29,7 @@
         android:enabled="true">
 
         <com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseCameraResolutionListPreferences
-            android:theme="@style/VideonaAlertDialog"
+            android:theme="@style/VideonaDialog"
             android:dialogTitle="@string/resolution"
             android:entries="@array/camera_resolution_names"
             android:entryValues="@array/camera_resolution_values"
@@ -39,7 +39,7 @@
             />
 
         <com.videonasocialmedia.vimojo.presentation.views.customviews.ChooseCameraQualityListPreferences
-            android:theme="@style/VideonaAlertDialog"
+            android:theme="@style/VideonaDialog"
             android:dialogTitle="@string/quality"
             android:entries="@array/camera_quality_names"
             android:entryValues="@array/camera_quality_values"
@@ -77,7 +77,8 @@
         <SwitchPreference
             android:key="themeApp"
             android:title="@string/title_theme_app_preference"
-            android:defaultValue="false" />
+            android:defaultValue="true"
+            android:checked="true"/>
     </PreferenceCategory>
 
     <PreferenceCategory

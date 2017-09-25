@@ -24,6 +24,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -168,9 +169,12 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   }
 
    private void setupFabMenu() {
-     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.common_navigate_record, R.color.colorWhite);
-     addAndConfigurateFabButton(ID_BUTTON_FAB_CENTER, R.drawable.common_navigate_gallery, R.color.colorWhite);
-     addAndConfigurateFabButton(ID_BUTTON_FAB_BOTTOM, R.drawable.activity_edit_clip_text_normal, R.color.colorWhite );
+
+     TypedValue typedValue = new TypedValue();
+     this.getTheme().resolveAttribute(R.attr.colorBackgroundFloating, typedValue, false);
+     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.common_navigate_record, typedValue.data);
+     addAndConfigurateFabButton(ID_BUTTON_FAB_CENTER, R.drawable.common_navigate_gallery, typedValue.data);
+     addAndConfigurateFabButton(ID_BUTTON_FAB_BOTTOM, R.drawable.activity_edit_clip_text_normal, typedValue.data);
   }
 
   private void addAndConfigurateFabButton(int id, int icon, int color) {
@@ -501,7 +505,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void showDialogMediasNotFound() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this,R.style.VideonaDialog);
         dialog.setTitle(R.string.titleVideosNotFound);
         dialog.setMessage(getString(R.string.messageVideosNotFound));
         dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {

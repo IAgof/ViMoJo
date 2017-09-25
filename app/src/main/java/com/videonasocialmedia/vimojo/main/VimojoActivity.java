@@ -40,7 +40,6 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
-import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,7 +88,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
         if(isActivateDarkTheme) {
             setTheme(R.style.VideonaThemeDark);
         } else {
-            setTheme(R.style.VideonaTheme);
+            setTheme(R.style.VideonaThemeLight);
         }
     }
 
@@ -240,7 +239,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
         }
 
         private void showDialog() {
-            dialog = new AlertDialog.Builder(context, R.style.VideonaAlertDialog)
+            dialog = new AlertDialog.Builder(context, R.style.VideonaDialog)
                     .setTitle(title)
                     .setMessage(message)
                     .setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {

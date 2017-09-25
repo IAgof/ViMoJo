@@ -16,7 +16,7 @@
             android:id="@+id/relativeLayoutTop"
             android:layout_width="match_parent"
             android:layout_height="@dimen/defaultbarHeight"
-            android:background="@color/colorPrimary">
+            android:background="?attr/colorPrimary">
 
             <ImageButton
                 android:id="@+id/button_cancel_gallery"

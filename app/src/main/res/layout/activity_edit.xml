@@ -36,6 +36,7 @@
         app:bb_tabXmlResource="@xml/bottombar_tabs"
         android:layout_alignParentBottom="true"
         android:background="@color/colorTransparent"
+        app:bb_activeTabColor="?attr/colorAccent"
         />
     </RelativeLayout>
 

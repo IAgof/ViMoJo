@@ -8,7 +8,8 @@
     android:layout_margin="5dp"
     android:padding="4dp"
     app:cardCornerRadius="4dp"
-    app:cardElevation="4dp">
+    app:cardElevation="4dp"
+    style="?attr/cardViewStyle">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -29,7 +30,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_margin="8dp"
-            android:textColor="@color/textColorSecondary"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="8sp"
             tools:text="Lenght"/>
 
@@ -49,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:textColor="@color/textColorPrimary"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="12sp"
                 tools:text="Guitarra"/>
 
@@ -59,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="@color/colorSecondaryLight"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="12sp"
                 tools:text="Guitarra"/>
 

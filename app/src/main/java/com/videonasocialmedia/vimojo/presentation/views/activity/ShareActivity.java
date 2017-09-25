@@ -294,7 +294,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaDialog);
         AlertDialog alertDialog = builder.setCancelable(false)
                 .setTitle(R.string.title_dialog_sharedActivity)
                 .setView(dialogView)
@@ -342,7 +342,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
         AlertDialog alertDialogClearProject = builder.setCancelable(false)
                 .setMessage(R.string.dialog_message_clean_project)
                 .setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
@@ -425,7 +425,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
                   }
                 };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.VideonaAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.VideonaDialog);
         AlertDialog alertDialogClearProject = builder.setCancelable(false)
                 .setTitle(R.string.dialog_title_export_error)
                 .setMessage(R.string.dialog_message_export_error)
