@@ -269,6 +269,9 @@
     <string name="drawerNewProject">New project</string>
     <string name="drawerUserProfile">User profile</string>
     <string name="drawerSettings">Settings</string>
+    <string name="drawerProjectName">Project name</string>
+    <string name="drawerProjectLocation">Project location</string>
+    <string name="drawerProjectDate">Project date</string>
 
 
     <!-- About Activity -->
