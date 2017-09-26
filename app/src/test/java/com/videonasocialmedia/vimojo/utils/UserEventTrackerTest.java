@@ -50,7 +50,8 @@ public class UserEventTrackerTest {
         UserEventTracker userEventTracker = new UserEventTracker(mockedMixpanelAPI);
 
         assertThat("Mixpanel is set", userEventTracker.mixpanel, is(mockedMixpanelAPI));
-        assertThat("Mixpanel object type", userEventTracker.mixpanel, instanceOf(MixpanelAPI.class));
+        assertThat("Mixpanel object type", userEventTracker.mixpanel,
+                instanceOf(MixpanelAPI.class));
     }
 
     @Test
@@ -73,7 +74,8 @@ public class UserEventTrackerTest {
     public void trackEventCallsMixpanelTrack() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
 
-        UserEventTracker.Event event = new UserEventTracker.Event(AnalyticsConstants.VIDEO_EDITED, null);
+        UserEventTracker.Event event = new UserEventTracker.Event(AnalyticsConstants.VIDEO_EDITED,
+                null);
         userEventTracker.trackEvent(event);
 
         Mockito.verify(mockedMixpanelAPI).track(event.getName(), event.getProperties());
@@ -83,7 +85,8 @@ public class UserEventTrackerTest {
     ArgumentCaptor<UserEventTracker.Event> eventCaptor;
 
     @Test
-    public void trackVideoStartRecordingCallsTrackWithEventNameAndProperties() throws JSONException {
+    public void trackVideoStartRecordingCallsTrackWithEventNameAndProperties()
+            throws JSONException {
         UserEventTracker userEventTracker = Mockito
             .spy(UserEventTracker.getInstance(mockedMixpanelAPI));
 
@@ -157,12 +160,12 @@ public class UserEventTrackerTest {
             is(project.getProfile().getResolution().name()));
         assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.TOTAL_VIDEOS_RECORDED),
             is(totalVideosRecorded));
-
     }
 
     @Test
     public void trackClipsReorderedCallsTrackWithEventNameAndProperties() throws JSONException {
-        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
+                .getInstance(mockedMixpanelAPI));
         Project videonaProject = getAProject();
 
         userEventTracker.trackClipsReordered(videonaProject);
@@ -170,13 +173,16 @@ public class UserEventTrackerTest {
         Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
         UserEventTracker.Event trackedEvent = eventCaptor.getValue();
         assertThat(trackedEvent.getName(), is(AnalyticsConstants.VIDEO_EDITED));
-        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.EDIT_ACTION), is(AnalyticsConstants.EDIT_ACTION_REORDER));
-        assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(), videonaProject);
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.EDIT_ACTION),
+                is(AnalyticsConstants.EDIT_ACTION_REORDER));
+        assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(),
+                videonaProject);
     }
 
     @Test
     public void trackClipTrimmedCallsTrackWithEventNameAndProperties() throws JSONException {
-        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
+                .getInstance(mockedMixpanelAPI));
         Project videonaProject = getAProject();
 
         userEventTracker.trackClipTrimmed(videonaProject);
@@ -184,13 +190,16 @@ public class UserEventTrackerTest {
         Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
         UserEventTracker.Event trackedEvent = eventCaptor.getValue();
         assertThat(trackedEvent.getName(), is(AnalyticsConstants.VIDEO_EDITED));
-        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.EDIT_ACTION), is(AnalyticsConstants.EDIT_ACTION_TRIM));
-        assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(), videonaProject);
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.EDIT_ACTION),
+                is(AnalyticsConstants.EDIT_ACTION_TRIM));
+        assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(),
+                videonaProject);
     }
 
     @Test
     public void trackClipSplitCallsTrackWithEventNameAndProperties() throws JSONException {
-        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
+                .getInstance(mockedMixpanelAPI));
         Project videonaProject = getAProject();
 
         userEventTracker.trackClipSplitted(videonaProject);
@@ -198,13 +207,16 @@ public class UserEventTrackerTest {
         Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
         UserEventTracker.Event trackedEvent = eventCaptor.getValue();
         assertThat(trackedEvent.getName(), is(AnalyticsConstants.VIDEO_EDITED));
-        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.EDIT_ACTION), is(AnalyticsConstants.EDIT_ACTION_SPLIT));
-        assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(), videonaProject);
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.EDIT_ACTION),
+                is(AnalyticsConstants.EDIT_ACTION_SPLIT));
+        assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(),
+                videonaProject);
     }
 
     @Test
     public void trackClipDuplicatedCallsTrackWithEventNameAndProperties() throws JSONException {
-        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
+                .getInstance(mockedMixpanelAPI));
         Project videonaProject = getAProject();
         int copies = 3;
 
@@ -213,14 +225,18 @@ public class UserEventTrackerTest {
         Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
         UserEventTracker.Event trackedEvent = eventCaptor.getValue();
         assertThat(trackedEvent.getName(), is(AnalyticsConstants.VIDEO_EDITED));
-        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.EDIT_ACTION), is(AnalyticsConstants.EDIT_ACTION_DUPLICATE));
-        assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.NUMBER_OF_DUPLICATES), is(copies));
-        assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(), videonaProject);
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.EDIT_ACTION),
+                is(AnalyticsConstants.EDIT_ACTION_DUPLICATE));
+        assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.NUMBER_OF_DUPLICATES),
+                is(copies));
+        assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(),
+                videonaProject);
     }
 
     @Test
     public void trackClipAddTextToClipCallsTrackWithEventAndProperties() throws JSONException {
-        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
+                .getInstance(mockedMixpanelAPI));
         Project videonaProject = getAProject();
         String position = "Center";
         int lengthText = 27;
@@ -231,16 +247,22 @@ public class UserEventTrackerTest {
         UserEventTracker.Event trackedEvent = eventCaptor.getValue();
 
         assertThat(trackedEvent.getName(), is(AnalyticsConstants.VIDEO_EDITED));
-        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.EDIT_ACTION), is(AnalyticsConstants.EDIT_ACTION_TEXT));
-        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.TEXT_POSITION), is(position));
-        assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.TEXT_LENGTH), is(lengthText));
-        assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(), videonaProject);
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.EDIT_ACTION),
+                is(AnalyticsConstants.EDIT_ACTION_TEXT));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.TEXT_POSITION),
+                is(position));
+        assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.TEXT_LENGTH),
+                is(lengthText));
+        assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(),
+                videonaProject);
 
     }
 
     @Test
-    public void trackMusicSetCallsTrackWithEventNameAndProperties() throws IllegalItemOnTrack, JSONException {
-        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+    public void trackMusicSetCallsTrackWithEventNameAndProperties()
+            throws IllegalItemOnTrack, JSONException {
+        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
+                .getInstance(mockedMixpanelAPI));
         Project videonaProject = getAProject();
         Music music = new Music(1, "Music title", 2, 3, "Music Author","", 0);
         videonaProject.getAudioTracks().get(0).insertItem(music);
@@ -250,25 +272,32 @@ public class UserEventTrackerTest {
         Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
         UserEventTracker.Event trackedEvent = eventCaptor.getValue();
         assertThat(trackedEvent.getName(), is(AnalyticsConstants.VIDEO_EDITED));
-        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.EDIT_ACTION), is(AnalyticsConstants.EDIT_ACTION_MUSIC_SET));
-        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.MUSIC_TITLE), is(music.getTitle()));
-        assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(), videonaProject);
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.EDIT_ACTION),
+                is(AnalyticsConstants.EDIT_ACTION_MUSIC_SET));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.MUSIC_TITLE),
+                is(music.getTitle()));
+        assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(),
+                videonaProject);
     }
 
     @Test
     public void trackMusicSetTracksEmptyTitleIfMusicIsNull() throws JSONException {
-        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
+                .getInstance(mockedMixpanelAPI));
         Project videonaProject = getAProject();
 
         userEventTracker.trackMusicSet(videonaProject);
 
         Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
-        assertThat(eventCaptor.getValue().getProperties().getString(AnalyticsConstants.MUSIC_TITLE), isEmptyString());
+        assertThat(eventCaptor.getValue().getProperties().getString(AnalyticsConstants.MUSIC_TITLE),
+                isEmptyString());
     }
 
     @Test
-    public void trackVideoSharedPropertiesCallsTrackWithEventNameAndProperties() throws JSONException {
-        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+    public void trackVideoSharedPropertiesCallsTrackWithEventNameAndProperties()
+            throws JSONException {
+        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
+                .getInstance(mockedMixpanelAPI));
         Project videonaProject = getAProject();
 
         String socialNetworkId = "SocialNetwork";
@@ -280,17 +309,24 @@ public class UserEventTrackerTest {
 
         Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
         UserEventTracker.Event trackedEvent = eventCaptor.getValue();
-        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.SOCIAL_NETWORK), is(socialNetworkId));
-        assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.VIDEO_LENGTH), is(videonaProject.getDuration()));
-        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.RESOLUTION), is(videoResolution.getWidth() + "x" + videoResolution.getHeight()));
-        assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.NUMBER_OF_CLIPS), is(videonaProject.numberOfClips()));
-        assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.TOTAL_VIDEOS_SHARED), is(totalVideoShared));
-
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.SOCIAL_NETWORK),
+                is(socialNetworkId));
+        assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.VIDEO_LENGTH),
+                is(videonaProject.getDuration()));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.RESOLUTION),
+                is(videoResolution.getWidth() + "x" + videoResolution.getHeight()));
+        assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.NUMBER_OF_CLIPS),
+                is(videonaProject.numberOfClips()));
+        assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.TOTAL_VIDEOS_SHARED),
+                is(totalVideoShared));
     }
 
-    public void assertEvenPropertiesIncludeProjectCommonProperties(JSONObject eventProperties, Project videonaProject) throws JSONException {
-        assertThat(eventProperties.getInt(AnalyticsConstants.NUMBER_OF_CLIPS), is(videonaProject.numberOfClips()));
-        assertThat(eventProperties.getInt(AnalyticsConstants.VIDEO_LENGTH), is(videonaProject.getDuration()));
+    public void assertEvenPropertiesIncludeProjectCommonProperties(
+            JSONObject eventProperties, Project videonaProject) throws JSONException {
+        assertThat(eventProperties.getInt(AnalyticsConstants.NUMBER_OF_CLIPS),
+                is(videonaProject.numberOfClips()));
+        assertThat(eventProperties.getInt(AnalyticsConstants.VIDEO_LENGTH),
+                is(videonaProject.getDuration()));
     }
 
     public Project getAProject() {

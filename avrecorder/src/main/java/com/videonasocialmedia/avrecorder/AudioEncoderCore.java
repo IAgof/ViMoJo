@@ -43,11 +43,15 @@ public class AudioEncoderCore extends AndroidEncoder {
 
         // Set some properties.  Failing to specify some of these can cause the MediaCodec
         // configure() call to throw an unhelpful exception.
-        format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
+        format.setInteger(MediaFormat.KEY_AAC_PROFILE,
+                MediaCodecInfo.CodecProfileLevel.AACObjectLC);
         format.setInteger(MediaFormat.KEY_SAMPLE_RATE, mSampleRate);
         format.setInteger(MediaFormat.KEY_CHANNEL_COUNT, numChannels);
         format.setInteger(MediaFormat.KEY_BIT_RATE, bitRate);
         format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 16384);
+        format.setInteger(MediaFormat.KEY_PROFILE,
+                MediaCodecInfo.CodecProfileLevel.AVCProfileBaseline);
+        format.setInteger("level", MediaCodecInfo.CodecProfileLevel.AVCLevel13);
 
         // Create a MediaCodec encoder, and configure it with our format.  Get a Surface
         // we can use for input and wrap it with a class that handles the EGL work.

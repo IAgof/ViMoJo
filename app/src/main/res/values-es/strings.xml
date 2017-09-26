@@ -668,8 +668,10 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="dialog_message_export_project">Haciendo magia en tu vídeo</string>
 
     <string name="dialog_title_export_error">Error exportando</string>
-    <string name="dialog_message_export_error">Ha ocurrido un error durante la exportación y tu
+    <string name="dialog_message_export_error_unknown">Ha ocurrido un error durante la exportación y tu
         proyecto no podrá ser exportado correctamente. Por favor, inténtalo otra vez</string>
+    <string name="dialog_message_export_error_no_space_left">No queda suficiente espacio libre en su
+        dispositivo. Por favor, libere algo de espacio e inténtalo otra vez</string>
     <string name="storage">Almacenamiento interno: </string>
     <string name="free_memory_space">Espacio disponible: </string>
     <string name="preposition_of">de</string>

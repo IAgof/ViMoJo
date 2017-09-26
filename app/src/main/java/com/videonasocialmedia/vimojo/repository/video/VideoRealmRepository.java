@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.repository.video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.repository.Mapper;
+import com.videonasocialmedia.vimojo.repository.RealmSpecification;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.project.RealmProject;
 
@@ -56,6 +57,21 @@ public class VideoRealmRepository implements VideoRepository {
   }
 
   @Override
+  public void setSuccessTranscodingVideo(Video video) {
+    video.resetNumTriesToExportVideo();
+    video.setTranscodingTempFileFinished(true);
+    video.setVideoError(null);
+    update(video);
+  }
+
+  @Override
+  public void setErrorTranscodingVideo(Video video, String message) {
+    video.setVideoError(message);
+    video.setTranscodingTempFileFinished(true);
+    update(video);
+  }
+
+  @Override
   public void add(Iterable<Video> items) {
 
   }
@@ -96,7 +112,16 @@ public class VideoRealmRepository implements VideoRepository {
 
   @Override
   public List<Video> query(Specification specification) {
-    return null;
+    final RealmSpecification realmSpecification = (RealmSpecification) specification;
+    final Realm realm = Realm.getDefaultInstance();
+    final RealmResults<RealmVideo> realmResults = realmSpecification.toRealmResults(realm);
+    final List<Video> videos = new ArrayList<>();
+    for (RealmVideo realmVideo : realmResults) {
+      videos.add(toVideoMapper.map(realmVideo));
+    }
+    realm.close();
+
+    return videos;
   }
 
 }

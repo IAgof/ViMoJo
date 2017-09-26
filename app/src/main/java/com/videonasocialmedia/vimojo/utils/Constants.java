@@ -22,8 +22,10 @@ public class Constants {
     //TODO cambiar el endpoint a la dirección de producción
     public static final String API_ENDPOINT = "http://192.168.0.22/Videona/web/app_dev.php/api";
     //OAuth
-    public static final String OAUTH_CLIENT_ID = "4_6c1bbez44j0okk8sckcssk4wocsgks044wsw0sogkw4gwc8gg0";
-    public static final String OAUTH_CLIENT_SECRET = "64a2br3oixwk0kkw4wwscoocssss0cwg0og8g0ssggcs80owww";
+    public static final String OAUTH_CLIENT_ID
+            = "4_6c1bbez44j0okk8sckcssk4wocsgks044wsw0sogkw4gwc8gg0";
+    public static final String OAUTH_CLIENT_SECRET
+            = "64a2br3oixwk0kkw4wwscoocssss0cwg0og8g0ssggcs80owww";
 
 
     // Folders
@@ -66,10 +68,12 @@ public class Constants {
     final public static String CURRENT_VIDEO_INDEX = "current_video_index";
     final public static String VIDEO_TO_SHARE_PATH = "video_to_share_path";
     final public static String MUSIC_SELECTED_TITLE = "music_selected";
-    final public static String OUTPUT_FILE_MIXED_AUDIO = PATH_APP_TEMP + File.separator + com.videonasocialmedia.videonamediaframework.model.Constants.MIXED_AUDIO_FILE_NAME;
+    final public static String OUTPUT_FILE_MIXED_AUDIO = PATH_APP_TEMP + File.separator
+            + com.videonasocialmedia.videonamediaframework.model.Constants.MIXED_AUDIO_FILE_NAME;
 
 
-    public static final String NOTIFICATION_EXPORT_SERVICES_RECEIVER = "com.videonasocialmedia.vimojo";
+    public static final String NOTIFICATION_EXPORT_SERVICES_RECEIVER =
+            "com.videonasocialmedia.vimojo";
 
     public static final int DEFAULT_VIMOJO_WIDTH = 1280;
     public static final int DEFAULT_VIMOJO_HEIGHT = 720;
@@ -84,8 +88,10 @@ public class Constants {
     public static final String USER_THUMB = "userThumb.jpg";
 
     public static final int MAX_NUM_TRIES_TO_EXPORT_VIDEO = 4;
+    public static final int EXPORT_ERROR_UNKNOWN = 10;
+    public static final int EXPORT_ERROR_NO_SPACE_LEFT = 11;
 
-    public enum ERROR_TRANSCODING_TEMP_FILE_TYPE {SPLIT, TRIM, TEXT, AVTRANSITION, APP_CRASH}
+  public enum ERROR_TRANSCODING_TEMP_FILE_TYPE {SPLIT, TRIM, TEXT, AVTRANSITION, APP_CRASH}
 
     public enum BATTERY_STATUS {CHARGING, CRITICAL, LOW, MEDIUM, FULL, UNKNOW}
     public enum MEMORY_STATUS {CRITICAL, MEDIUM, OKAY}
@@ -93,5 +99,4 @@ public class Constants {
     public static final int ADVANCE_PLAYER_PRECISION_LOW = 300;
     public static final int ADVANCE_PLAYER_PRECISION_MEDIUM = 600;
     public static final int ADVANCE_PLAYER_PRECISION_HIGH = 1200;
-
 }

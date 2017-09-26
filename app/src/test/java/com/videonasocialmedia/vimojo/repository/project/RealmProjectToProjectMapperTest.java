@@ -9,7 +9,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -29,7 +28,6 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.robolectric.RobolectricTestRunner;
 
 import java.io.File;
 
@@ -37,8 +35,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
 
 /**
  * Created by jliarte on 21/10/16.
@@ -305,7 +301,8 @@ public class RealmProjectToProjectMapperTest {
 
     Project project = mapper.map(realmProject);
 
-    AudioTrack voiceOverTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    AudioTrack voiceOverTrack = project.getAudioTracks()
+            .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     assertThat(voiceOverTrack.getVolume(), is(0.9f));
     assertThat(voiceOverTrack.isMuted(), is(true));
     assertThat(voiceOverTrack.getPosition(), is(2));

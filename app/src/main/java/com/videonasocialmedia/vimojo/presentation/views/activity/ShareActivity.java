@@ -361,7 +361,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       }
     }
 
-    @Override
+  @Override
     public void loadExportedVideoPreview(String mediaPath) {
       final String destPath = getDestPath(mediaPath);
       final ShareActivity activity = this;
@@ -391,9 +391,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   @Override
-  public void showVideoExportError() {
+  public void showVideoExportError(int cause) {
     exportProgressDialog.dismiss();
-    showVideoExportErrorDialog();
+    showVideoExportErrorDialog(cause);
   }
 
   @Override
@@ -408,7 +408,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     });
   }
 
-  private void showVideoExportErrorDialog() {
+  private void showVideoExportErrorDialog(final int cause) {
     final ShareActivity activity = this;
     runOnUiThread(new Runnable() {
       @Override
@@ -424,11 +424,15 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
                     }
                   }
                 };
-
+        int dialog_message_export_error = R.string.dialog_message_export_error_unknown;
+        switch (cause) {
+          case Constants.EXPORT_ERROR_NO_SPACE_LEFT:
+            dialog_message_export_error = R.string.dialog_message_export_error_no_space_left;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.VideonaDialog);
         AlertDialog alertDialogClearProject = builder.setCancelable(false)
                 .setTitle(R.string.dialog_title_export_error)
-                .setMessage(R.string.dialog_message_export_error)
+                .setMessage(dialog_message_export_error)
                 .setNeutralButton(R.string.ok, dialogClickListener).show();
       }
     });

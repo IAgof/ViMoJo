@@ -78,8 +78,8 @@ public class Utils {
                 file.delete();
             InputStream in = ctx.getResources().openRawResource(musicResourceId);
             try {
-                FileOutputStream out = new FileOutputStream(Constants.PATH_APP_TEMP + File.separator +
-                        nameFile + fileTypeExtensionConstant);
+                FileOutputStream out = new FileOutputStream(Constants.PATH_APP_TEMP
+                        + File.separator + nameFile + fileTypeExtensionConstant);
                 byte[] buff = new byte[1024];
                 int read = 0;
                 while ((read = in.read(buff)) > 0) {
@@ -94,8 +94,9 @@ public class Utils {
         }
     }
 
-    public static void copyResourceToPrivateFolder(String privatePath, Context ctx, String name, int resourceId,
-                                          String fileTypeExtensionConstant) throws IOException {
+    public static void copyResourceToPrivateFolder(String privatePath, Context ctx, String name,
+                                                   int resourceId, String fileTypeExtensionConstant)
+            throws IOException {
         String nameFile = String.valueOf(name);
         File file = new File(privatePath + File.separator + nameFile +
             fileTypeExtensionConstant);
@@ -126,15 +127,18 @@ public class Utils {
         }
     }
 
-    public static void copyMusicResourceToTemp(Context ctx, String name, int musicResourceId) throws IOException {
+    public static void copyMusicResourceToTemp(Context ctx, String name, int musicResourceId)
+            throws IOException {
         copyResourceToTemp(ctx, name, musicResourceId, Constants.AUDIO_MUSIC_FILE_EXTENSION);
     }
 
     public static File getMusicFileByName(String musicName, int musicResourceId) {
-        File f = new File(Constants.PATH_APP_TEMP + File.separator + musicName + Constants.AUDIO_MUSIC_FILE_EXTENSION);
+        File f = new File(Constants.PATH_APP_TEMP + File.separator + musicName
+                + Constants.AUDIO_MUSIC_FILE_EXTENSION);
         if (!f.exists()) {
             try {
-                copyMusicResourceToTemp(VimojoApplication.getAppContext(), musicName, musicResourceId);
+                copyMusicResourceToTemp(VimojoApplication.getAppContext(), musicName,
+                        musicResourceId);
             } catch (IOException e) {
                 //TODO show error message
                 f = null;
@@ -595,8 +599,8 @@ public class Utils {
 
     public static boolean copyWatermarkResourceToDevice() {
         try {
-            copyResourceToPrivateFolder(Constants.PATH_APP_ANDROID, VimojoApplication.getAppContext(),
-                "watermark", R.raw.watermark, ".png");
+            copyResourceToPrivateFolder(Constants.PATH_APP_ANDROID,
+                    VimojoApplication.getAppContext(), "watermark", R.raw.watermark, ".png");
         } catch (IOException e) {
             e.printStackTrace();
             return false;
