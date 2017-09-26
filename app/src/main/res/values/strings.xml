@@ -259,9 +259,16 @@
     <!-- End Settings Activity -->
 
     <!-- DRAWER -->
-    <string name="drawerProjects">My projects</string>
+    <string name="drawerWatchProjects">Watch projects</string>
+    <string name="drawerEntryText">Entry text</string>
+    <string name="drawerAddPhotos">Add photos</string>
+    <string name="drawerSocialNetworks">Social networks</string>
+    <string name="drawerShareProject">Share project</string>3
+    <string name="drawerProjectInfo">Project info</string>
+    <string name="drawerMyProjects">My projects</string>
+    <string name="drawerNewProject">New project</string>
+    <string name="drawerUserProfile">User profile</string>
     <string name="drawerSettings">Settings</string>
-    <string name="drawerSuggestions">Suggestions</string>
 
 
     <!-- About Activity -->
