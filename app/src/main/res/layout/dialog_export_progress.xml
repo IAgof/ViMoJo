@@ -23,12 +23,13 @@
         android:layout_gravity="center"
         android:padding="8dp"/>
 
+    <!-- Vale para algo ¿? Álvaro
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="2dp"
-        android:background="?android:attr/textColorSecondary"/>
+        android:background="?android:attr/textColorSecondary"/> -->
 
     <!--<LinearLayout-->
         <!--android:layout_width="wrap_content"-->
