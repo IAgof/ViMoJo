@@ -3,7 +3,6 @@ package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
@@ -19,14 +18,13 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -36,18 +34,16 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-import java.io.IOException;
-
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
@@ -69,21 +65,16 @@ public class RecordCamera2PresenterTest {
   @Mock SharedPreferences mockedSharedPreferences;
   @Mock SharedPreferences.Editor mockedEditor;
   @Mock AutoFitTextureView mockedTextureView;
-  String directorySaveVideos;
-  @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
-  @Mock LaunchTranscoderAddAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionUseCase;
-  @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideoFormatFromCurrentProjectUseCase;
+  @Mock
+  ApplyAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionUseCase;
   @Mock AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
-  @Mock AdaptVideoRecordedToVideoFormatUseCase mockedAdaptVideoRecordedToVideoFormatUseCase;
   @Mock VideonaFormat mockedVideoFormat;
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
   @Mock Camera2WrapperListener mockedCamera2WrapperListener;
-  @Mock Camera2Wrapper.RecordStartedCallback mockedRecordStartedCallback;
-  int rotation = 0;
-  Drawable fadeTransition;
-  boolean isFadeActivated;
   @Mock private Activity mockedActivity;
   @Mock private Camera2Wrapper mockedCamera2Wrapper;
+  @Mock private VideoRepository mockedVideoRepository;
+  @Mock private NewClipImporter mockedNewClipImporter;
 
 
   @InjectMocks private RecordCamera2Presenter injectedPresenter;
@@ -131,7 +122,8 @@ public class RecordCamera2PresenterTest {
   @Test
   public void navigateEditOrGalleryButtonCallsGalleryIfThereIsNotVideos() {
     getAProject().clear();
-    int numVideosInProject = getAProject().getVMComposition().getMediaTrack().getNumVideosInProject();
+    int numVideosInProject = getAProject().getVMComposition().getMediaTrack()
+            .getNumVideosInProject();
     assertThat("There is not videos in project ", numVideosInProject, is(0));
     presenter = getRecordCamera2Presenter();
 
@@ -148,7 +140,8 @@ public class RecordCamera2PresenterTest {
     MediaTrack track = project.getMediaTrack();
     track.insertItem(video);
     track.insertItem(video);
-    int numVideosInProject = getAProject().getVMComposition().getMediaTrack().getNumVideosInProject();
+    int numVideosInProject = getAProject().getVMComposition().getMediaTrack()
+            .getNumVideosInProject();
     assertThat("There are videos in project", numVideosInProject, is(2));
     // TODO:(alvaro.martinez) 6/04/17 Assert also there are not videos pending to adapt, transcoding
     presenter = getRecordCamera2Presenter();
@@ -156,28 +149,6 @@ public class RecordCamera2PresenterTest {
     presenter.navigateToEdit();
 
     verify(mockedRecordView).navigateTo(EditActivity.class);
-  }
-
-  @Ignore
-  @Test
-  public void navigateEditOrGalleryCallsShowProgressAdaptingVideoIfThereAreVideosPendingToAdapt()
-      throws IllegalItemOnTrack, IOException {
-    // TODO:(alvaro.martinez) 6/04/17  Prepare this test, i don't know how to mock adapting video process and fake futures.isDone to false.
-    Video video = new Video("dcim/fakeVideo", Video.DEFAULT_VOLUME);
-    Project project = getAProject();
-    MediaTrack track = project.getMediaTrack();
-    track.insertItem(video);
-    track.insertItem(video);
-    int numVideos = getAProject().getVMComposition().getMediaTrack().getNumVideosInProject();
-    assertThat("There are videos in project", numVideos, is(2));
-    mockedAdaptVideoRecordedToVideoFormatUseCase.adaptVideo(video, mockedVideoFormat,
-        directorySaveVideos, rotation, fadeTransition, isFadeActivated,
-        mockedTranscoderHelperListener);
-    presenter = getRecordCamera2Presenter();
-
-    presenter.navigateToEdit();
-
-    verify(mockedRecordView).showProgressAdaptingVideo();
   }
 
   @Test
@@ -253,7 +224,7 @@ public class RecordCamera2PresenterTest {
   }
 
   @Test
-  public void setMicrophoneStatusCallsRecordViewShowSmartPhoneMicrophoneConnected(){
+  public void setMicrophoneStatusCallsRecordViewShowSmartPhoneMicrophoneConnected() {
     int stateHeadSetPlug = 0; // jack is not connected
     int microphone = 1; // microphone connected
     presenter = getRecordCamera2Presenter();
@@ -263,20 +234,20 @@ public class RecordCamera2PresenterTest {
     verify(mockedRecordView).showSmartphoneMicrophoneWorking();
   }
 
-  @Ignore // // TODO:(alvaro.martinez) 25/07/17 How to mock Handler post delayed. java.lang.RuntimeException: Method postDelayed in android.os.Handler not mocked.
+  @Ignore // // TODO:(alvaro.martinez) 25/07/17 How to mock Handler post delayed.
+  // java.lang.RuntimeException: Method postDelayed in android.os.Handler not mocked.
   @Test
-  public void startRecordCallsTrackVideoStartRecording(){
+  public void startRecordCallsTrackVideoStartRecording() {
     presenter = getRecordCamera2Presenter();
     doAnswer(new Answer() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
-        Camera2Wrapper.RecordStartedCallback listener = invocation
-            .getArgumentAt(0, Camera2Wrapper.RecordStartedCallback.class);
+        Camera2Wrapper.RecordStartedCallback listener = invocation.getArgument(0);
         listener.onRecordStarted();
         return null;
       }
-    }).when(mockedCamera2Wrapper).startRecordingVideo(Matchers
-        .any(Camera2Wrapper.RecordStartedCallback.class));
+    }).when(mockedCamera2Wrapper).startRecordingVideo(
+            any(Camera2Wrapper.RecordStartedCallback.class));
 
     presenter.startRecord();
 
@@ -284,7 +255,7 @@ public class RecordCamera2PresenterTest {
   }
 
   @Test
-  public void stopRecordCallsTrackVideoStopRecording(){
+  public void stopRecordCallsTrackVideoStopRecording() {
     presenter = getRecordCamera2Presenter();
     when(mockedSharedPreferences.getInt(anyString(), anyInt())).thenReturn(0);
     when(mockedEditor.commit()).thenReturn(true);
@@ -296,7 +267,7 @@ public class RecordCamera2PresenterTest {
   }
 
   @Test
-  public void stopRecordCallsTrackTotalVideosRecordedSuperProperty(){
+  public void stopRecordCallsTrackTotalVideosRecordedSuperProperty() {
     presenter = getRecordCamera2Presenter();
     when(mockedSharedPreferences.getInt(anyString(), anyInt())).thenReturn(0);
     when(mockedEditor.commit()).thenReturn(true);
@@ -308,7 +279,7 @@ public class RecordCamera2PresenterTest {
   }
 
   @Test
-  public void stopRecordCallsTrackVideoRecorded(){
+  public void stopRecordCallsTrackVideoRecorded() {
     presenter = getRecordCamera2Presenter();
     when(mockedSharedPreferences.getInt(anyString(), anyInt())).thenReturn(0);
     when(mockedEditor.commit()).thenReturn(true);
@@ -320,7 +291,7 @@ public class RecordCamera2PresenterTest {
   }
 
   @Test
-  public void stopRecordCallsTrackVideoRecordedUserTraits(){
+  public void stopRecordCallsTrackVideoRecordedUserTraits() {
     presenter = getRecordCamera2Presenter();
     when(mockedSharedPreferences.getInt(anyString(), anyInt())).thenReturn(0);
     when(mockedEditor.commit()).thenReturn(true);
@@ -364,11 +335,6 @@ public class RecordCamera2PresenterTest {
   private RecordCamera2Presenter getRecordCamera2Presenter() {
     return new RecordCamera2Presenter(mockedActivity,
             mockedRecordView, mockedUserEventTracker, mockedSharedPreferences,
-            mockedUpdateVideoRepositoryUseCase,
-            mockedLaunchTranscoderAddAVTransitionUseCase,
-            mockedGetVideoFormatFromCurrentProjectUseCase,
-            mockedAddVideoToProjectUseCase, mockedAdaptVideoRecordedToVideoFormatUseCase,
-            mockedCamera2Wrapper);
+            mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper);
   }
-
 }

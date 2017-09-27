@@ -151,13 +151,15 @@ public class ShareVideoPresenter {
         userEventTracker.trackVideoSharedUserTraits();
     }
 
-    public void newDefaultProject(String rootPath, String privatePath, boolean isWatermarkFeatured){
+    public void newDefaultProject(String rootPath, String privatePath,
+                                  boolean isWatermarkFeatured) {
         clearProjectDataFromSharedPreferences();
         createDefaultProjectUseCase.createProject(rootPath, privatePath, isWatermarkFeatured);
     }
 
     // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?
-    // TODO:(alvaro.martinez) 4/01/17 these data will no be saved in SharedPreferences, rewrite mixpanel tracking and delete.
+    // TODO:(alvaro.martinez) 4/01/17 these data will no be saved in SharedPreferences,
+    // rewrite mixpanel tracking and delete.
     private void clearProjectDataFromSharedPreferences() {
         sharedPreferences = VimojoApplication.getAppContext().getSharedPreferences(
                 ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
@@ -176,9 +178,16 @@ public class ShareVideoPresenter {
         exportUseCase.export(Constants.PATH_WATERMARK, new OnExportFinishedListener() {
             @Override
             public void onExportError(String error) {
-                Crashlytics.log("Error exportando: " + error);
+                Crashlytics.log("Error exporting: " + error);
                 // TODO(jliarte): 28/04/17 pass the string?
-                shareVideoView.showVideoExportError();
+                // known strings
+                switch (error) {
+                    case "No space left on device":
+                        shareVideoView.showVideoExportError(Constants.EXPORT_ERROR_NO_SPACE_LEFT);
+                        break;
+                    default:
+                        shareVideoView.showVideoExportError(Constants.EXPORT_ERROR_UNKNOWN);
+                }
             }
             @Override
             public void onExportSuccess(Video video) {

@@ -62,8 +62,8 @@ public class UpdateVideoFrameRateToProjectUseCaseTest {
     String title = "project title";
     String rootPath = "project/root/path";
     String privatePath = "private/path";
-    Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
-        VideoFrameRate.FrameRate.FPS25);
+    Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720,
+            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     return Project.getInstance(title, rootPath, privatePath, profile);
   }
 }

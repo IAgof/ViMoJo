@@ -87,7 +87,8 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
                 new OnAddMediaFinishedListener() {
                     @Override
                     public void onAddMediaItemToTrackError() {
-                        duplicateView.showError(String.valueOf(R.string.addMediaItemToTrackError));
+                        duplicateView.showError(String
+                                .valueOf(R.string.addMediaItemToTrackError));
                     }
 
                     @Override
