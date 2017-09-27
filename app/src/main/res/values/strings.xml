@@ -46,6 +46,7 @@
     <string name="dialog_editor_user_thumb_message">Select user photo from</string>
     <string name="dialog_editor_user_thumb_take_photo">Camera</string>
     <string name="dialog_editor_user_thumb_pick_photo">Gallery</string>
+    <string name="section_navview_style">Dark theme</string>
 
 
     <!-- Edit Activity -->
@@ -1804,8 +1805,8 @@ and Conditions.\n\n
     <string name="title_track_clip_voice_over">Voice over track volume</string>
     <string name="mute">Mute</string>
     <string name="solo">Solo</string>
-    <string name="title_theme_app_preference">ThemeApp</string>
-    <string name="title_theme_app_section">Activate Theme Dark</string>
+    <string name="title_theme_app_preference">Dark theme</string>
+    <string name="title_theme_app_section">Activate dark theme</string>
 
 
 </resources>
