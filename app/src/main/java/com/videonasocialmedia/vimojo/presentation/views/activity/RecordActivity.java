@@ -80,7 +80,8 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 /**
  * RecordActivity manages a single live record.
- * @deprecated Update and clean activity RecordCamera2Activity. Delete dependency with camera1 and avrecorder module
+ * @deprecated Update and clean activity RecordCamera2Activity. Delete dependency with camera1 and
+ * avrecorder module
  */
 public class RecordActivity extends VimojoActivity implements RecordView {
     private final String LOG_TAG = getClass().getSimpleName();
@@ -214,7 +215,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 //        editor = sharedPreferences.edit();
 
         this.getActivityPresentersComponent().inject(this);
-//        recordPresenter = new RecordPresenter(VimojoApplication.getAppContext(), this, cameraView, sharedPreferences, externalIntent);
+//        recordPresenter = new RecordPresenter(VimojoApplication.getAppContext(), this, cameraView,
+//                sharedPreferences, externalIntent);
 
         configChronometer();
         initOrientationHelper();
@@ -284,7 +286,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
 
   private void createProgressDialogBatteryOrMemory() {
     AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
-    View dialogView = getLayoutInflater().inflate(R.layout.alert_dialog_with_info_into_circle, null);
+    View dialogView = getLayoutInflater().inflate(R.layout.alert_dialog_with_info_into_circle,
+            null);
     progressBarBatteryOrMemory = (ProgressBar) dialogView.findViewById(R.id.progressBar_level);
     percentLevel = (TextView) dialogView.findViewById(R.id.text_percent_level);
     freeMemorySpace=(TextView)dialogView.findViewById(R.id.text_message);
@@ -399,7 +402,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     }
 
     public void updateBatteryStatus() {
-        Intent batteryStatus = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        Intent batteryStatus = registerReceiver(null,
+                new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
         int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
         int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
@@ -706,7 +710,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     percentLevel.setText(batteryPercent + " %");
   }
 
-  private void updateProgressBarBattery(Constants.BATTERY_STATUS batteryStatus, int batteryPercent) {
+  private void updateProgressBarBattery(Constants.BATTERY_STATUS batteryStatus,
+                                        int batteryPercent) {
     progressBarBatteryOrMemory.setProgress(batteryPercent);
     setColorProgressBarBattery(batteryStatus);
   }
@@ -732,7 +737,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
   }
 
   @Override
-  public void showFreeMemorySpace(Constants.MEMORY_STATUS memoryStatus, int memoryPercent, String freeMemoryInBytes, String totalMemoryInBytes) {
+  public void showFreeMemorySpace(Constants.MEMORY_STATUS memoryStatus, int memoryPercent,
+                                  String freeMemoryInBytes, String totalMemoryInBytes) {
     progressDialogBatteryOrMemory.setTitle(R.string.storage);
     freeMemorySpace.setVisibility(View.VISIBLE);
 
@@ -785,7 +791,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
   }
 
   private GradientDrawable getDrawableProgressBar() {
-    LayerDrawable drawableProgressBar = (LayerDrawable) progressBarBatteryOrMemory.getProgressDrawable();
+    LayerDrawable drawableProgressBar =
+            (LayerDrawable) progressBarBatteryOrMemory.getProgressDrawable();
     return (GradientDrawable) drawableProgressBar
         .findDrawableByLayerId(R.id.progressbar_alert_dialog_circular_progress);
   }
@@ -823,9 +830,12 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     // TODO(jliarte): 13/12/16 do we still need to use sharedPreferences for this?
     private void saveVideoFeaturesToConfig() {
         SharedPreferences.Editor preferencesEditor = sharedPreferences.edit();
-        preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION, recordPresenter.getProjectDuration());
-        preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS, recordPresenter.getNumVideosOnProject());
-        preferencesEditor.putString(ConfigPreferences.RESOLUTION, recordPresenter.getResolution());
+        preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION,
+                recordPresenter.getProjectDuration());
+        preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS,
+                recordPresenter.getNumVideosOnProject());
+        preferencesEditor.putString(ConfigPreferences.RESOLUTION,
+                recordPresenter.getResolution());
         preferencesEditor.commit();
     }
 
@@ -971,7 +981,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
          *
          */
         public void startMonitoringOrientation() throws NoOrientationSupportException {
-            rotationView = ( (Activity) context ).getWindowManager().getDefaultDisplay().getRotation();
+            rotationView = ( (Activity) context ).getWindowManager().getDefaultDisplay()
+                    .getRotation();
             if (rotationView == Surface.ROTATION_90) {
                 isNormalOrientation = true;
                 orientationHaveChanged = false;
@@ -1008,7 +1019,8 @@ public class RecordActivity extends VimojoActivity implements RecordView {
         }
 
         public void reStartMonitoringOrientation() throws NoOrientationSupportException {
-            rotationView = ( (Activity) context ).getWindowManager().getDefaultDisplay().getRotation();
+            rotationView = ( (Activity) context ).getWindowManager().getDefaultDisplay()
+                    .getRotation();
             if (rotationView == Surface.ROTATION_90) {
                 isNormalOrientation = true;
                 orientationHaveChanged = false;

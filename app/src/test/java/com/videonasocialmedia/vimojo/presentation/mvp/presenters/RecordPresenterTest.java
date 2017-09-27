@@ -11,11 +11,11 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.LaunchTranscoderAddAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -34,28 +34,18 @@ import static org.mockito.Mockito.verify;
  */
 
 public class RecordPresenterTest {
-
+  @Mock Context mockedContext;
+  @Mock RecordView mockedRecordView;
+  @Mock UserEventTracker mockedUserEventTracker;
+  @Mock GLCameraView mockedGLCameraview;
+  @Mock SharedPreferences mockedSharedPreferences;
+  @Mock AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
   @Mock
-  Context mockedContext;
-  @Mock
-  RecordView mockedRecordView;
-  @Mock
-  UserEventTracker mockedUserEventTracker;
-  @Mock
-  GLCameraView mockedGLCameraview;
-  @Mock
-  SharedPreferences mockedSharedPreferences;
-  @Mock
-  AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
-  @Mock
-  UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
-  @Mock
-  LaunchTranscoderAddAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionsUseCase;
-  @Mock
-  GetVideoFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
+  ApplyAVTransitionsUseCase mockedApplyAVTransitionsUseCase;
+  @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
+  @Mock private VideoRepository mockedVideoRepository;
 
   boolean externalIntent;
-
   private RecordPresenter recordPresenter;
 
   @Before
@@ -65,7 +55,6 @@ public class RecordPresenterTest {
 
   @Test
   public void constructorSetsCurrentProject() {
-
     recordPresenter = getRecordPresenter();
 
     Project project = getAProject();
@@ -77,7 +66,7 @@ public class RecordPresenterTest {
   private RecordPresenter getRecordPresenter() {
     return new RecordPresenter(mockedContext, mockedRecordView, mockedUserEventTracker,
         mockedGLCameraview, mockedSharedPreferences, externalIntent, mockedAddVideoToProjectUseCase,
-        mockedUpdateVideoRepositoryUseCase, mockedLaunchTranscoderAddAVTransitionsUseCase,
+        mockedVideoRepository, mockedApplyAVTransitionsUseCase,
         mockedGetVideonaFormatFromCurrentProjectUseCase);
   }
 
@@ -91,12 +80,11 @@ public class RecordPresenterTest {
   public void videoToLaunchAVTransitionTempFileUpdateVideoTempPath(){
     getAProject().clear();
     Project project = getAProject();
-    project.setAudioFadeTransitionActivated(true);
+    project.getVMComposition().setAudioFadeTransitionActivated(true);
     String path = "media/path";
-    assertThat("Audio transition is activated ", project.isAudioFadeTransitionActivated(), is(true));
-
+    assertThat("Audio transition is activated ",
+            project.getVMComposition().isAudioFadeTransitionActivated(), is(true));
     recordPresenter = getRecordPresenter();
-
     Video video = new Video(path, 1f);
     String tempPath = video.getTempPath();
 
@@ -125,7 +113,6 @@ public class RecordPresenterTest {
     int percentBattery;
     recordPresenter = getRecordPresenter();
 
-
     percentBattery = recordPresenter.getPercentLevel(levelBattery, scaleBattery);
 
     assertThat("percentLevel will be 20", percentBattery, is(20));
@@ -139,7 +126,6 @@ public class RecordPresenterTest {
     Constants.BATTERY_STATUS status;
     recordPresenter = getRecordPresenter();
 
-
     status = recordPresenter.getBatteryStatus(statusBattery, percentBattery);
 
     assertNotEquals("Status is not charging", status, is(Constants.BATTERY_STATUS.CHARGING));
@@ -151,7 +137,6 @@ public class RecordPresenterTest {
     int statusBattery = 2; // BatteryManager.BATTERY_STATUS_CHARGING
     Constants.BATTERY_STATUS status;
     recordPresenter = getRecordPresenter();
-
 
     status = recordPresenter.getBatteryStatus(statusBattery, percentBattery);
 

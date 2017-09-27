@@ -27,31 +27,30 @@ public class GetVideoFormatFromCurrentProjectUseCase {
         return videoCameraFormat;
     }
 
-    public VideonaFormat getVideonaFormatFromCurrentProject(){
+    public VideonaFormat getVideonaFormatFromCurrentProject() {
         VideonaFormat videonaFormat;
         VideoResolution resolution = project.getProfile().getVideoResolution();
         VideoQuality quality = project.getProfile().getVideoQuality();
 
-        if(resolution!=null && quality!=null) {
+        if (resolution != null && quality != null) {
             videonaFormat = new VideonaFormat(quality.getVideoBitRate(), resolution.getWidth(),
                 resolution.getHeight());
         } else {
             videonaFormat = new VideonaFormat();
         }
-
         return videonaFormat;
     }
 
-    public VideonaFormat getVideonaFormatToAdaptAudio(){
+    public VideonaFormat getVideonaFormatToAdaptAudio() {
         return new VideonaFormat(Constants.DEFAULT_VIMOJO_AUDIO_BITRATE,
             Constants.DEFAULT_VIMOJO_AUDIO_CHANNELS);
     }
 
-    public VideonaFormat getVideonaFormatToAdaptVideoRecordedAudioAndVideo(){
+    public VideonaFormat getVideonaFormatToAdaptVideoRecordedAudioAndVideo() {
         VideonaFormat videonaFormat;
         VideoResolution resolution = project.getProfile().getVideoResolution();
         VideoQuality quality = project.getProfile().getVideoQuality();
-        if(resolution!=null && quality!=null) {
+        if (resolution != null && quality != null) {
             videonaFormat = new VideonaFormat(quality.getVideoBitRate(), resolution.getWidth(),
                 resolution.getHeight(), Constants.DEFAULT_VIMOJO_AUDIO_BITRATE,
                 Constants.DEFAULT_VIMOJO_AUDIO_CHANNELS);
@@ -59,7 +58,6 @@ public class GetVideoFormatFromCurrentProjectUseCase {
             videonaFormat = new VideonaFormat(Constants.DEFAULT_VIMOJO_AUDIO_BITRATE,
                 Constants.DEFAULT_VIMOJO_AUDIO_CHANNELS);
         }
-
         return videonaFormat;
     }
 }

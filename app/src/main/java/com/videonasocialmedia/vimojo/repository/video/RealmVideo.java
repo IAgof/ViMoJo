@@ -1,7 +1,5 @@
 package com.videonasocialmedia.vimojo.repository.video;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 

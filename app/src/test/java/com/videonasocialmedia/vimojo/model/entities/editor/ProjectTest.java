@@ -104,14 +104,16 @@ public class ProjectTest {
     }
 
     @Test
-    public void shouldSaveProfileVMCompositionDurationLastModificationIfProjectIsDuplicate() throws IllegalItemOnTrack {
+    public void shouldSaveProfileVMCompositionDurationLastModificationIfProjectIsDuplicate()
+            throws IllegalItemOnTrack {
         Project project = getAProject();
         Project duplicateProject = new Project(project);
 
         Assert.assertThat("copy project save duration ", duplicateProject.getDuration(),
             CoreMatchers.is(project.getDuration()));
-        Assert.assertThat("copy project save last modification ", duplicateProject.getLastModification(),
-            CoreMatchers.is(project.getLastModification()));
+        Assert.assertThat("copy project save last modification ",
+                duplicateProject.getLastModification(),
+                CoreMatchers.is(project.getLastModification()));
     }
 
     @Test

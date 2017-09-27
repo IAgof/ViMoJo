@@ -83,38 +83,4 @@ public class MergeVoiceOverAudiosUseCase {
         Crashlytics.log(msg);
         Log.d(TAG, msg+" - Error in export session: " + msg);
     }
-
-//    private void logExceptionWithMessage(Exception e, String msg) {
-//        Crashlytics.log(msg);
-//        Crashlytics.logException(e);
-//        Log.d(TAG, msg+" - "+String.valueOf(e));
-//    }
-
-//    private void oldMergeCode(ArrayList<String> audioPathList, String pathAudioEdited) {
-//        Movie result = appendFiles(audioPathList, true);
-//        if (result != null) {
-//            try {
-//                createFile(result, pathAudioEdited);
-//                listener.onMergeVoiceOverAudioSuccess(pathAudioEdited);
-//            } catch (IOException | NullPointerException e) {
-//                listener.onMergeVoiceOverAudioError(String.valueOf(e));
-//            } catch (NoSuchElementException e) {
-//                logExceptionWithMessage(e, "saveFinalVideo: Exception caught in 20161011 debugging session w/ pablo");
-//                listener.onMergeVoiceOverAudioError(String.valueOf(e));
-//            }
-//        }
-//    }
-
-
-//    private Movie appendFiles(ArrayList<String> videoTranscodedPaths, boolean addOriginalAudio) {
-//        Movie merge;
-//        try {
-//            merge = appender.appendVideos(videoTranscodedPaths, addOriginalAudio);
-//        } catch (Exception e) {
-//            merge = null;
-//            listener.onMergeVoiceOverAudioError(String.valueOf(e));
-//        }
-//        return merge;
-//    }
-
 }
