@@ -84,7 +84,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
 
         restoreState(savedInstanceState);
 
-        changeVisibilityAndResouceButton(buttonRecordIsInStop);
+        changeVisibilityAndResouceButton();
 
         videonaPlayer.setSeekBarLayoutEnabled(false);
         videonaPlayer.setListener(this);
@@ -156,7 +156,11 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
 
     @OnClick(R.id.button_voice_over_accept)
     public void onClickVoiceOverAccept() {
-        presenter.addVoiceOver(Constants.AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME);
+        if (!buttonRecordIsInStop){
+            navigateTo(SoundActivity.class);
+        } else {
+            presenter.addVoiceOver(Constants.AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME);
+        }
     }
 
     @OnClick(R.id.button_voice_over_cancel)
@@ -189,7 +193,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
         progressBarVoiceOver.setProgress(0);
         refreshTimeTag(0);
         buttonRecordIsInStop = false;
-        changeVisibilityAndResouceButton(buttonRecordIsInStop);
+        changeVisibilityAndResouceButton();
         millisecondsLeft = maxDuration;
         videonaPlayer.seekTo(0);
     }
@@ -285,7 +289,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
             // Stop recording and save file
             presenter.stopRecording();
             buttonRecordIsInStop =true;
-            changeVisibilityAndResouceButton(buttonRecordIsInStop);
+            changeVisibilityAndResouceButton();
             cancelTimer();
             return true;
         }
@@ -314,13 +318,13 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
                 presenter.stopRecording();
                 buttonRecordIsInStop =true;
                 progressBarVoiceOver.setProgress(maxDuration);
-                changeVisibilityAndResouceButton(buttonRecordIsInStop);
+                changeVisibilityAndResouceButton();
                 refreshTimeTag(maxDuration);
             }
         }.start();
     }
 
-    private void changeVisibilityAndResouceButton(boolean buttonRecordIsInStop) {
+    private void changeVisibilityAndResouceButton() {
         buttonRecordVoiceOver.setImageResource(
             R.drawable.activity_edit_sound_voice_record_normal);
     }
