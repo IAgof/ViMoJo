@@ -163,7 +163,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         checkAvailableQuality();
         checkTransitions();
         checkWatermark(BuildConfig.FEATURE_WATERMARK);
-        checkThemeApp(ConfigPreferences.THEME_APP);
+        checkThemeApp(ConfigPreferences.THEME_APP_DARK);
     }
 
     private void checkThemeApp(String key) {

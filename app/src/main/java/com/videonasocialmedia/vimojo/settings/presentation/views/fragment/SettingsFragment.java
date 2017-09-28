@@ -138,7 +138,7 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     private void setupThemeApp() {
-        themeappSwitchPref = (SwitchPreference) findPreference(ConfigPreferences.THEME_APP);
+        themeappSwitchPref = (SwitchPreference) findPreference(ConfigPreferences.THEME_APP_DARK);
     }
 
     private void setupCameraSettings() {
@@ -303,14 +303,14 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                           String key) {
         Preference connectionPref = findPreference(key);
-        if(key.equals(ConfigPreferences.THEME_APP)){
+        if(key.equals(ConfigPreferences.THEME_APP_DARK)){
             restartActivity();
         }
 
         if (key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0
                 || key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0
                 || key.compareTo(ConfigPreferences.WATERMARK) == 0
-                ||key.compareTo(ConfigPreferences.THEME_APP)==0) {
+                ||key.compareTo(ConfigPreferences.THEME_APP_DARK)==0) {
             return;
         }
         if (!key.equals(ConfigPreferences.PASSWORD_FTP)

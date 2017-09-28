@@ -85,7 +85,7 @@ public class EditorPresenter {
   }
 
   public boolean getPreferenceThemeApp() {
-    boolean isActivateDarkTheme= sharedPreferences.getBoolean(ConfigPreferences.THEME_APP,false);
+    boolean isActivateDarkTheme= sharedPreferences.getBoolean(ConfigPreferences.THEME_APP_DARK,true);
     return isActivateDarkTheme;
   }
 
@@ -140,7 +140,7 @@ public class EditorPresenter {
 
   public void switchTheme(final boolean isDarkThemeChecked) {
     preferencesEditor = sharedPreferences.edit();
-    preferencesEditor.putBoolean(ConfigPreferences.THEME_APP, isDarkThemeChecked);
+    preferencesEditor.putBoolean(ConfigPreferences.THEME_APP_DARK, isDarkThemeChecked);
     preferencesEditor.apply();
     if(isChildShareActivity()){
       editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
