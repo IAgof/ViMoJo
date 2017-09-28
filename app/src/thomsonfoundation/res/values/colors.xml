@@ -8,7 +8,6 @@
 
     <color name="colorPrimary">#009cde</color>
     <color name="colorPrimaryDark">#003587</color>
-    <color name="colorPrimaryLight">#FF8CDBFC</color>
 
     <color name="colorAccent">#009cde</color>
 
@@ -17,9 +16,7 @@
 
     <color name="colorDivider">#B6B6B6</color>
 
-    <color name="textColor">@color/colorSecondary</color>
-    <color name="textColorPrimary">@color/colorSecondary</color>
-    <color name="textColorSecondary">@color/colorSecondaryLight</color>
+    <color name="textColorTitle">@color/textColorPrimary</color>
 
     <color name="button">@color/colorSecondary</color>
     <color name="button_pressed">@color/colorPrimary</color>
@@ -28,9 +25,6 @@
 
     <color name="button_toolbar">@color/colorWhite</color>
     <color name="button_record">@color/colorWhite</color>
-    <color name="button_edit">@color/colorSecondary</color>
-
-    <color name="textColorTitle">@color/textColorPrimary</color>
 
     <!-- for gallery loading animation -->
     <color name="book_loading_background">#00ffffff</color>

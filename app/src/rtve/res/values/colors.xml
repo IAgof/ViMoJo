@@ -5,26 +5,18 @@
     <color name="colorGreyTransparent">#4F000000</color>
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
-    <color name="colorAccent">#FF9D01</color>
-
-    <!-- for gallery loading animation -->
-    <color name="book_loading_background">#00ffffff</color>
-    <color name="book_loading_book">@color/colorAccent</color>
-    <color name="recordActivityInfoGreen">#37c151</color>
-    <color name="recordActivityInfoYellow">#ffcb00</color>
-    <color name="recordActivityInfoRed">#ff2232</color>
 
     <color name="colorPrimary">#FF9D01</color>
     <color name="colorPrimaryDark">#F98106</color>
-    <color name="colorPrimaryLight"> #FF9D01 </color>
+
+    <color name="colorAccent">#FF9D01</color>
+
     <color name="colorSecondary">#666666</color>
     <color name="colorSecondaryLight">#999999</color>
 
     <color name="colorDivider">#B6B6B6</color>
 
-    <color name="textColor">@color/colorSecondary</color>
-    <color name="textColorPrimary">@color/colorSecondary</color>
-    <color name="textColorSecondary">@color/colorSecondaryLight</color>
+    <color name="textColorTitle">@color/textColorPrimary</color>
 
     <color name="button">@color/colorSecondary</color>
     <color name="button_pressed">@color/colorPrimary</color>
@@ -33,9 +25,15 @@
 
     <color name="button_toolbar">@color/colorWhite</color>
     <color name="button_record">@color/colorWhite</color>
-    <color name="button_edit">@color/colorSecondary</color>
 
-    <color name="textColorTitle">@color/textColorPrimary</color>
+
+    <!-- for gallery loading animation -->
+    <color name="book_loading_background">#00ffffff</color>
+    <color name="book_loading_book">@color/colorAccent</color>
+
+    <color name="recordActivityInfoGreen">#37c151</color>
+    <color name="recordActivityInfoYellow">#ffcb00</color>
+    <color name="recordActivityInfoRed">#ff2232</color>
 
     <!--color Theme Dark-->
     <color name="colorPrimaryThemeDark">#1B2836</color>
