@@ -7,7 +7,7 @@
 
 package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
@@ -23,7 +23,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import static com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity.MS_CORRECTION_FACTOR;
-import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_LOW;
 
 /**
  * Created by vlf on 7/7/15.
@@ -85,23 +84,15 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
         trimView.refreshDurationTag(video.getDuration());
     }
 
-    private void showTimeTags(Video video) {
-        trimView.refreshDurationTag(video.getDuration());
-        trimView.refreshStartTimeTag(video.getStartTime());
-        trimView.refreshStopTimeTag(video.getStopTime());
-    }
-
     @Override
     public void onNoVideosRetrieved() {
         trimView.showError("No videos");
     }
 
     public void setTrim(int startTimeMs, int finishTimeMs) {
-        VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
 
         modifyVideoDurationUseCase.trimVideo(videoToEdit, startTimeMs, finishTimeMs,
                 currentProject);
-
         trackVideoTrimmed();
     }
 
@@ -109,83 +100,50 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
         userEventTracker.trackClipTrimmed(currentProject);
     }
 
-    public void updateVideoTrim(int videoIndexOnTrack, int startTimeMs, int finishTimeMs) {
-        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
-        if (videoList != null) {
-            ArrayList<Video> v = new ArrayList<>();
-            videoToEdit = (Video) videoList.get(videoIndexOnTrack);
-            v.add(videoToEdit);
-            onVideosRetrieved(v);
-            trimView.showPreview(v);
-            Video video = v.get(0);
-            trimView.showTrimBar(startTimeMs, finishTimeMs, video.getDuration());
-        }
-    }
-
-    @Override
-    public void onSuccessTranscoding(Video video) {
-        Log.d(LOG_TAG, "onSuccessTranscoding after trim " + video.getTempPath());
-        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
-    }
-
-    @Override
-    public void onErrorTranscoding(Video video, String message) {
-        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-        if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
-            video.increaseNumTriesToExportVideo();
-            setTrim(video.getStartTime(), video.getStopTime());
-        } else {
-            //trimView.showError(message);
-            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
-                    Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
-        }
-    }
-
-    public void advanceBackwardStartTrimming(int advancePrecision, int startTimeMs, int finishTimeMs) {
+    public void advanceBackwardStartTrimming(int advancePrecision, int startTimeMs) {
         float adjustSeekBarMinPosition = (float) (startTimeMs - advancePrecision)
             / MS_CORRECTION_FACTOR;
         trimView.updateStartTrimmingRangeSeekBar(Math.max(0, adjustSeekBarMinPosition));
-        //trimView.refreshDurationTag(finishTimeMs - startTimeMs);
     }
 
-    public void advanceForwardStartTrimming(int advancePrecision, int startTimeMs, int finishTimeMs) {
-        if(finishTimeMs - (startTimeMs + advancePrecision) < MIN_TRIM_OFFSET){
+    public void advanceForwardStartTrimming(int advancePrecision, int startTimeMs,
+                                            int finishTimeMs) {
+        if(((finishTimeMs - startTimeMs) / MS_CORRECTION_FACTOR) <= MIN_TRIM_OFFSET){
             return;
         }
         float adjustSeekBarMinPosition = (float) (startTimeMs + advancePrecision)
             / MS_CORRECTION_FACTOR;
-        if(Math.abs(adjustSeekBarMinPosition - (float) finishTimeMs / MS_CORRECTION_FACTOR) < MIN_TRIM_OFFSET){
-            adjustSeekBarMinPosition = ((float) finishTimeMs / MS_CORRECTION_FACTOR) - MIN_TRIM_OFFSET;
+        if(Math.abs(adjustSeekBarMinPosition - (float) finishTimeMs / MS_CORRECTION_FACTOR)
+                < MIN_TRIM_OFFSET){
+            adjustSeekBarMinPosition = ((float) finishTimeMs / MS_CORRECTION_FACTOR)
+                    - MIN_TRIM_OFFSET;
         }
         trimView.updateStartTrimmingRangeSeekBar(Math.min(adjustSeekBarMinPosition,
             ((float) finishTimeMs / MS_CORRECTION_FACTOR)));
-        //trimView.refreshDurationTag(finishTimeMs - startTimeMs);
     }
 
-    public void advanceBackwardEndTrimming(int advancePrecision, int startTimeMs, int finishTimeMs) {
-        if((finishTimeMs - advancePrecision) - startTimeMs < MIN_TRIM_OFFSET){
+    public void advanceBackwardEndTrimming(int advancePrecision, int startTimeMs,
+                                           int finishTimeMs) {
+        if(((finishTimeMs - startTimeMs) / MS_CORRECTION_FACTOR) <= MIN_TRIM_OFFSET){
             return;
         }
 
         float adjustSeekBarMaxPosition = (float) (finishTimeMs - advancePrecision)
             / MS_CORRECTION_FACTOR;
-        if(Math.abs(adjustSeekBarMaxPosition - (float) startTimeMs / MS_CORRECTION_FACTOR) < MIN_TRIM_OFFSET){
-            adjustSeekBarMaxPosition = (float) startTimeMs / MS_CORRECTION_FACTOR + MIN_TRIM_OFFSET;
+        if(Math.abs(adjustSeekBarMaxPosition - (float) startTimeMs / MS_CORRECTION_FACTOR)
+                < MIN_TRIM_OFFSET){
+            adjustSeekBarMaxPosition = (startTimeMs / MS_CORRECTION_FACTOR) + MIN_TRIM_OFFSET;
         }
-        trimView.updateFinishTrimmingRangeSeekBar(Math.max(adjustSeekBarMaxPosition, ((float) startTimeMs / MS_CORRECTION_FACTOR) - MIN_TRIM_OFFSET));
-       // trimView.refreshDurationTag(finishTimeMs - startTimeMs);
+        trimView.updateFinishTrimmingRangeSeekBar(Math.max(adjustSeekBarMaxPosition,
+                ((float) startTimeMs / MS_CORRECTION_FACTOR) - MIN_TRIM_OFFSET));
     }
 
-    public void advanceForwardEndTrimming(int advancePrecision, int startTimeMs, int finishTimeMs) {
-        float adjustSeekBarMaxPosition = (float) (finishTimeMs + advancePrecision)
-            / MS_CORRECTION_FACTOR;
+    public void advanceForwardEndTrimming(int advancePrecision, int finishTimeMs) {
+
         float maxRangeSeekBarValue = (float) videoToEdit.getFileDuration() / MS_CORRECTION_FACTOR;
-        if (adjustSeekBarMaxPosition > maxRangeSeekBarValue) {
-            adjustSeekBarMaxPosition = maxRangeSeekBarValue;
-        }
-        trimView.updateFinishTrimmingRangeSeekBar(Math.min(maxRangeSeekBarValue,
-            adjustSeekBarMaxPosition));
-        //trimView.refreshDurationTag(finishTimeMs - startTimeMs);
+        float adjustSeekBarMaxPosition = Math.min(maxRangeSeekBarValue,
+                (float) (finishTimeMs + advancePrecision) / MS_CORRECTION_FACTOR);
+        trimView.updateFinishTrimmingRangeSeekBar(adjustSeekBarMaxPosition);
     }
 }
 
