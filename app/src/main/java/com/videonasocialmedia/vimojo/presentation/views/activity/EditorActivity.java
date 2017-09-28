@@ -71,8 +71,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   CircleImageView imageUserThumb;
   String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_THUMB;
   private int REQUEST_ICON_USER = 100;
-  private final String THEME_DARK = "dark";
-  private final String THEME_LIGHT = "light";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -141,38 +139,11 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     }
     editorPresenter.init();
     setupSwitchThemeAppIntoDrawer();
-    updateTheme();
-  }
-
-  private void updateTheme() {
-    boolean isDark = checkIfThemeDarkIsSelected();
-    String currentTheme = getCurrentAppliedTheme();
-    if (isDark && currentTheme.equals(THEME_LIGHT) || !isDark && currentTheme.equals(THEME_DARK)) {
-      restartActivity();
-    }
-
-  }
-
-  private String getCurrentAppliedTheme() {
-    String currentTheme;
-    TypedValue outValue = new TypedValue();
-    getTheme().resolveAttribute(R.attr.themeName, outValue, true);
-    if (THEME_DARK.equals(outValue.string)) {
-      currentTheme = THEME_DARK;
-    } else {
-      currentTheme = THEME_LIGHT;
-    }
-    return currentTheme;
+    editorPresenter.updateTheme();
   }
 
   private boolean checkIfThemeDarkIsSelected() {
     return editorPresenter.getPreferenceThemeApp();
-  }
-
-  private void restartActivity() {
-    Intent intent = getIntent();
-    startActivity(intent);
-    finish();
   }
 
   @Override
@@ -290,15 +261,14 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   public void setupSwitchThemeAppIntoDrawer() {
     switchTheme = (SwitchCompat) navigationView.getMenu().findItem(R.id.switch_theme_dark)
         .getActionView();
-    boolean themeDarkIsSelected = checkIfThemeDarkIsSelected();
     if (switchTheme != null) {
+      boolean themeDarkIsSelected = checkIfThemeDarkIsSelected();
       switchTheme.setChecked(themeDarkIsSelected);
       switchTheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isDarkThemeChecked) {
           editorPresenter.switchTheme(isDarkThemeChecked);
           drawerLayout.closeDrawers();
-          restartActivity();
         }
       });
     }
@@ -308,7 +278,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   public void showPreferenceUserName(String data) {
     Menu menu = navigationView.getMenu();
     menu.findItem(R.id.menu_navview_username).setTitle(data);
-
   }
 
   @Override
@@ -337,6 +306,21 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   public void showMessage(final int stringToast) {
     Snackbar snackbar = Snackbar.make(fabMenu, stringToast, Snackbar.LENGTH_LONG);
     snackbar.show();
+  }
+
+  @Override
+  public void restartShareActivity(String videoPath) {
+    Intent intent = getIntent();
+    intent.putExtra("videoPath", videoPath);
+    startActivity(intent);
+    finish();
+  }
+
+  @Override
+  public void restartActivity() {
+    Intent intent = getIntent();
+    startActivity(intent);
+    finish();
   }
 
   public void showDialogUserAddThumb() {

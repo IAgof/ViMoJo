@@ -88,10 +88,19 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         videonaPlayer.setListener(this);
         initOptionsShareList();
         restoreState(savedInstanceState);
+        checkIntentExtras();
         bottomBar.selectTabWithId(R.id.tab_share);
         setupBottomBar(bottomBar);
         hideFab();
         initBarProgressDialog();
+    }
+
+    // if user updates theme from drawer
+    private void checkIntentExtras() {
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null) {
+            videoPath = bundle.getString("videoPath");
+        }
     }
 
   @Override
