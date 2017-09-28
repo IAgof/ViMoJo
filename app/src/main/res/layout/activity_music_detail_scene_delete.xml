@@ -5,13 +5,13 @@
 
     <ImageButton
         android:id="@+id/delete_music"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="48dp"
+        android:layout_height="64dp"
         android:layout_centerInParent="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="4dp"
         android:background="#00000000"
         android:scaleType="fitCenter"
-        android:src="@drawable/activity_edit_clip_delete_normal"
+        android:src="@drawable/activity_edit_audio_delete_music"
         android:tint="@color/button"
         />
 
