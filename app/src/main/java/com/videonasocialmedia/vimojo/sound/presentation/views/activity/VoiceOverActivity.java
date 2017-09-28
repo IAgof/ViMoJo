@@ -82,12 +82,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
         ButterKnife.bind(this);
         getActivityPresentersComponent().inject(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-
         restoreState(savedInstanceState);
 
         changeVisibilityAndResouceButton(buttonRecordIsInStop);
@@ -174,6 +168,7 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
                     case DialogInterface.BUTTON_POSITIVE:
                         //Yes button clicked
                         resetVoiceRecorder();
+                        navigateTo(SoundActivity.class);
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         //No button clicked
@@ -328,13 +323,6 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
     private void changeVisibilityAndResouceButton(boolean buttonRecordIsInStop) {
         buttonRecordVoiceOver.setImageResource(
             R.drawable.activity_edit_sound_voice_record_normal);
-        if (buttonRecordIsInStop == true) {
-            buttonVoiceOverAccept.setVisibility(View.VISIBLE);
-            buttonVoiceOverCancel.setVisibility(View.VISIBLE);
-        } else {
-            buttonVoiceOverAccept.setVisibility(View.INVISIBLE);
-            buttonVoiceOverCancel.setVisibility(View.INVISIBLE);
-        }
     }
 
     public static void enableDisableView(View view, boolean enabled) {
