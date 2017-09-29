@@ -16,6 +16,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
@@ -35,6 +36,7 @@ import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.OnRelaunchT
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
@@ -49,6 +51,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     private static final String LOG_TAG = PreferencesPresenter.class.getSimpleName();
     private Context context;
+    private UserEventTracker userEventTracker;
     private SharedPreferences sharedPreferences;
     private PreferencesView preferencesView;
     private PreferenceCategory cameraSettingsPref;
@@ -86,8 +89,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      * @param sharedPreferences
      */
     public PreferencesPresenter(PreferencesView preferencesView,
-            Context context,
-            SharedPreferences sharedPreferences,
+            Context context, SharedPreferences sharedPreferences,
             PreferenceCategory cameraSettingsPref,
             ListPreference resolutionPref, ListPreference qualityPref,
             Preference transitionVideoPref, Preference themeApp,
@@ -129,6 +131,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.updateWatermarkPreferenceToProjectUseCase = updateWatermarkPreferenceToProjectUseCase;
         this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
         this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
+        userEventTracker = UserEventTracker.getInstance(MixpanelAPI
+                .getInstance(context.getApplicationContext(), BuildConfig.MIXPANEL_TOKEN));
     }
 
     /**
@@ -414,5 +418,9 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             }
         }
         return null;
+    }
+
+    public void trackThemeApp(boolean isDarkTheme) {
+        userEventTracker.trackThemeAppSettingsChanged(isDarkTheme);
     }
 }

@@ -121,4 +121,12 @@ public class AnalyticsConstants {
     public static final String TEXT_LENGTH = "Text length";
     public static final String NUMBER_OF_DUPLICATES = "numberOfDuplicates";
     public static final String MUSIC_TITLE = "musicTitle";
+
+    /**
+     * App Theme Events properties and values
+     */
+    public static final String THEME_APP_ACTION_DRAWER = "themeActionDrawer";
+    public static final String THEME_APP_ACTION_SETTINGS = "themeActionSettings";
+    public static final String THEME_APP_ACTION_DARK = "Theme dark";
+    public static final String THEME_APP_ACTION_LIGHT = "Theme light";
 }

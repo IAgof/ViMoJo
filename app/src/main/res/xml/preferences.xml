@@ -75,7 +75,7 @@
         android:title="@string/title_theme_app_section"
         android:key="@string/title_theme_app_section">
         <SwitchPreference
-            android:key="themeApp"
+            android:key="themeAppDark"
             android:title="@string/title_theme_app_preference"
             android:defaultValue="true"
             android:checked="true"/>

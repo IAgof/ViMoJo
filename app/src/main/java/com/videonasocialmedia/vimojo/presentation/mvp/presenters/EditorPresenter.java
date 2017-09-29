@@ -6,7 +6,6 @@ import android.util.Log;
 import android.util.TypedValue;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -47,13 +46,15 @@ public class EditorPresenter {
   @Inject
   public EditorPresenter(
           EditorActivityView editorActivityView, SharedPreferences sharedPreferences,
-          Context context, CreateDefaultProjectUseCase createDefaultProjectUseCase,
+          Context context, UserEventTracker userEventTracker,
+          CreateDefaultProjectUseCase createDefaultProjectUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           NewClipImporter newClipImporter) {
     this.editorActivityView = editorActivityView;
     this.sharedPreferences = sharedPreferences;
     this.context = context;
+    this.userEventTracker = userEventTracker;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
@@ -134,7 +135,6 @@ public class EditorPresenter {
 
   private void relaunchTranscoderTempFileJob(Video video) {
     Project currentProject = getCurrentProject();
-    VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
     relaunchTranscoderTempBackgroundUseCase.relaunchExport(video, currentProject);
   }
 
@@ -142,6 +142,7 @@ public class EditorPresenter {
     preferencesEditor = sharedPreferences.edit();
     preferencesEditor.putBoolean(ConfigPreferences.THEME_APP_DARK, isDarkThemeChecked);
     preferencesEditor.apply();
+    userEventTracker.trackThemeAppDrawerChanged(isDarkThemeChecked);
     if(isChildShareActivity()){
       editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
     } else {
