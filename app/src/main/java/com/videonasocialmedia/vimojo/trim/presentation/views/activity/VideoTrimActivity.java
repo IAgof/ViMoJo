@@ -220,12 +220,14 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @OnClick(R.id.player_advance_low_forward_start_trim)
     public void onClickAdvanceLowForwardStart(){
-        presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs, finishTimeMs);
+        presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs,
+                finishTimeMs);
     }
 
     @OnClick(R.id.player_advance_low_backward_end_trim)
     public void onClickAdvanceLowBackwardEnd(){
-        presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs, finishTimeMs);
+        presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs,
+                finishTimeMs);
     }
 
     @OnClick(R.id.player_advance_low_forward_end_trim)
@@ -240,12 +242,14 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @OnClick(R.id.player_advance_medium_forward_start_trim)
     public void onClickAdvanceMediumForwardStart(){
-        presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs, finishTimeMs);
+        presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs,
+                finishTimeMs);
     }
 
     @OnClick(R.id.player_advance_medium_backward_end_trim)
     public void onClickAdvanceMediumBackwardEnd(){
-        presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs, finishTimeMs);
+        presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs,
+                finishTimeMs);
     }
 
     @OnClick(R.id.player_advance_medium_forward_end_trim)
@@ -260,12 +264,14 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @OnClick(R.id.player_advance_high_forward_start_trim)
     public void onClickAdvanceHighForwardStart(){
-        presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs, finishTimeMs);
+        presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs,
+                finishTimeMs);
     }
 
     @OnClick(R.id.player_advance_high_backward_end_trim)
     public void onClickAdvanceHighBackwardEnd(){
-        presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs, finishTimeMs);
+        presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs,
+                finishTimeMs);
     }
 
     @OnClick(R.id.player_advance_high_forward_end_trim)
@@ -383,23 +389,16 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         try {
             float minValueFloat = (float) minValue;
             float maxValueFloat = (float) maxValue;
-            if (Math.abs(maxValueFloat - minValueFloat) <= MIN_TRIM_OFFSET) {
+            if (isRangeSeekBarLessThanMinTrimOffset(minValueFloat, maxValueFloat)) {
                 if(maxValueFloat - minValueFloat > 0) {
-                    this.startTimeMs = (int) ( minValueFloat * MS_CORRECTION_FACTOR);
-                    trimmingRangeSeekBar.setSelectedMinValue(minValueFloat);
                     maxValueFloat = minValueFloat + MIN_TRIM_OFFSET;
-                    this.finishTimeMs = (int) ((maxValueFloat) * MS_CORRECTION_FACTOR);
-                    trimmingRangeSeekBar.setSelectedMaxValue(maxValueFloat);
                 } else {
                     minValueFloat = maxValueFloat - MIN_TRIM_OFFSET;
-                    this.startTimeMs = (int) ((minValueFloat) * MS_CORRECTION_FACTOR);
-                    trimmingRangeSeekBar.setSelectedMinValue(minValueFloat);
-                    this.finishTimeMs = (int) ( maxValueFloat * MS_CORRECTION_FACTOR);
-                    trimmingRangeSeekBar.setSelectedMaxValue(maxValueFloat);
                 }
+                updateTimesAndRangeSeekBar(minValueFloat, maxValueFloat);
                 seekBarMinPosition = minValueFloat;
-                video.setStartTime(startTimeMs);
                 seekBarMaxPosition = maxValueFloat;
+                video.setStartTime(startTimeMs);
                 video.setStopTime(finishTimeMs);
                 currentPosition = startTimeMs;
                 videonaPlayer.seekClipToTime(currentPosition);
@@ -428,6 +427,17 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         } catch (Exception e) {
             Log.d(TAG, "Exception updating range seekbar selection values");
         }
+    }
+
+    private void updateTimesAndRangeSeekBar(float minValueFloat, float maxValueFloat) {
+        this.startTimeMs = (int) ((minValueFloat) * MS_CORRECTION_FACTOR);
+        trimmingRangeSeekBar.setSelectedMinValue(minValueFloat);
+        this.finishTimeMs = (int) ( maxValueFloat * MS_CORRECTION_FACTOR);
+        trimmingRangeSeekBar.setSelectedMaxValue(maxValueFloat);
+    }
+
+    private boolean isRangeSeekBarLessThanMinTrimOffset(float minValueFloat, float maxValueFloat) {
+        return Math.abs(maxValueFloat - minValueFloat) <= MIN_TRIM_OFFSET;
     }
 
     private void updateTimeVideoPlaying() {
