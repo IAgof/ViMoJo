@@ -74,15 +74,20 @@ public class AdaptVideoToFormatUseCase {
         FileUtils.removeFile(video.getMediaPath());
         Log.d(TAG, "deleting " + video.getMediaPath());
         video.setMediaPath(videoToAdapt.getDestVideoPath());
+      } else {
+        Log.e(TAG, "Null video in retrieved video to adapt!! for video " + video.getMediaPath());
       }
       video.setVolume(Video.DEFAULT_VOLUME);
       video.setStopTime(FileUtils.getDuration(video.getMediaPath()));
       video.setTranscodingTask(null);
       video.resetTempPath();
       video.notifyChanges();
-
       // (jliarte): 18/07/17 now we should move the file, notify changes, and launch AV transitions
       videoRepository.update(video);
+      notifySuccess(video);
+    }
+
+    private void notifySuccess(Video video) {
       AdaptListener listener = adaptListener.get();
       if (listener != null) {
         listener.onSuccessAdapting(video);
