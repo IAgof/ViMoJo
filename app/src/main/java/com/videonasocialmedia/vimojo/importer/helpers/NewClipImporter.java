@@ -141,6 +141,7 @@ public class NewClipImporter {
           adaptVideoToVideonaFormat(currentProject, videoToAdapt.getVideo(),
                   videoToAdapt.getPosition(), videoToAdapt.getRotation(),
                   ++videoToAdapt.numTriesAdaptingVideo);
+          videoToAdapt.getVideo().addListener(currentProject);
         }
       }
     }
