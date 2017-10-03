@@ -6,7 +6,9 @@ import android.util.Log;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
@@ -27,7 +29,7 @@ import java.util.List;
 public class NewClipImporter {
   private static final String TAG = NewClipImporter.class.getCanonicalName();
   private final VideoRepository videoRepository;
-  private final VideoToAdaptRepository videoToAdaptRepository;
+  protected VideoToAdaptRepository videoToAdaptRepository;
   private AdaptVideoToFormatUseCase adaptVideoToFormatUseCase;
   private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
@@ -117,7 +119,7 @@ public class NewClipImporter {
     };
   }
 
-  private VideonaFormat getVideoFormat(int rotation) {
+  protected VideonaFormat getVideoFormat(int rotation) {
     // FIXME: 23/05/17 if rotation == 0, should be use getVideonaFormatToAdaptVideoRecordedAudio, more efficient.
     // Fix problems with profile MotoG, LG_pablo, ...
     return getVideoFormatFromCurrentProjectUseCase
@@ -138,13 +140,31 @@ public class NewClipImporter {
         if (videoToAdapt.getVideo().getTranscodingTask() == null) {
           Log.d(TAG, "Relaunching video adapt task for video "
                   + videoToAdapt.getVideo().getMediaPath());
-          adaptVideoToVideonaFormat(currentProject, videoToAdapt.getVideo(),
-                  videoToAdapt.getPosition(), videoToAdapt.getRotation(),
-                  ++videoToAdapt.numTriesAdaptingVideo);
-          videoToAdapt.getVideo().addListener(currentProject);
+          // Now find which videoRepository video correspond with videoToAdaptRepository by uuid
+          Video videoToRelaunch = getVideoToRelaunch(currentProject, videoToAdapt);
+          if(videoToRelaunch != null) {
+            adaptVideoToVideonaFormat(currentProject, videoToRelaunch,
+                    videoToAdapt.getPosition(), videoToAdapt.getRotation(),
+                    ++videoToAdapt.numTriesAdaptingVideo);
+            videoToRelaunch.addListener(currentProject);
+          } else {
+            Log.e(TAG, "Video to relaunch not found " + videoToAdapt);
+            videoToAdaptRepository.remove(videoToAdapt);
+          }
+
         }
       }
     }
+  }
+
+  protected Video getVideoToRelaunch(Project currentProject, VideoToAdapt videoToAdapt) {
+    for(Media video: currentProject.getMediaTrack().getItems()){
+      Video videoToRelaunch = (Video) video;
+      if(videoToRelaunch.getUuid().compareTo(videoToAdapt.getVideo().getUuid()) == 0) {
+        return videoToRelaunch;
+      }
+    }
+    return null;
   }
 
 }

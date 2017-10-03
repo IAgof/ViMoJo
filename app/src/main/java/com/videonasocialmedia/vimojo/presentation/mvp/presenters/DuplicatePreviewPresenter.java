@@ -7,6 +7,7 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -25,7 +26,7 @@ import javax.inject.Inject;
 /**
  * Created by vlf on 7/7/15.
  */
-public class DuplicatePreviewPresenter implements OnVideosRetrieved {
+public class DuplicatePreviewPresenter implements OnVideosRetrieved, ElementChangedListener {
 
     /**
      * LOG_TAG
@@ -53,6 +54,7 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
 
         this.currentProject = loadCurrentProject();
+        currentProject.addListener(this);
     }
 
     private Project loadCurrentProject() {
@@ -100,6 +102,10 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
         userEventTracker.trackClipDuplicated(numDuplicates, currentProject);
     }
 
+    @Override
+    public void onObjectUpdated() {
+        duplicateView.updateProject();
+    }
 }
 
 

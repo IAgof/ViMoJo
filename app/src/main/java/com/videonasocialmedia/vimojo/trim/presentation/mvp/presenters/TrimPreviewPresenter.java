@@ -8,6 +8,7 @@
 package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
@@ -27,7 +28,7 @@ import static com.videonasocialmedia.vimojo.trim.presentation.views.activity.Vid
 /**
  * Created by vlf on 7/7/15.
  */
-public class TrimPreviewPresenter implements OnVideosRetrieved {
+public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedListener {
 
     /**
      * LOG_TAG
@@ -54,6 +55,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
         //this.trimView = new WeakReference<>(trimView);
         this.trimView = trimView;
         this.currentProject = loadCurrentProject();
+        currentProject.addListener(this);
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
@@ -132,6 +134,11 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
         }
         trimView.updateFinishTrimmingRangeSeekBar(Math.min(maxRangeSeekBarValue,
             adjustSeekBarMaxPosition));
+    }
+
+    @Override
+    public void onObjectUpdated() {
+        trimView.updateProject();
     }
 }
 

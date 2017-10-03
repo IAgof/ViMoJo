@@ -270,6 +270,11 @@ public class VoiceOverActivity extends VimojoActivity implements VoiceOverView,
     }
 
     @Override
+    public void updateProject() {
+        presenter.init();
+    }
+
+    @Override
     public void newClipPlayed(int currentClipIndex) {
         videonaPlayer.setVideoVolume(videoVolumeMute);
     }

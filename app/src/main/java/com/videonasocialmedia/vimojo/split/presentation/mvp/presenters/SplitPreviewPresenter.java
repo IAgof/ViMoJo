@@ -12,6 +12,7 @@ import android.util.Log;
 
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -37,7 +38,7 @@ import javax.inject.Inject;
  * Created by vlf on 7/7/15.
  */
 public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoListener,
-    TranscoderHelperListener {
+    TranscoderHelperListener, ElementChangedListener {
 
     /**
      * LOG_TAG
@@ -72,6 +73,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
         this.currentProject = loadCurrentProject();
+        currentProject.addListener(this);
     }
 
     private Project loadCurrentProject() {
@@ -156,6 +158,11 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     public void advanceForwardEndSplitting(int advancePlayerPrecision, int currentSplitPosition) {
         int progress = currentSplitPosition + advancePlayerPrecision;
         splitView.updateSplitSeekbar(Math.min(maxSeekBarSplit, progress));
+    }
+
+    @Override
+    public void onObjectUpdated() {
+        splitView.updateProject();
     }
 }
 

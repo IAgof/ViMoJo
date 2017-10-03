@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -367,6 +368,11 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     public void updateFinishTrimmingRangeSeekBar(float maxValue) {
         onRangeSeekBarValuesChanged(trimmingRangeSeekBar, seekBarMinPosition, maxValue);
         trimmingRangeSeekBar.setSelectedMaxValue(maxValue);
+    }
+
+    @Override
+    public void updateProject() {
+        presenter.init(videoIndexOnTrack);
     }
 
     private void updateTrimmingTextTags() {

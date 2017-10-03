@@ -256,6 +256,20 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
             lessThanOrEqualTo(1000));
   }
 
+  @Test
+  public void createVideoToAdaptRespectVideoReference(){
+    Video video = new Video(".temporal/Vid1234.mp4", Video.DEFAULT_VOLUME);
+    String destVideoRecorded = "DCIM/ViMoJo/Masters/Vid1233.mp4";
+    int videoPosition = 0;
+    int cameraRotation = 0;
+    int retries = 0;
+
+    VideoToAdapt videoToAdapt = new VideoToAdapt(video, destVideoRecorded, videoPosition,
+            cameraRotation, retries);
+
+    assertThat(video, is(videoToAdapt.getVideo()));
+  }
+
   @NonNull
   private Project setupProjectPath() {
     Project project = getCurrentProject();

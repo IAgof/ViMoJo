@@ -234,6 +234,11 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     public void showError(String message) {
     }
 
+    @Override
+    public void updateProject() {
+        presenter.loadProjectVideo(videoIndexOnTrack);
+    }
+
     private void showThumbVideo(ImageView imageThumbLeft) {
         int microSecond = video.getStartTime() * 1000;
         BitmapPool bitmapPool = Glide.get(this).getBitmapPool();

@@ -303,6 +303,11 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     @Override
+    public void updateProject() {
+        presenter.init(videoIndexOnTrack);
+    }
+
+    @Override
     public void newClipPlayed(int currentClipIndex) {
     }
 
