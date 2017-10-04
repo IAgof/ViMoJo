@@ -80,9 +80,9 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
         duplicateView.showError("No videos");
     }
 
-    public void duplicateVideo(Video video, int positionInAdapter, int numDuplicates) {
+    public void duplicateVideo(int positionInAdapter, int numDuplicates) {
         for (int duplicates = 1; duplicates < numDuplicates; duplicates++) {
-            Video copyVideo = new Video(video);
+            Video copyVideo = new Video(videoToEdit);
             addVideoToProjectUseCase.addVideoToProjectAtPosition(copyVideo, positionInAdapter,
                 new OnAddMediaFinishedListener() {
                     @Override

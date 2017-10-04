@@ -185,7 +185,7 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
 
     @OnClick(R.id.button_duplicate_accept)
     public void onClickDuplicateAccept() {
-        presenter.duplicateVideo(video, videoIndexOnTrack, numDuplicateVideos);
+        presenter.duplicateVideo(videoIndexOnTrack, numDuplicateVideos);
         navigateTo(EditActivity.class, videoIndexOnTrack);
     }
 
@@ -224,7 +224,8 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
 
     @Override
     public void showPreview(List<Video> movieList) {
-        video = movieList.get(0);
+        // (alvaro.martinez) 4/10/17 work on a copy to not modify original one until user accepts text
+        video = new Video(movieList.get(0));
         // TODO(jliarte): will need fix when all videos from project will be loaded
         videonaPlayer.initPreviewLists(movieList);
         videonaPlayer.initPreview(currentPosition);
