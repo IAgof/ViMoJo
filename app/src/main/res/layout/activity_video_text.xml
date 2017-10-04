@@ -111,7 +111,7 @@
                     android:hint="@string/edit_text_hint_VideoEditText"
                     android:textColorHint="?android:attr/textColorSecondary"
                     android:imeOptions="actionDone"
-                    android:background="@drawable/rectangle_edittext"
+                    android:background="@android:color/transparent"
                     android:imeActionId="@+id/convertText"
                     android:lines="2"
                     android:maxLines="2"
