@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/VideonaTheme.PopupOverlay"
-            app:theme="@style/VideonaDrawerIconStyle">
+            app:theme="@style/arrowWhiteToolbar">
 
         </android.support.v7.widget.Toolbar>
 
@@ -40,13 +40,14 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             app:cardCornerRadius="4dp"
-            app:cardElevation="4dp">
+            app:cardElevation="2dp"
+            style="?attr/cardViewStyle">
 
             <RelativeLayout
                 android:id="@+id/detail_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="4dp"
                 android:padding="8dp"
                 >
 
@@ -73,30 +74,29 @@
                     android:id="@+id/music_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/textColorPrimary"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="18sp"
-                    tools:text="El título de la canción"
-                    />
-
-                <TextView
-                    android:id="@+id/music_author"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@color/colorSecondaryLight"
-                    android:textSize="14sp"
-                    tools:text="El autor de la canción"
-                    />
+                    tools:text="El título de la canción"/>
 
                 <TextView
                     android:id="@+id/music_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:textColor="@color/colorSecondary"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="14sp"
-                    tools:text="La duración de la canción"
-                    />
+                    tools:text="La duración de la canción"/>
+
+                <TextView
+                    android:id="@+id/music_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="12sp"
+                    tools:text="El autor de la canción"/>
+
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -105,14 +105,12 @@
                     android:id="@+id/linear_layout_seekBar_volume_sound"
                     android:layout_below="@+id/music_image"
                     android:orientation="horizontal"
-                    android:layout_marginTop="36dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginLeft="8dp">
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="16dp">
 
                     <TextView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginRight="4dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:scaleType="fitXY"
                         android:gravity="center"
@@ -124,21 +122,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:minHeight="16dp"
-                        android:layout_weight="1"
+                        android:layout_weight="0.18"
                         android:layout_marginTop="24dp"
                         android:layout_marginBottom="0dp"
                         android:indeterminate="false"
                         android:layout_gravity="center_horizontal"
-                        android:progressTint="@color/colorPrimary"
-                        android:progressBackgroundTint="@color/button_color"
+                        android:progressTint="?attr/colorAccent"
+                        android:progressBackgroundTint="?android:attr/textColorPrimary"
                         android:thumb="@drawable/ic_circular_thumb_seekbar"
                         />
 
 
                     <TextView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginLeft="4dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="right"
                         android:scaleType="fitXY"
                         android:text="@string/maxVolume"

@@ -1,3 +1,12 @@
+v0.7.0-RC8
+- Ui updates in voice over, gallery, music, bottomBar, edit text.
+
+
+v0.7.0-RC7
+- Moved video adaptation tasks to background
+- Overall export process improvement
+- Updated SDK to v0.3-RC1 with new Transcoder helper API prefering ListenableFutures over callbacks
+
 v0.7.0-RC6
 - Redesign size in some icons in activity record
 - Fixed problem manifest and Google Play.

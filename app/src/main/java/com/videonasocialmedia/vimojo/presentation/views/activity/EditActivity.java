@@ -24,6 +24,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -524,7 +525,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void showDialogMediasNotFound() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this,R.style.VideonaDialog);
         dialog.setTitle(R.string.titleVideosNotFound);
         dialog.setMessage(getString(R.string.messageVideosNotFound));
         dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {

@@ -3,9 +3,9 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.util.TypedValue;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -14,6 +14,7 @@ import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgro
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
+import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -39,16 +40,21 @@ public class EditorPresenter {
   private final NewClipImporter newClipImporter;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
 
+  private final String THEME_DARK = "dark";
+  private final String THEME_LIGHT = "light";
+
   @Inject
   public EditorPresenter(
           EditorActivityView editorActivityView, SharedPreferences sharedPreferences,
-          Context context, CreateDefaultProjectUseCase createDefaultProjectUseCase,
+          Context context, UserEventTracker userEventTracker,
+          CreateDefaultProjectUseCase createDefaultProjectUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           NewClipImporter newClipImporter) {
     this.editorActivityView = editorActivityView;
     this.sharedPreferences = sharedPreferences;
     this.context = context;
+    this.userEventTracker = userEventTracker;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
@@ -79,7 +85,12 @@ public class EditorPresenter {
     }
   }
 
-  public void createNewProject(String roothPath, String privatePath, boolean isWatermarkFeatured) {
+  public boolean getPreferenceThemeApp() {
+    boolean isActivateDarkTheme= sharedPreferences.getBoolean(ConfigPreferences.THEME_APP_DARK,true);
+    return isActivateDarkTheme;
+  }
+
+  public void createNewProject(String roothPath, String privatePath, boolean isWatermarkFeatured){
     createDefaultProjectUseCase.createProject(roothPath, privatePath, isWatermarkFeatured);
     clearProjectDataFromSharedPreferences();
     editorActivityView.updateViewResetProject();
@@ -124,7 +135,51 @@ public class EditorPresenter {
 
   private void relaunchTranscoderTempFileJob(Video video) {
     Project currentProject = getCurrentProject();
-    VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
     relaunchTranscoderTempBackgroundUseCase.relaunchExport(video, currentProject);
   }
+
+  public void switchTheme(final boolean isDarkThemeChecked) {
+    preferencesEditor = sharedPreferences.edit();
+    preferencesEditor.putBoolean(ConfigPreferences.THEME_APP_DARK, isDarkThemeChecked);
+    preferencesEditor.apply();
+    userEventTracker.trackThemeAppDrawerChanged(isDarkThemeChecked);
+    if(isChildShareActivity()){
+      editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
+    } else {
+      editorActivityView.restartActivity();
+    }
+  }
+
+  public void updateTheme() {
+    boolean isDark =  getPreferenceThemeApp();
+    String currentTheme = getCurrentAppliedTheme();
+    if (isDark && currentTheme.equals(THEME_LIGHT) || !isDark && currentTheme.equals(THEME_DARK)) {
+      if(isChildShareActivity()){
+        editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
+      } else {
+        editorActivityView.restartActivity();
+      }
+    }
+  }
+
+  private boolean isChildShareActivity() {
+    if(context.getClass().getName().compareTo(ShareActivity.class.getName()) == 0){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private String getCurrentAppliedTheme() {
+    String currentTheme;
+    TypedValue outValue = new TypedValue();
+    context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
+    if (THEME_DARK.equals(outValue.string)) {
+      currentTheme = THEME_DARK;
+    } else {
+      currentTheme = THEME_LIGHT;
+    }
+    return currentTheme;
+  }
+
 }

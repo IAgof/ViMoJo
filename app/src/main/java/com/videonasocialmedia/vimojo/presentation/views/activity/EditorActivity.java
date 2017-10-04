@@ -6,16 +6,20 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
@@ -47,7 +51,7 @@ import butterknife.ButterKnife;
  *
  */
 
-public abstract class EditorActivity extends VimojoActivity implements EditorActivityView {
+public abstract class EditorActivity extends VimojoActivity implements EditorActivityView{
   @Inject UserEventTracker userEventTracker;
   @Inject EditorPresenter editorPresenter;
 
@@ -61,6 +65,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   LinearLayout navigator;
   @Bind(R.id.fab_edit_room)
   FloatingActionsMenu fabMenu;
+  @Nullable @Bind(R.id.switch_theme_dark)
+  SwitchCompat switchTheme;
 
   CircleImageView imageUserThumb;
   String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_THUMB;
@@ -132,6 +138,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       editorPresenter.getPreferenceEmail();
     }
     editorPresenter.init();
+    setupSwitchThemeAppIntoDrawer();
+    editorPresenter.updateTheme();
+  }
+
+  private boolean checkIfThemeDarkIsSelected() {
+    return editorPresenter.getPreferenceThemeApp();
   }
 
   @Override
@@ -201,7 +213,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   private void createDialog(final int resourceItemMenuId) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaAlertDialog);
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
     if (resourceItemMenuId == R.id.menu_navview_delete_clip)
       builder.setMessage(getResources().getString(R.string.dialog_message_clean_project));
     if (resourceItemMenuId == R.id.menu_navview_mail)
@@ -214,7 +226,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       public void onClick(DialogInterface dialog, int which) {
         switch (which) {
           case DialogInterface.BUTTON_POSITIVE:
-           // drawerLayout.closeDrawers();
             if(resourceItemMenuId == R.id.menu_navview_delete_clip)
                 editorPresenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
                     BuildConfig.FEATURE_WATERMARK);
@@ -247,11 +258,26 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     startActivity(i);
   }
 
+  public void setupSwitchThemeAppIntoDrawer() {
+    switchTheme = (SwitchCompat) navigationView.getMenu().findItem(R.id.switch_theme_dark)
+        .getActionView();
+    if (switchTheme != null) {
+      boolean themeDarkIsSelected = checkIfThemeDarkIsSelected();
+      switchTheme.setChecked(themeDarkIsSelected);
+      switchTheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isDarkThemeChecked) {
+          editorPresenter.switchTheme(isDarkThemeChecked);
+          drawerLayout.closeDrawers();
+        }
+      });
+    }
+  }
+
   @Override
   public void showPreferenceUserName(String data) {
     Menu menu = navigationView.getMenu();
     menu.findItem(R.id.menu_navview_username).setTitle(data);
-
   }
 
   @Override
@@ -280,6 +306,21 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   public void showMessage(final int stringToast) {
     Snackbar snackbar = Snackbar.make(fabMenu, stringToast, Snackbar.LENGTH_LONG);
     snackbar.show();
+  }
+
+  @Override
+  public void restartShareActivity(String videoPath) {
+    Intent intent = getIntent();
+    intent.putExtra("videoPath", videoPath);
+    startActivity(intent);
+    finish();
+  }
+
+  @Override
+  public void restartActivity() {
+    Intent intent = getIntent();
+    startActivity(intent);
+    finish();
   }
 
   public void showDialogUserAddThumb() {

@@ -1,8 +1,8 @@
 <vector
-    android:height="24dp"
+    android:height="32dp"
     android:viewportHeight="59.0"
     android:viewportWidth="59.0"
-    android:width="24dp"
+    android:width="32dp"
     android:tintMode="multiply"
     android:tint="@color/button_color_toolbar"
     xmlns:android="http://schemas.android.com/apk/res/android">

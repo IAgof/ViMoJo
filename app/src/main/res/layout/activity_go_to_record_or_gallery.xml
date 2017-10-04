@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
-              android:background="@color/colorAccent"
+              android:background="?attr/colorPrimary"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:gravity="center"
@@ -47,6 +47,7 @@
         android:layout_height="56dp"
         android:layout_alignParentBottom="true"
         android:background="@color/colorTransparent"
+        app:bb_activeTabColor="?attr/colorAccent"
         android:visibility="gone"
         />
 

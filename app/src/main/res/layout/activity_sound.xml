@@ -35,7 +35,8 @@
             <com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack
                 android:id="@+id/cardview_audio_blocks_clips_video"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                style="?attr/cardViewStyle">
             </com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack>
 
 
@@ -43,14 +44,16 @@
                 android:id="@+id/cardview_audio_blocks_clips_audio_track_first"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone">
+                android:visibility="gone"
+                style="?attr/cardViewStyle">
             </com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack>
 
             <com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack
                 android:id="@+id/cardview_audio_blocks_clips_audio_track_second"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone">
+                android:visibility="gone"
+                style="?attr/cardViewStyle">
             </com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack>
 
         </LinearLayout>
@@ -62,7 +65,9 @@
         android:layout_height="56dp"
         app:bb_tabXmlResource="@xml/bottombar_tabs"
         android:layout_alignParentBottom="true"
+        app:bb_showShadow="false"
         android:background="@color/colorTransparent"
+        app:bb_activeTabColor="?attr/colorAccent"
         />
 
 </RelativeLayout>

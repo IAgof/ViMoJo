@@ -15,7 +15,7 @@
             android:id="@id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:theme="@style/VideonaDrawerIconStyle">
+            app:theme="@style/arrowWhiteToolbar">
 
             <LinearLayout
                 android:id="@+id/container_navigator"
@@ -42,8 +42,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginRight="8dp"
-        app:fab_addButtonColorNormal="@color/colorAccent"
-        app:fab_addButtonColorPressed="@color/colorAccent"
+        app:fab_addButtonColorNormal="?attr/colorAccent"
+        app:fab_addButtonColorPressed="?attr/colorAccent"
         app:fab_labelsPosition="right"
         fab:fab_addButtonSize="mini"
         app:layout_scrollFlags="scroll|enterAlways">

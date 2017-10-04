@@ -28,7 +28,6 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptMemoryRepository;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
@@ -266,13 +265,14 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   EditorPresenter provideEditorPresenter(
+          UserEventTracker userEventTracker,
           SharedPreferences sharedPreferences,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           NewClipImporter newClipImporter) {
     return new EditorPresenter((EditorActivity) activity, sharedPreferences, activity,
-        createDefaultProjectUseCase, getMediaListFromProjectUseCase,
+            userEventTracker, createDefaultProjectUseCase, getMediaListFromProjectUseCase,
             relaunchTranscoderTempBackgroundUseCase, newClipImporter);
   }
 
