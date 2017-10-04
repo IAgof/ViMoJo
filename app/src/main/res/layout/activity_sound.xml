@@ -65,6 +65,7 @@
         android:layout_height="56dp"
         app:bb_tabXmlResource="@xml/bottombar_tabs"
         android:layout_alignParentBottom="true"
+        app:bb_showShadow="false"
         android:background="@color/colorTransparent"
         app:bb_activeTabColor="?attr/colorAccent"
         />

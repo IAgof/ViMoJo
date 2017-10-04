@@ -41,10 +41,10 @@
 
                 <ImageButton
                     android:id="@+id/button_trash"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_gravity="center"
-                    android:layout_marginRight="28dp"
+                    android:layout_marginRight="48dp"
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"
                     android:visibility="visible"
@@ -66,9 +66,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginRight="28dp"
+                    android:layout_marginRight="48dp"
                     android:text="0"
-                    android:textSize="24sp"
+                    android:textSize="16sp"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/white"/>
 
@@ -78,7 +78,7 @@
                     android:layout_height="24dp"
                     android:layout_alignParentEnd="true"
                     android:layout_gravity="center"
-                    android:layout_marginRight="20dp"
+                    android:layout_marginRight="24dp"
                     android:background="@android:color/transparent"
                     android:scaleType="fitXY"
                     android:visibility="visible"
@@ -92,7 +92,6 @@
             android:id="@+id/vpPager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:layoutMode="opticalBounds">
 
             <android.support.v4.view.PagerTabStrip
@@ -100,9 +99,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
-                android:paddingBottom="4dp"
-                android:paddingTop="4dp"
-                android:background="@color/colorTransparent"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:background="@color/colorWhite"
                 android:transitionGroup="false"
                 android:touchscreenBlocksFocus="false"/>
 
