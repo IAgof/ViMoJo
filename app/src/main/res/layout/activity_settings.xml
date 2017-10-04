@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
         app:popupTheme="@style/VideonaTheme.PopupOverlay"
-        app:theme="@style/VideonaDrawerIconStyle">
+        app:theme="@style/arrowWhiteToolbar">
 
 
         <TextView

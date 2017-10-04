@@ -30,7 +30,8 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="8dp"
+                style="?attr/cardViewStyle">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -61,7 +62,7 @@
                             android:layout_height="wrap_content"
                             android:paddingLeft="20dp"
                             android:paddingRight="20dp"
-                            android:textColor="@color/textColorSecondary"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:textSize="24sp"
                             tools:text="x2" />
 
@@ -80,7 +81,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/duplicate_cardview"
                 android:layout_gravity="center_horizontal"
-                android:layout_margin="16dp">
+                android:layout_margin="16dp"
+                style="?attr/cardViewStyle">
 
 
                 <ImageButton
@@ -113,7 +115,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_margin="16dp">
+                android:layout_margin="16dp"
+                style="?attr/cardViewStyle">
 
 
                 <ImageButton

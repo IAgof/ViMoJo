@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/VideonaTheme.PopupOverlay"
-            app:theme="@style/VideonaDrawerIconStyle">
+            app:theme="@style/arrowWhiteToolbar">
 
         </android.support.v7.widget.Toolbar>
 
@@ -40,7 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             app:cardCornerRadius="4dp"
-            app:cardElevation="2dp">
+            app:cardElevation="2dp"
+            style="?attr/cardViewStyle">
 
             <RelativeLayout
                 android:id="@+id/detail_content"
@@ -73,7 +74,7 @@
                     android:id="@+id/music_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/textColorPrimary"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="18sp"
                     tools:text="El título de la canción"/>
 
@@ -82,7 +83,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:textColor="@color/textColorPrimary"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="14sp"
                     tools:text="La duración de la canción"/>
 
@@ -91,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:textColor="@color/colorSecondaryLight"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="12sp"
                     tools:text="El autor de la canción"/>
 
@@ -126,9 +127,11 @@
                         android:layout_marginBottom="0dp"
                         android:indeterminate="false"
                         android:layout_gravity="center_horizontal"
-                        android:progressTint="@color/colorPrimary"
-                        android:progressBackgroundTint="@color/button_color"
-                        android:thumb="@drawable/ic_circular_thumb_seekbar" />
+                        android:progressTint="?attr/colorAccent"
+                        android:progressBackgroundTint="?android:attr/textColorPrimary"
+                        android:thumb="@drawable/ic_circular_thumb_seekbar"
+                        />
+
 
                     <TextView
                         android:layout_width="wrap_content"

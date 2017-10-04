@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/VideonaTheme.PopupOverlay"
-            app:theme="@style/VideonaDrawerIconStyle">
+            app:theme="@style/arrowWhiteToolbar">
 
         </android.support.v7.widget.Toolbar>
 
@@ -49,7 +49,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 app:cardCornerRadius="4dp"
-                app:cardElevation="4dp">
+                app:cardElevation="4dp"
+                style="?attr/cardViewStyle">
 
                 <RelativeLayout
                     android:id="@+id/detail_content"
@@ -83,7 +84,7 @@
                                 android:id="@+id/music_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/textColorPrimary"
+                                android:textColor="?android:attr/textColorPrimary"
                                 android:textSize="16sp"
                                 tools:text="El título de la canción"
                                 />

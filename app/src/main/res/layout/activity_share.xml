@@ -25,7 +25,8 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:layout_below="@+id/videona_player"
-        android:layout_above="@+id/bottomBar">
+        android:layout_above="@+id/bottomBar"
+        style="?attr/cardViewStyle">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/options_to_share_list"
@@ -42,7 +43,8 @@
         app:bb_tabXmlResource="@xml/bottombar_tabs"
         app:bb_showShadow="false"
         android:layout_alignParentBottom="true"
-        android:background="@color/colorTransparent" />
+        android:background="@color/colorTransparent"
+        app:bb_activeTabColor="?attr/colorAccent"/>
 
 
     <android.support.design.widget.FloatingActionButton
@@ -50,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/common_icon_add_white"
-        app:backgroundTint="@color/colorAccent"
+        app:backgroundTint="?android:attr/colorAccent"
         android:layout_above="@+id/bottomBar"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="4dp"

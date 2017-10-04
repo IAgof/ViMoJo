@@ -82,8 +82,8 @@
                             android:layout_weight="0.95"
                             android:indeterminate="false"
                             android:minHeight="16dp"
-                            android:progressBackgroundTint="@color/button_color"
-                            android:progressTint="@color/colorPrimary"
+                            android:progressBackgroundTint="?android:attr/textColorPrimary"
+                            android:progressTint="?attr/colorAccent"
                             android:thumb="@drawable/ic_circular_thumb_seekbar" />
 
                         <TextView

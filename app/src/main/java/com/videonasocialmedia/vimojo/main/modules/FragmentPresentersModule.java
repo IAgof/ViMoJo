@@ -41,6 +41,7 @@ public class FragmentPresentersModule {
   private SwitchPreference transitionAudioPref;
   private SwitchPreference transitionVideoPref;
   private SwitchPreference watermarkPref;
+  private SwitchPreference themeAppPref;
   private ListPreference frameRatePref;
   private Preference emailPref;
   private ListPreference resolutionPref;
@@ -60,6 +61,7 @@ public class FragmentPresentersModule {
                                   SwitchPreference transitionsVideoPref,
                                   SwitchPreference transitionsAudioPref,
                                   SwitchPreference watermarkPref,
+                                  SwitchPreference themeAppPref,
                                   Preference emailPref) {
     this.settingsFragment = settingsFragment;
     this.context = context;
@@ -70,6 +72,7 @@ public class FragmentPresentersModule {
     this.transitionVideoPref = transitionsVideoPref;
     this.transitionAudioPref = transitionsAudioPref;
     this.watermarkPref = watermarkPref;
+    this.themeAppPref=themeAppPref;
     this.emailPref = emailPref;
 
   }
@@ -93,7 +96,7 @@ public class FragmentPresentersModule {
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
         cameraSettingsPref, resolutionPref, qualityPref, transitionVideoPref,
-        transitionAudioPref, watermarkPref, emailPref, getMediaListFromProjectUseCase,
+        transitionAudioPref, watermarkPref, themeAppPref, emailPref, getMediaListFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase,
         updateAudioTransitionPreferenceToProjectUseCase,
         updateVideoTransitionPreferenceToProjectUseCase,

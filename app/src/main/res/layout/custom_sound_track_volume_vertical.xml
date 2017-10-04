@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="invisible"
-            android:textColor="@color/button"
+            android:textColor="?android:attr/textColorPrimary"
             tools:text="@string/title_track_clip_music"/>
 
         <LinearLayout
@@ -45,8 +45,8 @@
                     android:progress="50"
                     android:max="100"
                     android:layout_gravity="center_horizontal"
-                    android:progressTint="@color/colorPrimary"
-                    android:progressBackgroundTint="@color/button_color"
+                    android:progressTint="?attr/colorAccent"
+                    android:progressBackgroundTint="?android:attr/textColorPrimary"
                     android:thumb="@drawable/ic_circular_thumb_seekbar"
                     />
                 <TextView
