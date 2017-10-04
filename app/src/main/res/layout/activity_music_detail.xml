@@ -40,13 +40,13 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             app:cardCornerRadius="4dp"
-            app:cardElevation="4dp">
+            app:cardElevation="2dp">
 
             <RelativeLayout
                 android:id="@+id/detail_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="4dp"
                 android:padding="8dp"
                 >
 
@@ -75,8 +75,16 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="18sp"
-                    tools:text="El título de la canción"
-                    />
+                    tools:text="El título de la canción"/>
+
+                <TextView
+                    android:id="@+id/music_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="14sp"
+                    tools:text="La duración de la canción"/>
 
                 <TextView
                     android:id="@+id/music_author"
@@ -84,19 +92,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:textColor="@color/colorSecondaryLight"
-                    android:textSize="14sp"
-                    tools:text="El autor de la canción"
-                    />
+                    android:textSize="12sp"
+                    tools:text="El autor de la canción"/>
 
-                <TextView
-                    android:id="@+id/music_duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@color/colorSecondary"
-                    android:textSize="14sp"
-                    tools:text="La duración de la canción"
-                    />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -105,14 +104,12 @@
                     android:id="@+id/linear_layout_seekBar_volume_sound"
                     android:layout_below="@+id/music_image"
                     android:orientation="horizontal"
-                    android:layout_marginTop="36dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginLeft="8dp">
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="16dp">
 
                     <TextView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginRight="4dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:scaleType="fitXY"
                         android:gravity="center"
@@ -124,21 +121,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:minHeight="16dp"
-                        android:layout_weight="1"
+                        android:layout_weight="0.18"
                         android:layout_marginTop="24dp"
                         android:layout_marginBottom="0dp"
                         android:indeterminate="false"
                         android:layout_gravity="center_horizontal"
                         android:progressTint="@color/colorPrimary"
                         android:progressBackgroundTint="@color/button_color"
-                        android:thumb="@drawable/ic_circular_thumb_seekbar"
-                        />
-
+                        android:thumb="@drawable/ic_circular_thumb_seekbar" />
 
                     <TextView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginLeft="4dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="right"
                         android:scaleType="fitXY"
                         android:text="@string/maxVolume"

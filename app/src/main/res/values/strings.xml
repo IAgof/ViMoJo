@@ -1797,8 +1797,8 @@ and Conditions.\n\n
 
     <string name="onNoVideosRetrieved">Not video retrieved</string>
 
-    <string name="minVolume">0</string>
-    <string name="maxVolume">100</string>
+    <string name="minVolume">0%</string>
+    <string name="maxVolume">100%</string>
     <string name="title_track_clip_video">Audio track volume</string>
     <string name="title_track_clip_music">Music track volume</string>
     <string name="title_track_clip_voice_over">Voice over track volume</string>

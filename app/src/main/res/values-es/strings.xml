@@ -40,7 +40,7 @@
     <string name="credentialFTPNull">Conexión a FTP no establecida. Por favor, configure los datos FTP en ajustes.</string>
 
     <!-- Editor Activity -->
-    <string name="new_project">New project</string>
+    <string name="new_project">Nuevo projecto</string>
     <string name="clear_project">Clean project</string>
     <string name="other_options">Otras opciones</string>
     <string name="record">Grabar</string>
