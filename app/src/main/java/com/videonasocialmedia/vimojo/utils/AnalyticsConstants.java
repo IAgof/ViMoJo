@@ -125,8 +125,11 @@ public class AnalyticsConstants {
     /**
      * App Theme Events properties and values
      */
-    public static final String THEME_APP_ACTION_DRAWER = "themeActionDrawer";
-    public static final String THEME_APP_ACTION_SETTINGS = "themeActionSettings";
+    public static final String ACTION_THEME_CHANGED = "themeChanged";
+    public static final String ACTION_THEME_SELECTED = "themeSelected";
+    public static final String THEME_CHANGE_SOURCE = "sourceThemeChanged";
+    public static final String THEME_CHANGE_SOURCE_DRAWER = "sourceThemeDrawer";
+    public static final String THEME_CHANGE_SOURCE_SETTINGS = "sourceThemeSettings";
     public static final String THEME_APP_ACTION_DARK = "Theme dark";
     public static final String THEME_APP_ACTION_LIGHT = "Theme light";
 }
