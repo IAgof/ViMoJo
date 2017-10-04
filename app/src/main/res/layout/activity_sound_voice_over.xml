@@ -31,7 +31,8 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginBottom="4dp">
+                android:layout_marginBottom="4dp"
+                style="?attr/cardViewStyle">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -124,7 +125,8 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:layout_gravity="center_horizontal"
-                    android:layout_above="@+id/cancel_accept_voiceover_cardview">
+                    android:layout_above="@+id/cancel_accept_voiceover_cardview"
+                    style="?attr/cardViewStyle">
 
                     <RelativeLayout
                         android:id="@+id/relative_layout_rec_volume"
@@ -156,7 +158,8 @@
                     android:layout_marginBottom="8dp"
                     android:layout_marginTop="4dp"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp">
+                    android:layout_marginRight="16dp"
+                    style="?attr/cardViewStyle">
 
                     <ImageButton
                         android:id="@+id/button_voice_over_cancel"
