@@ -54,7 +54,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
  * Created by Alvaro on 03/10/2017.
  */
 
-//@RunWith(MockitoJUnitRunner.class)
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Log.class, Environment.class})
 public class NewClipImporterTest {
@@ -140,36 +139,6 @@ public class NewClipImporterTest {
                 cameraRotation,
                 ++retries);
         assertThat(videosToAdapt.get(0).getVideo().getIdentifier(), is(video.getIdentifier()));
-    }
-
-    @Test
-    public void relaunchUnfinishedAdaptTasksGetCorrectVideoReference() throws IllegalItemOnTrack {
-        Project project = getAProject();
-        Video video = new Video(".temp/path", Video.DEFAULT_VOLUME);
-        VideoRepository videoRepository =  Mockito.spy(new VideoRealmRepository());
-        videoRepository.update(video);
-        project.getVMComposition().getMediaTrack().insertItem(video);
-        String destVideoPath = "DCIM/ViMoJo/Masters";
-        int position = 0;
-        int cameraRotation = 0;
-        int retries = 0;
-        VideoToAdapt videoToAdapt =  new VideoToAdapt(video, destVideoPath, position, cameraRotation,
-            retries);
-        VideoToAdaptRepository videoToAdaptRepository = Mockito.spy(new
-                VideoToAdaptRealmRepository());
-        videoToAdaptRepository.update(videoToAdapt);
-        // App kills, get video and videoToAdapt from repository
-        Project restartProject = getAProject();
-        Video video1 = videoRepository.getAllVideos().get(0);
-        restartProject.getVMComposition().getMediaTrack().insertItem(video1);
-        VideoToAdapt videoToAdaptRestarted = videoToAdaptRepository.getAllVideos().get(0);
-
-
-        Video videoToRelaunch = injectedNewClipImporter.getVideoToRelaunch(restartProject,
-                videoToAdaptRestarted);
-
-        assertThat(videoToRelaunch, is(video));
-        assertThat(video, is(videoToAdapt.getVideo()));
     }
 
     private Project getAProject() {
