@@ -1,33 +1,51 @@
 package com.videonasocialmedia.vimojo.integration;
 
+import android.content.Context;
 import android.media.MediaMetadataRetriever;
 import android.support.annotation.NonNull;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptMemoryRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
+import org.hamcrest.CoreMatchers;
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static org.hamcrest.CoreMatchers.is;
@@ -53,6 +71,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
   @Mock private AdaptVideoToFormatUseCase.AdaptListener mockedListener;
   @Mock private OnExportFinishedListener mockedExportListener;
   private String testPath;
+  @Mock Context mockedContext;
 
   @Before
   public void setUp() {
@@ -60,6 +79,13 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     videoToAdaptRepo = new VideoToAdaptMemoryRepository();
     testPath = getInstrumentation().getTargetContext().getExternalCacheDir()
             .getAbsolutePath();
+  }
+
+  @After
+  public void tearDown(){
+    // FIXME: tests are not independent as Project keeps state between tests
+    Project singletonProject = Project.getInstance(null, null, null, null);
+    singletonProject.clear();
   }
 
   @Test
@@ -257,8 +283,10 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
   }
 
   @Test
-  public void createVideoToAdaptRespectVideoReference(){
+  public void createVideoToAdaptRespectVideoReferences() throws IllegalItemOnTrack {
     Video video = new Video(".temporal/Vid1234.mp4", Video.DEFAULT_VOLUME);
+    Project project = getCurrentProject();
+    project.getVMComposition().getMediaTrack().insertItem(video);
     String destVideoRecorded = "DCIM/ViMoJo/Masters/Vid1233.mp4";
     int videoPosition = 0;
     int cameraRotation = 0;
@@ -268,6 +296,44 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
             cameraRotation, retries);
 
     assertThat(video, is(videoToAdapt.getVideo()));
+    assertThat(project.getMediaTrack().getItems().get(0),
+        CoreMatchers.<Media>is(videoToAdapt.getVideo()));
+  }
+
+  @Rule
+  public TemporaryFolder testFolder = new TemporaryFolder();
+
+  @Test
+  public void afterRestoreVideoAdaptViaRepositoryVideoReferenceChanges() throws IllegalItemOnTrack, IOException {
+    //Config realm
+    File tempFolder = testFolder.newFolder("realmdata");
+    RealmConfiguration config = new RealmConfiguration.Builder(tempFolder).build();
+    Realm realm = Realm.getInstance(config);
+    //Prepare project and videoToAdapt
+    Video video = new Video(".temporal/Vid1234.mp4", Video.DEFAULT_VOLUME);
+    Project project = getAProject();
+    project.setProjectPath(testPath);
+    project.getVMComposition().getMediaTrack().insertItem(video);
+    ProjectRepository projectRepo = Mockito.spy(new ProjectRealmRepository());
+    projectRepo.update(project);
+    String destVideoRecorded = "DCIM/ViMoJo/Masters/Vid1233.mp4";
+    int videoPosition = 0;
+    int cameraRotation = 0;
+    int retries = 0;
+    VideoToAdapt videoToAdapt = new VideoToAdapt(video, destVideoRecorded, videoPosition,
+        cameraRotation, retries);
+    VideoToAdaptRepository videoToAdaptRepo = Mockito.spy(new VideoToAdaptRealmRepository());
+    videoToAdaptRepo.update(videoToAdapt);
+
+    // App died, restore data
+    Project projectRetriever = projectRepo.getCurrentProject();
+    VideoToAdapt videoToAdaptRetrieve = videoToAdaptRepo.getAllVideos().get(0);
+
+    assertThat( projectRetriever.getMediaTrack().getItems().get(0),
+        CoreMatchers.<Media>not(videoToAdaptRetrieve.getVideo()));
+
+    project.clear();
+    realm.close(); // Important
   }
 
   @NonNull
@@ -279,6 +345,12 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
 
   private Project getCurrentProject() {
     return Project.getInstance(null, null, null, null);
+  }
+
+  public Project getAProject() {
+    return Project.getInstance("title", "/path", "private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
+            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 
   private String getVideoDuration(String videoPath) {
