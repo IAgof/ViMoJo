@@ -418,7 +418,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             if (seekBarMaxPosition != maxValueFloat) {
                 seekBarMaxPosition = maxValueFloat;
                 video.setStopTime(finishTimeMs);
-                currentPosition = finishTimeMs;
+                //currentPosition = finishTimeMs;
             }
             videonaPlayer.seekClipToTime(currentPosition);
             videonaPlayer.updatePreviewTimeLists();
