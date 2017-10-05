@@ -49,7 +49,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayer.VideonaPlayerListener {
 
     public static final float MS_CORRECTION_FACTOR = 1000f;
-    public static final float MIN_TRIM_OFFSET = 0.5f;
+    public static final float MIN_TRIM_OFFSET = 0.35f; //350ms
 
     @Inject TrimPreviewPresenter presenter;
 
@@ -390,7 +390,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             float minValueFloat = (float) minValue;
             float maxValueFloat = (float) maxValue;
             if (isRangeSeekBarLessThanMinTrimOffset(minValueFloat, maxValueFloat)) {
-                if(maxValueFloat - minValueFloat > 0) {
+                if(seekBarMinPosition != minValueFloat) {
                     maxValueFloat = minValueFloat + MIN_TRIM_OFFSET;
                 } else {
                     minValueFloat = maxValueFloat - MIN_TRIM_OFFSET;

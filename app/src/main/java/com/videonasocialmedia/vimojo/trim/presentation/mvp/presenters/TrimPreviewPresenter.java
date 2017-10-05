@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import static com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity.MIN_TRIM_OFFSET;
 import static com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity.MS_CORRECTION_FACTOR;
 
 /**
@@ -46,8 +47,6 @@ public class TrimPreviewPresenter implements OnVideosRetrieved {
     private TrimView trimView;
     public UserEventTracker userEventTracker;
     public Project currentProject;
-
-    public static final float MIN_TRIM_OFFSET = 0.5f;
 
     @Inject
     public TrimPreviewPresenter(TrimView trimView, UserEventTracker userEventTracker,
