@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="16dp"
-                >
+                style="?attr/cardViewStyle">
 
                 <RelativeLayout
                     android:id="@+id/split_cardview_relativelayout"
@@ -48,7 +48,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="8dp"
                         android:layout_marginTop="8dp"
-                        android:textColor="@color/textColorSecondary"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="12sp"
                         android:visibility="visible"
                         tools:text="00:00" />
@@ -63,7 +63,7 @@
                         android:layout_marginTop="30dp"
                         android:background="@null"
                         android:maxHeight="1dp"
-                        android:progressDrawable="@color/colorAccent"
+                        android:progressDrawable="?android:attr/colorAccent"
                         android:splitTrack="false"
                         android:thumb="@drawable/ic_circular_thumb_seekbar"
                         />
@@ -83,12 +83,12 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="4dp"
+                style="?attr/cardViewStyle"
                 >
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:orientation="vertical">
 
                     <RelativeLayout
@@ -219,7 +219,8 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
+                android:layout_marginRight="16dp"
+                style="?attr/cardViewStyle">
 
 
                 <ImageButton

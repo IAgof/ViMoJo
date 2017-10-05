@@ -61,12 +61,6 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
         setContentView(R.layout.activity_sound_volume);
         ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-
         Intent intent = getIntent();
         soundVoiceOverPath = intent.getStringExtra(IntentConstants.VOICE_OVER_RECORDED_PATH);
 

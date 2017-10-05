@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/VideonaTheme.PopupOverlay"
-            app:theme="@style/VideonaDrawerIconStyle">
+            app:theme="@style/arrowWhiteToolbar">
 
         </android.support.v7.widget.Toolbar>
 

@@ -18,7 +18,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/VideonaTheme.PopupOverlay"
-            app:theme="@style/VideonaDrawerIconStyle"/>
+            app:theme="@style/arrowWhiteToolbar"/>
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
@@ -63,7 +63,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="?attr/colorAccent"
                     android:textSize="24sp"
                     tools:text="x2"/>
 
