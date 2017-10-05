@@ -37,6 +37,7 @@
                 android:layout_width="match_parent"
                 android:backgroundTint="@color/colorTransparent"
                 android:layout_height="wrap_content"
+                app:cardElevation="0dp"
                 style="?attr/cardViewStyle">
             </com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack>
 
@@ -47,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/colorTransparent"
                 android:visibility="gone"
+                app:cardElevation="0dp"
                 style="?attr/cardViewStyle">
             </com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack>
 
@@ -55,6 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/colorTransparent"
+                app:cardElevation="0dp"
                 android:visibility="gone"
                 style="?attr/cardViewStyle">
             </com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack>
