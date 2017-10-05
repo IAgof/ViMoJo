@@ -16,7 +16,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/VideonaTheme.PopupOverlay"
-            app:theme="@style/VideonaDrawerIconStyle"/>
+            app:theme="@style/arrowWhiteToolbar"/>
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
@@ -62,8 +62,8 @@
                 android:layout_marginRight="16dp"
                 android:indeterminate="false"
                 android:layout_gravity="center_horizontal"
-                android:progressTint="@color/colorPrimary"
-                android:progressBackgroundTint="@color/button_color"
+                android:progressTint="?attr/colorPrimary"
+                android:progressBackgroundTint="?android:attr/textColorPrimary"
                 android:layout_below="@+id/textView_seekBar_volume_sound"
                 android:layout_centerHorizontal="true"
                 android:thumb="@drawable/ic_circular_thumb_seekbar"/>

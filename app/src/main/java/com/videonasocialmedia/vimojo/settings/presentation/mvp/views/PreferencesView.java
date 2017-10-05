@@ -62,6 +62,8 @@ public interface PreferencesView {
 
     void setWatermarkSwitchPref(boolean value);
 
+    void setThemeDarkAppPref (String key, boolean value);
+
     void hideFtpsViews();
 
     void hideWatermarkView();

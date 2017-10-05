@@ -8,7 +8,7 @@
         android:id="@+id/button_edit_navigator"
         style="@style/Widget.AppCompat.ActionButton"
         android:layout_width="0dp"
-        android:layout_height="24dp"
+        android:layout_height="64dp"
         android:layout_weight="1"
         android:scaleType="fitCenter"
         android:background="?attr/selectableItemBackgroundBorderless"

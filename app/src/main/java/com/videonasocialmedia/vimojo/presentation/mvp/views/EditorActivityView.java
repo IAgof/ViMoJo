@@ -17,4 +17,8 @@ public interface EditorActivityView {
   void showMessage(int stringToast);
 
   void expandFabMenu();
+
+  void restartShareActivity(String extraDataIntent);
+
+  void restartActivity();
 }
