@@ -8,8 +8,13 @@
 
 <resources>
 
+    <attr name="themeName" format="string"/>
     <attr name="ic_settings_videona" format="reference"/>
-    
+
+    <declare-styleable name = "cardViewStyle">
+        <attr name="cardViewStyle" format="reference" />
+    </declare-styleable>
+
     <declare-styleable name="CircleImageView">
         <attr name="border_width" format="dimension"/>
         <attr name="border_color" format="color"/>

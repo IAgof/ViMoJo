@@ -279,6 +279,44 @@ public class UserEventTracker {
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date()));
     }
 
+    public void trackThemeAppDrawerChanged(boolean isDarkTheme) {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.INTERACTION,
+                AnalyticsConstants.ACTION_THEME_CHANGED);
+            eventProperties.put(AnalyticsConstants.ACTION_THEME_SELECTED, isDarkTheme ?
+                AnalyticsConstants.THEME_APP_ACTION_DARK :
+                    AnalyticsConstants.THEME_APP_ACTION_LIGHT);
+            eventProperties.put(AnalyticsConstants.THEME_CHANGE_SOURCE,
+                AnalyticsConstants.THEME_CHANGE_SOURCE_DRAWER);
+            Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(TAG, "trackThemeAppChanged: error sending mixpanel USER_INTERACTED drawer theme "
+                    + "dark event");
+            e.printStackTrace();
+        }
+    }
+
+    public void trackThemeAppSettingsChanged(boolean isDarkTheme) {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.INTERACTION,
+                AnalyticsConstants.ACTION_THEME_CHANGED);
+            eventProperties.put(AnalyticsConstants.ACTION_THEME_SELECTED, isDarkTheme ?
+                AnalyticsConstants.THEME_APP_ACTION_DARK :
+                AnalyticsConstants.THEME_APP_ACTION_LIGHT);
+            eventProperties.put(AnalyticsConstants.THEME_CHANGE_SOURCE,
+                AnalyticsConstants.THEME_CHANGE_SOURCE_SETTINGS);
+            Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(TAG, "trackThemeAppChanged: error sending mixpanel USER_INTERACTED settings theme"
+                    + " dark event ");
+            e.printStackTrace();
+        }
+    }
+
     public static class Event {
         private String name;
         private JSONObject properties;

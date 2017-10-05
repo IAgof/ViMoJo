@@ -35,7 +35,7 @@ public class AlertDialogWithInfoIntoCircle extends android.support.v7.app.AlertD
 
   public AlertDialogWithInfoIntoCircle(Activity activity, String titleText){
     super(activity);
-    final AlertDialog.Builder builder = new AlertDialog.Builder(activity,R.style.VideonaAlertDialog);
+    final AlertDialog.Builder builder = new AlertDialog.Builder(activity,R.style.VideonaDialog);
     LayoutInflater inflater = this.getLayoutInflater();
     alertDialogView = inflater.inflate(R.layout.alert_dialog_with_info_into_circle, null);
     builder.setView(alertDialogView);

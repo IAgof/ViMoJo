@@ -18,7 +18,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:theme="@style/VideonaDrawerIconStyle">
+            app:theme="@style/arrowWhiteToolbar"
+            app:popupTheme="@style/VideonaTheme.PopupOverlay">
 
             <LinearLayout
                 android:id="@+id/container_navigator"
@@ -49,7 +50,7 @@
         android:layout_gravity="bottom|end"
         app:fab_addButtonColorNormal="@color/colorAccent"
         app:fab_addButtonColorPressed="@color/colorAccent"
-        app:backgroundTint="@color/colorAccent"
+        app:backgroundTint="?attr/colorAccent"
         app:layout_behavior="com.videonasocialmedia.vimojo.presentation.views.custombehaviors.FloatingActionMenuButtonBehavior"
         app:layout_anchor="@id/bottomBar"
         app:layout_anchorGravity="top|end">

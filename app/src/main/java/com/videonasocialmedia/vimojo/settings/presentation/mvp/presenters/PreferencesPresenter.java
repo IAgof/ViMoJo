@@ -16,6 +16,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
@@ -35,6 +36,7 @@ import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.OnRelaunchT
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
@@ -49,6 +51,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     private static final String LOG_TAG = PreferencesPresenter.class.getSimpleName();
     private Context context;
+    private UserEventTracker userEventTracker;
     private SharedPreferences sharedPreferences;
     private PreferencesView preferencesView;
     private PreferenceCategory cameraSettingsPref;
@@ -57,6 +60,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private Preference transitionVideoPref;
     private Preference transitionAudioPref;
     private Preference watermarkPref;
+    private Preference themeApp;
     private Preference emailPref;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private boolean isPreferenceAvailable = false;
@@ -85,11 +89,10 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      * @param sharedPreferences
      */
     public PreferencesPresenter(PreferencesView preferencesView,
-            Context context,
-            SharedPreferences sharedPreferences,
+            Context context, SharedPreferences sharedPreferences,
             PreferenceCategory cameraSettingsPref,
             ListPreference resolutionPref, ListPreference qualityPref,
-            Preference transitionVideoPref,
+            Preference transitionVideoPref, Preference themeApp,
             Preference transitionAudioPref, Preference watermarkPref, Preference emailPref,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
@@ -114,6 +117,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.transitionAudioPref = transitionAudioPref;
         this.watermarkPref = watermarkPref;
         this.emailPref = emailPref;
+        this.themeApp = themeApp;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase =
             getPreferencesTransitionFromProjectUseCase;
@@ -127,6 +131,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.updateWatermarkPreferenceToProjectUseCase = updateWatermarkPreferenceToProjectUseCase;
         this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
         this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
+        userEventTracker = UserEventTracker.getInstance(MixpanelAPI
+                .getInstance(context.getApplicationContext(), BuildConfig.MIXPANEL_TOKEN));
     }
 
     /**
@@ -161,6 +167,11 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         checkAvailableQuality();
         checkTransitions();
         checkWatermark(BuildConfig.FEATURE_WATERMARK);
+        checkThemeApp(ConfigPreferences.THEME_APP_DARK);
+    }
+
+    private void checkThemeApp(String key) {
+        preferencesView.setThemeDarkAppPref(key, sharedPreferences.getBoolean(key,false));
     }
 
     private void checkTransitions() {
@@ -407,5 +418,9 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             }
         }
         return null;
+    }
+
+    public void trackThemeApp(boolean isDarkTheme) {
+        userEventTracker.trackThemeAppSettingsChanged(isDarkTheme);
     }
 }
