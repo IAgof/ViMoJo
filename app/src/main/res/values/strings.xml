@@ -24,7 +24,7 @@
     <string name="recordTextEdit">Edit</string>
 
     <string name="dialog_title_record_adapting_video">Adapting video</string>
-    <string name="dialog_message_record_adapting_video">Working ...</string>
+    <string name="dialog_message_record_adapting_video">Working …</string>
     <string name="alert_dialog_info_detail">Info detail</string>
 
     <!-- Share Activity -->
@@ -441,7 +441,7 @@
 
         GOING HIGHER\n
             My music is licensed under a Creative Commons License:\n
-            You are free to use the music in your multimedia project (online videos(youtube,...),
+            You are free to use the music in your multimedia project (online videos(youtube,…),
             websites, animations, etc.) as long as you credit me, For example:\n
             "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
 
@@ -451,7 +451,7 @@
 
         UKELELE\n
             My music is licensed under a Creative Commons License:\n
-            You are free to use the music in your multimedia project (online videos(youtube,...),
+            You are free to use the music in your multimedia project (online videos(youtube,…),
             websites, animations, etc.) as long as you credit me, For example:\n
             "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
 
@@ -461,7 +461,7 @@
 
         JAZZY-FRENCHY\n
             My music is licensed under a Creative Commons License:\n
-            You are free to use the music in your multimedia project (online videos(youtube,...),
+            You are free to use the music in your multimedia project (online videos(youtube,…),
             websites, animations, etc.) as long as you credit me, For example:\n
             "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
 
@@ -471,102 +471,339 @@
 
         ACOUSTIC BREEZE\n
             My music is licensed under a Creative Commons License:\n
-            You are free to use the music in your multimedia project (online videos(youtube,...),
+            You are free to use the music in your multimedia project (online videos(youtube,…),
             websites, animations, etc.) as long as you credit me, For example:\n
             "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
 
             You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
             https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
             http://www.bensound.com/index.php?route=product/search&amp;search=ACOUSTIC%20BREEZE\n\n
+   </string>
 
+    <string name="licenseDagger">
+        Copyright 2012 The Dagger Authors\n\nLicensed under the Apache License, Version 2.0
+        (the "License"); you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at\n\nhttp://www.apache.org/licenses/LICENSE-2.0\n\n
+        Unless required by applicable law or agreed to in writing, software distributed under
+        the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+        either express or implied.See the License for the specific language governing permissions and
+        limitations under the License.
     </string>
 
-    <string name="licenseContent">
-        Copyright &amp;#169; 2013 Jake Wharton\nLicensed under the Apache License, Version 2.0 (the
-        "License"); you may not use this file except in compliance with the License.
-        You may obtain a copy of the License at\n\thttp://www.apache.org/licenses/LICENSE-2.0\nUnless
-        required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.\nCopyright &amp;#169; 2013 Lucas Rocha\nTwoWayView\'s code is
-        based on bits and pieces of Android\'s AbsListView, Listview, and
-        StaggeredGridView.\nCopyright &amp;#169; 2012 The Android Open Source Project\nLicensed under the
+    <string name="licenseGlide">
+        License for everything not in third_party and not otherwise marked:\n\nCopyright 2014 Google,
+        Inc. All rights reserved.\n Redistribution and use in source and binary forms, with or
+        without modification, are permitted provided that the following conditions are met:\n
+        1. Redistributions of source code must retain the above copyright notice, this list of
+         conditions and the following disclaimer.\n
+        2. Redistributions in binary form must reproduce the above copyright notice, this list
+         of conditions and the following disclaimer in the documentation and/or other materials
+         provided with the distribution.\n\nTHIS SOFTWARE IS PROVIDED BY GOOGLE, INC. \'\'AS IS\'\'
+        AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+        OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+        GOOGLE, INC. OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+        EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+        HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+        OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+        SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\nThe views and conclusions
+        contained in the software and documentation are those of the authors and should not be
+        interpreted as representing official policies, either expressed or implied, of Google, Inc.\n
+        ---------------------------------------------------------------------------------------------
+        \nLicense for third_party/disklrucache:\n\n Copyright 2012 Jake Wharton\nCopyright 2011
+        The Android Open Source Project\n Licensed under the Apache License, Version 2.0
+        (the "License"); you may not use this file except in compliance with the License. You may
+        obtain a copy of the License at\n\n http://www.apache.org/licenses/LICENSE-2.0\n\n
+        Unless required by applicable law or agreed to in writing, software distributed under the
+        License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+        either express or implied. See the License for the specific language governing permissions
+        and limitations under the License.\n
+        ---------------------------------------------------------------------------------------------
+        \nLicense for third_party/gif_decoder:\n\n Copyright 2013 Xcellent Creations, Inc.\n
+        Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+        and associated documentation files (the "Software"), to deal in the Software without
+        restriction, including without limitation the rights to use, copy, modify, merge, publish,
+        distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+        Software is furnished to do so, subject to the following conditions:\n The above copyright
+        notice and this permission notice shall be included in all copies or substantial portions of
+        the Software.\n\n THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+        PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+        LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+        OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+        DEALINGS IN THE SOFTWARE.\n
+        ---------------------------------------------------------------------------------------------
+        \nLicense for third_party/gif_encoder/AnimatedGifEncoder.java and
+        third_party/gif_encoder/LZWEncoder.java:\nNo copyright asserted on the source code of
+        this class. May be used for any purpose, however, refer to the Unisys LZW patent for
+        restrictions on use of the associated LZWEncoder class. Please forward any corrections to
+        kweiner@fmsware.com.\n
+        -----------------------------------------------------------------------------
+        \nLicense for third_party/gif_encoder/NeuQuant.java\n\n Copyright 1994 Anthony
+        Dekker\nNEUQUANT Neural-Net quantization algorithm by Anthony Dekker, 1994. See Kohonen neural
+        networks for optimal colour quantization" in "Network:Computation in Neural Systems" Vol. 5
+        (1994) pp 351-367. for a discussion of the algorithm.\n\n Any party obtaining a copy of
+        these files from the author, directly or indirectly, is granted, free of charge, a full and
+        unrestricted irrevocable, world-wide, paid up, royalty-free, nonexclusive right and license
+        to deal in this software and documentation files (the "Software"), including without
+        limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+        sell copies of the Software, and to permit persons who receive copies from any such party to
+        do so, with the only requirement being that this copyright notice remain intact.
+    </string>
+
+    <string name="licenseWasabeef">
+        Copyright 2017 Wasabeef\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of the
+        License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable
+        law or agreed to in writing, software distributed under the License is distributed on an
+        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+        the License for the specific language governing permissions and limitations under the License.
+    </string>
+
+    <string name="licenseJakeWharton">
+        Copyright 2013 Jake Wharton\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+    </string>
+
+    <string name="licenseSquare">
+        Copyright 2016 Square, Inc.\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+    </string>
+
+    <string name="licenseEventBus">
+        EventBus binaries and source code can be used according to the Apache License, Version 2.0:\n\n
+        Copyright  2012-2016 Markus Junginger, greenrobot (http://greenrobot.org)\n\nLicensed under
+        the Apache License, Version 2.0 (the “License”); you may not use this file except in
+        compliance with the License. You may obtain a copy of the License at\n\n
+        http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to
+        in writing, software distributed under the License is distributed on an “AS IS” BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+        either express or implied. See the License for the specific language governing permissions
+        and limitations under the License.
+    </string>
+
+    <string name="licenseMixPanel">
+        Copyright 2012 Mixpanel, Inc.\n\nPlease see the project README file for additional information.
+        \n\nLicensed under the Apache License, Version 2.0 (the "License");you may not use this work
+        except in compliance with the License. You may obtain a copy of the License below, or at:\n\n
+           http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed
+        to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+        the specific language governing permissions and limitations under the License.
+
+        \n\n                        Apache License
+        \n                 Version 2.0, January 2004
+        \n             http://www.apache.org/licenses/
+        \n\n
+        See LICENSE File for details. The Base64Coder, ConfigurationChecker, and StackBlurManager
+        classes, and the entirety of the com.mixpanel.android.java_websocket package used by this
+        software have been licensed from non-Mixpanel sources and modified
+        for use in the library. Please see the relevant source files, and the
+        LICENSE file in the com.mixpanel.android.java_websocket package for details.\n\n
+        The StackBlurManager class uses an algorithm by Mario Klingemann mario@64quansimondo.com
+        You can learn more about the algorithm at
+        http://www.quasimondo.com/StackBlurForCanvas/StackBlurDemo.html.
+    </string>
+
+    <string name="licenseAndroidOpenSource">
+        Copyright 2012 The Android Open Source Project\n\nLicensed under the
         Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
         with the License. You may obtain a copy of the License
-        at\n\thttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or
+        at\n\n\    http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or
         agreed to in writing, software distributed under the License is distributed on an "AS IS"
         BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
         See the License for the specific language governing permissions and
-        limitations under the License.\nCopyright &amp;#169; mpa4parser\nLicensed under the Apache
-        License, Version 2.0 (the "License"); you may not use this file except in compliance with
-        the License. You may obtain a copy of the License at\n\thttp://www.apache.org/licenses/LICENSE-2.0\nUnless
-        required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.\n
-        Copyright 2012 Mixpanel, Inc.
+        limitations under the License.
+    </string>
 
-Please see the project README file for additional information.
+    <string name="licenseFloatingActionButton">
+        Copyright  2014 Jerzy Chalupski\n\nLicensed under the Apache License, Version 2.0
+        (the "License");you may not use this file except in compliance with the License.You may
+        obtain a copy of the License at\n\n     http://www.apache.org/licenses/LICENSE-2.0\n\nUnless
+        required by applicable law or agreed to in writing, software distributed under the License
+        is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+        express or implied.See the License for the specific language governing permissions and
+        limitations under the License.
+    </string>
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this work except in compliance with the License.
-You may obtain a copy of the License below, or at:
+    <string name="licenseKarumi">
+        Copyright 2015 Karumi\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+    </string>
 
-   http://www.apache.org/licenses/LICENSE-2.0
+    <string name="licenseJcraftJZ">
+        JSch 0.0.\* was released under the GNU LGPL license.  Later, we have switched over to a
+        BSD-style license. \n\n
+        ------------------------------------------------------------------------------\n
+        Copyright 2000-2011 ymnk, JCraft,Inc. All rights reserved.
+        \n\nRedistribution and use in source and binary forms, with or without modification, are
+        permitted provided that the following conditions are met:\n\n
+        1. Redistributions of source code must retain the above copyright notice, this list of
+        conditions and the following disclaimer.\n
+        2. Redistributions in binary form must reproduce the above copyright notice, this list of
+        conditions and the following disclaimer in the documentation and/or other materials provided
+        with the distribution.\n
+        3. The names of the authors may not be used to endorse or promote products derived from this
+        software without specific prior written permission.\n\n THIS SOFTWARE IS PROVIDED \'\'AS IS\'\'
+        AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+        WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+        IN NO EVENT SHALL JCRAFT, INC. OR ANY CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY DIRECT,
+        INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+        LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+        BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+        STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+        USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    </string>
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+    <string name="licenseJcraftJSch">
+        JSch 0.0. \* was released under the GNU LGPL license.  Later, we have switched over to a
+        BSD-style license. \n\n
+        ------------------------------------------------------------------------------\n
+        Copyright 2002-2015 Atsuhiko Yamanaka, JCraft,Inc. All rights reserved.
+        \n\nRedistribution and use in source and binary forms, with or without modification, are
+        permitted provided that the following conditions are met:\n\n
+        1. Redistributions of source code must retain the above copyright notice, this list of
+        conditions and the following disclaimer.\n
+        2. Redistributions in binary form must reproduce the above copyright notice, this list of
+        conditions and the following disclaimer in the documentation and/or other materials provided
+        with the distribution.\n
+        3. The names of the authors may not be used to endorse or promote products derived from this
+        software without specific prior written permission.\n\n THIS SOFTWARE IS PROVIDED \'\'AS IS\'\'
+        AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+        WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+        IN NO EVENT SHALL JCRAFT, INC. OR ANY CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY DIRECT,
+        INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+        LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+        BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+        STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+        USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    </string>
 
-                                 Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/ \n
-        Event Bus                 Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/ \n
+    <string name="licenseRangeSeekBar">
+        The images are licensed under Creative Commons ( http://creativecommons.org/licenses/by/3.0/ ).
+        The originals are provided in the original project ( https://code.google.com/p/range-seek-bar/ )
+        and seek_thumb_disabled.png is added by us (https://github.com/anothem/android-range-seek-bar)\n
+        The source code is licensed under the Apache License. A copy of this can be found at
+        http://www.apache.org/licenses/LICENSE-2.0 and has been included in the repository as well.
+    </string>
 
+    <string name="licenseExoPlayer">
+        Copyright ExoPlayer\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+    </string>
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License below, or at:
+    <string name="licenseRealm">
+        Realm Android Adapters is published under the Apache 2.0 license.\n\nCopyright
+        Realm\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+    </string>
 
-http://www.apache.org/licenses/LICENSE-2.0
+    <string name="licenseRoughikeBottomBar">
+        BottomBar library for Android\n\nCopyright 2016 Iiro Krankka (http://github.com/roughike).
+        \n\nLicensed under the Apache License, Version 2.0 (the "License"); you may not use this
+        file except in compliance with the License. You may obtain a copy of the License at \n\n
+        http://www.apache.org/licenses/LICENSE-2.0\n\n Unless required by applicable law or agreed
+        to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+        the specific language governing permissions and limitations under the License.
+    </string>
 
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+    <string name="licenseVerticalSeekbar">
+        This library is licensed under the Apache Software License, Version 2.0, and contains some
+        source code files delivered from product of Android Open Source Project (AOSP). \nSee
+        LICENSE for full of the license text.\n\n Copyright 2015 Haruki Hasegawa \n\nLicensed under
+        the Apache License, Version 2.0 (the "License"); you may not use this file except in
+        compliance with the License.\n\nYou may obtain a copy of the License at \n\n
+        http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to
+        in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+        the specific language governing permissions and limitations under the License.
+    </string>
+    
+    <string name="licenseYankaiVictor">
+        Copyright 2015 yankai-victor\n\n Licensed under the Apache License, Version 2.0
+        (the "License"); you may not use this work except in compliance with the License.
+        You may obtain a copy of the License in the LICENSE file, or at:\n\n
+        http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to
+        in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+        License for the specific language governing permissions and limitations under the License.
+    </string>
+    <string name="licenseJCodec">
+        Copyright 2008-2017 JCodecProject.\n\nRedistribution  and  use  in   source  and   binary
+        forms,  with  or  without modification, are permitted provided  that the following
+        conditions  are  met:\n\nRedistributions of  source code  must  retain the above  copyright
+        notice, this list of conditions and the following disclaimer. Redistributions in binary form
+        must  reproduce  the above  copyright notice, this  list of conditions  and the
+        following disclaimer in the documentation and/or other  materials provided with the
+        distribution.\n\n THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+        AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,  BUT NOT LIMITED TO, THE  IMPLIED
+        WARRANTIES  OF  MERCHANTABILITY  AND  FITNESS  FOR  A  PARTICULAR  PURPOSE  ARE DISCLAIMED.
+        IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+        INCIDENTAL, SPECIAL, EXEMPLARY,  OR CONSEQUENTIAL DAMAGES (INCLUDING,  BUT NOT LIMITED TO,
+        PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE, DATA, OR PROFITS;  OR BUSINESS
+        INTERRUPTION) HOWEVER CAUSED AND ON ANY  THEORY  OF  LIABILITY,  WHETHER  IN  CONTRACT,
+        STRICT LIABILITY,  OR TORT (INCLUDING  NEGLIGENCE OR OTHERWISE)  ARISING IN ANY WAY
+        OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    </string>
 
-                             Apache License
-                       Version 2.0, January 2004
-                    http://www.apache.org/licenses/ \n
-        Dexmaker        Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/ \n
-        Google-services Apache License
-Version 2.0, January 2004
-http://www.apache.org/licenses/ \n
-        Kickflip        Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/ \n
-        Glide BSD, part MIT and Apache 2.0. \n
-        OkHttp      Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/ \n
-        GSon Copyright 2008 Google Inc.
+    <string name="licenseGoogleGSon">
+        Copyright 2008 Google Inc.\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n    http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is
+        distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+        express or implied. See the License for the specific language governing permissions and
+        limitations under the License.
+    </string>
+    
+    <string name="licenseMp4Parser">
+        Copyright MP4 Parser, Inc.\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+    </string>
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+    <string name="licenseGuava">
+        Copyright Guava, Inc.\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+    </string>
 
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License. \n
-
-
+    <string name="licenseApacheCommonsNet">
+        http://www.apache.org/licenses/LICENSE-2.0.txt
     </string>
 
     <!-- Legal Notice -->
@@ -1892,7 +2129,7 @@ and Conditions.\n\n
     </string>
 
     <!-- Others -->
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="comingSoon">Coming Soon</string>
@@ -1942,7 +2179,7 @@ and Conditions.\n\n
     <string name="dialog_title_export_project">Exporting project</string>
     <string name="dialog_message_export_project">Making magic in your video</string>
     <string name="dialog_title_export_error">Exporting error</string>
-    <string name="dialog_message_export_error">An error ocurred while exporting and exporting could not be completed. Please try again.</string>
+    <string name="dialog_message_export_error">An error occurred while exporting and exporting could not be completed. Please try again.</string>
     <string name="battery">Battery</string>
     <string name="storage">Internal storage</string>
     <string name="free_memory_space">Available space:</string>
