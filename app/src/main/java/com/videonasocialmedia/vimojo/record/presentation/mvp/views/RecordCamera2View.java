@@ -21,7 +21,6 @@ import java.util.List;
 
 public interface RecordCamera2View {
 
-
     // Start/Stop record view
 
     void showRecordButton();
@@ -121,9 +120,9 @@ public interface RecordCamera2View {
 
     void showError(String message);
 
-    void showProgressAdaptingVideo();
-
-    void hideProgressAdaptingVideo();
+//    void showProgressAdaptingVideo();
+//
+//    void hideProgressAdaptingVideo();
 
     void navigateTo(Class cls);
 

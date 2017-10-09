@@ -61,7 +61,8 @@ public class RemoveAudioUseCaseTest {
     assertThat("MusicTrack position is 1 ", musicTrack.getPosition(), is(1));
     project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack voiceOverTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    AudioTrack voiceOverTrack = project.getAudioTracks()
+            .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     voiceOverTrack.setPosition(2);
     assertThat("Project has voice over ", project.hasVoiceOver(), is(true));
@@ -169,7 +170,8 @@ public class RemoveAudioUseCaseTest {
     musicTrack.setPosition(1);
     project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack voiceOverTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    AudioTrack voiceOverTrack = project.getAudioTracks()
+            .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     voiceOverTrack.setPosition(2);
     assertThat("AudioTrack list size is 2", project.getAudioTracks().size(), is(2));
@@ -193,7 +195,8 @@ public class RemoveAudioUseCaseTest {
     musicTrack.setPosition(1);
     project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack voiceOverTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    AudioTrack voiceOverTrack = project.getAudioTracks()
+            .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     voiceOverTrack.setPosition(2);
     assertThat("AudioTrack list size is 2", project.getAudioTracks().size(), is(2));

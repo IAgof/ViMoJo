@@ -6,11 +6,15 @@
     android:id="@+id/cardview_audio_blocks_video"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="4dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
     android:padding="4dp"
     app:cardCornerRadius="4dp"
-    app:cardElevation="4dp"
-    tools:showIn="@layout/activity_sound">
+    app:cardElevation="2dp"
+    tools:showIn="@layout/activity_sound"
+    style="?attr/cardViewStyle">
 
     <LinearLayout
         android:layout_width="match_parent"

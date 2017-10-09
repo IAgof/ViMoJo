@@ -1,4 +1,4 @@
-v0.7.0-RC6
--Redesign size in some icons in activity record
--Fixed problem manifest and Google Play.
--Added corner radius to thumbs in Edit Activity, timeline.
+v0.7.0-RC8
+- Fixed mixing audio error that generated incompleted audio track in export sessions
+- Ui updates in voice over, gallery, music, bottomBar, edit text.
+- Changed application default theme to dark. Added option in settings and drawer screens to switch with theme light.

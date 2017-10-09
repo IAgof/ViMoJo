@@ -7,6 +7,7 @@ public class IntentConstants {
 
     public final static String VIDEO_ID = "videoId";
     public final static String VIDEO_EXPORTED = "videoExportedNavigateToShareActivity";
+    public final static String THEME_APP="themeAppSelected";
 
     /**
      * Trimming files

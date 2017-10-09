@@ -82,7 +82,8 @@ public class GetAudioFromProjectUseCaseTest {
         new GetAudioFromProjectUseCase().getMusicFromProject(mockedListener);
 
         Mockito.verify(mockedListener).onMusicRetrieved(retrievedMusicCaptor.capture());
-        assertThat("Music retrieved when no audio tracks", retrievedMusicCaptor.getValue(), CoreMatchers.<Music>nullValue());
+        assertThat("Music retrieved when no audio tracks", retrievedMusicCaptor.getValue(),
+                CoreMatchers.<Music>nullValue());
     }
 
 

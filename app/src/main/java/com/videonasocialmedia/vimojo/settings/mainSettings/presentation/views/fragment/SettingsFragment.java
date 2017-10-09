@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+
 import com.videonasocialmedia.vimojo.main.DaggerFragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.FragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -59,6 +60,7 @@ public class SettingsFragment extends PreferenceFragment implements
     protected SwitchPreference transitionsVideoPref;
     protected SwitchPreference transitionsAudioPref;
     protected SwitchPreference watermarkSwitchPref;
+    protected SwitchPreference themeappSwitchPref;
     protected Context context;
     protected SharedPreferences sharedPreferences;
     protected SharedPreferences.Editor editor;
@@ -80,7 +82,7 @@ public class SettingsFragment extends PreferenceFragment implements
         return DaggerFragmentPresentersComponent.builder()
             .fragmentPresentersModule(new FragmentPresentersModule(this, context, sharedPreferences,
                 cameraSettingsPref, resolutionPref,qualityPref, transitionsVideoPref,
-                transitionsAudioPref,watermarkSwitchPref, emailPref))
+                transitionsAudioPref,watermarkSwitchPref, themeappSwitchPref, emailPref))
             .systemComponent(((VimojoApplication)getActivity().getApplication()).getSystemComponent())
             .build();
     }
@@ -103,6 +105,7 @@ public class SettingsFragment extends PreferenceFragment implements
         setupLicense();
         setupLegalNotice();
         setupTransitions();
+        setupThemeApp();
     }
 
     private void setupMailValid() {
@@ -133,6 +136,10 @@ public class SettingsFragment extends PreferenceFragment implements
 
     private void setupWatermark() {
         watermarkSwitchPref = (SwitchPreference) findPreference(ConfigPreferences.WATERMARK);
+    }
+
+    private void setupThemeApp() {
+        themeappSwitchPref = (SwitchPreference) findPreference(ConfigPreferences.THEME_APP_DARK);
     }
 
     private void setupCameraSettings() {
@@ -230,6 +237,11 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     @Override
+    public void setThemeDarkAppPref(String key, boolean isActivate) {
+        themeappSwitchPref.setChecked(isActivate);
+    }
+
+    @Override
     public void setCameraSettingsAvailable(boolean isAvailable) {
         if (isAvailable) {
             resolutionPrefNotAvailable = findPreference(context.getString(R.string.resolution));
@@ -292,9 +304,15 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                           String key) {
         Preference connectionPref = findPreference(key);
+        if(key.equals(ConfigPreferences.THEME_APP_DARK)){
+            preferencesPresenter.trackThemeApp(sharedPreferences.getBoolean(key, true));
+            restartActivity();
+        }
+
         if (key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0
                 || key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0
-                || key.compareTo(ConfigPreferences.WATERMARK) == 0) {
+                || key.compareTo(ConfigPreferences.WATERMARK) == 0
+                ||key.compareTo(ConfigPreferences.THEME_APP_DARK)==0) {
             return;
         }
         if (!key.equals(ConfigPreferences.PASSWORD_FTP)
@@ -302,7 +320,16 @@ public class SettingsFragment extends PreferenceFragment implements
             connectionPref.setSummary(sharedPreferences.getString(key, ""));
             return;
         }
+
+
+
         trackQualityAndResolutionAndFrameRateUserTraits(key, sharedPreferences.getString(key, ""));
+    }
+
+    private void restartActivity() {
+        getActivity().finish();
+        Intent intent = getActivity().getIntent();
+        getActivity().startActivity(intent);
     }
 
     private void setupLegalNotice() {

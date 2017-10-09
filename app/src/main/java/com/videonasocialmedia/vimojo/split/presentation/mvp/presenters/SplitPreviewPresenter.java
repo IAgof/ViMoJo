@@ -8,22 +8,19 @@
 package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
@@ -47,13 +44,13 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
      */
     private final String LOG_TAG = getClass().getSimpleName();
     private final Context context;
+    private final VideoRepository videoRepository;
     private SplitVideoUseCase splitVideoUseCase;
 
     private Video videoToEdit;
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
-    private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
 
     private SplitView splitView;
     public UserEventTracker userEventTracker;
@@ -63,17 +60,17 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
 
     @Inject
     public SplitPreviewPresenter(SplitView splitView, UserEventTracker userEventTracker,
-                                 Context context, SplitVideoUseCase splitVideoUseCase,
+                                 Context context, VideoRepository videoRepository,
+                                 SplitVideoUseCase splitVideoUseCase,
                                  GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                                 ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-                                 UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase) {
+                                 ModifyVideoDurationUseCase modifyVideoDurationUseCase) {
         this.splitView = splitView;
         this.userEventTracker = userEventTracker;
         this.context = context;
+        this.videoRepository = videoRepository;
         this.splitVideoUseCase = splitVideoUseCase;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
-        this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.currentProject = loadCurrentProject();
     }
 
@@ -119,13 +116,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     @Override
     public void trimVideo(Video video, int startTimeMs, int finishTimeMs) {
         VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
-        // TODO:(alvaro.martinez) 22/02/17 This drawable saved in app or sdk?
-        Drawable drawableFadeTransitionVideo =
-            ContextCompat.getDrawable(VimojoApplication.getAppContext(), R.drawable.alpha_transition_white);
-
-        modifyVideoDurationUseCase.trimVideo(drawableFadeTransitionVideo, video, videoFormat,
-            startTimeMs, finishTimeMs, currentProject.getProjectPathIntermediateFileAudioFade(),
-            this);
+        modifyVideoDurationUseCase.trimVideo(video, startTimeMs, finishTimeMs, currentProject);
     }
 
     @Override
@@ -137,19 +128,19 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     public void onSuccessTranscoding(Video video) {
         // update videoRepository
         Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
-        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
+        videoRepository.setSuccessTranscodingVideo(video);
     }
 
     @Override
     public void onErrorTranscoding(Video video, String message) {
         //splitView.showError(message);
         Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-        if(video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO){
+        if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
             video.increaseNumTriesToExportVideo();
             trimVideo(video, video.getStartTime(), video.getStopTime());
         } else {
-            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
-                Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.SPLIT.name());
+            videoRepository.setErrorTranscodingVideo(video,
+                    Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.SPLIT.name());
         }
     }
 

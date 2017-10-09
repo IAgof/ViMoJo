@@ -57,7 +57,8 @@ public class MusicDetailPresenterTest {
     @Mock private Context mockedContext;
     @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock private GetAudioFromProjectUseCase mockedGetMusicFromProject;
-    @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
+    @Mock private GetPreferencesTransitionFromProjectUseCase
+            mockedGetPreferencesTransitionsFromProject;
     @Mock private AddAudioUseCase mockedAddAudioUseCase;
     @Mock private RemoveAudioUseCase mockedRemoveAudioUseCase;
     @Mock private ModifyTrackUseCase mockedModifyTrackUseCase;
@@ -98,7 +99,7 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void addMusicCallsGoToSoundActivityOnAddMediaItemFromTrackSuccess(){
+    public void addMusicCallsGoToSoundActivityOnAddMediaItemFromTrackSuccess() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         Project videonaProject = getAProject();
@@ -107,8 +108,7 @@ public class MusicDetailPresenterTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                OnAddMediaFinishedListener listener =
-                    invocation.getArgumentAt(2, OnAddMediaFinishedListener.class);
+                OnAddMediaFinishedListener listener = invocation.getArgument(2);
                 listener.onAddMediaItemToTrackSuccess(music);
                 return null;
             }
@@ -123,7 +123,7 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void addMusicCallsGoToSoundActivityOnAddMediaItemFromTrackError(){
+    public void addMusicCallsGoToSoundActivityOnAddMediaItemFromTrackError() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         Project videonaProject = getAProject();
@@ -132,8 +132,7 @@ public class MusicDetailPresenterTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                OnAddMediaFinishedListener listener =
-                    invocation.getArgumentAt(2, OnAddMediaFinishedListener.class);
+                OnAddMediaFinishedListener listener = invocation.getArgument(2);
                 listener.onAddMediaItemToTrackError();
                 return null;
             }
@@ -143,11 +142,11 @@ public class MusicDetailPresenterTest {
 
         musicDetailPresenter.addMusic(music, volumeMusic);
 
-        verify(musicDetailView).showError(anyString());
+        verify(musicDetailView).showError(null);
     }
 
     @Test
-    public void removeMusicCallsGoToSoundActivityOnRemoveMediaItemFromTrackSuccess(){
+    public void removeMusicCallsGoToSoundActivityOnRemoveMediaItemFromTrackSuccess() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         Project videonaProject = getAProject();
@@ -155,8 +154,7 @@ public class MusicDetailPresenterTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                OnRemoveMediaFinishedListener listener =
-                    invocation.getArgumentAt(2, OnRemoveMediaFinishedListener.class);
+                OnRemoveMediaFinishedListener listener = invocation.getArgument(2);
                 listener.onRemoveMediaItemFromTrackSuccess();
                 return null;
             }
@@ -171,15 +169,14 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void removeMusicCallsShowErrorOnRemoveMediaItemFromTrackError(){
+    public void removeMusicCallsShowErrorOnRemoveMediaItemFromTrackError() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         Music music = new Music(1, "Music title", 2, 3, "Music Author", "3", 0);
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                OnRemoveMediaFinishedListener listener =
-                    invocation.getArgumentAt(2, OnRemoveMediaFinishedListener.class);
+                OnRemoveMediaFinishedListener listener = invocation.getArgument(2);
                 listener.onRemoveMediaItemFromTrackError();
                 return null;
             }
@@ -189,7 +186,7 @@ public class MusicDetailPresenterTest {
 
         musicDetailPresenter.removeMusic(music);
 
-        verify(musicDetailView).showError(anyString());
+        verify(musicDetailView).showError(null);
     }
 
     @Test

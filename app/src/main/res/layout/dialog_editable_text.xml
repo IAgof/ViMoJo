@@ -12,12 +12,12 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:textCursorDrawable="@null"
-        android:textColor="@color/colorSecondaryLight"
+        android:textColorPrimary="?attr/android:textColorPrimary"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:textColorHint="@color/colorSecondaryLight"
         android:windowSoftInputMode="stateAlwaysVisible"
         android:imeOptions="actionDone"
-        android:backgroundTint="@color/colorSecondaryLight"
+        android:textColor="?attr/android:textColorPrimary"
+
         />
 
 </LinearLayout>

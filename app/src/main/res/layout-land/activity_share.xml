@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:src="@drawable/common_icon_add_white"
-        app:backgroundTint="@color/colorAccent"
+        app:backgroundTint="?attr/colorAccent"
         android:layout_above="@+id/bottomBar"
         android:layout_alignParentRight="true"
         android:layout_marginRight="24dp"

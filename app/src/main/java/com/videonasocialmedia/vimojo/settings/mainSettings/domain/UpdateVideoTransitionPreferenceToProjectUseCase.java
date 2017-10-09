@@ -8,17 +8,16 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
  */
 
 public class UpdateVideoTransitionPreferenceToProjectUseCase {
-
   private Project currentProject;
   private ProjectRepository projectRepository;
 
-  public UpdateVideoTransitionPreferenceToProjectUseCase(ProjectRepository projectRepository){
+  public UpdateVideoTransitionPreferenceToProjectUseCase(ProjectRepository projectRepository) {
       this.projectRepository = projectRepository;
   }
 
   public void setVideoFadeTransitionActivated(boolean data) {
-      currentProject = Project.getInstance(null,null,null,null);
-      currentProject.setVideoFadeTransitionActivated(data);
+      currentProject = Project.getInstance(null, null, null, null);
+      currentProject.getVMComposition().setVideoFadeTransitionActivated(data);
       projectRepository.update(currentProject);
   }
 }

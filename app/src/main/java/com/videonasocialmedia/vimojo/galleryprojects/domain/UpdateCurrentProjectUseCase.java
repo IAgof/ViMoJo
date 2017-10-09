@@ -15,17 +15,17 @@ public class UpdateCurrentProjectUseCase {
   protected ProjectRepository projectRepository;
 
   @Inject
-  public UpdateCurrentProjectUseCase(ProjectRepository projectRepository){
+  public UpdateCurrentProjectUseCase(ProjectRepository projectRepository) {
     this.projectRepository = projectRepository;
   }
 
-  public void updateLastModificationAndProjectInstance(Project project){
+  public void updateLastModificationAndProjectInstance(Project project) {
     project.setLastModification(DateUtils.getDateRightNow());
     projectRepository.update(project);
     Project.INSTANCE = project;
   }
 
-  public void updateProject(){
+  public void updateProject() {
     Project project = Project.getInstance(null,null,null,null);
     projectRepository.update(project);
   }

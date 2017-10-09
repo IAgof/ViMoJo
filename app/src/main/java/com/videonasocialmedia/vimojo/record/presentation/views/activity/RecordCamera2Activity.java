@@ -230,7 +230,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private final int RESOLUTION_SELECTED_HD4K = 2160;
   private OrientationHelper orientationHelper;
 
-  private ProgressDialog progressDialogAdaptVideo;
+//  private ProgressDialog progressDialogAdaptVideo;
 
   private BatteryReceiver batteryReceiver = new BatteryReceiver(){
     @Override
@@ -266,7 +266,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
   };
   public int audioGainSeekBarProgress = DEFAULT_AUDIO_GAIN;
-  private final SeekBar.OnSeekBarChangeListener audioGainSeekbarListener = new SeekBar.OnSeekBarChangeListener() {
+  private final SeekBar.OnSeekBarChangeListener audioGainSeekbarListener =
+          new SeekBar.OnSeekBarChangeListener() {
     @Override
     public void onProgressChanged(SeekBar seekBar, int gainProgress, boolean b) {
       // TODO(jliarte): 13/07/17 should we save these adjusts on activity pause???
@@ -297,7 +298,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
     this.getActivityPresentersComponent().inject(this);
 
-    createProgressDialogAdaptVideo();
+//    createProgressDialogAdaptVideo();
     createAlertDialogBatteryAndStorage();
     initWhiteBalanceModesMap();
     initFocusSelectionModesMap();
@@ -308,15 +309,15 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintProgress(ColorStateList.valueOf(getResources().getColor(R.color.recordActivityInfoGreen)));
     picometerProgress.setScaleY(SCALE_Y_PICOMETER_PROGRESS);
   }
-
-  private void createProgressDialogAdaptVideo() {
-    progressDialogAdaptVideo = new ProgressDialog(this);
-    progressDialogAdaptVideo.setTitle(getString(R.string.dialog_title_record_adapting_video));
-    progressDialogAdaptVideo.setMessage(getString(R.string.dialog_message_record_adapting_video));
-    progressDialogAdaptVideo.setIndeterminate(false);
-    progressDialogAdaptVideo.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-  }
+//
+//  private void createProgressDialogAdaptVideo() {
+//    progressDialogAdaptVideo = new ProgressDialog(this);
+//    progressDialogAdaptVideo.setTitle(getString(R.string.dialog_title_record_adapting_video));
+//    progressDialogAdaptVideo.setMessage(getString(R.string.dialog_message_record_adapting_video));
+//    progressDialogAdaptVideo.setIndeterminate(false);
+//    progressDialogAdaptVideo.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+//        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+//  }
 
   private void createAlertDialogBatteryAndStorage() {
     alertDialogBattery = new AlertDialogWithInfoIntoCircle(this, getString(R.string.battery));
@@ -495,7 +496,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void setFlash(boolean on) {
-    // TODO:(alvaro.martinez) 18/01/17 Review flash tracking trackUserInteracted(AnalyticsConstants.CHANGE_FLASH, String.valueOf(on));
+    // TODO:(alvaro.martinez) 18/01/17 Review flash tracking
+    // trackUserInteracted(AnalyticsConstants.CHANGE_FLASH, String.valueOf(on));
     flashButton.setActivated(on);
     flashButton.setSelected(on);
   }
@@ -536,15 +538,15 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     showMessage(message);
   }
 
-  @Override
-  public void showProgressAdaptingVideo() {
-    progressDialogAdaptVideo.show();
-  }
-
-  @Override
-  public void hideProgressAdaptingVideo() {
-    progressDialogAdaptVideo.dismiss();
-  }
+//  @Override
+//  public void showProgressAdaptingVideo() {
+//    progressDialogAdaptVideo.show();
+//  }
+//
+//  @Override
+//  public void hideProgressAdaptingVideo() {
+//    progressDialogAdaptVideo.dismiss();
+//  }
 
   @Override
   public void hidePrincipalViews() {
@@ -892,7 +894,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     seekbarLowerText.setText(minEV + "EV");
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_EXPOSURE_COMPENSATION;
     final int minExposure = presenter.getMinimumExposureCompensation();
-    slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to call the listener when setting up the progress bar to match the existing state
+    slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to
+    // call the listener when setting up the progress bar to match the existing state
     slideSeekBar.setMax( presenter.getMaximumExposureCompensation() - minExposure );
     slideSeekBar.setProgress( presenter.getCurrentExposureCompensation() - minExposure );
     slideSeekBar.setEnabled(true);
@@ -982,7 +985,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     seekBarUpperImage.setImageResource(R.drawable.activity_record_ic_focus_infinite);
     seekBarLowerImage.setImageResource(R.drawable.activity_record_ic_focus_macro);
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_FOCUS_MANUAL;
-    slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to call the listener when setting up the progress bar to match the existing state
+    slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to
+    // call the listener when setting up the progress bar to match the existing state
     slideSeekBar.setMax(100);
     slideSeekBar.setProgress(50);
     slideSeekBar.setEnabled(true);
@@ -1100,10 +1104,12 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     switch (batteryStatus) {
       case CHARGING:
       case FULL:
-        alertDialogBattery.setPercentColor(getResources().getColor(R.color.recordActivityInfoGreen));
+        alertDialogBattery.setPercentColor(getResources()
+                .getColor(R.color.recordActivityInfoGreen));
         break;
       case MEDIUM:
-        alertDialogBattery.setPercentColor(getResources().getColor(R.color.recordActivityInfoYellow));
+        alertDialogBattery.setPercentColor(getResources()
+                .getColor(R.color.recordActivityInfoYellow));
         break;
       case LOW:
       case CRITICAL:
@@ -1157,10 +1163,12 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private void setColorProgressBarMemory(Constants.MEMORY_STATUS memoryStatus) {
     switch (memoryStatus) {
       case OKAY:
-        alertDialogStorage.setPercentColor(getResources().getColor(R.color.recordActivityInfoGreen));
+        alertDialogStorage.setPercentColor(getResources()
+                .getColor(R.color.recordActivityInfoGreen));
         break;
       case MEDIUM:
-        alertDialogStorage.setPercentColor(getResources().getColor(R.color.recordActivityInfoYellow));
+        alertDialogStorage.setPercentColor(getResources()
+                .getColor(R.color.recordActivityInfoYellow));
         break;
       case CRITICAL:
         alertDialogStorage.setPercentColor(getResources().getColor(R.color.recordActivityInfoRed));
@@ -1299,9 +1307,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnClick(R.id.activity_record_icon_storage)
   public void showDialogWithLevelStorage(){
     if(!alertDialogStorage.isShowing()) {
-      StatFs statFs= new StatFs(Environment.getDataDirectory().getPath());
-      long totalStorage= getTotalStorage(statFs);
-      long freeStorage= getFreeStorage(statFs);
+      StatFs statFs = new StatFs(Environment.getDataDirectory().getPath());
+      long totalStorage = getTotalStorage(statFs);
+      long freeStorage = getFreeStorage(statFs);
       presenter.storageDialog(totalStorage, freeStorage);
     }
   }
@@ -1712,7 +1720,5 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         recordButton.setEnabled(true);
       }
     }
-
   }
-
 }
