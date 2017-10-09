@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:textSize="16sp"
-        android:textColor="@color/textColor"
+        android:textColor="?android:attr/textColorPrimary"
         android:padding="16dp"
         android:background="?attr/selectableItemBackground"
         tools:text="Gatito"/>
