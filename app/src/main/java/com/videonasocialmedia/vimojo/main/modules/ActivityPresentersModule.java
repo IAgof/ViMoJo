@@ -1,7 +1,10 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 
+import com.videonasocialmedia.avrecorder.AudioRecorder;
+import com.videonasocialmedia.avrecorder.SessionConfig;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
@@ -61,6 +64,7 @@ import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.NewVoiceOverPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
@@ -79,6 +83,8 @@ import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPrevie
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
+import java.io.IOException;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -89,6 +95,8 @@ import dagger.Provides;
 @Module
 public class ActivityPresentersModule {
   private final VimojoActivity activity;
+  private String destinationFolderPath = ".project/102893438/tempMixedAudio/voiceOverRecord";
+  private int numTracks = 1;
   private AutoFitTextureView textureView;
   private GLCameraView cameraView = null;
   private boolean externalIntent;
@@ -113,6 +121,13 @@ public class ActivityPresentersModule {
     this.directorySaveVideos = directorySaveVideos;
   }
 
+  public ActivityPresentersModule(VoiceOverActivity activity, String destinationFolderPath,
+                                  int numTracks){
+    this.activity = activity;
+    this.destinationFolderPath = destinationFolderPath;
+    this.numTracks = numTracks;
+  }
+
   @Provides @PerActivity
   SoundVolumePresenter getSoundVolumePresenter(
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
@@ -128,8 +143,19 @@ public class ActivityPresentersModule {
   VoiceOverPresenter voiceOverPresenter(
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-          MergeVoiceOverAudiosUseCase mergeVoiceOverAudiosUseCase) {
+          MergeVoiceOverAudiosUseCase mergeVoiceOverAudiosUseCase, SessionConfig sessionConfig,
+          AudioRecorder audioRecorder) {
     return new VoiceOverPresenter((VoiceOverActivity) activity, getMediaListFromProjectUseCase,
+        getPreferencesTransitionFromProjectUseCase, mergeVoiceOverAudiosUseCase,sessionConfig,
+        audioRecorder);
+  }
+
+  @Provides @PerActivity
+  NewVoiceOverPresenter provideNewVoiceOverPresenter(
+      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+      MergeVoiceOverAudiosUseCase mergeVoiceOverAudiosUseCase) {
+    return new NewVoiceOverPresenter((VoiceOverActivity) activity, getMediaListFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase, mergeVoiceOverAudiosUseCase);
   }
 
@@ -449,5 +475,20 @@ public class ActivityPresentersModule {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase,
             adaptVideoToFormatUseCase, launchTranscoderAddAVTransitionUseCase,
             relaunchTranscoderTempBackgroundUseCase, videoRepository, videoToAdaptRepository);
+  }
+
+  @Provides
+  SessionConfig provideSessionConfig(){
+    return new SessionConfig(destinationFolderPath, numTracks);
+  }
+
+  @Provides
+  AudioRecorder providesAudioRecorder(){
+    try {
+      return new AudioRecorder(provideSessionConfig());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 }

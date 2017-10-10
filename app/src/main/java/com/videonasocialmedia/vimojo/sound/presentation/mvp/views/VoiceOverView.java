@@ -17,4 +17,6 @@ public interface VoiceOverView {
     void showError(String errorMessage);
     void setVideoFadeTransitionAmongVideos();
     void setAudioFadeTransitionAmongVideos();
+    void resetVoiceOverRecorded();
+    void cleanTempDirectoryPathVoiceOverRecorded(String folderDirectory);
 }

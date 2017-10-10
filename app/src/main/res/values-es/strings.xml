@@ -116,6 +116,10 @@
     <string name="dialog_project_edit_title_accept">Sí</string>
     <string name="dialog_project_edit_title_cancel">No</string>
 
+    <string name="dialog_voice_over_cancel_title_message">¿Desea descartar la locución y volver a grabarla de nuevo?</string>
+    <string name="dialog_voice_over_cancel_positive_button">Aceptar</string>
+    <string name="dialog_voice_over_cancel_negative_button">Declinar</string>
+
     <!--SoundVolumeActivity-->
     <string name="exitSoundVolumeActivity" >¿Desea descartar los cambios y volver a grabar de nuevo?</string>
     <string name="acceptExitSoundVolumeActivity">Sí</string>
