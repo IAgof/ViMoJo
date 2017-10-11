@@ -25,6 +25,8 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by ruth on 15/09/16.
  */
+@Deprecated // New implemetation of voice over. Not needed avrecorder package to save several .mp4
+// audio voice over files and merged. Instead of, it use om-recorder library to save one file .pcm
 public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAudiosListener {
 
     /**

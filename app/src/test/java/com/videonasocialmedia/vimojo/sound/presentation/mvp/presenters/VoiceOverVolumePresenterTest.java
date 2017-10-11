@@ -38,7 +38,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
@@ -48,11 +47,13 @@ import static org.mockito.Mockito.verify;
  * Created by jliarte on 23/10/16.
  */
 @RunWith(PowerMockRunner.class)
-public class SoundVolumePresenterTest {
+public class VoiceOverVolumePresenterTest {
 
   @Mock private SoundVolumeView mockedSoundVolumeView;
-  @InjectMocks SoundVolumePresenter injectedPresenter;
-  @Mock SoundVolumePresenter mockedSoundVolumePresenter;
+  @InjectMocks
+  VoiceOverVolumePresenter injectedPresenter;
+  @Mock
+  VoiceOverVolumePresenter mockedVoiceOverVolumePresenter;
   @Mock private MusicRepository mockedMusicRepository;
   @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock private GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
@@ -153,8 +154,8 @@ public class SoundVolumePresenterTest {
   }
 
   @NonNull
-  private SoundVolumePresenter getSoundVolumePresenter() {
-    return new SoundVolumePresenter(mockedSoundVolumeView, mockedGetMediaListFromProjectUseCase,
+  private VoiceOverVolumePresenter getSoundVolumePresenter() {
+    return new VoiceOverVolumePresenter(mockedSoundVolumeView, mockedGetMediaListFromProjectUseCase,
         mockedGetPreferencesTransitionsFromProject, mockedGetAudioFromProjectUseCase,
         mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedContext);
   }

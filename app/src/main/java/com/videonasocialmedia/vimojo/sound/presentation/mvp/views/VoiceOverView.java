@@ -19,4 +19,5 @@ public interface VoiceOverView {
     void setAudioFadeTransitionAmongVideos();
     void resetVoiceOverRecorded();
     void cleanTempDirectoryPathVoiceOverRecorded(String folderDirectory);
+    void disableRecordButton();
 }

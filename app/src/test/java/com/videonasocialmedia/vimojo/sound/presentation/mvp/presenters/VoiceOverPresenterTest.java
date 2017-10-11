@@ -42,7 +42,7 @@ import static org.mockito.Mockito.verify;
 /**
  * Created by alvaro on 9/10/17.
  */
-
+@Deprecated
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Log.class})
 public class VoiceOverPresenterTest {

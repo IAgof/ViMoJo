@@ -246,18 +246,18 @@
         android:parentActivityName=".sound.presentation.views.activity.MusicListActivity"/>
 
         <activity
-            android:name=".sound.presentation.views.activity.VoiceOverActivity"
+            android:name=".sound.presentation.views.activity.VoiceOverRecordActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:parentActivityName=".sound.presentation.views.activity.SoundActivity"/>
 
         <activity
-            android:name=".sound.presentation.views.activity.SoundVolumeActivity"
+            android:name=".sound.presentation.views.activity.VoiceOverVolumeActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:parentActivityName=".sound.presentation.views.activity.VoiceOverActivity"/>
+            android:parentActivityName=".sound.presentation.views.activity.VoiceOverRecordActivity"/>
 
 
         <service

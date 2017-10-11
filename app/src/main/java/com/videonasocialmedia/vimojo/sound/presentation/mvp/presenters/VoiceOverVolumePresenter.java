@@ -30,7 +30,7 @@ import javax.inject.Inject;
 /**
  * Created by ruth on 19/09/16.
  */
-public class SoundVolumePresenter implements OnVideosRetrieved {
+public class VoiceOverVolumePresenter implements OnVideosRetrieved {
 
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     private SoundVolumeView soundVolumeView;
@@ -44,13 +44,13 @@ public class SoundVolumePresenter implements OnVideosRetrieved {
     private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
 
     @Inject
-    public SoundVolumePresenter(SoundVolumeView soundVolumeView,
-                                GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                                GetPreferencesTransitionFromProjectUseCase
+    public VoiceOverVolumePresenter(SoundVolumeView soundVolumeView,
+                                    GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                    GetPreferencesTransitionFromProjectUseCase
                                     getPreferencesTransitionFromProjectUseCase,
-                                GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-                                AddAudioUseCase addAudioUseCase,
-                                RemoveAudioUseCase removeAudioUseCase, Context context) {
+                                    GetAudioFromProjectUseCase getAudioFromProjectUseCase,
+                                    AddAudioUseCase addAudioUseCase,
+                                    RemoveAudioUseCase removeAudioUseCase, Context context) {
         this.soundVolumeView = soundVolumeView;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase =

@@ -3,9 +3,7 @@ package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -17,7 +15,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
@@ -34,14 +32,15 @@ import butterknife.OnClick;
 /**
  * Created by ruth on 19/09/16.
  */
-public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSeekBarChangeListener,
+public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.OnSeekBarChangeListener,
         VideonaPlayer.VideonaPlayerListener, SoundVolumeView {
     private static final String SOUND_VOLUME_POSITION_VOLUME = "sound_volume_position";
     private static final String SOUND_VOLUME_PROJECT_POSITION = "sound_volume_project_position";
     private static final String VOICE_OVER_RECORDED_PATH = "voice_over_recorded_path";
-    private static final String TAG = "SoundVolumeActivity";
+    private static final String TAG = "VoiceOverVolumeActivity";
 
-    @Inject SoundVolumePresenter presenter;
+    @Inject
+    VoiceOverVolumePresenter presenter;
 
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
@@ -149,7 +148,7 @@ public class SoundVolumeActivity extends VimojoActivity implements SeekBar.OnSee
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        navigateTo(VoiceOverActivity.class);
+                        navigateTo(VoiceOverRecordActivity.class);
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
