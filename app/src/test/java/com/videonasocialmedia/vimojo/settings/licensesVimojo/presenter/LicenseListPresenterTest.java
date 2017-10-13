@@ -11,6 +11,7 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.vi
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -50,7 +51,7 @@ public class LicenseListPresenterTest {
 
     licenseListPresenter.getLicenseList();
 
-    verify(licenseListView).showLicenseList(anyList());
+    verify(licenseListView).showLicenseList(ArgumentMatchers.<LicenseVimojo>anyList());
   }
 
   @NonNull
