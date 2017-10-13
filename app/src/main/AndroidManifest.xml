@@ -177,6 +177,12 @@
         android:parentActivityName=".record.presentation.views.activity.RecordCamera2Activity"/>
 
         <activity
+            android:name=".userProfile.presentation.mvp.views.UserProfileActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".settings.presentation.views.activity.SettingsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"

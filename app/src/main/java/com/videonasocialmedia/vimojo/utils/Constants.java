@@ -82,6 +82,7 @@ public class Constants {
     final public static String FLAVOR_VIMOJO = "vimojo";
 
     public static final String USER_THUMB = "userThumb.jpg";
+    public static final String USER_PROFILE_THUMB = "userProfileThumb.jpg";
 
     public static final int MAX_NUM_TRIES_TO_EXPORT_VIDEO = 4;
 

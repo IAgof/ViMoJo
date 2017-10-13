@@ -77,6 +77,9 @@ import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditT
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
+import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
+import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileActivity;
+import com.videonasocialmedia.vimojo.userProfile.presentation.views.UserProfileActivityView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import dagger.Module;
@@ -326,6 +329,10 @@ public class ActivityPresentersModule {
         userEventTracker, getMediaListFromProjectUseCase, modifyVideoTextAndPositionUseCase,
         getVideonaFormatFromCurrentProjectUseCase, updateVideoRepositoryUseCase,
         relaunchTranscoderTempBackgroundUseCase);
+  }
+  @Provides @PerActivity
+  UserProfilePresenter provideUserProfilePresenter(SharedPreferences sharedPreferences) {
+    return new  UserProfilePresenter((UserProfileActivityView) activity, activity, sharedPreferences);
   }
 
   @Provides

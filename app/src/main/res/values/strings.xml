@@ -1812,5 +1812,7 @@ and Conditions.\n\n
     <string name="mute">Mute</string>
     <string name="solo">Solo</string>
 
+    <string name="profession">Profession</string>
+
 
 </resources>

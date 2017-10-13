@@ -31,6 +31,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
+import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
@@ -180,6 +181,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                 return false;
               case R.id.menu_navview_delete_clip:
                 createDialog(R.id.menu_navview_delete_clip);
+                return false;
+              case R.id.menu_navview_user_profile:
+                navigateTo(UserProfileActivity.class);
                 return false;
               /*case R.id.menu_navview_mail:
                 createDialog(R.id.menu_navview_mail);
