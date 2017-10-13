@@ -1,11 +1,10 @@
 package com.videonasocialmedia.vimojo.domain;
 
 
-import android.content.Context;
-import android.os.Environment;
-
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -13,7 +12,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,8 +20,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.doReturn;
@@ -30,12 +29,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by jliarte on 23/10/16.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(RobolectricTestRunner.class)
+@Config(application = VimojoTestApplication.class, constants = BuildConfig.class, sdk = 21,
+        shadows = {ShadowMultiDex.class}, packageName = "com.videonasocialmedia.vimojo.debug")
 public class CreateDefaultProjectUseCaseTest {
 
   @Mock ProjectRepository mockedProjectRepository;
@@ -75,7 +75,6 @@ public class CreateDefaultProjectUseCaseTest {
     assert Project.INSTANCE == null;
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
-
     injectedUseCase.loadOrCreateProject("root/path", "private/path", false);
 
     verify(mockedProjectRepository).getCurrentProject();
@@ -97,7 +96,7 @@ public class CreateDefaultProjectUseCaseTest {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
     Project currentProject = new Project("current project title", "current/path", "private/path",
-        profile);
+            profile);
     doReturn(currentProject).when(mockedProjectRepository).getCurrentProject();
 
     injectedUseCase.loadOrCreateProject("root/path", "private/path", false);
@@ -106,51 +105,48 @@ public class CreateDefaultProjectUseCaseTest {
   }
 
   @Test
-  public void loadOrCreateUpdateProjectRepository(){
+  public void loadOrCreateUpdatesProjectRepository() {
     injectedUseCase.loadOrCreateProject("root/path", "private/path", false);
-    Project actualProject = Project.getInstance(null,null,null,null);
+
+    Project actualProject = Project.getInstance(null, null, null, null);
+
     verify(mockedProjectRepository).update(actualProject);
   }
 
   @Test
-  public void createProjectUpdateProjectRepository(){
-    injectedUseCase.createProject("root/path","private/path", false);
-    Project actualProject = Project.getInstance(null,null,null,null);
-    verify(mockedProjectRepository).update(actualProject);
-  }
-
-  @Test
-  public void createProjectUpdateProjectInstance() {
-    assert Project.INSTANCE == null;
-    /*Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
-        VideoFrameRate.FrameRate.FPS25);
-    doReturn(profile).when(mockedProfileRepository).getCurrentProfile();
-    Project currentProject = Project.getInstance("current project", "current/path", profile);
-    assertThat(Project.getInstance(null,null,null), is(currentProject));*/
+  public void createProjectUpdatesProjectRepository() {
     injectedUseCase.createProject("root/path", "private/path", false);
-    Project actualProject = Project.getInstance(null,null,null,null);
+
+    Project actualProject = Project.getInstance(null, null, null, null);
+
+    verify(mockedProjectRepository).update(actualProject);
   }
 
   @Test
-  public void createProjectActivateWatermarkIfIsFeatured(){
+  public void createProjectUpdatesProjectInstance() {
+    assert Project.INSTANCE == null;
+    injectedUseCase.createProject("root/path", "private/path", false);
 
+    Project actualProject = Project.getInstance(null, null, null, null);
+  }
+
+  @Test
+  public void createProjectActivatesWatermarkIfIsFeatured() {
     boolean isWatermarkFeatured = true;
 
-    injectedUseCase.createProject("root/path","private/path", isWatermarkFeatured);
+    injectedUseCase.createProject("root/path", "private/path", isWatermarkFeatured);
 
-    assertThat("Watermark is activated", Project.getInstance(null,null,null,null).getVMComposition()
-        .hasWatermark(), is(true));
+    assertThat("Watermark is activated", Project.getInstance(null, null, null, null)
+            .getVMComposition().hasWatermark(), is(true));
   }
 
   @Test
-  public void loadOrCreateProjectActivateWatermarkIfIsFeatured(){
-
+  public void loadOrCreateProjectActivatesWatermarkIfIsFeatured() {
     boolean isWatermarkFeatured = true;
 
     injectedUseCase.loadOrCreateProject("root/path", "private/path", isWatermarkFeatured);
 
-    assertThat("Watermark is activated", Project.getInstance(null,null,null,null).getVMComposition()
-        .hasWatermark(), is(true));
+    assertThat("Watermark is activated", Project.getInstance(null, null, null, null)
+            .getVMComposition().hasWatermark(), is(true));
   }
-
-  }
+}

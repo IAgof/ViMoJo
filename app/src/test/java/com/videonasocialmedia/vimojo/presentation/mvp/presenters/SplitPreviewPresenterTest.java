@@ -7,13 +7,13 @@ import android.support.annotation.NonNull;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
@@ -27,7 +27,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -53,9 +52,9 @@ public class SplitPreviewPresenterTest {
     @Mock private SplitVideoUseCase mockedSplitVideoUseCase;
     @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock ModifyVideoDurationUseCase mockedModifyVideoDurationUseCase;
-    @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
 
     @Mock Context mockedContext;
+    @Mock private VideoRepository mockedVideoRepository;
 
     @Before
     public void injectMocks() {
@@ -71,9 +70,8 @@ public class SplitPreviewPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(mockedSplitView,
-            userEventTracker, mockedContext, mockedSplitVideoUseCase,
-            mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
-            mockedUpdateVideoRepositoryUseCase);
+            userEventTracker, mockedContext, mockedVideoRepository, mockedSplitVideoUseCase,
+            mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase);
 
         assertThat(presenter.userEventTracker, is(userEventTracker));
     }
@@ -123,9 +121,8 @@ public class SplitPreviewPresenterTest {
     @NonNull
     private SplitPreviewPresenter getSplitPreviewPresenter() {
         return new SplitPreviewPresenter(mockedSplitView,
-            mockedUserEventTracker, mockedContext, mockedSplitVideoUseCase,
-            mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
-            mockedUpdateVideoRepositoryUseCase);
+            mockedUserEventTracker, mockedContext, mockedVideoRepository, mockedSplitVideoUseCase,
+            mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase);
     }
 
     public Project getAProject() {

@@ -43,7 +43,8 @@ public class UserEventTracker {
     public void trackClipsReordered(Project project) {
         JSONObject eventProperties = new JSONObject();
         try {
-            eventProperties.put(AnalyticsConstants.EDIT_ACTION, AnalyticsConstants.EDIT_ACTION_REORDER);
+            eventProperties.put(AnalyticsConstants.EDIT_ACTION,
+                    AnalyticsConstants.EDIT_ACTION_REORDER);
             addProjectEventProperties(project, eventProperties);
             Event trackingEvent = new Event(AnalyticsConstants.VIDEO_EDITED, eventProperties);
             this.trackEvent(trackingEvent);
@@ -56,7 +57,8 @@ public class UserEventTracker {
     public void trackClipTrimmed(Project project) {
         JSONObject eventProperties = new JSONObject();
         try {
-            eventProperties.put(AnalyticsConstants.EDIT_ACTION, AnalyticsConstants.EDIT_ACTION_TRIM);
+            eventProperties.put(AnalyticsConstants.EDIT_ACTION,
+                    AnalyticsConstants.EDIT_ACTION_TRIM);
             addProjectEventProperties(project, eventProperties);
             Event trackingEvent = new Event(AnalyticsConstants.VIDEO_EDITED, eventProperties);
             this.trackEvent(trackingEvent);
@@ -82,7 +84,8 @@ public class UserEventTracker {
     public void trackClipDuplicated(int copies, Project project) {
         JSONObject eventProperties = new JSONObject();
         try {
-            eventProperties.put(AnalyticsConstants.EDIT_ACTION, AnalyticsConstants.EDIT_ACTION_DUPLICATE);
+            eventProperties.put(AnalyticsConstants.EDIT_ACTION,
+                    AnalyticsConstants.EDIT_ACTION_DUPLICATE);
             eventProperties.put(AnalyticsConstants.NUMBER_OF_DUPLICATES, copies);
             addProjectEventProperties(project, eventProperties);
             Event trackingEvent = new Event(AnalyticsConstants.VIDEO_EDITED, eventProperties);
@@ -97,7 +100,8 @@ public class UserEventTracker {
 
         JSONObject eventProperties = new JSONObject();
         try {
-            eventProperties.put(AnalyticsConstants.EDIT_ACTION, AnalyticsConstants.EDIT_ACTION_TEXT);
+            eventProperties.put(AnalyticsConstants.EDIT_ACTION,
+                    AnalyticsConstants.EDIT_ACTION_TEXT);
             eventProperties.put(AnalyticsConstants.TEXT_POSITION, position);
             eventProperties.put(AnalyticsConstants.TEXT_LENGTH, textLength);
             addProjectEventProperties(project, eventProperties);
@@ -113,7 +117,8 @@ public class UserEventTracker {
     public void trackMusicSet(Project project) {
         JSONObject eventProperties = new JSONObject();
         try {
-            eventProperties.put(AnalyticsConstants.EDIT_ACTION, AnalyticsConstants.EDIT_ACTION_MUSIC_SET);
+            eventProperties.put(AnalyticsConstants.EDIT_ACTION,
+                    AnalyticsConstants.EDIT_ACTION_MUSIC_SET);
             String musicTitle = "";
             if (project.getMusic() != null) {
                 musicTitle = project.getMusic().getTitle();
@@ -127,7 +132,8 @@ public class UserEventTracker {
         }
     }
 
-    public void addProjectEventProperties(Project project, JSONObject eventProperties) throws JSONException {
+    public void addProjectEventProperties(Project project, JSONObject eventProperties)
+            throws JSONException {
         eventProperties.put(AnalyticsConstants.NUMBER_OF_CLIPS, project.numberOfClips());
         eventProperties.put(AnalyticsConstants.VIDEO_LENGTH, project.getDuration());
     }
@@ -157,7 +163,8 @@ public class UserEventTracker {
             eventProperties.put(AnalyticsConstants.SOCIAL_NETWORK, socialNetworkId);
             eventProperties.put(AnalyticsConstants.VIDEO_LENGTH, project.getDuration());
             VideoResolution videoResolution = project.getProfile().getVideoResolution();
-            eventProperties.put(AnalyticsConstants.RESOLUTION, videoResolution.getWidth() + "x" + videoResolution.getHeight());
+            eventProperties.put(AnalyticsConstants.RESOLUTION, videoResolution.getWidth() + "x"
+                    + videoResolution.getHeight());
             eventProperties.put(AnalyticsConstants.NUMBER_OF_CLIPS, project.numberOfClips());
             eventProperties.put(AnalyticsConstants.TOTAL_VIDEOS_SHARED, totalVideoShared);
 
@@ -253,11 +260,13 @@ public class UserEventTracker {
         JSONObject videoRecordedProperties = new JSONObject();
         VideoResolution.Resolution resolution = currentProject.getProfile().getResolution();
         try {
-            videoRecordedProperties.put(AnalyticsConstants.VIDEO_LENGTH, currentProject.getDuration());
+            videoRecordedProperties.put(AnalyticsConstants.VIDEO_LENGTH,
+                    currentProject.getDuration());
             videoRecordedProperties.put(AnalyticsConstants.RESOLUTION, resolution.name());
             videoRecordedProperties.put(AnalyticsConstants.TOTAL_VIDEOS_RECORDED,
                 totalVideosRecorded);
-            Event trackingEvent = new Event(AnalyticsConstants.VIDEO_RECORDED, videoRecordedProperties);
+            Event trackingEvent = new Event(AnalyticsConstants.VIDEO_RECORDED,
+                    videoRecordedProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -268,6 +277,44 @@ public class UserEventTracker {
         mixpanel.getPeople().increment(AnalyticsConstants.TOTAL_VIDEOS_RECORDED, 1);
         mixpanel.getPeople().set(AnalyticsConstants.LAST_VIDEO_RECORDED,
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date()));
+    }
+
+    public void trackThemeAppDrawerChanged(boolean isDarkTheme) {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.INTERACTION,
+                AnalyticsConstants.ACTION_THEME_CHANGED);
+            eventProperties.put(AnalyticsConstants.ACTION_THEME_SELECTED, isDarkTheme ?
+                AnalyticsConstants.THEME_APP_ACTION_DARK :
+                    AnalyticsConstants.THEME_APP_ACTION_LIGHT);
+            eventProperties.put(AnalyticsConstants.THEME_CHANGE_SOURCE,
+                AnalyticsConstants.THEME_CHANGE_SOURCE_DRAWER);
+            Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(TAG, "trackThemeAppChanged: error sending mixpanel USER_INTERACTED drawer theme "
+                    + "dark event");
+            e.printStackTrace();
+        }
+    }
+
+    public void trackThemeAppSettingsChanged(boolean isDarkTheme) {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.INTERACTION,
+                AnalyticsConstants.ACTION_THEME_CHANGED);
+            eventProperties.put(AnalyticsConstants.ACTION_THEME_SELECTED, isDarkTheme ?
+                AnalyticsConstants.THEME_APP_ACTION_DARK :
+                AnalyticsConstants.THEME_APP_ACTION_LIGHT);
+            eventProperties.put(AnalyticsConstants.THEME_CHANGE_SOURCE,
+                AnalyticsConstants.THEME_CHANGE_SOURCE_SETTINGS);
+            Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(TAG, "trackThemeAppChanged: error sending mixpanel USER_INTERACTED settings theme"
+                    + " dark event ");
+            e.printStackTrace();
+        }
     }
 
     public static class Event {

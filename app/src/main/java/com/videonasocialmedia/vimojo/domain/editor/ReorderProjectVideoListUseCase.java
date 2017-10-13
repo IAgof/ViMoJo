@@ -2,9 +2,6 @@ package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
-import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
-
-import java.util.LinkedList;
 
 /**
  * Created by Alejandro on 21/10/16.

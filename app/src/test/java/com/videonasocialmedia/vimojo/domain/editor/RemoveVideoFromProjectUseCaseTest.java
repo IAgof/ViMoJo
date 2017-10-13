@@ -24,7 +24,6 @@ import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
 
 /**

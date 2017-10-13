@@ -19,7 +19,7 @@ import javax.inject.Inject;
 public class GetMediaListFromProjectUseCase {
 
     @Inject
-    public GetMediaListFromProjectUseCase(){
+    public GetMediaListFromProjectUseCase() {
 
     }
 

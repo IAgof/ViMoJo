@@ -8,7 +8,8 @@
     android:layout_margin="4dp"
     android:padding="4dp"
     app:cardCornerRadius="4dp"
-    app:cardElevation="4dp">
+    app:cardElevation="4dp"
+    style="?attr/cardViewStyle">
 
 
     <TextView
@@ -54,7 +55,7 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:layout_marginTop="12dp"
-                android:textColor="@color/textColorPrimary"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 tools:text="Guitarra"/>
@@ -65,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="@color/colorSecondaryLight"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="12sp"
                 android:visibility="gone"
                 tools:text="20-10-2016"/>
@@ -78,7 +79,7 @@
                 android:layout_marginTop="2dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="@color/colorSecondaryLight"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="12sp"
                 android:text="@string/projectTitleSizeMb"/>
 
@@ -89,7 +90,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:layout_marginTop="2dp"
-                android:textColor="@color/colorSecondaryLight"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="12sp"
                 android:text="@string/projectTitleDurationMinSec"/>
 
@@ -106,7 +107,7 @@
                     android:layout_height="24dp"
                     android:layout_weight="1"
                     android:scaleType="fitCenter"
-                    android:tint="@color/button_color"
+                    android:tint="?android:attr/textColorPrimary"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/activity_gallery_projects_duplicate"/>
 
@@ -116,7 +117,7 @@
                     android:layout_height="24dp"
                     android:layout_weight="1"
                     android:scaleType="fitCenter"
-                    android:tint="@color/button_color"
+                    android:tint="?android:attr/textColorPrimary"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/activity_edit_share_normal"/>
 
@@ -126,7 +127,7 @@
                     android:layout_height="24dp"
                     android:layout_weight="1"
                     android:scaleType="fitCenter"
-                    android:tint="@color/button_color"
+                    android:tint="?android:attr/textColorPrimary"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/activity_edit_clip_delete_normal"/>
 
@@ -136,7 +137,7 @@
                     android:layout_height="24dp"
                     android:layout_weight="1"
                     android:scaleType="fitCenter"
-                    android:tint="@color/button_color"
+                    android:tint="?android:attr/textColorPrimary"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/activity_gallery_projects_edit_project"/>
 

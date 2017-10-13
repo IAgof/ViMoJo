@@ -40,22 +40,22 @@ public class RealmProjectRepositoryTest {
     MockitoAnnotations.initMocks(this);
   }
 
-  @Before
-  public void setup() {
-    mockStatic(RealmLog.class);
-    mockStatic(Realm.class);
+//  @Before
+//  public void setup() {
+//    mockStatic(RealmLog.class);
+//    mockStatic(Realm.class);
+//
+//    Realm mockRealm = PowerMockito.mock(Realm.class);
+//
+//    when(Realm.getDefaultInstance()).thenReturn(mockRealm);
+//
+//    this.mockedRealm = mockRealm;
+//  }
 
-    Realm mockRealm = PowerMockito.mock(Realm.class);
-
-    when(Realm.getDefaultInstance()).thenReturn(mockRealm);
-
-    this.mockedRealm = mockRealm;
-  }
-
-  @Test
-  public void shouldBeAbleToGetDefaultInstance() {
-    assertThat(Realm.getDefaultInstance(), is(mockedRealm));
-  }
+//  @Test
+//  public void shouldBeAbleToGetDefaultInstance() {
+//    assertThat(Realm.getDefaultInstance(), is(mockedRealm));
+//  }
 
   // TODO:(alvaro.martinez) 22/12/16 Study how to test getCurrentProject, now Query depends of lastModification
   @Ignore

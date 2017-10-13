@@ -12,23 +12,18 @@ package com.videonasocialmedia.vimojo.settings.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
-import android.util.Log;
 
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
@@ -41,10 +36,10 @@ import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.OnRelaunchT
 import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,10 +47,11 @@ import java.util.List;
  * This class is used to show the setting menu.
  */
 public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenceChangeListener,
-    OnRelaunchTemporalFileListener, TranscoderHelperListener {
+    OnRelaunchTemporalFileListener {
 
-    private static final String LOG_TAG = "PreferencesPresenter";
+    private static final String LOG_TAG = PreferencesPresenter.class.getSimpleName();
     private Context context;
+    private UserEventTracker userEventTracker;
     private SharedPreferences sharedPreferences;
     private PreferencesView preferencesView;
     private PreferenceCategory cameraSettingsPref;
@@ -64,6 +60,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private Preference transitionVideoPref;
     private Preference transitionAudioPref;
     private Preference watermarkPref;
+    private Preference themeApp;
     private Preference emailPref;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private boolean isPreferenceAvailable = false;
@@ -76,13 +73,11 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         updateIntermediateTemporalFilesTransitionsUseCase;
     private GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase;
     private UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase;
-    private UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
     private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
     private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
 
-    private Drawable drawableFadeTransitionVideo;
-    private VideonaFormat videoFormat;
-    private String TAG = "PreferencesPresenter";
+//    private Drawable drawableFadeTransitionVideo;
+//    private VideonaFormat videoFormat;
 
     /**
      * Constructor
@@ -94,11 +89,10 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
      * @param sharedPreferences
      */
     public PreferencesPresenter(PreferencesView preferencesView,
-            Context context,
-            SharedPreferences sharedPreferences,
+            Context context, SharedPreferences sharedPreferences,
             PreferenceCategory cameraSettingsPref,
             ListPreference resolutionPref, ListPreference qualityPref,
-            Preference transitionVideoPref,
+            Preference transitionVideoPref, Preference themeApp,
             Preference transitionAudioPref, Preference watermarkPref, Preference emailPref,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
@@ -110,7 +104,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                                         updateIntermediateTemporalFilesTransitionsUseCase,
             GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
             UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-            UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase,
             RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
             GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase) {
 
@@ -124,6 +117,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.transitionAudioPref = transitionAudioPref;
         this.watermarkPref = watermarkPref;
         this.emailPref = emailPref;
+        this.themeApp = themeApp;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase =
             getPreferencesTransitionFromProjectUseCase;
@@ -135,9 +129,10 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             updateIntermediateTemporalFilesTransitionsUseCase;
         this.getWatermarkPreferenceFromProjectUseCase = getWatermarkPreferenceFromProjectUseCase;
         this.updateWatermarkPreferenceToProjectUseCase = updateWatermarkPreferenceToProjectUseCase;
-        this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
         this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
         this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
+        userEventTracker = UserEventTracker.getInstance(MixpanelAPI
+                .getInstance(context.getApplicationContext(), BuildConfig.MIXPANEL_TOKEN));
     }
 
     /**
@@ -172,6 +167,11 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         checkAvailableQuality();
         checkTransitions();
         checkWatermark(BuildConfig.FEATURE_WATERMARK);
+        checkThemeApp(ConfigPreferences.THEME_APP_DARK);
+    }
+
+    private void checkThemeApp(String key) {
+        preferencesView.setThemeDarkAppPref(key, sharedPreferences.getBoolean(key,false));
     }
 
     private void checkTransitions() {
@@ -398,14 +398,17 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     @Override
     public void videoToRelaunch(String videoUuid, String intermediatesTempAudioFadeDirectory) {
         final Video video = getVideo(videoUuid);
-        relaunchTranscoderTempBackgroundUseCase.relaunchExport(
-                context.getDrawable(R.drawable.alpha_transition_white), video,
-                getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
-                intermediatesTempAudioFadeDirectory, this);
+        Project currentProject = loadCurrentProject();
+        relaunchTranscoderTempBackgroundUseCase.relaunchExport(video, currentProject);
+    }
+
+    private Project loadCurrentProject() {
+        return Project.getInstance(null, null, null, null);
     }
 
     private Video getVideo(String videoId) {
-        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase = new GetMediaListFromProjectUseCase();
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
+                new GetMediaListFromProjectUseCase();
         List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
         if (videoList != null) {
             for (Media video : videoList) {
@@ -417,25 +420,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         return null;
     }
 
-    @Override
-    public void onSuccessTranscoding(Video video) {
-        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
-        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
-    }
-
-    @Override
-    public void onErrorTranscoding(Video video, String message) {
-        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-        if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
-            video.increaseNumTriesToExportVideo();
-            Project currentProject = Project.getInstance(null, null, null, null);
-            relaunchTranscoderTempBackgroundUseCase.relaunchExport(
-                    context.getDrawable(R.drawable.alpha_transition_white), video,
-                    getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
-                    currentProject.getProjectPathIntermediateFileAudioFade(), this);
-        } else {
-            updateVideoRepositoryUseCase.errorTranscodingVideo(video,
-                    Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
-        }
+    public void trackThemeApp(boolean isDarkTheme) {
+        userEventTracker.trackThemeAppSettingsChanged(isDarkTheme);
     }
 }

@@ -176,7 +176,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
                         getResources().getString(R.string.confirmDeleteTitle2);
             }
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaDialog);
 
             final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                 @Override

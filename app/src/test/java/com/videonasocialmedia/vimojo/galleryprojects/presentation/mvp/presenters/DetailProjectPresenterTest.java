@@ -19,12 +19,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.internal.log.RealmLog;
-
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 /**
  * Created by alvaro on 22/12/16.

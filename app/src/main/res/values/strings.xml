@@ -46,6 +46,7 @@
     <string name="dialog_editor_user_thumb_message">Select user photo from</string>
     <string name="dialog_editor_user_thumb_take_photo">Camera</string>
     <string name="dialog_editor_user_thumb_pick_photo">Gallery</string>
+    <string name="section_navview_style">Dark theme</string>
 
 
     <!-- Edit Activity -->
@@ -1790,7 +1791,10 @@ and Conditions.\n\n
     <string name="dialog_title_export_project">Exporting project</string>
     <string name="dialog_message_export_project">Making magic in your video</string>
     <string name="dialog_title_export_error">Exporting error</string>
-    <string name="dialog_message_export_error">An error ocurred while exporting and exporting could not be completed. Please try again.</string>
+    <string name="dialog_message_export_error_unknown">An error ocurred while exporting and
+        exporting could not be completed. Please try again.</string>
+    <string name="dialog_message_export_error_no_space_left">No space left on device. Please
+        free some space and try again.</string>
     <string name="battery">Battery</string>
     <string name="storage">Internal storage</string>
     <string name="free_memory_space">Available space:</string>
@@ -1804,13 +1808,15 @@ and Conditions.\n\n
 
     <string name="onNoVideosRetrieved">Not video retrieved</string>
 
-    <string name="minVolume">0</string>
-    <string name="maxVolume">100</string>
+    <string name="minVolume">0%</string>
+    <string name="maxVolume">100%</string>
     <string name="title_track_clip_video">Audio track volume</string>
     <string name="title_track_clip_music">Music track volume</string>
     <string name="title_track_clip_voice_over">Voice over track volume</string>
     <string name="mute">Mute</string>
     <string name="solo">Solo</string>
+    <string name="title_theme_app_preference">Dark theme</string>
+    <string name="title_theme_app_section">Activate dark theme</string>
 
     <string name="profession">Profession</string>
 

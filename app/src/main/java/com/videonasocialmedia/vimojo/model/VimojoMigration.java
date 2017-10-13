@@ -3,7 +3,6 @@ package com.videonasocialmedia.vimojo.model;
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.sources.MusicSource;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -164,9 +163,9 @@ public class VimojoMigration implements RealmMigration {
     }
 
     //// Migrate from version 4 to version 5,
-    if(oldVersion == 4){
+    if (oldVersion == 4) {
       RealmObjectSchema realmProject = schema.get("RealmProject");
-      if(!realmProject.hasField("isWatermarkActivated")){
+      if (!realmProject.hasField("isWatermarkActivated")) {
         realmProject.addField("isWatermarkActivated", boolean.class)
             .transform(new RealmObjectSchema.Function() {
               @Override
@@ -178,9 +177,9 @@ public class VimojoMigration implements RealmMigration {
       oldVersion++;
     }
 
-    if(oldVersion == 5){
+    if (oldVersion == 5) {
       RealmObjectSchema realmVideo = schema.get("RealmVideo");
-      if(!realmVideo.hasField("videoError")){
+      if (!realmVideo.hasField("videoError")) {
         realmVideo.addField("videoError", String.class)
             .transform(new RealmObjectSchema.Function() {
               @Override
@@ -189,7 +188,7 @@ public class VimojoMigration implements RealmMigration {
               }
             });
       }
-      if(!realmVideo.hasField("isTranscodingTempFileFinished")){
+      if (!realmVideo.hasField("isTranscodingTempFileFinished")) {
         realmVideo.addField("isTranscodingTempFileFinished", boolean.class)
             .transform(new RealmObjectSchema.Function() {
           @Override
@@ -198,7 +197,7 @@ public class VimojoMigration implements RealmMigration {
           }
         });
       }
-      if(realmVideo.hasField("isTempPathFinished")){
+      if (realmVideo.hasField("isTempPathFinished")) {
         realmVideo.removeField("isTempPathFinished");
       }
       oldVersion++;
@@ -206,16 +205,15 @@ public class VimojoMigration implements RealmMigration {
 
     // Migrate from version 6 to version 7, update RealmVideo, update RealmProject, add RealmTrack, add RealmMusic
     if (oldVersion == 6) {
-
       RealmObjectSchema trackSchema = schema.create("RealmTrack")
-          .addField("uuid", String.class, FieldAttribute.PRIMARY_KEY)
+          .addField("uuid", String.class, FieldAttribute.PRIMARY_KEY, FieldAttribute.REQUIRED)
           .addField("id", Integer.class, FieldAttribute.REQUIRED)
           .addField("volume", Float.class, FieldAttribute.REQUIRED)
           .addField("mute", Boolean.class, FieldAttribute.REQUIRED)
           .addField("position", Integer.class, FieldAttribute.REQUIRED);
 
       final RealmObjectSchema musicSchema = schema.create("RealmMusic")
-          .addField("uuid", String.class, FieldAttribute.PRIMARY_KEY)
+          .addField("uuid", String.class, FieldAttribute.PRIMARY_KEY, FieldAttribute.REQUIRED)
           .addField("musicPath", String.class, FieldAttribute.REQUIRED)
           .addField("title", String.class, FieldAttribute.REQUIRED)
           .addField("author", String.class, FieldAttribute.REQUIRED)
@@ -309,17 +307,47 @@ public class VimojoMigration implements RealmMigration {
             }
           });
 
-      if(realmProject.hasField("musicTitle")){
+      if (realmProject.hasField("musicTitle")) {
         realmProject.removeField("musicTitle");
       }
-      if(realmProject.hasField("musicVolume")){
+      if (realmProject.hasField("musicVolume")) {
         realmProject.removeField("musicVolume");
       }
 
       oldVersion++;
     }
 
-  }
+    /**
+     * // Version 8, new RealmVideoToAdapt table
+     * public class RealmVideoToAdapt extends RealmObject {
+         private int position;
+         private String video_uuid;
+         @PrimaryKey
+         private String mediaPath;
+         private int rotation;
+         private String destVideoPath;
+         private int numTriesAdaptingVideo = 0;
+       }
+     }
+
+     */
+    // Migrate from version 7 to version 8, new RealmVideoToAdapt
+    if (oldVersion == 7) {
+      RealmObjectSchema realmVideoToAdaptTable = schema.get("RealmVideoToAdapt");
+      if (schema.get("RealmVideoToAdapt") == null) {
+        RealmObjectSchema videoToAdaptSchema = schema.create("RealmVideoToAdapt")
+                .addField("video_uuid", String.class, FieldAttribute.REQUIRED)
+                .addField("position", Integer.class, FieldAttribute.REQUIRED)
+                .addField("rotation", Integer.class, FieldAttribute.REQUIRED)
+                .addField("mediaPath", String.class, FieldAttribute.PRIMARY_KEY,
+                        FieldAttribute.REQUIRED)
+                .addField("destVideoPath", String.class, FieldAttribute.REQUIRED)
+                .addField("numTriesAdaptingVideo", Integer.class, FieldAttribute.REQUIRED);
+      }
+      oldVersion++;
+    }
+
+    }
 
   private void updateRealmProjectPrimaryKeyToUuid(RealmObjectSchema realmProject) {
     if (!realmProject.getPrimaryKey().equals("uuid")) {

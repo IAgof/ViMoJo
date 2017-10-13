@@ -24,6 +24,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -405,13 +406,26 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void showProgressDialog() {
-        progressDialog.show();
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          if (!isFinishing()) {
+            progressDialog.show();
+          }
+        }
+      });
     }
 
     @Override
     public void hideProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing())
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
+          }
+        }
+      });
     }
 
     @Override
@@ -427,14 +441,19 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     }
 
     @Override
-    public void bindVideoList(List<Video> videoList) {
-        this.videoList = videoList;
-        timeLineAdapter.updateVideoList(videoList);
-        timeLineAdapter.updateSelection(currentVideoIndex); // TODO: check this flow and previous updateSelection(0); in updateVideoList
-        videoListRecyclerView.scrollToPosition(currentVideoIndex);
+    public void bindVideoList(final List<Video> retrievedVideoList) {
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          videoList = retrievedVideoList;
+          timeLineAdapter.updateVideoList(retrievedVideoList);
+          timeLineAdapter.updateSelection(currentVideoIndex); // TODO: check this flow and previous updateSelection(0); in updateVideoList
+          videoListRecyclerView.scrollToPosition(currentVideoIndex);
 //        timeLineAdapter.notifyDataSetChanged();
-        videonaPlayer.bindVideoList(videoList);
-        videonaPlayer.seekTo(currentProjectTimePosition);
+          videonaPlayer.bindVideoList(retrievedVideoList);
+          videonaPlayer.seekTo(currentProjectTimePosition);
+        }
+      });
     }
 
     @Override
@@ -459,7 +478,12 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void updateProject() {
-        editPresenter.init();
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          editPresenter.init();
+        }
+      });
     }
 
     @Override
@@ -501,7 +525,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void showDialogMediasNotFound() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this,R.style.VideonaDialog);
         dialog.setTitle(R.string.titleVideosNotFound);
         dialog.setMessage(getString(R.string.messageVideosNotFound));
         dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {

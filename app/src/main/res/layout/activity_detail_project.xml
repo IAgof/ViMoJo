@@ -19,9 +19,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:popupTheme="@style/VideonaTheme.PopupOverlay"
-                app:theme="@style/VideonaDrawerIconStyle"/>
+                android:background="?attr/colorPrimary"/>
 
         </android.support.design.widget.AppBarLayout>
 
@@ -61,7 +59,6 @@
                 android:textCursorDrawable="@null"
                 android:layout_centerHorizontal="true"
                 android:gravity="center_vertical"
-                android:textColor="@color/colorSecondary"
                 android:textSize="18sp"
                 android:hint="@string/detail_project_hint_title"
                 android:drawableLeft="@drawable/activity_detail_project_edit_title"
@@ -73,7 +70,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/button_margin"
-                android:layout_below="@id/detail_project_title">
+                android:layout_below="@id/detail_project_title"
+                style="?attr/cardViewStyle">
 
                 <LinearLayout
                     android:layout_width="match_parent"

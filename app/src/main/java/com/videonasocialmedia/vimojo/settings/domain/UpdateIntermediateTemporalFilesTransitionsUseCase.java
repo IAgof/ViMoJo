@@ -16,8 +16,8 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCase {
 
   private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
 
-  public UpdateIntermediateTemporalFilesTransitionsUseCase(GetMediaListFromProjectUseCase
-                                                               getMediaListFromProjectUseCase){
+  public UpdateIntermediateTemporalFilesTransitionsUseCase(
+          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
   }
 
@@ -28,7 +28,8 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCase {
       for (Media media : items) {
         Video video = (Video) media;
         video.setTempPath(project.getProjectPathIntermediateFiles());
-        listener.videoToRelaunch(video.getUuid(), project.getProjectPathIntermediateFileAudioFade());
+        listener.videoToRelaunch(video.getUuid(),
+                project.getProjectPathIntermediateFileAudioFade());
       }
     }
   }

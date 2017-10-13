@@ -104,7 +104,6 @@ public class VimojoApplication extends Application {
         return dataRepositoriesModule;
     }
 
-
     private void setupGoogleAnalytics() {
         GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
         if (BuildConfig.DEBUG)
@@ -123,7 +122,7 @@ public class VimojoApplication extends Application {
     protected void setupDataBase() {
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
                 .name("vimojoDB")
-                .schemaVersion(7) // 20062017 - v0.4.23 21070227
+                .schemaVersion(8) // 20060724 - v0.7.0-RC4 20060724
                 .migration(new VimojoMigration())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);
