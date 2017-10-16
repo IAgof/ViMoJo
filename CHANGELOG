@@ -1,5 +1,8 @@
 v0.7.0-RC8
 - Ui updates in voice over, gallery, music, bottomBar, edit text.
+- Fixed mixing audio error that generated incompleted audio track in export sessions
+- Ui updates in voice over, gallery, music, bottomBar, edit text.
+- Changed application default theme to dark. Added option in settings and drawer screens to switch with theme light.
 
 
 v0.7.0-RC7
