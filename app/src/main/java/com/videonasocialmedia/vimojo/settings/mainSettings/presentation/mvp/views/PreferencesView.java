@@ -8,7 +8,7 @@
  * Veronica Lago Fominaya
  */
 
-package com.videonasocialmedia.vimojo.settings.presentation.mvp.views;
+package com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views;
 
 import android.preference.ListPreference;
 

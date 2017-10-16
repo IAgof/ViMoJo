@@ -32,7 +32,8 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="16dp"
+                style="?attr/cardViewStyle">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -111,7 +112,8 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
+                android:layout_marginRight="16dp"
+                style="?attr/cardViewStyle">
 
                 <ImageButton
                     android:id="@+id/button_volume_sound_cancel"
