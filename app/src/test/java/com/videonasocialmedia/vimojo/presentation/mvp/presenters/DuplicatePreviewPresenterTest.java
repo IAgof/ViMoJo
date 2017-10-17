@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.media.MediaMetadataRetriever;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -29,6 +30,8 @@ import org.robolectric.annotation.Config;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.CoreMatchers.*;
+import static org.powermock.api.mockito.PowerMockito.doReturn;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 10/06/16.
@@ -46,6 +49,7 @@ public class DuplicatePreviewPresenterTest {
 
     // TODO(jliarte): 13/06/16 Decouple Video entity from android
     @Mock(name="retriever") MediaMetadataRetriever mockedMediaMetadataRetriever;
+    @Mock private Video mockedVideo;
 
     @Before
     public void injectMocks() {
@@ -79,17 +83,22 @@ public class DuplicatePreviewPresenterTest {
     }
 
     @Test
-    @Config(manifest="../app/AndroidManifest.xml", shadows = {MediaMetadataRetrieverShadow.class})
-    public void duplicateVideoCallsTracking() {
+    //@Config(manifest="../app/AndroidManifest.xml", shadows = {MediaMetadataRetrieverShadow.class})
+    public void duplicateVideoCallsTracking() throws IllegalItemOnTrack {
         Project videonaProject = getAProject();
-        Video video = new Video("/media/path", 1f, 0, 10);
+        Video video = new Video("/media/path", Video.DEFAULT_VOLUME);
         int numCopies = 3;
+        DuplicatePreviewPresenter duplicatePreviewPresenter =
+            new DuplicatePreviewPresenter(mockedDuplicateView, mockedUserEventTracker,
+                mockedAddVideoToProjectUseCase);
+        duplicatePreviewPresenter = Mockito.spy(duplicatePreviewPresenter);
+        doReturn(video).when(duplicatePreviewPresenter).getVideoCopy();
 
         /**
          * Exception accesing in getFileDuration as MediaMetadataRetriever.extractMetadata returns
          * null using a custom shadow instead
          */
-        injectedPresenter.duplicateVideo(video, 0, numCopies);
+        duplicatePreviewPresenter.duplicateVideo(0, numCopies);
 
         Mockito.verify(mockedUserEventTracker).trackClipDuplicated(numCopies, videonaProject);
     }
