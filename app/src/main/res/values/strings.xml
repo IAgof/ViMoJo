@@ -696,11 +696,11 @@
     </string>
 
     <string name="licenseRangeSeekBar">
-        The images are licensed under Creative Commons ( http://creativecommons.org/licenses/by/3.0/ ).
+        The images are licensed under Creative Commons ( http://creativecommons.org/licenses/by/3.0/ ).\n\n
         The originals are provided in the original project ( https://code.google.com/p/range-seek-bar/ )
         and seek_thumb_disabled.png is added by us (https://github.com/anothem/android-range-seek-bar)\n
-        The source code is licensed under the Apache License. A copy of this can be found at
-        http://www.apache.org/licenses/LICENSE-2.0 and has been included in the repository as well.
+        The source code is licensed under the Apache License. A copy of this can be found at\n\n
+        http://www.apache.org/licenses/LICENSE-2.0\n\n and has been included in the repository as well.
     </string>
 
     <string name="licenseExoPlayer">
@@ -802,7 +802,7 @@
         See the License for the specific language governing permissions and limitations under the
         License.
     </string>
-    
+
     <string name="licenseTwoWayView">
         Copyright  2013 Lucas Rocha\n\nTwoWayView\'s code is based on bits and pieces of Android\'s
         AbsListView, Listview, and StaggeredGridView.\n\nCopyright 2012 The Android Open Source
@@ -813,7 +813,7 @@
         WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
         for the specific language governing permissions and limitations under the License.
     </string>
-    
+
     <string name="licenseDexmaker">
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License. You may obtain a copy of
@@ -824,7 +824,7 @@
         License.
 
     </string>
-    
+
     <string name="licenseKickflip">
        Copyright 2014 OpenWatch, Inc.\n\nLicensed under the Apache License,
         Version 2.0 (the "License"); you may not use this file except in compliance with the License.
@@ -836,6 +836,10 @@
     </string>
 
     <string name="licenseApacheCommonsNet">
+        http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to
+        in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+        the specific language governing permissions and limitations under the License. \n\n
         http://www.apache.org/licenses/LICENSE-2.0.txt
     </string>
 
@@ -896,7 +900,7 @@ Videona reserves the right to modify, terminate, discontinue, suspend or interru
 
 temporarily or permanently, at any time and without notice, the access to the products,
 
-services and/or contents of the Platform, as well as to its configuration, without the User\\\´s
+services and/or contents of the Platform, as well as to its configuration, without the User\´s
 
 right to claim or request damages of any kind; specifically, the above may be carried out
 
@@ -938,7 +942,7 @@ services that imply the payment of the said economic consideration. Once the app
 
 particular terms and conditions come into force, the access and/or use of the products or
 
-services by the User will imply the User\\\´s acceptance, without reservation, of the
+services by the User will imply the User\´s acceptance, without reservation, of the
 
 respective particular terms and conditions. \n\n
 
@@ -1020,7 +1024,7 @@ The Platform may contain information, opinions, advice, warnings, and statements
 
 provided by different information and content sources as well as any User of the Platform.
 
-Videona shall have no liability for User\\\´s decisions based on the information provided by or
+Videona shall have no liability for Users\´ decisions based on the information provided by or
 
 through the Platform. Any information posted on the Platform is intended for general
 
@@ -1153,7 +1157,7 @@ If the User infringes the above prohibitions/restrictions or Videona has reasona
 
 to suspect that a User has infringed any of the same, Videona reserves the right to
 
-suspend or terminate the User\\\´s account and to refuse any and all current or future use of
+suspend or terminate the User\´s account and to refuse any and all current or future use of
 
 the products, services and/or the Platform (or any portion thereof).\n\n
 
@@ -1391,7 +1395,7 @@ jurisdiction of such courts.\n\n
     <string name="privacyPolicyTitle"><u>Privacy Policy</u></string>
     <string name="privacyPolicyContent">
 
-        This Privacy Policy is part of the Platform\\\´s Legal Notice.\n\n
+        This Privacy Policy is part of the Platform\´s Legal Notice.\n\n
 
 In accordance with the current data protection regulations, VIDEONA SOCIALMEDIA,
 
@@ -1427,7 +1431,7 @@ provided by sensors, the date and time of access to the Platform, the source
 
 1.2. Such data will be used, among others, for the following purposes:\n\n
 
- Managing the User\\\´s registration process;\n\n
+ Managing the User\´s registration process;\n\n
 
  Managing the purchasing process in the Marketplace;\n\n
 
@@ -1445,7 +1449,7 @@ Platform;\n\n
 
 1.3 In addition, Users will be provided with commercial communications sent by
 
-electronic means, with regard to products and services which may be of the User\\\´s
+electronic means, with regard to products and services which may be of the User\´s
 
 interest. The User can refuse the reception of the mentioned communications, notifying
 
@@ -1561,7 +1565,7 @@ IF YOU DOES NOT AGREE WITH THESE GUIDELINES DO NOT USE THE
 
 SERVICES.\n\n
 
-THESE GUIDELINES ARE PART OF THE PLATFORM\\\´S LEGAL NOTICE.\n\n
+THESE GUIDELINES ARE PART OF THE PLATFORM\´S LEGAL NOTICE.\n\n
 
 1. GENERAL RULES\n\n
 
@@ -1728,7 +1732,7 @@ IF YOU DOES NOT AGREE WITH THESE PARTICULAR TERMS AND
 
 CONDITIONS DO NOT USE THE SERVICES.
 
-THESE PARTICULAR TERMS AND CONDITIONS ARE PART OF THE WEBSITE\\\´S
+THESE PARTICULAR TERMS AND CONDITIONS ARE PART OF THE WEBSITE\´S
 
 LEGAL NOTICE.\n\n
 
