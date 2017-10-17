@@ -59,6 +59,7 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
         return Project.getInstance(null, null, null, null);
     }
 
+
     public void loadProjectVideo(int videoIndex) {
         List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
         if (videoList != null) {
@@ -82,8 +83,8 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
 
     public void duplicateVideo(int positionInAdapter, int numDuplicates) {
         for (int duplicates = 1; duplicates < numDuplicates; duplicates++) {
-            Video copyVideo = new Video(videoToEdit);
-            addVideoToProjectUseCase.addVideoToProjectAtPosition(copyVideo, positionInAdapter,
+            //Video copyVideo = new Video(getVideoCopy());
+            addVideoToProjectUseCase.addVideoToProjectAtPosition(getVideoCopy(), positionInAdapter,
                 new OnAddMediaFinishedListener() {
                     @Override
                     public void onAddMediaItemToTrackError() {
@@ -100,6 +101,9 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
         userEventTracker.trackClipDuplicated(numDuplicates, currentProject);
     }
 
+    public Video getVideoCopy() {
+        return new Video(videoToEdit);
+    }
 }
 
 

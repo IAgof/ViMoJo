@@ -27,6 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.CoreMatchers.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Mockito.verify;
 
@@ -117,10 +118,13 @@ public class TrimPreviewPresenterTest {
         int advancePrecision = 600; //ms
         int startTimeMs = 1200; //ms
         int finishTimeMs = 1800; //ms
+        int MIN_TRIM_OFFSET = 350;
+        float MS_CORRECTION_FACTOR = 1000f;
+        float startTimeMsAdjusted = 1.4499999f; // Math.min(startTimeMs + advancePrecision, finishTimeMs-MIN_TRIM_OFFSET);
 
         presenter.advanceForwardStartTrimming(advancePrecision, startTimeMs, finishTimeMs);
 
-        verify(mockedTrimView).updateStartTrimmingRangeSeekBar(1.3f);
+        verify(mockedTrimView).updateStartTrimmingRangeSeekBar(startTimeMsAdjusted);
     }
 
     @Test
@@ -141,10 +145,13 @@ public class TrimPreviewPresenterTest {
         int advancePrecision = 600; //ms
         int startTimeMs = 1800; //ms
         int finishTimeMs = 2400; //ms
+        int MIN_TRIM_OFFSET = 350;
+        float MS_CORRECTION_FACTOR = 1000f;
+        float finishTimeMsAdjusted = 2.1499999f; // Math.max(startTimeMs + MIN_TRIM_OFFSET, finishTimeMs-advancePrecision);
 
         presenter.advanceBackwardEndTrimming(advancePrecision, startTimeMs, finishTimeMs);
 
-        verify(mockedTrimView).updateFinishTrimmingRangeSeekBar(2.3f);
+        verify(mockedTrimView).updateFinishTrimmingRangeSeekBar(finishTimeMsAdjusted);
     }
 
     @Test
