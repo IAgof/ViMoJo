@@ -27,6 +27,7 @@ import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,11 +37,10 @@ import javax.inject.Inject;
  * Created by jca on 11/12/15.
  */
 public class ShareVideoPresenter {
-    private final Context context;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetFtpListUseCase getFtpListUseCase;
     private CreateDefaultProjectUseCase createDefaultProjectUseCase;
-    private ShareVideoView shareVideoView;
+    private WeakReference<ShareVideoView> shareVideoViewReference;
     protected Project currentProject;
     protected UserEventTracker userEventTracker;
     private SharedPreferences sharedPreferences;
@@ -54,15 +54,14 @@ public class ShareVideoPresenter {
 
     @Inject
     public ShareVideoPresenter(ShareVideoView shareVideoView, UserEventTracker userEventTracker,
-                               SharedPreferences sharedPreferences, Context context,
+                               SharedPreferences sharedPreferences,
                                CreateDefaultProjectUseCase createDefaultProjectUseCase,
                                AddLastVideoExportedToProjectUseCase
                                        addLastVideoExportedProjectUseCase,
                                ExportProjectUseCase exportProjectUseCase) {
-        this.shareVideoView = shareVideoView;
+        this.shareVideoViewReference = new WeakReference<>(shareVideoView);
         this.userEventTracker = userEventTracker;
         this.sharedPreferences = sharedPreferences;
-        this.context = context;
         this.createDefaultProjectUseCase = createDefaultProjectUseCase;
         this.addLastVideoExportedProjectUseCase = addLastVideoExportedProjectUseCase;
         this.exportUseCase = exportProjectUseCase;
@@ -83,8 +82,10 @@ public class ShareVideoPresenter {
         obtainNetworksToShare();
         obtainListFtp();
         obtainListOptionsToShare(ftpList, socialNetworkList);
-        shareVideoView.showOptionsShareList(optionToShareList);
-        shareVideoView.startVideoExport();
+        if (shareVideoViewReference != null) {
+            shareVideoViewReference.get().showOptionsShareList(optionToShareList);
+            shareVideoViewReference.get().startVideoExport();
+        }
     }
 
     private void obtainListFtp() {
@@ -125,8 +126,10 @@ public class ShareVideoPresenter {
     // TODO(jliarte): 15/12/16 safe delete this method - old way to show networks?
     public void obtainExtraAppsToShare() {
         List networks = obtainNetworksToShareUseCase.obtainSecondaryNetworks();
-        shareVideoView.hideShareNetworks();
-        shareVideoView.showMoreNetworks(networks);
+        if (shareVideoViewReference.get() != null) {
+            shareVideoViewReference.get().hideShareNetworks();
+            shareVideoViewReference.get().showMoreNetworks(networks);
+        }
     }
 
     public void updateNumTotalVideosShared() {
@@ -183,20 +186,30 @@ public class ShareVideoPresenter {
                 // known strings
                 switch (error) {
                     case "No space left on device":
-                        shareVideoView.showVideoExportError(Constants.EXPORT_ERROR_NO_SPACE_LEFT);
+                        if (shareVideoViewReference.get() != null) {
+                            shareVideoViewReference.get()
+                                    .showVideoExportError(Constants.EXPORT_ERROR_NO_SPACE_LEFT);
+                        }
                         break;
                     default:
-                        shareVideoView.showVideoExportError(Constants.EXPORT_ERROR_UNKNOWN);
+                        if (shareVideoViewReference.get() != null) {
+                            shareVideoViewReference.get()
+                                    .showVideoExportError(Constants.EXPORT_ERROR_UNKNOWN);
+                        }
                 }
             }
             @Override
             public void onExportSuccess(Video video) {
-                shareVideoView.loadExportedVideoPreview(video.getMediaPath());
+                if (shareVideoViewReference.get() != null) {
+                    shareVideoViewReference.get().loadExportedVideoPreview(video.getMediaPath());
+                }
             }
 
             @Override
             public void onExportProgress(String progressMsg, int exportStage) {
-                shareVideoView.showExportProgress(progressMsg);
+                if (shareVideoViewReference.get() != null) {
+                    shareVideoViewReference.get().showExportProgress(progressMsg);
+                }
             }
         });
     }

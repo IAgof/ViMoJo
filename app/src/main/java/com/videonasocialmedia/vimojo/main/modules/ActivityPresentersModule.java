@@ -253,7 +253,7 @@ public class ActivityPresentersModule {
                                      addLastVideoExportedProjectUseCase,
                              ExportProjectUseCase exportProjectUseCase) {
     return new ShareVideoPresenter((ShareActivity) activity, userEventTracker, sharedPreferences,
-            activity, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
+            createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
             exportProjectUseCase);
   }
 

@@ -232,9 +232,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
 //  private ProgressDialog progressDialogAdaptVideo;
 
-  private BatteryReceiver batteryReceiver = new BatteryReceiver(){
+  private BatteryReceiver batteryReceiver = new BatteryReceiver() {
     @Override
-    public void onReceive(Context context, Intent intent){
+    public void onReceive(Context context, Intent intent) {
       Bundle bundle = intent.getExtras();
       if (bundle != null) {
         updateBatteryStatus();
@@ -256,9 +256,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private HashMap<TextView, Integer> isoButtons = new HashMap<>();
 
   // TODO:(alvaro.martinez) 10/07/17 Study unify broadcast receiver with batteryReceiver
-  BroadcastReceiver jackConnectorReceiver = new BroadcastReceiver(){
+  BroadcastReceiver jackConnectorReceiver = new BroadcastReceiver() {
     @Override
-    public void onReceive(Context context, Intent intent){
+    public void onReceive(Context context, Intent intent) {
       Bundle bundle = intent.getExtras();
       if (bundle != null && intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
           updateMicrophoneStatus(intent);
@@ -956,14 +956,14 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnClick(R.id.af_setting_auto)
-  public void onClickFocusModeAuto(){
+  public void onClickFocusModeAuto() {
     deselectAllFocusSelectionButtons();
     selectFocusSelectionButton(afSettingAuto);
     presenter.setFocusSelectionMode(AF_MODE_AUTO); // Ask for QA, UX.
   }
 
   @OnClick(R.id.af_setting_manual)
-  public void onClickFocusModeManual(){
+  public void onClickFocusModeManual() {
     deselectAllFocusSelectionButtons();
     selectFocusSelectionButton(afSettingManual);
     showFocusModeManualSlider();
@@ -971,7 +971,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnClick(R.id.af_setting_selective)
-  public void onClickFocusModeSelective(){
+  public void onClickFocusModeSelective() {
     deselectAllFocusSelectionButtons();
     selectFocusSelectionButton(afSettingSelective);
     presenter.setFocusSelectionMode(AF_MODE_REGIONS);
@@ -1049,7 +1049,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void setResolutionSelected(int resolutionSelected) {
-    switch (resolutionSelected){
+    switch (resolutionSelected) {
       case (RESOLUTION_SELECTED_HD720):
         resolutionIndicatorButton.setImageResource(R.drawable.activity_record_ic_resolution_720);
         break;
@@ -1212,7 +1212,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
-  public void setFocusModeManual(MotionEvent event){
+  public void setFocusModeManual(MotionEvent event) {
     customManualFocusView.onTouchEvent(event);
   }
 
@@ -1237,7 +1237,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnClick(R.id.button_navigate_gallery)
-  public void onClickNavigateGallery(){
+  public void onClickNavigateGallery() {
     navigateTo(GalleryActivity.class);
   }
 
@@ -1261,7 +1261,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnClick(R.id.button_settings_camera)
-  public void showHideBottomSettingsCamera(){
+  public void showHideBottomSettingsCamera() {
     presenter.buttonSettingsCamera(settingsCameraButton.isSelected());
   }
 
@@ -1278,7 +1278,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnClick(R.id.show_all_controls_button)
-  public void showAllControlsInCamera(){
+  public void showAllControlsInCamera() {
     showPrincipalViews();
     showRightControlsView();
   }
@@ -1289,12 +1289,12 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnClick(R.id.button_to_hide_controls)
-  public void hideRightControls(){
+  public void hideRightControls() {
     presenter.hideRightControls();
   }
 
   @OnClick(R.id.activity_record_icon_battery)
-  public void showDialogWithLevelBattery(){
+  public void showDialogWithLevelBattery() {
     if(!alertDialogBattery.isShowing()) {
       Intent batteryStatus = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
       int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
@@ -1305,7 +1305,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnClick(R.id.activity_record_icon_storage)
-  public void showDialogWithLevelStorage(){
+  public void showDialogWithLevelStorage() {
     if(!alertDialogStorage.isShowing()) {
       StatFs statFs = new StatFs(Environment.getDataDirectory().getPath());
       long totalStorage = getTotalStorage(statFs);
@@ -1428,7 +1428,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       presenter.setAudioGain(audioGainSeekBarProgress);
     }
 
-    if(flashButton.isSelected()){
+    if(flashButton.isSelected()) {
       presenter.setFlashOff();
     }
   }
@@ -1494,7 +1494,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private void showAFSelectionSubmenu() {
     afSelectionButton.setSelected(true);
     afSelectionSubmenuCardView.setVisibility(View.VISIBLE);
-    if(afSettingManual.isSelected()){
+    if(afSettingManual.isSelected()) {
       showFocusModeManualSlider();
     }
   }
@@ -1529,7 +1529,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     whiteBalanceSubmenuCardView.setVisibility(View.INVISIBLE);
   }
 
-  private void showSoundVolumeSubmenu(){
+  private void showSoundVolumeSubmenu() {
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_AUDIO_GAIN;
     slideSeekBar.setOnSeekBarChangeListener(null);
     soundVolumeButton.setSelected(true);
@@ -1545,7 +1545,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     updateAudioGainSeekbarDisability();
   }
 
-  private void hideSoundVolumeSubmenu(){
+  private void hideSoundVolumeSubmenu() {
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_UNACTIVE;
     slideSeekBar.setOnSeekBarChangeListener(null);
     soundVolumeButton.setSelected(false);
@@ -1553,7 +1553,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @OnClick(R.id.button_record)
- public void onClickRecordButton(){
+ public void onClickRecordButton() {
    if (!isRecording) {
      presenter.startRecord();
    } else {
@@ -1651,7 +1651,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     return freeStorage;
   }
 
-  private void updateMicrophoneStatus(Intent intent){
+  private void updateMicrophoneStatus(Intent intent) {
     int state = intent.getIntExtra("state", -1);
     int microphone = intent.getIntExtra("microphone", -1);
     presenter.setMicrophoneStatus(state, microphone);
@@ -1693,7 +1693,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     private void restartPreview() {
       Runnable r = new Runnable() {
         @Override
-        public void run(){
+        public void run() {
           presenter.restartPreview();
         }
       };
