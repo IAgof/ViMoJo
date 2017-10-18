@@ -1,4 +1,4 @@
-v0.7.0-RC8
-- Fixed mixing audio error that generated incompleted audio track in export sessions
-- Ui updates in voice over, gallery, music, bottomBar, edit text.
-- Changed application default theme to dark. Added option in settings and drawer screens to switch with theme light.
+v0.7.0-RC9
+- Added in settings screen option to see all licenses used in app.
+- Fixed ui problems in trim screen.
+- Fixed problem with audio normalization while project is exporting.
