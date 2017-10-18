@@ -6,8 +6,12 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptMemoryRepository;
 import com.videonasocialmedia.vimojo.integration.AssetManagerAndroidTest;
@@ -56,11 +60,10 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
     video.setTempPath(testPath);
     Project project = setupProjectPath();
     project.getVMComposition().getMediaTrack().insertItem(video);
-    VideonaFormat videoFormat = new VideonaFormat(5000000, 1280, 720);
     ModifyVideoDurationUseCase modifyVideoDurationUseCase =
             new ModifyVideoDurationUseCase(videoRepo, videoToAdaptRepo);
 
-    modifyVideoDurationUseCase.trimVideo(video, 0, 500, project);
+    modifyVideoDurationUseCase.trimVideo(video, 100, 600, project);
 
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
     transcodingTask.get();
@@ -121,7 +124,9 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
   }
 
   private Project getCurrentProject() {
-    return Project.getInstance("title", testPath, testPath, null);
+    return Project.getInstance("title", testPath, testPath,
+        Profile.getInstance(VideoResolution.Resolution.HD720,VideoQuality.Quality.HIGH,
+            VideoFrameRate.FrameRate.FPS25));
   }
 
 
