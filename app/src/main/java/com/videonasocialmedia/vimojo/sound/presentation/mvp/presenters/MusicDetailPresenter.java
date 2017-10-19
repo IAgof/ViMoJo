@@ -5,7 +5,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementCha
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
-import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import android.content.Context;
 
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;

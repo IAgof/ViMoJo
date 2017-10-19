@@ -218,7 +218,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
 
     @OnClick(R.id.button_split_accept)
     public void onClickSplitAccept() {
-        presenter.splitVideo(video, videoIndexOnTrack, currentSplitPosition);
+        presenter.splitVideo(videoIndexOnTrack, currentSplitPosition);
         navigateTo(EditActivity.class, videoIndexOnTrack);
     }
 
@@ -269,7 +269,8 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
 
     @Override
     public void showPreview(List<Video> movieList) {
-        video = movieList.get(0);
+        // (alvaro.martinez) 4/10/17 work on a copy to not modify original one until user accepts text
+        video = new Video(movieList.get(0));
         videonaPlayer.initPreviewLists(movieList);
         videonaPlayer.initPreview(currentVideoPosition);
     }

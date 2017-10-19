@@ -106,8 +106,8 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     }
 
 
-    public void splitVideo(Video video, int positionInAdapter, int timeMs) {
-        splitVideoUseCase.splitVideo(video, positionInAdapter,timeMs, this);
+    public void splitVideo(int positionInAdapter, int timeMs) {
+        splitVideoUseCase.splitVideo(videoToEdit, positionInAdapter,timeMs, this);
         trackSplitVideo();
     }
 
