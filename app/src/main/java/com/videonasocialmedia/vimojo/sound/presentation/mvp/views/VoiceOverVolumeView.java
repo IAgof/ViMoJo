@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by ruth on 19/09/16.
  */
-public interface SoundVolumeView {
+public interface VoiceOverVolumeView {
 
     void bindVideoList(List<Video> movieList);
     void setMusic(Music music);
@@ -17,5 +17,7 @@ public interface SoundVolumeView {
     void setVideoFadeTransitionAmongVideos();
     void setAudioFadeTransitionAmongVideos();
     void showError(String message);
+    void muteVideo();
+    void muteMusic();
 
 }

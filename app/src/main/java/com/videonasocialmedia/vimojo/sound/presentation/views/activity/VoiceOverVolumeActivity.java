@@ -16,7 +16,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverVolumePresenter;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
@@ -33,7 +33,7 @@ import butterknife.OnClick;
  * Created by ruth on 19/09/16.
  */
 public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.OnSeekBarChangeListener,
-        VideonaPlayer.VideonaPlayerListener, SoundVolumeView {
+        VideonaPlayer.VideonaPlayerListener, VoiceOverVolumeView {
     private static final String SOUND_VOLUME_POSITION_VOLUME = "sound_volume_position";
     private static final String SOUND_VOLUME_PROJECT_POSITION = "sound_volume_project_position";
     private static final String VOICE_OVER_RECORDED_PATH = "voice_over_recorded_path";
@@ -138,7 +138,7 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
     @OnClick(R.id.button_volume_sound_accept)
     public void onClickVolumeSoundAccept() {
         float volume = (float) (seekBarVolume.getProgress() * 0.01);
-        presenter.setVoiceOver(soundVoiceOverPath, volume);
+        presenter.setVoiceOverVolume(volume);
     }
 
     @OnClick(R.id.button_volume_sound_cancel)
@@ -217,6 +217,16 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
     public void showError(String message) {
         String title = getString(R.string.alert_dialog_title_voice_over);
         super.showAlertDialog(title, message);
+    }
+
+    @Override
+    public void muteVideo() {
+        videonaPlayer.setVideoVolume(0.0f);
+    }
+
+    @Override
+    public void muteMusic() {
+        videonaPlayer.setMusicVolume(0.0f);
     }
 
     @Override

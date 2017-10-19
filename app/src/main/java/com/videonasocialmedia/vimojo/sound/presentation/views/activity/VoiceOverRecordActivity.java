@@ -19,17 +19,14 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverRecordPresenter;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverView;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverRecordView;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.FileUtils;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -42,7 +39,7 @@ import butterknife.OnClick;
 /**
  * Created by ruth on 14/09/16.
  */
-public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOverView,
+public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOverRecordView,
         VideonaPlayer.VideonaPlayerListener, View.OnTouchListener {
     private static final String VOICE_OVER_POSITION = "voice_over_position";
     private static final String TAG = "VoiceOverRecordActivity";
@@ -107,12 +104,8 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     @Override
     protected void onPause() {
         super.onPause();
-        try {
-            if(presenter.isRecording()) {
-                presenter.stopRecording();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(presenter.isRecording()){
+            presenter.pauseRecording();
         }
         videonaPlayer.onPause();
     }
@@ -158,28 +151,13 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
             .getProjectPathIntermediateFiles(),1);
     }
 
-    private void navigateTo(Class cls, int currentVideoIndex) {
-        Intent intent = new Intent(this, cls);
-        intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
-        startActivity(intent);
-        finish();
-    }
-
     @OnClick(R.id.button_voice_over_accept)
     public void onClickVoiceOverAccept() {
-        /*if (!buttonRecordIsInStop){
-            navigateTo(SoundActivity.class);
-        } else {
-            presenter.addVoiceOver(Constants.AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME);
-        }*/
         try {
-            if(presenter.isRecording()) {
-                presenter.stopRecording();
-            }
+            presenter.setVoiceOver(Constants.AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        presenter.addVoiceOver(Constants.AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME);
     }
 
     @OnClick(R.id.button_voice_over_cancel)
@@ -189,7 +167,11 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        presenter.cancelVoiceOverRecorded();
+                        try {
+                            presenter.cancelVoiceOverRecorded();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         break;
@@ -252,7 +234,7 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     }
 
     @Override
-    public void navigateToSoundVolumeActivity(String voiceOverRecordedPath) {
+    public void navigateToVoiceOverVolumeActivity(String voiceOverRecordedPath) {
         Intent intent = new Intent(this, VoiceOverVolumeActivity.class);
         intent.putExtra(IntentConstants.VOICE_OVER_RECORDED_PATH, voiceOverRecordedPath);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -277,16 +259,12 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     @Override
     public void resetVoiceOverRecorded() {
         progressBarVoiceOver.setProgress(0);
+        buttonRecordVoiceOver.setEnabled(true);
         refreshTimeTag(0);
         buttonRecordIsInStop = false;
         changeVisibilityAndResouceButton();
         millisecondsLeft = maxDuration;
         videonaPlayer.seekTo(0);
-    }
-
-    @Override
-    public void cleanTempDirectoryPathVoiceOverRecorded(String folderDirectory) {
-        FileUtils.cleanDirectory(new File(folderDirectory));
     }
 
     @Override

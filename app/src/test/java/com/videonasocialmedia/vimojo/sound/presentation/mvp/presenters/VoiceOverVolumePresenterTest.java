@@ -1,8 +1,5 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -11,35 +8,18 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
+import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 
 
@@ -49,115 +29,49 @@ import static org.mockito.Mockito.verify;
 @RunWith(PowerMockRunner.class)
 public class VoiceOverVolumePresenterTest {
 
-  @Mock private SoundVolumeView mockedSoundVolumeView;
-  @InjectMocks
-  VoiceOverVolumePresenter injectedPresenter;
-  @Mock
-  VoiceOverVolumePresenter mockedVoiceOverVolumePresenter;
-  @Mock private MusicRepository mockedMusicRepository;
-  @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
-  @Mock private GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
-  @Mock private GetPreferencesTransitionFromProjectUseCase
-          mockedGetPreferencesTransitionsFromProject;
-  @Mock private AddAudioUseCase mockedAddAudioUseCase;
-  @Mock private RemoveAudioUseCase mockedRemoveAudioUseCase;
-  @Mock Music mockedMusic;
-  @Mock OnAddMediaFinishedListener mockedAddMediaFinishedListener;
-  @Mock private Context mockedContext;
+  @InjectMocks  VoiceOverVolumePresenter injectedPresenter;
+
+  @Mock VoiceOverVolumeView mockedVoiceOverVolumeView;
+  @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
 
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
   }
 
-  @After
-  public void clearProjectInstance() {
-    Project.INSTANCE.clear();
-  }
-
   @Test
-  public void addVoiceOverCallsGoToSoundActivityOnAddMediaItemToTrackSuccess() {
-    final float defaultVolume = 0.5f;
-    int defaultDuration = 100;
-    final Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    doAnswer(new Answer() {
-      @Override
-      public Object answer(InvocationOnMock invocation) throws Throwable {
-        OnAddMediaFinishedListener listener = invocation.getArgument(2);
-        listener.onAddMediaItemToTrackSuccess(voiceOver);
-        return null;
-      }
-    }).when(mockedAddAudioUseCase).addMusic(eq(voiceOver),
-        eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
-        any(OnAddMediaFinishedListener.class));
-
-    injectedPresenter.addVoiceOver(voiceOver);
-
-    verify(mockedSoundVolumeView).goToSoundActivity();
-  }
-
-  @Test
-  public void addVoiceOverCallsShowErrorOnAddMediaItemToTrackError() {
-    final float defaultVolume = 0.5f;
-    int defaultDuration = 100;
-    final Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    doAnswer(new Answer() {
-      @Override
-      public Object answer(InvocationOnMock invocation) throws Throwable {
-        OnAddMediaFinishedListener listener = invocation.getArgument(2);
-        listener.onAddMediaItemToTrackError();
-        return null;
-      }
-    }).when(mockedAddAudioUseCase).addMusic(eq(voiceOver),
-        eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
-        any(OnAddMediaFinishedListener.class));
-
-    injectedPresenter.addVoiceOver(voiceOver);
-
-    verify(mockedSoundVolumeView).showError(null);
-  }
-
-  @Test
-  public void removePreviousVoiceOverCallsShowErrorOnRemoveMediaItemFromTrackError()
-          throws IllegalItemOnTrack {
+  public void setVolumeCallsModifyTrackUseCase() throws IllegalItemOnTrack {
+    float volume = 0.7f;
     Project project = getAProject();
-    final float defaultVolume = 0.5f;
     int defaultDuration = 100;
-    final Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    String mediaPath = "somePath";
+    Music voiceOver = new Music(mediaPath, volume, defaultDuration);
     project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
-    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(voiceOver);
-    assertThat("Project has voice over", project.hasVoiceOver(), is(true));
-    doAnswer(new Answer() {
-      @Override
-      public Object answer(InvocationOnMock invocation) throws Throwable {
-        OnRemoveMediaFinishedListener listener = invocation.getArgument(2);
-        listener.onRemoveMediaItemFromTrackError();
-        return null;
-      }
-    }).when(mockedRemoveAudioUseCase).removeMusic(eq(voiceOver),
-        eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
-        Matchers.any(OnRemoveMediaFinishedListener.class));
+    AudioTrack voiceOverTrack = project.getAudioTracks()
+            .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    voiceOverTrack.insertItem(voiceOver);
 
-    injectedPresenter.deletePreviousVoiceOver();
+    injectedPresenter.setVoiceOverVolume(volume);
 
-    verify(mockedSoundVolumeView).showError(null);
+    verify(mockedModifyTrackUseCase).setTrackVolume(project.getAudioTracks()
+            .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER), volume);
   }
 
   @Test
-  public void getVoiceOverAsMusicCreateVoiceOverObject() {
-    Music voiceOver = injectedPresenter.getVoiceOverAsMusic("media/path", 0.55f);
+  public void setVolumeNavigateToSoundActivity() throws IllegalItemOnTrack {
+    float volume = 0.7f;
+    Project project = getAProject();
+    int defaultDuration = 100;
+    String mediaPath = "somePath";
+    Music voiceOver = new Music(mediaPath, volume, defaultDuration);
+    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    AudioTrack voiceOverTrack = project.getAudioTracks()
+            .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    voiceOverTrack.insertItem(voiceOver);
 
-    assertThat("Voice over has correct title", voiceOver.getMusicTitle(),
-        is(com.videonasocialmedia.vimojo.utils.Constants.MUSIC_AUDIO_VOICEOVER_TITLE));
-    assertThat("Voice over has icon resource", voiceOver.getIconResourceId(),
-        is(R.drawable.activity_edit_audio_voice_over_icon));
-  }
+    injectedPresenter.setVoiceOverVolume(volume);
 
-  @NonNull
-  private VoiceOverVolumePresenter getSoundVolumePresenter() {
-    return new VoiceOverVolumePresenter(mockedSoundVolumeView, mockedGetMediaListFromProjectUseCase,
-        mockedGetPreferencesTransitionsFromProject, mockedGetAudioFromProjectUseCase,
-        mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedContext);
+    verify(mockedVoiceOverVolumeView).goToSoundActivity();
   }
 
   public Project getAProject() {
