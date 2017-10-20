@@ -33,4 +33,5 @@ public interface TrimView {
 
     void updateFinishTrimmingRangeSeekBar(float maxValue);
 
+    void updateProject();
 }

@@ -238,6 +238,11 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         super.showAlertDialog(title, message);
     }
 
+    @Override
+    public void updateProject() {
+        presenter.init(musicPath);
+    }
+
     @Nullable
     @OnClick(R.id.select_music)
     public void selectMusic() {

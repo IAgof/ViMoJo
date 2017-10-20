@@ -45,7 +45,8 @@ import javax.inject.Inject;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.*;
 
-public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener, ElementChangedListener {
+public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener,
+        ElementChangedListener {
     public static final float VOLUME_MUTE = 0f;
     private final String TAG = getClass().getSimpleName();
     private final Project currentProject;

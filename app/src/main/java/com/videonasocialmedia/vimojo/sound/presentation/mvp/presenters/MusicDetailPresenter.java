@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
@@ -31,7 +32,8 @@ import javax.inject.Inject;
 /**
  *
  */
-public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback {
+public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback,
+        ElementChangedListener{
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
@@ -67,6 +69,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         this.modifyTrackUseCase = modifyTrackUseCase;
         // TODO(jliarte): 1/12/16 should it be a parameter of use case method?
         this.currentProject = loadCurrentProject();
+        currentProject.addListener(this);
         musicSelected = new Music("", 0);
     }
 
@@ -179,5 +182,10 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         // Now setVolume update MusicTrackVolume until Vimojo support setVolume by clip.
         modifyTrackUseCase.setTrackVolume(currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_MUSIC), volume);
+    }
+
+    @Override
+    public void onObjectUpdated() {
+        musicDetailView.updateProject();
     }
 }
