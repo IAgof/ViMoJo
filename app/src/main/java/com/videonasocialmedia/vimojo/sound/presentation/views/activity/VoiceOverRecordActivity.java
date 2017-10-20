@@ -80,7 +80,7 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sound_voice_over);
         ButterKnife.bind(this);
-        getActivityPresentersComponent().inject(this);
+        this.getActivityPresentersComponent().inject(this);
         restoreState(savedInstanceState);
         changeVisibilityAndResouceButton();
         videonaPlayer.setSeekBarLayoutEnabled(false);
@@ -143,12 +143,6 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
         outState.putInt(VOICE_OVER_POSITION, currentVoiceOverPosition);
         outState.putBoolean(STATE_BUTTON_RECORD, buttonRecordIsInStop);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public ActivityPresentersModule getActivityPresentersModule() {
-        return new ActivityPresentersModule(this, Project.getInstance(null, null, null, null)
-            .getProjectPathIntermediateFiles(),1);
     }
 
     @OnClick(R.id.button_voice_over_accept)

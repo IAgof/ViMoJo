@@ -98,8 +98,6 @@ import dagger.Provides;
 @Module
 public class ActivityPresentersModule {
   private final VimojoActivity activity;
-  private String destinationFolderPath = ".project/102893438/tempMixedAudio/voiceOverRecord";
-  private int numTracks = 1;
   private AutoFitTextureView textureView;
   private GLCameraView cameraView = null;
   private boolean externalIntent;
@@ -122,13 +120,6 @@ public class ActivityPresentersModule {
     this.activity = activity;
     this.textureView = textureView;
     this.directorySaveVideos = directorySaveVideos;
-  }
-
-  public ActivityPresentersModule(VoiceOverRecordActivity activity, String destinationFolderPath,
-                                  int numTracks){
-    this.activity = activity;
-    this.destinationFolderPath = destinationFolderPath;
-    this.numTracks = numTracks;
   }
 
   @Provides @PerActivity
