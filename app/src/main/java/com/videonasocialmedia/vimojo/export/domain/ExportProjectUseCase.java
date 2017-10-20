@@ -89,7 +89,8 @@ public class ExportProjectUseCase implements ExportListener {
     }
   }
 
-  private ListenableFuture<List<Video>> getAdaptingVideoTasks() throws ExecutionException, InterruptedException {
+  private ListenableFuture<List<Video>> getAdaptingVideoTasks() throws ExecutionException,
+          InterruptedException {
     ArrayList<ListenableFuture<Video>> adaptTasks = new ArrayList<>();
     List<VideoToAdapt> videosBeingAdapted = videoToAdaptRepository.getAllVideos();
     if (videosBeingAdapted.size() > 0) {

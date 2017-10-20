@@ -15,6 +15,8 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
+import java.io.IOException;
+
 /**
  * Created by alvaro on 28/09/16.
  */
@@ -47,10 +49,15 @@ public class RelaunchTranscoderTempBackgroundUseCase {
    */
   public void relaunchExport(Video videoToEdit, Project currentProject) {
     // TODO(jliarte): 19/09/17 should we also wait for adapting jobs here?
-    runTranscodingTask(videoToEdit, currentProject);
+    try {
+      runTranscodingTask(videoToEdit, currentProject);
+    } catch (IOException ioError) {
+      ioError.printStackTrace();
+      handleTranscodingError(videoToEdit, ioError.getMessage());
+    }
   }
 
-  private void runTranscodingTask(Video videoToEdit, Project project) {
+  private void runTranscodingTask(Video videoToEdit, Project project) throws IOException {
     videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
     videoToEdit.setTranscodingTempFileFinished(false);
     videoRepository.update(videoToEdit);

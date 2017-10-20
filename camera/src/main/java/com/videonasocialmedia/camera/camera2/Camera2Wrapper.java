@@ -39,6 +39,7 @@ import com.videonasocialmedia.camera.utils.VideoCameraFormat;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +58,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private final String TAG = getClass().getSimpleName();
 
   private Camera2WrapperListener listener;
-  private final Context context;
+  private final WeakReference<Context> contextWeakReference;
   private final String directorySaveVideos;
   private final Camera2ZoomHelper camera2ZoomHelper;
   private final Camera2FocusHelper camera2FocusHelper;
@@ -146,9 +147,12 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       cameraOpenCloseLock.release();
       cameraDevice.close();
       Camera2Wrapper.this.cameraDevice = null;
-      Activity activity = (Activity) context;
-      if (null != activity) {
-        activity.finish();
+      finishActivity();
+    }
+
+    private void finishActivity() {
+      if (contextWeakReference.get() != null) {
+        ((Activity) contextWeakReference.get()).finish();
       }
     }
   };
@@ -166,7 +170,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   public Camera2Wrapper(Context context, int cameraIdSelected,
                         AutoFitTextureView textureView, String directorySaveVideos,
                         VideoCameraFormat videoCameraFormat) {
-    this.context = context;
+    contextWeakReference = new WeakReference<>(context);
     this.cameraIdSelected = cameraIdSelected;
     this.textureView = textureView;
     this.directorySaveVideos = directorySaveVideos;
@@ -243,15 +247,19 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   private void getCameraManager() {
-    final Activity activity = (Activity) context;
-    manager = (CameraManager) activity.getSystemService(context.CAMERA_SERVICE);
+    if (contextWeakReference.get() != null) {
+      final Activity activity = (Activity) contextWeakReference.get();
+      manager = (CameraManager) activity.getSystemService(activity.CAMERA_SERVICE);
+    }
   }
 
   public void onPause() {
-    if(isRecordingVideo) {
+    if (isRecordingVideo) {
       stopRecordVideo();
     }
     closeCamera();
+    // TODO(jliarte): 16/10/17 consider including in closCamera method
+    manager = null;
     stopBackgroundThread();
   }
 
@@ -341,7 +349,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
    * Tries to open a {@link CameraDevice}. The result is listened by `stateCallback`.
    */
   private void openCamera(int width, int height) {
-    final Activity activity = (Activity) context;
+    final Activity activity = (Activity) contextWeakReference.get();
     if (activity == null || activity.isFinishing()) {
       return;
     }
@@ -381,7 +389,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
       mediaRecorder = new MediaRecorderWrapper(new MediaRecorder(), cameraIdSelected,
           sensorOrientation, rotation, createVideoFilePath(), videoCameraFormat);
-     if (ActivityCompat.checkSelfPermission(context,
+     if (ActivityCompat.checkSelfPermission(contextWeakReference.get(),
           android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
         // TODO: Consider calling
         //    ActivityCompat#requestPermissions
@@ -442,7 +450,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
    * @param viewHeight The height of `mTextureView`
    */
   private void configureTransform(int viewWidth, int viewHeight) {
-    Activity activity = (Activity) context;
+    Activity activity = (Activity) contextWeakReference.get();
     if (null == textureView || null == previewSize || null == activity) {
       Log.d(TAG, "configureTransform, null textureView, previewSize, activity");
       return;
@@ -469,7 +477,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
    * Start the camera preview.
    */
   private void startPreview() {
-    if (null == cameraDevice || !textureView.isAvailable() || null == previewSize) {
+    if (cameraDevice == null || !textureView.isAvailable() || previewSize == null) {
       return;
     }
     try {
@@ -491,8 +499,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
             @Override
             public void onConfigureFailed(CameraCaptureSession cameraCaptureSession) {
-              Activity activity = (Activity) context;
-              if (null != activity) {
+              Activity activity = (Activity) contextWeakReference.get();
+              if (activity != null) {
                 Toast.makeText(activity, "Failed", Toast.LENGTH_SHORT).show();
               }
             }
@@ -609,7 +617,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
         @Override
         public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-          Activity activity = (Activity) context;
+          Activity activity = (Activity) contextWeakReference.get();
           if (activity != null) {
             Toast.makeText(activity, "Failed to start recording.", Toast.LENGTH_SHORT).show();
           }
@@ -622,7 +630,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       e.printStackTrace();
     } finally {
       initializingRecorder = false;
-      }
+    }
   }
 
   public int getMaxAmplitudeRecording() {
@@ -638,19 +646,21 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   private void startRecordingSession(final RecordStartedCallback callback) {
-    ((Activity) context).runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        // Start recording
-        try {
-          mediaRecorder.start();
-          isRecordingVideo = true;
-          callback.onRecordStarted();
-        } catch (IllegalStateException illegalStateError) {
-          Log.d(TAG, "IllegalStateException - Caught error starting record");
+    if (contextWeakReference.get() != null) {
+      ((Activity) contextWeakReference.get()).runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          // Start recording
+          try {
+            mediaRecorder.start();
+            isRecordingVideo = true;
+            callback.onRecordStarted();
+          } catch (IllegalStateException illegalStateError) {
+            Log.d(TAG, "IllegalStateException - Caught error starting record");
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   private void setCurrentFlashSettings() {
@@ -721,7 +731,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     if(rotation == Surface.ROTATION_270) {
       if(sensorOrientation == 90) {
         return getInverseRotation();
-      }else {
+      } else {
         return getNormalRotation();
       }
     } else {
