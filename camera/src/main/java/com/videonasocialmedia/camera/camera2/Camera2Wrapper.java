@@ -200,6 +200,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   private String getCameraId() throws CameraAccessException {
+    getCameraManager();
     return manager.getCameraIdList()[this.cameraIdSelected];
   }
 
@@ -404,7 +405,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     } catch (CameraAccessException e) {
       Toast.makeText(activity, "Cannot access the camera.", Toast.LENGTH_SHORT).show();
       activity.finish();
-    } catch (NullPointerException e) {
+    } catch (NullPointerException npeOpeningCamera) {
+      Crashlytics.log("Error opening camera!");
+      Crashlytics.logException(npeOpeningCamera);
+      npeOpeningCamera.printStackTrace();
+      throw npeOpeningCamera;
       // Currently an NPE is thrown when the Camera2API is used but not supported on the
       // device this code runs.
       // TODO:(alvaro.martinez) 17/01/17 Manage this NPE
