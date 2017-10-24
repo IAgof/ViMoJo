@@ -123,18 +123,18 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  VoiceOverVolumePresenter getSoundVolumePresenter(
+  VoiceOverVolumePresenter provideVoiceOverVolumePresenter(
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           GetAudioFromProjectUseCase getAudioFromProjectUseCase, ModifyTrackUseCase
-                  modifyTrackUseCase) {
-    return new VoiceOverVolumePresenter((VoiceOverVolumeView) activity,
+                  modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase) {
+    return new VoiceOverVolumePresenter(activity, (VoiceOverVolumeView) activity,
             getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
-            getAudioFromProjectUseCase, modifyTrackUseCase);
+            getAudioFromProjectUseCase, modifyTrackUseCase, removeAudioUseCase);
   }
 
   @Provides @PerActivity
-  VoiceOverRecordPresenter provideNewVoiceOverPresenter(
+  VoiceOverRecordPresenter provideVoiceOverRecordPresenter(
       GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
       GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
       AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,

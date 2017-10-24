@@ -116,7 +116,7 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
 
     @Override
     public void onBackPressed() {
-        navigateTo(EditActivity.class, videoIndexOnTrack);
+        navigateTo(SoundActivity.class, videoIndexOnTrack);
         finish();
     }
 
@@ -148,6 +148,7 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
+                        presenter.deleteVoiceOver();
                         navigateTo(VoiceOverRecordActivity.class);
                         break;
 
