@@ -92,6 +92,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         splitSeekBar.setOnSeekBarChangeListener(this);
         timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(0));
 
+        videonaPlayer.setListener(this);
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
 
@@ -294,5 +295,10 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     onProgressChanged(splitSeekBar, progress, true);
     splitSeekBar.setProgress(progress);
   }
+
+    @Override
+    public void updateProject() {
+        presenter.loadProjectVideo(videoIndexOnTrack);
+    }
 
 }

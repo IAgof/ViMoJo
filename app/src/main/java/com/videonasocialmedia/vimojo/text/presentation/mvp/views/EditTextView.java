@@ -27,4 +27,5 @@ public interface EditTextView {
 
     void initTextToVideoAdded(String text, String position);
 
+    void updateProject();
 }

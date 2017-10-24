@@ -51,7 +51,6 @@ public class ModifyVideoDurationUseCaseTest {
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
   @Mock private VideoToAdaptRepository mockedVideoToAdaptRepository;
 
-
   @Before
   public void injectDoubles() throws Exception {
     MockitoAnnotations.initMocks(this);
@@ -101,7 +100,7 @@ public class ModifyVideoDurationUseCaseTest {
   }
 
   @Test
-  public void trimVideoCallsVideoRepositoryUpdate() {
+  public void trimVideoCallsVideoRepositoryUpdate() throws IOException {
     Project currentProject = getAProject();
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
@@ -120,7 +119,7 @@ public class ModifyVideoDurationUseCaseTest {
   }
 
   @Test
-  public void trimVideoUpdatesVideoParams() {
+  public void trimVideoUpdatesVideoParams() throws IOException {
     Project currentProject = getAProject();
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assert video.isTranscodingTempFileFinished();

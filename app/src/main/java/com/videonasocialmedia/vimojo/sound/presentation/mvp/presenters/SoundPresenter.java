@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -25,7 +26,7 @@ import javax.inject.Inject;
  * Created by ruth on 13/09/16.
  */
 public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback,
-    VideoTranscodingErrorNotifier {
+    VideoTranscodingErrorNotifier, ElementChangedListener {
 
   private SoundView soundView;
   private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
@@ -47,6 +48,7 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
         this.currentProject = loadCurrentProject();
+        currentProject.addListener(this);
         this.getPreferencesTransitionFromProjectUseCase =
                 getPreferencesTransitionFromProjectUseCase;
         this.modifyTrackUseCase = modifyTrackUseCase;
@@ -278,5 +280,10 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
         break;
     }
 
+  }
+
+  @Override
+  public void onObjectUpdated() {
+    soundView.updateProject();
   }
 }

@@ -61,7 +61,7 @@ public class ShareVideoPresenterTest {
         Project videonaProject = getAProject();
 
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
-                mockedUserEventTracker, mockSharedPrefs, mockContext,
+                mockedUserEventTracker, mockSharedPrefs,
                 mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
                 mockedExportProjectUseCase);
 
@@ -72,7 +72,7 @@ public class ShareVideoPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
-                userEventTracker, mockSharedPrefs, mockContext, mockedCreateDefaultProjectUseCase,
+                userEventTracker, mockSharedPrefs, mockedCreateDefaultProjectUseCase,
             mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
@@ -80,7 +80,7 @@ public class ShareVideoPresenterTest {
     @Test
     public void shareVideoPresenterCallsTracking(){
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
-                mockedUserEventTracker, mockSharedPrefs, mockContext,
+                mockedUserEventTracker, mockSharedPrefs,
                 mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
                 mockedExportProjectUseCase);
         Project videonaProject = getAProject();

@@ -28,4 +28,5 @@ public interface SoundView {
     void showTrackAudioSecond();
     void showWarningTempFile();
     void setWarningMessageTempFile(String messageTempFile);
+    void updateProject();
 }

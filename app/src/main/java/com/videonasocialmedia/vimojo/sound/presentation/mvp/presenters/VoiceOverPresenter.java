@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 import com.videonasocialmedia.avrecorder.AudioRecorder;
 import com.videonasocialmedia.avrecorder.SessionConfig;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -22,7 +23,8 @@ import javax.inject.Inject;
 /**
  * Created by ruth on 15/09/16.
  */
-public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAudiosListener {
+public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAudiosListener,
+        ElementChangedListener{
 
     /**
      * LOG_TAG
@@ -55,7 +57,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
             getPreferencesTransitionFromProjectUseCase;
         this.mergeVoiceOverAudiosUseCase = mergeVoiceOverAudiosUseCase;
         this.currentProject = loadCurrentProject();
-
+        currentProject.addListener(this);
         initAudioRecorder();
     }
 
@@ -75,7 +77,7 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
         init();
     }
 
-    private void init() {
+    public void init() {
         obtainVideos();
         if (getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()) {
             voiceOverView.setVideoFadeTransitionAmongVideos();
@@ -176,5 +178,10 @@ public class VoiceOverPresenter implements OnVideosRetrieved, OnMergeVoiceOverAu
     @Override
     public void onMergeVoiceOverAudioError(String message) {
         voiceOverView.showError("Cannot apply voice over in your video project");
+    }
+
+    @Override
+    public void onObjectUpdated() {
+        voiceOverView.updateProject();
     }
 }
