@@ -17,8 +17,6 @@ import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverRecordPresenter;
@@ -27,7 +25,6 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -74,6 +71,7 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     private int maxDuration;
     private boolean buttonRecordIsInStop = false;
     private float videoVolumeMute = 0f;
+    private android.app.AlertDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +83,16 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
         changeVisibilityAndResouceButton();
         videonaPlayer.setSeekBarLayoutEnabled(false);
         videonaPlayer.setListener(this);
+        createProgressDialog();
         buttonRecordVoiceOver.setOnTouchListener(this);
+    }
+
+    private void createProgressDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_export_progress, null);
+        progressDialog = builder.setCancelable(false)
+            .setView(dialogView)
+            .create();
     }
 
     private void restoreState(Bundle savedInstanceState) {
@@ -147,11 +154,7 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
 
     @OnClick(R.id.button_voice_over_accept)
     public void onClickVoiceOverAccept() {
-        try {
-            presenter.setVoiceOver(Constants.AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        presenter.setVoiceOver(Constants.AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME);
     }
 
     @OnClick(R.id.button_voice_over_cancel)
@@ -161,11 +164,7 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        try {
-                            presenter.cancelVoiceOverRecorded();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        presenter.cancelVoiceOverRecorded();
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         break;
@@ -272,6 +271,30 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     }
 
     @Override
+    public void showProgressDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!isFinishing()) {
+                    progressDialog.show();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void hideProgressDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+            }
+        });
+    }
+
+    @Override
     public void newClipPlayed(int currentClipIndex) {
         videonaPlayer.setVideoVolume(videoVolumeMute);
     }
@@ -322,11 +345,7 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
 
             @Override
             public void onFinish() {
-                try {
-                    presenter.stopRecording();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                presenter.stopRecording();
                 buttonRecordIsInStop =true;
                 progressBarVoiceOver.setProgress(maxDuration);
                 changeVisibilityAndResouceButton();

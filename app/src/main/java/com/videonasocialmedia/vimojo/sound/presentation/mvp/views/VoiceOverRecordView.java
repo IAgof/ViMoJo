@@ -20,4 +20,6 @@ public interface VoiceOverRecordView {
     void updateProject();
     void resetVoiceOverRecorded();
     void disableRecordButton();
+    void showProgressDialog();
+    void hideProgressDialog();
 }

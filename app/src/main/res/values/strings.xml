@@ -120,14 +120,17 @@
     <string name="dialog_voice_over_cancel_title_message">Do you want to discard voice over and start a new one?</string>
     <string name="dialog_voice_over_cancel_positive_button">Yes</string>
     <string name="dialog_voice_over_cancel_negative_button">No</string>
-
-    <!--VoiceOverVolumeActivity-->
-    <string name="exitSoundVolumeActivity" >Are you sure do you want to discard the changes and return to record again?</string>
-    <string name="acceptExitSoundVolumeActivity">Yes</string>
-    <string name="cancelExitSoundVolumeActvity">No</string>
     <string name="alert_dialog_title_voice_over">Voice over</string>
     <string name="alert_dialog_title_message_adding_voice_over">Problem adding voice over in project</string>
     <string name="alert_dialog_title_message_start_record_voice_over">Please, record some voice over</string>
+    <string name="error_record_voice_over">Problem recording voice over, start again</string>
+    <string name="dialog_generating_voice_over">Generating voice over</string>
+    <string name="error_transcoding_voice_over">Error transcoding voice over</string>
+
+    <!--VoiceOverVolumeActivity-->
+    <string name="exitVoiceOverVolumeActivity" >Are you sure do you want to discard the changes and return to record again?</string>
+    <string name="acceptExitVoiceOverVolumeActivity">Yes</string>
+    <string name="cancelExitVoiceOverVolumeActvity">No</string>
 
     <!-- Trim fragment -->
     <string name="confirmTrim">Done</string>
@@ -2264,7 +2267,5 @@ and Conditions.\n\n
     <string name="solo">Solo</string>
     <string name="title_theme_app_preference">Dark theme</string>
     <string name="title_theme_app_section">Activate dark theme</string>
-
-
 
 </resources>

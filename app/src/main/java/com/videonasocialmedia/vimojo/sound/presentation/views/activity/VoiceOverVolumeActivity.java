@@ -12,7 +12,6 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverVolumePresenter;
@@ -159,9 +158,9 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-        builder.setMessage(R.string.exitSoundVolumeActivity)
-                .setPositiveButton(R.string.acceptExitSoundVolumeActivity, dialogClickListener)
-                .setNegativeButton(R.string.cancelExitSoundVolumeActvity, dialogClickListener).show();
+        builder.setMessage(R.string.exitVoiceOverVolumeActivity)
+                .setPositiveButton(R.string.acceptExitVoiceOverVolumeActivity, dialogClickListener)
+                .setNegativeButton(R.string.cancelExitVoiceOverVolumeActvity, dialogClickListener).show();
     }
 
     @Override

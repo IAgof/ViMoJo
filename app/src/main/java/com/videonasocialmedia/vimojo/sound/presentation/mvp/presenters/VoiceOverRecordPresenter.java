@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
@@ -29,6 +31,7 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -61,7 +64,6 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
     private boolean isRecording = false;
     private Recorder audioRecorder;
     private String directoryVoiceOverRecorded;
-    private Music voiceOver;
     private boolean voiceOverRecorded = false;
     private final TextToDrawable drawableGenerator =
             new TextToDrawable(VimojoApplication.getAppContext());
@@ -110,8 +112,14 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
 
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
-        voiceOverRecordView.bindVideoList(videoList);
-        voiceOverRecordView.initVoiceOverView(0, currentProject.getDuration());
+      List<Video> copyVideoList = new ArrayList<>();
+      for(Video video: videoList){
+        Video copyVideo = new Video(video);
+        copyVideo.setVolume(0f);
+        copyVideoList.add(copyVideo);
+      }
+      voiceOverRecordView.bindVideoList(copyVideoList);
+      voiceOverRecordView.initVoiceOverView(0, currentProject.getDuration());
     }
 
     @Override
@@ -119,40 +127,30 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
         voiceOverRecordView.resetPreview();
     }
 
-    public void setVoiceOver(String finalNamePathAudioMerge) throws IOException {
-        if(isRecording()){
-            stopAudioRecorded();
-        }
-        if (isVoiceOverRecorded()) {
-            applyVoiceOver(finalNamePathAudioMerge);
-        } else {
-            voiceOverRecordView.showError(context
-                    .getString(R.string.alert_dialog_title_message_start_record_voice_over));
-        }
+    public void setVoiceOver(String finalNamePathAudioMerge) {
+      if(isRecording()) {
+        stopAudioRecorded();
+      }
+      if (isVoiceOverRecorded()) {
+        applyVoiceOver(finalNamePathAudioMerge);
+      } else {
+          voiceOverRecordView.showError(context
+                  .getString(R.string.alert_dialog_title_message_start_record_voice_over));
+      }
     }
 
     protected void applyVoiceOver(String finalNamePathAudioMerge) {
-        String voiceOverAbsolutePath = directoryVoiceOverRecorded + File.separator +
-                finalNamePathAudioMerge;
-        ListenableFuture<Void> exportVoiceOverTask = transcoderHelper
-                .generateOutputAudioVoiceOver(fileRecordedPcm().getAbsolutePath(),
-                        voiceOverAbsolutePath);
-        try {
-            exportVoiceOverTask.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            voiceOverRecordView.showError(context.getString(R.string
-                    .alert_dialog_title_message_adding_voice_over));
-        }
-        voiceOver = getVoiceOverAsMusic(voiceOverAbsolutePath);
-        // TODO: 19/10/2017 Delete voice over from UI, not recording a new one.
-        if(currentProject.hasVoiceOver()) {
-            deletePreviousVoiceOver();
-        }
-        addVoiceOver(voiceOver);
+      voiceOverRecordView.showProgressDialog();
+      String voiceOverAbsolutePath = directoryVoiceOverRecorded + File.separator +
+              finalNamePathAudioMerge;
+      ListenableFuture<String> exportVoiceOverTask = transcoderHelper
+              .generateOutputAudioVoiceOver(fileRecordedPcm().getAbsolutePath(),
+                      voiceOverAbsolutePath);
+      Futures.addCallback(exportVoiceOverTask, new
+          VoiceOverTranscodingTaskCallback(voiceOverAbsolutePath));
     }
 
-    public void trackVoiceOverVideo() {
+    protected void trackVoiceOverVideo() {
         userEventTracker.trackVoiceOverSet(currentProject);
     }
 
@@ -177,15 +175,15 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
         voiceOverRecordView.playVideo();
     }
 
-    public void stopRecording() throws IOException {
+    public void stopRecording() {
         Log.d(LOG_TAG, "stopRecording");
         if(isRecording()){
-            stopAudioRecorded();
+          stopAudioRecorded();
         }
         voiceOverRecordView.disableRecordButton();
     }
 
-    public void cancelVoiceOverRecorded() throws IOException {
+    public void cancelVoiceOverRecorded() {
         voiceOverRecordView.resetVoiceOverRecorded();
         if(isRecording()){
             stopAudioRecorded();
@@ -193,9 +191,14 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
         voiceOverRecorded = false;
     }
 
-    private void stopAudioRecorded() throws IOException {
+    private void stopAudioRecorded() {
+      isRecording = false;
+      try {
         audioRecorder.stopRecording();
-        isRecording = false;
+      } catch (IOException e) {
+        e.printStackTrace();
+        voiceOverRecordView.showError(context.getString(R.string.error_record_voice_over));
+      }
     }
 
     private void setupAudioRecorder() {
@@ -208,8 +211,8 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
                 }), fileRecordedPcm());
     }
 
-    private void cleanFileRecordedPcm(){
-        if(fileRecordedPcm().exists()){
+    private void cleanFileRecordedPcm() {
+        if(fileRecordedPcm().exists()) {
             fileRecordedPcm().delete();
         }
     }
@@ -240,13 +243,13 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
                 new OnAddMediaFinishedListener() {
                     @Override
                     public void onAddMediaItemToTrackSuccess(Media media) {
-                        trackVoiceOverVideo();
-                        voiceOverRecordView
-                                .navigateToVoiceOverVolumeActivity(voiceOver.getMediaPath());
+                      trackVoiceOverVideo();
+                      voiceOverRecordView
+                              .navigateToVoiceOverVolumeActivity(voiceOver.getMediaPath());
                     }
                     @Override
                     public void onAddMediaItemToTrackError() {
-                        voiceOverRecordView.showError(context.getString(R.string
+                      voiceOverRecordView.showError(context.getString(R.string
                                 .alert_dialog_title_message_adding_voice_over));
                     }
                 });
@@ -282,4 +285,38 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
     protected boolean isVoiceOverRecorded() {
         return voiceOverRecorded;
     }
+
+  private class VoiceOverTranscodingTaskCallback implements FutureCallback<String> {
+
+    private String outputFilePath;
+
+    private VoiceOverTranscodingTaskCallback(String outputFilePath) {
+      this.outputFilePath = outputFilePath;
+    }
+
+    @Override
+    public void onSuccess(String outputFilePath) {
+      handleTranscodingSuccess(outputFilePath);
+    }
+
+    @Override
+    public void onFailure(@NonNull Throwable t) {
+      handleTranscodingError(outputFilePath, t.getMessage());
+    }
+  }
+
+  private void handleTranscodingError(String outputFilePath, String message) {
+    voiceOverRecordView.hideProgressDialog();
+    voiceOverRecordView.showError(context.getString(R.string.error_transcoding_voice_over));
+  }
+
+  private void handleTranscodingSuccess(String outputFilePath) {
+    voiceOverRecordView.hideProgressDialog();
+    Music voiceOver = getVoiceOverAsMusic(outputFilePath);
+    // TODO: 19/10/2017 Delete voice over from UI, not recording a new one.
+    if(currentProject.hasVoiceOver()) {
+      deletePreviousVoiceOver();
+    }
+    addVoiceOver(voiceOver);
+  }
 }
