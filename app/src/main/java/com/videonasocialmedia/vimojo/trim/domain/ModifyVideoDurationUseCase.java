@@ -23,13 +23,18 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.inject.Inject;
+
+import static com.videonasocialmedia.vimojo.utils.Constants.MIN_TRIM_OFFSET;
+import static com.videonasocialmedia.vimojo.utils.Constants.MS_CORRECTION_FACTOR;
 
 /**
  * Created by jca on 27/5/15.
  */
 public class ModifyVideoDurationUseCase {
+  static final int AUTOTRIM_MS_RANGE = 10;
   private final String TAG = ModifyVideoDurationUseCase.class.getName();
 
   VideoRepository videoRepository;
@@ -112,8 +117,8 @@ public class ModifyVideoDurationUseCase {
     return videoToAdaptRepository.getByMediaPath(videoToEdit.getMediaPath()) != null;
   }
 
-  private ListenableFuture<Video> runTrimTranscodingTask(Video videoToEdit,
-                                                         Project currentProject) {
+  ListenableFuture<Video> runTrimTranscodingTask(Video videoToEdit,
+                                                 Project currentProject) {
     // (jliarte): 18/09/17 after adapting a video, tmpPath is reset calling video.resetTempPath(),
     // so we have to set it again before we call runTrimTranscoding in the futures chaining
     // TODO(jliarte): 18/09/17 I guess this method should work independent of the video object
@@ -141,10 +146,13 @@ public class ModifyVideoDurationUseCase {
     videoRepository.setSuccessTranscodingVideo(video);
   }
 
-  private void handleTaskError(Video video, String message, Project currentProject) {
+  void handleTaskError(Video video, String message, Project currentProject) {
     Log.d(TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
     if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
       video.increaseNumTriesToExportVideo();
+      // TODO(jliarte): 23/10/17 modify here trim times
+      randomizeTrimTimes(video);
+      videoRepository.update(video);
       runTrimTranscodingTask(video, currentProject);
     } else {
       //trimView.showError(message);
@@ -152,6 +160,27 @@ public class ModifyVideoDurationUseCase {
       video.setTranscodingTempFileFinished(true);
       videoRepository.update(video);
     }
+  }
+
+  private void randomizeTrimTimes(Video video) {
+    int minTrimTime = (int) (MIN_TRIM_OFFSET * MS_CORRECTION_FACTOR);
+    int startTime = video.getStartTime();
+    int stopTime = video.getStopTime();
+    int randomStart = startTime;
+    while (randomStart == startTime) {
+      int minStart = Math.max(0, startTime - AUTOTRIM_MS_RANGE);
+      int maxStart = Math.min(startTime + AUTOTRIM_MS_RANGE, stopTime - minTrimTime);
+      randomStart = ThreadLocalRandom.current().nextInt(minStart, maxStart + 1);
+    }
+    video.setStartTime(randomStart);
+
+    int randomStop = stopTime;
+    while (randomStop == stopTime) {
+      int minStop = Math.max(stopTime - AUTOTRIM_MS_RANGE, randomStart + minTrimTime);
+      int maxStop = Math.min(stopTime + AUTOTRIM_MS_RANGE, video.getFileDuration());
+      randomStop = ThreadLocalRandom.current().nextInt(minStop, maxStop + 1);
+    }
+    video.setStopTime(randomStop);
   }
 
   private class TrimTaskCallback implements FutureCallback<Video> {
