@@ -7,7 +7,6 @@
 
 package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -24,8 +23,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import static com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity.MIN_TRIM_OFFSET;
-import static com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity.MS_CORRECTION_FACTOR;
+import static com.videonasocialmedia.vimojo.utils.Constants.MIN_TRIM_OFFSET;
+import static com.videonasocialmedia.vimojo.utils.Constants.MS_CORRECTION_FACTOR;
 
 /**
  * Created by vlf on 7/7/15.
