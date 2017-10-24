@@ -171,8 +171,13 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
   public void onResume() {
     showThumbAndNumber();
     Log.d(TAG, "resume presenter");
-    camera.onResume();
-    startSamplingPicometerPreview();
+    try {
+      camera.onResume();
+      startSamplingPicometerPreview();
+    } catch (RuntimeException cameraError) {
+      // TODO(jliarte): 18/10/17 move to strings
+      recordView.showError("Error opening camera, please restart the app");
+    }
   }
 
   private void startSamplingPicometerPreview() {

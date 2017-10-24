@@ -337,6 +337,11 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
     warningTranscodingFilesMessage = messageTempFile;
   }
 
+  @Override
+  public void updateProject() {
+    presenter.init();
+  }
+
   @Nullable @Override
   public void newClipPlayed(int currentClipIndex) {
     trackClipsVideo.updateClipSelection(currentClipIndex);

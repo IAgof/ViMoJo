@@ -1,4 +1,8 @@
 v0.7.0-RC9
 - Added in settings screen option to see all licenses used in app.
-- Fixed ui problems in trim screen.
+- Fixed ui problems in trim and voice over screen.
 - Fixed problem with audio normalization while project is exporting.
+- Fixed problem restarting app with adapting jobs missing.
+- Updated isoparser library to 1.1.22 version
+- Improving error management in export process
+- Solved leaks in ShareVideoPresenter and Camera2Wrapper by using weak references to activity or context

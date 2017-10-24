@@ -251,6 +251,11 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     }
 
     @Override
+    public void updateProject() {
+        presenter.init();
+    }
+
+    @Override
     public void resetVoiceOverRecorded() {
         progressBarVoiceOver.setProgress(0);
         buttonRecordVoiceOver.setEnabled(true);

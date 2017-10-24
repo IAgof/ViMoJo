@@ -17,6 +17,7 @@ public interface VoiceOverRecordView {
     void showError(String errorMessage);
     void setVideoFadeTransitionAmongVideos();
     void setAudioFadeTransitionAmongVideos();
+    void updateProject();
     void resetVoiceOverRecorded();
     void disableRecordButton();
 }

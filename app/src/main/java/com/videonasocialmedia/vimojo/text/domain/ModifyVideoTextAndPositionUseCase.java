@@ -23,6 +23,7 @@ import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
@@ -103,13 +104,19 @@ public class ModifyVideoTextAndPositionUseCase {
     videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
     videoToEdit.setTranscodingTempFileFinished(false);
     videoRepository.update(videoToEdit);
-    ListenableFuture<Video> transcoderTextTask = transcoderHelper.updateIntermediateFile(
-            project.getVMComposition().getDrawableFadeTransitionVideo(),
-            project.getVMComposition().isVideoFadeTransitionActivated(),
-            project.getVMComposition().isAudioFadeTransitionActivated(),
-            videoToEdit, project.getVMComposition().getVideoFormat(),
-            project.getProjectPathIntermediateFileAudioFade());
-    Futures.addCallback(transcoderTextTask, new TextTaskCallback(project, videoToEdit));
+    ListenableFuture<Video> transcoderTextTask = null;
+    try {
+      transcoderTextTask = transcoderHelper.updateIntermediateFile(
+              project.getVMComposition().getDrawableFadeTransitionVideo(),
+              project.getVMComposition().isVideoFadeTransitionActivated(),
+              project.getVMComposition().isAudioFadeTransitionActivated(),
+              videoToEdit, project.getVMComposition().getVideoFormat(),
+              project.getProjectPathIntermediateFileAudioFade());
+      Futures.addCallback(transcoderTextTask, new TextTaskCallback(project, videoToEdit));
+    } catch (IOException ioError) {
+      ioError.printStackTrace();
+      handleTranscodingError(videoToEdit, ioError.getMessage(), getCurrentProject());
+    }
     return transcoderTextTask;
   }
 

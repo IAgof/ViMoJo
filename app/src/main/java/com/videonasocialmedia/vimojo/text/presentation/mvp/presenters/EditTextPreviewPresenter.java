@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
@@ -25,7 +26,7 @@ import javax.inject.Inject;
  * Created by ruth on 1/09/16.
  */
 
-public class EditTextPreviewPresenter implements OnVideosRetrieved {
+public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChangedListener {
     private final String LOG_TAG = EditTextPreviewPresenter.class.getSimpleName();
 
     private TextToDrawable drawableGenerator;
@@ -53,6 +54,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
         this.currentProject = loadCurrentProject();
+        currentProject.addListener(this);
     }
 
     private Project loadCurrentProject() {
@@ -94,6 +96,11 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
                 textPositionSelected.name(), currentProject);
 
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
+    }
+
+    @Override
+    public void onObjectUpdated() {
+        editTextView.updateProject();
     }
 }
 

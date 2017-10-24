@@ -130,7 +130,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
   }
 
   @Test
-  public void relaunchExportCallsVideoRepositoryUpdate() {
+  public void relaunchExportCallsVideoRepositoryUpdate() throws IOException {
     Project project = getAProject();
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     injectedRelaunchTranscoderTempBackgroundUseCase.transcoderHelper = mockedTranscoderHelper;
@@ -148,7 +148,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
   }
 
   @Test
-  public void relaunchExportUpdateIsTranscodingTempFileFinished() {
+  public void relaunchExportUpdateIsTranscodingTempFileFinished() throws IOException {
     Project project = getAProject();
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assert video.isTranscodingTempFileFinished();

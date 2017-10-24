@@ -14,4 +14,5 @@ public interface MusicListView {
     void resetPreview();
     void goToDetailActivity(String mediaPath);
     void setVideoFadeTransitionAmongVideos();
+    void updateProject();
 }

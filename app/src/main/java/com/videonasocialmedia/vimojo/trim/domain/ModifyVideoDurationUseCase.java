@@ -21,6 +21,7 @@ import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
@@ -119,13 +120,19 @@ public class ModifyVideoDurationUseCase {
     // state, so we move here the setting of tempPath right after transcoderHelper call
     videoToEdit.setTempPath(currentProject.getProjectPathIntermediateFiles());
     videoToEdit.setTranscodingTempFileFinished(false);
-    ListenableFuture<Video> trimTask = transcoderHelper.updateIntermediateFile(
-            currentProject.getVMComposition().getDrawableFadeTransitionVideo(),
-            currentProject.getVMComposition().isVideoFadeTransitionActivated(),
-            currentProject.getVMComposition().isAudioFadeTransitionActivated(), videoToEdit,
-            currentProject.getVMComposition().getVideoFormat(),
-            currentProject.getProjectPathIntermediateFileAudioFade());
-    Futures.addCallback(trimTask, new TrimTaskCallback(videoToEdit, currentProject));
+    ListenableFuture<Video> trimTask = null;
+    try {
+      trimTask = transcoderHelper.updateIntermediateFile(
+              currentProject.getVMComposition().getDrawableFadeTransitionVideo(),
+              currentProject.getVMComposition().isVideoFadeTransitionActivated(),
+              currentProject.getVMComposition().isAudioFadeTransitionActivated(), videoToEdit,
+              currentProject.getVMComposition().getVideoFormat(),
+              currentProject.getProjectPathIntermediateFileAudioFade());
+      Futures.addCallback(trimTask, new TrimTaskCallback(videoToEdit, currentProject));
+    } catch (IOException ioError) {
+      ioError.printStackTrace();
+      handleTaskError(videoToEdit, ioError.getMessage(), currentProject);
+    }
     return trimTask;
   }
 
