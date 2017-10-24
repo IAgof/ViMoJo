@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -48,9 +47,6 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoTrimActivity extends VimojoActivity implements TrimView,
         RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayer.VideonaPlayerListener {
-
-    public static final float MS_CORRECTION_FACTOR = 1000f;
-    public static final float MIN_TRIM_OFFSET = 0.35f; //350ms
 
     @Inject TrimPreviewPresenter presenter;
 
@@ -301,9 +297,9 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             startTimeMs = videoStartTime;
             finishTimeMs = videoStopTime;
         }
-        seekBarMinPosition = (float) startTimeMs / MS_CORRECTION_FACTOR;
-        seekBarMaxPosition = (float) finishTimeMs / MS_CORRECTION_FACTOR;
-        trimmingRangeSeekBar.setRangeValues(0f, (float) videoDuration / MS_CORRECTION_FACTOR);
+        seekBarMinPosition = (float) startTimeMs / Constants.MS_CORRECTION_FACTOR;
+        seekBarMaxPosition = (float) finishTimeMs / Constants.MS_CORRECTION_FACTOR;
+        trimmingRangeSeekBar.setRangeValues(0f, (float) videoDuration / Constants.MS_CORRECTION_FACTOR);
         trimmingRangeSeekBar.setSelectedMinValue(seekBarMinPosition);
         trimmingRangeSeekBar.setSelectedMaxValue(seekBarMaxPosition);
         videonaPlayer.seekClipToTime(startTimeMs);
@@ -368,14 +364,14 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     public void updateStartTrimmingRangeSeekBar(float minValue) {
         onRangeSeekBarValuesChanged(trimmingRangeSeekBar, minValue, seekBarMaxPosition);
         trimmingRangeSeekBar.setSelectedMinValue(minValue);
-        this.startTimeMs = (int) ( minValue * MS_CORRECTION_FACTOR);
+        this.startTimeMs = (int) ( minValue * Constants.MS_CORRECTION_FACTOR);
     }
 
     @Override
     public void updateFinishTrimmingRangeSeekBar(float maxValue) {
         onRangeSeekBarValuesChanged(trimmingRangeSeekBar, seekBarMinPosition, maxValue);
         trimmingRangeSeekBar.setSelectedMaxValue(maxValue);
-        this.finishTimeMs = (int) ( maxValue * MS_CORRECTION_FACTOR);
+        this.finishTimeMs = (int) ( maxValue * Constants.MS_CORRECTION_FACTOR);
     }
 
     @Override
@@ -397,9 +393,9 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             float maxValueFloat = (float) maxValue;
             if (isRangeSeekBarLessThanMinTrimOffset(minValueFloat, maxValueFloat)) {
                 if(seekBarMinPosition != minValueFloat) {
-                    maxValueFloat = minValueFloat + MIN_TRIM_OFFSET;
+                    maxValueFloat = minValueFloat + Constants.MIN_TRIM_OFFSET;
                 } else {
-                    minValueFloat = maxValueFloat - MIN_TRIM_OFFSET;
+                    minValueFloat = maxValueFloat - Constants.MIN_TRIM_OFFSET;
                 }
                 updateTimesAndRangeSeekBar(minValueFloat, maxValueFloat);
                 seekBarMinPosition = minValueFloat;
@@ -413,8 +409,8 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
                 refreshDurationTag(finishTimeMs - startTimeMs);
                 return;
             }
-            this.startTimeMs = (int) ( minValueFloat * MS_CORRECTION_FACTOR);
-            this.finishTimeMs = (int) ( maxValueFloat * MS_CORRECTION_FACTOR);
+            this.startTimeMs = (int) ( minValueFloat * Constants.MS_CORRECTION_FACTOR);
+            this.finishTimeMs = (int) ( maxValueFloat * Constants.MS_CORRECTION_FACTOR);
 
             if (seekBarMinPosition != minValueFloat) {
                 seekBarMinPosition = minValueFloat;
@@ -436,14 +432,14 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     }
 
     private void updateTimesAndRangeSeekBar(float minValueFloat, float maxValueFloat) {
-        this.startTimeMs = (int) ((minValueFloat) * MS_CORRECTION_FACTOR);
+        this.startTimeMs = (int) ((minValueFloat) * Constants.MS_CORRECTION_FACTOR);
         trimmingRangeSeekBar.setSelectedMinValue(minValueFloat);
-        this.finishTimeMs = (int) ( maxValueFloat * MS_CORRECTION_FACTOR);
+        this.finishTimeMs = (int) ( maxValueFloat * Constants.MS_CORRECTION_FACTOR);
         trimmingRangeSeekBar.setSelectedMaxValue(maxValueFloat);
     }
 
     private boolean isRangeSeekBarLessThanMinTrimOffset(float minValueFloat, float maxValueFloat) {
-        return Math.abs(maxValueFloat - minValueFloat) <= MIN_TRIM_OFFSET;
+        return Math.abs(maxValueFloat - minValueFloat) <= Constants.MIN_TRIM_OFFSET;
     }
 
     private void updateTimeVideoPlaying() {
