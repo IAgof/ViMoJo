@@ -62,7 +62,6 @@ public class VoiceOverRecordPresenterTest {
   @Mock GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionFromProjectUseCase;
   @Mock Log mockedLog;
   @Mock File mockedFile;
-  @Mock GenerateVoiceOverUseCase mockedGenerateVoiceOverUseCase;
   @Mock AddAudioUseCase mockedAddAudioUseCase;
   @Mock RemoveAudioUseCase mockedRemoveAudioUseCase;
   @Mock UserEventTracker mockedUserEventTracker;
@@ -88,12 +87,11 @@ public class VoiceOverRecordPresenterTest {
     VoiceOverRecordPresenter voiceOverRecordPresenter =
             Mockito.spy(getVoiceOverRecorderPresenter());
     when(voiceOverRecordPresenter.isVoiceOverRecorded()).thenReturn(true);
-    when(mockedGenerateVoiceOverUseCase.exportVoiceOver(anyString(), anyString()))
-            .thenReturn(mockedListenableFuture);
 
     voiceOverRecordPresenter.setVoiceOver("somePath");
 
     verify(voiceOverRecordPresenter).applyVoiceOver(anyString());
+    verify(mockedVoiceOverRecordView).showProgressDialog();
   }
 
   @Test
@@ -188,7 +186,7 @@ public class VoiceOverRecordPresenterTest {
   private VoiceOverRecordPresenter getVoiceOverRecorderPresenter(){
     return new VoiceOverRecordPresenter(mockedContext, mockedVoiceOverRecordView,
             mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromProjectUseCase,
-            mockedGenerateVoiceOverUseCase,mockedAddAudioUseCase, mockedRemoveAudioUseCase,
+            mockedAddAudioUseCase, mockedRemoveAudioUseCase,
             mockedUserEventTracker);
   }
 }
