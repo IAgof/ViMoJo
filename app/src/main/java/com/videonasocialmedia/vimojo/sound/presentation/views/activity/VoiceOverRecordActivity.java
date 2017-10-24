@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -71,7 +72,7 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     private int maxDuration;
     private boolean buttonRecordIsInStop = false;
     private float videoVolumeMute = 0f;
-    private android.app.AlertDialog progressDialog;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,11 +89,15 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     }
 
     private void createProgressDialog() {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_export_progress, null);
-        progressDialog = builder.setCancelable(false)
-            .setView(dialogView)
-            .create();
+        progressDialog = new ProgressDialog(VoiceOverRecordActivity.this, R.style.VideonaDialog);
+        progressDialog.setTitle(R.string.alert_dialog_title_voice_over);
+        progressDialog.setMessage(getString(R.string.dialog_generating_voice_over));
+        progressDialog.setProgressStyle(progressDialog.STYLE_HORIZONTAL);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setProgressNumberFormat(null);
+        progressDialog.setProgressPercentFormat(null);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
     }
 
     private void restoreState(Bundle savedInstanceState) {
