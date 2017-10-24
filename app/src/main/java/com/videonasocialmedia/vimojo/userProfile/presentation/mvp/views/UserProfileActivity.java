@@ -6,10 +6,14 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -30,6 +34,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class UserProfileActivity extends VimojoActivity implements UserProfileActivityView {
 
@@ -44,6 +49,9 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
   TextView username;
   @Bind(R.id.user_profile_email)
   TextView email;
+  @Nullable
+  @Bind(R.id.text_dialog)
+  EditText editTextDialog;
 
   String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_PROFILE_THUMB;
   private int REQUEST_ICON_USER_PROFILE = 200;
@@ -66,7 +74,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
   }
 
   private void setUpAndCheckUserThumb() {
-    image_user = (CircleImageView)findViewById(R.id.image_user_profile);
+    image_user = (CircleImageView) findViewById(R.id.image_user_profile);
     image_user.setOnClickListener(new View.OnClickListener() {
 
       @Override
@@ -81,12 +89,12 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
     File thumb = new File(path);
     if (thumb.getName().compareTo(Constants.USER_PROFILE_THUMB) != 0) {
       try {
-        Utils.copyFile(path,userThumbPath);
+        Utils.copyFile(path, userThumbPath);
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
-    if(thumb.exists()) {
+    if (thumb.exists()) {
       Glide.with(this)
           .load(userThumbPath)
           .diskCacheStrategy(DiskCacheStrategy.RESULT)
@@ -145,7 +153,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (resultCode == RESULT_OK && requestCode == REQUEST_ICON_USER_PROFILE && data != null) {
-      if(data.getData() != null) {
+      if (data.getData() != null) {
         final String inPath = Utils.getPath(this, data.getData());
         if (inPath != null)
           updateUserThumb(inPath);
@@ -155,7 +163,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()){
+    switch (item.getItemId()) {
       case android.R.id.home:
         onBackPressed();
         return true;
@@ -173,4 +181,56 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
   public void showPreferenceEmail(String emailPreference) {
     email.setText(emailPreference);
   }
+
+  @OnClick(R.id.user_profile_username)
+  public void showDialogUpdateUsername() {
+    showDialogToUpdatePreference(username.getText().toString(), username);
+  }
+
+  private void showDialogToUpdatePreference(String text, final TextView textView) {
+    View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
+    editTextDialog = (EditText) dialogView.findViewById(R.id.text_dialog);
+    editTextDialog.setText(text);
+    final DialogInterface.OnClickListener dialogClickListener =
+        new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            hideKeyboard(editTextDialog);
+            switch (which) {
+              case DialogInterface.BUTTON_POSITIVE: {
+                String textPreference = editTextDialog.getText().toString();
+                if (textPreference.compareTo("") == 0)
+                  return;
+                textView.setText(textPreference);
+                presenter.updateUserNamePreference(textPreference);
+              }
+              case DialogInterface.BUTTON_NEGATIVE:
+                break;
+            }
+          }
+        };
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    AlertDialog alertDialog = builder.setCancelable(false)
+        .setTitle("Cambiar nombre de usuario")
+        .setView(dialogView)
+        .setPositiveButton(R.string.positiveButton, dialogClickListener)
+        .setNegativeButton(R.string.negativeButton, dialogClickListener)
+        .setCancelable(false).show();
+
+    editTextDialog.requestFocus();
+    showKeyboard();
+  }
+
+  private void showKeyboard() {
+    InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+  }
+
+  private void hideKeyboard(View v) {
+    InputMethodManager keyboard =
+        (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+    keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
+  }
 }
+

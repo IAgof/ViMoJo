@@ -16,6 +16,7 @@ import javax.inject.Inject;
 public class UserProfilePresenter {
 
   private SharedPreferences sharedPreferences;
+  private SharedPreferences.Editor preferencesEditor;
   private UserProfileActivityView userProfileActivityView;
   private Context context;
 
@@ -43,5 +44,12 @@ public class UserProfilePresenter {
     }else {
       userProfileActivityView.showPreferenceEmail(context.getResources().getString(R.string.emailPreference));
     }
+  }
+
+  public void updateUserNamePreference(String userNamePreference) {
+    preferencesEditor = sharedPreferences.edit();
+    preferencesEditor.putString(ConfigPreferences.USERNAME, userNamePreference);
+    preferencesEditor.apply();
+    userProfileActivityView.showPreferenceUserName(userNamePreference);
   }
 }
