@@ -234,9 +234,10 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.mixpanel.android:mixpanel-android:5.+'
-    compile 'com.google.android.gms:play-services-identity:10.2.0'
-    compile 'com.google.android.gms:play-services-gcm:10.2.0'
-    compile 'com.google.android.gms:play-services-analytics:10.2.0'
+    compile 'com.google.android.gms:play-services-identity:11.0.4'
+    compile 'com.google.android.gms:play-services-gcm:11.0.4'
+    compile 'com.google.android.gms:play-services-analytics:11.0.4'
+    compile 'com.google.firebase:firebase-core:11.0.4'
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.karumi:dexter:2.2.2'
     compile 'commons-net:commons-net:3.5'
@@ -281,3 +282,7 @@ dependencies {
 
     compile 'com.kailashdabhi:om-recorder:1.1.5'
 }
+
+// ADD THIS AT THE BOTTOM
+apply plugin: 'com.google.gms.google-services'
+
