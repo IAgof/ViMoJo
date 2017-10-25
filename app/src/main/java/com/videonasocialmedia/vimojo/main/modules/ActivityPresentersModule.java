@@ -2,6 +2,8 @@ package com.videonasocialmedia.vimojo.main.modules;
 
 import android.content.SharedPreferences;
 
+import com.videonasocialmedia.avrecorder.AudioRecorder;
+import com.videonasocialmedia.avrecorder.SessionConfig;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
@@ -62,18 +64,17 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.pr
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseDetailView;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseListView;
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.MergeVoiceOverAudiosUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverRecordPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverRecordActivity;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
@@ -84,6 +85,8 @@ import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+
+import java.io.IOException;
 
 import dagger.Module;
 import dagger.Provides;
@@ -120,23 +123,25 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  SoundVolumePresenter getSoundVolumePresenter(
+  VoiceOverVolumePresenter provideVoiceOverVolumePresenter(
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-          GetAudioFromProjectUseCase getAudioFromProjectUseCase, AddAudioUseCase addAudioUseCase,
-          RemoveAudioUseCase removeAudioUseCase) {
-    return new SoundVolumePresenter((SoundVolumeView) activity, getMediaListFromProjectUseCase,
-        getPreferencesTransitionFromProjectUseCase, getAudioFromProjectUseCase, addAudioUseCase,
-        removeAudioUseCase, activity);
+          GetAudioFromProjectUseCase getAudioFromProjectUseCase, ModifyTrackUseCase
+                  modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase) {
+    return new VoiceOverVolumePresenter(activity, (VoiceOverVolumeView) activity,
+            getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
+            getAudioFromProjectUseCase, modifyTrackUseCase, removeAudioUseCase);
   }
 
   @Provides @PerActivity
-  VoiceOverPresenter voiceOverPresenter(
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-          MergeVoiceOverAudiosUseCase mergeVoiceOverAudiosUseCase) {
-    return new VoiceOverPresenter((VoiceOverActivity) activity, getMediaListFromProjectUseCase,
-        getPreferencesTransitionFromProjectUseCase, mergeVoiceOverAudiosUseCase);
+  VoiceOverRecordPresenter provideVoiceOverRecordPresenter(
+      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+      AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
+      UserEventTracker userEventTracker) {
+    return new VoiceOverRecordPresenter(activity, (VoiceOverRecordActivity) activity,
+            getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
+            addAudioUseCase, removeAudioUseCase, userEventTracker);
   }
 
   @Provides @PerActivity

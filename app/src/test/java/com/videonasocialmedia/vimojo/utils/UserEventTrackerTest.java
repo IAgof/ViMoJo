@@ -294,6 +294,29 @@ public class UserEventTrackerTest {
     }
 
     @Test
+    public void trackVoiceOverSetCallsTrackWithEventNameAndProperties() throws IllegalItemOnTrack,
+            JSONException {
+        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
+                .getInstance(mockedMixpanelAPI));
+        Project videonaProject = getAProject();
+        final float defaultVolume = 0.5f;
+        int defaultDuration = 100;
+        String mediaPath = "somePath";
+        final Music voiceOver = new Music(mediaPath, defaultVolume, defaultDuration);
+        videonaProject.getAudioTracks().get(0).insertItem(voiceOver);
+
+        userEventTracker.trackVoiceOverSet(videonaProject);
+
+        Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
+        UserEventTracker.Event trackedEvent = eventCaptor.getValue();
+        assertThat(trackedEvent.getName(), is(AnalyticsConstants.VIDEO_EDITED));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.EDIT_ACTION),
+                is(AnalyticsConstants.EDIT_ACTION_VOICE_OVER_SET));
+        assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(),
+                videonaProject);
+    }
+
+    @Test
     public void trackVideoSharedPropertiesCallsTrackWithEventNameAndProperties()
             throws JSONException {
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker

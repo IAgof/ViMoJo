@@ -55,6 +55,7 @@ public class Constants {
 
     final public static String VIDEO_TEMP_RECORD_FILENAME = "VID_temp.mp4";
     final public static String AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME = "AudioVoiceOver.mp4";
+    final public static String AUDIO_TEMP_RECORD_VOICE_OVER_RAW_FILE_NAME = "AudioVoiceOver.pcm";
     final public static String MUSIC_AUDIO_VOICEOVER_TITLE = "audio_voice_over_music";
 
     final public static String AUDIO_MUSIC_FILE_EXTENSION = ".m4a";

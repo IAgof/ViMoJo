@@ -58,5 +58,6 @@ public class VimojoLicensesProvider {
     licenseList.add(new LicenseVimojo("TwoWayView",context.getString(R.string.licenseTwoWayView)));
     licenseList.add(new LicenseVimojo("Vertical Seekbar",context.getString(R.string.licenseVerticalSeekbar)));
     licenseList.add(new LicenseVimojo("Apache Commons Net",context.getString(R.string.licenseApacheCommonsNet)));
+    licenseList.add(new LicenseVimojo("OmRecorder", context.getString(R.string.licenseOmRecorder)));
   }
 }
