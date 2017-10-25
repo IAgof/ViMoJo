@@ -116,10 +116,21 @@
     <string name="dialog_project_edit_title_accept">Yes</string>
     <string name="dialog_project_edit_title_cancel">No</string>
 
-    <!--SoundVolumeActivity-->
-    <string name="exitSoundVolumeActivity" >Are you sure do you want to discard the changes and return to record again?</string>
-    <string name="acceptExitSoundVolumeActivity">Yes</string>
-    <string name="cancelExitSoundVolumeActvity">No</string>
+    <!--VoiceOverRecordRecordActivity-->
+    <string name="dialog_voice_over_cancel_title_message">Do you want to discard voice over and start a new one?</string>
+    <string name="dialog_voice_over_cancel_positive_button">Yes</string>
+    <string name="dialog_voice_over_cancel_negative_button">No</string>
+    <string name="alert_dialog_title_voice_over">Voice over</string>
+    <string name="alert_dialog_title_message_adding_voice_over">Problem adding voice over in project</string>
+    <string name="alert_dialog_title_message_start_record_voice_over">Please, record some voice over</string>
+    <string name="error_record_voice_over">Problem recording voice over, start again</string>
+    <string name="dialog_generating_voice_over">Generating voice over</string>
+    <string name="error_transcoding_voice_over">Error transcoding voice over</string>
+
+    <!--VoiceOverVolumeActivity-->
+    <string name="exitVoiceOverVolumeActivity" >Are you sure do you want to discard the changes and return to record again?</string>
+    <string name="acceptExitVoiceOverVolumeActivity">Yes</string>
+    <string name="cancelExitVoiceOverVolumeActvity">No</string>
 
     <!-- Trim fragment -->
     <string name="confirmTrim">Done</string>
@@ -946,6 +957,21 @@ limitations under the License. \n
         WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for
         the specific language governing permissions and limitations under the License. \n\n
         http://www.apache.org/licenses/LICENSE-2.0.txt
+    </string>
+    <string name="licenseOmRecorder">
+        Copyright 2017 Kailash Dabhi (Kingbull Technology)\n\n
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at\n\n
+
+           http://www.apache.org/licenses/LICENSE-2.0\n\n
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.\n\n
     </string>
 
     <!-- Legal Notice -->
@@ -2333,8 +2359,6 @@ and Conditions.\n\n
     <string name="alert_dialog_title_music">Music</string>
     <string name="alert_dialog_title_message_adding_music">Problem adding music in project</string>
     <string name="alert_dialog_title_message_removing_music">Problem removing music in project</string>
-    <string name="alert_dialog_title_voice_over">Voice over</string>
-    <string name="alert_dialog_title_message_adding_voice_over">Problem adding voice over in project</string>
 
 
     <string name="onNoVideosRetrieved">Not video retrieved</string>
@@ -2348,6 +2372,5 @@ and Conditions.\n\n
     <string name="solo">Solo</string>
     <string name="title_theme_app_preference">Dark theme</string>
     <string name="title_theme_app_section">Activate dark theme</string>
-
 
 </resources>

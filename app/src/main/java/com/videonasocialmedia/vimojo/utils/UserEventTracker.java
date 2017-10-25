@@ -132,6 +132,19 @@ public class UserEventTracker {
         }
     }
 
+    public void trackVoiceOverSet(Project project) {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.EDIT_ACTION,
+                    AnalyticsConstants.EDIT_ACTION_VOICE_OVER_SET);
+            addProjectEventProperties(project, eventProperties);
+            Event trackingEvent = new Event(AnalyticsConstants.VIDEO_EDITED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void addProjectEventProperties(Project project, JSONObject eventProperties)
             throws JSONException {
         eventProperties.put(AnalyticsConstants.NUMBER_OF_CLIPS, project.numberOfClips());
