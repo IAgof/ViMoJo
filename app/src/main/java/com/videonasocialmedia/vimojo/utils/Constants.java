@@ -55,6 +55,7 @@ public class Constants {
 
     final public static String VIDEO_TEMP_RECORD_FILENAME = "VID_temp.mp4";
     final public static String AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME = "AudioVoiceOver.mp4";
+    final public static String AUDIO_TEMP_RECORD_VOICE_OVER_RAW_FILE_NAME = "AudioVoiceOver.pcm";
     final public static String MUSIC_AUDIO_VOICEOVER_TITLE = "audio_voice_over_music";
 
     final public static String AUDIO_MUSIC_FILE_EXTENSION = ".m4a";
@@ -90,12 +91,14 @@ public class Constants {
     public static final int MAX_NUM_TRIES_TO_EXPORT_VIDEO = 4;
     public static final int EXPORT_ERROR_UNKNOWN = 10;
     public static final int EXPORT_ERROR_NO_SPACE_LEFT = 11;
+  public enum ERROR_TRANSCODING_TEMP_FILE_TYPE {SPLIT, TRIM, TEXT, AVTRANSITION, APP_CRASH;}
 
-  public enum ERROR_TRANSCODING_TEMP_FILE_TYPE {SPLIT, TRIM, TEXT, AVTRANSITION, APP_CRASH}
+    public enum BATTERY_STATUS {CHARGING, CRITICAL, LOW, MEDIUM, FULL, UNKNOW;}
 
-    public enum BATTERY_STATUS {CHARGING, CRITICAL, LOW, MEDIUM, FULL, UNKNOW}
-    public enum MEMORY_STATUS {CRITICAL, MEDIUM, OKAY}
+    public enum MEMORY_STATUS {CRITICAL, MEDIUM, OKAY;}
 
+    public static final float MIN_TRIM_OFFSET = 0.35f; //350ms
+    public static final float MS_CORRECTION_FACTOR = 1000f;
     public static final int ADVANCE_PLAYER_PRECISION_LOW = 300;
     public static final int ADVANCE_PLAYER_PRECISION_MEDIUM = 600;
     public static final int ADVANCE_PLAYER_PRECISION_HIGH = 1200;
