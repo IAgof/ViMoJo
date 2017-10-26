@@ -29,7 +29,7 @@ public class MergeVoiceOverAudiosUseCase {
     public void mergeAudio(String pathAudioMerge, final OnMergeVoiceOverAudiosListener listener) {
         // TODO(jliarte): 30/11/16 make this in just one step and build AVComposition?
         //                Move this to presenter and pass composition as an argument?
-        Project project = Project.getInstance(null,null,null);
+        Project project = Project.getInstance(null,null,null,null);
         ArrayList<String> audioPathList =
             createAudioPathList(project.getProjectPathIntermediateAudioFilesVoiceOverRecord());
         final String pathAudioEdited = pathAudioMerge;
@@ -74,7 +74,9 @@ public class MergeVoiceOverAudiosUseCase {
         File directory = new File(path);
         ArrayList<String> audiosList = new ArrayList<String>();
         for(File audio: directory.listFiles()){
-            audiosList.add(audio.getAbsolutePath());
+            if(audio.getName().startsWith("AUD_")) {
+                audiosList.add(audio.getAbsolutePath());
+            }
         }
         return audiosList;
     }
@@ -83,38 +85,4 @@ public class MergeVoiceOverAudiosUseCase {
         Crashlytics.log(msg);
         Log.d(TAG, msg+" - Error in export session: " + msg);
     }
-
-//    private void logExceptionWithMessage(Exception e, String msg) {
-//        Crashlytics.log(msg);
-//        Crashlytics.logException(e);
-//        Log.d(TAG, msg+" - "+String.valueOf(e));
-//    }
-
-//    private void oldMergeCode(ArrayList<String> audioPathList, String pathAudioEdited) {
-//        Movie result = appendFiles(audioPathList, true);
-//        if (result != null) {
-//            try {
-//                createFile(result, pathAudioEdited);
-//                listener.onMergeVoiceOverAudioSuccess(pathAudioEdited);
-//            } catch (IOException | NullPointerException e) {
-//                listener.onMergeVoiceOverAudioError(String.valueOf(e));
-//            } catch (NoSuchElementException e) {
-//                logExceptionWithMessage(e, "saveFinalVideo: Exception caught in 20161011 debugging session w/ pablo");
-//                listener.onMergeVoiceOverAudioError(String.valueOf(e));
-//            }
-//        }
-//    }
-
-
-//    private Movie appendFiles(ArrayList<String> videoTranscodedPaths, boolean addOriginalAudio) {
-//        Movie merge;
-//        try {
-//            merge = appender.appendVideos(videoTranscodedPaths, addOriginalAudio);
-//        } catch (Exception e) {
-//            merge = null;
-//            listener.onMergeVoiceOverAudioError(String.valueOf(e));
-//        }
-//        return merge;
-//    }
-
 }

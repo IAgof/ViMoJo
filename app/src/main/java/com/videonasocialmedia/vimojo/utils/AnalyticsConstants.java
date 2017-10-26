@@ -97,7 +97,16 @@ public class AnalyticsConstants {
     public static final String SOURCE_APP_VIDEONA = "Videona";
     public static final String DESTINATION_KAMARADA_PLAY = "Kamarada Google Play";
 
-
+    /**
+     * Record Events properties and values
+     */
+    public static final String RECORD_ACTION = "recordAction";
+    public static final String RECORD_ACTION_CHANGE_CAMERA_BACK = "Change camera back";
+    public static final String RECORD_ACTION_CHANGE_CAMERA_FRONT = "Change camera front";
+    public static final String RECORD_ACTION_CHANGE_FLASH_ON = "Change flash ON";
+    public static final String RECORD_ACTION_CHANGE_FLASH_OFF = "Change flash OFF";
+    public static final String RECORD_ACTION_START_RECORDING = "Start";
+    public static final String RECORD_ACTION_STOP_RECORDING = "Stop";
     /**
      * Edit Events properties and values
      */
@@ -107,9 +116,21 @@ public class AnalyticsConstants {
     public static final String EDIT_ACTION_SPLIT = "Split";
     public static final String EDIT_ACTION_DUPLICATE = "Duplicate";
     public static final String EDIT_ACTION_MUSIC_SET = "Music set";
+    public static final String EDIT_ACTION_VOICE_OVER_SET = "Voice over set";
     public static final String EDIT_ACTION_TEXT = "Text to video";
     public static final String TEXT_POSITION = "Text position";
     public static final String TEXT_LENGTH = "Text length";
     public static final String NUMBER_OF_DUPLICATES = "numberOfDuplicates";
     public static final String MUSIC_TITLE = "musicTitle";
+
+    /**
+     * App Theme Events properties and values
+     */
+    public static final String ACTION_THEME_CHANGED = "themeChanged";
+    public static final String ACTION_THEME_SELECTED = "themeSelected";
+    public static final String THEME_CHANGE_SOURCE = "sourceThemeChanged";
+    public static final String THEME_CHANGE_SOURCE_DRAWER = "sourceThemeDrawer";
+    public static final String THEME_CHANGE_SOURCE_SETTINGS = "sourceThemeSettings";
+    public static final String THEME_APP_ACTION_DARK = "Theme dark";
+    public static final String THEME_APP_ACTION_LIGHT = "Theme light";
 }

@@ -48,13 +48,9 @@ public class ChooseCameraResolutionListPreferences extends ListPreference {
     }
 
     private VideoFormatPreferencesComponent initComponent() {
-        // TODO(jliarte): 14/12/16 should access to systemComponent singleton instead of create a
-        //                new DataRepositoriesModule?
         return DaggerVideoFormatPreferencesComponent.builder()
                 .videoFormatPreferencesModule(new VideoFormatPreferencesModule())
-                .dataRepositoriesModule(new DataRepositoriesModule())
-                .applicationModule(((VimojoApplication) getContext().getApplicationContext())
-                        .getApplicationModule())
+                .systemComponent(((VimojoApplication) getContext().getApplicationContext()).getSystemComponent())
                 .build();
     }
 

@@ -19,4 +19,6 @@ public interface DuplicateView {
 
     void showError(String message);
 
+    void updateProject();
+
 }

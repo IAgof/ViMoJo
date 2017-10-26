@@ -55,6 +55,8 @@ public class VideoTimeLineAdapter
     this.videoViewHolders.put(currentVideo, holder);
     if (failedVideos.indexOf(currentVideo) > 0) {
       holder.enableWarningIcon();
+    } else {
+      holder.diableWarningIcon();
     }
   }
 
@@ -111,7 +113,7 @@ public class VideoTimeLineAdapter
     return selectedVideoPosition;
   }
 
-  public void setFailedVideos(ArrayList<Video> failedVideod) {
-    this.failedVideos = failedVideod;
+  public void setFailedVideos(ArrayList<Video> failedVideos) {
+    this.failedVideos = failedVideos;
   }
 }

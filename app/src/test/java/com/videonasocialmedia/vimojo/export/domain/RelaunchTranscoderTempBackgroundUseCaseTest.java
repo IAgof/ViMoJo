@@ -1,11 +1,10 @@
 package com.videonasocialmedia.vimojo.export.domain;
 
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
-import com.videonasocialmedia.transcoder.video.overlay.Image;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -23,8 +22,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -36,7 +35,9 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -50,117 +51,117 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
   @Mock TextToDrawable mockedDrawableGenerator;
   @Mock MediaTranscoder mockedMediaTranscoder;
   @Mock TranscoderHelper mockedTranscoderHelper;
-  @Mock Drawable mockDrawableFadeTransition;
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
   @Mock VideoRepository mockedVideoRepository;
-  String intermediatesTempAudioFadeDirectory;
-  boolean isVideoFadeTransitionActivated;
-  boolean isAudioFadeTransitionActivated;
 
   @InjectMocks
   RelaunchTranscoderTempBackgroundUseCase injectedRelaunchTranscoderTempBackgroundUseCase;
-
-  private final VideonaFormat videonaFormat = new VideonaFormat();
 
   @Before
   public void injectDoubles() throws Exception {
     MockitoAnnotations.initMocks(this);
   }
 
+  private void clearProject() {
+    if (Project.INSTANCE != null) {
+      Project.INSTANCE.clear();
+    }
+  }
+
   @Ignore
   @Test
   public void testBugRelaunchExportThrowsNPE_WhenVideoHasntText() throws Exception {
+    Project currentProject = getAProject();
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assertThat(video.getClipText(), is(nullValue()));
 
-    new RelaunchTranscoderTempBackgroundUseCase().relaunchExport(mockDrawableFadeTransition, video,
-        videonaFormat, intermediatesTempAudioFadeDirectory,
-        mockedTranscoderHelperListener);
-  }
-
-  @Ignore
-  @Test
-  public void testRelaunchExportCallsTranscodeTrimAndOverlayImageToVideoIfVideoHasText()
-          throws IOException {
-    Video video = getVideoWithText();
-    assert video.hasText();
-    video.setStopTime(10);
-    Project currentProject = getAProject();
-    // TODO(jliarte): 19/10/16 replace injected mocked transcoderhelper with a real one.
-    injectedRelaunchTranscoderTempBackgroundUseCase.transcoderHelper =
-            new TranscoderHelper(mockedDrawableGenerator, mockedMediaTranscoder);
-
-    injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
-        videonaFormat, currentProject.getProjectPathIntermediateFileAudioFade(),
-        mockedTranscoderHelperListener);
-
-    verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
-        eq(mockDrawableFadeTransition), eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()),
-            eq(video.getTempPath()), eq(videonaFormat),
-            Matchers.any(Image.class), eq(video.getStartTime()), eq(video.getStopTime()));
+    new RelaunchTranscoderTempBackgroundUseCase(mockedVideoRepository)
+            .relaunchExport(video, currentProject);
   }
 
   @Test
-  public void testRelaunchExportCallsgenerateOutputVideoWithOverlayImageAndTrimmingIfVideoHasText()
+  public void testRelaunchExportCallsUpdateIntermediateFileIfVideoHasText()
           throws Exception {
+    Project project = getAProject();
     Video video = getVideoWithText();
     assert video.hasText();
-    injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition,
-        video, videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+    injectedRelaunchTranscoderTempBackgroundUseCase.transcoderHelper = mockedTranscoderHelper;
+    ListenableFuture<Video> mockedTask = Mockito.mock(ListenableFuture.class);
+    doReturn(mockedTask).when(mockedTranscoderHelper).updateIntermediateFile(
+            eq(project.getVMComposition().getDrawableFadeTransitionVideo()),
+            eq(project.getVMComposition().isVideoFadeTransitionActivated()),
+            eq(project.getVMComposition().isAudioFadeTransitionActivated()),
+            eq(video), any(VideonaFormat.class),
+            eq(project.getProjectPathIntermediateFileAudioFade()));
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithOverlayImageAndTrimmingAsync(
-        mockDrawableFadeTransition, isVideoFadeTransitionActivated, isAudioFadeTransitionActivated,
-        video, videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
-  }
+    injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(video, project);
 
-  @Ignore
-  @Test
-  public void testRelaunchExportCallsTranscodeAndTrimVideoIfVideoHasntText() throws IOException {
-    Video video = new Video("media/path", Video.DEFAULT_VOLUME);
-    assert ! video.hasText();
-    injectedRelaunchTranscoderTempBackgroundUseCase.transcoderHelper =
-            new TranscoderHelper(mockedDrawableGenerator, mockedMediaTranscoder);
-    Project currentProject = getAProject();
-    injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
-        videonaFormat, currentProject.getProjectPathIntermediateFileAudioFade(),
-        mockedTranscoderHelperListener);
-
-    verify(mockedMediaTranscoder).transcodeAndTrimVideo(eq(mockDrawableFadeTransition),
-        eq(isVideoFadeTransitionActivated), eq(video.getMediaPath()), eq(video.getTempPath()),
-        eq(videonaFormat), eq(video.getStartTime()), eq(video.getStopTime()));
+    verify(mockedTranscoderHelper).updateIntermediateFile(
+            eq(project.getVMComposition().getDrawableFadeTransitionVideo()),
+            eq(project.getVMComposition().isVideoFadeTransitionActivated()),
+            eq(project.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
+            any(VideonaFormat.class),
+            eq(project.getProjectPathIntermediateFileAudioFade()));
   }
 
   @Test
-  public void testRelaunchExportCallsGenerateOutputVideoWithTrimmingIfVideoHasntText()
+  public void testRelaunchExportCallsUpdateIntermediateFileIfVideoHasntText()
           throws IOException {
+    Project project = getAProject();
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assert ! video.hasText();
+    injectedRelaunchTranscoderTempBackgroundUseCase.transcoderHelper = mockedTranscoderHelper;
+    ListenableFuture<Video> mockedTask = Mockito.mock(ListenableFuture.class);
+    doReturn(mockedTask).when(mockedTranscoderHelper).updateIntermediateFile(
+            eq(project.getVMComposition().getDrawableFadeTransitionVideo()),
+            eq(project.getVMComposition().isVideoFadeTransitionActivated()),
+            eq(project.getVMComposition().isAudioFadeTransitionActivated()),
+            eq(video), any(VideonaFormat.class),
+            eq(project.getProjectPathIntermediateFileAudioFade()));
 
-    injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
-        videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+    injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(video, project);
 
-    verify(mockedTranscoderHelper).generateOutputVideoWithTrimmingAsync(mockDrawableFadeTransition,
-        isVideoFadeTransitionActivated, isAudioFadeTransitionActivated, video, videonaFormat,
-        intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+    verify(mockedTranscoderHelper).updateIntermediateFile(
+            eq(project.getVMComposition().getDrawableFadeTransitionVideo()),
+            eq(project.getVMComposition().isVideoFadeTransitionActivated()),
+            eq(project.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
+            any(VideonaFormat.class),
+            eq(project.getProjectPathIntermediateFileAudioFade()));
   }
 
   @Test
-  public void relaunchExportCallsVideoRepositoryUpdate() {
+  public void relaunchExportCallsVideoRepositoryUpdate() throws IOException {
+    Project project = getAProject();
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
+    injectedRelaunchTranscoderTempBackgroundUseCase.transcoderHelper = mockedTranscoderHelper;
+    ListenableFuture<Video> mockedTask = Mockito.mock(ListenableFuture.class);
+    doReturn(mockedTask).when(mockedTranscoderHelper).updateIntermediateFile(
+            eq(project.getVMComposition().getDrawableFadeTransitionVideo()),
+            eq(project.getVMComposition().isVideoFadeTransitionActivated()),
+            eq(project.getVMComposition().isAudioFadeTransitionActivated()),
+            eq(video), any(VideonaFormat.class),
+            eq(project.getProjectPathIntermediateFileAudioFade()));
 
-    injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
-        videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+    injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(video, project);
 
     verify(mockedVideoRepository).update(video);
   }
 
   @Test
-  public void relaunchExportUpdateIsTranscodingTempFileFinished() {
+  public void relaunchExportUpdateIsTranscodingTempFileFinished() throws IOException {
+    Project project = getAProject();
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assert video.isTranscodingTempFileFinished();
+    injectedRelaunchTranscoderTempBackgroundUseCase.transcoderHelper = mockedTranscoderHelper;
+    ListenableFuture<Video> mockedTask = Mockito.mock(ListenableFuture.class);
+    doReturn(mockedTask).when(mockedTranscoderHelper).updateIntermediateFile(
+            eq(project.getVMComposition().getDrawableFadeTransitionVideo()),
+            eq(project.getVMComposition().isVideoFadeTransitionActivated()),
+            eq(project.getVMComposition().isAudioFadeTransitionActivated()),
+            eq(video), any(VideonaFormat.class),
+            eq(project.getProjectPathIntermediateFileAudioFade()));
 
-    injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(mockDrawableFadeTransition, video,
-        videonaFormat, intermediatesTempAudioFadeDirectory, mockedTranscoderHelperListener);
+    injectedRelaunchTranscoderTempBackgroundUseCase.relaunchExport(video, project);
 
     assertThat(video.isTranscodingTempFileFinished(), is(false));
   }
@@ -174,8 +175,9 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
   }
 
   public Project getAProject() {
-    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+    clearProject();
+    return Project.getInstance("title", "/path", "private/path",
+            new Profile(VideoResolution.Resolution.HD720,
+                    VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
-
 }

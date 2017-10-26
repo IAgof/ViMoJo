@@ -1,19 +1,17 @@
 package com.videonasocialmedia.vimojo.domain.project;
 
-import com.videonasocialmedia.videonamediaframework.model.Constants;
-import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
-import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
-import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
+import android.graphics.drawable.Drawable;
+
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.track.TrackRealmRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -25,6 +23,7 @@ public class CreateDefaultProjectUseCase {
   protected ProfileRepository profileRepository;
   protected ProjectRepository projectRepository;
   protected TrackRepository trackRepository;
+  private final Drawable drawableFadeTransitionVideo;
 
   /**
    * Default constructor with project repository argument.
@@ -36,32 +35,41 @@ public class CreateDefaultProjectUseCase {
     this.projectRepository = projectRepository;
     this.profileRepository = profileRepository;
     this.trackRepository = trackRepository;
+    drawableFadeTransitionVideo = VimojoApplication.getAppContext()
+            .getDrawable(R.drawable.alpha_transition_white);
   }
 
-  public void loadOrCreateProject(String rootPath, boolean isWatermarkFeatured) {
-
+  public void loadOrCreateProject(String rootPath, String privatePath,
+                                  boolean isWatermarkFeatured) {
     // By default project title,
     String projectTitle = DateUtils.getDateRightNow();
     // TODO(jliarte): 22/10/16 we should store current project in other place than Project instance.
     //                This is done for convenience only as we should get rid of all
     //                Project.getInstance calls
+    boolean isProjectCreated = false;
     if (Project.INSTANCE == null) {
       Project.INSTANCE = projectRepository.getCurrentProject();
+      isProjectCreated = true;
     }
 
-    Project currentProject = Project.getInstance(projectTitle, rootPath,
+    Project currentProject = Project.getInstance(projectTitle, rootPath, privatePath,
         profileRepository.getCurrentProfile());
-    if(isWatermarkFeatured){
+    currentProject.getVMComposition().setDrawableFadeTransitionVideo(drawableFadeTransitionVideo);
+    if ((isProjectCreated && isWatermarkFeatured) || areWeIntoFlavorVimojo()) {
       currentProject.setWatermarkActivated(true);
     }
     projectRepository.update(currentProject);
   }
 
-  public void createProject(String rootPath, boolean isWatermarkFeatured){
+  private boolean areWeIntoFlavorVimojo() {
+    return BuildConfig.FLAVOR.compareTo(Constants.FLAVOR_VIMOJO) == 0;
+  }
+
+  public void createProject(String rootPath, String privatePath, boolean isWatermarkFeatured) {
     String projectTitle = DateUtils.getDateRightNow();
-    Project currentProject = new Project(projectTitle,rootPath,
+    Project currentProject = new Project(projectTitle, rootPath, privatePath,
         profileRepository.getCurrentProfile());
-    if(isWatermarkFeatured){
+    if (isWatermarkFeatured || areWeIntoFlavorVimojo()) {
       currentProject.setWatermarkActivated(true);
     }
     Project.INSTANCE = currentProject;

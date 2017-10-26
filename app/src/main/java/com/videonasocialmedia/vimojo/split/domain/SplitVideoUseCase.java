@@ -27,6 +27,7 @@ public class SplitVideoUseCase {
         final Video endVideo = new Video(initialVideo);
         endVideo.setStartTime(splitTimeMs);
         endVideo.setStopTime(initialVideo.getStopTime());
+        endVideo.setTranscodingTask(initialVideo.getTranscodingTask());
         initialVideo.setStopTime(splitTimeMs);
 
         addVideoToProjectUseCase.addVideoToProjectAtPosition(endVideo, positionInAdapter + 1,

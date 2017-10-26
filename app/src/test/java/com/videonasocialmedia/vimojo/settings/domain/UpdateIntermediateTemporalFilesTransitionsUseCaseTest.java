@@ -7,12 +7,14 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.settings.presentation.mvp.views.OnRelaunchTemporalFileListener;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
+import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.OnRelaunchTemporalFileListener;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,19 +32,20 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
   @Mock VideoRepository mockedVideoRepository;
   @Mock OnRelaunchTemporalFileListener mockedOnRelaunchTemporalFileListener;
   @Mock OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
+  @Mock private ApplyAVTransitionsUseCase mockedApplyAVTransitionUseCase;
 
   @Before
-  public void init(){
+  public void init() {
     MockitoAnnotations.initMocks(this);
-    Project project = Project.getInstance(null, null, null);
+    Project project = Project.getInstance(null, null, null, null);
     project.clear();
   }
 
   @Test
-  public void ifProjectHasVideosCallsVideoToRelaunchListener(){
+  public void ifProjectHasVideosCallsVideoToRelaunchListener() {
     Project project = getAProject();
     AddVideoToProjectUseCase addVideoToProjectUseCase =
-            new AddVideoToProjectUseCase(mockedProjectRepository);
+            new AddVideoToProjectUseCase(mockedProjectRepository, mockedApplyAVTransitionUseCase);
     Video videoAdded = new Video("somepath", 1f);
     videoAdded.setTempPath("tempDirectory");
     addVideoToProjectUseCase.addVideoToProjectAtPosition(videoAdded, 0,
@@ -58,7 +61,7 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
   }
 
   private Project getAProject() {
-    return Project.getInstance("title", "/path", Profile.getInstance(
+    return Project.getInstance("title", "/path", "private/path", Profile.getInstance(
             VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25));
   }

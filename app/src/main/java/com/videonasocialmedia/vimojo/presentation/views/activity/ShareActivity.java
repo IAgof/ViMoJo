@@ -88,10 +88,19 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         videonaPlayer.setListener(this);
         initOptionsShareList();
         restoreState(savedInstanceState);
+        checkIntentExtras();
         bottomBar.selectTabWithId(R.id.tab_share);
         setupBottomBar(bottomBar);
         hideFab();
         initBarProgressDialog();
+    }
+
+    // if user updates theme from drawer
+    private void checkIntentExtras() {
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null) {
+            videoPath = bundle.getString("videoPath");
+        }
     }
 
   @Override
@@ -294,7 +303,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaDialog);
         AlertDialog alertDialog = builder.setCancelable(false)
                 .setTitle(R.string.title_dialog_sharedActivity)
                 .setView(dialogView)
@@ -328,7 +337,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        presenter.newDefaultProject(Constants.PATH_APP,
+                        presenter.newDefaultProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
                             BuildConfig.FEATURE_WATERMARK);
                         navigateTo(GoToRecordOrGalleryActivity.class);
                         break;
@@ -342,7 +351,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
         AlertDialog alertDialogClearProject = builder.setCancelable(false)
                 .setMessage(R.string.dialog_message_clean_project)
                 .setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
@@ -361,7 +370,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       }
     }
 
-    @Override
+  @Override
     public void loadExportedVideoPreview(String mediaPath) {
       final String destPath = getDestPath(mediaPath);
       final ShareActivity activity = this;
@@ -391,9 +400,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   @Override
-  public void showVideoExportError() {
+  public void showVideoExportError(int cause) {
     exportProgressDialog.dismiss();
-    showVideoExportErrorDialog();
+    showVideoExportErrorDialog(cause);
   }
 
   @Override
@@ -408,7 +417,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     });
   }
 
-  private void showVideoExportErrorDialog() {
+  private void showVideoExportErrorDialog(final int cause) {
     final ShareActivity activity = this;
     runOnUiThread(new Runnable() {
       @Override
@@ -424,11 +433,15 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
                     }
                   }
                 };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.VideonaAlertDialog);
+        int dialog_message_export_error = R.string.dialog_message_export_error_unknown;
+        switch (cause) {
+          case Constants.EXPORT_ERROR_NO_SPACE_LEFT:
+            dialog_message_export_error = R.string.dialog_message_export_error_no_space_left;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.VideonaDialog);
         AlertDialog alertDialogClearProject = builder.setCancelable(false)
                 .setTitle(R.string.dialog_title_export_error)
-                .setMessage(R.string.dialog_message_export_error)
+                .setMessage(dialog_message_export_error)
                 .setNeutralButton(R.string.ok, dialogClickListener).show();
       }
     });

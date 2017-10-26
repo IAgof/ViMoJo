@@ -11,17 +11,16 @@ import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.FileDescriptorBitmapDecoder;
 import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
-import com.videonasocialmedia.transcoder.video.overlay.Image;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.ItemTouchHelperViewHolder;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.VideoTimeLineAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 import static com.videonasocialmedia.videonamediaframework.utils.TimeUtils.toFormattedTimeHoursMinutesSecond;
 
@@ -78,16 +77,18 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
             DecodeFormat.PREFER_ARGB_8888);
     String path = currentVideo.getIconPath() != null
             ? currentVideo.getIconPath() : currentVideo.getMediaPath();
-
+    int radius = 70;
+    int margin = 70;
     Glide.with(context)
             .load(path)
             .asBitmap()
-            .override(thumbnailView.getMaxWidth(), thumbnailView.getMaxHeight())
+//            .override(thumbnailView.getMaxWidth(), thumbnailView.getMaxHeight())
+//            .override(thumbnailView.getMeasuredWidth(), thumbnailView.getMeasuredHeight())
             // TODO(jliarte): 24/04/17 this seems not to work
             .override(100, 100)
-//                .override(thumbnailView.getMeasuredWidth(), thumbnailView.getMeasuredHeight())
             .videoDecoder(decoder)
             .centerCrop()
+            .transform(new RoundedCornersTransformation(context, radius, margin))
             .error(R.drawable.fragment_gallery_no_image)
             .into(thumbnailView);
   }

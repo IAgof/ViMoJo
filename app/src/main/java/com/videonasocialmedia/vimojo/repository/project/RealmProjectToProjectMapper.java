@@ -52,7 +52,8 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
 
   @NonNull
   private Profile mapProfile(RealmProject realmProject) {
-    VideoResolution.Resolution resolution = VideoResolution.Resolution.valueOf(realmProject.resolution);
+    VideoResolution.Resolution resolution =
+            VideoResolution.Resolution.valueOf(realmProject.resolution);
     VideoQuality.Quality quality = VideoQuality.Quality.valueOf(realmProject.quality);
     VideoFrameRate.FrameRate frameRate = VideoFrameRate.FrameRate.valueOf(realmProject.frameRate);
 
@@ -62,13 +63,15 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
   @NonNull
   private Project mapProject(RealmProject realmProject){
     Project currentProject = new Project(realmProject.title, Constants.PATH_APP,
-        mapProfile(realmProject));
+        Constants.PATH_APP_ANDROID, mapProfile(realmProject));
     currentProject.setProjectPath(realmProject.projectPath);
     currentProject.setUuid(realmProject.uuid);
     currentProject.setLastModification(realmProject.lastModification);
     currentProject.setDuration(realmProject.duration);
-    currentProject.setAudioFadeTransitionActivated(realmProject.isAudioFadeTransitionActivated);
-    currentProject.setVideoFadeTransitionActivated(realmProject.isVideoFadeTransitionActivated);
+    currentProject.getVMComposition().setAudioFadeTransitionActivated(
+            realmProject.isAudioFadeTransitionActivated);
+    currentProject.getVMComposition().setVideoFadeTransitionActivated(
+            realmProject.isVideoFadeTransitionActivated);
     currentProject.setWatermarkActivated(realmProject.isWatermarkActivated);
 
     return currentProject;
@@ -87,7 +90,7 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
   }
 
   private void setProjectLastVideoExported(Project project, RealmProject realmProject) {
-    if(realmProject.dateLastVideoExported != null && realmProject.pathLastVideoExported != null){
+    if (realmProject.dateLastVideoExported != null && realmProject.pathLastVideoExported != null) {
       LastVideoExported lastVideoExported = new LastVideoExported(
           realmProject.pathLastVideoExported,realmProject.dateLastVideoExported);
       project.setLastVideoExported(lastVideoExported);

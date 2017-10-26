@@ -19,7 +19,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
-import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -39,6 +39,8 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -55,10 +57,11 @@ public class EditPresenterTest {
   @Mock private UserEventTracker mockedUserEventTracker;
   @Mock private RemoveVideoFromProjectUseCase mockedVideoRemover;
   @Mock private ReorderMediaItemUseCase mockedMediaItemReorderer;
-  @Mock private GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionsFromProject;
   @Mock private GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
-  @Mock ListenableFuture<Void> mockedTranscodingTask;
+  @Mock ListenableFuture<Video> mockedTranscodingTask;
   @Mock private VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
+  @Mock private GetPreferencesTransitionFromProjectUseCase
+          mockedGetPreferencesTransitionsFromProject;
 
   @InjectMocks private EditPresenter injectedEditPresenter;
 
@@ -81,7 +84,8 @@ public class EditPresenterTest {
   public void loadProjectCallsGetMediaListFromProjectUseCase() {
     injectedEditPresenter.obtainVideos();
 
-    verify(mockedGetMediaListFromProjectUseCase).getMediaListFromProject(Mockito.any(OnVideosRetrieved.class));
+    verify(mockedGetMediaListFromProjectUseCase)
+            .getMediaListFromProject(any(OnVideosRetrieved.class));
   }
 
   // TODO(jliarte): 27/04/17 FIXME fix this test
@@ -105,7 +109,7 @@ public class EditPresenterTest {
     EditPresenter presenter = new EditPresenter(mockedEditorView,
             mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
             mockedVideoRemover, mockedMediaItemReorderer, getAudioFromProjectUseCase,
-            mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);
+            mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionsFromProject);
 
     presenter.init();
 
@@ -132,7 +136,6 @@ public class EditPresenterTest {
             mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
             mockedVideoRemover, mockedMediaItemReorderer, mockedGetAudioFromProjectUseCase,
             mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);
-    ArrayList<Video> failedVideos = new ArrayList<>();
 
     presenter.videoListErrorCheckerDelegate
             .checkWarningMessageVideosRetrieved(videoList, mockedVideoTranscodingErrorNotifier);
@@ -149,6 +152,6 @@ public class EditPresenterTest {
   public Project getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
-    return Project.getInstance("title", "/path", profile);
+    return Project.getInstance("title", "/path", "private/path", profile);
   }
 }

@@ -7,6 +7,7 @@ public class IntentConstants {
 
     public final static String VIDEO_ID = "videoId";
     public final static String VIDEO_EXPORTED = "videoExportedNavigateToShareActivity";
+    public final static String THEME_APP="themeAppSelected";
 
     /**
      * Trimming files
@@ -66,4 +67,10 @@ public class IntentConstants {
 
   public static final String JACK_PLUG_NOTIFICATION = "jack_plug_notifications";
   public static final String MICROPHONE_STATUS = "microphone";
+
+  /**
+   * LicenseVimojo Activity
+   */
+
+  public static final String LICENSE_SELECTED = "license_selected";
 }

@@ -53,7 +53,7 @@ public class ShareVideoPresenterTest {
 
     @After
     public void tearDown() {
-        Project.getInstance(null, null, null).clear();
+        Project.getInstance(null, null, null, null).clear();
     }
 
     @Test
@@ -61,7 +61,7 @@ public class ShareVideoPresenterTest {
         Project videonaProject = getAProject();
 
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
-                mockedUserEventTracker, mockSharedPrefs, mockContext,
+                mockedUserEventTracker, mockSharedPrefs,
                 mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
                 mockedExportProjectUseCase);
 
@@ -72,7 +72,7 @@ public class ShareVideoPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
-                userEventTracker, mockSharedPrefs, mockContext, mockedCreateDefaultProjectUseCase,
+                userEventTracker, mockSharedPrefs, mockedCreateDefaultProjectUseCase,
             mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
@@ -80,7 +80,7 @@ public class ShareVideoPresenterTest {
     @Test
     public void shareVideoPresenterCallsTracking(){
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
-                mockedUserEventTracker, mockSharedPrefs, mockContext,
+                mockedUserEventTracker, mockSharedPrefs,
                 mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
                 mockedExportProjectUseCase);
         Project videonaProject = getAProject();
@@ -92,7 +92,7 @@ public class ShareVideoPresenterTest {
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path",
+        return Project.getInstance("title", "/path", "private/path",
                 Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
                         VideoFrameRate.FrameRate.FPS25));
     }

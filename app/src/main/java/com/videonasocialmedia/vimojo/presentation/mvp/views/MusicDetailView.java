@@ -24,4 +24,5 @@ public interface MusicDetailView {
 
     void showError(String message);
 
+    void updateProject();
 }

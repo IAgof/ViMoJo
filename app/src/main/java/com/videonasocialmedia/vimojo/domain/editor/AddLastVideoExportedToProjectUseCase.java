@@ -15,18 +15,17 @@ public class AddLastVideoExportedToProjectUseCase {
   private ProjectRepository projectRepository;
 
   @Inject
-  public AddLastVideoExportedToProjectUseCase(ProjectRepository projectRepository){
+  public AddLastVideoExportedToProjectUseCase(ProjectRepository projectRepository) {
     this.projectRepository = projectRepository;
   }
 
-  public void addLastVideoExportedToProject(String pathVideoExported, String date){
+  public void addLastVideoExportedToProject(String pathVideoExported, String date) {
     //// TODO:(alvaro.martinez) 19/12/16 Move this functionality to VMComposition
-    Project currentProject = Project.getInstance(null,null,null);
+    Project currentProject = Project.getInstance(null,null,null,null);
     LastVideoExported lastVideoExported = new LastVideoExported(pathVideoExported, date);
     currentProject.setLastVideoExported(lastVideoExported);
     currentProject.setLastModification(date);
     projectRepository.updateWithDate(currentProject, date);
-
   }
 
 }

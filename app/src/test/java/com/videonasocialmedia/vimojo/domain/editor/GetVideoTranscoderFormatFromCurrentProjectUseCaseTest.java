@@ -25,7 +25,7 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
   @Before
   public void setUp() throws Exception {
     // FIXME: tests are not independent as Project keeps state between tests
-    Project.getInstance(null, null, null).clear();
+    Project.getInstance(null, null, null, null).clear();
     MockitoAnnotations.initMocks(this);
   }
 
@@ -50,11 +50,15 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
         new GetVideoFormatFromCurrentProjectUseCase();
     VideonaFormat defaultVideoTranscoderFormat = new VideonaFormat();
 
-    VideoCameraFormat videoTranscoderFormat = useCase.getVideoRecordedFormatFromCurrentProjectUseCase();
+    VideoCameraFormat videoTranscoderFormat =
+            useCase.getVideoRecordedFormatFromCurrentProjectUseCase();
 
-    assertThat(videoTranscoderFormat.getVideoBitrate(), is(defaultVideoTranscoderFormat.getVideoBitrate()));
-    assertThat(videoTranscoderFormat.getVideoHeight(), is(defaultVideoTranscoderFormat.getVideoHeight()));
-    assertThat(videoTranscoderFormat.getVideoWidth(), is(defaultVideoTranscoderFormat.getVideoWidth()));
+    assertThat(videoTranscoderFormat.getVideoBitrate(),
+            is(defaultVideoTranscoderFormat.getVideoBitrate()));
+    assertThat(videoTranscoderFormat.getVideoHeight(),
+            is(defaultVideoTranscoderFormat.getVideoHeight()));
+    assertThat(videoTranscoderFormat.getVideoWidth(),
+            is(defaultVideoTranscoderFormat.getVideoWidth()));
   }
 
   @Test
@@ -75,9 +79,10 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
   private Project getAProject() {
     String title = "project title";
     String rootPath = "project/root/path";
-    Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
-        VideoFrameRate.FrameRate.FPS25);
-    return Project.getInstance(title, rootPath, profile);
+    String privatePath = "private/path";
+    Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720,
+            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+    return Project.getInstance(title, rootPath, privatePath, profile);
   }
 
 }

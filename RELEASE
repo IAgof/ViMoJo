@@ -1,11 +1,5 @@
-v0.7.0-RC3
-- Added grid disabling when camera default settings is pressed.
-- Updated default quality to 16Mbps.
-- Pro camera capabilities are re-scanning when user switches camera.
-- Fixed spot metering selection icon when selecting center or auto metering and when switching camera.
-- Added picometer in record screen. Show amplitude values in preview and recording states.
-- Added icon if an external microphone is connected.
-- Fixed minim camera bugs and improved stability.
-- Added audio gain for recording videos
-- Updated split and trimming views with fine advance buttons
-- Added flavours for thomson foundation and vimojo with videona watermark
+v0.7.0-RC10
+- Modified trim task error handling to slightly move trim times before relaunching again
+- Fixed camera bug that caused app crash when going back to camera from other views
+- Fixed missing chunks voice over. Changed audio recorder library.
+- Improved stability in voice over record and volume screen.

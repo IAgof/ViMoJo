@@ -81,12 +81,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         setContentView(R.layout.activity_video_text);
         ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-
         getActivityPresentersComponent().inject(this);
         videonaPlayer.setSeekBarLayoutEnabled(false);
         videonaPlayer.setListener(this);
@@ -268,6 +262,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @Override
     public void showPreview(List<Video> movieList) {
+        // (alvaro.martinez) 4/10/17 work on a copy to not modify original one until user accepts text
         video = new Video(movieList.get(0));
         ArrayList<Video> clipList = new ArrayList<>();
         clipList.add(video);
@@ -300,6 +295,11 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         TextEffect.TextPosition positionText = TextToDrawable.getTypePositionFromString(position);
         paintPositionEditText(positionText);
         createDrawableFromText(typedText, positionText);
+    }
+
+    @Override
+    public void updateProject() {
+        presenter.init(videoIndexOnTrack);
     }
 
     @Override

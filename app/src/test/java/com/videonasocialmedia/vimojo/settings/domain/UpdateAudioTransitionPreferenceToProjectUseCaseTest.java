@@ -6,14 +6,15 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
@@ -34,7 +35,7 @@ public class UpdateAudioTransitionPreferenceToProjectUseCaseTest {
 
   @Test
   public void updateVideoTransitionPreferenceCallsUpdateRepository(){
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     injectedUseCase.setAudioFadeTransitionActivated(false);
     verify(mockedProjectRepository).update(currentProject);
   }
@@ -44,18 +45,19 @@ public class UpdateAudioTransitionPreferenceToProjectUseCaseTest {
     Project project = getAProject();
     boolean audioTransitionActivated = true;
     assertThat("project videoTransitionPreference false by default ",
-        project.isAudioFadeTransitionActivated(), CoreMatchers.is(false));
+        project.getVMComposition().isAudioFadeTransitionActivated(), is(false));
 
     injectedUseCase.setAudioFadeTransitionActivated(audioTransitionActivated);
 
-    project = Project.getInstance(null,null,null);
+    project = Project.getInstance(null,null,null,null);
 
     assertThat("project videoTransitionPreference is value injected",
-        project.isAudioFadeTransitionActivated(), CoreMatchers.is(audioTransitionActivated));
+        project.getVMComposition().isAudioFadeTransitionActivated(), is(audioTransitionActivated));
   }
 
   private Project getAProject() {
-    return new Project("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+    return new Project("title", "/path","private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 }

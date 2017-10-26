@@ -81,11 +81,9 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   }
 
   @OnClick(R.id.detail_project_title)
-  public void onClickProjectTitle(){
-
-    LayoutInflater inflater = LayoutInflater.from(VimojoApplication.getAppContext());
-    View subView = inflater.inflate(R.layout.dialog_editable_text,null);
-    final EditText editText = (EditText) subView.findViewById(R.id.detail_project_title_dialog);
+  public void onClickProjectTitle() {
+    View dialogView = getLayoutInflater().inflate(R.layout.dialog_editable_text, null);
+    final EditText editText = (EditText) dialogView.findViewById(R.id.detail_project_title_dialog);
     editText.setText(titleProject);
 
     final DialogInterface.OnClickListener dialogClickListener
@@ -106,7 +104,7 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
 
     AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
     builder.setTitle(R.string.dialog_project_edit_title_message)
-        .setView(subView)
+        .setView(dialogView)
         .setPositiveButton(R.string.dialog_project_edit_title_accept, dialogClickListener)
         .setNegativeButton(R.string.dialog_project_edit_title_cancel, dialogClickListener)
         .setCancelable(false)

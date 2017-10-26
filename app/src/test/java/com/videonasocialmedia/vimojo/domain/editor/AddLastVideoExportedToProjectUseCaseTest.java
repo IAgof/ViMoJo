@@ -39,21 +39,21 @@ public class AddLastVideoExportedToProjectUseCaseTest {
 
 
   @Test
-  public void ifAddLastVideoExportedToProjectLastModificationAndVideoExportedDateAreEqual(){
+  public void ifAddLastVideoExportedToProjectLastModificationAndVideoExportedDateAreEqual() {
 
     String date = DateUtils.getDateRightNow();
     injectedUseCase.addLastVideoExportedToProject("newVideoExported", date);
 
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
 
     assertThat("Date of last modification and videoExportedNavigateToShareActivity are equal ",
         currentProject.getLastModification(), is(currentProject.getDateLastVideoExported()));
   }
 
   @Test
-  public void testAddLastVideoExportedToProjectUpdateProjectRepository(){
+  public void testAddLastVideoExportedToProjectUpdateProjectRepository() {
 
-    Project currentProject = Project.getInstance(null, null, null);
+    Project currentProject = Project.getInstance(null, null, null, null);
     String date = DateUtils.getDateRightNow();
     injectedUseCase.addLastVideoExportedToProject("somePath", date);
     verify(mockedProjectRepository).updateWithDate(currentProject, date);
@@ -61,8 +61,8 @@ public class AddLastVideoExportedToProjectUseCaseTest {
   }
 
   private Project getAProject() {
-    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+    return Project.getInstance("title", "/path", "private/path", Profile
+        .getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+            VideoFrameRate.FrameRate.FPS25));
   }
-
 }

@@ -1,202 +1,170 @@
 package com.videonasocialmedia.vimojo.importer.helpers;
 
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.google.common.base.Function;
+import com.google.common.util.concurrent.Futures;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
+import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.record.domain.AdaptVideoRecordedToVideoFormatUseCase;
+import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
+import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * Created by jliarte on 6/07/17.
  */
-public class NewClipImporter implements TranscoderHelperListener {
+public class NewClipImporter {
   private static final String TAG = NewClipImporter.class.getCanonicalName();
-  private final UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase;
-  private AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase;
-  private HashMap<String, VideoToAdapt> videoListToAdaptAndPosition = new HashMap<>();
-  private static final int MAX_NUM_TRIES_ADAPTING_VIDEO = 3;
-//  private final WeakReference<ProjectVideoAdder> projectClipAdder;
-//  private WeakReference<View> view;
+  private final VideoRepository videoRepository;
+  protected VideoToAdaptRepository videoToAdaptRepository;
+  private AdaptVideoToFormatUseCase adaptVideoToFormatUseCase;
   private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
+  private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
+  private ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
 
   public NewClipImporter(
-//          ProjectVideoAdder projectClipAdder,
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-          AdaptVideoRecordedToVideoFormatUseCase adaptVideoRecordedToVideoFormatUseCase,
-          UpdateVideoRepositoryUseCase updateVideoRepositoryUseCase) {
-//    this.projectClipAdder = new WeakReference<>(projectClipAdder);
+          AdaptVideoToFormatUseCase adaptVideoToFormatUseCase,
+          ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase,
+          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+          VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository) {
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
-    this.adaptVideoRecordedToVideoFormatUseCase = adaptVideoRecordedToVideoFormatUseCase;
-    this.updateVideoRepositoryUseCase = updateVideoRepositoryUseCase;
-//    this.view = new WeakReference<>(view);
+    this.adaptVideoToFormatUseCase = adaptVideoToFormatUseCase;
+    this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;
+    this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
+    this.videoRepository = videoRepository;
+    this.videoToAdaptRepository = videoToAdaptRepository;
   }
 
-  public void adaptVideoToVideonaFormat(Video video, int videoPosition, int cameraRotation, int retries) {
-    Log.e(TAG, "Adapt video at position " + videoPosition);
+  public void adaptVideoToVideonaFormat(Project currentProject, Video video, int videoPosition,
+                                        int cameraRotation, int retries) {
+    Log.d(TAG, "Adapt video at position " + videoPosition);
     String destVideoRecorded = Constants.PATH_APP_MASTERS + File.separator
             + new File(video.getMediaPath()).getName();
-    saveVideoToAdapt(video, destVideoRecorded, videoPosition, cameraRotation, retries);
     VideonaFormat videoFormat = getVideoFormat(cameraRotation);
+    AdaptVideoToFormatUseCase.AdaptListener adaptListener =
+            new AdaptVideoToFormatUseCase.AdaptListener() {
+      @Override
+      public void onSuccessAdapting(Video video) {
+        // TODO(jliarte): 31/08/17 implement this method
+      }
+
+      @Override
+      public void onErrorAdapting(Video video, String message) {
+        // TODO(jliarte): 31/08/17 implement this method
+      }
+    };
+    // TODO(jliarte): 11/09/17 check if video is retrieved on error
+//    saveVideoToAdapt(video, destVideoRecorded, videoPosition, cameraRotation, retries);
+    VideoToAdapt videoToAdapt = new VideoToAdapt(video, destVideoRecorded, videoPosition,
+            cameraRotation, retries);
     try {
-      adaptVideoRecordedToVideoFormatUseCase.adaptVideo(video, videoFormat,
-              destVideoRecorded, cameraRotation, this);
+      adaptVideoToFormatUseCase.adaptVideo(videoToAdapt, videoFormat, adaptListener);
+      applyAVTransitions(video, currentProject);
     } catch (IOException e) {
       e.printStackTrace();
-      onErrorTranscoding(video, "adaptVideoRecordedToVideoFormatUseCase");
-//      handleViewCall();
+      adaptListener.onErrorAdapting(video, "adaptVideoToFormatUseCase");
     }
   }
 
-  private VideonaFormat getVideoFormat(int rotation) {
+  private void applyAVTransitions(Video video, Project currentProject) {
+    if (currentProject.getVMComposition().isAudioFadeTransitionActivated()
+            || currentProject.getVMComposition().isVideoFadeTransitionActivated()) {
+      video.setTranscodingTask(Futures.transform(video.getTranscodingTask(),
+              getAVTransitionApplierFunction(video, currentProject)));
+    }
+  }
+
+  private Function<Video, Video> getAVTransitionApplierFunction(
+          final Video video, final Project currentProject) {
+    return new Function<Video, Video>() {
+      @Override
+      public Video apply(Video input) {
+        video.setTempPath(currentProject.getProjectPathIntermediateFiles());
+        VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
+        Drawable drawableFadeTransitionVideo = currentProject.getVMComposition()
+                .getDrawableFadeTransitionVideo();
+        launchTranscoderAddAVTransitionUseCase.applyAVTransitions(drawableFadeTransitionVideo,
+                video, videoFormat, currentProject.getProjectPathIntermediateFileAudioFade(),
+                new ApplyAVTransitionsUseCase.AVTransitionsApplierListener() {
+                  @Override
+                  public void onSuccessApplyAVTransitions(Video video) {
+                    video.setTranscodingTask(null);
+                    VideoToAdapt adaptedVideo = videoToAdaptRepository
+                            .getByMediaPath(video.getMediaPath());
+                    videoToAdaptRepository.remove(adaptedVideo);
+                  }
+
+                  @Override
+                  public void onErrorApplyAVTransitions(Video video, String message) {
+                    // TODO(jliarte): 31/08/17 implement this method
+                  }
+                });
+        // TODO(jliarte): 29/08/17 wait for finish
+        return null;
+      }
+    };
+  }
+
+  protected VideonaFormat getVideoFormat(int rotation) {
     // FIXME: 23/05/17 if rotation == 0, should be use getVideonaFormatToAdaptVideoRecordedAudio, more efficient.
     // Fix problems with profile MotoG, LG_pablo, ...
     return getVideoFormatFromCurrentProjectUseCase
               .getVideonaFormatToAdaptVideoRecordedAudioAndVideo();
   }
 
-  private void saveVideoToAdapt(Video video, String destVideoPath, int videoPosition,
-                                int cameraRotation, int retries) {
-    // TODO(jliarte): 18/07/17 move this to a realm repo
-    VideoToAdapt videoToAdapt = new VideoToAdapt(video, destVideoPath, videoPosition,
-            cameraRotation, retries);
-    videoListToAdaptAndPosition.put(video.getMediaPath(), videoToAdapt);
-  }
+  public void relaunchUnfinishedAdaptTasks(Project currentProject) {
+    List<VideoToAdapt> videosToAdapt = videoToAdaptRepository.getAllVideos();
+    // (jliarte): 24/08/17 videos are reconstructed from repository, so they are not the same
+    // instance that where previously stored. Thus some fields differs or are missing, such as
+    // queried transcodingTask!!! Thus, we're included a in memory cache in the repo
+    Log.d(TAG, "There are " + videosToAdapt.size() + " videos to adapt in repository");
+    for (VideoToAdapt videoToAdapt : videosToAdapt) {
+      if (videoToAdapt.getVideo() == null) {
+        Log.e(TAG, "Orphan video to adapt " + videoToAdapt);
+        videoToAdaptRepository.remove(videoToAdapt);
+      } else {
+        if (videoToAdapt.getVideo().getTranscodingTask() == null) {
+          Log.d(TAG, "Relaunching video adapt task for video "
+                  + videoToAdapt.getVideo().getMediaPath());
+          // Now find which videoRepository video correspond with videoToAdaptRepository by uuid
+          Video videoToRelaunch = getVideoToRelaunch(currentProject, videoToAdapt);
+          if(videoToRelaunch != null) {
+            adaptVideoToVideonaFormat(currentProject, videoToRelaunch,
+                    videoToAdapt.getPosition(), videoToAdapt.getRotation(),
+                    ++videoToAdapt.numTriesAdaptingVideo);
+            videoToRelaunch.addListener(currentProject);
+          } else {
+            Log.e(TAG, "Video to relaunch not found " + videoToAdapt);
+            videoToAdaptRepository.remove(videoToAdapt);
+          }
 
-//  private void handleViewCall() {
-//    View activity = view.get();
-//    if (activity != null) {
-//      activity.hideProgressAdaptingVideo();
-//    }
-//  }
-
-  public boolean areTherePendingTranscodingTask() {
-    if (videoListToAdaptAndPosition.size() == 0) {
-      return false;
-    }
-    for (Map.Entry<String, VideoToAdapt> videoToAdaptHashMap :
-            videoListToAdaptAndPosition.entrySet()) {
-      VideoToAdapt video = videoToAdaptHashMap.getValue();
-      if ((video.getVideo().getTranscodingTask() == null)
-              || (!video.getVideo().getTranscodingTask().isDone())) {
-        return true;
+        }
       }
     }
-    return false;
   }
 
-//    private boolean isAVideoAdaptedToFormat(Video video) {
-//      String videoFolderPath = new File(video.getMediaPath()).getParent();
-//      return videoFolderPath.equals(Constants.PATH_APP_TEMP);
-//    }
-
-  @Override
-  public void onSuccessTranscoding(Video video) {
-//      if (isAVideoAdaptedToFormat(video)) {
-    Log.d(TAG, "onSuccessTranscoding adapting video " + video.getMediaPath());
-    VideoToAdapt videoToAdapt = videoListToAdaptAndPosition.remove(video.getMediaPath());
-    FileUtils.removeFile(video.getMediaPath());
-    Log.e(TAG, "deleting " + video.getMediaPath());
-    video.setMediaPath(videoToAdapt.destVideoPath);
-    video.setVolume(Video.DEFAULT_VOLUME);
-    video.setStopTime(FileUtils.getDuration(video.getMediaPath()));
-    video.resetTempPath();
-    video.notifyChanges();
-    updateVideoRepositoryUseCase.updateVideo(video);
-    // (jliarte): 18/07/17 now we should move the file, notify changes, and launch AV transitions
-
-//    hadleClipAdderCall(videoToAdapt);
-
-
-//      } else {
-//        // TODO(jliarte): 3/07/17 don't get the meaning of this case
-//        Log.d(TAG, "onSuccessTranscoding " + video.getTempPath());
-//        updateVideoRepositoryUseCase.succesTranscodingVideo(video);
-//      }
+  protected Video getVideoToRelaunch(Project currentProject, VideoToAdapt videoToAdapt) {
+    for(Media video: currentProject.getMediaTrack().getItems()){
+      Video videoToRelaunch = (Video) video;
+      if(videoToRelaunch.getUuid().compareTo(videoToAdapt.getVideo().getUuid()) == 0) {
+        return videoToRelaunch;
+      }
+    }
+    return null;
   }
 
-//  private void hadleClipAdderCall(VideoToAdapt videoToAdapt) {
-//    ProjectVideoAdder adder = projectClipAdder.get();
-//    if (adder != null) {
-//      adder.addVideoToProject(videoToAdapt);
-//    }
-//  }
-
-  @Override
-  public void onErrorTranscoding(Video video, String message) {
-//      if (newClipImporter.isAVideoAdaptedToFormat(video)) {
-    Log.d(TAG, "onErrorTranscoding adapting video " + video.getMediaPath() + " - " + message);
-    VideoToAdapt videoToAdapt = videoListToAdaptAndPosition.get(video.getMediaPath());
-    if (videoToAdapt == null) {
-      return;
-    }
-    if (videoToAdapt.numTriesAdaptingVideo < MAX_NUM_TRIES_ADAPTING_VIDEO) {
-      videoListToAdaptAndPosition.remove(video.getMediaPath());
-      // TODO(jliarte): 18/07/17 check if video still has volume
-      adaptVideoToVideonaFormat(video, videoToAdapt.getPosition(),
-              videoToAdapt.getRotation(), ++videoToAdapt.numTriesAdaptingVideo);
-    } else {
-      // TODO:(alvaro.martinez) 24/05/17 How to manage this error adapting video ¿?
-//      hadleClipAdderCall(videoListToAdaptAndPosition.remove(video.getUuid()));
-    }
-//      } else {
-//        Log.d(TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-//        if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
-//          video.increaseNumTriesToExportVideo();
-//          Project currentProject = Project.getInstance(null, null, null);
-//          launchTranscoderAddAVTransitionUseCase.launchExportTempFile(context
-//                          .getDrawable(R.drawable.alpha_transition_white), video,
-//                  getVideoFormatFromCurrentProjectUseCase.getVideonaFormatFromCurrentProject(),
-//                  currentProject.getProjectPathIntermediateFileAudioFade(), this);
-//        } else {
-//          updateVideoRepositoryUseCase.errorTranscodingVideo(video,
-//                  Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
-//        }
-//      }
-  }
-
-  public class VideoToAdapt {
-    private final int position;
-    private final Video video;
-    private final int rotation;
-    private final String destVideoPath;
-    private int numTriesAdaptingVideo = 0;
-
-    public VideoToAdapt(Video video, String destVideoPath, int position, int cameraRotation, int retries) {
-      this.video = video;
-      this.destVideoPath = destVideoPath;
-      this.position = position;
-      this.rotation = cameraRotation;
-      this.numTriesAdaptingVideo = retries;
-    }
-
-    public int getPosition() {
-      return position;
-    }
-
-    public Video getVideo() {
-      return video;
-    }
-
-    public int getRotation() {
-      return rotation;
-    }
-  }
-
-//  public interface ProjectVideoAdder {
-//    void addVideoToProject(VideoToAdapt videoToAdapt);
-//  }
-
-//  public interface View {
-//    void hideProgressAdaptingVideo();
-//  }
 }

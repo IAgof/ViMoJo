@@ -39,7 +39,7 @@ import static org.hamcrest.Matchers.nullValue;
 /**
  * Created by jliarte on 21/10/16.
  */
-//@RunWith(MockitoJUnitRunner.class)
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Environment.class)
 public class RealmProjectToProjectMapperTest {
@@ -60,6 +60,7 @@ public class RealmProjectToProjectMapperTest {
     mockedStorageDir = PowerMockito.mock(File.class);
     PowerMockito.when(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)).
         thenReturn(mockedStorageDir);
+    PowerMockito.when(Environment.getExternalStorageDirectory()).thenReturn(mockedStorageDir);
   }
 
   @Test
@@ -300,7 +301,8 @@ public class RealmProjectToProjectMapperTest {
 
     Project project = mapper.map(realmProject);
 
-    AudioTrack voiceOverTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    AudioTrack voiceOverTrack = project.getAudioTracks()
+            .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     assertThat(voiceOverTrack.getVolume(), is(0.9f));
     assertThat(voiceOverTrack.isMuted(), is(true));
     assertThat(voiceOverTrack.getPosition(), is(2));

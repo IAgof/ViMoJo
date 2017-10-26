@@ -81,7 +81,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   private final int ID_BUTTON_FAB_CENTER=2;
   private final int ID_BUTTON_FAB_BOTTOM=3;
 
-
     @Nullable @Bind(R.id.button_edit_duplicate)
     ImageButton editDuplicateButton;
     @Nullable @Bind(R.id.button_edit_trim)
@@ -410,7 +409,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
-          progressDialog.show();
+          if (!isFinishing()) {
+            progressDialog.show();
+          }
         }
       });
     }
@@ -477,7 +478,12 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void updateProject() {
-        editPresenter.init();
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          editPresenter.init();
+        }
+      });
     }
 
     @Override

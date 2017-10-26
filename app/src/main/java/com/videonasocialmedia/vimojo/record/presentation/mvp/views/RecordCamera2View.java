@@ -15,7 +15,6 @@ package com.videonasocialmedia.vimojo.record.presentation.mvp.views;
 import android.util.Range;
 import android.view.MotionEvent;
 
-import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
@@ -28,13 +27,15 @@ public interface RecordCamera2View {
 
     void showStopButton();
 
-    void showChronometer();
-
-    void hideChronometer();
-
     void startChronometer();
 
     void stopChronometer();
+
+    void resetChronometer();
+
+    void showRecordPointIndicator();
+
+    void hideRecordPointIndicator();
 
     void showNavigateToSettingsActivity();
 

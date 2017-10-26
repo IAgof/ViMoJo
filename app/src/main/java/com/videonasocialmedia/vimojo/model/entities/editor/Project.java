@@ -41,7 +41,8 @@ public class Project implements ElementChangedListener {
 
   public static final String INTERMEDIATE_FILES = "intermediate_files";
   public static final String INTERMEDIATE_FILES_TEMP_AUDIO_FADE = "tempAudioFade";
-  // TODO:(alvaro.martinez) 23/12/16 Change VideonaSDK, receive path temo from app, folder name ".tempAudio";
+  // TODO:(alvaro.martinez) 23/12/16 Change VideonaSDK, receive path temo from app,
+  // folder name ".tempAudio";
   public static final String TEMP_FILES_AUDIO_MIXED = "tempMixedAudio";
   public static final String TEMP_FILES_AUDIO_MIXED_VOICE_OVER_RECORD = "voiceOverRecord";
   private final String TAG = getClass().getCanonicalName();
@@ -80,10 +81,6 @@ public class Project implements ElementChangedListener {
      */
     private int duration;
 
-
-  private boolean isAudioFadeTransitionActivated;
-  private boolean isVideoFadeTransitionActivated;
-
     /**
      * Constructor of minimum number of parameters. This is the Default constructor.
      *
@@ -91,13 +88,13 @@ public class Project implements ElementChangedListener {
      * @param rootPath - Path to root folder for the current project.
      * @param profile  - Define some characteristics and limitations of the current project.
      */
-    public Project(String title, String rootPath, Profile profile) {
+    public Project(String title, String rootPath, String privatePath, Profile profile) {
         this.title = title;
-        this.vmComposition = new VMComposition(getResourceWatermarkFilePath(rootPath), profile);
+        this.vmComposition = new VMComposition(getResourceWatermarkFilePath(privatePath), profile);
         this.profile = profile;
         this.duration = 0;
-        this.isAudioFadeTransitionActivated = false;
-        this.isVideoFadeTransitionActivated = false;
+        this.vmComposition.setAudioFadeTransitionActivated(false);
+        this.vmComposition.setVideoFadeTransitionActivated(false);
         this.lastModification = DateUtils.getDateRightNow();
         this.projectPath = rootPath + File.separator + Constants.FOLDER_NAME_VIMOJO_PROJECTS +
             File.separator + uuid; //todo probablemente necesitemos un slugify de ese title.
@@ -105,10 +102,8 @@ public class Project implements ElementChangedListener {
     }
 
   @NonNull
-  public String getResourceWatermarkFilePath(String rootPath) {
-
-    return rootPath + File.separator + Constants.FOLDER_NAME_VIMOJO_TEMP + File.separator +
-        Constants.RESOURCE_WATERMARK_NAME;
+  public String getResourceWatermarkFilePath(String privatePath) {
+    return privatePath + File.separator + Constants.RESOURCE_WATERMARK_NAME;
   }
 
   public Project(Project project) throws IllegalItemOnTrack {
@@ -117,8 +112,6 @@ public class Project implements ElementChangedListener {
     vmComposition = new VMComposition(project.getVMComposition());
     profile = new Profile(project.getProfile());
     duration = project.getDuration();
-    isAudioFadeTransitionActivated = project.isAudioFadeTransitionActivated();
-    isVideoFadeTransitionActivated = project.isVideoFadeTransitionActivated();
     lastModification = project.getLastModification();
     projectPath = new File(project.getProjectPath()).getParent() + File.separator + uuid;
     createFolder(projectPath);
@@ -138,9 +131,10 @@ public class Project implements ElementChangedListener {
      * @return - Singleton instance of the current project.
      */
     @Deprecated
-    public static Project getInstance(String title, String rootPath, Profile profile) {
+    public static Project getInstance(String title, String rootPath, String privatePath,
+                                      Profile profile) {
         if (INSTANCE == null) {
-            INSTANCE = new Project(title, rootPath, profile);
+            INSTANCE = new Project(title, rootPath, privatePath, profile);
         }
         return INSTANCE;
     }
@@ -193,7 +187,6 @@ public class Project implements ElementChangedListener {
     }
 
     public void clear() {
-//        INSTANCE = new Project(null, null, null);
         if (INSTANCE != null) {
             Profile projectProfile = INSTANCE.getProfile();
             if (projectProfile != null) {
@@ -225,21 +218,6 @@ public class Project implements ElementChangedListener {
       return vmComposition.hasVoiceOver();
     }
 
-  public boolean isAudioFadeTransitionActivated() {
-    return isAudioFadeTransitionActivated;
-  }
-
-  public void setAudioFadeTransitionActivated(boolean audioFadeTransitionActivated) {
-    isAudioFadeTransitionActivated = audioFadeTransitionActivated;
-  }
-
-  public boolean isVideoFadeTransitionActivated() {
-    return isVideoFadeTransitionActivated;
-  }
-
-  public void setVideoFadeTransitionActivated(boolean videoFadeTransitionActivated) {
-    isVideoFadeTransitionActivated = videoFadeTransitionActivated;
-  }
   public String getLastModification() {
     return lastModification;
   }

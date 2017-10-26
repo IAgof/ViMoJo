@@ -8,7 +8,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.video.UpdateVideoRepositoryUseCase;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -23,12 +22,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.CoreMatchers.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Mockito.verify;
 
@@ -45,7 +44,6 @@ public class TrimPreviewPresenterTest {
 
     @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock ModifyVideoDurationUseCase mockedModifyVideoDurationUseCase;
-    @Mock UpdateVideoRepositoryUseCase mockedUpdateVideoRepositoryUseCase;
 
     @Before
     public void injectMocks() {
@@ -54,7 +52,7 @@ public class TrimPreviewPresenterTest {
 
     @After
     public void tearDown() {
-        Project.getInstance(null, null, null).clear();
+        Project.getInstance(null, null, null, null).clear();
     }
 
     @Test
@@ -62,7 +60,7 @@ public class TrimPreviewPresenterTest {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(mockedTrimView,
             userEventTracker, mockedGetMediaListFromProjectUseCase,
-            mockedModifyVideoDurationUseCase, mockedUpdateVideoRepositoryUseCase);
+            mockedModifyVideoDurationUseCase);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -87,12 +85,12 @@ public class TrimPreviewPresenterTest {
     }
 
     @Test
-    public void setTrimUpdateVideoTimes(){
+    public void setTrimUpdateVideoTimes() {
 
     }
 
     @Test
-    public void advanceBackwardStartTrimmingCallsUpdateStartTrimmingRangeSeekBar(){
+    public void advanceBackwardStartTrimmingCallsUpdateStartTrimmingRangeSeekBar() {
         TrimPreviewPresenter presenter = getTrimPreviewPresenter();
         int advancePrecision = 600; //ms
         int startTimeMs = 1200; //ms
@@ -102,25 +100,58 @@ public class TrimPreviewPresenterTest {
         verify(mockedTrimView).updateStartTrimmingRangeSeekBar(anyFloat());
     }
 
-    public void advanceForwardStartTrimmingCallsUpdateStartTrimmingRangeSeekBar(){
+    @Test
+    public void advanceForwardStartTrimmingCallsUpdateStartTrimmingRangeSeekBar() {
         TrimPreviewPresenter presenter = getTrimPreviewPresenter();
         int advancePrecision = 600; //ms
         int startTimeMs = 1200; //ms
+        int finishTimeMs = 2400; //ms
 
-        presenter.advanceForwardStartTrimming(advancePrecision, startTimeMs);
+        presenter.advanceForwardStartTrimming(advancePrecision, startTimeMs, finishTimeMs);
 
         verify(mockedTrimView).updateStartTrimmingRangeSeekBar(anyFloat());
     }
 
     @Test
-    public void advanceBackwardEndTrimmingCallsUpdateFinishTrimmingRangeSeekBar(){
+    public void advanceForwardStartTrimmingAdjustProperlyWithMinTrimOffset() {
         TrimPreviewPresenter presenter = getTrimPreviewPresenter();
         int advancePrecision = 600; //ms
-        int endTimeMs = 1200; //ms
+        int startTimeMs = 1200; //ms
+        int finishTimeMs = 1800; //ms
+        int MIN_TRIM_OFFSET = 350;
+        float MS_CORRECTION_FACTOR = 1000f;
+        float startTimeMsAdjusted = 1.4499999f; // Math.min(startTimeMs + advancePrecision, finishTimeMs-MIN_TRIM_OFFSET);
 
-        presenter.advanceBackwardEndTrimming(advancePrecision, endTimeMs);
+        presenter.advanceForwardStartTrimming(advancePrecision, startTimeMs, finishTimeMs);
+
+        verify(mockedTrimView).updateStartTrimmingRangeSeekBar(startTimeMsAdjusted);
+    }
+
+    @Test
+    public void advanceBackwardEndTrimmingCallsUpdateFinishTrimmingRangeSeekBar() {
+        TrimPreviewPresenter presenter = getTrimPreviewPresenter();
+        int advancePrecision = 600; //ms
+        int startTimeMs = 1200; //ms
+        int finishTimeMs = 2400; //ms
+
+        presenter.advanceBackwardEndTrimming(advancePrecision, startTimeMs, finishTimeMs);
 
         verify(mockedTrimView).updateFinishTrimmingRangeSeekBar(anyFloat());
+    }
+
+    @Test
+    public void advanceBackwardEndTrimmingAdjustProperlyWithMinTrimOffset() {
+        TrimPreviewPresenter presenter = getTrimPreviewPresenter();
+        int advancePrecision = 600; //ms
+        int startTimeMs = 1800; //ms
+        int finishTimeMs = 2400; //ms
+        int MIN_TRIM_OFFSET = 350;
+        float MS_CORRECTION_FACTOR = 1000f;
+        float finishTimeMsAdjusted = 2.1499999f; // Math.max(startTimeMs + MIN_TRIM_OFFSET, finishTimeMs-advancePrecision);
+
+        presenter.advanceBackwardEndTrimming(advancePrecision, startTimeMs, finishTimeMs);
+
+        verify(mockedTrimView).updateFinishTrimmingRangeSeekBar(finishTimeMsAdjusted);
     }
 
     @Test
@@ -128,8 +159,9 @@ public class TrimPreviewPresenterTest {
         TrimPreviewPresenter presenter = getTrimPreviewPresenter();
         int advancePrecision = 600; //ms
         int endTimeMs = 1200; //ms
+        int finishTimeMs = 2400; //ms
 
-        presenter.advanceBackwardEndTrimming(advancePrecision, endTimeMs);
+        presenter.advanceBackwardEndTrimming(advancePrecision, endTimeMs, finishTimeMs);
 
         verify(mockedTrimView).updateFinishTrimmingRangeSeekBar(anyFloat());
     }
@@ -138,11 +170,12 @@ public class TrimPreviewPresenterTest {
     private TrimPreviewPresenter getTrimPreviewPresenter() {
         return new TrimPreviewPresenter(mockedTrimView,
             mockedUserEventTracker, mockedGetMediaListFromProjectUseCase,
-            mockedModifyVideoDurationUseCase, mockedUpdateVideoRepositoryUseCase);
+            mockedModifyVideoDurationUseCase);
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+        return Project.getInstance("title", "/path", "private/path",
+            Profile.getInstance(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
     }
 }

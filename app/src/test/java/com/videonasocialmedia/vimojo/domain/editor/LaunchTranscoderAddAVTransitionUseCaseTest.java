@@ -27,6 +27,8 @@ import org.mockito.MockitoAnnotations;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -35,7 +37,6 @@ import static org.mockito.Mockito.verify;
  */
 
 public class LaunchTranscoderAddAVTransitionUseCaseTest {
-
   @Mock TextToDrawable mockedDrawableGenerator;
   @Mock MediaTranscoder mockedMediaTranscoder;
   @Mock ApplyAudioFadeInFadeOutToVideo mockedApplyAudioFadeInFadeOutToVideo;
@@ -45,13 +46,12 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
 
   private final VideonaFormat videonaFormat = new VideonaFormat();
 
-  @InjectMocks
-  LaunchTranscoderAddAVTransitionsUseCase
-      injectedLaunchTranscoderAddAVTransitionsUseCase;
-  @Mock
-  VideoRepository mockVideoRepository;
+  @Mock VideoRepository mockVideoRepository;
   @Mock Video mockedVideo;
   @Mock Project mockedProject;
+  @Mock private ApplyAVTransitionsUseCase.AVTransitionsApplierListener mockedAVTransitionsApplierListener;
+
+  @InjectMocks ApplyAVTransitionsUseCase injectedApplyAVTransitionsUseCase;
 
   @Before
   public void injectDoubles() throws Exception {
@@ -59,27 +59,26 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
   }
 
   @Test
-  public void ifProjectHasVideoTransitionActivatedCallsGenerateOutputVideoWithAVTransitions() throws IllegalItemOnTrack {
-    //getAProject().clear();
+  public void ifProjectHasVideoTransitionActivatedCallsGenerateOutputVideoWithAVTransitions()
+          throws IllegalItemOnTrack {
     Project project = getAProject();
-    project.setVideoFadeTransitionActivated(true);
+    project.getVMComposition().setVideoFadeTransitionActivated(true);
     Video video = new Video("media/path", 1f);
     Track track = project.getMediaTrack();
     track.insertItem(video);
-
     assertThat("Project has videos ", project.getVMComposition().hasVideos(), is(true));
+    injectedApplyAVTransitionsUseCase.transcoderHelper = mockedTranscoderHelper;
 
-    injectedLaunchTranscoderAddAVTransitionsUseCase.transcoderHelper = mockedTranscoderHelper;
+    injectedApplyAVTransitionsUseCase.applyAVTransitions(
+            mockedDrawableFadeTransition, video, videonaFormat,
+            project.getProjectPathIntermediateFileAudioFade(), mockedAVTransitionsApplierListener);
 
-    injectedLaunchTranscoderAddAVTransitionsUseCase.launchExportTempFile(mockedDrawableFadeTransition,
-        video, videonaFormat, project.getProjectPathIntermediateFileAudioFade(),
-        mockedTranscoderHelperListener);
-
-    verify(mockedTranscoderHelper).generateOutputVideoWithAVTransitionsAsync(mockedDrawableFadeTransition,
-        project.isVideoFadeTransitionActivated(), project.isAudioFadeTransitionActivated(), video,
-        videonaFormat, project.getProjectPathIntermediateFileAudioFade(),
-        mockedTranscoderHelperListener);
-
+    verify(mockedTranscoderHelper).generateOutputVideoWithAVTransitionsAsync(
+            eq(mockedDrawableFadeTransition),
+            eq(project.getVMComposition().isVideoFadeTransitionActivated()),
+            eq(project.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
+            eq(videonaFormat), eq(project.getProjectPathIntermediateFileAudioFade()),
+            any(TranscoderHelperListener.class));
     verify(mockedTranscoderHelper, never()).generateOutputVideoWithAudioTransitionAsync(video,
         project.getProjectPathIntermediateFileAudioFade(), mockedTranscoderHelperListener);
 
@@ -89,27 +88,25 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
   // and came back to this test.
   @Ignore
   @Test
-  public void ifProjectHasAudioTransitionActivatedCallsGenerateOutputVideoWithAudioTransitions() throws IllegalItemOnTrack {
+  public void ifProjectHasAudioTransitionActivatedCallsGenerateOutputVideoWithAudioTransitions()
+          throws IllegalItemOnTrack {
     getAProject().clear();
     Project project = getAProject();
-    project.setAudioFadeTransitionActivated(true);
-    project.setVideoFadeTransitionActivated(false);
+    project.getVMComposition().setAudioFadeTransitionActivated(true);
+    project.getVMComposition().setVideoFadeTransitionActivated(false);
     Video video = new Video("media/path", 1f);
     Track track = project.getMediaTrack();
     track.insertItem(video);
-
     assertThat("Project has videos ", project.getVMComposition().hasVideos(), is(true));
+    assertThat("Video transition is not activated ",
+            project.getVMComposition().isVideoFadeTransitionActivated(), is(false));
+    assertThat("Audio transition is activated ",
+            project.getVMComposition().isAudioFadeTransitionActivated(), is(true));
+    injectedApplyAVTransitionsUseCase.transcoderHelper = mockedTranscoderHelper;
 
-    assertThat("Video transition is not activated ", project.isVideoFadeTransitionActivated(),
-        is(false));
-    assertThat("Audio transition is activated ", project.isAudioFadeTransitionActivated(),
-        is(true));
-
-    injectedLaunchTranscoderAddAVTransitionsUseCase.transcoderHelper = mockedTranscoderHelper;
-
-    injectedLaunchTranscoderAddAVTransitionsUseCase.launchExportTempFile(mockedDrawableFadeTransition,
-        video, videonaFormat, project.getProjectPathIntermediateFileAudioFade(),
-        mockedTranscoderHelperListener);
+    injectedApplyAVTransitionsUseCase.applyAVTransitions(
+            mockedDrawableFadeTransition, video, videonaFormat,
+            project.getProjectPathIntermediateFileAudioFade(), mockedAVTransitionsApplierListener);
 
     verify(mockedTranscoderHelper).generateOutputVideoWithAudioTransitionAsync(video,
         project.getProjectPathIntermediateFileAudioFade(), mockedTranscoderHelperListener);
@@ -120,10 +117,11 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
   public void launchExportTempFileCallsVideoRepositoryUpdate() {
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
 
-    injectedLaunchTranscoderAddAVTransitionsUseCase.transcoderHelper = mockedTranscoderHelper;
-    injectedLaunchTranscoderAddAVTransitionsUseCase.launchExportTempFile(mockedDrawableFadeTransition,
-        video, videonaFormat, mockedProject.getProjectPathIntermediateFileAudioFade(),
-        mockedTranscoderHelperListener);
+    injectedApplyAVTransitionsUseCase.transcoderHelper = mockedTranscoderHelper;
+    injectedApplyAVTransitionsUseCase.applyAVTransitions(
+            mockedDrawableFadeTransition, video, videonaFormat,
+            mockedProject.getProjectPathIntermediateFileAudioFade(),
+            mockedAVTransitionsApplierListener);
 
     verify(mockVideoRepository).update(video);
   }
@@ -133,17 +131,19 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assert video.isTranscodingTempFileFinished();
 
-    injectedLaunchTranscoderAddAVTransitionsUseCase.transcoderHelper = mockedTranscoderHelper;
+    injectedApplyAVTransitionsUseCase.transcoderHelper = mockedTranscoderHelper;
 
-    injectedLaunchTranscoderAddAVTransitionsUseCase.launchExportTempFile(mockedDrawableFadeTransition,
-        video, videonaFormat, mockedProject.getProjectPathIntermediateFileAudioFade(),
-        mockedTranscoderHelperListener);
+    injectedApplyAVTransitionsUseCase.applyAVTransitions(
+            mockedDrawableFadeTransition, video, videonaFormat,
+            mockedProject.getProjectPathIntermediateFileAudioFade(),
+            mockedAVTransitionsApplierListener);
 
     assertThat(video.isTranscodingTempFileFinished(), is(false));
   }
 
   public Project getAProject() {
-    return Project.getInstance("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+    return Project.getInstance("title", "/path", "private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 }

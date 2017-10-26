@@ -10,13 +10,14 @@
 
 package com.videonasocialmedia.vimojo.domain.editor;
 
+import android.graphics.drawable.Drawable;
+
+import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
-import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessEvent;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnLaunchAVTransitionTempFileListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import java.util.List;
@@ -28,23 +29,26 @@ import javax.inject.Inject;
  */
 // TODO(jliarte): 22/10/16 refactor this class to have a unique insert point. Get rid of event bus
 public class AddVideoToProjectUseCase {
-
     protected ProjectRepository projectRepository;
     private Project currentProject;
+    private ApplyAVTransitionsUseCase applyAVTransitionsUseCase;
 
     /**
      * Default Constructor with project repository argument.
-     *
-     * @param projectRepository the project repository
+     *  @param projectRepository the project repository
+     * @param applyAVTransitionsUseCase
      */
-    @Inject public AddVideoToProjectUseCase(ProjectRepository projectRepository) {
+    @Inject public AddVideoToProjectUseCase(
+            ProjectRepository projectRepository,
+            ApplyAVTransitionsUseCase applyAVTransitionsUseCase) {
         this.projectRepository = projectRepository;
+        this.applyAVTransitionsUseCase = applyAVTransitionsUseCase;
     }
 
-    public void addVideoToTrack(String videoPath, OnLaunchAVTransitionTempFileListener listener) {
+    public void addVideoToTrack(String videoPath) {
         Video videoToAdd = new Video(videoPath, Video.DEFAULT_VOLUME);
         addVideoToTrack(videoToAdd);
-        checkIfVideoNeedAVTransitionTempFile(videoToAdd, listener);
+        checkIfVideoNeedAVTransitionTempFile(videoToAdd, currentProject);
     }
 
     private void addVideoToTrack(Video video) {
@@ -53,40 +57,10 @@ public class AddVideoToProjectUseCase {
             Track mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(video);
             projectRepository.update(currentProject);
-
-//            EventBus.getDefault().post(new AddMediaItemToTrackSuccessEvent(video));
-//            notifyEventsToBus(currentProject);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             //TODO manejar error
         }
     }
-
-//    /**
-//     * @param video
-//     * @param listener
-//     * @deprecated use the one parameter version instead
-//     */
-//    public void addVideoToTrack(Video video, OnAddMediaFinishedListener listener,
-//                                OnLaunchAVTransitionTempFileListener avtransitionsListener) {
-//        try {
-//            Project currentProject = getCurrentProject();
-//            Track mediaTrack = currentProject.getMediaTrack();
-//            mediaTrack.insertItem(video);
-//            projectRepository.update(currentProject);
-//            listener.onAddMediaItemToTrackSuccess(video);
-//            checkIfVideoNeedAVTransitionTempFile(video, avtransitionsListener);
-////            notifyEventsToBus(currentProject);
-//        } catch (IllegalItemOnTrack illegalItemOnTrack) {
-//            listener.onAddMediaItemToTrackError();
-//        }
-//    }
-
-//    private void notifyEventsToBus(Project currentProject) {
-//        // TODO(jliarte): 22/10/16 should get rid of EventBus calls?
-//        EventBus.getDefault().post(new UpdateProjectDurationEvent(currentProject.getDuration()));
-//        EventBus.getDefault().post(new NumVideosChangedEvent(currentProject.getMediaTrack().getNumItemsInTrack()));
-//        EventBus.getDefault().post(new VideoAddedToTrackEvent());
-//    }
 
     public void addVideoToProjectAtPosition(Video video, int position,
                                             OnAddMediaFinishedListener listener) {
@@ -102,34 +76,54 @@ public class AddVideoToProjectUseCase {
         }
     }
 
-    public void addVideoListToTrack(List<Video> videoList, OnAddMediaFinishedListener listener,
-                                    OnLaunchAVTransitionTempFileListener avtransitionsListener) {
+    public void addVideoListToTrack(List<Video> videoList, OnAddMediaFinishedListener listener) {
         try {
             Project currentProject = getCurrentProject();
             Track mediaTrack = currentProject.getMediaTrack();
             for (Video video : videoList) {
                 mediaTrack.insertItem(video);
-                checkIfVideoNeedAVTransitionTempFile(video,avtransitionsListener);
+                checkIfVideoNeedAVTransitionTempFile(video, currentProject);
             }
             projectRepository.update(currentProject);
             listener.onAddMediaItemToTrackSuccess(null);
-//            notifyEventsToBus(currentProject);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             listener.onAddMediaItemToTrackError();
         }
     }
 
-    private void checkIfVideoNeedAVTransitionTempFile(
-            Video videoToAdd, OnLaunchAVTransitionTempFileListener listener) {
-        currentProject = getCurrentProject();
-        if (currentProject.isAudioFadeTransitionActivated()
-                || currentProject.isVideoFadeTransitionActivated()) {
-            listener.videoToLaunchAVTransitionTempFile(videoToAdd,
-                    currentProject.getProjectPathIntermediateFileAudioFade());
+    private void checkIfVideoNeedAVTransitionTempFile(Video videoToAdd, Project currentProject) {
+        this.currentProject = getCurrentProject();
+        if (this.currentProject.getVMComposition().isAudioFadeTransitionActivated()
+                || this.currentProject.getVMComposition().isVideoFadeTransitionActivated()) {
+//            listener.videoToLaunchAVTransitionTempFile(videoToAdd,
+//                    currentProject.getProjectPathIntermediateFileAudioFade());
+            applyAVTransitions(videoToAdd, currentProject);
         }
     }
 
+    private void applyAVTransitions(Video video, Project currentProject) {
+        video.setTempPath(this.currentProject.getProjectPathIntermediateFiles());
+
+        VideonaFormat videoFormat = this.currentProject.getVMComposition().getVideoFormat();
+        Drawable drawableFadeTransitionVideo = this.currentProject.getVMComposition()
+                .getDrawableFadeTransitionVideo();
+
+        applyAVTransitionsUseCase.applyAVTransitions(drawableFadeTransitionVideo, video,
+                videoFormat, currentProject.getProjectPathIntermediateFileAudioFade(),
+                new ApplyAVTransitionsUseCase.AVTransitionsApplierListener() {
+                    @Override
+                    public void onSuccessApplyAVTransitions(Video video) {
+                        // TODO(jliarte): 31/08/17 implement this method
+                    }
+
+                    @Override
+                    public void onErrorApplyAVTransitions(Video video, String message) {
+                        // TODO(jliarte): 31/08/17 implement this method
+                    }
+                });
+    }
+
     private Project getCurrentProject() {
-        return Project.getInstance(null,null,null);
+        return Project.getInstance(null, null, null, null);
     }
 }

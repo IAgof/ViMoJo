@@ -30,7 +30,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
-import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -43,7 +43,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener, ElementChangedListener {
+import static com.videonasocialmedia.videonamediaframework.model.Constants.*;
+
+public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener,
+        ElementChangedListener {
     public static final float VOLUME_MUTE = 0f;
     private final String TAG = getClass().getSimpleName();
     private final Project currentProject;
@@ -92,7 +95,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     public Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null);
+        return Project.getInstance(null, null, null, null);
     }
 
     public String getResolution() {
@@ -106,7 +109,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     }
 
     public void moveItem(int fromPosition, int toPositon) {
-//        Video mediaToMove = videoList.get(fromPosition);
         Video mediaToMove = (Video) currentProject.getMediaTrack().getItems().get(fromPosition);
         reorderMediaItemUseCase.moveMediaItem(mediaToMove, toPositon,
                 new OnReorderMediaListener() {
@@ -156,8 +158,9 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 // TODO(jliarte): 26/04/17 notify the user we are deleting items from project!!! FIXME
                 ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
                 mediaToDeleteFromProject.add(video);
-                removeVideoFromProjectUseCase.removeMediaItemsFromProject(mediaToDeleteFromProject, this);
-                Log.d(TAG, video.getMediaPath() + "not found!! deleting from project");
+                removeVideoFromProjectUseCase.removeMediaItemsFromProject(
+                        mediaToDeleteFromProject, this);
+                Log.e(TAG, video.getMediaPath() + " not found!! deleting from project");
             } else {
                 checkedVideoList.add(video);
             }
@@ -184,7 +187,8 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 editActivityView.enableFabText(true);
                 editActivityView.hideProgressDialog();
                 editActivityView.bindVideoList(videoCopy);
-                videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(videoList, videoTranscodingErrorNotifier);
+                videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
+                        videoList, videoTranscodingErrorNotifier);
             }
 
             @Override
@@ -219,7 +223,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     private void checkMuteOnTracks() {
         if (currentProject.getVMComposition().hasMusic()) {
             Track musicTrack = currentProject.getAudioTracks()
-                .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC);
+                .get(INDEX_AUDIO_TRACK_MUSIC);
             if (musicTrack.isMuted()) {
                 editActivityView.setMusicVolume(VOLUME_MUTE);
             }
@@ -227,7 +231,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
         if (currentProject.getVMComposition().hasVoiceOver()) {
             Track voiceOverTrack = currentProject.getAudioTracks()
-                .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+                .get(INDEX_AUDIO_TRACK_VOICE_OVER);
             if (voiceOverTrack.isMuted()) {
                 editActivityView.setVoiceOverVolume(VOLUME_MUTE);
             }
@@ -272,6 +276,8 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     @Override
     public void onObjectUpdated() {
+        // TODO(jliarte): 26/07/17 save playback state and restore it when done updating project
+        // in view
         editActivityView.updateProject();
     }
 }

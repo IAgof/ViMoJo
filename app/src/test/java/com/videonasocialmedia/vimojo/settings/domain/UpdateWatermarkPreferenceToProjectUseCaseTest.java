@@ -6,6 +6,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -35,7 +36,7 @@ public class UpdateWatermarkPreferenceToProjectUseCaseTest {
 
   @Test
   public void updateWatermarkPreferenceCallsUpdateRepository(){
-    Project currentProject = Project.getInstance(null,null, null);
+    Project currentProject = Project.getInstance(null,null, null, null);
     injectedUseCase.setWatermarkActivated(true);
     verify(mockedProjectRepository).update(currentProject);
   }
@@ -49,7 +50,7 @@ public class UpdateWatermarkPreferenceToProjectUseCaseTest {
 
     injectedUseCase.setWatermarkActivated(activateWatermark);
 
-    currentProject = Project.getInstance(null, null, null);
+    currentProject = Project.getInstance(null, null, null, null);
 
     assertThat("UseCase update Watermark ", currentProject.hasWatermark(),
         CoreMatchers.is(activateWatermark));
@@ -57,7 +58,8 @@ public class UpdateWatermarkPreferenceToProjectUseCaseTest {
   }
 
   private Project getAProject() {
-    return new Project("title", "/path", Profile.getInstance(VideoResolution.Resolution.HD720,
+    return new Project("title", "/path", "private/path",
+        Profile.getInstance(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 

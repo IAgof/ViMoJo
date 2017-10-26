@@ -56,15 +56,16 @@ android {
         // Enabling multidex support.
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
     def FABRIC_VIDEONA_ORG_APIKEY = "eba78720f87307ca48dfa4200dd90914ff6653f2"
     def FABRIC_VIDEONA_ORG_APISECRET = "1636d8a8a8c633c8ba87f5a67ca26a5cc354c414b108ef565df202f07f393ae9"
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 47 // 20170714
-            versionName "0.7.0-RC3" // 20170714
-            resValue "string", "app_out_of_date", "2017-07-31" // 20170321
+            versionCode 65 // 20171024
+            versionName "0.7.0-RC10" // 20171024
+            resValue "string", "app_out_of_date", "2017-12-31" // 20170731
             resValue "string", "app_name", "Vimojo"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -76,51 +77,23 @@ android {
         }
         hispanopost {
             applicationId "com.videonasocialmedia.vimojo.hispanopost"
-            versionCode 27 // 20170714
-            versionName "0.7.0-RC3.fHispanopost" // 20170714
-            resValue "string", "app_out_of_date", "2016-12-01"
+            versionCode 45 // 20171024
+            versionName "0.7.0-RC10.fHispanopost" // 20171024
+            resValue "string", "app_out_of_date", "2017-12-01"
             resValue "string", "app_name", "HispanoPost"
-            buildConfigField "boolean", "FEATURE_FTP", "false"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "false"
-            buildConfigField "boolean", "FEATURE_WATERMARK", "false"
+            buildConfigField "boolean", "FEATURE_FTP", "true"
+            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
+            buildConfigField "boolean", "FEATURE_WATERMARK", "true"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
             ext.fabricApiKey = "3fc92dd8023e505ebab31a962e1eb284f37696bb"
             ext.fabricApiSecret = "f88950e831f1f8c6d7402b96e4e93c1c2f71f1e021dc68b183b8b3d2456b9b67"
             manifestPlaceholders = [appName: "HispanoPost", fabricApiKey: "3fc92dd8023e505ebab31a962e1eb284f37696bb"]
         }
-        shoulderpod {
-            applicationId "com.videonasocialmedia.vimojo.shoulderpod"
-            versionCode 27 // 20170714
-            versionName "0.7.0-RC3.fShoulderpod" // 20170714
-            resValue "string", "app_out_of_date", "2016-12-01"
-            resValue "string", "app_name", "Shoulderpod"
-            buildConfigField "boolean", "FEATURE_FTP", "false"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "false"
-            buildConfigField "boolean", "FEATURE_WATERMARK", "false"
-            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            ext.fabricApiKey = "cee2254b437b99953c8a2a690fb3bf98cf36c343"
-            ext.fabricApiSecret = "356b560c9fa95c84d8635ad0ab7049a664ebe2917dd954a5b97ebd95faee4fa8"
-            manifestPlaceholders = [appName: "Shoulderpod", fabricApiKey: "cee2254b437b99953c8a2a690fb3bf98cf36c343"]
-        }
-        veinteminutos {
-            applicationId "com.videonasocialmedia.vimojo.veinteminutos"
-            versionCode 27 // 20170714
-            versionName "0.7.0-RC3.f20minutos" // 20170714
-            resValue "string", "app_out_of_date", "2016-12-13"
-            resValue "string", "app_name", "Video 20M"
-            buildConfigField "boolean", "FEATURE_FTP", "true"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
-            buildConfigField "boolean", "FEATURE_WATERMARK", "false"
-            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            ext.fabricApiKey = "cf33bf18eadd90ff4f7f671588c2017052150cbf"
-            ext.fabricApiSecret = "93b01a6ab712ca7229c35b072324a5e5e89a3c075e107932b0db61864e2ea880"
-            manifestPlaceholders = [appName: "Video 20M", fabricApiKey: "cf33bf18eadd90ff4f7f671588c2017052150cbf"]
-        }
         rtve {
             applicationId "com.videonasocialmedia.vimojo.rtve"
-            versionCode 27 // 20170714
-            versionName "0.7.0-RC3.fRtve" // 20170714
-            resValue "string", "app_out_of_date", "2017-07-31" // 20170321
+            versionCode 44 // 20171024
+            versionName "0.7.0-RC10.fRtve" // 20171024
+            resValue "string", "app_out_of_date", "2017-12-31" // 20170731
             resValue "string", "app_name", "Vimojo Rtve"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -130,39 +103,11 @@ android {
             ext.fabricApiSecret = "b3bf19cf86f8075700885f47ec7cf2813b8d8b6832a78a008ed9b757e5a56d91"
             manifestPlaceholders = [appName: "Vimojo Rtve", fabricApiKey: "9600ab9fda1b0c0991396ffc882a957bbcca8678"]
         }
-        ochoaldia {
-            applicationId "com.videonasocialmedia.vimojo.ochoaldia"
-            versionCode 24 // 20170714
-            versionName "0.7.0-RC3.fOchoAlDia" // 20170714
-            resValue "string", "app_out_of_date", "2017-07-31"
-            resValue "string", "app_name", "8 al día"
-            buildConfigField "boolean", "FEATURE_FTP", "true"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
-            buildConfigField "boolean", "FEATURE_WATERMARK", "true"
-            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            ext.fabricApiKey = "636f0d9539c15314d7f540afdd251bec68edeb01"
-            ext.fabricApiSecret = "13f8e6cd589173f4405844b46bc19b5d8acca736dc0c3d963ca8c16d48bc7137"
-            manifestPlaceholders = [appName: "8 al día", fabricApiKey: "636f0d9539c15314d7f540afdd251bec68edeb01"]
-        }
-        elpaisdigital {
-            applicationId "com.videonasocialmedia.vimojo.elpaisdigital"
-            versionCode 22 // 20170714
-            versionName "0.7.0-RC3.fElPaisDigial" // 20170714
-            resValue "string", "app_out_of_date", "2017-07-31"
-            resValue "string", "app_name", "El País Digital"
-            buildConfigField "boolean", "FEATURE_FTP", "false"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "false"
-            buildConfigField "boolean", "FEATURE_WATERMARK", "false"
-            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            ext.fabricApiKey = "9e2c54ec6e94c68364a80a8e511406d4b74285c8"
-            ext.fabricApiSecret = "08a85538f0c5c0811431392c62d603bb2d93bcf6102a3f85fe614decde8a03f2"
-            manifestPlaceholders = [appName: "El País Digital", fabricApiKey: "9e2c54ec6e94c68364a80a8e511406d4b74285c8"]
-        }
         vimojowatermark {
             applicationId "com.videonasocialmedia.vimojo.vimojowatermark"
-            versionCode 1
-            versionName "0.7.0-RC2.fVimojoWatermark"
-            resValue "string", "app_out_of_date", "2017-07-31"
+            versionCode 18 // 20171024
+            versionName "0.7.0-RC10.fVimojoWatermark" // 20171024
+            resValue "string", "app_out_of_date", "2017-12-31" //20170731
             resValue "string", "app_name", "Vimojo Videona"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -174,8 +119,8 @@ android {
         }
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 1
-            versionName "0.7.0-RC2.fThomsonFoundation"
+            versionCode 18 // 20171024
+            versionName "0.7.0-RC10.fThomsonFoundation" // 20171024
             resValue "string", "app_out_of_date", "2017-12-31"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             buildConfigField "boolean", "FEATURE_FTP", "true"
@@ -265,35 +210,33 @@ dependencies {
     testCompile('junit:junit:4.12') {
         exclude group: "org.hamcrest"
     }
-    testCompile('org.mockito:mockito-core:1.10.19') {
+    testCompile('org.mockito:mockito-core:2.6.3') {
         exclude group: "org.hamcrest"
     }
     testCompile 'org.robolectric:robolectric:3.1.2'
-    testCompile 'org.powermock:powermock-api-mockito:1.6.4'
-    testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.6.4'
-//    testCompile 'org.powermock:powermock-module-junit4-rule:1.6.4'
-    testCompile 'org.powermock:powermock-module-junit4:1.6.4'
+    testCompile 'org.powermock:powermock-api-mockito2:1.7.1'
+    testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.7.1'
+    testCompile 'org.powermock:powermock-module-junit4:1.7.1'
     testCompile 'org.json:json:20140107'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':avrecorder')
-    compile 'com.android.support:appcompat-v7:25.2.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:recyclerview-v7:25.2.0'
-    compile 'com.android.support:cardview-v7:25.2.0'
-    compile 'com.android.support:percent:25.2.0'
-    compile 'com.android.support:support-v13:25.2.0'
-    compile 'com.github.bumptech.glide:glide:3.6.0'
-//    compile 'com.googlecode.mp4parser:isoparser:1.0.5.4'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.android.support:cardview-v7:25.3.1'
+    compile 'com.android.support:percent:25.3.1'
+    compile 'com.android.support:support-v13:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.github.bumptech.glide:glide:3.8.0'
+    compile 'jp.wasabeef:glide-transformations:2.0.2'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'de.greenrobot:eventbus:2.4.0'
-    compile 'com.mixpanel.android:mixpanel-android:4.6.4'
-//    compile 'com.google.android.gms:play-services-ads:8.3.0'
-    compile 'com.google.android.gms:play-services-identity:8.3.0'
-    compile 'com.google.android.gms:play-services-gcm:8.3.0'
-    compile 'com.google.android.gms:play-services-analytics:8.3.0'
-    compile 'com.android.support:design:25.1.0'
+    compile 'com.mixpanel.android:mixpanel-android:5.+'
+    compile 'com.google.android.gms:play-services-identity:10.2.0'
+    compile 'com.google.android.gms:play-services-gcm:10.2.0'
+    compile 'com.google.android.gms:play-services-analytics:10.2.0'
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.karumi:dexter:2.2.2'
     compile 'commons-net:commons-net:3.5'
@@ -317,11 +260,15 @@ dependencies {
     androidTestCompile('junit:junit:4.12') {
         exclude group: "org.hamcrest"
     }
-    androidTestCompile('org.mockito:mockito-core:1.10.19') {
+//    androidTestCompile('org.mockito:mockito-core:1.10.19') {
+//        exclude group: "org.hamcrest"
+//    }
+//    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
+//    androidTestCompile 'com.linkedin.dexmaker:dexmaker-mockito:2.2.0'
+    androidTestCompile('org.mockito:mockito-core:2.6.3') {
         exclude group: "org.hamcrest"
     }
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
+    androidTestCompile 'org.mockito:mockito-android:2.6.3'
     compile('com.crashlytics.sdk.android:crashlytics:2.6.3@aar') {
         transitive = true;
     }
@@ -329,6 +276,8 @@ dependencies {
     androidTestCompile 'io.reactivex:rxjava:1.1.0'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
-    androidTestCompile 'com.android.support:support-annotations:25.2.0'
+    androidTestCompile 'com.android.support:support-annotations:25.3.1'
     compile project(path: ':camera')
+
+    compile 'com.kailashdabhi:om-recorder:1.1.5'
 }
