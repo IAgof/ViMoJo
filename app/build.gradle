@@ -249,6 +249,7 @@ dependencies {
     compile 'com.roughike:bottom-bar:2.0.2'
     compile 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:0.7.2'
     compile 'com.victor:lib:1.0.4'
+    compile 'com.github.apl-devs:appintro:v4.2.2'
 //    compile(name:'videona-sdk-v0.1.0',ext:'aar')
     compile project(':sdk')
     compile 'org.jcodec:jcodec:0.1.9'

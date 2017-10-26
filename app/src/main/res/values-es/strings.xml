@@ -685,5 +685,6 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="onNoVideosRetrieved">Error, no hay vídeos en el proyecto</string>
     <string name="title_theme_app_preference">Tema Oscuro </string>
     <string name="title_theme_app_section">Tema </string>
+    <string name="tutorial_record_done_button">Ver edición</string>
 
 </resources>

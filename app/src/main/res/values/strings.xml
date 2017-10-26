@@ -2243,6 +2243,7 @@ and Conditions.\n\n
     <string name="solo">Solo</string>
     <string name="title_theme_app_preference">Dark theme</string>
     <string name="title_theme_app_section">Activate dark theme</string>
+    <string name="tutorial_record_done_button">See edition</string>
 
 
 </resources>
