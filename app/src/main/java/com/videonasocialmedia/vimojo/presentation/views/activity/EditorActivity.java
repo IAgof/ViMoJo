@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -15,7 +16,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -186,7 +186,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     navigationView.setNavigationItemSelectedListener(
         new NavigationView.OnNavigationItemSelectedListener() {
           @Override
-          public boolean onNavigationItemSelected(MenuItem menuItem) {
+          public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
             switch (menuItem.getItemId()) {
               case R.id.menu_navview_gallery_projects:
                 drawerLayout.closeDrawers();
@@ -206,7 +206,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                 return false;
               case R.id.menu_navview_tutorial_edition:
                 navigateTo(TutorialEditorVimojo.class);
-                drawerLayout.closeDrawers();
                 return false;
               case R.id.menu_navview_tutorial_record:
                 navigateTo(TutorialRecordVimojo.class);
@@ -341,7 +340,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
         File file = new File(userThumbPath);
         Uri uri = Uri.fromFile(file);
 
-        Intent userThumbSetterIntent = null;
+        Intent userThumbSetterIntent;
         switch (which) {
           /*case DialogInterface.BUTTON_POSITIVE:
             // Take photo button clicked

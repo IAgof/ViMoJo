@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.github.paolorotolo.appintro.AppIntro;
-import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.custom.DepthPageTransformer;
+import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.custom.ZoomOutPageTransformer;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.fragments.fragment_tutorial_editor.Fragment10TutorialEditor;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.fragments.fragment_tutorial_editor.Fragment11TutorialEditor;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.fragments.fragment_tutorial_editor.Fragment1TutorialEditor;
@@ -38,7 +38,7 @@ public class TutorialEditorVimojo extends AppIntro {
     addSlide(new Fragment10TutorialEditor());
     addSlide(new Fragment11TutorialEditor());
 
-    setCustomTransformer(new DepthPageTransformer());
+    setCustomTransformer(new ZoomOutPageTransformer());
 
     setBarColor(Color.parseColor("#00000000"));
     setSeparatorColor(Color.parseColor("#00000000"));
