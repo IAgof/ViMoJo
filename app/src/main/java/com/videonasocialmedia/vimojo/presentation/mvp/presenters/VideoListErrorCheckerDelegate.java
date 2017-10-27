@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VideoListErrorCheckerDelegate {
-  boolean showWarning = false;
 
   public VideoListErrorCheckerDelegate() {
   }
@@ -24,13 +23,12 @@ public class VideoListErrorCheckerDelegate {
               || ((video.getVideoError() != null && !video.getVideoError().isEmpty()))) {
         failedVideos.add(video);
         // TODO(jliarte): 2/05/17 after retrieving videos from repository transcodingJob will always be null
-        showWarning = true;
         if (video.getVideoError() != null) {
           message = message + video.getVideoError();
         }
       }
     }
-    if (showWarning) {
+    if (failedVideos.size() > 0) {
       videoTranscodingErrorNotifier.showWarningTempFile(failedVideos);
       videoTranscodingErrorNotifier.setWarningMessageTempFile(message + " failed");
     }

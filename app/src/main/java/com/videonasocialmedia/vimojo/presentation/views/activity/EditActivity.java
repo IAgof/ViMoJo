@@ -70,7 +70,7 @@ import butterknife.OnClick;
 public class EditActivity extends EditorActivity implements EditActivityView,
         VideoTranscodingErrorNotifier, VideonaPlayer.VideonaPlayerListener,
         VideoTimeLineRecyclerViewClickListener {
-    private static String TAG = EditActivity.class.getCanonicalName();
+    private static String LOG_TAG = EditActivity.class.getCanonicalName();
     private static final String CURRENT_TIME_POSITION = "current_time_position";
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;
     private final int NUM_COLUMNS_GRID_TIMELINE_VERTICAL = 4;
@@ -548,7 +548,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   }
 
   @Override
-  public void setVideoMute(){
+  public void setVideoMute() {
     isVideoMute = true;
     videonaPlayer.setVideoVolume(0f);
   }
@@ -567,7 +567,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   public void showWarningTempFile(ArrayList<Video> failedVideos) {
     timeLineAdapter.setFailedVideos(failedVideos);
     for (Video failedVideo : failedVideos) {
-      Log.e(TAG, "failed video " + videoList.indexOf(failedVideo));
+      Log.e(LOG_TAG, "failed video " + videoList.indexOf(failedVideo));
     }
     warningTranscodingFilesButton.setVisibility(View.VISIBLE);
   }
@@ -575,6 +575,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Override
   public void setWarningMessageTempFile(String messageTempFile) {
     warningTranscodingFilesMessage = messageTempFile;
+    Log.d(LOG_TAG, "Error detected in videos intermediate files: " + messageTempFile);
   }
 
   @Override
@@ -582,7 +583,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         currentVideoIndex = currentClipIndex;
         timeLineAdapter.updateSelection(currentClipIndex);
         videoListRecyclerView.scrollToPosition(currentClipIndex);
-        if(isVideoMute){
+        if (isVideoMute) {
           videonaPlayer.setVideoVolume(0.f);
         }
     }

@@ -53,10 +53,10 @@ public class VideoTimeLineAdapter
     Video currentVideo = videoList.get(position);
     holder.bindData(currentVideo, position, selectedVideoPosition);
     this.videoViewHolders.put(currentVideo, holder);
-    if (failedVideos.indexOf(currentVideo) > 0) {
+    if (failedVideos.indexOf(currentVideo) >= 0) {
       holder.enableWarningIcon();
     } else {
-      holder.diableWarningIcon();
+      holder.disableWarningIcon();
     }
   }
 
