@@ -1,14 +1,12 @@
 package com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.github.paolorotolo.appintro.AppIntro;
-import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
-import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.custom.ZoomOutPageTransformer;
+import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.custom.DepthPageTransformer;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.fragments.fragment_tutorial_editor.Fragment10TutorialEditor;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.fragments.fragment_tutorial_editor.Fragment11TutorialEditor;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.fragments.fragment_tutorial_editor.Fragment1TutorialEditor;
@@ -40,7 +38,7 @@ public class TutorialEditorVimojo extends AppIntro {
     addSlide(new Fragment10TutorialEditor());
     addSlide(new Fragment11TutorialEditor());
 
-    setCustomTransformer(new ZoomOutPageTransformer());
+    setCustomTransformer(new DepthPageTransformer());
 
     setBarColor(Color.parseColor("#00000000"));
     setSeparatorColor(Color.parseColor("#00000000"));
@@ -50,19 +48,13 @@ public class TutorialEditorVimojo extends AppIntro {
   @Override
   public void onSkipPressed(Fragment currentFragment) {
     super.onSkipPressed(currentFragment);
-    loadMainActivity();
+    finish();
   }
 
   @Override
   public void onDonePressed(Fragment currentFragment) {
     super.onDonePressed(currentFragment);
-    loadMainActivity();
-  }
-
-
-  private void loadMainActivity() {
-    Intent intent = new Intent(this, RecordCamera2Activity.class);
-    startActivity(intent);
+    finish();
   }
 
 }

@@ -260,7 +260,7 @@
     <string name="content_contact_section">Give us feedback</string>
 
     <!-- Tutorial Settings, not in use -->
-    <string name="title_tutorial_section">Tutorial</string>
+    <string name="title_tutorial_section">Tutorials</string>
     <string name="content_tutorial_section">See our tutorial</string>
 
     <!-- Accounts actions -->
@@ -2267,6 +2267,8 @@ and Conditions.\n\n
     <string name="solo">Solo</string>
     <string name="title_theme_app_preference">Dark theme</string>
     <string name="title_theme_app_section">Activate dark theme</string>
-    <string name="tutorial_record_done_button">See edition</string>
+
+    <string name="title_tutorial_edition_section">Edition tutorial</string>
+    <string name="title_tutorial_record_section">Record tutorial</string>
 
 </resources>
