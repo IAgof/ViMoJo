@@ -86,7 +86,9 @@ public class EditorPresenter {
   }
 
   public boolean getPreferenceThemeApp() {
-    boolean isActivateDarkTheme= sharedPreferences.getBoolean(ConfigPreferences.THEME_APP_DARK,true);
+    // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
+    boolean isActivateDarkTheme = sharedPreferences
+            .getBoolean(ConfigPreferences.THEME_APP_DARK, false);
     return isActivateDarkTheme;
   }
 
