@@ -506,9 +506,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void setFlashSupported(boolean supported) {
     flashButton.setActivated(false);
     if (supported) {
-      flashButton.setEnabled(true);
+      flashButton.setVisibility(View.VISIBLE);
     } else {
-      flashButton.setEnabled(false);
+      flashButton.setVisibility(View.GONE);
     }
   }
 
