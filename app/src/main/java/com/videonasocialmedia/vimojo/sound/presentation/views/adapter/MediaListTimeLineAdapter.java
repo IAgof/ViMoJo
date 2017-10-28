@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.sound.presentation.views.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,12 +9,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.GenericRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.BitmapEncoder;
+import com.bumptech.glide.load.resource.bitmap.StreamBitmapDecoder;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
+import com.bumptech.glide.load.resource.transcode.BitmapToGlideDrawableTranscoder;
+import com.bumptech.glide.signature.StringSignature;
 import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.ItemTouchHelperViewHolder;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.VideoThumbnailGenerateParams;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.VideoThumbnailGenerateParamsBitmapResourceDecoder;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.VideoThumbnailGenerateParamsPassthroughModelLoader;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MediaListTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
@@ -23,6 +34,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 /**
  * Created by alvaro on 7/03/17.
@@ -36,9 +48,10 @@ public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTime
   private List<Media> mediaList;
 
   private int selectedVideoPosition = 0;
+  private GenericRequestBuilder<VideoThumbnailGenerateParams, VideoThumbnailGenerateParams, Bitmap, GlideDrawable> generator;
 
   public MediaListTimeLineAdapter(MediaListTimeLineRecyclerViewClickListener mediaTimeLineListener,
-                                  int trackId){
+                                  int trackId) {
     this.mediaListTimeLineListener = mediaTimeLineListener;
     this.trackId = trackId;
     this.mediaList = new ArrayList<>();
@@ -46,7 +59,6 @@ public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTime
 
   @Override
   public MediaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
     this.context = parent.getContext();
     View view = LayoutInflater.from(context)
         .inflate(R.layout.sound_mediatimeline_media_item, parent, false);
@@ -64,29 +76,37 @@ public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTime
 
   private String getTimeForVideoInPosition(int position) {
     int startTime = 0;
-    for(int i=0; i<position; i++){
+    for (int i = 0; i < position; i++) {
      startTime += mediaList.get(i).getDuration();
     }
     int stopTime = startTime + mediaList.get(position).getDuration();
 
     return TimeUtils.toFormattedTimeWithMinutesAndSeconds(startTime) + " - "
         + TimeUtils.toFormattedTimeWithMinutesAndSeconds(stopTime);
-
   }
 
   private void drawMediaThumbnail(ImageView thumbnailView, Media currentMedia) {
-
-    if(currentMedia instanceof Video) {
-      String path = currentMedia.getIconPath() != null
-          ? currentMedia.getIconPath() : currentMedia.getMediaPath();
-      Glide.with(context)
-          .load(path)
-          .centerCrop()
-          .error(R.drawable.fragment_gallery_no_image)
-          .into(thumbnailView);
+    if (currentMedia instanceof Video) {
+      // TODO(jliarte): 27/10/17 duplicate code with @com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.TimeLineVideoViewHolder
+      // TODO(jliarte): 27/10/17 try to move to constructor
+      generator = Glide.with(context)
+              .using(new VideoThumbnailGenerateParamsPassthroughModelLoader(),
+                      VideoThumbnailGenerateParams.class)
+              .from(VideoThumbnailGenerateParams.class)
+              .as(Bitmap.class)
+              .transcode(new BitmapToGlideDrawableTranscoder(context), GlideDrawable.class)
+              .decoder(new VideoThumbnailGenerateParamsBitmapResourceDecoder(context))
+              .encoder(new BitmapEncoder(Bitmap.CompressFormat.PNG, 0/*ignored for lossless*/)) // builtin
+              .cacheDecoder(new FileToStreamDecoder<Bitmap>(new StreamBitmapDecoder(context)))  // builtin
+              .error(R.drawable.fragment_gallery_no_image);
+      Video currentVideo = (Video) currentMedia;
+      generator
+              .load(new VideoThumbnailGenerateParams(currentVideo))
+              .signature(new StringSignature(Integer.toString(currentVideo.getStartTime()))) // to update thumbnail when trim start time has changed
+              .into(thumbnailView);
       return;
     }
-    if(currentMedia instanceof Audio) {
+    if (currentMedia instanceof Audio) {
       Glide.with(context)
           .load(currentMedia.getIconResourceId())
           .centerCrop()
@@ -100,7 +120,6 @@ public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTime
     notifyItemChanged(selectedVideoPosition);
     selectedVideoPosition = positionSelected;
     notifyItemChanged(selectedVideoPosition);
-
   }
 
   public int getSelectedVideoPosition() {
@@ -117,7 +136,6 @@ public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTime
   }
 
   class MediaViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
-
     @Bind(R.id.text_duration_clip)
     TextView textDurationClip;
     @Bind(R.id.timeline_audio_thumb)
@@ -132,17 +150,14 @@ public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTime
     public void onClipClick() {
       int position = getAdapterPosition();
       mediaListTimeLineListener.onClipClicked(position, trackId);
-
     }
 
     @Override
     public void onItemSelected() {
-
     }
 
     @Override
     public void onItemClear() {
-
     }
   }
 }
