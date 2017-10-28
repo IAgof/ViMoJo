@@ -84,8 +84,10 @@ public abstract class VimojoActivity extends AppCompatActivity {
     }
 
     public void updateThemeApp() {
-        boolean isActivateDarkTheme = sharedPreferences.getBoolean(ConfigPreferences.THEME_APP_DARK,true);
-        if(isActivateDarkTheme) {
+        // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
+        boolean isActivateDarkTheme = sharedPreferences
+                .getBoolean(ConfigPreferences.THEME_APP_DARK, false);
+        if (isActivateDarkTheme) {
             setTheme(R.style.VideonaThemeDark);
         } else {
             setTheme(R.style.VideonaThemeLight);
