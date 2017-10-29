@@ -14,6 +14,7 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRe
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -27,6 +28,8 @@ public class VideoTimeLineAdapter
   private List<Video> videoList;
   private int selectedVideoPosition;
   private VideoTimeLineRecyclerViewClickListener videoTimeLineListener;
+  private final HashMap<Video, TimeLineVideoViewHolder> videoViewHolders = new HashMap<>();
+  private ArrayList<Video> failedVideos = new ArrayList<>();
 
   public VideoTimeLineAdapter(VideoTimeLineRecyclerViewClickListener listener) {
     this.videoList = new ArrayList<>();
@@ -49,6 +52,12 @@ public class VideoTimeLineAdapter
   public void onBindViewHolder(TimeLineVideoViewHolder holder, int position) {
     Video currentVideo = videoList.get(position);
     holder.bindData(currentVideo, position, selectedVideoPosition);
+    this.videoViewHolders.put(currentVideo, holder);
+    if (failedVideos.indexOf(currentVideo) >= 0) {
+      holder.enableWarningIcon();
+    } else {
+      holder.disableWarningIcon();
+    }
   }
 
   public void updateSelection(int position) {
@@ -104,4 +113,7 @@ public class VideoTimeLineAdapter
     return selectedVideoPosition;
   }
 
+  public void setFailedVideos(ArrayList<Video> failedVideos) {
+    this.failedVideos = failedVideos;
+  }
 }
