@@ -142,6 +142,7 @@
                             android:layout_height="wrap_content"
                             android:background="@null"
                             android:visibility="visible"
+                            android:tint="@color/colorAccent"
                             android:padding="24dp"
                             app:srcCompat="@drawable/activity_edit_sound_voice_record_normal"
                             android:layout_centerVertical="true"
