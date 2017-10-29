@@ -139,6 +139,7 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     private void setupThemeApp() {
+        // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
         themeappSwitchPref = (SwitchPreference) findPreference(ConfigPreferences.THEME_APP_DARK);
     }
 
@@ -301,14 +302,13 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-                                          String key) {
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference connectionPref = findPreference(key);
-        if(key.equals(ConfigPreferences.THEME_APP_DARK)){
-            preferencesPresenter.trackThemeApp(sharedPreferences.getBoolean(key, true));
+        if (key.equals(ConfigPreferences.THEME_APP_DARK)) {
+            // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
+            preferencesPresenter.trackThemeApp(sharedPreferences.getBoolean(key, false));
             restartActivity();
         }
-
         if (key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0
                 || key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0
                 || key.compareTo(ConfigPreferences.WATERMARK) == 0
@@ -320,9 +320,6 @@ public class SettingsFragment extends PreferenceFragment implements
             connectionPref.setSummary(sharedPreferences.getString(key, ""));
             return;
         }
-
-
-
         trackQualityAndResolutionAndFrameRateUserTraits(key, sharedPreferences.getString(key, ""));
     }
 
