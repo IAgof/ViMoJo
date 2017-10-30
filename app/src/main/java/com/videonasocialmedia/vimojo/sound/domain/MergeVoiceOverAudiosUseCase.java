@@ -74,7 +74,9 @@ public class MergeVoiceOverAudiosUseCase {
         File directory = new File(path);
         ArrayList<String> audiosList = new ArrayList<String>();
         for(File audio: directory.listFiles()){
-            audiosList.add(audio.getAbsolutePath());
+            if(audio.getName().startsWith("AUD_")) {
+                audiosList.add(audio.getAbsolutePath());
+            }
         }
         return audiosList;
     }

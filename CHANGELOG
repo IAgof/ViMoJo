@@ -1,9 +1,23 @@
+v0.7.0-RC10
+- Modified trim task error handling to slightly move trim times before relaunching again
+- Fixed camera bug that caused app crash when going back to camera from other views
+- Fixed missing chunks voice over. Changed audio recorder library.
+- Improved stability in voice over record and volume screen.
+
+v0.7.0-RC9
+- Added in settings screen option to see all licenses used in app.
+- Fixed ui problems in trim and voice over screen.
+- Fixed problem with audio normalization while project is exporting.
+- Fixed problem restarting app with adapting jobs missing.
+- Updated isoparser library to 1.1.22 version
+- Improving error management in export process
+- Solved leaks in ShareVideoPresenter and Camera2Wrapper by using weak references to activity or context
+
 v0.7.0-RC8
 - Ui updates in voice over, gallery, music, bottomBar, edit text.
 - Fixed mixing audio error that generated incompleted audio track in export sessions
 - Ui updates in voice over, gallery, music, bottomBar, edit text.
 - Changed application default theme to dark. Added option in settings and drawer screens to switch with theme light.
-
 
 v0.7.0-RC7
 - Moved video adaptation tasks to background

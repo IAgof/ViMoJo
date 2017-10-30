@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.trim.domain;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
@@ -26,21 +27,32 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.IOException;
 
+import static com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase.AUTOTRIM_MS_RANGE;
+import static com.videonasocialmedia.vimojo.utils.Constants.MIN_TRIM_OFFSET;
+import static com.videonasocialmedia.vimojo.utils.Constants.MS_CORRECTION_FACTOR;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 /**
  * Created by jliarte on 18/10/16.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Log.class})
 public class ModifyVideoDurationUseCaseTest {
   @Mock TextToDrawable mockedDrawableGenerator;
   @Mock MediaTranscoder mockedMediaTranscoder;
@@ -139,6 +151,32 @@ public class ModifyVideoDurationUseCaseTest {
     // (jliarte): 22/08/17 now this is set to false in a new thread, after waiting for adapt job to
     // finish
 //    assertThat(video.isTranscodingTempFileFinished(), is(false));
+  }
+
+  @Test
+  public void handleTaskErrorModifiesVideoTrimmingTimes() throws IOException {
+    PowerMockito.mockStatic(Log.class);
+    Project currentProject = getAProject();
+    String message = "Error message";
+    Video video = spy(new Video("media/path", Video.DEFAULT_VOLUME));
+    video.setStartTime(50);
+    video.setStopTime(2540);
+    doReturn(5000).when(video).getFileDuration();
+    ModifyVideoDurationUseCase useCaseSpy = spy(injectedUseCase);
+    ListenableFuture<Video> mockedListenable = mock(ListenableFuture.class);
+    doReturn(mockedListenable).when(useCaseSpy).runTrimTranscodingTask(video, currentProject);
+
+    useCaseSpy.handleTaskError(video, message, currentProject);
+
+    assertThat(video.getStartTime(), is(not(50)));
+    assertThat(video.getStopTime(), is(not(2540)));
+
+    assertThat(Math.abs(video.getStartTime() - 50), lessThanOrEqualTo(AUTOTRIM_MS_RANGE));
+    assertThat(Math.abs(video.getStopTime() - 2540), lessThanOrEqualTo(AUTOTRIM_MS_RANGE));
+    assertThat(video.getStopTime() - video.getStartTime(),
+            greaterThanOrEqualTo((int) (MIN_TRIM_OFFSET * MS_CORRECTION_FACTOR)));
+    // (jliarte): 23/10/17 uncomment the line above to see the result values
+//    assertThat(video.getStartTime(), is(video.getStopTime()));
   }
 
   @NonNull
