@@ -41,11 +41,11 @@
             <menu>
                 <item
                     android:id="@+id/menu_navview_tutorial_edition"
-                    android:icon="@drawable/common_icon_help_white"
+                    android:icon="@drawable/ic_activity_drawer_edit_tutorial"
                     android:title="@string/title_tutorial_edition_section"/>
                 <item
                     android:id="@+id/menu_navview_tutorial_record"
-                    android:icon="@drawable/common_icon_help_white"
+                    android:icon="@drawable/ic_activity_drawer_rec_tutorial"
                     android:title="@string/title_tutorial_record_section"/>
 
             </menu>
