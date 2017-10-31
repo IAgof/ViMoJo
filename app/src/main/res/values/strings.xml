@@ -46,7 +46,7 @@
     <string name="dialog_editor_user_thumb_message">Select user photo from</string>
     <string name="dialog_editor_user_thumb_take_photo">Camera</string>
     <string name="dialog_editor_user_thumb_pick_photo">Gallery</string>
-    <string name="section_navview_style">Dark theme</string>
+    <string name="drawer_dark_theme">Dark theme</string>
 
 
     <!-- Edit Activity -->
@@ -260,7 +260,7 @@
     <string name="content_contact_section">Give us feedback</string>
 
     <!-- Tutorial Settings, not in use -->
-    <string name="title_tutorial_section">Tutorial</string>
+    <string name="title_tutorial_section">Tutorials</string>
     <string name="content_tutorial_section">See our tutorial</string>
 
     <!-- Accounts actions -->
@@ -273,7 +273,13 @@
     <!-- DRAWER -->
     <string name="drawerProjects">My projects</string>
     <string name="drawerSettings">Settings</string>
-    <string name="drawerSuggestions">Suggestions</string>
+    <string name="menuSuggestions">Suggestions</string>
+    <string name="title_tutorial_edition_section">Edition tutorial</string>
+    <string name="title_tutorial_record_section">Record tutorial</string>
+    <string name="menuGallery">Gallery</string>
+    <string name="menuSettings">Settings</string>
+    <string name="drawer_watermark">Watermark</string>
+
 
 
     <!-- About Activity -->

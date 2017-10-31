@@ -48,7 +48,7 @@
     <string name="dialog_editor_user_thumb_message">Añade foto de usuario</string>
     <string name="dialog_editor_user_thumb_take_photo">Cámara</string>
     <string name="dialog_editor_user_thumb_pick_photo">Galería</string>
-    <string name="section_navview_style">Tema oscuro</string>
+    <string name="drawer_dark_theme">Tema oscuro</string>
 
 
     <!-- Edit Activity -->
@@ -242,7 +242,7 @@
     <string name="content_contact_section">Dinos que opinas de la aplicación</string>
 
     <!-- Tutorial Settings, not in use -->
-    <string name="title_tutorial_section">Tutorial</string>
+    <string name="title_tutorial_section">Tutoriales</string>
     <string name="content_tutorial_section">Mira nuestro tutorial</string>
 
     <!-- Accounts actions -->
@@ -254,7 +254,7 @@
     <!-- DRAWER -->
     <string name="drawerProjects">Mis proyectos</string>
     <string name="drawerSettings">Ajustes</string>
-    <string name="drawerSuggestions">Sugerencias</string>
+    <string name="menuSuggestions">Sugerencias</string>
 
     <!-- About Activity -->
 
@@ -592,5 +592,11 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="onNoVideosRetrieved">Error, no hay vídeos en el proyecto</string>
     <string name="title_theme_app_preference">Tema Oscuro </string>
     <string name="title_theme_app_section">Tema </string>
+
+    <string name="title_tutorial_edition_section">Tutorial de edición</string>
+    <string name="title_tutorial_record_section">Tutorial de grabación</string>
+    <string name="menuGallery">Galería</string>
+    <string name="menuSettings">Ajustes</string>
+    <string name="drawer_watermark">Marca de agua</string>
 
 </resources>
