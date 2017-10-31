@@ -10,3 +10,4 @@
         android:fillColor="@color/button"
         android:pathData="M39,25H13c-0.55,0 -1,0.45 -1,1s0.45,1 1,1h26c0.55,0 1,-0.45 1,-1S39.55,25 39,25z"/>
 </vector>
+
