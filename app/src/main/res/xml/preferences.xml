@@ -77,8 +77,8 @@
         <SwitchPreference
             android:key="themeAppDark"
             android:title="@string/title_theme_app_preference"
-            android:defaultValue="true"
-            android:checked="true"/>
+            android:defaultValue="false"
+            android:checked="false"/>
     </PreferenceCategory>
 
     <PreferenceCategory
