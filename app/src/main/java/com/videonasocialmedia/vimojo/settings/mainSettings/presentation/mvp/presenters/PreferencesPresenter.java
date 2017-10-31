@@ -171,7 +171,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     }
 
     private void checkThemeApp(String key) {
-        preferencesView.setThemeDarkAppPref(key, sharedPreferences.getBoolean(key,true));
+        preferencesView.setThemeDarkAppPref(key, sharedPreferences.getBoolean(key, false));
     }
 
     private void checkTransitions() {
