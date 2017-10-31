@@ -1,3 +1,8 @@
+v0.7.0-RC11
+- Improved error notification in edit view, when there is a problem with a clip transcode
+- New timeline clip thumbnails that reflects video start trimming times
+- Set light theme as default
+
 v0.7.0-RC10
 - Modified trim task error handling to slightly move trim times before relaunching again
 - Fixed camera bug that caused app crash when going back to camera from other views
