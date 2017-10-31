@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.fragments.fragment_tutorial_record;
+package com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.fragments.fragment_tutorial_editor;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,11 +7,12 @@ import android.view.ViewGroup;
 
 import com.videonasocialmedia.vimojo.R;
 
-public class Fragment7TutorialRecord extends android.support.v4.app.Fragment {
+
+public class TutorialEditorFragment7 extends android.support.v4.app.Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
-    return inflater.inflate(R.layout.activity_turorial_record_7, container, false);
+    return inflater.inflate(R.layout.activity_turorial_editor_7, container, false);
   }
 }

@@ -35,8 +35,8 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.activity.SettingsActivity;
-import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialEditorVimojo;
-import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialRecordVimojo;
+import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialEditorActivity;
+import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialRecordActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
@@ -205,10 +205,10 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                 navigateTo(SettingsActivity.class);
                 return false;
               case R.id.menu_navview_tutorial_edition:
-                navigateTo(TutorialEditorVimojo.class);
+                navigateTo(TutorialEditorActivity.class);
                 return false;
               case R.id.menu_navview_tutorial_record:
-                navigateTo(TutorialRecordVimojo.class);
+                navigateTo(TutorialRecordActivity.class);
                 return false;
               case R.id.menu_navview_suggestions:
                 navigateToMail("mailto:info@videona.com");

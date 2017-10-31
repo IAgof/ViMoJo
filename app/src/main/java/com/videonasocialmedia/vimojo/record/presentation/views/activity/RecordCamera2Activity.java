@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.record.presentation.views.activity;
 
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -46,7 +45,7 @@ import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCa
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.dialogs.AlertDialogWithInfoIntoCircle;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.activity.SettingsActivity;
-import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialRecordVimojo;
+import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialRecordActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
@@ -1271,7 +1270,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnClick(R.id.button_navigate_tutorial)
   public void navigateToTutorial() {
     if (!isRecording) {
-      navigateTo(TutorialRecordVimojo.class);
+      navigateTo(TutorialRecordActivity.class);
     }
   }
 

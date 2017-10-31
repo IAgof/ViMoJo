@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import com.videonasocialmedia.vimojo.R;
 
 
-public class Fragment8TutorialEditor extends android.support.v4.app.Fragment {
+public class TutorialEditorFragment8 extends android.support.v4.app.Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {

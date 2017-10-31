@@ -267,14 +267,14 @@
             android:parentActivityName=".sound.presentation.views.activity.VoiceOverRecordActivity"/>
 
         <activity
-            android:name=".tutorial.presentation.mvp.views.activity.TutorialRecordVimojo"
+            android:name=".tutorial.presentation.mvp.views.activity.TutorialRecordActivity"
             android:label="@string/app_name"
             android:theme="@style/ViMoJoTutorial"
             android:screenOrientation="landscape">
         </activity>
 
         <activity
-            android:name=".tutorial.presentation.mvp.views.activity.TutorialEditorVimojo"
+            android:name=".tutorial.presentation.mvp.views.activity.TutorialEditorActivity"
             android:label="@string/app_name"
             android:theme="@style/ViMoJoTutorial"
             android:screenOrientation="portrait">

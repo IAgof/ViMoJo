@@ -7,12 +7,11 @@ import android.view.ViewGroup;
 
 import com.videonasocialmedia.vimojo.R;
 
-
-public class Fragment11TutorialRecord extends android.support.v4.app.Fragment {
+public class TutorialRecordFragment9 extends android.support.v4.app.Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
-    return inflater.inflate(R.layout.activity_turorial_record_11, container, false);
+    return inflater.inflate(R.layout.activity_turorial_record_9, container, false);
   }
 }

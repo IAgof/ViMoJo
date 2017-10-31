@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 import com.videonasocialmedia.vimojo.R;
 
 
-public class Fragment7TutorialEditor extends android.support.v4.app.Fragment {
+public class TutorialEditorFragment11 extends android.support.v4.app.Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
-    return inflater.inflate(R.layout.activity_turorial_editor_7, container, false);
+    return inflater.inflate(R.layout.activity_turorial_editor_11, container, false);
   }
 }
