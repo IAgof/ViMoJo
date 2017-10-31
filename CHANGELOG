@@ -1,3 +1,7 @@
+v0.7.0-RC12
+- Fixed bug if user return from the frontal camera, turn off the flash
+- Fixed default light theme in setting
+
 v0.7.0-RC11
 - Improved error notification in edit view, when there is a problem with a clip transcode
 - New timeline clip thumbnails that reflects video start trimming times
