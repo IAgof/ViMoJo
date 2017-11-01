@@ -2,8 +2,6 @@ package com.videonasocialmedia.vimojo.main.modules;
 
 import android.content.SharedPreferences;
 
-import com.videonasocialmedia.avrecorder.AudioRecorder;
-import com.videonasocialmedia.avrecorder.SessionConfig;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
@@ -63,6 +61,10 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.pr
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseListPresenter;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseDetailView;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseListView;
+import com.videonasocialmedia.vimojo.shop.domain.GetShopListUseCase;
+import com.videonasocialmedia.vimojo.shop.presentation.mvp.presenters.ShopListPresenter;
+import com.videonasocialmedia.vimojo.shop.presentation.mvp.views.ShopListView;
+import com.videonasocialmedia.vimojo.shop.source.ShopListProvider;
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
@@ -85,8 +87,6 @@ import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-
-import java.io.IOException;
 
 import dagger.Module;
 import dagger.Provides;
@@ -201,6 +201,11 @@ public class ActivityPresentersModule {
   LicenseListPresenter provideLicenseListPresenter(GetLicenseVimojoListUseCase
                                                        getLicenseVimojoListUseCase) {
     return new LicenseListPresenter((LicenseListView) activity, activity, getLicenseVimojoListUseCase);
+  }
+
+  @Provides @PerActivity
+  ShopListPresenter provideShopListPresenter(GetShopListUseCase getShopListUseCase) {
+    return new ShopListPresenter((ShopListView) activity, activity, getShopListUseCase);
   }
 
   @Provides @PerActivity
@@ -369,6 +374,11 @@ public class ActivityPresentersModule {
     return new GetMediaListFromProjectUseCase();
   }
 
+  @Provides GetShopListUseCase provideShopListUseCase(
+      ShopListProvider shopListProvider) {
+    return new GetShopListUseCase(shopListProvider);
+  }
+
   @Provides AddLastVideoExportedToProjectUseCase provideLastVideoExporterAdded(
           ProjectRepository projectRepository) {
     return new AddLastVideoExportedToProjectUseCase(projectRepository);
@@ -469,6 +479,11 @@ public class ActivityPresentersModule {
 
   @Provides VimojoLicensesProvider provideLicenseProvider() {
     return new VimojoLicensesProvider(activity);
+  }
+
+  @Provides
+  ShopListProvider provideShopProvider() {
+    return new ShopListProvider(activity);
   }
 
   @Provides

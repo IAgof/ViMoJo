@@ -598,5 +598,9 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="menuGallery">Galería</string>
     <string name="menuSettings">Ajustes</string>
     <string name="drawer_watermark">Marca de agua</string>
+    <string name="buy_now">Compra ahora por</string>
+    <string name="title_theme_app_shop">Activar tema oscuro</string>
+    <string name="description_theme_app_shop">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sagittis facilisis sapien, non luctus nulla bibendum eget. Nullam convallis ante id est porta bibendum. Cras maximus, dui ac vestibulum dictum.</string>
+    <string name="title_watermark_shop">Desactivar Marca de agua</string>
 
 </resources>

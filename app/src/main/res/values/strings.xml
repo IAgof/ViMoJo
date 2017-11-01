@@ -2378,5 +2378,9 @@ and Conditions.\n\n
     <string name="solo">Solo</string>
     <string name="title_theme_app_preference">Dark theme</string>
     <string name="title_theme_app_section">Activate dark theme</string>
+    <string name="buy_now">Buy now</string>
+    <string name="title_theme_app_shop">Activar tema oscuro</string>
+    <string name="description_theme_app_shop">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sagittis facilisis sapien, non luctus nulla bibendum eget. Nullam convallis ante id est porta bibendum. Cras maximus, dui ac vestibulum dictum.</string>
+    <string name="title_watermark_shop">Desactivar Marca de agua</string>
 
 </resources>

@@ -35,6 +35,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.activity.SettingsActivity;
+import com.videonasocialmedia.vimojo.shop.presentation.view.activity.ShopListActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
@@ -196,6 +197,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                 return false;
               case R.id.menu_navview_settings:
                 navigateTo(SettingsActivity.class);
+                return false;
+              case R.id.menu_navview_shopping_section:
+                navigateTo(ShopListActivity.class);
                 return false;
               default:
                 return false;
