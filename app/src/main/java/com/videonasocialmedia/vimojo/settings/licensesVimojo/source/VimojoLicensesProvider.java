@@ -33,6 +33,7 @@ public class VimojoLicensesProvider {
         (R.string.licenseAndroidOpenSource)));
     licenseList.add(new LicenseVimojo("Android-Range-Seek-Bar",
         context.getString(R.string.licenseRangeSeekBar)));
+    licenseList.add(new LicenseVimojo("AppIntro",context.getString(R.string.licenseAppIntro)));
     licenseList.add(new LicenseVimojo("BottomBar",context.getString(R.string.licenseRoughikeBottomBar)));
     licenseList.add(new LicenseVimojo("Butterknife", context.getString(R.string.licenseJakeWharton)));
     licenseList.add(new LicenseVimojo("Exo Player",context.getString(R.string.licenseExoPlayer)));
