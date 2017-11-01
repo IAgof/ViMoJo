@@ -207,8 +207,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
               case R.id.menu_navview_tutorial_record:
                 navigateTo(TutorialRecordActivity.class);
                 return false;
-              case R.id.menu_navview_suggestions:
-                navigateToMail("mailto:info@videona.com");
               case R.id.menu_navview_shopping_section:
                 navigateTo(ShopListActivity.class);
                 return false;

@@ -2393,7 +2393,4 @@ and Conditions.\n\n
     <string name="description_theme_app_shop">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sagittis facilisis sapien, non luctus nulla bibendum eget. Nullam convallis ante id est porta bibendum. Cras maximus, dui ac vestibulum dictum.</string>
     <string name="title_watermark_shop">Desactivar Marca de agua</string>
 
-    <string name="title_tutorial_edition_section">Edition tutorial</string>
-    <string name="title_tutorial_record_section">Record tutorial</string>
-
 </resources>
