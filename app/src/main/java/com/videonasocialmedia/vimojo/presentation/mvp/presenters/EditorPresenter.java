@@ -67,24 +67,6 @@ public class EditorPresenter {
     return Project.getInstance(null, null, null, null);
   }
 
-  public void getPreferenceUserName() {
-    String userNamePreference = sharedPreferences.getString(ConfigPreferences.USERNAME, null);
-    if (userNamePreference != null && !userNamePreference.isEmpty()) {
-      editorActivityView.showPreferenceUserName(userNamePreference);
-    } else {
-      editorActivityView.showPreferenceUserName(context.getResources().getString(R.string.username));
-    }
-  }
-
-  public void getPreferenceEmail() {
-    String emailPreference = sharedPreferences.getString(ConfigPreferences.EMAIL, null);
-    if (emailPreference != null && !emailPreference.isEmpty()) {
-      editorActivityView.showPreferenceEmail(emailPreference);
-    } else {
-      editorActivityView.showPreferenceEmail(context.getResources().getString(R.string.emailPreference));
-    }
-  }
-
   public boolean getPreferenceThemeApp() {
     // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
     boolean isActivateDarkTheme = sharedPreferences

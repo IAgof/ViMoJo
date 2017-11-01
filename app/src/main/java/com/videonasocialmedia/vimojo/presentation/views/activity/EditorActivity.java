@@ -16,6 +16,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +38,7 @@ import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageV
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialEditorActivity;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialRecordActivity;
+import com.videonasocialmedia.vimojo.shop.presentation.view.activity.ShopListActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
@@ -136,8 +138,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     if (navigationView != null) {
       setupDrawerContent(navigationView);
       setUpAndCheckUserThumb();
-      editorPresenter.getPreferenceUserName();
-      editorPresenter.getPreferenceEmail();
     }
     editorPresenter.init();
     setupSwitchThemeAppIntoDrawer();
@@ -169,6 +169,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       case R.id.action_settings_edit_gallery:
         navigateTo(GalleryActivity.class);
         return true;
+      case R.id.action_settings_suggestions:
+        navigateToMail("mailto:info@videona.com");
+        return true;
       case android.R.id.home:
         drawerLayout.openDrawer(GravityCompat.START);
         return true;
@@ -195,12 +198,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
               case R.id.menu_navview_delete_clip:
                 createDialog(R.id.menu_navview_delete_clip);
                 return false;
-              case R.id.menu_navview_mail:
-                createDialog(R.id.menu_navview_mail);
-                return false;
-              case R.id.menu_navview_username:
-                createDialog(R.id.menu_navview_username);
-                return false;
               case R.id.menu_navview_settings:
                 navigateTo(SettingsActivity.class);
                 return false;
@@ -212,6 +209,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                 return false;
               case R.id.menu_navview_suggestions:
                 navigateToMail("mailto:info@videona.com");
+              case R.id.menu_navview_shopping_section:
+                navigateTo(ShopListActivity.class);
                 return false;
               default:
                 return false;
@@ -224,10 +223,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
     if (resourceItemMenuId == R.id.menu_navview_delete_clip)
       builder.setMessage(getResources().getString(R.string.dialog_message_clean_project));
-    if (resourceItemMenuId == R.id.menu_navview_mail)
-      builder.setMessage(getResources().getString(R.string.dialog_change_email));
-    if (resourceItemMenuId == R.id.menu_navview_username)
-      builder.setMessage(getResources().getString(R.string.dialog_change_user_name));
 
     final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
       @Override
@@ -237,10 +232,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
             if(resourceItemMenuId == R.id.menu_navview_delete_clip)
                 editorPresenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
                     BuildConfig.FEATURE_WATERMARK);
-            if(resourceItemMenuId == R.id.menu_navview_mail)
-              navigateTo(SettingsActivity.class);
-            if(resourceItemMenuId == R.id.menu_navview_username)
-              navigateTo(SettingsActivity.class);
             break;
 
           case DialogInterface.BUTTON_NEGATIVE:
@@ -280,18 +271,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
         }
       });
     }
-  }
-
-  @Override
-  public void showPreferenceUserName(String data) {
-    Menu menu = navigationView.getMenu();
-    menu.findItem(R.id.menu_navview_username).setTitle(data);
-  }
-
-  @Override
-  public void showPreferenceEmail(String emailPreference) {
-    Menu menu = navigationView.getMenu();
-    menu.findItem(R.id.menu_navview_mail).setTitle(emailPreference);
   }
 
   @Override

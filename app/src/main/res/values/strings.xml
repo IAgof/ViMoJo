@@ -46,7 +46,7 @@
     <string name="dialog_editor_user_thumb_message">Select user photo from</string>
     <string name="dialog_editor_user_thumb_take_photo">Camera</string>
     <string name="dialog_editor_user_thumb_pick_photo">Gallery</string>
-    <string name="section_navview_style">Dark theme</string>
+    <string name="drawer_dark_theme">Dark theme</string>
 
 
     <!-- Edit Activity -->
@@ -273,7 +273,13 @@
     <!-- DRAWER -->
     <string name="drawerProjects">My projects</string>
     <string name="drawerSettings">Settings</string>
-    <string name="drawerSuggestions">Suggestions</string>
+    <string name="menuSuggestions">Suggestions</string>
+    <string name="title_tutorial_edition_section">Edition tutorial</string>
+    <string name="title_tutorial_record_section">Record tutorial</string>
+    <string name="menuGallery">Gallery</string>
+    <string name="menuSettings">Settings</string>
+    <string name="drawer_watermark">Watermark</string>
+
 
 
     <!-- About Activity -->
@@ -2382,6 +2388,10 @@ and Conditions.\n\n
     <string name="solo">Solo</string>
     <string name="title_theme_app_preference">Dark theme</string>
     <string name="title_theme_app_section">Activate dark theme</string>
+    <string name="buy_now">Buy now</string>
+    <string name="title_theme_app_shop">Activar tema oscuro</string>
+    <string name="description_theme_app_shop">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sagittis facilisis sapien, non luctus nulla bibendum eget. Nullam convallis ante id est porta bibendum. Cras maximus, dui ac vestibulum dictum.</string>
+    <string name="title_watermark_shop">Desactivar Marca de agua</string>
 
     <string name="title_tutorial_edition_section">Edition tutorial</string>
     <string name="title_tutorial_record_section">Record tutorial</string>

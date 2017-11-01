@@ -6,10 +6,6 @@ package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
 public interface EditorActivityView {
 
-  void showPreferenceUserName(String data);
-
-  void showPreferenceEmail(String emailPreference);
-
   void updateViewResetProject();
 
   void showError(int causeTextResource);
