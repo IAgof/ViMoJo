@@ -281,4 +281,5 @@ dependencies {
     compile project(path: ':camera')
 
     compile 'com.kailashdabhi:om-recorder:1.1.5'
+    compile 'com.android.billingclient:billing:1.0'
 }
