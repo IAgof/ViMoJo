@@ -1,3 +1,4 @@
 v0.7.0-RC12
 - Fixed bug if user return from the frontal camera, turn off the flash
 - Fixed default light theme in setting
+- Add an Edition tutorial and a Record tutorial

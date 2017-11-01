@@ -116,11 +116,12 @@
         <item name="android:textCursorDrawable">@null</item>
     </style>
 
-    <style name="VideonaIntroTutorial" parent="Theme.AppCompat.Light">
+    <style name="ViMoJoTutorial" parent="Theme.AppCompat.Light">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="android:background">@color/colorBlack</item>
     </style>
 
     <style name="arrowWhiteToolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -128,5 +129,7 @@
     </style>
 
     <style name="VideonaTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"></style>
+
+
 
 </resources>
