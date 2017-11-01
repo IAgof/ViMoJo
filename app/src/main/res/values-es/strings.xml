@@ -242,7 +242,7 @@
     <string name="content_contact_section">Dinos que opinas de la aplicación</string>
 
     <!-- Tutorial Settings, not in use -->
-    <string name="title_tutorial_section">Tutorial</string>
+    <string name="title_tutorial_section">Tutoriales</string>
     <string name="content_tutorial_section">Mira nuestro tutorial</string>
 
     <!-- Accounts actions -->
@@ -592,5 +592,8 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="onNoVideosRetrieved">Error, no hay vídeos en el proyecto</string>
     <string name="title_theme_app_preference">Tema Oscuro </string>
     <string name="title_theme_app_section">Tema </string>
+
+    <string name="title_tutorial_edition_section">Tutorial de edición</string>
+    <string name="title_tutorial_record_section">Tutorial de grabación</string>
 
 </resources>
