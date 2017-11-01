@@ -61,10 +61,8 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.pr
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseListPresenter;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseDetailView;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseListView;
-import com.videonasocialmedia.vimojo.shop.domain.GetShopListUseCase;
 import com.videonasocialmedia.vimojo.shop.presentation.mvp.presenters.ShopListPresenter;
 import com.videonasocialmedia.vimojo.shop.presentation.mvp.views.ShopListView;
-import com.videonasocialmedia.vimojo.shop.source.ShopListProvider;
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
@@ -204,8 +202,8 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  ShopListPresenter provideShopListPresenter(GetShopListUseCase getShopListUseCase) {
-    return new ShopListPresenter((ShopListView) activity, activity, getShopListUseCase);
+  ShopListPresenter provideShopListPresenter() {
+    return new ShopListPresenter((ShopListView) activity, activity);
   }
 
   @Provides @PerActivity
@@ -374,11 +372,6 @@ public class ActivityPresentersModule {
     return new GetMediaListFromProjectUseCase();
   }
 
-  @Provides GetShopListUseCase provideShopListUseCase(
-      ShopListProvider shopListProvider) {
-    return new GetShopListUseCase(shopListProvider);
-  }
-
   @Provides AddLastVideoExportedToProjectUseCase provideLastVideoExporterAdded(
           ProjectRepository projectRepository) {
     return new AddLastVideoExportedToProjectUseCase(projectRepository);
@@ -479,11 +472,6 @@ public class ActivityPresentersModule {
 
   @Provides VimojoLicensesProvider provideLicenseProvider() {
     return new VimojoLicensesProvider(activity);
-  }
-
-  @Provides
-  ShopListProvider provideShopProvider() {
-    return new ShopListProvider(activity);
   }
 
   @Provides

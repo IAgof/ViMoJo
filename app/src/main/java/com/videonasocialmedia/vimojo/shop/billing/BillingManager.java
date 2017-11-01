@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.billing;
+package com.videonasocialmedia.vimojo.shop.billing;
 
 import android.app.Activity;
 import android.support.annotation.Nullable;
@@ -8,11 +8,15 @@ import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.PurchaseHistoryResponseListener;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.android.billingclient.api.BillingClient.*;
@@ -24,39 +28,94 @@ import static com.android.billingclient.api.BillingClient.*;
 public class BillingManager implements PurchasesUpdatedListener {
 
     private final String LOG_TAG = BillingManager.class.getCanonicalName();
-    private final BillingUpdatesListener billingUpdatesListener;
-    private final BillingClient billingClient;
+    private BillingClient billingClient;
     private Activity activity;
     private boolean isServiceConnected;
     private int billingClientResponseCode;
+    private static final HashMap<String, List<String>> SKUS;
+    static {
+        SKUS = new HashMap<>();
+        SKUS.put(BillingClient.SkuType.INAPP, Arrays.asList("remove watermark", "dark theme"));
+        // Future use, app model subscription
+        // SKUS.put(BillingClient.SkuType.SUBS, Arrays.asList("monthly", "yearly"));
+    }
 
-    public BillingManager(Activity activity, final BillingUpdatesListener updatesListener) {
+    private BillingUpdatesPurchaseListener billingUpdatesPurchaseListener;
+    private BillingHistoryPurchaseListener billingHistoryPurchaseListener;
+    private List<Purchase> purchases = new ArrayList<>();
+
+    public BillingManager(Activity activity, BillingUpdatesPurchaseListener
+            billingUpdatesPurchaseListener, BillingHistoryPurchaseListener
+            billingHistoryPurchaseListener) {
         this.activity = activity;
-        billingUpdatesListener = updatesListener;
+        this.billingUpdatesPurchaseListener = billingUpdatesPurchaseListener;
+        this.billingHistoryPurchaseListener = billingHistoryPurchaseListener;
+        initBillingClient(activity);
+    }
+
+    public BillingManager(Activity activity, BillingHistoryPurchaseListener
+                                  billingHistoryPurchaseListener) {
+        this.activity = activity;
+        this.billingHistoryPurchaseListener = billingHistoryPurchaseListener;
+        initBillingClient(activity);
+    }
+
+    private void initBillingClient(Activity activity) {
         billingClient = newBuilder(activity).setListener(this).build();
         billingClient.startConnection(new BillingClientStateListener() {
             @Override
             public void onBillingSetupFinished(@BillingResponse int billingResponse) {
                 if (billingResponse == BillingResponse.OK) {
+                    isServiceConnected = true;
                     Log.i(LOG_TAG, "onBillingSetupFinished() response: " + billingResponse);
                 } else {
                     Log.w(LOG_TAG, "onBillingSetupFinished() error code: " + billingResponse);
                 }
+                billingClientResponseCode = billingResponse;
             }
 
             @Override
             public void onBillingServiceDisconnected() {
                 Log.w(LOG_TAG, "onBillingServiceDisconnected()");
+                isServiceConnected = false;
+
             }
         });
     }
 
     @Override
     public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
+        if (responseCode == BillingResponse.OK
+                && purchases != null) {
+            for (Purchase purchase : purchases) {
+                handlePurchase(purchase);
+                billingUpdatesPurchaseListener.purchasedItem(purchase);
+            }
 
+        } else if (responseCode == BillingResponse.USER_CANCELED) {
+            // Handle an error caused by a user cancelling the purchase flow.
+            billingUpdatesPurchaseListener.userCanceled();
+        } else {
+            // Handle any other error codes.
+            billingUpdatesPurchaseListener.showError(responseCode);
+        }
+    }
+
+    private void handlePurchase(Purchase purchase) {
+        // Perform purchase validation on your own secure server.
+        if (!verifyValidSignature(purchase.getOriginalJson(), purchase.getSignature())) {
+            // Skip a purchase if the signature isn't valid.
+            return;
+        }
+        purchases.add(purchase);
+    }
+
+    private boolean verifyValidSignature(String originalJson, String signature) {
+        return false;
     }
 
     public void startPurchaseFlow(final String skuId, final String billingType) {
+
         // Specify a runnable to start when connection to Billing client is established
         Runnable executeOnConnectedService = new Runnable() {
             @Override
@@ -133,5 +192,23 @@ public class BillingManager implements PurchasesUpdatedListener {
         // If Billing client was disconnected, we retry 1 time
         // and if success, execute the query
         startServiceConnectionIfNeeded(executeOnConnectedService);
+    }
+
+    public void queryPurchaseHistoryAsync() {
+        billingClient.queryPurchaseHistoryAsync(SkuType.INAPP,
+                new PurchaseHistoryResponseListener() {
+                    @Override
+                    public void onPurchaseHistoryResponse(@BillingResponse int responseCode,
+                                                          List<Purchase> purchasesList) {
+                        if (responseCode == BillingResponse.OK
+                                && purchasesList != null) {
+                            billingHistoryPurchaseListener.historyPurchasedItems(purchasesList);
+                        }
+                    }
+                });
+    }
+
+    public List<String> getSkus(@BillingClient.SkuType String type) {
+        return SKUS.get(type);
     }
 }

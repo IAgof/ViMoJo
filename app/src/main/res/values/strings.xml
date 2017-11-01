@@ -280,7 +280,11 @@
     <string name="menuSettings">Settings</string>
     <string name="drawer_watermark">Watermark</string>
 
-
+    <!-- ShopListActivity -->
+    <string name="alert_dialog_title_shop">Shop</string>
+    <string name="alert_dialog_message_shop">Loading shop items</string>
+    <string name="error_message_shop_no_items">Shop empty, no items to buy</string>
+    <string name="error_message_shop_purchasing_items">Buying item, error </string>
 
     <!-- About Activity -->
 

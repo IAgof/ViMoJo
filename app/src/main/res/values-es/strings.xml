@@ -256,6 +256,12 @@
     <string name="drawerSettings">Ajustes</string>
     <string name="menuSuggestions">Sugerencias</string>
 
+    <!-- ShopListActivity -->
+    <string name="alert_dialog_title_shop">Tienda</string>
+    <string name="alert_dialog_message_shop">Cargando artículos en la tienda</string>
+    <string name="error_message_shop_no_items">No hay artículos para comprar en la tienda</string>
+    <string name="error_message_shop_purchasing_items">Comprando artículo, error </string>
+
     <!-- About Activity -->
 
     <string name="aboutUsContent">
