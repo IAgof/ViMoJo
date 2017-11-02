@@ -203,28 +203,27 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack,
     }
   }
 
-
   private void updateImageIconTrackVideo() {
     if(isShowedAudioTrackOptions()) {
-      setImageTrack(R.drawable.activity_edit_sound_original_up);
-    } else {
       setImageTrack(R.drawable.activity_edit_sound_original_down);
+    } else {
+      setImageTrack(R.drawable.activity_edit_sound_original_up);
     }
   }
 
   private void updateImageIconTrackMusic() {
     if(isShowedAudioTrackOptions()) {
-      setImageTrack(R.drawable.activity_edit_sound_music_up);
-    } else {
       setImageTrack(R.drawable.activity_edit_sound_music_down);
+    } else {
+      setImageTrack(R.drawable.activity_edit_sound_music_up);
     }
   }
 
   private void updateImageIconTrackVoiceOver() {
     if(isShowedAudioTrackOptions()) {
-      setImageTrack(R.drawable.activity_edit_sound_voice_over_up);
-    } else {
       setImageTrack(R.drawable.activity_edit_sound_voice_over_down);
+    } else {
+      setImageTrack(R.drawable.activity_edit_sound_voice_over_up);
     }
   }
 

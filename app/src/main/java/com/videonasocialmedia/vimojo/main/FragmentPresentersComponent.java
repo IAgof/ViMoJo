@@ -2,7 +2,7 @@ package com.videonasocialmedia.vimojo.main;
 
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
 import com.videonasocialmedia.vimojo.main.modules.FragmentPresentersModule;
-import com.videonasocialmedia.vimojo.settings.presentation.views.fragment.SettingsFragment;
+import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
 
 import dagger.Component;
 

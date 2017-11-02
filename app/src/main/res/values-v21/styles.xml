@@ -35,6 +35,7 @@
         <item name="android:textColorPrimary">@color/colorSecondary</item>
         <item name="android:textColorSecondary">@color/colorSecondaryLight</item>
 
+
         <item name="android:alertDialogTheme">@style/VideonaDialog</item>
         <item name="android:preferenceCategoryStyle">@style/VideonaCategoryPreference</item>
 
@@ -49,6 +50,7 @@
     <!-- AppTheme Dark Videona -->
     <style name="VideonaThemeDark" parent="Theme.AppCompat.NoActionBar">
         <item name="themeName">dark</item>
+
 
         <!--transition-->
         <item name="android:windowContentTransitions">true</item>
@@ -65,11 +67,14 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
 
+
+
         <item name="android:windowBackground">@color/colorPrimaryThemeDark</item>
         <item name="android:windowFullscreen">false</item>
         <item name="android:windowContentOverlay">@color/colorTransparent</item>
         <!--Toolbar-->
         <item name="colorPrimary">@color/colorPrimaryThemeDark</item>
+
         <!--Status Bar -->
         <item name="colorPrimaryDark">@color/colorPrimaryThemeDark</item>
 
@@ -85,6 +90,7 @@
         <item name="cardViewStyle">@style/CardViewStyleDark</item>
 
         <item name="android:editTextStyle">@style/VideonaEditText</item>
+        <item name="android:buttonTint">@color/colorWhite</item>
     </style>
 
     <style name="CardViewStyleDark" parent="CardView.Dark">
@@ -110,11 +116,12 @@
         <item name="android:textCursorDrawable">@null</item>
     </style>
 
-    <style name="VideonaIntroTutorial" parent="Theme.AppCompat.Light">
+    <style name="ViMoJoTutorial" parent="Theme.AppCompat.Light">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="android:background">@color/colorBlack</item>
     </style>
 
     <style name="arrowWhiteToolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -122,5 +129,7 @@
     </style>
 
     <style name="VideonaTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"></style>
+
+
 
 </resources>

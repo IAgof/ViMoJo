@@ -1,4 +1,6 @@
-v0.7.0-RC8
-- Fixed mixing audio error that generated incompleted audio track in export sessions
-- Ui updates in voice over, gallery, music, bottomBar, edit text.
-- Changed application default theme to dark. Added option in settings and drawer screens to switch with theme light.
+v0.7.0-RC13
+- Fixed audio and video sync problems in export session
+- Improved trimmed clip timelines thumbnails
+- Fixed Split error handling to set the same time on first video stop and next one start times
+- Fixed audio mixing export session errors
+- Disabled FTP feature toggle for vimojo.main

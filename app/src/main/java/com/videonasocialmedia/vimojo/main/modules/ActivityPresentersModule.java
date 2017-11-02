@@ -54,20 +54,25 @@ import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.source.VimojoLicensesProvider;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.domain.GetLicenseVimojoListUseCase;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseDetailPresenter;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseListPresenter;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseDetailView;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseListView;
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
-import com.videonasocialmedia.vimojo.sound.domain.MergeVoiceOverAudiosUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverRecordPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundVolumePresenter;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundVolumeView;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverRecordActivity;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
@@ -114,23 +119,25 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  SoundVolumePresenter getSoundVolumePresenter(
+  VoiceOverVolumePresenter provideVoiceOverVolumePresenter(
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-          GetAudioFromProjectUseCase getAudioFromProjectUseCase, AddAudioUseCase addAudioUseCase,
-          RemoveAudioUseCase removeAudioUseCase) {
-    return new SoundVolumePresenter((SoundVolumeView) activity, getMediaListFromProjectUseCase,
-        getPreferencesTransitionFromProjectUseCase, getAudioFromProjectUseCase, addAudioUseCase,
-        removeAudioUseCase, activity);
+          GetAudioFromProjectUseCase getAudioFromProjectUseCase, ModifyTrackUseCase
+                  modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase) {
+    return new VoiceOverVolumePresenter(activity, (VoiceOverVolumeView) activity,
+            getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
+            getAudioFromProjectUseCase, modifyTrackUseCase, removeAudioUseCase);
   }
 
   @Provides @PerActivity
-  VoiceOverPresenter voiceOverPresenter(
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-          MergeVoiceOverAudiosUseCase mergeVoiceOverAudiosUseCase) {
-    return new VoiceOverPresenter((VoiceOverActivity) activity, getMediaListFromProjectUseCase,
-        getPreferencesTransitionFromProjectUseCase, mergeVoiceOverAudiosUseCase);
+  VoiceOverRecordPresenter provideVoiceOverRecordPresenter(
+      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+      AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
+      UserEventTracker userEventTracker) {
+    return new VoiceOverRecordPresenter(activity, (VoiceOverRecordActivity) activity,
+            getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
+            addAudioUseCase, removeAudioUseCase, userEventTracker);
   }
 
   @Provides @PerActivity
@@ -187,6 +194,18 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
+  LicenseListPresenter provideLicenseListPresenter(GetLicenseVimojoListUseCase
+                                                       getLicenseVimojoListUseCase) {
+    return new LicenseListPresenter((LicenseListView) activity, activity, getLicenseVimojoListUseCase);
+  }
+
+  @Provides @PerActivity
+  LicenseDetailPresenter provideLicenseDetailPresenter(GetLicenseVimojoListUseCase
+                                                       getLicenseVimojoListUseCase) {
+    return  new LicenseDetailPresenter((LicenseDetailView) activity, activity, getLicenseVimojoListUseCase);
+  }
+
+  @Provides @PerActivity
   DuplicatePreviewPresenter provideDuplicatePresenter
           (UserEventTracker userEventTracker, AddVideoToProjectUseCase addVideoToProjectUseCase) {
     return new DuplicatePreviewPresenter((VideoDuplicateActivity) activity, userEventTracker,
@@ -230,10 +249,9 @@ public class ActivityPresentersModule {
   SplitPreviewPresenter provideSplitPresenter(
           UserEventTracker userEventTracker, SplitVideoUseCase splitVideoUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          ModifyVideoDurationUseCase modifyVideoDurationUseCase, VideoRepository videoRepository) {
+          VideoRepository videoRepository) {
     return new SplitPreviewPresenter((VideoSplitActivity) activity, userEventTracker, activity,
-            videoRepository, splitVideoUseCase, getMediaListFromProjectUseCase,
-            modifyVideoDurationUseCase);
+            videoRepository, splitVideoUseCase, getMediaListFromProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -253,7 +271,7 @@ public class ActivityPresentersModule {
                                      addLastVideoExportedProjectUseCase,
                              ExportProjectUseCase exportProjectUseCase) {
     return new ShareVideoPresenter((ShareActivity) activity, userEventTracker, sharedPreferences,
-            activity, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
+            createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
             exportProjectUseCase);
   }
 
@@ -317,8 +335,11 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  SplitVideoUseCase provideVideoSplitter(AddVideoToProjectUseCase addVideoToProjectUseCase) {
-    return new SplitVideoUseCase(addVideoToProjectUseCase);
+  SplitVideoUseCase provideVideoSplitter(AddVideoToProjectUseCase addVideoToProjectUseCase,
+                                         ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+                                         VideoRepository videoRepository) {
+    return new SplitVideoUseCase(addVideoToProjectUseCase, modifyVideoDurationUseCase,
+            videoRepository);
   }
 
   @Provides
@@ -335,6 +356,11 @@ public class ActivityPresentersModule {
 
   @Provides GetMusicListUseCase provideMusicListUseCase() {
     return new GetMusicListUseCase(activity);
+  }
+
+  @Provides GetLicenseVimojoListUseCase provideLicenseListUseCase(
+      VimojoLicensesProvider vimojoLicencesProvider) {
+    return new GetLicenseVimojoListUseCase(vimojoLicencesProvider);
   }
 
   @Provides GetMediaListFromProjectUseCase provideMediaListRetriever() {
@@ -437,6 +463,10 @@ public class ActivityPresentersModule {
             directorySaveVideos,
             getVideoFormatFromCurrentProjectUseCase
                     .getVideoRecordedFormatFromCurrentProjectUseCase());
+  }
+
+  @Provides VimojoLicensesProvider provideLicenseProvider() {
+    return new VimojoLicensesProvider(activity);
   }
 
   @Provides

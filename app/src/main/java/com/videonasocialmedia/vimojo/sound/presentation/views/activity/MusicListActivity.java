@@ -173,6 +173,11 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
     }
 
     @Override
+    public void updateProject() {
+        presenter.init();
+    }
+
+    @Override
     public void onClick(Music music) {
         navigateToMusicDetailActivity(music.getMediaPath());
     }

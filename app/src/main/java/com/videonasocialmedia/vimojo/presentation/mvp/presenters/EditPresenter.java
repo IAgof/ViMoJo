@@ -30,7 +30,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
-import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -45,7 +45,8 @@ import javax.inject.Inject;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.*;
 
-public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener, ElementChangedListener {
+public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener,
+        ElementChangedListener {
     public static final float VOLUME_MUTE = 0f;
     private final String TAG = getClass().getSimpleName();
     private final Project currentProject;

@@ -24,7 +24,7 @@
     <string name="recordTextEdit">Edit</string>
 
     <string name="dialog_title_record_adapting_video">Adapting video</string>
-    <string name="dialog_message_record_adapting_video">Working ...</string>
+    <string name="dialog_message_record_adapting_video">Working …</string>
     <string name="alert_dialog_info_detail">Info detail</string>
 
     <!-- Share Activity -->
@@ -116,10 +116,21 @@
     <string name="dialog_project_edit_title_accept">Yes</string>
     <string name="dialog_project_edit_title_cancel">No</string>
 
-    <!--SoundVolumeActivity-->
-    <string name="exitSoundVolumeActivity" >Are you sure do you want to discard the changes and return to record again?</string>
-    <string name="acceptExitSoundVolumeActivity">Yes</string>
-    <string name="cancelExitSoundVolumeActvity">No</string>
+    <!--VoiceOverRecordRecordActivity-->
+    <string name="dialog_voice_over_cancel_title_message">Do you want to discard voice over and start a new one?</string>
+    <string name="dialog_voice_over_cancel_positive_button">Yes</string>
+    <string name="dialog_voice_over_cancel_negative_button">No</string>
+    <string name="alert_dialog_title_voice_over">Voice over</string>
+    <string name="alert_dialog_title_message_adding_voice_over">Problem adding voice over in project</string>
+    <string name="alert_dialog_title_message_start_record_voice_over">Please, record some voice over</string>
+    <string name="error_record_voice_over">Problem recording voice over, start again</string>
+    <string name="dialog_generating_voice_over">Generating voice over</string>
+    <string name="error_transcoding_voice_over">Error transcoding voice over</string>
+
+    <!--VoiceOverVolumeActivity-->
+    <string name="exitVoiceOverVolumeActivity" >Are you sure do you want to discard the changes and return to record again?</string>
+    <string name="acceptExitVoiceOverVolumeActivity">Yes</string>
+    <string name="cancelExitVoiceOverVolumeActvity">No</string>
 
     <!-- Trim fragment -->
     <string name="confirmTrim">Done</string>
@@ -249,7 +260,7 @@
     <string name="content_contact_section">Give us feedback</string>
 
     <!-- Tutorial Settings, not in use -->
-    <string name="title_tutorial_section">Tutorial</string>
+    <string name="title_tutorial_section">Tutorials</string>
     <string name="content_tutorial_section">See our tutorial</string>
 
     <!-- Accounts actions -->
@@ -300,8 +311,7 @@
     <string name="madeIn">With love from in Madrid - Spain</string>
 
     <!-- Licences -->
-
-    <string name="licenseTitle"><u>Free software licenses</u></string>
+    <string name="licenseTitle"><u>Free Software Licenses</u></string>
     <string name="licenseContent">
         Copyright &#169; 2013 Jake Wharton\nLicensed under the Apache License, Version 2.0 (the
         "License"); you may not use this file except in compliance with the License.
@@ -350,7 +360,6 @@ limitations under the License.
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/ \n
 
-
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License below, or at:
 
 http://www.apache.org/licenses/LICENSE-2.0
@@ -389,7 +398,7 @@ limitations under the License. \n
 
 
     </string>
-    <string name="licenseMusicTitle"><u>Attribution music</u></string>
+    <string name="licenseMusicTitle"><u>Music Attribution</u></string>
     <string name="licenseMusicContent">
         • Kevin MacLeod, Impact Prelude, http://freemusicarchive.org/music/Kevin_MacLeod/Impact/Impact_Prelude_1765,
         icono DJ, CC BY 3.0\n• Kevin MacLeod, Monkeys Spinning Monkeys,
@@ -406,6 +415,573 @@ limitations under the License. \n
         icono guitarra eléctrica, CC BY 4.0\n• Josh Woodward, The Last Slice Of Pecan Pie (INSTRUMENTAL VERSION),
         http://freemusicarchive.org/music/Josh_Woodward/The_Beautiful_Machine/JoshWoodward-TheLastSliceOfPecanPie-NoVox,
         icono clave de sol, CC BY 4.0\n
+    </string>
+
+    <!-- <string name="licenseDesignFreepik">
+
+        Here below yo will find attribution and licenses related with the design of this app.\n
+
+        FREEPIK: Some icons source ar Designed by Freepik\n
+
+        As per www.freepik.com instructions, How do I insert the attribution correctly?\n
+
+        Link:   http://support.freepik.com/hc/en-us/articles/208976585
+                http://support.freepik.com/hc/en-us/articles/115003373509-How-can-I-use-Freepik-content-as-a-Free-User- \n
+
+        Mobile app/game app:\n
+        When using our resources in a mobile app or a game app as a free user, please remember to
+        include the attribution line “Designed by Freepik” on the credit’s page of your app
+        and a link to our website www.freepik.com on the description of the app in the app store.\n
+
+    </string> -->
+
+    <string name="licenseDesign">
+
+       Icon Smartphone free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/smartphone_149384#term=iphone&amp;page=1&amp;position=1 and https://smashicons.com/\n\n
+
+       Icon Telephone battery free icon designed by Freepik from Flaticon
+       link https://www.flaticon.com/free-icon/telephone-battery_71589#term=battery&amp;page=5&amp;position=34\n\n
+
+       Icon Settings free icon designed by Pixel perfect from Flaticon
+       link https://www.flaticon.com/free-icon/settings_503819#term=settings&amp;page=33&amp;position=3\n and https://icon54.com/\n\n
+
+       Icon Gallery free icon designed by Creaticca Creative Agency from Flaticon
+       link https://www.flaticon.com/free-icon/gallery_335873#term=gallery&amp;page=1&amp;position=5 and http://www.creaticca.com/\n\n
+
+       Icon Grid on free icon designed by Those Icons from Flaticon
+       link https://www.flaticon.com/free-icon/grid-on_482420#term=grid&amp;page=15&amp;position=58\n\n
+
+       Icon Cloud free icon designed by Iconnice from Flaticon
+       link https://www.flaticon.com/free-icon/cloud_131077#term=cloud&amp;page=1&amp;position=87 and http://www.iconnice.com\n\n
+
+       Icon  Sun free icon designed by Iconnice from Flaticon
+       link https://www.flaticon.com/free-icon/sun_131042#term=sun&amp;page=1&amp;position=3 and http://www.iconnice.com\n\n
+
+       Icon WB Fluorescent free icon designed by Freepik from Flaticon
+       link https://www.flaticon.com/free-icon/wb-fluorescent_85489#term=fluorescent&amp;page=1&amp;position=5\n\n
+
+       Icon Idea free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/idea_149200#term=bulb&amp;page=1&amp;position=1 and https://smashicons.com/\n\n
+
+       Icon Tap free icon designed by Iconnice from Flaticon
+       link https://www.flaticon.com/free-icon/tap_131029#term=tap&amp;page=1&amp;position=2 and http://www.iconnice.com\n\n
+
+       Icon Controls free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/controls_149267#term=settings&amp;page=1&amp;position=11 and https://smashicons.com/\n\n
+
+       Icon Speaker free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/speaker_149140#term=speaker&amp;page=1&amp;position=2 and https://smashicons.com/\n\n
+
+       Icon  Bolt free icon designed by Dario Ferrando from Flaticon
+       link https://www.flaticon.com/free-icon/bolt_132884#term=flash&amp;page=1&amp;position=83 and http://dario.io/\n\n
+
+       Icon Rotate free icon designed by Dario Ferrando from Flaticon
+       link https://www.flaticon.com/free-icon/rotate_127762#term=refresh&amp;page=1&amp;position=93 and http://dario.io/\n\n
+
+       Icon Zoom in free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/zoom-in_149087#term=zoom&amp;page=1&amp;position=5 and https://smashicons.com/\n\n
+
+       Icon Macro free icon designed by Freepik from Flaticon
+       link https://www.flaticon.com/free-icon/macro_105733#term=macro&amp;page=1&amp;position=5 and http://www.freepik.com\n\n
+
+       Icon  Picture free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/picture_149092#term=landscape&amp;page=1&amp;position=1 and https://smashicons.com/\n\n
+
+       Icon Checked free icon designed by Freepik from Flaticon
+       link https://www.flaticon.com/free-icon/checked_121715#term=check&amp;page=1&amp;position=53 and http://www.freepik.com\n\n
+
+       Icon  Video clip free icon designed by Elias Bikbulatov from Flaticon
+       link https://www.flaticon.com/free-icon/video-clip_157366#term=movie&amp;page=5&amp;position=10 and http://okodesign.ru/\n\n
+
+       Icon  Garbage free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/garbage_149343#term=bin&amp;page=1&amp;position=1 and https://smashicons.com/\n\n
+
+       Icon Share free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/share_149179#term=share&amp;page=1&amp;position=3 and https://smashicons.com/\n\n
+
+       Icon List Menu free icon designed by Freepik from Flaticon
+       link https://www.flaticon.com/free-icon/list-menu_17949#term=menu&amp;page=1&amp;position=55 and http://www.freepik.com\n\n
+
+       Icon Three dots Menu free icon designed by Freepik from Flaticon
+       link https://www.flaticon.com/free-icon/three-dots-menu_17223#term=circles menu&amp;page=1&amp;position=19 and http://www.freepik.com\n\n
+
+       Icon User free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/user_137765 and https://smashicons.com/\n\n
+
+       Icon User free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/user_137762 and https://smashicons.com/\n\n
+
+       Icon  Mail free icon designed by Iconnice from Flaticon
+       link https://www.flaticon.com/free-icon/mail_131155#term=email&amp;page=1&amp;position=3 and http://www.iconnice.com\n\n
+
+       Icon Video player free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/video-player_149090#term=video&amp;page=1&amp;position=3 and https://smashicons.com/\n\n
+
+       Icon Plus free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/plus_149145#term=add&amp;page=1&amp;position=1 and https://smashicons.com/\n\n
+
+       Icon Settings free icon designed by Madebyoliver from Flaticon
+       https://www.flaticon.com/free-icon/settings_149294#term=settings&amp;page=1&amp;position=2 and https://smashicons.com/\n\n
+
+       Icon  Mail free icon designed by Iconnice from Flaticon
+       link https://www.flaticon.com/free-icon/mail_131150#term=email&amp;page=1&amp;position=67 and http://www.iconnice.com\n\n
+
+       Icon  Minus free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/minus_149146#term=minus&amp;page=1&amp;position=2 and https://smashicons.com/\n\n
+
+       Icon  Close free icon designed by Freepik from Flaticon
+       link https://www.flaticon.com/free-icon/close_122264#term=close&amp;page=1&amp;position=35 and http://www.freepik.com\n\n
+
+       Icon Play button free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/play-button_149125#term=play&amp;page=1&amp;position=1 and https://smashicons.com/\n\n
+
+       Icon  Right arrow circular button free icon designed by Robin Kylander from Flaticon
+       link https://www.flaticon.com/free-icon/right-arrow-circular-button_52284#term=advance&amp;page=1&amp;position=1 and http://superstoked.se\n\n
+
+       Icon  Microphone free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/microphone_149427#term=microphone&amp;page=1&amp;position=1 and https://smashicons.com/\n\n
+
+       Icon Music player free icon designed by Madebyoliver from Flaticon
+       link https://www.flaticon.com/free-icon/music-player_149103#term=music&amp;page=1&amp;position=5 and https://smashicons.com/\n\n
+
+       Icon Pause thin rounded button free icon designed by Sebastien Gabriel from Flaticon
+       link https://www.flaticon.com/free-icon/pause-thin-rounded-button_52725#term=pause&amp;page=1&amp;position=74 and http://sebastien-gabriel.com\n\n
+
+       Icon  Next free icon designed by Gregor Cresnar from Flaticon
+       link https://www.flaticon.com/free-icon/next_126490#term=arrow&amp;page=1&amp;position=1\n\n
+
+
+    </string>
+
+    <string name="licenseMusic">
+
+        GOING HIGHER\n
+            My music is licensed under a Creative Commons License:\n
+            You are free to use the music in your multimedia project (online videos(youtube,…),
+            websites, animations, etc.) as long as you credit me, For example:\n
+            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
+
+            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
+            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
+            https://www.bensound.com/royalty-free-music/track/going-higher\n\n
+
+        UKELELE\n
+            My music is licensed under a Creative Commons License:\n
+            You are free to use the music in your multimedia project (online videos(youtube,…),
+            websites, animations, etc.) as long as you credit me, For example:\n
+            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
+
+            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
+            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
+            http://www.bensound.com/royalty-free-music/track/ukulele\n\n
+
+        JAZZY-FRENCHY\n
+            My music is licensed under a Creative Commons License:\n
+            You are free to use the music in your multimedia project (online videos(youtube,…),
+            websites, animations, etc.) as long as you credit me, For example:\n
+            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
+
+            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
+            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
+            https://www.bensound.com/royalty-free-music/track/jazzy-frenchy\n\n
+
+        ACOUSTIC BREEZE\n
+            My music is licensed under a Creative Commons License:\n
+            You are free to use the music in your multimedia project (online videos(youtube,…),
+            websites, animations, etc.) as long as you credit me, For example:\n
+            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
+
+            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
+            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
+            http://www.bensound.com/index.php?route=product/search&amp;search=ACOUSTIC%20BREEZE\n\n
+   </string>
+
+    <string name="licenseDagger">
+        Copyright 2012 The Dagger Authors\n\nLicensed under the Apache License, Version 2.0
+        (the "License"); you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at\n\nhttp://www.apache.org/licenses/LICENSE-2.0\n\n
+        Unless required by applicable law or agreed to in writing, software distributed under
+        the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+        either express or implied.See the License for the specific language governing permissions and
+        limitations under the License.
+    </string>
+
+    <string name="licenseGlide">
+        License for everything not in third_party and not otherwise marked:\n\nCopyright 2014 Google,
+        Inc. All rights reserved.\n Redistribution and use in source and binary forms, with or
+        without modification, are permitted provided that the following conditions are met:\n
+        1. Redistributions of source code must retain the above copyright notice, this list of
+         conditions and the following disclaimer.\n
+        2. Redistributions in binary form must reproduce the above copyright notice, this list
+         of conditions and the following disclaimer in the documentation and/or other materials
+         provided with the distribution.\n\nTHIS SOFTWARE IS PROVIDED BY GOOGLE, INC. \'\'AS IS\'\'
+        AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+        OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+        GOOGLE, INC. OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+        EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+        HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+        OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+        SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\nThe views and conclusions
+        contained in the software and documentation are those of the authors and should not be
+        interpreted as representing official policies, either expressed or implied, of Google, Inc.\n
+        ---------------------------------------------------------------------------------------------
+        \nLicense for third_party/disklrucache:\n\n Copyright 2012 Jake Wharton\nCopyright 2011
+        The Android Open Source Project\n Licensed under the Apache License, Version 2.0
+        (the "License"); you may not use this file except in compliance with the License. You may
+        obtain a copy of the License at\n\n http://www.apache.org/licenses/LICENSE-2.0\n\n
+        Unless required by applicable law or agreed to in writing, software distributed under the
+        License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+        either express or implied. See the License for the specific language governing permissions
+        and limitations under the License.\n
+        ---------------------------------------------------------------------------------------------
+        \nLicense for third_party/gif_decoder:\n\n Copyright 2013 Xcellent Creations, Inc.\n
+        Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+        and associated documentation files (the "Software"), to deal in the Software without
+        restriction, including without limitation the rights to use, copy, modify, merge, publish,
+        distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+        Software is furnished to do so, subject to the following conditions:\n The above copyright
+        notice and this permission notice shall be included in all copies or substantial portions of
+        the Software.\n\n THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+        PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+        LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+        OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+        DEALINGS IN THE SOFTWARE.\n
+        ---------------------------------------------------------------------------------------------
+        \nLicense for third_party/gif_encoder/AnimatedGifEncoder.java and
+        third_party/gif_encoder/LZWEncoder.java:\nNo copyright asserted on the source code of
+        this class. May be used for any purpose, however, refer to the Unisys LZW patent for
+        restrictions on use of the associated LZWEncoder class. Please forward any corrections to
+        kweiner@fmsware.com.\n
+        -----------------------------------------------------------------------------
+        \nLicense for third_party/gif_encoder/NeuQuant.java\n\n Copyright 1994 Anthony
+        Dekker\nNEUQUANT Neural-Net quantization algorithm by Anthony Dekker, 1994. See Kohonen neural
+        networks for optimal colour quantization" in "Network:Computation in Neural Systems" Vol. 5
+        (1994) pp 351-367. for a discussion of the algorithm.\n\n Any party obtaining a copy of
+        these files from the author, directly or indirectly, is granted, free of charge, a full and
+        unrestricted irrevocable, world-wide, paid up, royalty-free, nonexclusive right and license
+        to deal in this software and documentation files (the "Software"), including without
+        limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+        sell copies of the Software, and to permit persons who receive copies from any such party to
+        do so, with the only requirement being that this copyright notice remain intact.
+    </string>
+
+    <string name="licenseWasabeef">
+        Copyright 2017 Wasabeef\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of the
+        License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable
+        law or agreed to in writing, software distributed under the License is distributed on an
+        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+        the License for the specific language governing permissions and limitations under the License.
+    </string>
+
+    <string name="licenseJakeWharton">
+        Copyright 2013 Jake Wharton\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+    </string>
+
+    <string name="licenseSquare">
+        Copyright 2016 Square, Inc.\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+    </string>
+
+    <string name="licenseEventBus">
+        EventBus binaries and source code can be used according to the Apache License, Version 2.0:\n\n
+        Copyright  2012-2016 Markus Junginger, greenrobot (http://greenrobot.org)\n\nLicensed under
+        the Apache License, Version 2.0 (the “License”); you may not use this file except in
+        compliance with the License. You may obtain a copy of the License at\n\n
+        http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to
+        in writing, software distributed under the License is distributed on an “AS IS” BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+        either express or implied. See the License for the specific language governing permissions
+        and limitations under the License.
+    </string>
+
+    <string name="licenseMixPanel">
+        Copyright 2012 Mixpanel, Inc.\n\nPlease see the project README file for additional information.
+        \n\nLicensed under the Apache License, Version 2.0 (the "License");you may not use this work
+        except in compliance with the License. You may obtain a copy of the License below, or at:\n\n
+           http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed
+        to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+        the specific language governing permissions and limitations under the License.
+
+        \n\n                        Apache License
+        \n                 Version 2.0, January 2004
+        \n             http://www.apache.org/licenses/
+        \n\n
+        See LICENSE File for details. The Base64Coder, ConfigurationChecker, and StackBlurManager
+        classes, and the entirety of the com.mixpanel.android.java_websocket package used by this
+        software have been licensed from non-Mixpanel sources and modified
+        for use in the library. Please see the relevant source files, and the
+        LICENSE file in the com.mixpanel.android.java_websocket package for details.\n\n
+        The StackBlurManager class uses an algorithm by Mario Klingemann mario@64quansimondo.com
+        You can learn more about the algorithm at
+        http://www.quasimondo.com/StackBlurForCanvas/StackBlurDemo.html.
+    </string>
+
+    <string name="licenseAndroidOpenSource">
+        Copyright 2012 The Android Open Source Project\n\nLicensed under the
+        Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
+        with the License. You may obtain a copy of the License
+        at\n\n\    http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or
+        agreed to in writing, software distributed under the License is distributed on an "AS IS"
+        BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+    </string>
+
+    <string name="licenseFloatingActionButton">
+        Copyright  2014 Jerzy Chalupski\n\nLicensed under the Apache License, Version 2.0
+        (the "License");you may not use this file except in compliance with the License.You may
+        obtain a copy of the License at\n\n     http://www.apache.org/licenses/LICENSE-2.0\n\nUnless
+        required by applicable law or agreed to in writing, software distributed under the License
+        is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+        express or implied.See the License for the specific language governing permissions and
+        limitations under the License.
+    </string>
+
+    <string name="licenseKarumi">
+        Copyright 2015 Karumi\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+    </string>
+
+    <string name="licenseJcraftJZ">
+        JSch 0.0.\* was released under the GNU LGPL license.  Later, we have switched over to a
+        BSD-style license. \n\n
+        ------------------------------------------------------------------------------\n
+        Copyright 2000-2011 ymnk, JCraft,Inc. All rights reserved.
+        \n\nRedistribution and use in source and binary forms, with or without modification, are
+        permitted provided that the following conditions are met:\n\n
+        1. Redistributions of source code must retain the above copyright notice, this list of
+        conditions and the following disclaimer.\n
+        2. Redistributions in binary form must reproduce the above copyright notice, this list of
+        conditions and the following disclaimer in the documentation and/or other materials provided
+        with the distribution.\n
+        3. The names of the authors may not be used to endorse or promote products derived from this
+        software without specific prior written permission.\n\n THIS SOFTWARE IS PROVIDED \'\'AS IS\'\'
+        AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+        WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+        IN NO EVENT SHALL JCRAFT, INC. OR ANY CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY DIRECT,
+        INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+        LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+        BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+        STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+        USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    </string>
+
+    <string name="licenseJcraftJSch">
+        JSch 0.0. \* was released under the GNU LGPL license.  Later, we have switched over to a
+        BSD-style license. \n\n
+        ------------------------------------------------------------------------------\n
+        Copyright 2002-2015 Atsuhiko Yamanaka, JCraft,Inc. All rights reserved.
+        \n\nRedistribution and use in source and binary forms, with or without modification, are
+        permitted provided that the following conditions are met:\n\n
+        1. Redistributions of source code must retain the above copyright notice, this list of
+        conditions and the following disclaimer.\n
+        2. Redistributions in binary form must reproduce the above copyright notice, this list of
+        conditions and the following disclaimer in the documentation and/or other materials provided
+        with the distribution.\n
+        3. The names of the authors may not be used to endorse or promote products derived from this
+        software without specific prior written permission.\n\n THIS SOFTWARE IS PROVIDED \'\'AS IS\'\'
+        AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+        WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+        IN NO EVENT SHALL JCRAFT, INC. OR ANY CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY DIRECT,
+        INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+        LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+        BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+        STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+        USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    </string>
+
+    <string name="licenseRangeSeekBar">
+        The images are licensed under Creative Commons ( http://creativecommons.org/licenses/by/3.0/ ).\n\n
+        The originals are provided in the original project ( https://code.google.com/p/range-seek-bar/ )
+        and seek_thumb_disabled.png is added by us (https://github.com/anothem/android-range-seek-bar)\n
+        The source code is licensed under the Apache License. A copy of this can be found at\n\n
+        http://www.apache.org/licenses/LICENSE-2.0\n\n and has been included in the repository as well.
+    </string>
+
+    <string name="licenseExoPlayer">
+        Copyright ExoPlayer\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+    </string>
+
+    <string name="licenseRealm">
+        Realm Android Adapters is published under the Apache 2.0 license.\n\nCopyright\nLicensed
+        under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+    </string>
+
+    <string name="licenseRoughikeBottomBar">
+        BottomBar library for Android\n\nCopyright 2016 Iiro Krankka (http://github.com/roughike).
+        \n\nLicensed under the Apache License, Version 2.0 (the "License"); you may not use this
+        file except in compliance with the License. You may obtain a copy of the License at \n\n
+        http://www.apache.org/licenses/LICENSE-2.0\n\n Unless required by applicable law or agreed
+        to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+        the specific language governing permissions and limitations under the License.
+    </string>
+
+    <string name="licenseVerticalSeekbar">
+        This library is licensed under the Apache Software License, Version 2.0, and contains some
+        source code files delivered from product of Android Open Source Project (AOSP). \nSee
+        LICENSE for full of the license text.\n\n Copyright 2015 Haruki Hasegawa \n\nLicensed under
+        the Apache License, Version 2.0 (the "License"); you may not use this file except in
+        compliance with the License.\n\nYou may obtain a copy of the License at \n\n
+        http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to
+        in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+        the specific language governing permissions and limitations under the License.
+    </string>
+
+    <string name="licenseYankaiVictor">
+        Copyright 2015 yankai-victor\n\n Licensed under the Apache License, Version 2.0
+        (the "License"); you may not use this work except in compliance with the License.
+        You may obtain a copy of the License in the LICENSE file, or at:\n\n
+        http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to
+        in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+        License for the specific language governing permissions and limitations under the License.
+    </string>
+    <string name="licenseJCodec">
+        Copyright 2008-2017 JCodecProject.\n\nRedistribution  and  use  in   source  and   binary
+        forms,  with  or  without modification, are permitted provided  that the following
+        conditions  are  met:\n\nRedistributions of  source code  must  retain the above  copyright
+        notice, this list of conditions and the following disclaimer. Redistributions in binary form
+        must  reproduce  the above  copyright notice, this  list of conditions  and the
+        following disclaimer in the documentation and/or other  materials provided with the
+        distribution.\n\n THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+        AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,  BUT NOT LIMITED TO, THE  IMPLIED
+        WARRANTIES  OF  MERCHANTABILITY  AND  FITNESS  FOR  A  PARTICULAR  PURPOSE  ARE DISCLAIMED.
+        IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+        INCIDENTAL, SPECIAL, EXEMPLARY,  OR CONSEQUENTIAL DAMAGES (INCLUDING,  BUT NOT LIMITED TO,
+        PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE, DATA, OR PROFITS;  OR BUSINESS
+        INTERRUPTION) HOWEVER CAUSED AND ON ANY  THEORY  OF  LIABILITY,  WHETHER  IN  CONTRACT,
+        STRICT LIABILITY,  OR TORT (INCLUDING  NEGLIGENCE OR OTHERWISE)  ARISING IN ANY WAY
+        OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    </string>
+
+    <string name="licenseGoogleGSon">
+        Copyright 2008 Google Inc.\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n    http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is
+        distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+        express or implied. See the License for the specific language governing permissions and
+        limitations under the License.
+    </string>
+
+    <string name="licenseMp4Parser">
+        Copyright MP4 Parser, Inc.\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+    </string>
+
+    <string name="licenseGuava">
+        Copyright Guava, Inc.\n\nLicensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+    </string>
+
+    <string name="licenseTwoWayView">
+        Copyright  2013 Lucas Rocha\n\nTwoWayView\'s code is based on bits and pieces of Android\'s
+        AbsListView, Listview, and StaggeredGridView.\n\nCopyright 2012 The Android Open Source
+        Project\n\nLicensed under the Apache License, Version 2.0 (the "License");you may not use
+        this file except in compliance with the License. You may obtain a copy of the License at\n\n
+        http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed
+        to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
+        for the specific language governing permissions and limitations under the License.
+    </string>
+
+    <string name="licenseDexmaker">
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License. You may obtain a copy of
+        the License at\n\n   http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by
+        applicable law or agreed to in writing, software distributed under the License is distributed
+        on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and limitations under the
+        License.
+
+    </string>
+
+    <string name="licenseKickflip">
+       Copyright 2014 OpenWatch, Inc.\n\nLicensed under the Apache License,
+        Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at\n\n
+        http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to
+        in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+        the specific language governing permissions and limitations under the License.
+    </string>
+
+    <string name="licenseApacheCommonsNet">
+        http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to
+        in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+        the specific language governing permissions and limitations under the License. \n\n
+        http://www.apache.org/licenses/LICENSE-2.0.txt
+    </string>
+    <string name="licenseOmRecorder">
+        Copyright 2017 Kailash Dabhi (Kingbull Technology)\n\n
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at\n\n
+
+           http://www.apache.org/licenses/LICENSE-2.0\n\n
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.\n\n
+    </string>
+
+    <string name="licenseAppIntro">
+        Copyright 2015 Paolo Rotolo\n\nCopyright 2016 Maximilian Narr\n\nLicensed under the Apache
+        License, Version 2.0 (the "License"); you may not use this file except in compliance
+        with the License. You may obtain a copy of the License at\n\n
+        http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to
+        in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+        the specific language governing permissions and limitations under the License.
     </string>
 
     <!-- Legal Notice -->
@@ -465,7 +1041,7 @@ Videona reserves the right to modify, terminate, discontinue, suspend or interru
 
 temporarily or permanently, at any time and without notice, the access to the products,
 
-services and/or contents of the Platform, as well as to its configuration, without the User´s
+services and/or contents of the Platform, as well as to its configuration, without the User\´s
 
 right to claim or request damages of any kind; specifically, the above may be carried out
 
@@ -507,7 +1083,7 @@ services that imply the payment of the said economic consideration. Once the app
 
 particular terms and conditions come into force, the access and/or use of the products or
 
-services by the User will imply the User´s acceptance, without reservation, of the
+services by the User will imply the User\´s acceptance, without reservation, of the
 
 respective particular terms and conditions. \n\n
 
@@ -589,7 +1165,7 @@ The Platform may contain information, opinions, advice, warnings, and statements
 
 provided by different information and content sources as well as any User of the Platform.
 
-Videona shall have no liability for Users´ decisions based on the information provided by or
+Videona shall have no liability for Users\´ decisions based on the information provided by or
 
 through the Platform. Any information posted on the Platform is intended for general
 
@@ -722,7 +1298,7 @@ If the User infringes the above prohibitions/restrictions or Videona has reasona
 
 to suspect that a User has infringed any of the same, Videona reserves the right to
 
-suspend or terminate the User´s account and to refuse any and all current or future use of
+suspend or terminate the User\´s account and to refuse any and all current or future use of
 
 the products, services and/or the Platform (or any portion thereof).\n\n
 
@@ -960,7 +1536,7 @@ jurisdiction of such courts.\n\n
     <string name="privacyPolicyTitle"><u>Privacy Policy</u></string>
     <string name="privacyPolicyContent">
 
-        This Privacy Policy is part of the Platform´s Legal Notice.\n\n
+        This Privacy Policy is part of the Platform\´s Legal Notice.\n\n
 
 In accordance with the current data protection regulations, VIDEONA SOCIALMEDIA,
 
@@ -996,7 +1572,7 @@ provided by sensors, the date and time of access to the Platform, the source
 
 1.2. Such data will be used, among others, for the following purposes:\n\n
 
- Managing the User´s registration process;\n\n
+ Managing the User\´s registration process;\n\n
 
  Managing the purchasing process in the Marketplace;\n\n
 
@@ -1014,7 +1590,7 @@ Platform;\n\n
 
 1.3 In addition, Users will be provided with commercial communications sent by
 
-electronic means, with regard to products and services which may be of the User´s
+electronic means, with regard to products and services which may be of the User\´s
 
 interest. The User can refuse the reception of the mentioned communications, notifying
 
@@ -1297,7 +1873,7 @@ IF YOU DOES NOT AGREE WITH THESE PARTICULAR TERMS AND
 
 CONDITIONS DO NOT USE THE SERVICES.
 
-THESE PARTICULAR TERMS AND CONDITIONS ARE PART OF THE WEBSITE´S
+THESE PARTICULAR TERMS AND CONDITIONS ARE PART OF THE WEBSITE\´S
 
 LEGAL NOTICE.\n\n
 
@@ -1731,7 +2307,7 @@ and Conditions.\n\n
     </string>
 
     <!-- Others -->
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="comingSoon">Coming Soon</string>
@@ -1781,6 +2357,7 @@ and Conditions.\n\n
     <string name="dialog_title_export_project">Exporting project</string>
     <string name="dialog_message_export_project">Making magic in your video</string>
     <string name="dialog_title_export_error">Exporting error</string>
+    <string name="dialog_message_export_error">An error occurred while exporting and exporting could not be completed. Please try again.</string>
     <string name="dialog_message_export_error_unknown">An error ocurred while exporting and
         exporting could not be completed. Please try again.</string>
     <string name="dialog_message_export_error_no_space_left">No space left on device. Please
@@ -1792,8 +2369,6 @@ and Conditions.\n\n
     <string name="alert_dialog_title_music">Music</string>
     <string name="alert_dialog_title_message_adding_music">Problem adding music in project</string>
     <string name="alert_dialog_title_message_removing_music">Problem removing music in project</string>
-    <string name="alert_dialog_title_voice_over">Voice over</string>
-    <string name="alert_dialog_title_message_adding_voice_over">Problem adding voice over in project</string>
 
 
     <string name="onNoVideosRetrieved">Not video retrieved</string>
@@ -1808,5 +2383,7 @@ and Conditions.\n\n
     <string name="title_theme_app_preference">Dark theme</string>
     <string name="title_theme_app_section">Activate dark theme</string>
 
+    <string name="title_tutorial_edition_section">Edition tutorial</string>
+    <string name="title_tutorial_record_section">Record tutorial</string>
 
 </resources>

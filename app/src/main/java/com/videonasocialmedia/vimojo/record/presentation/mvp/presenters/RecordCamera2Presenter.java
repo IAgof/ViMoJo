@@ -30,7 +30,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
@@ -39,7 +38,6 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerAmplitudeDbListener;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoopThread;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -171,8 +169,13 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
   public void onResume() {
     showThumbAndNumber();
     Log.d(TAG, "resume presenter");
-    camera.onResume();
-    startSamplingPicometerPreview();
+    try {
+      camera.onResume();
+      startSamplingPicometerPreview();
+    } catch (RuntimeException cameraError) {
+      // TODO(jliarte): 18/10/17 move to strings
+      recordView.showError("Error opening camera, please restart the app");
+    }
   }
 
   private void startSamplingPicometerPreview() {
@@ -524,7 +527,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
 
   private void resetViewSwitchCamera() {
     recordView.setZoom(0f);
-    recordView.setFlash(false);
     recordView.resetSpotMeteringSelector();
   }
 
