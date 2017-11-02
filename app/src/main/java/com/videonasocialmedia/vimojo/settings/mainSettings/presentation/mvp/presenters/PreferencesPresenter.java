@@ -10,12 +10,15 @@
 
 package com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
+import android.util.Log;
 
+import com.android.billingclient.api.Purchase;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -34,6 +37,8 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTra
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.OnRelaunchTemporalFileListener;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
+import com.videonasocialmedia.vimojo.shop.billing.BillingHistoryPurchaseListener;
+import com.videonasocialmedia.vimojo.shop.billing.BillingManager;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -47,7 +52,7 @@ import java.util.List;
  * This class is used to show the setting menu.
  */
 public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenceChangeListener,
-    OnRelaunchTemporalFileListener {
+    OnRelaunchTemporalFileListener, BillingHistoryPurchaseListener {
 
     private static final String LOG_TAG = PreferencesPresenter.class.getSimpleName();
     private Context context;
@@ -75,6 +80,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase;
     private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
     private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
+    private BillingManager billingManager;
 
 //    private Drawable drawableFadeTransitionVideo;
 //    private VideonaFormat videoFormat;
@@ -422,5 +428,25 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     public void trackThemeApp(boolean isDarkTheme) {
         userEventTracker.trackThemeAppSettingsChanged(isDarkTheme);
+    }
+
+
+    @Override
+    public void historyPurchasedItems(List<Purchase> purchasesList) {
+        for(Purchase purchase: purchasesList){
+            if(purchase.getSku().compareTo(Constants.IN_APP_BILLING_ITEM_DARK_THEME) == 0) {
+                preferencesView.itemDarkThemePurchased();
+                Log.d(LOG_TAG, "item purchased " + purchase.getSku());
+            }
+            if(purchase.getSku().compareTo(Constants.IN_APP_BILLING_ITEM_WATERMARK) == 0) {
+                preferencesView.itemWatermarkPurchased();
+                Log.d(LOG_TAG, "item purchased " + purchase.getSku());
+            }
+        }
+    }
+
+    public void checkPurchasedItems(Activity activity) {
+        billingManager = new BillingManager(activity, this);
+        billingManager.queryPurchaseHistoryAsync();
     }
 }

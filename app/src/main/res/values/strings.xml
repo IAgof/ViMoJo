@@ -281,6 +281,8 @@
     <string name="drawer_watermark">Watermark</string>
     <string name="title_theme_app_preference">Dark theme</string>
     <string name="title_theme_app_section">Activate dark theme</string>
+    <string name="drawerShopTitle">Shop</string>
+    <string name="drawer_go_to_shop">Go to shop</string>
 
     <!-- ShopListActivity -->
     <string name="buy_now">Buy now</string>

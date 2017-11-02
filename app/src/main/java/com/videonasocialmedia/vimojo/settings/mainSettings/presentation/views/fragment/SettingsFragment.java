@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,6 +33,7 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.a
 import com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity;
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
+import com.videonasocialmedia.vimojo.shop.presentation.view.activity.ShopListActivity;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
@@ -66,6 +68,8 @@ public class SettingsFragment extends PreferenceFragment implements
     protected SharedPreferences.Editor editor;
     protected MixpanelAPI mixpanel;
     protected VideonaDialog dialog;
+    private boolean isPursachedTheme = false;
+    private boolean isPursachedWatermark = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +80,11 @@ public class SettingsFragment extends PreferenceFragment implements
         FragmentPresentersComponent fragmentPresentersComponent = initComponent();
         fragmentPresentersComponent.inject(this);
         mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_TOKEN);
+        checkPurchasedItems();
+    }
+
+    public void checkPurchasedItems() {
+        preferencesPresenter.checkPurchasedItems(this.getActivity());
     }
 
     private FragmentPresentersComponent initComponent() {
@@ -176,8 +185,18 @@ public class SettingsFragment extends PreferenceFragment implements
         super.onResume();
         preferencesPresenter.checkAvailablePreferences();
         preferencesPresenter.checkMailValid();
+        updateIcon (themeappSwitchPref, isPursachedTheme);
+        updateIcon (watermarkSwitchPref, isPursachedWatermark);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferencesPresenter);
+    }
+
+    private void updateIcon(SwitchPreference switchPreference, boolean isThemePaid) {
+        if (isThemePaid) {
+            switchPreference.setIcon(context.getDrawable(R.drawable.ic_unlocked));
+        } else {
+            switchPreference.setIcon(context.getDrawable(R.drawable.ic_locked));
+        }
     }
 
     @Override
@@ -285,6 +304,18 @@ public class SettingsFragment extends PreferenceFragment implements
         }
     }
 
+    @Override
+    public void itemDarkThemePurchased() {
+        isPursachedTheme = true;
+        updateIcon (themeappSwitchPref, isPursachedTheme);
+    }
+
+    @Override
+    public void itemWatermarkPurchased() {
+        isPursachedWatermark = true;
+        updateIcon (watermarkSwitchPref, isPursachedWatermark);
+    }
+
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
         String property = null;
         switch (key) {
@@ -305,14 +336,28 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference connectionPref = findPreference(key);
         if (key.equals(ConfigPreferences.THEME_APP_DARK)) {
-            // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
-            preferencesPresenter.trackThemeApp(sharedPreferences.getBoolean(key, false));
-            restartActivity();
+            if(isPursachedTheme) {
+                // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
+                preferencesPresenter.trackThemeApp(sharedPreferences.getBoolean(key, false));
+                restartActivity();
+            } else if (!isPursachedTheme && themeappSwitchPref.isChecked()){
+                themeappSwitchPref.setChecked(false);
+            } else {
+                navigateTo(ShopListActivity.class);
+            }
+           return;
+        }
+        if (key.equals(ConfigPreferences.WATERMARK)) {
+            if(isPursachedWatermark) {
+            } else if (!isPursachedWatermark && !watermarkSwitchPref.isChecked()){
+                watermarkSwitchPref.setChecked(true);
+            } else {
+                navigateTo(ShopListActivity.class);
+            }
+            return;
         }
         if (key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0
-                || key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0
-                || key.compareTo(ConfigPreferences.WATERMARK) == 0
-                ||key.compareTo(ConfigPreferences.THEME_APP_DARK)==0) {
+                || key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0 ){
             return;
         }
         if (!key.equals(ConfigPreferences.PASSWORD_FTP)

@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.shop.model.Shop;
 import com.videonasocialmedia.vimojo.shop.model.SkuShopData;
 import com.videonasocialmedia.vimojo.shop.presentation.mvp.views.ShopListClickListener;
 
@@ -24,7 +23,6 @@ public class ShopListAdapter extends
     RecyclerView.Adapter<ShopListAdapter.ShopAdapterItemViewHolder> {
 
   private List<SkuShopData> skuShopList;
-  private List<Shop> shopList;
   private ShopListClickListener listener;
   private Context context;
 
@@ -32,8 +30,7 @@ public class ShopListAdapter extends
     this.listener = listener;
   }
 
-  public void setShopList(List<Shop> shopList, List<SkuShopData> skuShopList) {
-    this.shopList = shopList;
+  public void setShopList(List<SkuShopData> skuShopList) {
     this.skuShopList = skuShopList;
     notifyDataSetChanged();
   }
@@ -43,18 +40,18 @@ public class ShopListAdapter extends
     View rowView = LayoutInflater.from(viewGroup.getContext()).
         inflate(R.layout.shopping_list_item_view_holder, viewGroup, false);
     this.context = viewGroup.getContext();
-    return new ShopAdapterItemViewHolder(rowView, shopList);
+    return new ShopAdapterItemViewHolder(rowView, skuShopList);
   }
 
   @Override
   public void onBindViewHolder(ShopAdapterItemViewHolder holder, int position) {
-    Shop shop = shopList.get(position);
-    String textPrice = (context.getString(R.string.buy_now) + " " + shop.getPrice() + " €");
-    holder.titleShop.setText(shop.getTitle());
-    holder.descriptionShop.setText(shop.getDescription());
+    SkuShopData skuShopData = skuShopList.get(position);
+    String textPrice = (context.getString(R.string.buy_now) + " " + skuShopData.getPrice());
+    holder.titleShop.setText(skuShopData.getTitle());
+    holder.descriptionShop.setText(skuShopData.getDescription());
     holder.buttonShop.setText(textPrice);
 
-    boolean isPaid= shop.isPurchased();
+    boolean isPaid= skuShopData.isPurchased();
     if(isPaid) {
       holder.buttonShop.setVisibility(View.GONE);
       holder.textPurchased.setVisibility(View.VISIBLE);
@@ -68,8 +65,8 @@ public class ShopListAdapter extends
   @Override
   public int getItemCount() {
     int result = 0;
-    if (shopList != null)
-      result = shopList.size();
+    if (skuShopList != null)
+      result = skuShopList.size();
     return result;
   }
 
@@ -83,19 +80,18 @@ public class ShopListAdapter extends
    @Bind(R.id.text_view_pursached_shop)
    TextView textPurchased;
 
-    private List<Shop> shopList;
+    private List<SkuShopData> skuShopList;
 
-    public ShopAdapterItemViewHolder(View itemView, List<Shop> shopList) {
+    public ShopAdapterItemViewHolder(View itemView, List<SkuShopData> skuShopList) {
       super(itemView);
       ButterKnife.bind(this, itemView);
-      this.shopList = shopList;
+      this.skuShopList = skuShopList;
     }
 
     @OnClick({R.id.button_to_buy_shop_section})
     public void onClick() {
       SkuShopData data = getData(getAdapterPosition());
-      Shop shop = shopList.get(getAdapterPosition());
-      listener.onClickShopItem(shop, data.getSkuId(), data.getBillingType());
+      listener.onClickShopItem(data.getSkuId(), data.getBillingType());
     }
 
     private SkuShopData getData(int adapterPosition) {

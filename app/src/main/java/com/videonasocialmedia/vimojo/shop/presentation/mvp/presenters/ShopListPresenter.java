@@ -12,7 +12,6 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.shop.billing.BillingHistoryPurchaseListener;
 import com.videonasocialmedia.vimojo.shop.billing.BillingManager;
 import com.videonasocialmedia.vimojo.shop.billing.BillingUpdatesPurchaseListener;
-import com.videonasocialmedia.vimojo.shop.model.Shop;
 import com.videonasocialmedia.vimojo.shop.model.SkuShopData;
 import com.videonasocialmedia.vimojo.shop.presentation.mvp.views.ShopListView;
 
@@ -28,7 +27,6 @@ public class ShopListPresenter implements BillingUpdatesPurchaseListener,
 
   private static final String LOG_TAG = ShopListPresenter.class.getCanonicalName();
   private Context context;
-  private List<Shop> shopItemList = new ArrayList<>();
   private List<SkuShopData> skuShopItemList = new ArrayList<>();
   private ShopListView shopListView;
   private BillingManager billingManager;
@@ -37,44 +35,46 @@ public class ShopListPresenter implements BillingUpdatesPurchaseListener,
   public ShopListPresenter(ShopListView shopListView, Context context) {
     this.context = context;
     this.shopListView = shopListView;
+  }
+
+  public void createBillingManager(){
     this.billingManager = new BillingManager((Activity) context, this, this);
   }
 
   public void handleBillingManager() {
-    shopListView.showProgressDialog();
     // Start querying for in-app SKUs
     List<String> inAppSkus = billingManager.getSkus(INAPP);
-    billingManager.querySkuDetailsAsync(INAPP, inAppSkus,
-        new SkuDetailsResponseListener() {
-          @Override
-          public void onSkuDetailsResponse(int responseCode, List<SkuDetails> skuDetailsList) {
-            if (responseCode == BillingClient.BillingResponse.OK && skuDetailsList != null) {
-              // Repacking the result for an adapter
-              for (SkuDetails details : skuDetailsList) {
-                Log.i(LOG_TAG, "Found sku: " + details);
-                shopItemList.add(new Shop(details.getTitle(), details.getDescription(),
-                    details.getPrice()));
-                skuShopItemList.add(new SkuShopData(details.getSku(),
-                    details.getTitle(), details.getPrice(), details.getDescription(),
-                    details.getType()));
+    if(billingManager.isServiceConnected()) {
+      shopListView.showProgressDialog();
+      billingManager.querySkuDetailsAsync(INAPP, inAppSkus,
+          new SkuDetailsResponseListener() {
+            @Override
+            public void onSkuDetailsResponse(int responseCode, List<SkuDetails> skuDetailsList) {
+              if (responseCode == BillingClient.BillingResponse.OK && skuDetailsList != null) {
+                // Repacking the result for an adapter
+                for (SkuDetails details : skuDetailsList) {
+                  Log.i(LOG_TAG, "Found sku: " + details);
+                  skuShopItemList.add(new SkuShopData(details.getSku(),
+                      details.getTitle(), details.getPrice(), details.getDescription(),
+                      details.getType()));
+                }
+                if (skuShopItemList.size() == 0) {
+                  shopListView.showError(context.getString(R.string.error_message_shop_no_items));
+                } else {
+                  shopListView.showShopList(skuShopItemList);
+                }
               }
-              if (shopItemList.size() == 0) {
-                shopListView.showError(context.getString(R.string.error_message_shop_no_items));
-              } else {
-                shopListView.showShopList(shopItemList, skuShopItemList);
-              }
+              shopListView.hideProgressDialog();
             }
-            shopListView.hideProgressDialog();
-          }
-        });
+          });
+    }
 
     billingManager.queryPurchaseHistoryAsync();
-
   }
 
   public void getShopList() {
-    if (shopItemList.size() != 0 || skuShopItemList.size() != 0) {
-      shopListView.showShopList(shopItemList, skuShopItemList);
+    if (skuShopItemList.size() != 0) {
+      shopListView.showShopList(skuShopItemList);
     }
   }
 
@@ -95,6 +95,7 @@ public class ShopListPresenter implements BillingUpdatesPurchaseListener,
   public void purchasedItem(Purchase purchase) {
     for (SkuShopData skuShopData : skuShopItemList) {
       if (purchase.getSku() == skuShopData.getSkuId()) {
+        skuShopData.setPurchased(true);
         shopListView.updatePurchasedItem(skuShopData);
       }
     }
@@ -120,6 +121,16 @@ public class ShopListPresenter implements BillingUpdatesPurchaseListener,
 
   @Override
   public void historyPurchasedItems(List<Purchase> purchasesList) {
-    shopListView.updateHistoryPurchasedItems(purchasesList);
+    List<SkuShopData> shopPurchasesList = new ArrayList<>();
+    for(SkuShopData skuShopData: skuShopItemList) {
+      for(Purchase purchase: purchasesList) {
+        if(skuShopData.getSkuId().compareTo(purchase.getSku()) == 0){
+          skuShopData.setPurchased(true);
+          Log.d(LOG_TAG, "item purchased " + purchase.getSku());
+          shopPurchasesList.add(skuShopData);
+        }
+      }
+    }
+    shopListView.updateHistoryPurchasedItems(shopPurchasesList);
   }
 }

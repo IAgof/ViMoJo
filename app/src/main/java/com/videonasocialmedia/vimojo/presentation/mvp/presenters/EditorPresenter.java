@@ -1,10 +1,12 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.TypedValue;
 
+import com.android.billingclient.api.Purchase;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
@@ -15,7 +17,10 @@ import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
+import com.videonasocialmedia.vimojo.shop.billing.BillingHistoryPurchaseListener;
+import com.videonasocialmedia.vimojo.shop.billing.BillingManager;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
@@ -26,7 +31,7 @@ import javax.inject.Inject;
  * Created by ruth on 23/11/16.
  */
 
-public class EditorPresenter {
+public class EditorPresenter implements BillingHistoryPurchaseListener {
   private String LOG_TAG = "EditorPresenter";
 
   private EditorActivityView editorActivityView;
@@ -42,6 +47,8 @@ public class EditorPresenter {
 
   private final String THEME_DARK = "dark";
   private final String THEME_LIGHT = "light";
+
+  private BillingManager billingManager;
 
   @Inject
   public EditorPresenter(
@@ -74,8 +81,8 @@ public class EditorPresenter {
     return isActivateDarkTheme;
   }
 
-  public void createNewProject(String roothPath, String privatePath, boolean isWatermarkFeatured){
-    createDefaultProjectUseCase.createProject(roothPath, privatePath, isWatermarkFeatured);
+  public void createNewProject(String roothPath, String privatePath){
+    createDefaultProjectUseCase.createProject(roothPath, privatePath, getPreferenceWaterMark());
     clearProjectDataFromSharedPreferences();
     editorActivityView.updateViewResetProject();
   }
@@ -122,15 +129,20 @@ public class EditorPresenter {
     relaunchTranscoderTempBackgroundUseCase.relaunchExport(video, currentProject);
   }
 
-  public void switchTheme(final boolean isDarkThemeChecked) {
+  public void switchPreference(final boolean isChecked, String preference) {
     preferencesEditor = sharedPreferences.edit();
-    preferencesEditor.putBoolean(ConfigPreferences.THEME_APP_DARK, isDarkThemeChecked);
+    preferencesEditor.putBoolean(preference, isChecked);
     preferencesEditor.apply();
-    userEventTracker.trackThemeAppDrawerChanged(isDarkThemeChecked);
-    if(isChildShareActivity()){
-      editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
-    } else {
-      editorActivityView.restartActivity();
+    if (preference.compareTo(ConfigPreferences.THEME_APP_DARK) == 0) {
+      userEventTracker.trackThemeAppDrawerChanged(isChecked);
+      if (isChildShareActivity()) {
+        editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
+      } else {
+        editorActivityView.restartActivity();
+      }
+    }
+    if(preference.compareTo(ConfigPreferences.WATERMARK) == 0){
+      // TODO:(alvaro.martinez) 2/11/17 track watermark applyed
     }
   }
 
@@ -166,4 +178,29 @@ public class EditorPresenter {
     return currentTheme;
   }
 
+  public boolean getPreferenceWaterMark() {
+    boolean isActivateWatermark = sharedPreferences
+        .getBoolean(ConfigPreferences.WATERMARK, false);
+    return isActivateWatermark;
+  }
+
+  public void checkPurchasedItems() {
+    // TODO:(alvaro.martinez) 2/11/17 inject this with dagger
+    this.billingManager = new BillingManager((Activity) context, this);
+    billingManager.queryPurchaseHistoryAsync();
+  }
+
+  @Override
+  public void historyPurchasedItems(List<Purchase> purchasesList) {
+    for(Purchase purchase: purchasesList){
+      if(purchase.getSku().compareTo(Constants.IN_APP_BILLING_ITEM_DARK_THEME) == 0) {
+        editorActivityView.itemDarkThemePurchased();
+        Log.d(LOG_TAG, "item purchased " + purchase.getSku());
+      }
+      if(purchase.getSku().compareTo(Constants.IN_APP_BILLING_ITEM_WATERMARK) == 0) {
+        editorActivityView.itemWatermarkPurchased();
+        Log.d(LOG_TAG, "item purchased " + purchase.getSku());
+      }
+    }
+  }
 }

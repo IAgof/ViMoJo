@@ -259,6 +259,8 @@
     <string name="title_tutorial_record_section">Tutorial de grabación</string>
     <string name="title_theme_app_preference">Tema Oscuro </string>
     <string name="title_theme_app_section">Tema </string>
+    <string name="drawerShopTitle">Tienda</string>
+    <string name="drawer_go_to_shop">Ir a tienda</string>
 
     <!-- ShopListActivity -->
     <string name="buy_now">Compra ahora por</string>

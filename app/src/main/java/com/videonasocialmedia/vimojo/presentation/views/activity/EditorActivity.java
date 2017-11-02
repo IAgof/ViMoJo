@@ -16,7 +16,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +38,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.ac
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialEditorActivity;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialRecordActivity;
 import com.videonasocialmedia.vimojo.shop.presentation.view.activity.ShopListActivity;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
@@ -55,7 +55,8 @@ import butterknife.ButterKnife;
  *
  */
 
-public abstract class EditorActivity extends VimojoActivity implements EditorActivityView{
+public abstract class EditorActivity extends VimojoActivity implements EditorActivityView {
+
   @Inject UserEventTracker userEventTracker;
   @Inject EditorPresenter editorPresenter;
 
@@ -71,7 +72,10 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   FloatingActionsMenu fabMenu;
   @Nullable @Bind(R.id.switch_theme_dark)
   SwitchCompat switchTheme;
-
+  @Nullable @Bind(R.id.switch_watermark)
+  SwitchCompat switchWatermark;
+  private boolean isPurchasedTheme = false;
+  private boolean isPurchasedWatermark = false;
   CircleImageView imageUserThumb;
   String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_THUMB;
   private int REQUEST_ICON_USER = 100;
@@ -83,6 +87,11 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
     setUpAndCheckUserThumb();
+    checkPurchasedItems();
+  }
+
+  private void checkPurchasedItems() {
+    editorPresenter.checkPurchasedItems();
   }
 
   private void setUpAndCheckUserThumb() {
@@ -141,11 +150,16 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     }
     editorPresenter.init();
     setupSwitchThemeAppIntoDrawer();
+    setupSwitchWatermarkIntoDrawer();
     editorPresenter.updateTheme();
   }
 
   private boolean checkIfThemeDarkIsSelected() {
     return editorPresenter.getPreferenceThemeApp();
+  }
+
+  private boolean checkIfWatermarkIsSelected() {
+    return editorPresenter.getPreferenceWaterMark();
   }
 
   @Override
@@ -228,8 +242,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
         switch (which) {
           case DialogInterface.BUTTON_POSITIVE:
             if(resourceItemMenuId == R.id.menu_navview_delete_clip)
-                editorPresenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
-                    BuildConfig.FEATURE_WATERMARK);
+                editorPresenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID);
             break;
 
           case DialogInterface.BUTTON_NEGATIVE:
@@ -261,13 +274,52 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     if (switchTheme != null) {
       boolean themeDarkIsSelected = checkIfThemeDarkIsSelected();
       switchTheme.setChecked(themeDarkIsSelected);
+      updateIcon(isPurchasedTheme, R.id.switch_theme_dark);
       switchTheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isDarkThemeChecked) {
-          editorPresenter.switchTheme(isDarkThemeChecked);
-          drawerLayout.closeDrawers();
+          if (isPurchasedTheme) {
+            editorPresenter.switchPreference(isDarkThemeChecked, ConfigPreferences.THEME_APP_DARK);
+            drawerLayout.closeDrawers();
+          } else {
+            switchTheme.setChecked(false);
+            navigateTo(ShopListActivity.class);
+          }
         }
       });
+    }
+  }
+
+
+ private void setupSwitchWatermarkIntoDrawer() {
+    switchWatermark = (SwitchCompat) navigationView.getMenu().findItem(R.id.switch_watermark)
+        .getActionView();
+    if(switchWatermark!=null) {
+      if(BuildConfig.FEATURE_WATERMARK) {
+        boolean watermarkIsSelected = checkIfWatermarkIsSelected();
+        switchWatermark.setChecked(watermarkIsSelected);
+        updateIcon(isPurchasedWatermark, R.id.switch_watermark);
+        switchWatermark.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+          @Override
+          public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isPurchasedWatermark) {
+              editorPresenter.switchPreference(isChecked, ConfigPreferences.WATERMARK);
+              drawerLayout.closeDrawers();
+            } else {
+              switchWatermark.setChecked(true);
+              navigateTo(ShopListActivity.class);
+            }
+          }
+        });
+      }
+    }
+  }
+
+  private void updateIcon(boolean isPaidTheme, int identifier) {
+    if (isPaidTheme){
+     navigationView.getMenu().findItem(identifier).setIcon(this.getDrawable(R.drawable.ic_unlocked));
+    } else {
+      navigationView.getMenu().findItem(R.id.switch_theme_dark).setIcon(this.getDrawable(R.drawable.ic_locked));
     }
   }
 
@@ -306,6 +358,16 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     Intent intent = getIntent();
     startActivity(intent);
     finish();
+  }
+
+  @Override
+  public void itemDarkThemePurchased() {
+    isPurchasedTheme = true;
+  }
+
+  @Override
+  public void itemWatermarkPurchased() {
+    isPurchasedWatermark = true;
   }
 
   public void showDialogUserAddThumb() {

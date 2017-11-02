@@ -77,6 +77,8 @@ import butterknife.ButterKnife;
  */
 
 public class InitAppActivity extends VimojoActivity implements InitAppView, OnInitAppEventListener {
+    public static final boolean DEFAULT_THEME_DARK = false;
+    public static final boolean DEFAULT_WATERMARK = true;
     private final String LOG_TAG = this.getClass().getSimpleName();
     private long MINIMUN_WAIT_TIME = 900;
 
@@ -273,6 +275,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
                 trackUserProfile();
                 trackCreatedSuperProperty();
                 initSettings();
+                initThemeAndWatermark();
                 break;
             default:
                 break;
@@ -339,6 +342,12 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
      */
     private void initSettings() {
         editor.putInt(ConfigPreferences.CAMERA_ID, ConfigPreferences.BACK_CAMERA).commit();
+    }
+
+
+    private void initThemeAndWatermark() {
+        editor.putBoolean(ConfigPreferences.THEME_APP_DARK, DEFAULT_THEME_DARK).commit();
+        editor.putBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK).commit();
     }
 
     /**

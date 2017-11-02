@@ -5,6 +5,7 @@ package com.videonasocialmedia.vimojo.shop.model;
  */
 public class SkuShopData {
   private final String skuId, title, price, description, billingType;
+  private boolean isPurchased = false;
 
   public SkuShopData(String skuId, String title, String price, String description, String type) {
     this.skuId = skuId;
@@ -32,5 +33,13 @@ public class SkuShopData {
 
   public String getBillingType() {
     return billingType;
+  }
+
+  public boolean isPurchased() {
+    return isPurchased;
+  }
+
+  public void setPurchased(boolean purchased) {
+    isPurchased = purchased;
   }
 }

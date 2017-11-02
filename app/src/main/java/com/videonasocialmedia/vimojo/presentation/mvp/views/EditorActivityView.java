@@ -17,4 +17,8 @@ public interface EditorActivityView {
   void restartShareActivity(String extraDataIntent);
 
   void restartActivity();
+
+  void itemDarkThemePurchased();
+
+  void itemWatermarkPurchased();
 }

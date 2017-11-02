@@ -7,10 +7,8 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.android.billingclient.api.Purchase;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.shop.model.Shop;
 import com.videonasocialmedia.vimojo.shop.model.SkuShopData;
 import com.videonasocialmedia.vimojo.shop.presentation.mvp.presenters.ShopListPresenter;
 import com.videonasocialmedia.vimojo.shop.presentation.mvp.views.ShopListClickListener;
@@ -75,8 +73,8 @@ public class ShopListActivity extends VimojoActivity implements ShopListView, Sh
   @Override
   protected void onResume() {
     super.onResume();
+    presenter.createBillingManager();
     presenter.handleBillingManager();
-    presenter.getShopList();
   }
 
   @Override
@@ -86,13 +84,13 @@ public class ShopListActivity extends VimojoActivity implements ShopListView, Sh
   }
 
   @Override
-  public void onClickShopItem(Shop shop, String skuId, String billingType) {
+  public void onClickShopItem(String skuId, String billingType) {
     presenter.purchaseItem(skuId, billingType);
   }
 
   @Override
-  public void showShopList(List<Shop> shopList, List<SkuShopData> skuShopList) {
-    adapter.setShopList(shopList, skuShopList);
+  public void showShopList(List<SkuShopData> skuShopList) {
+    adapter.setShopList(skuShopList);
   }
 
   @Override
@@ -126,12 +124,12 @@ public class ShopListActivity extends VimojoActivity implements ShopListView, Sh
 
   @Override
   public void updatePurchasedItem(SkuShopData skuShopData) {
-    // TODO: 02/11/2017 User has just bought and item and expects ...
+    adapter.notifyDataSetChanged();
   }
 
   @Override
-  public void updateHistoryPurchasedItems(List<Purchase> purchasesList) {
-    // TODO: 02/11/2017 User bought items from list
+  public void updateHistoryPurchasedItems(List<SkuShopData> shopPurchasesList) {
+    adapter.notifyDataSetChanged();
   }
 
   @OnClick(R.id.cancel_shopping)

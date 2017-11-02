@@ -32,7 +32,7 @@ public class BillingManager implements PurchasesUpdatedListener {
   private BillingClient billingClient;
   private Activity activity;
   private boolean isServiceConnected = false;
-  private int billingClientResponseCode;
+  private int billingClientResponseCode = -1;
   private static final HashMap<String, List<String>> SKUS;
 
   static {
@@ -75,14 +75,14 @@ public class BillingManager implements PurchasesUpdatedListener {
           Log.w(LOG_TAG, "onBillingSetupFinished() error code: " + billingResponse);
         }
         billingClientResponseCode = billingResponse;
-        billingUpdatesPurchaseListener.billingClientSetupFinished();
+        //billingUpdatesPurchaseListener.billingClientSetupFinished();
       }
 
       @Override
       public void onBillingServiceDisconnected() {
         Log.w(LOG_TAG, "onBillingServiceDisconnected()");
         isServiceConnected = false;
-        billingUpdatesPurchaseListener.billingClientSetupFinished();
+        //billingUpdatesPurchaseListener.billingClientSetupFinished();
       }
     });
   }
