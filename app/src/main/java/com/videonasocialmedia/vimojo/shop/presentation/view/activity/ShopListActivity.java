@@ -48,7 +48,6 @@ public class ShopListActivity extends VimojoActivity implements ShopListView, Sh
     getActivityPresentersComponent().inject(this);
     createProgessDialog();
     initShopListRecycler();
-    presenter.handleBillingManager();
   }
 
   private void createProgessDialog() {
@@ -75,6 +74,7 @@ public class ShopListActivity extends VimojoActivity implements ShopListView, Sh
   @Override
   protected void onResume() {
     super.onResume();
+    presenter.handleBillingManager();
     presenter.getShopList();
   }
 

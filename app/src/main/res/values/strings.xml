@@ -285,6 +285,7 @@
     <string name="alert_dialog_message_shop">Loading shop items</string>
     <string name="error_message_shop_no_items">Shop empty, no items to buy</string>
     <string name="error_message_shop_purchasing_items">Buying item, error </string>
+    <string name="error_message_shop_not_available">Connection with shop not available</string>
 
     <!-- About Activity -->
 

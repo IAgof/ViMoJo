@@ -102,4 +102,7 @@ public class Constants {
     public static final int ADVANCE_PLAYER_PRECISION_LOW = 300;
     public static final int ADVANCE_PLAYER_PRECISION_MEDIUM = 600;
     public static final int ADVANCE_PLAYER_PRECISION_HIGH = 1200;
+
+    public static final String IN_APP_BILLING_ITEM_WATERMARK = "inappitem_watermark";
+    public static final String IN_APP_BILLING_ITEM_DARK_THEME = "inappitem_darktheme";
 }

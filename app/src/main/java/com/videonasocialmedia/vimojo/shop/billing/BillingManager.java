@@ -13,6 +13,7 @@ import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,12 +31,13 @@ public class BillingManager implements PurchasesUpdatedListener {
     private final String LOG_TAG = BillingManager.class.getCanonicalName();
     private BillingClient billingClient;
     private Activity activity;
-    private boolean isServiceConnected;
+    private boolean isServiceConnected = false;
     private int billingClientResponseCode;
     private static final HashMap<String, List<String>> SKUS;
     static {
         SKUS = new HashMap<>();
-        SKUS.put(BillingClient.SkuType.INAPP, Arrays.asList("remove watermark", "dark theme"));
+        SKUS.put(BillingClient.SkuType.INAPP, Arrays.asList(Constants.IN_APP_BILLING_ITEM_WATERMARK,
+            Constants.IN_APP_BILLING_ITEM_DARK_THEME));
         // Future use, app model subscription
         // SKUS.put(BillingClient.SkuType.SUBS, Arrays.asList("monthly", "yearly"));
     }
@@ -72,13 +74,14 @@ public class BillingManager implements PurchasesUpdatedListener {
                     Log.w(LOG_TAG, "onBillingSetupFinished() error code: " + billingResponse);
                 }
                 billingClientResponseCode = billingResponse;
+                billingUpdatesPurchaseListener.billingClientSetupFinished();
             }
 
             @Override
             public void onBillingServiceDisconnected() {
                 Log.w(LOG_TAG, "onBillingServiceDisconnected()");
                 isServiceConnected = false;
-
+                billingUpdatesPurchaseListener.billingClientSetupFinished();
             }
         });
     }
@@ -102,6 +105,7 @@ public class BillingManager implements PurchasesUpdatedListener {
     }
 
     private void handlePurchase(Purchase purchase) {
+        // TODO:(alvaro.martinez) 2/11/17 Manage new purchase. Added to sharedPreferences?, tracking?
         // Perform purchase validation on your own secure server.
         if (!verifyValidSignature(purchase.getOriginalJson(), purchase.getSignature())) {
             // Skip a purchase if the signature isn't valid.
@@ -154,12 +158,14 @@ public class BillingManager implements PurchasesUpdatedListener {
                         Log.w(LOG_TAG, "onBillingSetupFinished() error code: " + billingResponse);
                     }
                     billingClientResponseCode = billingResponse;
+                    billingUpdatesPurchaseListener.billingClientSetupFinished();
                 }
 
                 @Override
                 public void onBillingServiceDisconnected() {
                     Log.w(LOG_TAG, "onBillingServiceDisconnected()");
                     isServiceConnected = false;
+                    billingUpdatesPurchaseListener.billingClientSetupFinished();
                 }
             });
         }
@@ -210,5 +216,13 @@ public class BillingManager implements PurchasesUpdatedListener {
 
     public List<String> getSkus(@BillingClient.SkuType String type) {
         return SKUS.get(type);
+    }
+
+    public boolean isServiceConnected() {
+        return isServiceConnected;
+    }
+
+    public int getBillingClientResponseCode() {
+        return billingClientResponseCode;
     }
 }

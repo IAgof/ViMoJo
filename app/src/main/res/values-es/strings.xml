@@ -261,6 +261,7 @@
     <string name="alert_dialog_message_shop">Cargando artículos en la tienda</string>
     <string name="error_message_shop_no_items">No hay artículos para comprar en la tienda</string>
     <string name="error_message_shop_purchasing_items">Comprando artículo, error </string>
+    <string name="error_message_shop_not_available">Conexión con la tienda no disponible</string>
 
     <!-- About Activity -->
 
