@@ -67,7 +67,7 @@ android {
             versionName "0.7.0-RC13" // 20171031
             resValue "string", "app_out_of_date", "2017-12-31" // 20170731
             resValue "string", "app_name", "Vimojo"
-            buildConfigField "boolean", "FEATURE_FTP", "true"
+            buildConfigField "boolean", "FEATURE_FTP", "false"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
             buildConfigField "boolean", "FEATURE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
