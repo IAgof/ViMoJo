@@ -2,8 +2,6 @@ package com.videonasocialmedia.vimojo.main.modules;
 
 import android.content.SharedPreferences;
 
-import com.videonasocialmedia.avrecorder.AudioRecorder;
-import com.videonasocialmedia.avrecorder.SessionConfig;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
@@ -85,8 +83,6 @@ import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-
-import java.io.IOException;
 
 import dagger.Module;
 import dagger.Provides;
@@ -253,10 +249,9 @@ public class ActivityPresentersModule {
   SplitPreviewPresenter provideSplitPresenter(
           UserEventTracker userEventTracker, SplitVideoUseCase splitVideoUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          ModifyVideoDurationUseCase modifyVideoDurationUseCase, VideoRepository videoRepository) {
+          VideoRepository videoRepository) {
     return new SplitPreviewPresenter((VideoSplitActivity) activity, userEventTracker, activity,
-            videoRepository, splitVideoUseCase, getMediaListFromProjectUseCase,
-            modifyVideoDurationUseCase);
+            videoRepository, splitVideoUseCase, getMediaListFromProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -340,8 +335,11 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  SplitVideoUseCase provideVideoSplitter(AddVideoToProjectUseCase addVideoToProjectUseCase) {
-    return new SplitVideoUseCase(addVideoToProjectUseCase);
+  SplitVideoUseCase provideVideoSplitter(AddVideoToProjectUseCase addVideoToProjectUseCase,
+                                         ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+                                         VideoRepository videoRepository) {
+    return new SplitVideoUseCase(addVideoToProjectUseCase, modifyVideoDurationUseCase,
+            videoRepository);
   }
 
   @Provides

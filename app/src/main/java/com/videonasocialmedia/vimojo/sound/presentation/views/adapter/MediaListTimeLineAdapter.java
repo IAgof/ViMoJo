@@ -9,6 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.FileDescriptorBitmapDecoder;
+import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
+import com.bumptech.glide.signature.StringSignature;
 import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -23,6 +28,10 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+
+import static com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.TimeLineVideoViewHolder.VIEWHOLDER_RADIUS;
+import static com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.TimeLineVideoViewHolder.VIEWHOLDER_MARGIN;
 
 /**
  * Created by alvaro on 7/03/17.
@@ -38,7 +47,7 @@ public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTime
   private int selectedVideoPosition = 0;
 
   public MediaListTimeLineAdapter(MediaListTimeLineRecyclerViewClickListener mediaTimeLineListener,
-                                  int trackId){
+                                  int trackId) {
     this.mediaListTimeLineListener = mediaTimeLineListener;
     this.trackId = trackId;
     this.mediaList = new ArrayList<>();
@@ -46,7 +55,6 @@ public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTime
 
   @Override
   public MediaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
     this.context = parent.getContext();
     View view = LayoutInflater.from(context)
         .inflate(R.layout.sound_mediatimeline_media_item, parent, false);
@@ -64,29 +72,39 @@ public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTime
 
   private String getTimeForVideoInPosition(int position) {
     int startTime = 0;
-    for(int i=0; i<position; i++){
+    for (int i = 0; i < position; i++) {
      startTime += mediaList.get(i).getDuration();
     }
     int stopTime = startTime + mediaList.get(position).getDuration();
 
     return TimeUtils.toFormattedTimeWithMinutesAndSeconds(startTime) + " - "
         + TimeUtils.toFormattedTimeWithMinutesAndSeconds(stopTime);
-
   }
 
   private void drawMediaThumbnail(ImageView thumbnailView, Media currentMedia) {
-
-    if(currentMedia instanceof Video) {
-      String path = currentMedia.getIconPath() != null
-          ? currentMedia.getIconPath() : currentMedia.getMediaPath();
+    if (currentMedia instanceof Video) {
+      // TODO(jliarte): 27/10/17 duplicate code with @com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.TimeLineVideoViewHolder
+      BitmapPool bitmapPool = Glide.get(context).getBitmapPool();
+      Video currentVideo = (Video) currentMedia;
+      FileDescriptorBitmapDecoder decoder = new FileDescriptorBitmapDecoder(
+              new VideoBitmapDecoder(currentVideo.getStartTime() * 1000),
+              bitmapPool,
+              DecodeFormat.PREFER_ARGB_8888);
+      String path = currentVideo.getIconPath() != null
+              ? currentVideo.getIconPath() : currentVideo.getMediaPath();
       Glide.with(context)
-          .load(path)
-          .centerCrop()
-          .error(R.drawable.fragment_gallery_no_image)
-          .into(thumbnailView);
+              .load(path)
+              .asBitmap()
+              .override(thumbnailView.getMaxWidth(), thumbnailView.getMaxHeight())
+              .videoDecoder(decoder)
+              .transform(new RoundedCornersTransformation(context, VIEWHOLDER_RADIUS,
+                      VIEWHOLDER_MARGIN))
+              .signature(new StringSignature(currentVideo.getUuid() + currentVideo.getStartTime()))
+              .error(R.drawable.fragment_gallery_no_image)
+              .into(thumbnailView);
       return;
     }
-    if(currentMedia instanceof Audio) {
+    if (currentMedia instanceof Audio) {
       Glide.with(context)
           .load(currentMedia.getIconResourceId())
           .centerCrop()
@@ -100,7 +118,6 @@ public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTime
     notifyItemChanged(selectedVideoPosition);
     selectedVideoPosition = positionSelected;
     notifyItemChanged(selectedVideoPosition);
-
   }
 
   public int getSelectedVideoPosition() {
@@ -117,7 +134,6 @@ public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTime
   }
 
   class MediaViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
-
     @Bind(R.id.text_duration_clip)
     TextView textDurationClip;
     @Bind(R.id.timeline_audio_thumb)
@@ -132,17 +148,14 @@ public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTime
     public void onClipClick() {
       int position = getAdapterPosition();
       mediaListTimeLineListener.onClipClicked(position, trackId);
-
     }
 
     @Override
     public void onItemSelected() {
-
     }
 
     @Override
     public void onItemClear() {
-
     }
   }
 }

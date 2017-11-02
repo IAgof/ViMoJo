@@ -1,3 +1,19 @@
+v0.7.0-RC12
+- Fixed bug if user return from the frontal camera, turn off the flash
+- Fixed default light theme in setting
+- Add an Edition tutorial and a Record tutorial
+
+v0.7.0-RC11
+- Improved error notification in edit view, when there is a problem with a clip transcode
+- New timeline clip thumbnails that reflects video start trimming times
+- Set light theme as default
+
+v0.7.0-RC10
+- Modified trim task error handling to slightly move trim times before relaunching again
+- Fixed camera bug that caused app crash when going back to camera from other views
+- Fixed missing chunks voice over. Changed audio recorder library.
+- Improved stability in voice over record and volume screen.
+
 v0.7.0-RC9
 - Added in settings screen option to see all licenses used in app.
 - Fixed ui problems in trim and voice over screen.
