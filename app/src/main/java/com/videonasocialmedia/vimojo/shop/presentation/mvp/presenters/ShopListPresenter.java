@@ -94,7 +94,7 @@ public class ShopListPresenter implements BillingUpdatesPurchaseListener,
   @Override
   public void purchasedItem(Purchase purchase) {
     for (SkuShopData skuShopData : skuShopItemList) {
-      if (purchase.getSku() == skuShopData.getSku()) {
+      if (purchase.getSku() == skuShopData.getSkuId()) {
         shopListView.updatePurchasedItem(skuShopData);
       }
     }
@@ -108,13 +108,13 @@ public class ShopListPresenter implements BillingUpdatesPurchaseListener,
 
   @Override
   public void billingClientSetupFinished() {
-    if(billingManager.getBillingClientResponseCode() == BillingClient.BillingResponse.OK &&
-        billingManager.isServiceConnected()){
+    if (billingManager.getBillingClientResponseCode() == BillingClient.BillingResponse.OK &&
+        billingManager.isServiceConnected()) {
       return;
     } else {
       shopListView.hideProgressDialog();
       shopListView.showError(context.getString(R.string.error_message_shop_not_available));
-      Log.d(LOG_TAG, "billing client response " +  billingManager.getBillingClientResponseCode());
+      Log.d(LOG_TAG, "billing client response " + billingManager.getBillingClientResponseCode());
     }
   }
 

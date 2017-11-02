@@ -1,11 +1,11 @@
 package com.videonasocialmedia.vimojo.shop.model;
 
-
-
 public class Shop {
+
   private String title;
   private String description;
   private String price;
+  private boolean isPurchased;
 
   public Shop(String title, String description, String price) {
     this.title = title;
@@ -23,6 +23,14 @@ public class Shop {
 
   public String getPrice() {
     return price;
+  }
+
+  public boolean isPurchased() {
+    return isPurchased;
+  }
+
+  public void setPurchased(boolean isPurchased) {
+    this.isPurchased = isPurchased;
   }
 
 }

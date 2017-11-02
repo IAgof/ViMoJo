@@ -30,11 +30,12 @@ public class ShopListActivity extends VimojoActivity implements ShopListView, Sh
 
   private static final String LOG_TAG = ShopListActivity.class.getCanonicalName();
 
-  @Inject ShopListPresenter presenter;
+  @Inject
+  ShopListPresenter presenter;
 
   @Bind(R.id.recycler_shop)
   RecyclerView shopList;
-  @Bind (R.id.cancel_shopping)
+  @Bind(R.id.cancel_shopping)
   CardView cancelShopping;
 
   private ShopListAdapter adapter;
@@ -133,7 +134,7 @@ public class ShopListActivity extends VimojoActivity implements ShopListView, Sh
     // TODO: 02/11/2017 User bought items from list
   }
 
-  @OnClick (R.id.cancel_shopping)
+  @OnClick(R.id.cancel_shopping)
   public void cancelShopping() {
     finish();
   }

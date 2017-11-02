@@ -41,12 +41,25 @@
                 />
 
             <Button
-                android:id="@+id/button_shop_section"
+                android:id="@+id/button_to_buy_shop_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="visible"
                 android:background="?attr/colorAccent"
                 android:text="Compra ahora 0,79€"
                 android:textColor="@color/colorWhite"/>
+
+            <TextView
+                android:id="@+id/text_view_pursached_shop"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="@string/purchased"
+                android:visibility="gone"
+                android:gravity="center"
+                android:background="?attr/colorAccent"
+                android:textStyle="bold"
+                android:textColor="@color/colorWhite"
+                />
         </LinearLayout>
 
     </android.support.v7.widget.CardView>

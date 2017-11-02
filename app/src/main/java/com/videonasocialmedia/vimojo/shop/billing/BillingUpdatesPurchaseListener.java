@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface BillingUpdatesPurchaseListener {
 
-    void userCanceled();
+  void userCanceled();
 
-    void purchasedItem(Purchase purchase);
+  void purchasedItem(Purchase purchase);
 
-    void showError(int responseCode);
+  void showError(int responseCode);
 
-    void billingClientSetupFinished();
+  void billingClientSetupFinished();
 }

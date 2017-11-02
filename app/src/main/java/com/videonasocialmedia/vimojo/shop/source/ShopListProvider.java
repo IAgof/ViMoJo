@@ -8,8 +8,6 @@ import com.videonasocialmedia.vimojo.shop.model.Shop;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class ShopListProvider {
   private final Context context;
   private List<Shop> shopList = new ArrayList();
@@ -24,7 +22,9 @@ public class ShopListProvider {
   }
 
   private void populateShopList() {
-    shopList.add(new Shop(context.getString(R.string.title_theme_app_shop),context.getString(R.string.description_theme_app_shop),"0,79"));
-    shopList.add(new Shop(context.getString(R.string.title_watermark_shop),context.getString(R.string.description_theme_app_shop),"0,79"));
+    shopList.add(new Shop(context.getString(R.string.title_theme_app_shop),
+        context.getString(R.string.description_theme_app_shop), "0,79"));
+    shopList.add(new Shop(context.getString(R.string.title_watermark_shop),
+        context.getString(R.string.description_theme_app_shop), "0,79"));
   }
 }

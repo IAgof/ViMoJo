@@ -4,5 +4,5 @@ import com.videonasocialmedia.vimojo.shop.model.Shop;
 
 
 public interface ShopListClickListener {
-  void onClickShopItem(Shop shop, String sku, String billingType);
+  void onClickShopItem(Shop shop, String skuId, String billingType);
 }

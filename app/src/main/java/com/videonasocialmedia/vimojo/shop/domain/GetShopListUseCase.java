@@ -9,14 +9,15 @@ import java.util.List;
 import javax.inject.Inject;
 
 
- public class GetShopListUseCase {
+public class GetShopListUseCase {
   private ShopListProvider shopListProvider;
 
   @Inject
   public GetShopListUseCase(ShopListProvider shopListProvider) {
-   this.shopListProvider = shopListProvider;
+    this.shopListProvider = shopListProvider;
 
   }
+
   public List<Shop> getShopList() {
     return shopListProvider.getAll();
   }

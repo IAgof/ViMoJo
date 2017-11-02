@@ -9,5 +9,5 @@ import java.util.List;
  */
 
 public interface BillingHistoryPurchaseListener {
-    void historyPurchasedItems(List<Purchase> purchasesList);
+  void historyPurchasedItems(List<Purchase> purchasesList);
 }
