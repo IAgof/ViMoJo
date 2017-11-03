@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.TypedValue;
 
+import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.Purchase;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -17,6 +18,7 @@ import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
+import com.videonasocialmedia.vimojo.shop.billing.BillingConnectionListener;
 import com.videonasocialmedia.vimojo.shop.billing.BillingHistoryPurchaseListener;
 import com.videonasocialmedia.vimojo.shop.billing.BillingManager;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -31,7 +33,7 @@ import javax.inject.Inject;
  * Created by ruth on 23/11/16.
  */
 
-public class EditorPresenter implements BillingHistoryPurchaseListener {
+public class EditorPresenter implements BillingConnectionListener, BillingHistoryPurchaseListener {
   private String LOG_TAG = "EditorPresenter";
 
   private EditorActivityView editorActivityView;
@@ -57,7 +59,7 @@ public class EditorPresenter implements BillingHistoryPurchaseListener {
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          NewClipImporter newClipImporter) {
+          NewClipImporter newClipImporter, BillingManager billingManager) {
     this.editorActivityView = editorActivityView;
     this.sharedPreferences = sharedPreferences;
     this.context = context;
@@ -67,6 +69,7 @@ public class EditorPresenter implements BillingHistoryPurchaseListener {
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.currentProject = getCurrentProject();
     this.newClipImporter = newClipImporter;
+    this.billingManager = billingManager;
   }
 
   public Project getCurrentProject() {
@@ -96,6 +99,11 @@ public class EditorPresenter implements BillingHistoryPurchaseListener {
   public void init() {
     newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
     obtainVideos();
+    initBilling();
+  }
+
+  private void initBilling() {
+    billingManager.initBillingClient(this);
   }
 
   private void obtainVideos() {
@@ -184,14 +192,9 @@ public class EditorPresenter implements BillingHistoryPurchaseListener {
     return isActivateWatermark;
   }
 
-  public void checkPurchasedItems() {
-    // TODO:(alvaro.martinez) 2/11/17 inject this with dagger
-    this.billingManager = new BillingManager((Activity) context, this);
-    billingManager.queryPurchaseHistoryAsync();
-  }
-
   @Override
   public void historyPurchasedItems(List<Purchase> purchasesList) {
+    Log.d(LOG_TAG, "historyPurchasedItems " + purchasesList.size());
     for(Purchase purchase: purchasesList){
       if(purchase.getSku().compareTo(Constants.IN_APP_BILLING_ITEM_DARK_THEME) == 0) {
         editorActivityView.itemDarkThemePurchased();
@@ -202,5 +205,22 @@ public class EditorPresenter implements BillingHistoryPurchaseListener {
         Log.d(LOG_TAG, "item purchased " + purchase.getSku());
       }
     }
+  }
+
+  @Override
+  public void billingClientSetupFinished() {
+    if (billingManager.getBillingClientResponseCode() == BillingClient.BillingResponse.OK &&
+        billingManager.isServiceConnected()) {
+      checkPurchasedItems();
+    } else {
+      Log.d(LOG_TAG, "billing client response " + billingManager.getBillingClientResponseCode());
+      //editorActivityView.showMessage(R.string.error_message_shop_not_available);
+    }
+  }
+
+
+  public void checkPurchasedItems() {
+    Log.d(LOG_TAG, "checkPurchasedItems ");
+    billingManager.queryPurchaseHistoryAsync(this);
   }
 }

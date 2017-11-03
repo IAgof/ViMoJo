@@ -87,11 +87,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
     setUpAndCheckUserThumb();
-    checkPurchasedItems();
-  }
-
-  private void checkPurchasedItems() {
-    editorPresenter.checkPurchasedItems();
   }
 
   private void setUpAndCheckUserThumb() {
@@ -363,11 +358,13 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   public void itemDarkThemePurchased() {
     isPurchasedTheme = true;
+    updateIcon(isPurchasedTheme, R.id.switch_theme_dark);
   }
 
   @Override
   public void itemWatermarkPurchased() {
     isPurchasedWatermark = true;
+    updateIcon(isPurchasedWatermark, R.id.switch_watermark);
   }
 
   public void showDialogUserAddThumb() {

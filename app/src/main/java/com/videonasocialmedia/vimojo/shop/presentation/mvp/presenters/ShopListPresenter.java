@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.shop.presentation.mvp.presenters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -9,6 +8,7 @@ import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.shop.billing.BillingConnectionListener;
 import com.videonasocialmedia.vimojo.shop.billing.BillingHistoryPurchaseListener;
 import com.videonasocialmedia.vimojo.shop.billing.BillingManager;
 import com.videonasocialmedia.vimojo.shop.billing.BillingUpdatesPurchaseListener;
@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import static com.android.billingclient.api.BillingClient.SkuType.INAPP;
 
 public class ShopListPresenter implements BillingUpdatesPurchaseListener,
-    BillingHistoryPurchaseListener {
+    BillingHistoryPurchaseListener, BillingConnectionListener {
 
   private static final String LOG_TAG = ShopListPresenter.class.getCanonicalName();
   private Context context;
@@ -32,13 +32,21 @@ public class ShopListPresenter implements BillingUpdatesPurchaseListener,
   private BillingManager billingManager;
 
   @Inject
-  public ShopListPresenter(ShopListView shopListView, Context context) {
+  public ShopListPresenter(ShopListView shopListView, Context context, BillingManager
+      billingManager) {
     this.context = context;
     this.shopListView = shopListView;
+    this.billingManager = billingManager;
   }
 
-  public void createBillingManager(){
-    this.billingManager = new BillingManager((Activity) context, this, this);
+  public void initBilling() {
+    if(!isSkuShopItemPopulate()) {
+      billingManager.initBillingClient(this);
+    }
+  }
+
+  private boolean isSkuShopItemPopulate() {
+    return skuShopItemList.size() != 0;
   }
 
   public void handleBillingManager() {
@@ -68,18 +76,14 @@ public class ShopListPresenter implements BillingUpdatesPurchaseListener,
             }
           });
     }
-
-    billingManager.queryPurchaseHistoryAsync();
   }
 
-  public void getShopList() {
-    if (skuShopItemList.size() != 0) {
-      shopListView.showShopList(skuShopItemList);
-    }
+  public void queryPurchaseHistory(){
+    billingManager.queryPurchaseHistoryAsync(this);
   }
 
   public void purchaseItem(String skuId, String billingType) {
-    billingManager.startPurchaseFlow(skuId, billingType);
+    billingManager.startPurchaseFlow(skuId, billingType, this);
   }
 
   public void destroyBillingManager() {
@@ -89,6 +93,7 @@ public class ShopListPresenter implements BillingUpdatesPurchaseListener,
   @Override
   public void userCanceled() {
     // TODO: 01/11/2017 User cancel flow buying item
+
   }
 
   @Override
@@ -111,7 +116,7 @@ public class ShopListPresenter implements BillingUpdatesPurchaseListener,
   public void billingClientSetupFinished() {
     if (billingManager.getBillingClientResponseCode() == BillingClient.BillingResponse.OK &&
         billingManager.isServiceConnected()) {
-      return;
+      handleBillingManager();
     } else {
       shopListView.hideProgressDialog();
       shopListView.showError(context.getString(R.string.error_message_shop_not_available));

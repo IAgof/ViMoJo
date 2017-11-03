@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,6 +32,7 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.a
 import com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity;
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
+import com.videonasocialmedia.vimojo.shop.billing.BillingManager;
 import com.videonasocialmedia.vimojo.shop.presentation.view.activity.ShopListActivity;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -70,6 +70,7 @@ public class SettingsFragment extends PreferenceFragment implements
     protected VideonaDialog dialog;
     private boolean isPursachedTheme = false;
     private boolean isPursachedWatermark = false;
+    protected BillingManager billingManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,18 +81,14 @@ public class SettingsFragment extends PreferenceFragment implements
         FragmentPresentersComponent fragmentPresentersComponent = initComponent();
         fragmentPresentersComponent.inject(this);
         mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_TOKEN);
-        checkPurchasedItems();
-    }
-
-    public void checkPurchasedItems() {
-        preferencesPresenter.checkPurchasedItems(this.getActivity());
     }
 
     private FragmentPresentersComponent initComponent() {
         return DaggerFragmentPresentersComponent.builder()
             .fragmentPresentersModule(new FragmentPresentersModule(this, context, sharedPreferences,
                 cameraSettingsPref, resolutionPref,qualityPref, transitionsVideoPref,
-                transitionsAudioPref,watermarkSwitchPref, themeappSwitchPref, emailPref))
+                transitionsAudioPref,watermarkSwitchPref, themeappSwitchPref, emailPref,
+                this.getActivity()))
             .systemComponent(((VimojoApplication)getActivity().getApplication()).getSystemComponent())
             .build();
     }
@@ -185,14 +182,13 @@ public class SettingsFragment extends PreferenceFragment implements
         super.onResume();
         preferencesPresenter.checkAvailablePreferences();
         preferencesPresenter.checkMailValid();
-        updateIcon (themeappSwitchPref, isPursachedTheme);
-        updateIcon (watermarkSwitchPref, isPursachedWatermark);
+        preferencesPresenter.initBilling();
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferencesPresenter);
     }
 
-    private void updateIcon(SwitchPreference switchPreference, boolean isThemePaid) {
-        if (isThemePaid) {
+    private void updateIconLockItemsInAPP(SwitchPreference switchPreference, boolean isPaid) {
+        if (isPaid) {
             switchPreference.setIcon(context.getDrawable(R.drawable.ic_unlocked));
         } else {
             switchPreference.setIcon(context.getDrawable(R.drawable.ic_locked));
@@ -307,13 +303,13 @@ public class SettingsFragment extends PreferenceFragment implements
     @Override
     public void itemDarkThemePurchased() {
         isPursachedTheme = true;
-        updateIcon (themeappSwitchPref, isPursachedTheme);
+        updateIconLockItemsInAPP(themeappSwitchPref, isPursachedTheme);
     }
 
     @Override
     public void itemWatermarkPurchased() {
         isPursachedWatermark = true;
-        updateIcon (watermarkSwitchPref, isPursachedWatermark);
+        updateIconLockItemsInAPP(watermarkSwitchPref, isPursachedWatermark);
     }
 
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {

@@ -73,8 +73,7 @@ public class ShopListActivity extends VimojoActivity implements ShopListView, Sh
   @Override
   protected void onResume() {
     super.onResume();
-    presenter.createBillingManager();
-    presenter.handleBillingManager();
+    presenter.initBilling();
   }
 
   @Override
@@ -91,6 +90,7 @@ public class ShopListActivity extends VimojoActivity implements ShopListView, Sh
   @Override
   public void showShopList(List<SkuShopData> skuShopList) {
     adapter.setShopList(skuShopList);
+    presenter.queryPurchaseHistory();
   }
 
   @Override

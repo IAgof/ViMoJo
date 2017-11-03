@@ -15,6 +15,4 @@ public interface BillingUpdatesPurchaseListener {
   void purchasedItem(Purchase purchase);
 
   void showError(int responseCode);
-
-  void billingClientSetupFinished();
 }

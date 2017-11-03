@@ -18,6 +18,7 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.util.Log;
 
+import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.Purchase;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -37,6 +38,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTra
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.OnRelaunchTemporalFileListener;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
+import com.videonasocialmedia.vimojo.shop.billing.BillingConnectionListener;
 import com.videonasocialmedia.vimojo.shop.billing.BillingHistoryPurchaseListener;
 import com.videonasocialmedia.vimojo.shop.billing.BillingManager;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -52,7 +54,7 @@ import java.util.List;
  * This class is used to show the setting menu.
  */
 public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenceChangeListener,
-    OnRelaunchTemporalFileListener, BillingHistoryPurchaseListener {
+    OnRelaunchTemporalFileListener, BillingHistoryPurchaseListener, BillingConnectionListener {
 
     private static final String LOG_TAG = PreferencesPresenter.class.getSimpleName();
     private Context context;
@@ -111,7 +113,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
             UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
             RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-            GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase) {
+            GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+            BillingManager billingManager) {
 
         this.preferencesView = preferencesView;
         this.context = context;
@@ -139,6 +142,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
         userEventTracker = UserEventTracker.getInstance(MixpanelAPI
                 .getInstance(context.getApplicationContext(), BuildConfig.MIXPANEL_TOKEN));
+        this.billingManager = billingManager;
     }
 
     /**
@@ -445,8 +449,23 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         }
     }
 
-    public void checkPurchasedItems(Activity activity) {
-        billingManager = new BillingManager(activity, this);
-        billingManager.queryPurchaseHistoryAsync();
+    private void checkPurchasedItems() {
+        billingManager.queryPurchaseHistoryAsync(this);
+    }
+
+    public void initBilling() {
+        billingManager.initBillingClient(this);
+    }
+
+    @Override
+    public void billingClientSetupFinished() {
+        if (billingManager.getBillingClientResponseCode() == BillingClient.BillingResponse.OK &&
+            billingManager.isServiceConnected()) {
+            checkPurchasedItems();
+        } else {
+           // preferencesView.showError(R.string.error_message_shop_not_available);
+            Log.d(LOG_TAG, "billing client response " +
+                billingManager.getBillingClientResponseCode());
+        }
     }
 }
