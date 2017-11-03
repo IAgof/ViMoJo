@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.utils;
 
-import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 
 import java.io.File;

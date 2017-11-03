@@ -256,10 +256,9 @@ public class ActivityPresentersModule {
   SplitPreviewPresenter provideSplitPresenter(
           UserEventTracker userEventTracker, SplitVideoUseCase splitVideoUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          ModifyVideoDurationUseCase modifyVideoDurationUseCase, VideoRepository videoRepository) {
+          VideoRepository videoRepository) {
     return new SplitPreviewPresenter((VideoSplitActivity) activity, userEventTracker, activity,
-            videoRepository, splitVideoUseCase, getMediaListFromProjectUseCase,
-            modifyVideoDurationUseCase);
+            videoRepository, splitVideoUseCase, getMediaListFromProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -343,8 +342,11 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  SplitVideoUseCase provideVideoSplitter(AddVideoToProjectUseCase addVideoToProjectUseCase) {
-    return new SplitVideoUseCase(addVideoToProjectUseCase);
+  SplitVideoUseCase provideVideoSplitter(AddVideoToProjectUseCase addVideoToProjectUseCase,
+                                         ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+                                         VideoRepository videoRepository) {
+    return new SplitVideoUseCase(addVideoToProjectUseCase, modifyVideoDurationUseCase,
+            videoRepository);
   }
 
   @Provides

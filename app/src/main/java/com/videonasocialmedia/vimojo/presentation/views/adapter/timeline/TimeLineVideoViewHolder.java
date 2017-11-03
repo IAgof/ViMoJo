@@ -8,21 +8,16 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.GenericRequestBuilder;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.BitmapEncoder;
-import com.bumptech.glide.load.resource.bitmap.StreamBitmapDecoder;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
-import com.bumptech.glide.load.resource.transcode.BitmapToGlideDrawableTranscoder;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.FileDescriptorBitmapDecoder;
+import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
 import com.bumptech.glide.signature.StringSignature;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.ItemTouchHelperViewHolder;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.VideoThumbnailGenerateParams;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.VideoThumbnailGenerateParamsBitmapResourceDecoder;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.VideoThumbnailGenerateParamsPassthroughModelLoader;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 
 import butterknife.Bind;
@@ -49,7 +44,6 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
   @Bind(R.id.image_video_warning)
   ImageView videoWarning;
   private int selectedColor;
-  private GenericRequestBuilder<VideoThumbnailGenerateParams, VideoThumbnailGenerateParams, Bitmap, GlideDrawable> generator;
   public static final int VIEWHOLDER_RADIUS = 70;
   public static final int VIEWHOLDER_MARGIN = 70;
 
@@ -83,22 +77,22 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
 
   private void loadThumbnailWithGlide(ImageView thumbnailView, Video currentVideo) {
     Context context = thumbnailView.getContext();
-    // TODO(jliarte): 27/10/17 try to move to constructor
-    generator = Glide.with(context)
-            .using(new VideoThumbnailGenerateParamsPassthroughModelLoader(),
-                    VideoThumbnailGenerateParams.class)
-            .from(VideoThumbnailGenerateParams.class)
-            .as(Bitmap.class)
-            .transcode(new BitmapToGlideDrawableTranscoder(context), GlideDrawable.class)
-            .decoder(new VideoThumbnailGenerateParamsBitmapResourceDecoder(context))
-            .encoder(new BitmapEncoder(Bitmap.CompressFormat.PNG, 0/*ignored for lossless*/)) // builtin
-            .cacheDecoder(new FileToStreamDecoder<Bitmap>(new StreamBitmapDecoder(context)))  // builtin
+    BitmapPool bitmapPool = Glide.get(context).getBitmapPool();
+    FileDescriptorBitmapDecoder decoder = new FileDescriptorBitmapDecoder(
+            new VideoBitmapDecoder(currentVideo.getStartTime() * 1000),
+            bitmapPool,
+            DecodeFormat.PREFER_ARGB_8888);
+    String path = currentVideo.getIconPath() != null
+            ? currentVideo.getIconPath() : currentVideo.getMediaPath();
+    Glide.with(context)
+            .load(path)
+            .asBitmap()
+            .override(thumbnailView.getMaxWidth(), thumbnailView.getMaxHeight())
+            .videoDecoder(decoder)
             .transform(new RoundedCornersTransformation(context, VIEWHOLDER_RADIUS,
                     VIEWHOLDER_MARGIN))
-            .error(R.drawable.fragment_gallery_no_image);
-    generator
-            .load(new VideoThumbnailGenerateParams(currentVideo))
-            .signature(new StringSignature(Integer.toString(currentVideo.getStartTime()))) // to update thumbnail when trim start time has changed
+            .signature(new StringSignature(currentVideo.getUuid() + currentVideo.getStartTime()))
+            .error(R.drawable.fragment_gallery_no_image)
             .into(thumbnailView);
   }
 
