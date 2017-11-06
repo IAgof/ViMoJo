@@ -1,6 +1,2 @@
-v0.7.0-RC13
-- Fixed audio and video sync problems in export session
-- Improved trimmed clip timelines thumbnails
-- Fixed Split error handling to set the same time on first video stop and next one start times
-- Fixed audio mixing export session errors
-- Disabled FTP feature toggle for vimojo.main
+v0.7.0
+- Add Google FireBase Analytics to Flavors
