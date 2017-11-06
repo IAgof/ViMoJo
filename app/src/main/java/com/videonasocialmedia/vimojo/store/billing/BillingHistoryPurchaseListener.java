@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.shop.billing;
+package com.videonasocialmedia.vimojo.store.billing;
 
 import com.android.billingclient.api.Purchase;
 

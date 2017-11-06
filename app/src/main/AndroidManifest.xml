@@ -283,7 +283,7 @@
         </activity>
 
         <activity
-            android:name=".shop.presentation.view.activity.ShopListActivity"
+            android:name=".store.presentation.view.activity.VimojoStoreActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"/>

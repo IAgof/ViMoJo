@@ -69,7 +69,7 @@ android {
             resValue "string", "app_name", "Vimojo"
             buildConfigField "boolean", "FEATURE_FTP", "false"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
-            buildConfigField "boolean", "FEATURE_WATERMARK", "false"
+            buildConfigField "boolean", "FEATURE_WATERMARK", "true"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
             ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
             ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"

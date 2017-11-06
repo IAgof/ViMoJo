@@ -34,12 +34,12 @@
 
         <item
             android:id="@+id/menu_navview_shopping"
-            android:title="@string/drawerShopTitle">
+            android:title="@string/drawerStoreTitle">
             <menu>
                 <item
                     android:id="@+id/menu_navview_shopping_section"
                     android:icon="@drawable/ic_activity_drawer_shopping"
-                    android:title="@string/drawer_go_to_shop"/>
+                    android:title="@string/drawer_go_to_store"/>
 
 
             </menu>

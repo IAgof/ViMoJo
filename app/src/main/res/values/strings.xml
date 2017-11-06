@@ -281,21 +281,21 @@
     <string name="drawer_watermark">Watermark</string>
     <string name="title_theme_app_preference">Dark theme</string>
     <string name="title_theme_app_section">Activate dark theme</string>
-    <string name="drawerShopTitle">Shop</string>
-    <string name="drawer_go_to_shop">Go to shop</string>
+    <string name="drawerStoreTitle">Vimojo Store</string>
+    <string name="drawer_go_to_store">Go to store</string>
 
-    <!-- ShopListActivity -->
+    <!-- VimojoStoreActivity -->
     <string name="buy_now">Buy now</string>
-    <string name="title_theme_app_shop">Activate dark them</string>
-    <string name="description_theme_app_shop">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sagittis facilisis sapien, non luctus nulla bibendum eget. Nullam convallis ante id est porta bibendum. Cras maximus, dui ac vestibulum dictum.</string>
-    <string name="title_watermark_shop">Remove Watermark</string>
-    <string name="purchased">PURSACHED!</string>
-    <string name="buy_later_section_shop">Buy Later</string>
-    <string name="alert_dialog_title_shop">Shop</string>
-    <string name="alert_dialog_message_shop">Loading shop items</string>
-    <string name="error_message_shop_no_items">Shop empty, no items to buy</string>
-    <string name="error_message_shop_purchasing_items">Buying item, error </string>
-    <string name="error_message_shop_not_available">Connection with shop not available</string>
+    <string name="title_theme_app_store">Activate dark theme</string>
+    <string name="description_theme_app_store">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sagittis facilisis sapien, non luctus nulla bibendum eget. Nullam convallis ante id est porta bibendum. Cras maximus, dui ac vestibulum dictum.</string>
+    <string name="title_watermark_store">Remove Watermark</string>
+    <string name="purchased">PURCHASED!</string>
+    <string name="buy_later_section_store">Buy Later</string>
+    <string name="alert_dialog_title_store">Vimojo Store</string>
+    <string name="alert_dialog_message_store">Loading store items</string>
+    <string name="error_message_store_no_items">Store empty, no items to buy</string>
+    <string name="error_message_store_purchasing_items">Buying item, error </string>
+    <string name="error_message_store_not_available">Connection with store not available</string>
 
     <!-- About Activity -->
 

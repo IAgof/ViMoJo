@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -18,9 +17,9 @@ import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.shop.billing.BillingConnectionListener;
-import com.videonasocialmedia.vimojo.shop.billing.BillingHistoryPurchaseListener;
-import com.videonasocialmedia.vimojo.shop.billing.BillingManager;
+import com.videonasocialmedia.vimojo.store.billing.BillingConnectionListener;
+import com.videonasocialmedia.vimojo.store.billing.BillingHistoryPurchaseListener;
+import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -80,12 +79,12 @@ public class EditorPresenter implements BillingConnectionListener, BillingHistor
   public boolean getPreferenceThemeApp() {
     // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
     boolean isActivateDarkTheme = sharedPreferences
-            .getBoolean(ConfigPreferences.THEME_APP_DARK, false);
+            .getBoolean(ConfigPreferences.THEME_APP_DARK, Constants.DEFAULT_THEME_DARK_STATE);
     return isActivateDarkTheme;
   }
 
-  public void createNewProject(String roothPath, String privatePath){
-    createDefaultProjectUseCase.createProject(roothPath, privatePath, getPreferenceWaterMark());
+  public void createNewProject(String rootPath, String privatePath) {
+    createDefaultProjectUseCase.createProject(rootPath, privatePath, getPreferenceWaterMark());
     clearProjectDataFromSharedPreferences();
     editorActivityView.updateViewResetProject();
   }
@@ -214,7 +213,7 @@ public class EditorPresenter implements BillingConnectionListener, BillingHistor
       checkPurchasedItems();
     } else {
       Log.d(LOG_TAG, "billing client response " + billingManager.getBillingClientResponseCode());
-      //editorActivityView.showMessage(R.string.error_message_shop_not_available);
+      //editorActivityView.showMessage(R.string.error_message_store_not_available);
     }
   }
 

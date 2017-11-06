@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.shop.presentation.view.activity;
+package com.videonasocialmedia.vimojo.store.presentation.view.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -9,11 +9,11 @@ import android.support.v7.widget.RecyclerView;
 
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.shop.model.SkuShopData;
-import com.videonasocialmedia.vimojo.shop.presentation.mvp.presenters.ShopListPresenter;
-import com.videonasocialmedia.vimojo.shop.presentation.mvp.views.ShopListClickListener;
-import com.videonasocialmedia.vimojo.shop.presentation.mvp.views.ShopListView;
-import com.videonasocialmedia.vimojo.shop.presentation.view.adapter.ShopListAdapter;
+import com.videonasocialmedia.vimojo.store.model.SkuStoreData;
+import com.videonasocialmedia.vimojo.store.presentation.mvp.presenters.VimojoStorePresenter;
+import com.videonasocialmedia.vimojo.store.presentation.mvp.views.StoreListClickListener;
+import com.videonasocialmedia.vimojo.store.presentation.mvp.views.VimojoStoreView;
+import com.videonasocialmedia.vimojo.store.presentation.view.adapter.StoreListAdapter;
 
 import java.util.List;
 
@@ -24,35 +24,35 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class ShopListActivity extends VimojoActivity implements ShopListView, ShopListClickListener {
+public class VimojoStoreActivity extends VimojoActivity implements VimojoStoreView, StoreListClickListener {
 
-  private static final String LOG_TAG = ShopListActivity.class.getCanonicalName();
+  private static final String LOG_TAG = VimojoStoreActivity.class.getCanonicalName();
 
   @Inject
-  ShopListPresenter presenter;
+  VimojoStorePresenter presenter;
 
-  @Bind(R.id.recycler_shop)
-  RecyclerView shopList;
+  @Bind(R.id.recycler_store)
+  RecyclerView storeList;
   @Bind(R.id.cancel_shopping)
   CardView cancelShopping;
 
-  private ShopListAdapter adapter;
+  private StoreListAdapter adapter;
   private ProgressDialog progressDialog;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_shopping);
+    setContentView(R.layout.activity_store);
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
     createProgessDialog();
-    initShopListRecycler();
+    initVimojoStoreRecycler();
   }
 
   private void createProgessDialog() {
-    progressDialog = new ProgressDialog(ShopListActivity.this, R.style.VideonaDialog);
-    progressDialog.setTitle(R.string.alert_dialog_title_shop);
-    progressDialog.setMessage(getString(R.string.alert_dialog_message_shop));
+    progressDialog = new ProgressDialog(VimojoStoreActivity.this, R.style.VideonaDialog);
+    progressDialog.setTitle(R.string.alert_dialog_title_store);
+    progressDialog.setMessage(getString(R.string.alert_dialog_message_store));
     progressDialog.setProgressStyle(progressDialog.STYLE_HORIZONTAL);
     progressDialog.setIndeterminate(true);
     progressDialog.setProgressNumberFormat(null);
@@ -61,13 +61,13 @@ public class ShopListActivity extends VimojoActivity implements ShopListView, Sh
     progressDialog.setCancelable(false);
   }
 
-  private void initShopListRecycler() {
-    adapter = new ShopListAdapter();
-    adapter.setShopListClickListener(this);
+  private void initVimojoStoreRecycler() {
+    adapter = new StoreListAdapter();
+    adapter.setStoreListClickListener(this);
     LinearLayoutManager layoutManager =
         new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-    shopList.setLayoutManager(layoutManager);
-    shopList.setAdapter(adapter);
+    storeList.setLayoutManager(layoutManager);
+    storeList.setAdapter(adapter);
   }
 
   @Override
@@ -83,13 +83,13 @@ public class ShopListActivity extends VimojoActivity implements ShopListView, Sh
   }
 
   @Override
-  public void onClickShopItem(String skuId, String billingType) {
+  public void onClickStoreItem(String skuId, String billingType) {
     presenter.purchaseItem(skuId, billingType);
   }
 
   @Override
-  public void showShopList(List<SkuShopData> skuShopList) {
-    adapter.setShopList(skuShopList);
+  public void showStoreList(List<SkuStoreData> skuStoreList) {
+    adapter.setStoreItemsList(skuStoreList);
     presenter.queryPurchaseHistory();
   }
 
@@ -123,12 +123,12 @@ public class ShopListActivity extends VimojoActivity implements ShopListView, Sh
   }
 
   @Override
-  public void updatePurchasedItem(SkuShopData skuShopData) {
+  public void updatePurchasedItem(SkuStoreData skuStoreData) {
     adapter.notifyDataSetChanged();
   }
 
   @Override
-  public void updateHistoryPurchasedItems(List<SkuShopData> shopPurchasesList) {
+  public void updateHistoryPurchasedItems(List<SkuStoreData> storePurchasesList) {
     adapter.notifyDataSetChanged();
   }
 

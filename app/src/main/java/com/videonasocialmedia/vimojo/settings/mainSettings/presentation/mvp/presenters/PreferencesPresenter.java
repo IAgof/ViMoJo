@@ -10,7 +10,6 @@
 
 package com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.ListPreference;
@@ -38,9 +37,9 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTra
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.OnRelaunchTemporalFileListener;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
-import com.videonasocialmedia.vimojo.shop.billing.BillingConnectionListener;
-import com.videonasocialmedia.vimojo.shop.billing.BillingHistoryPurchaseListener;
-import com.videonasocialmedia.vimojo.shop.billing.BillingManager;
+import com.videonasocialmedia.vimojo.store.billing.BillingConnectionListener;
+import com.videonasocialmedia.vimojo.store.billing.BillingHistoryPurchaseListener;
+import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;

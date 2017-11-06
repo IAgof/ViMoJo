@@ -61,9 +61,9 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.pr
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseListPresenter;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseDetailView;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseListView;
-import com.videonasocialmedia.vimojo.shop.billing.BillingManager;
-import com.videonasocialmedia.vimojo.shop.presentation.mvp.presenters.ShopListPresenter;
-import com.videonasocialmedia.vimojo.shop.presentation.mvp.views.ShopListView;
+import com.videonasocialmedia.vimojo.store.billing.BillingManager;
+import com.videonasocialmedia.vimojo.store.presentation.mvp.presenters.VimojoStorePresenter;
+import com.videonasocialmedia.vimojo.store.presentation.mvp.views.VimojoStoreView;
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
@@ -203,8 +203,8 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  ShopListPresenter provideShopListPresenter(BillingManager billingManager) {
-    return new ShopListPresenter((ShopListView) activity, activity, billingManager);
+  VimojoStorePresenter provideShopListPresenter(BillingManager billingManager) {
+    return new VimojoStorePresenter((VimojoStoreView) activity, activity, billingManager);
   }
 
   @Provides @PerActivity

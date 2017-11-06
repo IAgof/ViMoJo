@@ -1,13 +1,13 @@
-package com.videonasocialmedia.vimojo.shop.model;
+package com.videonasocialmedia.vimojo.store.model;
 
 /**
  * A model for SkusAdapter's row which holds all the data to render UI
  */
-public class SkuShopData {
+public class SkuStoreData {
   private final String skuId, title, price, description, billingType;
   private boolean isPurchased = false;
 
-  public SkuShopData(String skuId, String title, String price, String description, String type) {
+  public SkuStoreData(String skuId, String title, String price, String description, String type) {
     this.skuId = skuId;
     this.title = title;
     this.price = price;

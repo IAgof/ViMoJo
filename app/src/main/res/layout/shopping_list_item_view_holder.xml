@@ -21,7 +21,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/title_shop_section"
+                android:id="@+id/store_item_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
@@ -32,7 +32,7 @@
                 />
 
             <TextView
-                android:id="@+id/descripton_shop_section"
+                android:id="@+id/store_item_descripton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14dp"
@@ -41,7 +41,7 @@
                 />
 
             <Button
-                android:id="@+id/button_to_buy_shop_section"
+                android:id="@+id/purchase_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="visible"
@@ -50,7 +50,7 @@
                 android:textColor="@color/colorWhite"/>
 
             <TextView
-                android:id="@+id/text_view_pursached_shop"
+                android:id="@+id/text_view_item_purchased"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:text="@string/purchased"

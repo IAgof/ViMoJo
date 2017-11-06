@@ -26,7 +26,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTra
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
-import com.videonasocialmedia.vimojo.shop.billing.BillingManager;
+import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 
 
 import dagger.Module;

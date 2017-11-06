@@ -32,8 +32,8 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.a
 import com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity;
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
-import com.videonasocialmedia.vimojo.shop.billing.BillingManager;
-import com.videonasocialmedia.vimojo.shop.presentation.view.activity.ShopListActivity;
+import com.videonasocialmedia.vimojo.store.billing.BillingManager;
+import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
@@ -68,8 +68,8 @@ public class SettingsFragment extends PreferenceFragment implements
     protected SharedPreferences.Editor editor;
     protected MixpanelAPI mixpanel;
     protected VideonaDialog dialog;
-    private boolean isPursachedTheme = false;
-    private boolean isPursachedWatermark = false;
+    private boolean darkThemePurchased = false;
+    private boolean watermarkPurchased = false;
     protected BillingManager billingManager;
 
     @Override
@@ -187,8 +187,8 @@ public class SettingsFragment extends PreferenceFragment implements
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferencesPresenter);
     }
 
-    private void updateIconLockItemsInAPP(SwitchPreference switchPreference, boolean isPaid) {
-        if (isPaid) {
+    private void updateIconLockItemsInAPP(SwitchPreference switchPreference, boolean isPurchased) {
+        if (isPurchased) {
             switchPreference.setIcon(context.getDrawable(R.drawable.ic_unlocked));
         } else {
             switchPreference.setIcon(context.getDrawable(R.drawable.ic_locked));
@@ -302,14 +302,14 @@ public class SettingsFragment extends PreferenceFragment implements
 
     @Override
     public void itemDarkThemePurchased() {
-        isPursachedTheme = true;
-        updateIconLockItemsInAPP(themeappSwitchPref, isPursachedTheme);
+        darkThemePurchased = true;
+        updateIconLockItemsInAPP(themeappSwitchPref, darkThemePurchased);
     }
 
     @Override
     public void itemWatermarkPurchased() {
-        isPursachedWatermark = true;
-        updateIconLockItemsInAPP(watermarkSwitchPref, isPursachedWatermark);
+        watermarkPurchased = true;
+        updateIconLockItemsInAPP(watermarkSwitchPref, watermarkPurchased);
     }
 
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
@@ -332,23 +332,23 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference connectionPref = findPreference(key);
         if (key.equals(ConfigPreferences.THEME_APP_DARK)) {
-            if(isPursachedTheme) {
+            if (darkThemePurchased) {
                 // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
                 preferencesPresenter.trackThemeApp(sharedPreferences.getBoolean(key, false));
                 restartActivity();
-            } else if (!isPursachedTheme && themeappSwitchPref.isChecked()){
+            } else if (!darkThemePurchased && themeappSwitchPref.isChecked()) {
                 themeappSwitchPref.setChecked(false);
             } else {
-                navigateTo(ShopListActivity.class);
+                navigateTo(VimojoStoreActivity.class);
             }
            return;
         }
         if (key.equals(ConfigPreferences.WATERMARK)) {
-            if(isPursachedWatermark) {
-            } else if (!isPursachedWatermark && !watermarkSwitchPref.isChecked()){
+            if (watermarkPurchased) {
+            } else if (!watermarkPurchased && !watermarkSwitchPref.isChecked()) {
                 watermarkSwitchPref.setChecked(true);
             } else {
-                navigateTo(ShopListActivity.class);
+                navigateTo(VimojoStoreActivity.class);
             }
             return;
         }

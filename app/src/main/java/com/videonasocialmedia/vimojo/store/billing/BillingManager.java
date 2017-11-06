@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.shop.billing;
+package com.videonasocialmedia.vimojo.store.billing;
 
 import android.app.Activity;
 import android.support.annotation.Nullable;
@@ -13,7 +13,6 @@ import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
-import com.videonasocialmedia.vimojo.shop.presentation.mvp.presenters.ShopListPresenter;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.ArrayList;

@@ -30,13 +30,13 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="@string/buy_later_section_shop"
+                android:text="@string/buy_later_section_store"
                 android:textSize="18sp"/>
 
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_shop"
+            android:id="@+id/recycler_store"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/cancel_shopping"
