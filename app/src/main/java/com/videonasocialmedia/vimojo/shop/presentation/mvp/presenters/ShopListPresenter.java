@@ -99,7 +99,7 @@ public class ShopListPresenter implements BillingUpdatesPurchaseListener,
   @Override
   public void purchasedItem(Purchase purchase) {
     for (SkuShopData skuShopData : skuShopItemList) {
-      if (purchase.getSku() == skuShopData.getSkuId()) {
+      if (skuShopData.getSkuId().compareTo(purchase.getSku()) == 0) {
         skuShopData.setPurchased(true);
         shopListView.updatePurchasedItem(skuShopData);
       }

@@ -43,7 +43,9 @@ public class BillingManager implements PurchasesUpdatedListener {
     // Future use, app model subscription
     // SKUS.put(BillingClient.SkuType.SUBS, Arrays.asList("monthly", "yearly"));
   }
+
   private BillingUpdatesPurchaseListener billingUpdatesPurchaseListener;
+
   private List<Purchase> purchases = new ArrayList<>();
 
   public BillingManager(Activity activity) {
@@ -110,7 +112,7 @@ public class BillingManager implements PurchasesUpdatedListener {
   }
 
   public void startPurchaseFlow(final String skuId, final String billingType,
-                                final BillingUpdatesPurchaseListener
+                                BillingUpdatesPurchaseListener
                                     billingUpdatesPurchaseListener) {
 
     this.billingUpdatesPurchaseListener = billingUpdatesPurchaseListener;
@@ -231,6 +233,10 @@ public class BillingManager implements PurchasesUpdatedListener {
 
   public int getBillingClientResponseCode() {
     return billingClientResponseCode;
+  }
+
+  public List<Purchase> getPurchases() {
+    return purchases;
   }
 
 }
