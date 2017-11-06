@@ -87,6 +87,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     ImageButton editTrimButton;
     @Nullable @Bind(R.id.button_edit_split)
     ImageButton editSplitButton;
+    @Nullable @Bind(R.id.button_edit_add_text)
+    ImageButton editTextButton;
     @Nullable @Bind(R.id.recyclerview_editor_timeline)
     RecyclerView videoListRecyclerView;
     @Nullable @Bind(R.id.videona_player)
@@ -171,7 +173,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
    private void setupFabMenu() {
      addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.common_navigate_record, R.color.colorWhite);
      addAndConfigurateFabButton(ID_BUTTON_FAB_CENTER, R.drawable.common_navigate_gallery, R.color.colorWhite);
-     addAndConfigurateFabButton(ID_BUTTON_FAB_BOTTOM, R.drawable.activity_edit_clip_text_normal, R.color.colorWhite );
   }
 
   private void addAndConfigurateFabButton(int id, int icon, int color) {
@@ -192,13 +193,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
           case ID_BUTTON_FAB_CENTER:
             fabMenu.collapse();
             navigateTo(GalleryActivity.class);
-            break;
-          case ID_BUTTON_FAB_BOTTOM:
-            if(isEnableFabText) {
-              fabMenu.collapse();
-              navigateTo(VideoEditTextActivity.class, currentVideoIndex);
-            }else
-              showMessage(R.string.add_videos_to_project);
             break;
         }
       }
@@ -307,6 +301,14 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         if (!editSplitButton.isEnabled())
             return;
         navigateTo(VideoSplitActivity.class, currentVideoIndex);
+    }
+
+    @Nullable @OnClick (R.id.button_edit_add_text)
+    public void onClickEditText() {
+      if (!editTextButton.isEnabled()) {
+        return;
+      }
+      navigateTo( VideoEditTextActivity.class, currentVideoIndex);
     }
 
     @Nullable @OnClick(R.id.button_edit_warning_transcoding_file)
@@ -490,6 +492,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     public void enableEditActions() {
         editTrimButton.setEnabled(true);
         editSplitButton.setEnabled(true);
+        editTextButton.setEnabled(true);
         editDuplicateButton.setEnabled(true);
     }
 
@@ -497,6 +500,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     public void disableEditActions() {
         editTrimButton.setEnabled(false);
         editSplitButton.setEnabled(false);
+        editTextButton.setEnabled(false);
         editDuplicateButton.setEnabled(false);
   }
 

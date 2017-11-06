@@ -13,8 +13,7 @@
     <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
         android:id="@+id/videona_player"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/videonaPlayerExo_marginTop" />
+        android:layout_height="wrap_content"/>
 
     <android.support.v7.widget.CardView
         android:id="@+id/share_buttons"
