@@ -452,7 +452,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         billingManager.queryPurchaseHistoryAsync(this);
     }
 
-    public void initBilling() {
+    private void initBilling() {
         billingManager.initBillingClient(this);
     }
 
@@ -465,6 +465,13 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
            // preferencesView.showError(R.string.error_message_shop_not_available);
             Log.d(LOG_TAG, "billing client response " +
                 billingManager.getBillingClientResponseCode());
+        }
+    }
+
+    public void checkVimojoStore() {
+        if(BuildConfig.VIMOJO_STORE_AVAILABLE) {
+          initBilling();
+          preferencesView.vimojoStoreSupported();
         }
     }
 }

@@ -70,7 +70,7 @@ public class SettingsFragment extends PreferenceFragment implements
     protected VideonaDialog dialog;
     private boolean darkThemePurchased = false;
     private boolean watermarkPurchased = false;
-    protected BillingManager billingManager;
+    private boolean isVimojoStoreSupported = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -182,9 +182,7 @@ public class SettingsFragment extends PreferenceFragment implements
         super.onResume();
         preferencesPresenter.checkAvailablePreferences();
         preferencesPresenter.checkMailValid();
-        if(BuildConfig.VIMOJO_STORE_AVAILABLE) {
-            preferencesPresenter.initBilling();
-        }
+        preferencesPresenter.checkVimojoStore();
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferencesPresenter);
     }
@@ -314,6 +312,11 @@ public class SettingsFragment extends PreferenceFragment implements
         updateIconLockItemsInAPP(watermarkSwitchPref, watermarkPurchased);
     }
 
+    @Override
+    public void vimojoStoreSupported() {
+        isVimojoStoreSupported = true;
+    }
+
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
         String property = null;
         switch (key) {
@@ -367,11 +370,11 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     private boolean isDarkThemeAvailable() {
-        return darkThemePurchased || !BuildConfig.VIMOJO_STORE_AVAILABLE;
+        return darkThemePurchased || !isVimojoStoreSupported;
     }
 
     private boolean isWatermarkAvailable() {
-        return watermarkPurchased || !BuildConfig.VIMOJO_STORE_AVAILABLE;
+        return watermarkPurchased || !isVimojoStoreSupported;
     }
 
     private void restartActivity() {

@@ -68,8 +68,7 @@
         <SwitchPreference
             android:key="add_watermark"
             android:title="@string/title_watermark_preference"
-            android:defaultValue="false"
-            android:icon="@drawable/ic_locked"/>
+            android:defaultValue="false"/>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -79,8 +78,7 @@
             android:key="themeAppDark"
             android:title="@string/title_theme_app_preference"
             android:defaultValue="false"
-            android:checked="false"
-            android:icon="@drawable/ic_locked"/>
+            android:checked="false"/>
     </PreferenceCategory>
 
     <PreferenceCategory

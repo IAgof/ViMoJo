@@ -99,8 +99,19 @@ public class EditorPresenter implements BillingConnectionListener, BillingHistor
   public void init() {
     newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
     obtainVideos();
-    if(BuildConfig.VIMOJO_STORE_AVAILABLE) {
-      initBilling();
+    checkFeaturesAvailable();
+  }
+
+  private void checkFeaturesAvailable() {
+    if (BuildConfig.FEATURE_WATERMARK) {
+      editorActivityView.watermarkFeatureAvailable();
+    }
+    if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
+     initBilling();
+     editorActivityView.setIconsPurchaseInApp();
+    } else {
+     editorActivityView.setIconsFeatures();
+      editorActivityView.hideVimojoStoreViews();
     }
   }
 

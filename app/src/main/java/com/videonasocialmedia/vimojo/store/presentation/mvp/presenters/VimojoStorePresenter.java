@@ -61,7 +61,7 @@ public class VimojoStorePresenter implements BillingUpdatesPurchaseListener,
               if (responseCode == BillingClient.BillingResponse.OK && skuDetailsList != null) {
                 // Repacking the result for an adapter
                 for (SkuDetails details : skuDetailsList) {
-                  Log.i(LOG_TAG, "Found sku: " + details);
+                  //Log.i(LOG_TAG, "Found sku: " + details);
                   skuStoreItemList.add(new SkuStoreData(details.getSku(),
                       details.getTitle(), details.getPrice(), details.getDescription(),
                       details.getType()));
@@ -132,7 +132,7 @@ public class VimojoStorePresenter implements BillingUpdatesPurchaseListener,
       for(Purchase purchase: purchasesList) {
         if(skuStoreData.getSkuId().compareTo(purchase.getSku()) == 0){
           skuStoreData.setPurchased(true);
-          Log.d(LOG_TAG, "item purchased " + purchase.getSku());
+          //Log.d(LOG_TAG, "item purchased " + purchase.getSku());
           storePurchasesList.add(skuStoreData);
         }
       }

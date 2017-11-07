@@ -21,4 +21,12 @@ public interface EditorActivityView {
   void itemDarkThemePurchased();
 
   void itemWatermarkPurchased();
+
+  void watermarkFeatureAvailable();
+
+  void setIconsFeatures();
+
+  void setIconsPurchaseInApp();
+
+  void hideVimojoStoreViews();
 }
