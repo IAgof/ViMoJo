@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.store.billing;
 
+import android.app.Activity;
 import android.util.Log;
 
 import com.android.billingclient.api.BillingClient;
@@ -25,8 +26,8 @@ public class PlayStoreBillingDelegate implements BillingConnectionListener,
     this.billingDelegateView = billingDelegateView;
   }
 
-  public void initBilling() {
-    billingManager.initBillingClient(this);
+  public void initBilling(Activity activity) {
+    billingManager.initBillingClient(activity, this);
   }
 
   @Override

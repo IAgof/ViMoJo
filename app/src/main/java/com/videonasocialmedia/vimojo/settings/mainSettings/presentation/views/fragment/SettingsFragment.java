@@ -179,6 +179,7 @@ public class SettingsFragment extends PreferenceFragment implements
     @Override
     public void onResume() {
         super.onResume();
+        preferencesPresenter.onResume();
         preferencesPresenter.checkAvailablePreferences();
         preferencesPresenter.checkMailValid();
         preferencesPresenter.checkVimojoStore();
@@ -199,6 +200,7 @@ public class SettingsFragment extends PreferenceFragment implements
         super.onPause();
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferencesPresenter);
+        preferencesPresenter.onPause();
     }
 
     @Override

@@ -10,6 +10,7 @@
 
 package com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.ListPreference;
@@ -57,7 +58,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     OnRelaunchTemporalFileListener, PlayStoreBillingDelegate.BillingDelegateView {
 
     private static final String LOG_TAG = PreferencesPresenter.class.getSimpleName();
-    private final PlayStoreBillingDelegate playStoreBillingDelegate;
+    private final BillingManager billingManager;
+    private PlayStoreBillingDelegate playStoreBillingDelegate;
     private Context context;
     private UserEventTracker userEventTracker;
     private SharedPreferences sharedPreferences;
@@ -138,7 +140,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
         userEventTracker = UserEventTracker.getInstance(MixpanelAPI
                 .getInstance(context.getApplicationContext(), BuildConfig.MIXPANEL_TOKEN));
-        playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
+        this.billingManager = billingManager;
+        this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
     }
 
     /**
@@ -430,8 +433,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         userEventTracker.trackThemeAppSettingsChanged(isDarkTheme);
     }
 
-    public void initBilling() {
-        playStoreBillingDelegate.initBilling();
+    public void initBilling(Activity activity) {
+        playStoreBillingDelegate.initBilling(activity);
     }
 
     @Override
@@ -467,5 +470,12 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
           initBilling();
           preferencesView.vimojoStoreSupported();
         }
+    }
+
+    public void onPause() {
+        billingManager.destroy();
+    }
+
+    public void onResume() {
     }
 }

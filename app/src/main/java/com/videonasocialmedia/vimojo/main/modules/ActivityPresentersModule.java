@@ -490,6 +490,6 @@ public class ActivityPresentersModule {
   }
 
   @Provides BillingManager provideBillingManager() {
-    return new BillingManager(activity);
+    return new BillingManager();
   }
 }

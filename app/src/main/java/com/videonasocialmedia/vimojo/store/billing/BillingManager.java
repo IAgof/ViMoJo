@@ -47,11 +47,9 @@ public class BillingManager implements PurchasesUpdatedListener {
 
   private List<Purchase> purchases = new ArrayList<>();
 
-  public BillingManager(Activity activity) {
+  public void initBillingClient(Activity activity,
+                                final BillingConnectionListener billingConnectionListener) {
     this.activity = activity;
-  }
-
-  public void initBillingClient(final BillingConnectionListener billingConnectionListener) {
     billingClient = newBuilder(activity).setListener(this).build();
     billingClient.startConnection(new BillingClientStateListener() {
       @Override
@@ -170,6 +168,7 @@ public class BillingManager implements PurchasesUpdatedListener {
 
   public void destroy() {
     billingClient.endConnection();
+    activity = null;
   }
 
   public void querySkuDetailsAsync(@BillingClient.SkuType final String itemType,
