@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.ListPreference;
@@ -25,6 +26,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTra
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
+import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 
 
 import dagger.Module;
@@ -37,6 +39,7 @@ import dagger.Provides;
 @Module
 public class FragmentPresentersModule {
 
+  private Activity activity;
   private ListPreference qualityPref;
   private SwitchPreference transitionAudioPref;
   private SwitchPreference transitionVideoPref;
@@ -62,7 +65,8 @@ public class FragmentPresentersModule {
                                   SwitchPreference transitionsAudioPref,
                                   SwitchPreference watermarkPref,
                                   SwitchPreference themeAppPref,
-                                  Preference emailPref) {
+                                  Preference emailPref,
+                                  Activity activity) {
     this.settingsFragment = settingsFragment;
     this.context = context;
     this.sharedPreferences = sharedPreferences;
@@ -74,6 +78,7 @@ public class FragmentPresentersModule {
     this.watermarkPref = watermarkPref;
     this.themeAppPref=themeAppPref;
     this.emailPref = emailPref;
+    this.activity = activity;
 
   }
 
@@ -81,18 +86,19 @@ public class FragmentPresentersModule {
   @Provides
   @PerFragment
   public PreferencesPresenter providePreferencePresenter(
-             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-             UpdateAudioTransitionPreferenceToProjectUseCase
+      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+      UpdateAudioTransitionPreferenceToProjectUseCase
               updateAudioTransitionPreferenceToProjectUseCase,
-             UpdateVideoTransitionPreferenceToProjectUseCase
+      UpdateVideoTransitionPreferenceToProjectUseCase
               updateVideoTransitionPreferenceToProjectUseCase,
-             UpdateIntermediateTemporalFilesTransitionsUseCase
+      UpdateIntermediateTemporalFilesTransitionsUseCase
               updateIntermediateTemporalFilesTransitionsUseCase,
-             GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
-             UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-             RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-             GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase) {
+      GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
+      UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
+      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+      GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+      BillingManager billingManager) {
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
         cameraSettingsPref, resolutionPref, qualityPref, transitionVideoPref,
@@ -104,7 +110,8 @@ public class FragmentPresentersModule {
         getWatermarkPreferenceFromProjectUseCase,
         updateWatermarkPreferenceToProjectUseCase,
         relaunchTranscoderTempBackgroundUseCase,
-        getVideonaFormatFromCurrentProjectUseCase);
+        getVideonaFormatFromCurrentProjectUseCase,
+        billingManager);
   }
 
   @Provides
@@ -167,6 +174,11 @@ public class FragmentPresentersModule {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase, adaptVideosUseCase,
             launchAVTranscoderAddAVTransitionUseCase, relaunchTranscodingUseCase, videoRepository,
             videoToAdaptRepository);
+  }
+
+  @Provides
+  BillingManager providesBillingManager() {
+    return new BillingManager();
   }
 
 }

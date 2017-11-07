@@ -64,6 +64,9 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
+
 /**
  * InitAppActivity.
  * <p/>
@@ -77,6 +80,7 @@ import butterknife.ButterKnife;
  */
 
 public class InitAppActivity extends VimojoActivity implements InitAppView, OnInitAppEventListener {
+
     private final String LOG_TAG = this.getClass().getSimpleName();
     private long MINIMUN_WAIT_TIME = 900;
 
@@ -273,6 +277,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
                 trackUserProfile();
                 trackCreatedSuperProperty();
                 initSettings();
+                initThemeAndWatermark();
                 break;
             default:
                 break;
@@ -339,6 +344,12 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
      */
     private void initSettings() {
         editor.putInt(ConfigPreferences.CAMERA_ID, ConfigPreferences.BACK_CAMERA).commit();
+    }
+
+
+    private void initThemeAndWatermark() {
+        editor.putBoolean(ConfigPreferences.THEME_APP_DARK, DEFAULT_THEME_DARK_STATE).commit();
+        editor.putBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE).commit();
     }
 
     /**
