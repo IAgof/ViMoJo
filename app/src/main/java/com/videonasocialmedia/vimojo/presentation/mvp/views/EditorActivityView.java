@@ -29,4 +29,8 @@ public interface EditorActivityView {
   void setIconsPurchaseInApp();
 
   void hideVimojoStoreViews();
+
+  void deactivateDarkTheme();
+
+  void activateWatermark();
 }

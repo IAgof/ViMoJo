@@ -73,4 +73,8 @@ public interface PreferencesView {
     void itemWatermarkPurchased();
 
     void vimojoStoreSupported();
+
+    void deactivateDarkTheme();
+
+    void activateWatermark();
 }

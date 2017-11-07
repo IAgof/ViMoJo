@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.TypedValue;
 
-import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.Purchase;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -18,9 +16,8 @@ import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.store.billing.BillingConnectionListener;
-import com.videonasocialmedia.vimojo.store.billing.BillingHistoryPurchaseListener;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
+import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -33,7 +30,8 @@ import javax.inject.Inject;
  * Created by ruth on 23/11/16.
  */
 
-public class EditorPresenter implements BillingConnectionListener, BillingHistoryPurchaseListener {
+public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegateView {
+  private final PlayStoreBillingDelegate playStoreBillingDelegate;
   private String LOG_TAG = "EditorPresenter";
 
   private EditorActivityView editorActivityView;
@@ -49,8 +47,6 @@ public class EditorPresenter implements BillingConnectionListener, BillingHistor
 
   private final String THEME_DARK = "dark";
   private final String THEME_LIGHT = "light";
-
-  private BillingManager billingManager;
 
   @Inject
   public EditorPresenter(
@@ -69,7 +65,26 @@ public class EditorPresenter implements BillingConnectionListener, BillingHistor
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.currentProject = getCurrentProject();
     this.newClipImporter = newClipImporter;
-    this.billingManager = billingManager;
+    playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
+  }
+
+  public void init() {
+    newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
+    obtainVideos();
+    checkFeaturesAvailable();
+  }
+
+  private void checkFeaturesAvailable() {
+    if (BuildConfig.FEATURE_WATERMARK) {
+      editorActivityView.watermarkFeatureAvailable();
+    }
+    if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
+      playStoreBillingDelegate.initBilling();
+      editorActivityView.setIconsPurchaseInApp();
+    } else {
+      editorActivityView.setIconsFeatures();
+      editorActivityView.hideVimojoStoreViews();
+    }
   }
 
   public Project getCurrentProject() {
@@ -84,6 +99,10 @@ public class EditorPresenter implements BillingConnectionListener, BillingHistor
     return isActivateDarkTheme;
   }
 
+  private void deactivateDarkThemePreference() {
+    sharedPreferences.edit().putBoolean(ConfigPreferences.THEME_APP_DARK, false).commit();
+  }
+
   public void createNewProject(String rootPath, String privatePath) {
     createDefaultProjectUseCase.createProject(rootPath, privatePath, getPreferenceWaterMark());
     clearProjectDataFromSharedPreferences();
@@ -94,29 +113,6 @@ public class EditorPresenter implements BillingConnectionListener, BillingHistor
     preferencesEditor = sharedPreferences.edit();
     preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION, 0);
     preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS, 0);
-  }
-
-  public void init() {
-    newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
-    obtainVideos();
-    checkFeaturesAvailable();
-  }
-
-  private void checkFeaturesAvailable() {
-    if (BuildConfig.FEATURE_WATERMARK) {
-      editorActivityView.watermarkFeatureAvailable();
-    }
-    if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
-     initBilling();
-     editorActivityView.setIconsPurchaseInApp();
-    } else {
-     editorActivityView.setIconsFeatures();
-      editorActivityView.hideVimojoStoreViews();
-    }
-  }
-
-  private void initBilling() {
-    billingManager.initBillingClient(this);
   }
 
   private void obtainVideos() {
@@ -156,22 +152,23 @@ public class EditorPresenter implements BillingConnectionListener, BillingHistor
     preferencesEditor.apply();
     if (preference.compareTo(ConfigPreferences.THEME_APP_DARK) == 0) {
       userEventTracker.trackThemeAppDrawerChanged(isChecked);
-      if (isChildShareActivity()) {
+      if (isShareActivity()) {
         editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
       } else {
         editorActivityView.restartActivity();
       }
     }
-    if(preference.compareTo(ConfigPreferences.WATERMARK) == 0){
-      // TODO:(alvaro.martinez) 2/11/17 track watermark applyed
+    if (preference.compareTo(ConfigPreferences.WATERMARK) == 0) {
+      // TODO:(alvaro.martinez) 2/11/17 track watermark applied
     }
   }
 
   public void updateTheme() {
-    boolean isDark =  getPreferenceThemeApp();
+    boolean isDarkThemeActivated = getPreferenceThemeApp();
     String currentTheme = getCurrentAppliedTheme();
-    if (isDark && currentTheme.equals(THEME_LIGHT) || !isDark && currentTheme.equals(THEME_DARK)) {
-      if(isChildShareActivity()){
+    if (isDarkThemeActivated && currentTheme.equals(THEME_LIGHT)
+            || !isDarkThemeActivated && currentTheme.equals(THEME_DARK)) {
+      if (isShareActivity()) {
         editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
       } else {
         editorActivityView.restartActivity();
@@ -179,8 +176,8 @@ public class EditorPresenter implements BillingConnectionListener, BillingHistor
     }
   }
 
-  private boolean isChildShareActivity() {
-    if(context.getClass().getName().compareTo(ShareActivity.class.getName()) == 0){
+  private boolean isShareActivity() {
+    if (context.getClass().getName().compareTo(ShareActivity.class.getName()) == 0) {
       return true;
     } else {
       return false;
@@ -200,40 +197,32 @@ public class EditorPresenter implements BillingConnectionListener, BillingHistor
   }
 
   public boolean getPreferenceWaterMark() {
-    boolean isActivateWatermark = sharedPreferences
-        .getBoolean(ConfigPreferences.WATERMARK, false);
+    boolean isActivateWatermark = sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
     return isActivateWatermark;
   }
 
-  @Override
-  public void historyPurchasedItems(List<Purchase> purchasesList) {
-    Log.d(LOG_TAG, "historyPurchasedItems " + purchasesList.size());
-    for(Purchase purchase: purchasesList){
-      if(purchase.getSku().compareTo(Constants.IN_APP_BILLING_ITEM_DARK_THEME) == 0) {
-        editorActivityView.itemDarkThemePurchased();
-        Log.d(LOG_TAG, "item purchased " + purchase.getSku());
-      }
-      if(purchase.getSku().compareTo(Constants.IN_APP_BILLING_ITEM_WATERMARK) == 0) {
-        editorActivityView.itemWatermarkPurchased();
-        Log.d(LOG_TAG, "item purchased " + purchase.getSku());
-      }
-    }
+  private void activateWatermarkPreference() {
+    sharedPreferences.edit().putBoolean(ConfigPreferences.WATERMARK, true).commit();
   }
 
   @Override
-  public void billingClientSetupFinished() {
-    if (billingManager.getBillingClientResponseCode() == BillingClient.BillingResponse.OK &&
-        billingManager.isServiceConnected()) {
-      checkPurchasedItems();
+  public void itemDarkThemePurchased(boolean purchased) {
+    if (purchased) {
+      editorActivityView.itemDarkThemePurchased();
     } else {
-      Log.d(LOG_TAG, "billing client response " + billingManager.getBillingClientResponseCode());
-      //editorActivityView.showMessage(R.string.error_message_store_not_available);
+      deactivateDarkThemePreference();
+      editorActivityView.deactivateDarkTheme();
     }
   }
 
-
-  public void checkPurchasedItems() {
-    Log.d(LOG_TAG, "checkPurchasedItems ");
-    billingManager.queryPurchaseHistoryAsync(this);
+  @Override
+  public void itemWatermarkPurchased(boolean purchased) {
+    if (purchased) {
+      editorActivityView.itemWatermarkPurchased();
+    } else {
+      activateWatermarkPreference();
+      editorActivityView.activateWatermark();
+    }
   }
+
 }
