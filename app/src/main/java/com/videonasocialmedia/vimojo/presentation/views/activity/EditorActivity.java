@@ -26,7 +26,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -82,11 +81,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   CircleImageView imageUserThumb;
   String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_THUMB;
   private int REQUEST_ICON_USER = 100;
+  private boolean isVimojoStoreAvailable = true;
   private CompoundButton.OnCheckedChangeListener watermarkOnCheckedChangeListener =
           new CompoundButton.OnCheckedChangeListener() {
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-      if (watermarkPurchased) {
+      if (isWatermarkAvailable()) {
         editorPresenter.switchPreference(isChecked, ConfigPreferences.WATERMARK);
         drawerLayout.closeDrawers();
       } else {
@@ -99,7 +99,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
           = new CompoundButton.OnCheckedChangeListener() {
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isDarkThemeChecked) {
-      if (darkThemePurchased) {
+      if (isDarkThemeAvailable()) {
         editorPresenter.switchPreference(isDarkThemeChecked, ConfigPreferences.THEME_APP_DARK);
         drawerLayout.closeDrawers();
       } else {
@@ -174,8 +174,13 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     }
     editorPresenter.init();
     setupSwitchThemeAppIntoDrawer();
-    setupSwitchWatermarkIntoDrawer();
     editorPresenter.updateTheme();
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    editorPresenter.onPause();
   }
 
   private boolean checkIfThemeDarkIsSelected() {
@@ -245,7 +250,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                   case R.id.menu_navview_tutorial_record:
                     navigateTo(TutorialRecordActivity.class);
                     return false;
-                  case R.id.menu_navview_shopping_section:
+                  case R.id.menu_navview_vimojo_store_section:
                     navigateTo(VimojoStoreActivity.class);
                     return false;
                   default:
@@ -292,40 +297,39 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     startActivity(i);
   }
 
-  public void setupSwitchThemeAppIntoDrawer() {
+  private void setupSwitchThemeAppIntoDrawer() {
     switchTheme = (SwitchCompat) navigationView.getMenu().findItem(R.id.switch_theme_dark)
-            .getActionView();
+        .getActionView();
     if (switchTheme != null) {
       boolean themeDarkIsSelected = checkIfThemeDarkIsSelected();
       switchTheme.setOnCheckedChangeListener(null);
       switchTheme.setChecked(themeDarkIsSelected);
-      updateLockIcon(darkThemePurchased, R.id.switch_theme_dark);
       switchTheme.setOnCheckedChangeListener(themeOnCheckedChangeListener);
     }
+  }
+
+  private boolean isDarkThemeAvailable() {
+    return darkThemePurchased || !isVimojoStoreAvailable;
+  }
+
+  private boolean isWatermarkAvailable() {
+    return watermarkPurchased || !isVimojoStoreAvailable;
   }
 
   private void setupSwitchWatermarkIntoDrawer() {
     switchWatermark = (SwitchCompat) navigationView.getMenu().findItem(R.id.switch_watermark)
             .getActionView();
     if (switchWatermark != null) {
-      if (BuildConfig.FEATURE_WATERMARK) {
-        boolean watermarkIsSelected = checkIfWatermarkIsSelected();
-        switchWatermark.setOnCheckedChangeListener(null);
-        switchWatermark.setChecked(watermarkIsSelected);
-        updateLockIcon(watermarkPurchased, R.id.switch_watermark);
-        switchWatermark.setOnCheckedChangeListener(watermarkOnCheckedChangeListener);
-      }
+      boolean watermarkIsSelected = checkIfWatermarkIsSelected();
+      switchWatermark.setOnCheckedChangeListener(null);
+      switchWatermark.setChecked(watermarkIsSelected);
+      switchWatermark.setOnCheckedChangeListener(watermarkOnCheckedChangeListener);
     }
   }
 
-  private void updateLockIcon(boolean itemIsPurchased, int identifier) {
-    if (itemIsPurchased) {
-      navigationView.getMenu().findItem(identifier)
-              .setIcon(this.getDrawable(R.drawable.ic_unlocked));
-    } else {
-      navigationView.getMenu().findItem(identifier)
-              .setIcon(this.getDrawable(R.drawable.ic_locked));
-    }
+  private void updateNavigationIcon(int identifier, int resourceId) {
+    navigationView.getMenu().findItem(identifier)
+             .setIcon(this.getDrawable(resourceId));
   }
 
   @Override
@@ -368,13 +372,38 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   public void itemDarkThemePurchased() {
     darkThemePurchased = true;
-    updateLockIcon(darkThemePurchased, R.id.switch_theme_dark);
+    updateNavigationIcon(R.id.switch_theme_dark, R.drawable.ic_unlocked);
   }
 
   @Override
   public void itemWatermarkPurchased() {
     watermarkPurchased = true;
-    updateLockIcon(watermarkPurchased, R.id.switch_watermark);
+    updateNavigationIcon(R.id.switch_watermark, R.drawable.ic_unlocked);
+  }
+
+  @Override
+  public void watermarkFeatureAvailable() {
+    setupSwitchWatermarkIntoDrawer();
+  }
+
+  @Override
+  public void setIconsFeatures() {
+    updateNavigationIcon(R.id.switch_theme_dark, R.drawable.activity_editor_drawer_dark_theme);
+    updateNavigationIcon(R.id.switch_watermark, R.drawable.activity_editor_drawer_watermark);
+  }
+
+  @Override
+  public void setIconsPurchaseInApp() {
+    updateNavigationIcon(R.id.switch_theme_dark, R.drawable.ic_locked);
+    updateNavigationIcon(R.id.switch_watermark, R.drawable.ic_locked);
+  }
+
+  @Override
+  public void hideVimojoStoreViews() {
+    Menu menu = navigationView.getMenu();
+    MenuItem target = menu.findItem(R.id.menu_navview_vimojo_store_section);
+    target.setVisible(false);
+    isVimojoStoreAvailable = false;
   }
 
   public void showDialogUserAddThumb() {

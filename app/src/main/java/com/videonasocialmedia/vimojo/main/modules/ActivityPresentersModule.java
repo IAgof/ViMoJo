@@ -203,7 +203,7 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  VimojoStorePresenter provideShopListPresenter(BillingManager billingManager) {
+  VimojoStorePresenter provideVimojoStorePresenter(BillingManager billingManager) {
     return new VimojoStorePresenter((VimojoStoreView) activity, activity, billingManager);
   }
 

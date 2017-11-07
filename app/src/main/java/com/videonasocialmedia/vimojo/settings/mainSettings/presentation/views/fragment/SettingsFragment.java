@@ -69,6 +69,7 @@ public class SettingsFragment extends PreferenceFragment implements
     protected VideonaDialog dialog;
     private boolean darkThemePurchased = false;
     private boolean watermarkPurchased = false;
+    private boolean isVimojoStoreSupported = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -178,10 +179,9 @@ public class SettingsFragment extends PreferenceFragment implements
     @Override
     public void onResume() {
         super.onResume();
-        preferencesPresenter.onResume();
         preferencesPresenter.checkAvailablePreferences();
         preferencesPresenter.checkMailValid();
-        preferencesPresenter.initBilling(getActivity());
+        preferencesPresenter.checkVimojoStore(getActivity());
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferencesPresenter);
     }
@@ -313,6 +313,11 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     @Override
+    public void vimojoStoreSupported() {
+        isVimojoStoreSupported = true;
+    }
+
+    @Override
     public void deactivateDarkTheme() {
         darkThemePurchased = false;
         themeappSwitchPref.setChecked(false);
@@ -344,7 +349,7 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference connectionPref = findPreference(key);
         if (key.equals(ConfigPreferences.THEME_APP_DARK)) {
-            if (darkThemePurchased) {
+            if (isDarkThemeAvailable()) {
                 // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
                 preferencesPresenter.trackThemeApp(sharedPreferences.getBoolean(key, false));
                 restartActivity();
@@ -356,7 +361,7 @@ public class SettingsFragment extends PreferenceFragment implements
            return;
         }
         if (key.equals(ConfigPreferences.WATERMARK)) {
-            if (!watermarkPurchased) {
+            if (!isWatermarkAvailable()) {
                 if (!watermarkSwitchPref.isChecked()) {
                     watermarkSwitchPref.setChecked(true);
                 } else {
@@ -375,6 +380,14 @@ public class SettingsFragment extends PreferenceFragment implements
             return;
         }
         trackQualityAndResolutionAndFrameRateUserTraits(key, sharedPreferences.getString(key, ""));
+    }
+
+    private boolean isDarkThemeAvailable() {
+        return darkThemePurchased || !isVimojoStoreSupported;
+    }
+
+    private boolean isWatermarkAvailable() {
+        return watermarkPurchased || !isVimojoStoreSupported;
     }
 
     private void restartActivity() {

@@ -132,7 +132,7 @@ public class VimojoStorePresenter implements BillingUpdatesPurchaseListener,
       for(Purchase purchase: purchasesList) {
         if(skuStoreData.getSkuId().compareTo(purchase.getSku()) == 0){
           skuStoreData.setPurchased(true);
-          Log.d(LOG_TAG, "item purchased " + purchase.getSku());
+          //Log.d(LOG_TAG, "item purchased " + purchase.getSku());
           storePurchasesList.add(skuStoreData);
         }
       }

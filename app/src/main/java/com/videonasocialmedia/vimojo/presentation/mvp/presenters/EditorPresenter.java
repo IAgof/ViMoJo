@@ -8,6 +8,7 @@ import android.util.TypedValue;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
@@ -32,7 +33,7 @@ import javax.inject.Inject;
 
 public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegateView {
   private final PlayStoreBillingDelegate playStoreBillingDelegate;
-  private String LOG_TAG = "EditorPresenter";
+  private static final String LOG_TAG = EditorPresenter.class.getSimpleName();
 
   private EditorActivityView editorActivityView;
   private SharedPreferences sharedPreferences;
@@ -47,6 +48,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
 
   private final String THEME_DARK = "dark";
   private final String THEME_LIGHT = "light";
+  private final BillingManager billingManager;
 
   @Inject
   public EditorPresenter(
@@ -65,13 +67,33 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.currentProject = getCurrentProject();
     this.newClipImporter = newClipImporter;
+    this.billingManager = billingManager;
     playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
   }
 
   public void init() {
     newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
     obtainVideos();
-    playStoreBillingDelegate.initBilling((Activity) editorActivityView);
+    checkFeaturesAvailable();
+  }
+
+  public void onPause() {
+    if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
+      billingManager.destroy();
+    }
+  }
+
+  private void checkFeaturesAvailable() {
+    if (BuildConfig.FEATURE_WATERMARK) {
+      editorActivityView.watermarkFeatureAvailable();
+    }
+    if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
+      playStoreBillingDelegate.initBilling((Activity) editorActivityView);
+      editorActivityView.setIconsPurchaseInApp();
+    } else {
+      editorActivityView.setIconsFeatures();
+      editorActivityView.hideVimojoStoreViews();
+    }
   }
 
   public Project getCurrentProject() {
