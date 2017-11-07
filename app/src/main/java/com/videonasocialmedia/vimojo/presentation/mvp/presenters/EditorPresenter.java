@@ -9,6 +9,7 @@ import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.Purchase;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
@@ -98,7 +99,9 @@ public class EditorPresenter implements BillingConnectionListener, BillingHistor
   public void init() {
     newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
     obtainVideos();
-    initBilling();
+    if(BuildConfig.VIMOJO_STORE_AVAILABLE) {
+      initBilling();
+    }
   }
 
   private void initBilling() {

@@ -182,7 +182,9 @@ public class SettingsFragment extends PreferenceFragment implements
         super.onResume();
         preferencesPresenter.checkAvailablePreferences();
         preferencesPresenter.checkMailValid();
-        preferencesPresenter.initBilling();
+        if(BuildConfig.VIMOJO_STORE_AVAILABLE) {
+            preferencesPresenter.initBilling();
+        }
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferencesPresenter);
     }
@@ -332,7 +334,7 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference connectionPref = findPreference(key);
         if (key.equals(ConfigPreferences.THEME_APP_DARK)) {
-            if (darkThemePurchased) {
+            if (isDarkThemeAvailable()) {
                 // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
                 preferencesPresenter.trackThemeApp(sharedPreferences.getBoolean(key, false));
                 restartActivity();
@@ -344,7 +346,7 @@ public class SettingsFragment extends PreferenceFragment implements
            return;
         }
         if (key.equals(ConfigPreferences.WATERMARK)) {
-            if (watermarkPurchased) {
+            if (isWatermarkAvailable()) {
             } else if (!watermarkPurchased && !watermarkSwitchPref.isChecked()) {
                 watermarkSwitchPref.setChecked(true);
             } else {
@@ -362,6 +364,14 @@ public class SettingsFragment extends PreferenceFragment implements
             return;
         }
         trackQualityAndResolutionAndFrameRateUserTraits(key, sharedPreferences.getString(key, ""));
+    }
+
+    private boolean isDarkThemeAvailable() {
+        return darkThemePurchased || !BuildConfig.VIMOJO_STORE_AVAILABLE;
+    }
+
+    private boolean isWatermarkAvailable() {
+        return watermarkPurchased || !BuildConfig.VIMOJO_STORE_AVAILABLE;
     }
 
     private void restartActivity() {

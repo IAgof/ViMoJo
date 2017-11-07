@@ -37,7 +37,7 @@
             android:title="@string/drawerStoreTitle">
             <menu>
                 <item
-                    android:id="@+id/menu_navview_shopping_section"
+                    android:id="@+id/menu_navview_vimojo_store_section"
                     android:icon="@drawable/ic_activity_drawer_shopping"
                     android:title="@string/drawer_go_to_store"/>
 
