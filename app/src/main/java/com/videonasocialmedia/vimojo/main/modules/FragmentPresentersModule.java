@@ -178,7 +178,7 @@ public class FragmentPresentersModule {
 
   @Provides
   BillingManager providesBillingManager() {
-    return new BillingManager(activity);
+    return new BillingManager();
   }
 
 }

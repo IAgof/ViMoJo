@@ -178,9 +178,10 @@ public class SettingsFragment extends PreferenceFragment implements
     @Override
     public void onResume() {
         super.onResume();
+        preferencesPresenter.onResume();
         preferencesPresenter.checkAvailablePreferences();
         preferencesPresenter.checkMailValid();
-        preferencesPresenter.initBilling();
+        preferencesPresenter.initBilling(getActivity());
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferencesPresenter);
     }
@@ -198,6 +199,7 @@ public class SettingsFragment extends PreferenceFragment implements
         super.onPause();
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferencesPresenter);
+        preferencesPresenter.onPause();
     }
 
     @Override

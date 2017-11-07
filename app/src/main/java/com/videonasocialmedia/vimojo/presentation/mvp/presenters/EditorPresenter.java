@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -70,7 +71,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   public void init() {
     newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
     obtainVideos();
-    playStoreBillingDelegate.initBilling();
+    playStoreBillingDelegate.initBilling((Activity) editorActivityView);
   }
 
   public Project getCurrentProject() {

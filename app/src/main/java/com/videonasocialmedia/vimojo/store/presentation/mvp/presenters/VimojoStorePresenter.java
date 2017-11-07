@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.store.presentation.mvp.presenters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -41,7 +42,7 @@ public class VimojoStorePresenter implements BillingUpdatesPurchaseListener,
 
   public void initBilling() {
     if(!isSkuStoreItemPopulated()) {
-      billingManager.initBillingClient(this);
+      billingManager.initBillingClient((Activity) vimojoStoreView, this);
     }
   }
 
