@@ -32,6 +32,7 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.a
 import com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity;
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
+import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
@@ -66,6 +67,8 @@ public class SettingsFragment extends PreferenceFragment implements
     protected SharedPreferences.Editor editor;
     protected MixpanelAPI mixpanel;
     protected VideonaDialog dialog;
+    private boolean darkThemePurchased = false;
+    private boolean watermarkPurchased = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,7 +85,8 @@ public class SettingsFragment extends PreferenceFragment implements
         return DaggerFragmentPresentersComponent.builder()
             .fragmentPresentersModule(new FragmentPresentersModule(this, context, sharedPreferences,
                 cameraSettingsPref, resolutionPref,qualityPref, transitionsVideoPref,
-                transitionsAudioPref,watermarkSwitchPref, themeappSwitchPref, emailPref))
+                transitionsAudioPref,watermarkSwitchPref, themeappSwitchPref, emailPref,
+                this.getActivity()))
             .systemComponent(((VimojoApplication)getActivity().getApplication()).getSystemComponent())
             .build();
     }
@@ -174,10 +178,20 @@ public class SettingsFragment extends PreferenceFragment implements
     @Override
     public void onResume() {
         super.onResume();
+        preferencesPresenter.onResume();
         preferencesPresenter.checkAvailablePreferences();
         preferencesPresenter.checkMailValid();
+        preferencesPresenter.initBilling(getActivity());
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferencesPresenter);
+    }
+
+    private void updateIconLockItemsInAPP(SwitchPreference switchPreference, boolean isPurchased) {
+        if (isPurchased) {
+            switchPreference.setIcon(context.getDrawable(R.drawable.ic_unlocked));
+        } else {
+            switchPreference.setIcon(context.getDrawable(R.drawable.ic_locked));
+        }
     }
 
     @Override
@@ -185,6 +199,7 @@ public class SettingsFragment extends PreferenceFragment implements
         super.onPause();
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferencesPresenter);
+        preferencesPresenter.onPause();
     }
 
     @Override
@@ -285,6 +300,30 @@ public class SettingsFragment extends PreferenceFragment implements
         }
     }
 
+    @Override
+    public void itemDarkThemePurchased() {
+        darkThemePurchased = true;
+        updateIconLockItemsInAPP(themeappSwitchPref, darkThemePurchased);
+    }
+
+    @Override
+    public void itemWatermarkPurchased() {
+        watermarkPurchased = true;
+        updateIconLockItemsInAPP(watermarkSwitchPref, watermarkPurchased);
+    }
+
+    @Override
+    public void deactivateDarkTheme() {
+        darkThemePurchased = false;
+        themeappSwitchPref.setChecked(false);
+    }
+
+    @Override
+    public void activateWatermark() {
+        watermarkPurchased = false;
+        watermarkSwitchPref.setChecked(true);
+    }
+
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
         String property = null;
         switch (key) {
@@ -305,14 +344,29 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference connectionPref = findPreference(key);
         if (key.equals(ConfigPreferences.THEME_APP_DARK)) {
-            // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
-            preferencesPresenter.trackThemeApp(sharedPreferences.getBoolean(key, false));
-            restartActivity();
+            if (darkThemePurchased) {
+                // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
+                preferencesPresenter.trackThemeApp(sharedPreferences.getBoolean(key, false));
+                restartActivity();
+            } else if (!darkThemePurchased && themeappSwitchPref.isChecked()) {
+                themeappSwitchPref.setChecked(false);
+            } else {
+                navigateTo(VimojoStoreActivity.class);
+            }
+           return;
+        }
+        if (key.equals(ConfigPreferences.WATERMARK)) {
+            if (!watermarkPurchased) {
+                if (!watermarkSwitchPref.isChecked()) {
+                    watermarkSwitchPref.setChecked(true);
+                } else {
+                    navigateTo(VimojoStoreActivity.class);
+                }
+            }
+            return;
         }
         if (key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0
-                || key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0
-                || key.compareTo(ConfigPreferences.WATERMARK) == 0
-                ||key.compareTo(ConfigPreferences.THEME_APP_DARK)==0) {
+                || key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0 ){
             return;
         }
         if (!key.equals(ConfigPreferences.PASSWORD_FTP)
@@ -330,7 +384,7 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     private void setupLegalNotice() {
-        Preference legalNoticePref=findPreference(ConfigPreferences.LEGAL_NOTICE);
+        Preference legalNoticePref = findPreference(ConfigPreferences.LEGAL_NOTICE);
         legalNoticePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -341,7 +395,7 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     private void setupLicense() {
-        Preference licensePref=findPreference(ConfigPreferences.LICENSES);
+        Preference licensePref = findPreference(ConfigPreferences.LICENSES);
         licensePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -352,7 +406,7 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     private void setupTermOfService() {
-        Preference termOfServicePref=findPreference(ConfigPreferences.TERM_OF_SERVICE);
+        Preference termOfServicePref = findPreference(ConfigPreferences.TERM_OF_SERVICE);
         termOfServicePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -363,7 +417,7 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     private void setupPrivacyPolicy() {
-        Preference privacyPolicyPref=findPreference(ConfigPreferences.PRIVACY_POLICY);
+        Preference privacyPolicyPref = findPreference(ConfigPreferences.PRIVACY_POLICY);
         privacyPolicyPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -374,7 +428,7 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     private void setupAboutUs() {
-        Preference aboutUsPref=findPreference(ConfigPreferences.ABOUT_US);
+        Preference aboutUsPref = findPreference(ConfigPreferences.ABOUT_US);
         aboutUsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {

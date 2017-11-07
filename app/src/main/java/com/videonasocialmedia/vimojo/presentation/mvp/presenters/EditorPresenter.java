@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -15,7 +16,10 @@ import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
+import com.videonasocialmedia.vimojo.store.billing.BillingManager;
+import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
@@ -26,7 +30,8 @@ import javax.inject.Inject;
  * Created by ruth on 23/11/16.
  */
 
-public class EditorPresenter {
+public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegateView {
+  private final PlayStoreBillingDelegate playStoreBillingDelegate;
   private String LOG_TAG = "EditorPresenter";
 
   private EditorActivityView editorActivityView;
@@ -50,7 +55,7 @@ public class EditorPresenter {
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          NewClipImporter newClipImporter) {
+          NewClipImporter newClipImporter, BillingManager billingManager) {
     this.editorActivityView = editorActivityView;
     this.sharedPreferences = sharedPreferences;
     this.context = context;
@@ -60,6 +65,13 @@ public class EditorPresenter {
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.currentProject = getCurrentProject();
     this.newClipImporter = newClipImporter;
+    playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
+  }
+
+  public void init() {
+    newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
+    obtainVideos();
+    playStoreBillingDelegate.initBilling((Activity) editorActivityView);
   }
 
   public Project getCurrentProject() {
@@ -67,33 +79,19 @@ public class EditorPresenter {
     return Project.getInstance(null, null, null, null);
   }
 
-  public void getPreferenceUserName() {
-    String userNamePreference = sharedPreferences.getString(ConfigPreferences.USERNAME, null);
-    if (userNamePreference != null && !userNamePreference.isEmpty()) {
-      editorActivityView.showPreferenceUserName(userNamePreference);
-    } else {
-      editorActivityView.showPreferenceUserName(context.getResources().getString(R.string.username));
-    }
-  }
-
-  public void getPreferenceEmail() {
-    String emailPreference = sharedPreferences.getString(ConfigPreferences.EMAIL, null);
-    if (emailPreference != null && !emailPreference.isEmpty()) {
-      editorActivityView.showPreferenceEmail(emailPreference);
-    } else {
-      editorActivityView.showPreferenceEmail(context.getResources().getString(R.string.emailPreference));
-    }
-  }
-
   public boolean getPreferenceThemeApp() {
     // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
     boolean isActivateDarkTheme = sharedPreferences
-            .getBoolean(ConfigPreferences.THEME_APP_DARK, false);
+            .getBoolean(ConfigPreferences.THEME_APP_DARK, Constants.DEFAULT_THEME_DARK_STATE);
     return isActivateDarkTheme;
   }
 
-  public void createNewProject(String roothPath, String privatePath, boolean isWatermarkFeatured){
-    createDefaultProjectUseCase.createProject(roothPath, privatePath, isWatermarkFeatured);
+  private void deactivateDarkThemePreference() {
+    sharedPreferences.edit().putBoolean(ConfigPreferences.THEME_APP_DARK, false).commit();
+  }
+
+  public void createNewProject(String rootPath, String privatePath) {
+    createDefaultProjectUseCase.createProject(rootPath, privatePath, getPreferenceWaterMark());
     clearProjectDataFromSharedPreferences();
     editorActivityView.updateViewResetProject();
   }
@@ -102,11 +100,6 @@ public class EditorPresenter {
     preferencesEditor = sharedPreferences.edit();
     preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION, 0);
     preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS, 0);
-  }
-
-  public void init() {
-    newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
-    obtainVideos();
   }
 
   private void obtainVideos() {
@@ -140,23 +133,29 @@ public class EditorPresenter {
     relaunchTranscoderTempBackgroundUseCase.relaunchExport(video, currentProject);
   }
 
-  public void switchTheme(final boolean isDarkThemeChecked) {
+  public void switchPreference(final boolean isChecked, String preference) {
     preferencesEditor = sharedPreferences.edit();
-    preferencesEditor.putBoolean(ConfigPreferences.THEME_APP_DARK, isDarkThemeChecked);
+    preferencesEditor.putBoolean(preference, isChecked);
     preferencesEditor.apply();
-    userEventTracker.trackThemeAppDrawerChanged(isDarkThemeChecked);
-    if(isChildShareActivity()){
-      editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
-    } else {
-      editorActivityView.restartActivity();
+    if (preference.compareTo(ConfigPreferences.THEME_APP_DARK) == 0) {
+      userEventTracker.trackThemeAppDrawerChanged(isChecked);
+      if (isShareActivity()) {
+        editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
+      } else {
+        editorActivityView.restartActivity();
+      }
+    }
+    if (preference.compareTo(ConfigPreferences.WATERMARK) == 0) {
+      // TODO:(alvaro.martinez) 2/11/17 track watermark applied
     }
   }
 
   public void updateTheme() {
-    boolean isDark =  getPreferenceThemeApp();
+    boolean isDarkThemeActivated = getPreferenceThemeApp();
     String currentTheme = getCurrentAppliedTheme();
-    if (isDark && currentTheme.equals(THEME_LIGHT) || !isDark && currentTheme.equals(THEME_DARK)) {
-      if(isChildShareActivity()){
+    if (isDarkThemeActivated && currentTheme.equals(THEME_LIGHT)
+            || !isDarkThemeActivated && currentTheme.equals(THEME_DARK)) {
+      if (isShareActivity()) {
         editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
       } else {
         editorActivityView.restartActivity();
@@ -164,8 +163,8 @@ public class EditorPresenter {
     }
   }
 
-  private boolean isChildShareActivity() {
-    if(context.getClass().getName().compareTo(ShareActivity.class.getName()) == 0){
+  private boolean isShareActivity() {
+    if (context.getClass().getName().compareTo(ShareActivity.class.getName()) == 0) {
       return true;
     } else {
       return false;
@@ -182,6 +181,35 @@ public class EditorPresenter {
       currentTheme = THEME_LIGHT;
     }
     return currentTheme;
+  }
+
+  public boolean getPreferenceWaterMark() {
+    boolean isActivateWatermark = sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
+    return isActivateWatermark;
+  }
+
+  private void activateWatermarkPreference() {
+    sharedPreferences.edit().putBoolean(ConfigPreferences.WATERMARK, true).commit();
+  }
+
+  @Override
+  public void itemDarkThemePurchased(boolean purchased) {
+    if (purchased) {
+      editorActivityView.itemDarkThemePurchased();
+    } else {
+      deactivateDarkThemePreference();
+      editorActivityView.deactivateDarkTheme();
+    }
+  }
+
+  @Override
+  public void itemWatermarkPurchased(boolean purchased) {
+    if (purchased) {
+      editorActivityView.itemWatermarkPurchased();
+    } else {
+      activateWatermarkPreference();
+      editorActivityView.activateWatermark();
+    }
   }
 
 }

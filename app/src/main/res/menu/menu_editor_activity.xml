@@ -17,14 +17,19 @@
             <item
                 android:id="@+id/action_settings_edit_gallery"
                 android:icon="@drawable/menu_gallery"
-                android:title="Gallery"
+                android:title="@string/menuGallery"
                 app:showAsAction="never"
                 />
+            <item
+                android:id="@+id/action_settings_suggestions"
+                android:icon="@drawable/editor_activity_drawer_ic_mail"
+                android:title="@string/menuSuggestions"
+                app:showAsAction="never"/>
 
             <item
                 android:id="@+id/action_settings_edit_options"
                 android:icon="@drawable/menu_settings"
-                android:title="Settings"
+                android:title="@string/menuSettings"
                 app:showAsAction="never"/>
         </menu>
 

@@ -1,2 +1,4 @@
 v0.7.0
+- Added store item to disable watermark from exported videos
+- Added store item to enable dark theme
 - Add Google FireBase Analytics to Flavors

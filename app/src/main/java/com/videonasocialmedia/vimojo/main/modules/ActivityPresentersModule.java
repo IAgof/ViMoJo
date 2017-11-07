@@ -61,6 +61,9 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.pr
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseListPresenter;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseDetailView;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseListView;
+import com.videonasocialmedia.vimojo.store.billing.BillingManager;
+import com.videonasocialmedia.vimojo.store.presentation.mvp.presenters.VimojoStorePresenter;
+import com.videonasocialmedia.vimojo.store.presentation.mvp.views.VimojoStoreView;
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
@@ -200,6 +203,11 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
+  VimojoStorePresenter provideShopListPresenter(BillingManager billingManager) {
+    return new VimojoStorePresenter((VimojoStoreView) activity, activity, billingManager);
+  }
+
+  @Provides @PerActivity
   LicenseDetailPresenter provideLicenseDetailPresenter(GetLicenseVimojoListUseCase
                                                        getLicenseVimojoListUseCase) {
     return  new LicenseDetailPresenter((LicenseDetailView) activity, activity, getLicenseVimojoListUseCase);
@@ -288,10 +296,10 @@ public class ActivityPresentersModule {
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          NewClipImporter newClipImporter) {
+          NewClipImporter newClipImporter, BillingManager billingManager) {
     return new EditorPresenter((EditorActivity) activity, sharedPreferences, activity,
             userEventTracker, createDefaultProjectUseCase, getMediaListFromProjectUseCase,
-            relaunchTranscoderTempBackgroundUseCase, newClipImporter);
+            relaunchTranscoderTempBackgroundUseCase, newClipImporter, billingManager);
   }
 
   @Provides @PerActivity
@@ -479,5 +487,9 @@ public class ActivityPresentersModule {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase,
             adaptVideoToFormatUseCase, launchTranscoderAddAVTransitionUseCase,
             relaunchTranscoderTempBackgroundUseCase, videoRepository, videoToAdaptRepository);
+  }
+
+  @Provides BillingManager provideBillingManager() {
+    return new BillingManager();
   }
 }
