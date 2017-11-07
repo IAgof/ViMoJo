@@ -16,10 +16,7 @@ import android.content.SharedPreferences;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
-import android.util.Log;
 
-import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.Purchase;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -38,8 +35,6 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTra
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.OnRelaunchTemporalFileListener;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
-import com.videonasocialmedia.vimojo.store.billing.BillingConnectionListener;
-import com.videonasocialmedia.vimojo.store.billing.BillingHistoryPurchaseListener;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -142,6 +137,12 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
                 .getInstance(context.getApplicationContext(), BuildConfig.MIXPANEL_TOKEN));
         this.billingManager = billingManager;
         this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
+    }
+
+    public void onPause() {
+        if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
+            billingManager.destroy();
+        }
     }
 
     /**
@@ -259,6 +260,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         }
     }
 
+
     private void sendPropertyToMixpanel(String key, String data) {
         if (key.equals(ConfigPreferences.NAME)) {
             preferencesView.setUserPropertyToMixpanel("$first_name", data);
@@ -270,7 +272,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             preferencesView.setUserPropertyToMixpanel("$account_email", data);
         }
     }
-
 
     /**
      * Checks supported resolutions on camera
@@ -324,6 +325,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         }
     }
 
+
     /**
      * Checks supported qualities on camera
      */
@@ -360,7 +362,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             preferencesView.setAvailablePreferences(qualityPref, qualityNames, qualityValues);
         }
     }
-
 
     /**
      * Checks if the actual default value in shared preferences is supported by the device
@@ -466,14 +467,9 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     }
 
     public void checkVimojoStore(Activity activity) {
-        if(BuildConfig.VIMOJO_STORE_AVAILABLE) {
+        if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
           initBilling(activity);
           preferencesView.vimojoStoreSupported();
         }
     }
-
-    public void destroyBillingManager() {
-        billingManager.destroy();
-    }
-
 }

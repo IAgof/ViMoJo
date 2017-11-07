@@ -33,7 +33,7 @@ import javax.inject.Inject;
 
 public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegateView {
   private final PlayStoreBillingDelegate playStoreBillingDelegate;
-  private String LOG_TAG = "EditorPresenter";
+  private static final String LOG_TAG = EditorPresenter.class.getSimpleName();
 
   private EditorActivityView editorActivityView;
   private SharedPreferences sharedPreferences;
@@ -75,6 +75,12 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
     obtainVideos();
     checkFeaturesAvailable();
+  }
+
+  public void onPause() {
+    if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
+      billingManager.destroy();
+    }
   }
 
   private void checkFeaturesAvailable() {
@@ -228,7 +234,4 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  public void destroyBillingManager() {
-    billingManager.destroy();
-  }
 }

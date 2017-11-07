@@ -199,8 +199,7 @@ public class SettingsFragment extends PreferenceFragment implements
         super.onPause();
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferencesPresenter);
-        if(isVimojoStoreSupported)
-            preferencesPresenter.destroyBillingManager();
+        preferencesPresenter.onPause();
     }
 
     @Override

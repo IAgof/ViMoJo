@@ -26,7 +26,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -181,8 +180,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   protected void onPause() {
     super.onPause();
-    if(isVimojoStoreAvailable)
-      editorPresenter.destroyBillingManager();
+    editorPresenter.onPause();
   }
 
   private boolean checkIfThemeDarkIsSelected() {
