@@ -21,4 +21,8 @@ public interface EditorActivityView {
   void itemDarkThemePurchased();
 
   void itemWatermarkPurchased();
+
+  void deactivateDarkTheme();
+
+  void activateWatermark();
 }

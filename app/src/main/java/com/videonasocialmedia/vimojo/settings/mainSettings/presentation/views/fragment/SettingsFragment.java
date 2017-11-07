@@ -32,7 +32,6 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.a
 import com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity;
 import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
-import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -70,7 +69,6 @@ public class SettingsFragment extends PreferenceFragment implements
     protected VideonaDialog dialog;
     private boolean darkThemePurchased = false;
     private boolean watermarkPurchased = false;
-    protected BillingManager billingManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -312,6 +310,18 @@ public class SettingsFragment extends PreferenceFragment implements
         updateIconLockItemsInAPP(watermarkSwitchPref, watermarkPurchased);
     }
 
+    @Override
+    public void deactivateDarkTheme() {
+        darkThemePurchased = false;
+        themeappSwitchPref.setChecked(false);
+    }
+
+    @Override
+    public void activateWatermark() {
+        watermarkPurchased = false;
+        watermarkSwitchPref.setChecked(true);
+    }
+
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
         String property = null;
         switch (key) {
@@ -344,11 +354,12 @@ public class SettingsFragment extends PreferenceFragment implements
            return;
         }
         if (key.equals(ConfigPreferences.WATERMARK)) {
-            if (watermarkPurchased) {
-            } else if (!watermarkPurchased && !watermarkSwitchPref.isChecked()) {
-                watermarkSwitchPref.setChecked(true);
-            } else {
-                navigateTo(VimojoStoreActivity.class);
+            if (!watermarkPurchased) {
+                if (!watermarkSwitchPref.isChecked()) {
+                    watermarkSwitchPref.setChecked(true);
+                } else {
+                    navigateTo(VimojoStoreActivity.class);
+                }
             }
             return;
         }
@@ -371,7 +382,7 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     private void setupLegalNotice() {
-        Preference legalNoticePref=findPreference(ConfigPreferences.LEGAL_NOTICE);
+        Preference legalNoticePref = findPreference(ConfigPreferences.LEGAL_NOTICE);
         legalNoticePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -382,7 +393,7 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     private void setupLicense() {
-        Preference licensePref=findPreference(ConfigPreferences.LICENSES);
+        Preference licensePref = findPreference(ConfigPreferences.LICENSES);
         licensePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -393,7 +404,7 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     private void setupTermOfService() {
-        Preference termOfServicePref=findPreference(ConfigPreferences.TERM_OF_SERVICE);
+        Preference termOfServicePref = findPreference(ConfigPreferences.TERM_OF_SERVICE);
         termOfServicePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -404,7 +415,7 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     private void setupPrivacyPolicy() {
-        Preference privacyPolicyPref=findPreference(ConfigPreferences.PRIVACY_POLICY);
+        Preference privacyPolicyPref = findPreference(ConfigPreferences.PRIVACY_POLICY);
         privacyPolicyPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -415,7 +426,7 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     private void setupAboutUs() {
-        Preference aboutUsPref=findPreference(ConfigPreferences.ABOUT_US);
+        Preference aboutUsPref = findPreference(ConfigPreferences.ABOUT_US);
         aboutUsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {

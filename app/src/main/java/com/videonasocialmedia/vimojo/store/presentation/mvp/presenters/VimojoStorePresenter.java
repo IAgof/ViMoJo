@@ -61,7 +61,6 @@ public class VimojoStorePresenter implements BillingUpdatesPurchaseListener,
               if (responseCode == BillingClient.BillingResponse.OK && skuDetailsList != null) {
                 // Repacking the result for an adapter
                 for (SkuDetails details : skuDetailsList) {
-                  Log.i(LOG_TAG, "Found sku: " + details);
                   skuStoreItemList.add(new SkuStoreData(details.getSku(),
                       details.getTitle(), details.getPrice(), details.getDescription(),
                       details.getType()));

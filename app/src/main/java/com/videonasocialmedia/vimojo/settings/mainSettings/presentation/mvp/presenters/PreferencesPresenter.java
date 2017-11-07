@@ -40,6 +40,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.view
 import com.videonasocialmedia.vimojo.store.billing.BillingConnectionListener;
 import com.videonasocialmedia.vimojo.store.billing.BillingHistoryPurchaseListener;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
+import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -53,9 +54,10 @@ import java.util.List;
  * This class is used to show the setting menu.
  */
 public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenceChangeListener,
-    OnRelaunchTemporalFileListener, BillingHistoryPurchaseListener, BillingConnectionListener {
+    OnRelaunchTemporalFileListener, PlayStoreBillingDelegate.BillingDelegateView {
 
     private static final String LOG_TAG = PreferencesPresenter.class.getSimpleName();
+    private final PlayStoreBillingDelegate playStoreBillingDelegate;
     private Context context;
     private UserEventTracker userEventTracker;
     private SharedPreferences sharedPreferences;
@@ -81,10 +83,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase;
     private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
     private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
-    private BillingManager billingManager;
-
-//    private Drawable drawableFadeTransitionVideo;
-//    private VideonaFormat videoFormat;
 
     /**
      * Constructor
@@ -114,7 +112,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
             GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
             BillingManager billingManager) {
-
         this.preferencesView = preferencesView;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
@@ -141,7 +138,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
         userEventTracker = UserEventTracker.getInstance(MixpanelAPI
                 .getInstance(context.getApplicationContext(), BuildConfig.MIXPANEL_TOKEN));
-        this.billingManager = billingManager;
+        playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
     }
 
     /**
@@ -433,38 +430,35 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         userEventTracker.trackThemeAppSettingsChanged(isDarkTheme);
     }
 
-
-    @Override
-    public void historyPurchasedItems(List<Purchase> purchasesList) {
-        for(Purchase purchase: purchasesList){
-            if(purchase.getSku().compareTo(Constants.IN_APP_BILLING_ITEM_DARK_THEME) == 0) {
-                preferencesView.itemDarkThemePurchased();
-                Log.d(LOG_TAG, "item purchased " + purchase.getSku());
-            }
-            if(purchase.getSku().compareTo(Constants.IN_APP_BILLING_ITEM_WATERMARK) == 0) {
-                preferencesView.itemWatermarkPurchased();
-                Log.d(LOG_TAG, "item purchased " + purchase.getSku());
-            }
-        }
-    }
-
-    private void checkPurchasedItems() {
-        billingManager.queryPurchaseHistoryAsync(this);
-    }
-
     public void initBilling() {
-        billingManager.initBillingClient(this);
+        playStoreBillingDelegate.initBilling();
     }
 
     @Override
-    public void billingClientSetupFinished() {
-        if (billingManager.getBillingClientResponseCode() == BillingClient.BillingResponse.OK &&
-            billingManager.isServiceConnected()) {
-            checkPurchasedItems();
+    public void itemDarkThemePurchased(boolean purchased) {
+        if (purchased) {
+            preferencesView.itemDarkThemePurchased();
         } else {
-           // preferencesView.showError(R.string.error_message_shop_not_available);
-            Log.d(LOG_TAG, "billing client response " +
-                billingManager.getBillingClientResponseCode());
+            deactivateDarkThemePreference();
+            preferencesView.deactivateDarkTheme();
         }
+    }
+
+    private void deactivateDarkThemePreference() {
+        sharedPreferences.edit().putBoolean(ConfigPreferences.THEME_APP_DARK, false).commit();
+    }
+
+    @Override
+    public void itemWatermarkPurchased(boolean purchased) {
+        if (purchased) {
+            preferencesView.itemWatermarkPurchased();
+        } else  {
+            activateWatermarkPreference();
+            preferencesView.activateWatermark();
+        }
+    }
+
+    private void activateWatermarkPreference() {
+        sharedPreferences.edit().putBoolean(ConfigPreferences.WATERMARK, true).commit();
     }
 }

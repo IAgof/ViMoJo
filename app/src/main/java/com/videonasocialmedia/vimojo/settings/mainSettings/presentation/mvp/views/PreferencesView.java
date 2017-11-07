@@ -71,4 +71,8 @@ public interface PreferencesView {
   void itemDarkThemePurchased();
 
     void itemWatermarkPurchased();
+
+  void deactivateDarkTheme();
+
+    void activateWatermark();
 }

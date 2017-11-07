@@ -115,7 +115,7 @@ public class BillingManager implements PurchasesUpdatedListener {
                                     billingUpdatesPurchaseListener) {
 
     this.billingUpdatesPurchaseListener = billingUpdatesPurchaseListener;
-
+    Log.e(LOG_TAG, "startPurchaseflow id " + skuId + " type " + billingType);
     // Specify a runnable to start when connection to Billing client is established
     Runnable executeOnConnectedService = new Runnable() {
       @Override
@@ -124,6 +124,7 @@ public class BillingManager implements PurchasesUpdatedListener {
             .setType(billingType)
             .setSku(skuId)
             .build();
+        Log.e(LOG_TAG, "executeOnConnectedService id " + skuId + " type " + billingType);
         billingClient.launchBillingFlow(activity, billingFlowParams);
       }
     };
