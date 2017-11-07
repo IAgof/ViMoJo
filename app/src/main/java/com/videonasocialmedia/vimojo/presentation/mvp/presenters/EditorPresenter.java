@@ -48,6 +48,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
 
   private final String THEME_DARK = "dark";
   private final String THEME_LIGHT = "light";
+  private final BillingManager billingManager;
 
   @Inject
   public EditorPresenter(
@@ -66,6 +67,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.currentProject = getCurrentProject();
     this.newClipImporter = newClipImporter;
+    this.billingManager = billingManager;
     playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
   }
 
@@ -80,7 +82,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
       editorActivityView.watermarkFeatureAvailable();
     }
     if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
-      playStoreBillingDelegate.initBilling();
+      playStoreBillingDelegate.initBilling((Activity) editorActivityView);
       editorActivityView.setIconsPurchaseInApp();
     } else {
       editorActivityView.setIconsFeatures();
@@ -226,4 +228,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
+  public void destroyBillingManager() {
+    billingManager.destroy();
+  }
 }

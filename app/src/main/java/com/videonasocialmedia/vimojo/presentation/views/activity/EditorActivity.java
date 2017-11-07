@@ -178,6 +178,13 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     editorPresenter.updateTheme();
   }
 
+  @Override
+  protected void onPause() {
+    super.onPause();
+    if(isVimojoStoreAvailable)
+      editorPresenter.destroyBillingManager();
+  }
+
   private boolean checkIfThemeDarkIsSelected() {
     return editorPresenter.getPreferenceThemeApp();
   }
@@ -299,7 +306,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       boolean themeDarkIsSelected = checkIfThemeDarkIsSelected();
       switchTheme.setOnCheckedChangeListener(null);
       switchTheme.setChecked(themeDarkIsSelected);
-      updateLockIcon(darkThemePurchased, R.id.switch_theme_dark);
       switchTheme.setOnCheckedChangeListener(themeOnCheckedChangeListener);
     }
   }
@@ -308,6 +314,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     return darkThemePurchased || !isVimojoStoreAvailable;
   }
 
+  private boolean isWatermarkAvailable() {
+    return watermarkPurchased || !isVimojoStoreAvailable;
+  }
 
   private void setupSwitchWatermarkIntoDrawer() {
     switchWatermark = (SwitchCompat) navigationView.getMenu().findItem(R.id.switch_watermark)
@@ -316,7 +325,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       boolean watermarkIsSelected = checkIfWatermarkIsSelected();
       switchWatermark.setOnCheckedChangeListener(null);
       switchWatermark.setChecked(watermarkIsSelected);
-      updateLockIcon(watermarkPurchased, R.id.switch_watermark);
       switchWatermark.setOnCheckedChangeListener(watermarkOnCheckedChangeListener);
     }
   }

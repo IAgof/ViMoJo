@@ -465,17 +465,15 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         sharedPreferences.edit().putBoolean(ConfigPreferences.WATERMARK, true).commit();
     }
 
-    public void checkVimojoStore() {
+    public void checkVimojoStore(Activity activity) {
         if(BuildConfig.VIMOJO_STORE_AVAILABLE) {
-          initBilling();
+          initBilling(activity);
           preferencesView.vimojoStoreSupported();
         }
     }
 
-    public void onPause() {
+    public void destroyBillingManager() {
         billingManager.destroy();
     }
 
-    public void onResume() {
-    }
 }
