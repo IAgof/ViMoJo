@@ -7,6 +7,8 @@ import android.hardware.camera2.CaptureRequest;
 import android.util.Log;
 import android.util.Range;
 
+import com.samsung.android.sdk.camera.SCaptureRequest;
+
 /**
  * Created by jliarte on 26/05/17.
  */
@@ -81,6 +83,7 @@ class Camera2ISOHelper {
       long exposureTime = getNewExposureTime();
       Long currentExposureTime = previewBuilder.get(CaptureRequest.SENSOR_EXPOSURE_TIME);
       previewBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_OFF);
+//      previewBuilder.set(SCaptureRequest.METERING_MODE, CameraMetadata.CONTROL_AE_MODE_OFF);
       Log.d(TAG, "Manual exposure settings: current exposure time " + currentExposureTime
               + " def setting: " + exposureTime);
       Log.d(TAG, "Setting ISO value to: " + iso);
