@@ -1,3 +1,8 @@
+v0.7.0
+- Added store item to disable watermark from exported videos
+- Added store item to enable dark theme
+- Add Google FireBase Analytics to Flavors
+
 v0.7.0-RC13
 - Fixed audio and video sync problems in export session
 - Improved trimmed clip timelines thumbnails

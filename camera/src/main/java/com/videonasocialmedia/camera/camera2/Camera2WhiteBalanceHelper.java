@@ -6,8 +6,9 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.util.Log;
 
+import com.google.common.collect.HashBiMap;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by jliarte on 26/05/17.
@@ -28,7 +29,7 @@ public class Camera2WhiteBalanceHelper {
   public static final String WB_MODE_WARM_FLUORESCENT = "warm-fluorescent";
   public static final String WB_MODE_MANUAL = "manual";
   private final Camera2Wrapper camera2Wrapper;
-  private final HashMap<Integer, String> whiteBalanceMap = new HashMap<>();
+  private final HashBiMap<Integer, String> whiteBalanceMap = HashBiMap.create();
   private CameraFeatures.SupportedValues supportedWhiteBalanceValues;
 
   public Camera2WhiteBalanceHelper(Camera2Wrapper camera2Wrapper) {
@@ -48,7 +49,7 @@ public class Camera2WhiteBalanceHelper {
     this.whiteBalanceMap.put(CameraMetadata.CONTROL_AWB_MODE_TWILIGHT, WB_MODE_TWILIGHT);
     this.whiteBalanceMap.put(CameraMetadata.CONTROL_AWB_MODE_WARM_FLUORESCENT,
             WB_MODE_WARM_FLUORESCENT);
-    this.whiteBalanceMap.put(CameraMetadata.CONTROL_AWB_MODE_OFF, WB_MODE_MANUAL);
+//    this.whiteBalanceMap.put(CameraMetadata.CONTROL_AWB_MODE_OFF, WB_MODE_MANUAL);
   }
 
   public void setup() {
@@ -62,11 +63,13 @@ public class Camera2WhiteBalanceHelper {
   void setupSupportedValues() {
     try {
       ArrayList<String> whiteBalanceStringArrayList = new ArrayList<>();
-      whiteBalanceStringArrayList.add(WB_MODE_OFF);
       int [] returnedValues = camera2Wrapper.getCurrentCameraCharacteristics()
               .get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
       for (int whiteBalanceSetting : returnedValues) {
         whiteBalanceStringArrayList.add(convertWhiteBalanceToString(whiteBalanceSetting));
+      }
+      if (whiteBalanceStringArrayList.size() == 0) {
+        whiteBalanceStringArrayList.add(WB_MODE_AUTO);
       }
       this.supportedWhiteBalanceValues = new CameraFeatures.SupportedValues(
               whiteBalanceStringArrayList, getDefaultWhiteBalanceSetting());
@@ -100,7 +103,10 @@ public class Camera2WhiteBalanceHelper {
   public void setWhiteBalanceMode(String whiteBalanceMode) {
     if (whiteBalanceSelectionSupported() && modeIsSupported(whiteBalanceMode)) {
       supportedWhiteBalanceValues.selectedValue = whiteBalanceMode;
-      Log.d(TAG, "---------------- set white balance to "+whiteBalanceMode+" .............");
+      Log.d(TAG, "---------------- set white balance to "+whiteBalanceMode+" ............." +
+              " with value " + getCameraMetadataWBFromString(whiteBalanceMode));
+      camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_MODE,
+              CaptureRequest.CONTROL_MODE_AUTO);
       camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AWB_MODE,
               getCameraMetadataWBFromString(whiteBalanceMode));
       camera2Wrapper.updatePreview();
@@ -108,7 +114,7 @@ public class Camera2WhiteBalanceHelper {
   }
 
   private Integer getCameraMetadataWBFromString(String whiteBalanceMode) {
-    return supportedWhiteBalanceValues.values.indexOf(whiteBalanceMode);
+    return whiteBalanceMap.inverse().get(whiteBalanceMode);
   }
 
   private boolean modeIsSupported(String whiteBalanceMode) {
