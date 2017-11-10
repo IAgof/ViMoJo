@@ -1,4 +1,4 @@
-v0.7.0
-- Added store item to disable watermark from exported videos
-- Added store item to enable dark theme
-- Add Google FireBase Analytics to Flavors
+v0.7.1
+- Added new version for Samsung mobiles
+- Fixed bug in ISO setting for Samsung mobiles
+- Fixed bug in WB settings

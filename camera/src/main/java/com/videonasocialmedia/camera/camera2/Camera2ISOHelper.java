@@ -76,13 +76,11 @@ class Camera2ISOHelper {
     currentIso = iso;
     CaptureRequest.Builder previewBuilder = this.camera2Wrapper.getPreviewBuilder();
     if (iso == 0) {
-      previewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
       previewBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_ON);
     } else {
       long exposureTime = getNewExposureTime();
       Long currentExposureTime = previewBuilder.get(CaptureRequest.SENSOR_EXPOSURE_TIME);
       previewBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_OFF);
-      previewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_OFF);
       Log.d(TAG, "Manual exposure settings: current exposure time " + currentExposureTime
               + " def setting: " + exposureTime);
       Log.d(TAG, "Setting ISO value to: " + iso);
