@@ -55,21 +55,17 @@ public class CreateDefaultProjectUseCase {
     Project currentProject = Project.getInstance(projectTitle, rootPath, privatePath,
         profileRepository.getCurrentProfile());
     currentProject.getVMComposition().setDrawableFadeTransitionVideo(drawableFadeTransitionVideo);
-    if ((isProjectCreated && isWatermarkFeatured) || areWeIntoFlavorVimojo()) {
+    if ((isProjectCreated && isWatermarkFeatured)) {
       currentProject.setWatermarkActivated(true);
     }
     projectRepository.update(currentProject);
-  }
-
-  private boolean areWeIntoFlavorVimojo() {
-    return BuildConfig.FLAVOR.compareTo(Constants.FLAVOR_VIMOJO) == 0;
   }
 
   public void createProject(String rootPath, String privatePath, boolean isWatermarkFeatured) {
     String projectTitle = DateUtils.getDateRightNow();
     Project currentProject = new Project(projectTitle, rootPath, privatePath,
         profileRepository.getCurrentProfile());
-    if (isWatermarkFeatured || areWeIntoFlavorVimojo()) {
+    if (isWatermarkFeatured) {
       currentProject.setWatermarkActivated(true);
     }
     Project.INSTANCE = currentProject;

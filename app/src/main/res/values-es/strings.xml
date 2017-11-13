@@ -48,7 +48,7 @@
     <string name="dialog_editor_user_thumb_message">Añade foto de usuario</string>
     <string name="dialog_editor_user_thumb_take_photo">Cámara</string>
     <string name="dialog_editor_user_thumb_pick_photo">Galería</string>
-    <string name="section_navview_style">Tema oscuro</string>
+    <string name="drawer_dark_theme">Tema oscuro</string>
 
 
     <!-- Edit Activity -->
@@ -254,7 +254,27 @@
     <!-- DRAWER -->
     <string name="drawerProjects">Mis proyectos</string>
     <string name="drawerSettings">Ajustes</string>
-    <string name="drawerSuggestions">Sugerencias</string>
+    <string name="menuSuggestions">Sugerencias</string>
+    <string name="title_tutorial_edition_section">Tutorial de edición</string>
+    <string name="title_tutorial_record_section">Tutorial de grabación</string>
+    <string name="title_theme_app_preference">Tema Oscuro </string>
+    <string name="title_theme_app_section">Tema </string>
+    <string name="drawerStoreTitle">Tienda</string>
+    <string name="drawer_go_to_store">Ir a tienda</string>
+
+    <!-- ShopListActivity -->
+    <string name="buy_now">Compra ahora por</string>
+    <string name="title_theme_app_store">Activar tema oscuro</string>
+    <string name="description_theme_app_store">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sagittis facilisis sapien, non luctus nulla bibendum eget. Nullam convallis ante id est porta bibendum. Cras maximus, dui ac vestibulum dictum.</string>
+    <string name="title_watermark_store">Desactivar Marca de agua</string>
+    <string name="purchased">¡COMPRADO!</string>
+    <string name="buy_later_section_store">Más tarde</string>
+    <string name="drawer_watermark">Marca de agua</string>
+    <string name="alert_dialog_title_store">Tienda</string>
+    <string name="alert_dialog_message_store">Cargando artículos en la tienda</string>
+    <string name="error_message_store_no_items">No hay artículos para comprar en la tienda</string>
+    <string name="error_message_store_purchasing_items">Comprando artículo, error </string>
+    <string name="error_message_store_not_available">Conexión con la tienda no disponible</string>
 
     <!-- About Activity -->
 
@@ -590,10 +610,7 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
 
 
     <string name="onNoVideosRetrieved">Error, no hay vídeos en el proyecto</string>
-    <string name="title_theme_app_preference">Tema Oscuro </string>
-    <string name="title_theme_app_section">Tema </string>
-
-    <string name="title_tutorial_edition_section">Tutorial de edición</string>
-    <string name="title_tutorial_record_section">Tutorial de grabación</string>
+    <string name="menuGallery">Galería</string>
+    <string name="menuSettings">Ajustes</string>
 
 </resources>
