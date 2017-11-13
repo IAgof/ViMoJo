@@ -19,6 +19,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -49,7 +50,7 @@ public class Camera2WhiteBalanceHelperTest {
 
     wbHelper.setWhiteBalanceMode(Camera2WhiteBalanceHelper.WB_MODE_AUTO);
 
-    verify(mockedPreviewBuilder)
+    verify(mockedPreviewBuilder, times(2))
             .set(CaptureRequest.CONTROL_AWB_MODE, CameraMetadata.CONTROL_AWB_MODE_AUTO);
     verify(mockedCameraWrapper).updatePreview();
   }
