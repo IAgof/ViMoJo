@@ -66,6 +66,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
+
 
 public class EditActivity extends EditorActivity implements EditActivityView,
         VideoTranscodingErrorNotifier, VideonaPlayer.VideonaPlayerListener,
@@ -74,12 +76,12 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     private static final String CURRENT_TIME_POSITION = "current_time_position";
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;
     private final int NUM_COLUMNS_GRID_TIMELINE_VERTICAL = 4;
+    private final String THEME_DARK = "dark";
 
     @Inject EditPresenter editPresenter;
 
   private final int ID_BUTTON_FAB_TOP=1;
   private final int ID_BUTTON_FAB_CENTER=2;
-  private final int ID_BUTTON_FAB_BOTTOM=3;
 
     @Nullable @Bind(R.id.button_edit_duplicate)
     ImageButton editDuplicateButton;
@@ -113,7 +115,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     private String warningTranscodingFilesMessage;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+  private BroadcastReceiver receiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -152,7 +154,25 @@ public class EditActivity extends EditorActivity implements EditActivityView,
           }
         setupBottomBar(bottomBar);
         setupFabMenu();
+        setupActivityButtons();
       }
+
+  private void setupActivityButtons() {
+    String currentTheme= editPresenter.getCurrentTheme();
+    if (currentTheme.compareTo(THEME_DARK) == 0 ){
+      tintEditButtons(R.color.button_color_theme_dark);
+    } else {
+      tintEditButtons(R.color.button_color_theme_light);
+    }
+  }
+
+  private void tintEditButtons(int tintList) {
+    tintButton(editTrimButton,tintList);
+    tintButton(editSplitButton,tintList);
+    tintButton(editTextButton,tintList);
+    tintButton(editDuplicateButton,tintList);
+  }
+
 
   private void setupBottomBar(BottomBar bottomBar) {
     bottomBar.setOnTabSelectListener(new OnTabSelectListener() {

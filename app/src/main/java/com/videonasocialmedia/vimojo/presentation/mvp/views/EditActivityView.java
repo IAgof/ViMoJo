@@ -40,5 +40,5 @@ public interface EditActivityView {
     void setVideoMute();
     void setVoiceOverVolume(float volume);
     void setMusicVolume(float volume);
-
+    void updateViewResetProject();
 }
