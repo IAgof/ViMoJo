@@ -10,6 +10,7 @@
 
 package com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.ListPreference;
@@ -34,6 +35,8 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTra
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.OnRelaunchTemporalFileListener;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
+import com.videonasocialmedia.vimojo.store.billing.BillingManager;
+import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -47,9 +50,11 @@ import java.util.List;
  * This class is used to show the setting menu.
  */
 public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenceChangeListener,
-    OnRelaunchTemporalFileListener {
+    OnRelaunchTemporalFileListener, PlayStoreBillingDelegate.BillingDelegateView {
 
     private static final String LOG_TAG = PreferencesPresenter.class.getSimpleName();
+    private final BillingManager billingManager;
+    private PlayStoreBillingDelegate playStoreBillingDelegate;
     private Context context;
     private UserEventTracker userEventTracker;
     private SharedPreferences sharedPreferences;
@@ -75,9 +80,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase;
     private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
     private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
-
-//    private Drawable drawableFadeTransitionVideo;
-//    private VideonaFormat videoFormat;
 
     /**
      * Constructor
@@ -105,8 +107,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
             UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
             RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-            GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase) {
-
+            GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+            BillingManager billingManager) {
         this.preferencesView = preferencesView;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
@@ -133,6 +135,14 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
         userEventTracker = UserEventTracker.getInstance(MixpanelAPI
                 .getInstance(context.getApplicationContext(), BuildConfig.MIXPANEL_TOKEN));
+        this.billingManager = billingManager;
+        this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
+    }
+
+    public void onPause() {
+        if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
+            billingManager.destroy();
+        }
     }
 
     /**
@@ -171,7 +181,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     }
 
     private void checkThemeApp(String key) {
-        preferencesView.setThemeDarkAppPref(key, sharedPreferences.getBoolean(key,true));
+        preferencesView.setThemeDarkAppPref(key, sharedPreferences.getBoolean(key, false));
     }
 
     private void checkTransitions() {
@@ -250,6 +260,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         }
     }
 
+
     private void sendPropertyToMixpanel(String key, String data) {
         if (key.equals(ConfigPreferences.NAME)) {
             preferencesView.setUserPropertyToMixpanel("$first_name", data);
@@ -261,7 +272,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             preferencesView.setUserPropertyToMixpanel("$account_email", data);
         }
     }
-
 
     /**
      * Checks supported resolutions on camera
@@ -315,6 +325,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         }
     }
 
+
     /**
      * Checks supported qualities on camera
      */
@@ -351,7 +362,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             preferencesView.setAvailablePreferences(qualityPref, qualityNames, qualityValues);
         }
     }
-
 
     /**
      * Checks if the actual default value in shared preferences is supported by the device
@@ -422,5 +432,44 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     public void trackThemeApp(boolean isDarkTheme) {
         userEventTracker.trackThemeAppSettingsChanged(isDarkTheme);
+    }
+
+    public void initBilling(Activity activity) {
+        playStoreBillingDelegate.initBilling(activity);
+    }
+
+    @Override
+    public void itemDarkThemePurchased(boolean purchased) {
+        if (purchased) {
+            preferencesView.itemDarkThemePurchased();
+        } else {
+            deactivateDarkThemePreference();
+            preferencesView.deactivateDarkTheme();
+        }
+    }
+
+    private void deactivateDarkThemePreference() {
+        sharedPreferences.edit().putBoolean(ConfigPreferences.THEME_APP_DARK, false).commit();
+    }
+
+    @Override
+    public void itemWatermarkPurchased(boolean purchased) {
+        if (purchased) {
+            preferencesView.itemWatermarkPurchased();
+        } else  {
+            activateWatermarkPreference();
+            preferencesView.activateWatermark();
+        }
+    }
+
+    private void activateWatermarkPreference() {
+        sharedPreferences.edit().putBoolean(ConfigPreferences.WATERMARK, true).commit();
+    }
+
+    public void checkVimojoStore(Activity activity) {
+        if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
+          initBilling(activity);
+          preferencesView.vimojoStoreSupported();
+        }
     }
 }

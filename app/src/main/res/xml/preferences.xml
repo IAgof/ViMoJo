@@ -68,7 +68,7 @@
         <SwitchPreference
             android:key="add_watermark"
             android:title="@string/title_watermark_preference"
-            android:defaultValue="false" />
+            android:defaultValue="false"/>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -77,8 +77,8 @@
         <SwitchPreference
             android:key="themeAppDark"
             android:title="@string/title_theme_app_preference"
-            android:defaultValue="true"
-            android:checked="true"/>
+            android:defaultValue="false"
+            android:checked="false"/>
     </PreferenceCategory>
 
     <PreferenceCategory

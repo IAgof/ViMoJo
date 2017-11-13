@@ -1,12 +1,17 @@
 package com.videonasocialmedia.vimojo.split.domain;
 
-import android.support.annotation.NonNull;
+import android.util.Log;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,21 +20,37 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.io.IOException;
+
+import static com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase.AUTOSPLIT_MS_RANGE;
+import static com.videonasocialmedia.vimojo.utils.Constants.MIN_TRIM_OFFSET;
+import static com.videonasocialmedia.vimojo.utils.Constants.MS_CORRECTION_FACTOR;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 /**
  * Created by jliarte on 23/10/16.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Log.class})
 public class SplitVideoUseCaseTest {
   @Mock ProjectRepository mockedProjectRepository;
   @Mock AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
+  @Mock private OnSplitVideoListener mockedSpliListener;
+  @Mock private VideoRepository videoRepository;
   @InjectMocks SplitVideoUseCase injectedUseCase;
 
   @Before
@@ -40,9 +61,8 @@ public class SplitVideoUseCaseTest {
   @Test
   public void splitVideoCallsAddVideoToProjectAtPosition() {
     Video video = new Video("media/path", 1f);
-    OnSplitVideoListener listener = getOnSplitVideoListener();
 
-    injectedUseCase.splitVideo(video, 0, 10, listener);
+    injectedUseCase.splitVideo(video, 0, 10, mockedSpliListener);
 
     ArgumentCaptor<Video> videoCaptor = ArgumentCaptor.forClass(Video.class);
     verify(mockedAddVideoToProjectUseCase).addVideoToProjectAtPosition(videoCaptor.capture(),
@@ -50,19 +70,48 @@ public class SplitVideoUseCaseTest {
     assertThat(videoCaptor.getValue().getMediaPath(), is(video.getMediaPath()));
   }
 
-  @NonNull
-  private OnSplitVideoListener getOnSplitVideoListener() {
-    return new OnSplitVideoListener() {
-      @Override
-      public void trimVideo(Video video, int startTimeMs, int finishTimeMs) {
+  @Test
+  public void handleTaskErrorModifiesVideoTrimmingTimes() throws IOException {
+    PowerMockito.mockStatic(Log.class);
+    Project currentProject = getAProject();
+    String message = "Error message";
+    Video video = spy(new Video("media/path", Video.DEFAULT_VOLUME));
+    int splitTime = 1250;
+    video.setStopTime(splitTime);
+    doReturn(5000).when(video).getFileDuration();
+    SplitVideoUseCase useCaseSpy = spy(injectedUseCase);
+    Video endVideo = new Video(video);
+    endVideo.setStartTime(splitTime);
+    endVideo.setStopTime(5000);
+    useCaseSpy.endVideo = endVideo;
+    doNothing().when(useCaseSpy).runTrimTasks(any(Video.class), any(Video.class));
 
-      }
+    useCaseSpy.handleTaskError(video, message, currentProject);
 
-      @Override
-      public void showErrorSplittingVideo() {
+    assertThat(video.getStartTime(), is(not(50)));
+    assertThat(video.getStopTime(), is(not(2540)));
 
-      }
-    };
+    assertThat(Math.abs(video.getStopTime() - splitTime), lessThanOrEqualTo(AUTOSPLIT_MS_RANGE));
+    assertThat(Math.abs(endVideo.getStartTime() - splitTime), lessThanOrEqualTo(AUTOSPLIT_MS_RANGE));
+    assertThat(video.getStopTime() - video.getStartTime(),
+            greaterThanOrEqualTo((int) (MIN_TRIM_OFFSET * MS_CORRECTION_FACTOR)));
+    assertThat(endVideo.getStopTime() - endVideo.getStartTime(),
+            greaterThanOrEqualTo((int) (MIN_TRIM_OFFSET * MS_CORRECTION_FACTOR)));
+    assertThat(video.getStopTime(), is(endVideo.getStartTime()));
+    // (jliarte): 23/11/01 uncomment the line above to see the result values
+//    assertThat(video.getStopTime(), is(not(endVideo.getStartTime())));
+  }
+
+  private Project getAProject() {
+    clearProject();
+    return Project.getInstance(null, null, null, new Profile(VideoResolution.Resolution.HD720,
+            VideoQuality.Quality.GOOD, VideoFrameRate.FrameRate.FPS30));
+  }
+
+  private void clearProject() {
+    if (Project.INSTANCE != null) {
+      Project.INSTANCE.clear();
+    }
   }
 
 }

@@ -64,8 +64,8 @@ public class ModifyVideoDurationUseCase {
    * @param finishTimeMs trim stop time in milliseconds
    * @param currentProject the project where the video belongs
    */
-  public void trimVideo(final Video videoToEdit,
-                        final int startTimeMs, final int finishTimeMs, Project currentProject) {
+  public ListenableFuture<Video> trimVideo(final Video videoToEdit, final int startTimeMs,
+                                           final int finishTimeMs, Project currentProject) {
     setVideoTrimParams(videoToEdit, startTimeMs, finishTimeMs, currentProject);
     videoRepository.update(videoToEdit);
 
@@ -73,9 +73,10 @@ public class ModifyVideoDurationUseCase {
       ListenableFuture<Video> videoAdaptTask = videoToEdit.getTranscodingTask();
       videoToEdit.setTranscodingTask(Futures.transform(videoAdaptTask,
               applyTrim(currentProject, videoToEdit, startTimeMs, finishTimeMs)));
+      return videoToEdit.getTranscodingTask();
     } else {
-      // TODO(jliarte): 18/09/17 in this case, we don't want to wait for task to finish
-      runTrimTranscodingTask(videoToEdit, currentProject);
+      // (jliarte): 18/09/17 in this case, we don't want to wait for task to finish
+      return runTrimTranscodingTask(videoToEdit, currentProject);
     }
   }
 
