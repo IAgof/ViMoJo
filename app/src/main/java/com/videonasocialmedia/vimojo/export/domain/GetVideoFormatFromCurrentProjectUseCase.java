@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.export.domain;
 
 import com.videonasocialmedia.camera.utils.VideoCameraFormat;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -22,8 +23,9 @@ public class GetVideoFormatFromCurrentProjectUseCase {
         VideoCameraFormat videoCameraFormat;
         VideoResolution resolution = project.getProfile().getVideoResolution();
         VideoQuality quality = project.getProfile().getVideoQuality();
+        VideoFrameRate frameRate = project.getProfile().getVideoFrameRate();
         videoCameraFormat = new VideoCameraFormat(resolution.getWidth(), resolution.getHeight(),
-            quality.getVideoBitRate());
+            quality.getVideoBitRate(), frameRate.getFrameRate());
         return videoCameraFormat;
     }
 

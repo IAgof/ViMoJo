@@ -538,11 +538,15 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       return;
     }
     try {
-//      setUpCaptureRequestBuilderAutoMode(previewBuilder);
+
+      // setUpCaptureRequestBuilderAutoMode(previewBuilder);
       // TODO(jliarte): 28/06/17 check if we can change frame rate with this.
       //                Tested on M5 and working at 25FPS.
       //                Seems not to crash if camera doesnt support FPS, it aproximates to next available FPS setting
-      getPreviewBuilder().set(CaptureRequest.SENSOR_FRAME_DURATION, Long.valueOf(40000000));
+      //getPreviewBuilder().set(CaptureRequest.SENSOR_FRAME_DURATION, Long.valueOf(40000000));
+      Range<Integer> fpsRange = new Range<>(videoCameraFormat.getFrameRate(),
+          videoCameraFormat.getFrameRate());
+      getPreviewBuilder().set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, fpsRange);
       previewSession.setRepeatingRequest(previewBuilder.build(), previewCaptureCallback,
               backgroundHandler);
     } catch (CameraAccessException e) {
