@@ -224,22 +224,37 @@
                         android:paddingRight="4dp"
                         android:text="00:00"
                         android:textColor="@android:color/white"
-                        android:textSize="20sp"
+                        android:textSize="24sp"
                         android:visibility="visible"/>
-                </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingStart="4dp"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/text_view_info_resolution"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/camera_settings_selected"
+                            android:textColor="@android:color/white"
+                            tools:text="720p"/>
+                        <TextView
+                            android:id="@+id/text_view_info_quality"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/camera_settings_selected"
+                            android:textColor="@android:color/white"
+                            tools:text="16Mbps"/>
+                        <TextView
+                            android:id="@+id/text_view_info_frame_rate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/camera_settings_selected"
+                            android:textColor="@android:color/white"
+                            tools:text="30 fps"/>
 
-                <ImageView
-                    android:id="@+id/button_resolution_indicator"
-                    android:layout_width="24dp"
-                    android:layout_height="23dp"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="16dp"
-                    android:layout_toRightOf="@+id/activity_record_icon_battery"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/activity_record_ic_resolution_720"
-                    android:visibility="visible"
-                    />
+                    </LinearLayout>
+                </LinearLayout>
 
                 <ImageButton
                     android:id="@+id/mic_plug_imageview"
@@ -275,7 +290,6 @@
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
                     android:layout_marginLeft="16dp"
-                    android:layout_toEndOf="@+id/button_resolution_indicator"
                     android:background="@null"
                     android:scaleType="fitCenter"
                     android:src="@drawable/activity_record_ic_expand"
@@ -557,7 +571,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerInParent="true"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center_vertical"
             android:layout_marginBottom="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"

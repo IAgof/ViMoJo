@@ -26,6 +26,8 @@ import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
@@ -44,6 +46,8 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.text.DecimalFormat;
 import java.util.List;
+
+import static com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality.Quality.HIGH;
 
 /**
  *  Created by alvaro on 16/01/17.
@@ -85,6 +89,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
     }
   };
 
+  // TODO:(alvaro.martinez) 14/11/17 get data from realm camera repository
+  private boolean cameraProSelected = true;
+
   public RecordCamera2Presenter(
           Context context, RecordCamera2View recordView,
           UserEventTracker userEventTracker,
@@ -111,7 +118,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
   }
 
   public void initViews() {
-    recordView.setResolutionSelected(getResolutionHeight(currentProject));
+    recordView.setCameraSettingSelected(getResolution(currentProject.getProfile().getResolution()),
+        getQuality(currentProject.getProfile().getQuality()),
+        getFrameRate(currentProject.getProfile().getFrameRate()));
     recordView.showPrincipalViews();
     recordView.showRightControlsView();
     recordView.showSettingsCameraView();
@@ -119,51 +128,91 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
     setupAdvancedCameraControls();
   }
 
+  private String getResolution(VideoResolution.Resolution resolution) {
+    String resolutionName;
+    switch (resolution) {
+      case HD1080:
+        resolutionName = "1080p";
+        break;
+      case HD4K:
+        resolutionName = "4k";
+        break;
+      case HD720:
+      default:
+        resolutionName = "720p";
+    }
+    return resolutionName;
+  }
+
+
+  private String getQuality(VideoQuality.Quality quality) {
+    String qualityName;
+    switch (quality) {
+      case HIGH:
+        qualityName = "50 Mbps";
+        break;
+      case GOOD:
+        qualityName = "32 Mbps";
+        break;
+      case LOW:
+      default:
+        qualityName = "16 Mbps";
+    }
+    return qualityName;
+  }
+
+  private String getFrameRate(VideoFrameRate.FrameRate frameRate) {
+    String frameRateName;
+    switch(frameRate) {
+      case FPS24:
+        frameRateName = "24 fps";
+        break;
+      case FPS25:
+        frameRateName = "25 fps";
+        break;
+      case FPS30:
+      default:
+        frameRateName = "30 fps";
+    }
+    return frameRateName;
+  }
+
   private void setupAdvancedCameraControls() {
-    if (!camera.ISOSelectionSupported()) {
+    if (!camera.ISOSelectionSupported() || !cameraProSelected) {
       recordView.hideISOSelection();
     } else {
       recordView.showISOSelection();
       recordView.setupISOSupportedModesButtons(camera.getSupportedISORange());
     }
-    if (!camera.focusSelectionSupported()) {
+    if (!camera.focusSelectionSupported() || !cameraProSelected) {
       recordView.hideAdvancedAFSelection();
     } else {
       recordView.showAdvancedAFSelection();
       recordView.setupFocusSelectionSupportedModesButtons(
               camera.getSupportedFocusSelectionModes().values);
     }
-    if (!camera.whiteBalanceSelectionSupported()) {
+    if (!camera.whiteBalanceSelectionSupported() || !cameraProSelected) {
       recordView.hideWhiteBalanceSelection();
     } else {
       recordView.showWhiteBalanceSelection();
       recordView.setupWhiteBalanceSupportedModesButtons(
               camera.getSupportedWhiteBalanceModes().values);
     }
-    if (!camera.metteringModeSelectionSupported()) {
+    if (!camera.metteringModeSelectionSupported() || !cameraProSelected) {
       recordView.hideMetteringModeSelection();
     } else {
       recordView.showMetteringModeSelection();
       recordView.setupMeteringModeSupportedModesButtons(
               camera.getSupportedMeteringModes().values);
     }
-  }
 
-  private int getResolutionHeight(Project currentProject) {
-    VideoResolution.Resolution resolution = currentProject.getProfile().getResolution();
-    int height;
-    switch (resolution) {
-      case HD1080:
-        height = 1080;
-        break;
-      case HD4K:
-        height = 2160;
-        break;
-      case HD720:
-      default:
-        height = 720;
+    if (!cameraProSelected) {
+      recordView.hideDefaultButton();
+      recordView.hideAudioGainButton();
+    } else {
+      recordView.showDefaultButton();
+      recordView.showAudioGainButton();
     }
-    return height;
   }
 
   public void onResume() {

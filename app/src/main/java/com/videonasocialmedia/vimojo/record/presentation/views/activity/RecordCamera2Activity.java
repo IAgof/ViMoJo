@@ -104,6 +104,12 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   Chronometer chronometer;
   @Bind(R.id.imageRecPoint)
   ImageView recPointImage;
+  @Bind(R.id.text_view_info_resolution)
+  TextView textViewInfoResolution;
+  @Bind(R.id.text_view_info_quality)
+  TextView textViewInfoQuality;
+  @Bind(R.id.text_view_info_frame_rate)
+  TextView textViewInfoFrameRate;
   @Bind(R.id.text_view_num_videos)
   TextView numVideosRecordedTextView;
   @Bind(R.id.edit_or_gallery_text_view)
@@ -192,8 +198,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Bind(R.id.button_camera_default)
   ImageButton cameraDefaultSettingsButton;
-  @Bind(R.id.button_resolution_indicator)
-  ImageView resolutionIndicatorButton;
   @Bind(R.id.customManualFocusView)
   CustomManualFocusView customManualFocusView;
   @Bind(R.id.camera_shutter)
@@ -1050,21 +1054,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
-  public void setResolutionSelected(int resolutionSelected) {
-    switch (resolutionSelected) {
-      case (RESOLUTION_SELECTED_HD720):
-        resolutionIndicatorButton.setImageResource(R.drawable.activity_record_ic_resolution_720);
-        break;
-      case(RESOLUTION_SELECTED_HD1080):
-        resolutionIndicatorButton.setImageResource(R.drawable.activity_record_ic_resolution_1080);
-        break;
-      case (RESOLUTION_SELECTED_HD4K):
-        resolutionIndicatorButton.setImageResource(R.drawable.activity_record_ic_resolution_4k);
-        break;
-      default:
-        resolutionIndicatorButton.setImageResource(R.drawable.activity_record_ic_resolution_720);
-        break;
-    }
+  public void setCameraSettingSelected(String resolution, String quality, String frameRate) {
+    textViewInfoResolution.setText(resolution);
+    textViewInfoQuality.setText(quality);
+    textViewInfoFrameRate.setText(frameRate);
   }
 
   @Override
@@ -1440,6 +1433,26 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     if(flashButton.isSelected()) {
       presenter.setFlashOff();
     }
+  }
+
+  @Override
+  public void showDefaultButton() {
+    cameraDefaultSettingsButton.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void hideDefaultButton() {
+    cameraDefaultSettingsButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void showAudioGainButton() {
+    soundVolumeButton.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void hideAudioGainButton() {
+    soundVolumeButton.setVisibility(View.GONE);
   }
 
   private void setAutoSettingsFocusModeByDefault() {
