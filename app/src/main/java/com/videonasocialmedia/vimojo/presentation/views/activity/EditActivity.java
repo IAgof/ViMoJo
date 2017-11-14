@@ -66,6 +66,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
+
 
 public class EditActivity extends EditorActivity implements EditActivityView,
         VideoTranscodingErrorNotifier, VideonaPlayer.VideonaPlayerListener,
@@ -74,12 +76,12 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     private static final String CURRENT_TIME_POSITION = "current_time_position";
     private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;
     private final int NUM_COLUMNS_GRID_TIMELINE_VERTICAL = 4;
+    private final String THEME_DARK = "dark";
 
     @Inject EditPresenter editPresenter;
 
   private final int ID_BUTTON_FAB_TOP=1;
   private final int ID_BUTTON_FAB_CENTER=2;
-  private final int ID_BUTTON_FAB_BOTTOM=3;
 
     @Nullable @Bind(R.id.button_edit_duplicate)
     ImageButton editDuplicateButton;
@@ -87,6 +89,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     ImageButton editTrimButton;
     @Nullable @Bind(R.id.button_edit_split)
     ImageButton editSplitButton;
+    @Nullable @Bind(R.id.button_edit_add_text)
+    ImageButton editTextButton;
     @Nullable @Bind(R.id.recyclerview_editor_timeline)
     RecyclerView videoListRecyclerView;
     @Nullable @Bind(R.id.videona_player)
@@ -111,7 +115,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     private String warningTranscodingFilesMessage;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+  private BroadcastReceiver receiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -150,7 +154,25 @@ public class EditActivity extends EditorActivity implements EditActivityView,
           }
         setupBottomBar(bottomBar);
         setupFabMenu();
+        setupActivityButtons();
       }
+
+  private void setupActivityButtons() {
+    String currentTheme= editPresenter.getCurrentTheme();
+    if (currentTheme.compareTo(THEME_DARK) == 0 ){
+      tintEditButtons(R.color.button_color_theme_dark);
+    } else {
+      tintEditButtons(R.color.button_color_theme_light);
+    }
+  }
+
+  private void tintEditButtons(int tintList) {
+    tintButton(editTrimButton,tintList);
+    tintButton(editSplitButton,tintList);
+    tintButton(editTextButton,tintList);
+    tintButton(editDuplicateButton,tintList);
+  }
+
 
   private void setupBottomBar(BottomBar bottomBar) {
     bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
@@ -171,7 +193,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
    private void setupFabMenu() {
      addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.common_navigate_record, R.color.colorWhite);
      addAndConfigurateFabButton(ID_BUTTON_FAB_CENTER, R.drawable.common_navigate_gallery, R.color.colorWhite);
-     addAndConfigurateFabButton(ID_BUTTON_FAB_BOTTOM, R.drawable.activity_edit_clip_text_normal, R.color.colorWhite );
   }
 
   private void addAndConfigurateFabButton(int id, int icon, int color) {
@@ -192,13 +213,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
           case ID_BUTTON_FAB_CENTER:
             fabMenu.collapse();
             navigateTo(GalleryActivity.class);
-            break;
-          case ID_BUTTON_FAB_BOTTOM:
-            if(isEnableFabText) {
-              fabMenu.collapse();
-              navigateTo(VideoEditTextActivity.class, currentVideoIndex);
-            }else
-              showMessage(R.string.add_videos_to_project);
             break;
         }
       }
@@ -307,6 +321,14 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         if (!editSplitButton.isEnabled())
             return;
         navigateTo(VideoSplitActivity.class, currentVideoIndex);
+    }
+
+    @Nullable @OnClick (R.id.button_edit_add_text)
+    public void onClickEditText() {
+      if (!editTextButton.isEnabled()) {
+        return;
+      }
+      navigateTo( VideoEditTextActivity.class, currentVideoIndex);
     }
 
     @Nullable @OnClick(R.id.button_edit_warning_transcoding_file)
@@ -490,6 +512,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     public void enableEditActions() {
         editTrimButton.setEnabled(true);
         editSplitButton.setEnabled(true);
+        editTextButton.setEnabled(true);
         editDuplicateButton.setEnabled(true);
     }
 
@@ -497,6 +520,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     public void disableEditActions() {
         editTrimButton.setEnabled(false);
         editSplitButton.setEnabled(false);
+        editTextButton.setEnabled(false);
         editDuplicateButton.setEnabled(false);
   }
 

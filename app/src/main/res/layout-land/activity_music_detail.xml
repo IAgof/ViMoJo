@@ -150,11 +150,11 @@
                             android:layout_marginLeft="16dp"
                             android:layout_marginRight="16dp"
                             android:indeterminate="false"
-                            android:secondaryProgressTint="@color/button_color"
+                            android:secondaryProgressTint="@color/button_color_theme_light"
                             android:layout_gravity="center_horizontal"
                             android:layout_below="@+id/linear_layout_icons_mix_audio"
                             android:progressTint="@color/colorPrimary"
-                            android:progressBackgroundTint="@color/button_color"
+                            android:progressBackgroundTint="@color/button_color_theme_light"
                             android:thumb="@drawable/ic_circular_thumb_seekbar"/>
 
                     </RelativeLayout>

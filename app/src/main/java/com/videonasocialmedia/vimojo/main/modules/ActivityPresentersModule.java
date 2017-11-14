@@ -165,7 +165,7 @@ public class ActivityPresentersModule {
                                      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                      GetPreferencesTransitionFromProjectUseCase
                                      getPreferencesTransitionFromProjectUseCase) {
-    return new EditPresenter((EditActivity) activity, (EditActivity) activity,
+    return new EditPresenter((EditActivity) activity, (EditActivity) activity, (EditActivity) activity,
             userEventTracker, removeVideosFromProjectUseCase, reorderMediaItemUseCase,
         getAudioFromProjectUseCase, getMediaListFromProjectUseCase,
             getPreferencesTransitionFromProjectUseCase);
