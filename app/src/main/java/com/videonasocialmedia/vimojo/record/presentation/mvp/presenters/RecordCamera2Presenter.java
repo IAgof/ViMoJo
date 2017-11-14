@@ -37,6 +37,8 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
+import com.videonasocialmedia.vimojo.record.domain.GetCameraPreferencesUseCase;
+import com.videonasocialmedia.vimojo.record.model.CameraPreferences;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerAmplitudeDbListener;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoopThread;
@@ -53,9 +55,7 @@ import static com.videonasocialmedia.videonamediaframework.model.media.utils.Vid
  *  Created by alvaro on 16/01/17.
  */
 
-public class RecordCamera2Presenter implements Camera2WrapperListener
-//        , OnLaunchAVTransitionTempFileListener
-{
+public class RecordCamera2Presenter implements Camera2WrapperListener {
   public static final int DEFAULT_CAMERA_ID = 0;
   private static final int NORMALIZE_PICOMETER_VALUE = 108;
   private static final double MAX_AMPLITUDE_VALUE_PICOMETER = 32768;
@@ -64,6 +64,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private static final String TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
+  private final GetCameraPreferencesUseCase getCameraPreferencesUseCase;
   private SharedPreferences sharedPreferences;
   protected UserEventTracker userEventTracker;
   private final NewClipImporter newClipImporter;
@@ -90,19 +91,20 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
   };
 
   // TODO:(alvaro.martinez) 14/11/17 get data from realm camera repository
-  private boolean cameraProSelected = true;
+  private boolean cameraProSelected = false;
 
   public RecordCamera2Presenter(
-          Context context, RecordCamera2View recordView,
-          UserEventTracker userEventTracker,
-          SharedPreferences sharedPreferences,
-          AddVideoToProjectUseCase addVideoToProjectUseCase, NewClipImporter newClipImporter,
-          Camera2Wrapper camera) {
+      Context context, RecordCamera2View recordView,
+      UserEventTracker userEventTracker,
+      SharedPreferences sharedPreferences,
+      AddVideoToProjectUseCase addVideoToProjectUseCase, NewClipImporter newClipImporter,
+      Camera2Wrapper camera, GetCameraPreferencesUseCase getCameraPreferencesUseCase) {
     this.context = context;
     this.recordView = recordView;
     this.userEventTracker = userEventTracker;
     this.sharedPreferences = sharedPreferences;
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
+    this.getCameraPreferencesUseCase = getCameraPreferencesUseCase;
     this.currentProject = loadProject();
     // TODO:(alvaro.martinez) 25/01/17 Support camera1, api <21 or combine both. Make Camera1Wrapper
 //    camera = new Camera2Wrapper(context, DEFAULT_CAMERA_ID, textureView, directorySaveVideos,
@@ -118,6 +120,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
   }
 
   public void initViews() {
+    checkCameraPreferences();
     recordView.setCameraSettingSelected(getResolution(currentProject.getProfile().getResolution()),
         getQuality(currentProject.getProfile().getQuality()),
         getFrameRate(currentProject.getProfile().getFrameRate()));
@@ -126,6 +129,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
     recordView.showSettingsCameraView();
     recordView.hideRecordPointIndicator();
     setupAdvancedCameraControls();
+  }
+
+  private void checkCameraPreferences() {
+    if(getCameraPreferencesUseCase.isInterfaceProSelected()) {
+      cameraProSelected = true;
+    }
   }
 
   private String getResolution(VideoResolution.Resolution resolution) {
