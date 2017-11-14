@@ -14,6 +14,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.util.TypedValue;
 
 
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
@@ -38,7 +39,6 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -50,6 +50,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     public static final float VOLUME_MUTE = 0f;
     private final String TAG = getClass().getSimpleName();
     private final Project currentProject;
+    private Context context;
     // TODO(jliarte): 2/05/17 inject delegate?
     final VideoListErrorCheckerDelegate videoListErrorCheckerDelegate
             = new VideoListErrorCheckerDelegate();
@@ -71,6 +72,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     @Inject
     public EditPresenter(EditActivityView editActivityView,
+                         Context context,
                          VideoTranscodingErrorNotifier videoTranscodingErrorNotifier,
                          UserEventTracker userEventTracker,
                          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
@@ -80,6 +82,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                          GetPreferencesTransitionFromProjectUseCase
                                  getPreferencesTransitionFromProjectUseCase) {
         this.editActivityView = editActivityView;
+        this.context =context;
         this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;
         this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
@@ -198,10 +201,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 editActivityView.enableFabText(false);
                 editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
                 editActivityView.hideProgressDialog();
-                editActivityView.showMessage(R.string.add_videos_to_project);
-                editActivityView.expandFabMenu();
-                editActivityView.resetPreview();
-                editActivityView.bindVideoList(Collections.<Video>emptyList());
+                editActivityView.updateViewResetProject();
             }
         });
     }
@@ -279,5 +279,11 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         // TODO(jliarte): 26/07/17 save playback state and restore it when done updating project
         // in view
         editActivityView.updateProject();
+    }
+
+    public String getCurrentTheme() {
+        TypedValue outValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
+        return (String) outValue.string;
     }
 }

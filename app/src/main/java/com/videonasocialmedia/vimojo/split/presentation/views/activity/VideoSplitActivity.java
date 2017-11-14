@@ -23,7 +23,6 @@ import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.presentation.views.utils.UiUtils;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -100,7 +99,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     public void setupActivityButtons() {
-      tintSplitButtons(R.color.button_color_trim_split_activity);
+      tintSplitButtons(R.color.button_color_theme_light);
     }
 
     private void tintSplitButtons(int button_color) {
