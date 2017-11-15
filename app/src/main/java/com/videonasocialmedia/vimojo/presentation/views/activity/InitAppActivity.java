@@ -40,6 +40,7 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnInitAppEventListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
+import com.videonasocialmedia.vimojo.record.model.ResolutionPreference;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.AppStart;
@@ -357,7 +358,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
      * supported resolutions
      */
     private void setupCameraSettings() throws CameraAccessException {
-       checkCamera2VideoSize();
+       presenter.checkCamera2VideoSize();
         // Camera 1 deprecated, RecordActivity
         // checkAvailableCameras();
       //  checkFlashMode();
@@ -394,24 +395,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         if (!fEdited.exists()) {
             fEdited.mkdirs();
         }
-    }
-
-    private void checkCamera2VideoSize() throws CameraAccessException {
-        Camera2Settings camera2Settings = new Camera2Settings(this);
-
-        if(camera2Settings.isBackCamera720pSupported())
-            editor.putBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, true).commit();
-        if(camera2Settings.isBackCamera1080pSupported())
-            editor.putBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, true).commit();
-        if(camera2Settings.isBackCamera2160pSupported())
-            editor.putBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, true).commit();
-
-        if(camera2Settings.isFrontCamera720pSupported())
-            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, true).commit();
-        if(camera2Settings.isFrontCamera1080pSupported())
-            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, true).commit();
-        if(camera2Settings.isFrontCamera2160pSupported())
-            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, true).commit();
     }
 
     /**

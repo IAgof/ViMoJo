@@ -43,10 +43,14 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.ShareVideoPrese
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
+import com.videonasocialmedia.vimojo.record.domain.AddCameraPreferencesUseCase;
+import com.videonasocialmedia.vimojo.record.domain.GetCameraPreferencesUseCase;
+import com.videonasocialmedia.vimojo.repository.camera.CameraRepository;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
@@ -248,9 +252,11 @@ public class ActivityPresentersModule {
   RecordCamera2Presenter provideRecordCamera2Presenter(
           UserEventTracker userEventTracker, SharedPreferences sharedPreferences,
           AddVideoToProjectUseCase addVideoToProjectUseCase, Camera2Wrapper camera2wrapper,
-          NewClipImporter newClipImporter) {
+          NewClipImporter newClipImporter, GetCameraPreferencesUseCase
+                  getCameraPreferencesUseCase) {
     return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity, userEventTracker,
-            sharedPreferences, addVideoToProjectUseCase, newClipImporter, camera2wrapper);
+            sharedPreferences, addVideoToProjectUseCase, newClipImporter, camera2wrapper,
+            getCameraPreferencesUseCase);
   }
 
   @Provides @PerActivity
@@ -285,8 +291,10 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   InitAppPresenter provideInitAppPresenter(
-          CreateDefaultProjectUseCase createDefaultProjectUseCase) {
-    return new InitAppPresenter(createDefaultProjectUseCase);
+          CreateDefaultProjectUseCase createDefaultProjectUseCase, AddCameraPreferencesUseCase
+          addCameraPreferencesUseCase) {
+    return new InitAppPresenter(activity, createDefaultProjectUseCase,
+            addCameraPreferencesUseCase);
   }
 
   @Provides @PerActivity
@@ -491,5 +499,15 @@ public class ActivityPresentersModule {
 
   @Provides BillingManager provideBillingManager() {
     return new BillingManager();
+  }
+
+  @Provides AddCameraPreferencesUseCase provideAddCameraPreferenceUseCase(CameraRepository
+                                                                          cameraRepository) {
+    return new AddCameraPreferencesUseCase(cameraRepository);
+  }
+
+  @Provides GetCameraPreferencesUseCase provideGetCameraPreferencesUseCase(CameraRepository
+                                                                           cameraRepository) {
+    return new GetCameraPreferencesUseCase(cameraRepository);
   }
 }
