@@ -347,6 +347,30 @@ public class VimojoMigration implements RealmMigration {
       oldVersion++;
     }
 
+    // Migrate from version 8 to 9, new RealmCameraPref
+    if (oldVersion == 8) {
+      //  RealmObjectSchema realmCameraPrefTable = schema.get("RealmCameraPref");
+      //  if(schema.get("RealmCameraPref") == null) {
+            RealmObjectSchema cameraPrefSchema = schema.create("RealmCameraPref")
+                    .addField("RealmCameraPref", String.class, FieldAttribute.PRIMARY_KEY,
+                            FieldAttribute.REQUIRED)
+                    .addField("interfaceProSelected", Boolean.class, FieldAttribute.REQUIRED)
+                    .addField("resolution", String.class, FieldAttribute.REQUIRED)
+                    .addField("quality", String.class, FieldAttribute.REQUIRED)
+                    .addField("frameRate", String.class, FieldAttribute.REQUIRED)
+                    .addField("resolutionBack720pSupported", Boolean.class, FieldAttribute.REQUIRED)
+                    .addField("resolutionBack1080pSupported", Boolean.class, FieldAttribute.REQUIRED)
+                    .addField("resolutionBack2160pSupported", Boolean.class, FieldAttribute.REQUIRED)
+                    .addField("resolutionFront720pSupported", Boolean.class, FieldAttribute.REQUIRED)
+                    .addField("resolutionFront1080pSupported", Boolean.class, FieldAttribute.REQUIRED)
+                    .addField("resolutionFront2160pSupported", Boolean.class, FieldAttribute.REQUIRED)
+                    .addField("frameRate24FpsSupported", Boolean.class, FieldAttribute.REQUIRED)
+                    .addField("frameRate25FpsSupported", Boolean.class, FieldAttribute.REQUIRED)
+                    .addField("frameRate30FpsSupported", Boolean.class, FieldAttribute.REQUIRED);
+       // }
+        oldVersion++;
+    }
+
     }
 
   private void updateRealmProjectPrimaryKeyToUuid(RealmObjectSchema realmProject) {

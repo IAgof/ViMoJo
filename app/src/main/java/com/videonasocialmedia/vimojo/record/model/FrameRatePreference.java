@@ -35,4 +35,8 @@ public class FrameRatePreference {
   public String getFrameRate() {
     return frameRate;
   }
+
+  public void setFrameRatePreference(String frameRatePreference) {
+    this.frameRate = frameRatePreference;
+  }
 }

@@ -108,4 +108,20 @@ public class Constants {
 
     public static final boolean DEFAULT_THEME_DARK_STATE = false;
     public static final boolean DEFAULT_WATERMARK_STATE = true;
+
+    // Default camera setting
+    public static final boolean DEFAULT_CAMERA_PREF_INTERFACE_PRO_SELECTED = false;
+    public static final String CAMERA_PREF_RESOLUTION_720 = "720p";
+    public static final String CAMERA_PREF_RESOLUTION_1080 = "1080p";
+    public static final String CAMERA_PREF_RESOLUTION_2160 = "4k";
+    public static final String DEFAULT_CAMERA_PREF_RESOLUTION = CAMERA_PREF_RESOLUTION_1080;
+    public static final String CAMERA_PREF_QUALITY_16 = "16 Mbps";
+    public static final String CAMERA_PREF_QUALITY_32 = "32 Mbps";
+    public static final String CAMERA_PREF_QUALITY_50 = "50 Mbps";
+    public static final String DEFAULT_CAMERA_PREF_QUALITY = CAMERA_PREF_QUALITY_16;
+    public static final String CAMERA_PREF_FRAME_RATE_24 = "24 fps";
+    public static final String CAMERA_PREF_FRAME_RATE_25 = "25 fps";
+    public static final String CAMERA_PREF_FRAME_RATE_30 = "30 fps";
+    public static final String DEFAULT_CAMERA_PREF_FRAME_RATE = CAMERA_PREF_FRAME_RATE_30;
+
 }

@@ -42,4 +42,12 @@ public class CameraPreferences {
   public void setFrameRatePreferences(FrameRatePreference frameRatePreference) {
     this.frameRatePreference = frameRatePreference;
   }
+
+  public void setInterfaceProSelected(boolean interfaceProSelected) {
+    this.interfaceProSelected = interfaceProSelected;
+  }
+
+  public void setQuality(String quality) {
+    this.quality = quality;
+  }
 }

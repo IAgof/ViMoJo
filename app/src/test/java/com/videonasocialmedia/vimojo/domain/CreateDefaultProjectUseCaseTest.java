@@ -10,7 +10,6 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 
@@ -39,7 +38,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class CreateDefaultProjectUseCaseTest {
 
   @Mock ProjectRepository mockedProjectRepository;
-  @Mock ProfileRepository mockedProfileRepository;
   @Mock VimojoApplication mockedVimojoApplication;
   @InjectMocks CreateDefaultProjectUseCase injectedUseCase;
 

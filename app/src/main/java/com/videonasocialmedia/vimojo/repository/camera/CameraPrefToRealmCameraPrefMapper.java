@@ -9,12 +9,12 @@ import com.videonasocialmedia.vimojo.repository.Mapper;
  * Created by alvaro on 14/11/17.
  */
 
-public class CameraToRealmCameraMapper  implements Mapper<CameraPreferences, RealmCamera> {
+public class CameraPrefToRealmCameraPrefMapper implements Mapper<CameraPreferences, RealmCameraPref> {
   @Override
-  public RealmCamera map(CameraPreferences cameraPreferences) {
+  public RealmCameraPref map(CameraPreferences cameraPreferences) {
     ResolutionPreference resolutionPreference = cameraPreferences.getResolutionPreference();
     FrameRatePreference frameRatePreference = cameraPreferences.getFrameRatePreference();
-    RealmCamera realmCamera = new RealmCamera("cameraPreferences",
+    RealmCameraPref realmCameraPref = new RealmCameraPref("RealmCameraPref",
         cameraPreferences.isInterfaceProSelected(),
         cameraPreferences.getResolutionPreference().getResolution(),
         cameraPreferences.getQuality(), cameraPreferences.getFrameRatePreference().getFrameRate(),
@@ -27,6 +27,6 @@ public class CameraToRealmCameraMapper  implements Mapper<CameraPreferences, Rea
         frameRatePreference.isFrameRate24FpsSupported(),
         frameRatePreference.isFrameRate25FpsSupported(),
         frameRatePreference.isFrameRate30FpsSupported());
-    return realmCamera;
+    return realmCameraPref;
   }
 }

@@ -55,4 +55,8 @@ public class ResolutionPreference {
   public boolean isResolutionFront2160pSupported() {
     return resolutionFront2160pSupported;
   }
+
+  public void setResolutionPreference(String resolutionPreference) {
+    this.resolution = resolutionPreference;
+  }
 }

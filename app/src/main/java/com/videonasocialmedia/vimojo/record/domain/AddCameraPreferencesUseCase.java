@@ -3,7 +3,9 @@ package com.videonasocialmedia.vimojo.record.domain;
 import com.videonasocialmedia.vimojo.record.model.CameraPreferences;
 import com.videonasocialmedia.vimojo.record.model.FrameRatePreference;
 import com.videonasocialmedia.vimojo.record.model.ResolutionPreference;
-import com.videonasocialmedia.vimojo.repository.camera.CameraRepository;
+import com.videonasocialmedia.vimojo.repository.camera.CameraPrefRepository;
+
+import javax.inject.Inject;
 
 /**
  * Created by alvaro on 14/11/17.
@@ -11,21 +13,46 @@ import com.videonasocialmedia.vimojo.repository.camera.CameraRepository;
 
 public class AddCameraPreferencesUseCase {
 
-  private CameraRepository cameraRepository;
+  private CameraPrefRepository cameraPrefRepository;
 
-  public AddCameraPreferencesUseCase(CameraRepository cameraRepository) {
-    this.cameraRepository = cameraRepository;
+  @Inject
+  public AddCameraPreferencesUseCase(CameraPrefRepository cameraPrefRepository) {
+    this.cameraPrefRepository = cameraPrefRepository;
   }
 
   public void setResolutionPreferencesSupported(ResolutionPreference resolutionPreference) {
-    CameraPreferences cameraPreferences = cameraRepository.getCameraPreferences();
+    CameraPreferences cameraPreferences = cameraPrefRepository.getCameraPreferences();
     cameraPreferences.setResolutionPreference(resolutionPreference);
-    cameraRepository.update(cameraPreferences);
+    cameraPrefRepository.update(cameraPreferences);
   }
 
   public void setFrameRatePreferencesSupported(FrameRatePreference frameRatePreference) {
-    CameraPreferences cameraPreferences = cameraRepository.getCameraPreferences();
+    CameraPreferences cameraPreferences = cameraPrefRepository.getCameraPreferences();
     cameraPreferences.setFrameRatePreferences(frameRatePreference);
-    cameraRepository.update(cameraPreferences);
+    cameraPrefRepository.update(cameraPreferences);
+  }
+
+  public void setInterfaceProSelected(boolean interfaceProSelected) {
+    CameraPreferences cameraPreferences = cameraPrefRepository.getCameraPreferences();
+    cameraPreferences.setInterfaceProSelected(interfaceProSelected);
+    cameraPrefRepository.update(cameraPreferences);
+  }
+
+  public void setQualityPreference(String qualityPreference) {
+    CameraPreferences cameraPreferences = cameraPrefRepository.getCameraPreferences();
+    cameraPreferences.setQuality(qualityPreference);
+    cameraPrefRepository.update(cameraPreferences);
+  }
+
+  public void setResolutionPreference(String resolutionPreference) {
+    CameraPreferences cameraPreferences = cameraPrefRepository.getCameraPreferences();
+    cameraPreferences.getResolutionPreference().setResolutionPreference(resolutionPreference);
+    cameraPrefRepository.update(cameraPreferences);
+  }
+
+  public void setFrameRatePreference(String frameRatePreference) {
+    CameraPreferences cameraPreferences = cameraPrefRepository.getCameraPreferences();
+    cameraPreferences.getFrameRatePreference().setFrameRatePreference(frameRatePreference);
+    cameraPrefRepository.update(cameraPreferences);
   }
 }

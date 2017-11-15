@@ -2,19 +2,24 @@ package com.videonasocialmedia.vimojo.repository.camera;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 /**
  * Created by alvaro on 14/11/17.
  */
 
-public class RealmCamera extends RealmObject {
+public class RealmCameraPref extends RealmObject {
 
   @PrimaryKey
-  public String cameraPreferenceId = "CameraPreferences";
+  @Required
+  public String cameraPreferenceId = "RealmCameraPref";
 
   public boolean interfaceProSelected;
+  @Required
   public String resolution;
+  @Required
   public String quality;
+  @Required
   public String frameRate;
 
   public boolean resolutionBack720pSupported;
@@ -28,16 +33,16 @@ public class RealmCamera extends RealmObject {
   public boolean frameRate25FpsSupported;
   public boolean frameRate30FpsSupported;
 
-  public RealmCamera() {
+  public RealmCameraPref() {
 
   }
 
-  public RealmCamera (String cameraPreferenceId, boolean interfaceProSelected, String resolution,
-                      String quality, String frameRate, boolean resolutionBack720pSupported,
-                      boolean resolutionBack1080pSupported, boolean resolutionBack2160pSupported,
-                      boolean resolutionFront720pSupported, boolean resolutionFront1080pSupported,
-                      boolean resolutionFront2160pSupported, boolean frameRate24FpsSupported,
-                      boolean frameRate25FpsSupported, boolean frameRate30FpsSupported){
+  public RealmCameraPref(String cameraPreferenceId, boolean interfaceProSelected, String resolution,
+                         String quality, String frameRate, boolean resolutionBack720pSupported,
+                         boolean resolutionBack1080pSupported, boolean resolutionBack2160pSupported,
+                         boolean resolutionFront720pSupported, boolean resolutionFront1080pSupported,
+                         boolean resolutionFront2160pSupported, boolean frameRate24FpsSupported,
+                         boolean frameRate25FpsSupported, boolean frameRate30FpsSupported){
 
     this.cameraPreferenceId = cameraPreferenceId;
     this.interfaceProSelected = interfaceProSelected;

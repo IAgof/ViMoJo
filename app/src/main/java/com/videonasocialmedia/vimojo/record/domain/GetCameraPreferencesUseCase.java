@@ -2,7 +2,9 @@ package com.videonasocialmedia.vimojo.record.domain;
 
 import com.videonasocialmedia.vimojo.record.model.FrameRatePreference;
 import com.videonasocialmedia.vimojo.record.model.ResolutionPreference;
-import com.videonasocialmedia.vimojo.repository.camera.CameraRepository;
+import com.videonasocialmedia.vimojo.repository.camera.CameraPrefRepository;
+
+import javax.inject.Inject;
 
 /**
  * Created by alvaro on 14/11/17.
@@ -10,25 +12,26 @@ import com.videonasocialmedia.vimojo.repository.camera.CameraRepository;
 
 public class GetCameraPreferencesUseCase {
 
-  private final CameraRepository cameraRepository;
+  private final CameraPrefRepository cameraPrefRepository;
 
-  public GetCameraPreferencesUseCase(CameraRepository cameraRepository) {
-    this.cameraRepository = cameraRepository;
+  @Inject
+  public GetCameraPreferencesUseCase(CameraPrefRepository cameraPrefRepository) {
+    this.cameraPrefRepository = cameraPrefRepository;
   }
 
   public ResolutionPreference getResolutionPreference() {
-    return cameraRepository.getCameraPreferences().getResolutionPreference();
+    return cameraPrefRepository.getCameraPreferences().getResolutionPreference();
   }
 
   public FrameRatePreference getFrameRatePreference() {
-    return cameraRepository.getCameraPreferences().getFrameRatePreference();
+    return cameraPrefRepository.getCameraPreferences().getFrameRatePreference();
   }
 
   public String getQualityPreference() {
-    return cameraRepository.getCameraPreferences().getQuality();
+    return cameraPrefRepository.getCameraPreferences().getQuality();
   }
 
   public boolean isInterfaceProSelected() {
-    return cameraRepository.getCameraPreferences().isInterfaceProSelected();
+    return cameraPrefRepository.getCameraPreferences().isInterfaceProSelected();
   }
 }
