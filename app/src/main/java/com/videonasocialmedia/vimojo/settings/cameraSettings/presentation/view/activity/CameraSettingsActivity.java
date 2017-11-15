@@ -45,6 +45,7 @@ public class CameraSettingsActivity extends VimojoActivity implements CameraSett
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
     initCameraSettingsRecycler();
+    presenter.getCameraSettingsList();
   }
 
   private void initCameraSettingsRecycler() {
@@ -62,7 +63,6 @@ public class CameraSettingsActivity extends VimojoActivity implements CameraSett
   @Override
   protected void onResume() {
     super.onResume();
-    presenter.getCameraSettingsList();
   }
 
   @Override
