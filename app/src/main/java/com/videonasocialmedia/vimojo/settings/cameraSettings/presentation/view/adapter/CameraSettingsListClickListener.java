@@ -5,5 +5,6 @@ package com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.view.
  */
 
 public interface CameraSettingsListClickListener {
-  void onClickStoreItem();
+
+  void onClickCameraPreferencesItem();
 }

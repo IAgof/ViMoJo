@@ -12,7 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.settings.cameraSettings.model.CameraSettingsItem;
+import com.videonasocialmedia.vimojo.settings.cameraSettings.model.CameraSettingsPackage;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import butterknife.OnClick;
 public class CameraSettingsAdapter extends
     RecyclerView.Adapter<CameraSettingsAdapter.CameraSettingsAdapterItemViewHolder> {
 
-  private List<CameraSettingsItem> cameraSettingsList;
+  private List<CameraSettingsPackage> cameraSettingsList;
   private CameraSettingsListClickListener listener;
   private Context context;
 
@@ -32,7 +32,7 @@ public class CameraSettingsAdapter extends
     this.listener = listener;
   }
 
-  public void setCameraSettingsItemsList(List<CameraSettingsItem> cameraSettingsList) {
+  public void setCameraSettingsItemsList(List<CameraSettingsPackage> cameraSettingsList) {
     this.cameraSettingsList = cameraSettingsList;
     notifyDataSetChanged();
   }
@@ -48,11 +48,21 @@ public class CameraSettingsAdapter extends
   @Override
   public void onBindViewHolder(CameraSettingsAdapterItemViewHolder holder, int position) {
 
-    CameraSettingsItem cameraSettingsItem = cameraSettingsList.get(position);
-    holder.settingCameraTitlePackage.setText(cameraSettingsItem.getTitlePreferencePackage());
+    CameraSettingsPackage cameraSettingsPackage = cameraSettingsList.get(position);
+    holder.settingCameraTitlePackage.setText(cameraSettingsPackage.getTitlePreferencePackage());
+    if(!cameraSettingsPackage.isAvailable()) {
+      holder.textNotAvailable.setText(context.getString(R.string.preference_camera_not_available)
+          + " " + cameraSettingsPackage.getTitlePreferencePackage());
+      holder.textNotAvailable.setVisibility(View.VISIBLE);
+      holder.cameraSettingGroup.setVisibility(View.GONE);
+    } else {
+      holder.textNotAvailable.setVisibility(View.GONE);
+      holder.cameraSettingGroup.setVisibility(View.VISIBLE);
+    }
 
     int id = (position+1)*100;
-    for (String preference : cameraSettingsItem.getPreferencesList()){
+
+    for (String preference : cameraSettingsPackage.getPreferencesList()){
       RadioButton preferenceOption = new RadioButton(CameraSettingsAdapter.this.context);
       preferenceOption.setId(id++);
       preferenceOption.setText(preference);
@@ -75,10 +85,12 @@ public class CameraSettingsAdapter extends
     TextView settingCameraTitlePackage;
     @Bind(R.id.camera_setting_radio_group)
     RadioGroup cameraSettingGroup;
+    @Bind(R.id.camera_setting_text_not_available)
+    TextView textNotAvailable;
 
-    private List<CameraSettingsItem> cameraSettingsList;
+    private List<CameraSettingsPackage> cameraSettingsList;
 
-    public CameraSettingsAdapterItemViewHolder(View itemView, List<CameraSettingsItem> cameraSettingsList) {
+    public CameraSettingsAdapterItemViewHolder(View itemView, List<CameraSettingsPackage> cameraSettingsList) {
       super(itemView);
       ButterKnife.bind(this, itemView);
       this.cameraSettingsList = cameraSettingsList;
@@ -89,7 +101,6 @@ public class CameraSettingsAdapter extends
         public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId) {
 
           if (radioGroup!= null) {
-
             Toast.makeText(CameraSettingsAdapter.this.context,
                 "Radio button clicked " + radioGroup.getCheckedRadioButtonId(),
                 Toast.LENGTH_SHORT).show();
@@ -100,10 +111,10 @@ public class CameraSettingsAdapter extends
 
     @OnClick({})
     public void onClick() {
-      CameraSettingsItem cameraSetting = getData(getAdapterPosition());
-      listener.onClickStoreItem();
+      CameraSettingsPackage cameraSetting = getData(getAdapterPosition());
+      listener.onClickCameraPreferencesItem();
     }
-      CameraSettingsItem getData(int adapterPosition) {
+      CameraSettingsPackage getData(int adapterPosition) {
       return cameraSettingsList == null ? null : cameraSettingsList.get(adapterPosition);
     }
   }

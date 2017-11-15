@@ -2,7 +2,8 @@ package com.videonasocialmedia.vimojo.settings.cameraSettings.domain;
 
 import android.content.Context;
 
-import com.videonasocialmedia.vimojo.settings.cameraSettings.model.CameraSettingsItem;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.settings.cameraSettings.model.CameraSettingsPackage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,28 +22,35 @@ public class GetCameraSettingListUseCase {
     this.context = context;
   }
 
-  public List<CameraSettingsItem> getCameraSettingsList() {
+  public List<CameraSettingsPackage> getCameraSettingsList() {
 
-    List <CameraSettingsItem> preferenceList = new ArrayList();
+    List <CameraSettingsPackage> preferenceList = new ArrayList();
 
     List<String> optionList = new ArrayList();
-    optionList.add("Camera Pro");
-    optionList.add("Camera Basic");
-    preferenceList.add(new CameraSettingsItem ("Camera Pro/Basic", optionList));
+    optionList.add(context.getString(R.string.camera_pro));
+    optionList.add(context.getString(R.string.camera_basic));
+    preferenceList.add(new CameraSettingsPackage(context.getString(R.string.camera_pro_o_basic), optionList, true));
 
     optionList = new ArrayList();
-    optionList.add("720");
-    optionList.add("1080");
-    optionList.add("4K");
+    optionList.add(context.getString(R.string.low_resolution_name));
+    optionList.add(context.getString(R.string.good_resolution_name));
+    optionList.add(context.getString(R.string.high_resolution_name));
 
-    preferenceList.add(new CameraSettingsItem ("Resolution", optionList));
+    preferenceList.add(new CameraSettingsPackage(context.getString(R.string.resolution), optionList, false));
 
     optionList = new ArrayList();
-    optionList.add("24");
-    optionList.add("25");
-    optionList.add("30");
+    optionList.add(context.getString(R.string.low_frame_rate_name));
+    optionList.add(context.getString(R.string.good_frame_rate_name));
+    optionList.add(context.getString(R.string.high_frame_rate_name));
 
-    preferenceList.add(new CameraSettingsItem ("FrameRate", optionList));
+    preferenceList.add(new CameraSettingsPackage(context.getString(R.string.frame_rate), optionList, true));
+
+    optionList = new ArrayList();
+    optionList.add(context.getString(R.string.low_quality_name));
+    optionList.add(context.getString(R.string.good_quality_name));
+    optionList.add(context.getString(R.string.high_quality_name));
+
+    preferenceList.add(new CameraSettingsPackage(context.getString(R.string.quality), optionList, true));
 
     return preferenceList;
   }

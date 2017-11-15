@@ -14,6 +14,7 @@
         android:padding="8dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="2dp"
+        android:minHeight="120dp"
         style="?attr/cardViewStyle">
 
         <LinearLayout
@@ -37,7 +38,7 @@
                 android:id="@+id/camera_setting_radio_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="60dp">
+                android:gravity="center_vertical">
 
             </RadioGroup>
 
@@ -46,8 +47,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14dp"
+                android:visibility="gone"
                 android:layout_marginBottom="12dp"
-                tools:text="@string/preference_not_available"
+                android:text="@string/preference_not_available"
+                android:textColor="?attr/colorAccent"
                 />
             </LinearLayout>
 
