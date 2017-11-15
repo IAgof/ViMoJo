@@ -357,8 +357,9 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
      * Checks the available cameras on the device (back/front), supported flash mode and the
      * supported resolutions
      */
-    private void setupCameraSettings() throws CameraAccessException {
-       presenter.checkCamera2VideoSize();
+    private void setupCameraSettings() {
+       presenter.checkCamera2ResolutionSupported();
+       presenter.checkCamera2FrameRateSupported();
         // Camera 1 deprecated, RecordActivity
         // checkAvailableCameras();
       //  checkFlashMode();
@@ -394,41 +395,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         File fEdited = new File(pathApp);
         if (!fEdited.exists()) {
             fEdited.mkdirs();
-        }
-    }
-
-    private void checkCamera2Settings() throws CameraAccessException {
-        Camera2Settings camera2Settings = new Camera2Settings(this);
-
-        if (camera2Settings.isBackCamera720pSupported())
-            editor.putBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, true).commit();
-        if (camera2Settings.isBackCamera1080pSupported())
-            editor.putBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, true).commit();
-        if (camera2Settings.isBackCamera2160pSupported())
-            editor.putBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, true).commit();
-
-        if (camera2Settings.isFrontCamera720pSupported())
-            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, true).commit();
-        if (camera2Settings.isFrontCamera1080pSupported())
-            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, true).commit();
-        if (camera2Settings.isFrontCamera2160pSupported())
-            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, true).commit();
-
-
-        if (camera2Settings.isFrameRateSupported()) {
-            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_SUPPORTED, true).commit();
-            if (camera2Settings.isFrameRate24fpsSupported()) {
-                editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, true)
-                    .commit();
-            }
-            if (camera2Settings.isFrameRate25fpsSupported()) {
-                editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, true)
-                    .commit();
-            }
-            if(camera2Settings.isFrameRate30fpsSupported()) {
-                editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, true)
-                    .commit();
-            }
         }
     }
 

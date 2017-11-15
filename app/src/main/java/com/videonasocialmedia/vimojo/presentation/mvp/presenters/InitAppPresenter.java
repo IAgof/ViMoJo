@@ -6,7 +6,9 @@ import android.hardware.camera2.CameraAccessException;
 import com.videonasocialmedia.camera.utils.Camera2Settings;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.record.domain.AddCameraPreferencesUseCase;
+import com.videonasocialmedia.vimojo.record.model.FrameRatePreference;
 import com.videonasocialmedia.vimojo.record.model.ResolutionPreference;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import javax.inject.Inject;
 
@@ -31,10 +33,17 @@ public class InitAppPresenter {
     createDefaultProjectUseCase.loadOrCreateProject(rootPath, privatePath, isWatermarkFeatured);
   }
 
-  public void checkCamera2VideoSize() throws CameraAccessException {
+  public void checkCamera2ResolutionSupported() {
 
-    Camera2Settings camera2Settings = new Camera2Settings(context);
-    String defaultResolution = "";
+      Camera2Settings camera2Settings = null;
+      try {
+          camera2Settings = new Camera2Settings(context);
+      } catch (CameraAccessException e) {
+          e.printStackTrace();
+          // TODO: 15/11/2017 Manage Error
+          return;
+      }
+      String defaultResolution = "";
     boolean resolutionBack720pSupported = false;
     boolean resolutionBack1080pSupported = false;
     boolean resolutionBack2160pSupported = false;
@@ -62,5 +71,38 @@ public class InitAppPresenter {
 
     addCameraPreferenceUseCase.setResolutionPreference(resolutionPreference);
 
+  }
+
+  public void checkCamera2FrameRateSupported() {
+      Camera2Settings camera2Settings = null;
+      try {
+          camera2Settings = new Camera2Settings(context);
+      } catch (CameraAccessException e) {
+          e.printStackTrace();
+          // TODO: 15/11/2017 Manage Error
+          return;
+      }
+
+      String defaultFrameRate = "";
+      boolean frameRate24FpsSupported = false;
+      boolean frameRate25FpsSupported = false;
+      boolean frameRate30FpsSupported = false;
+
+      if (camera2Settings.isFrameRateSupported()) {
+          if (camera2Settings.isFrameRate24fpsSupported()) {
+              frameRate24FpsSupported = true;
+          }
+          if (camera2Settings.isFrameRate25fpsSupported()) {
+              frameRate25FpsSupported = true;
+          }
+          if(camera2Settings.isFrameRate30fpsSupported()) {
+              frameRate30FpsSupported = true;
+          }
+      }
+
+      FrameRatePreference frameRatePreference = new FrameRatePreference(defaultFrameRate,
+              frameRate24FpsSupported, frameRate25FpsSupported, frameRate30FpsSupported);
+
+      addCameraPreferenceUseCase.setFrameRatePreference(frameRatePreference);
   }
 }
