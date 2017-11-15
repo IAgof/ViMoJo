@@ -13,7 +13,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
+import com.videonasocialmedia.vimojo.record.domain.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;

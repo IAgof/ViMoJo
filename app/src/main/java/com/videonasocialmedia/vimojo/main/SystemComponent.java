@@ -6,6 +6,7 @@ import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
+import com.videonasocialmedia.vimojo.repository.camera.CameraRepository;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -32,5 +33,6 @@ public interface SystemComponent {
   UserEventTracker getUserEventTracker();
   SharedPreferences getSharedPreferences();
   ProfileRepository getSharedPreferencesProfileRepository();
+  CameraRepository getCameraRepository();
   void inject(VimojoActivity activity);
 }

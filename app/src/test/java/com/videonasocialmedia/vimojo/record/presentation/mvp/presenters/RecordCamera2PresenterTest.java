@@ -23,6 +23,7 @@ import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
+import com.videonasocialmedia.vimojo.record.domain.GetCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -75,6 +76,7 @@ public class RecordCamera2PresenterTest {
   @Mock private Camera2Wrapper mockedCamera2Wrapper;
   @Mock private VideoRepository mockedVideoRepository;
   @Mock private NewClipImporter mockedNewClipImporter;
+  @Mock private GetCameraPreferencesUseCase mockedGetCameraPreferencesUseCase;
 
 
   @InjectMocks private RecordCamera2Presenter injectedPresenter;
@@ -102,7 +104,7 @@ public class RecordCamera2PresenterTest {
     presenter.initViews();
 
     verify(mockedRecordView).hideRecordPointIndicator();
-    verify(mockedRecordView).setResolutionSelected(720);
+    verify(mockedRecordView).setCameraSettingSelected("720", "16Mbps", "25 fps");
     verify(mockedRecordView).showPrincipalViews();
     verify(mockedRecordView).showRightControlsView();
   }
@@ -114,7 +116,7 @@ public class RecordCamera2PresenterTest {
     presenter.initViews();
 
     verify(mockedRecordView).hideRecordPointIndicator();
-    verify(mockedRecordView).setResolutionSelected(720);
+    verify(mockedRecordView).setCameraSettingSelected("720", "16Mbps", "25 fps");
     verify(mockedRecordView).showPrincipalViews();
     verify(mockedRecordView).showRightControlsView();
   }
@@ -335,6 +337,7 @@ public class RecordCamera2PresenterTest {
   private RecordCamera2Presenter getRecordCamera2Presenter() {
     return new RecordCamera2Presenter(mockedActivity,
             mockedRecordView, mockedUserEventTracker, mockedSharedPreferences,
-            mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper);
+            mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper,
+            mockedGetCameraPreferencesUseCase);
   }
 }

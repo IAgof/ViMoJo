@@ -40,15 +40,11 @@ import dagger.Provides;
 public class FragmentPresentersModule {
 
   private Activity activity;
-  private ListPreference qualityPref;
   private SwitchPreference transitionAudioPref;
   private SwitchPreference transitionVideoPref;
   private SwitchPreference watermarkPref;
   private SwitchPreference themeAppPref;
-  private ListPreference frameRatePref;
   private Preference emailPref;
-  private ListPreference resolutionPref;
-  private PreferenceCategory cameraSettingsPref;
   private SettingsFragment settingsFragment;
   private Context context;
   private SharedPreferences sharedPreferences;
@@ -58,9 +54,6 @@ public class FragmentPresentersModule {
 
   public FragmentPresentersModule(SettingsFragment settingsFragment, Context context,
                                   SharedPreferences sharedPreferences,
-                                  PreferenceCategory cameraSettingsPref,
-                                  ListPreference resolutionPref,
-                                  ListPreference qualityPref,
                                   SwitchPreference transitionsVideoPref,
                                   SwitchPreference transitionsAudioPref,
                                   SwitchPreference watermarkPref,
@@ -70,9 +63,6 @@ public class FragmentPresentersModule {
     this.settingsFragment = settingsFragment;
     this.context = context;
     this.sharedPreferences = sharedPreferences;
-    this.cameraSettingsPref = cameraSettingsPref;
-    this.resolutionPref = resolutionPref;
-    this.qualityPref = qualityPref;
     this.transitionVideoPref = transitionsVideoPref;
     this.transitionAudioPref = transitionsAudioPref;
     this.watermarkPref = watermarkPref;
@@ -101,8 +91,8 @@ public class FragmentPresentersModule {
       BillingManager billingManager) {
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
-        cameraSettingsPref, resolutionPref, qualityPref, transitionVideoPref,
-        transitionAudioPref, watermarkPref, themeAppPref, emailPref, getMediaListFromProjectUseCase,
+        transitionVideoPref, transitionAudioPref, watermarkPref, themeAppPref, emailPref,
+        getMediaListFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase,
         updateAudioTransitionPreferenceToProjectUseCase,
         updateVideoTransitionPreferenceToProjectUseCase,

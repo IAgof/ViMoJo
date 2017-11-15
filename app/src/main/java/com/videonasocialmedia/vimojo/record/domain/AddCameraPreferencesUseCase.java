@@ -17,13 +17,13 @@ public class AddCameraPreferencesUseCase {
     this.cameraRepository = cameraRepository;
   }
 
-  public void setResolutionPreference(ResolutionPreference resolutionPreference) {
+  public void setResolutionPreferencesSupported(ResolutionPreference resolutionPreference) {
     CameraPreferences cameraPreferences = cameraRepository.getCameraPreferences();
     cameraPreferences.setResolutionPreference(resolutionPreference);
     cameraRepository.update(cameraPreferences);
   }
 
-  public void setFrameRatePreference(FrameRatePreference frameRatePreference) {
+  public void setFrameRatePreferencesSupported(FrameRatePreference frameRatePreference) {
     CameraPreferences cameraPreferences = cameraRepository.getCameraPreferences();
     cameraPreferences.setFrameRatePreferences(frameRatePreference);
     cameraRepository.update(cameraPreferences);

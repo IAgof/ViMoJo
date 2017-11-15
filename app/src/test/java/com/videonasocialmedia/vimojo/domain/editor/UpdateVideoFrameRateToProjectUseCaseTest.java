@@ -5,6 +5,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.record.domain.UpdateVideoFrameRateToProjectUseCase;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.hamcrest.CoreMatchers;
@@ -25,7 +26,8 @@ import static org.mockito.Mockito.verify;
 public class UpdateVideoFrameRateToProjectUseCaseTest {
 
   @Mock ProjectRepository mockedProjectRepository;
-  @InjectMocks UpdateVideoFrameRateToProjectUseCase injectedUseCase;
+  @InjectMocks
+  UpdateVideoFrameRateToProjectUseCase injectedUseCase;
   private Project currentProject;
 
   @Before

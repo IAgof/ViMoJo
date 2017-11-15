@@ -28,6 +28,10 @@ public class RealmCamera extends RealmObject {
   public boolean frameRate25FpsSupported;
   public boolean frameRate30FpsSupported;
 
+  public RealmCamera() {
+
+  }
+
   public RealmCamera (String cameraPreferenceId, boolean interfaceProSelected, String resolution,
                       String quality, String frameRate, boolean resolutionBack720pSupported,
                       boolean resolutionBack1080pSupported, boolean resolutionBack2160pSupported,

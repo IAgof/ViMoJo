@@ -8,7 +8,6 @@ import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.record.domain.AddCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.record.model.FrameRatePreference;
 import com.videonasocialmedia.vimojo.record.model.ResolutionPreference;
-import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import javax.inject.Inject;
 
@@ -43,13 +42,15 @@ public class InitAppPresenter {
           // TODO: 15/11/2017 Manage Error
           return;
       }
-      String defaultResolution = "";
+
+    String defaultResolution = "";
     boolean resolutionBack720pSupported = false;
     boolean resolutionBack1080pSupported = false;
     boolean resolutionBack2160pSupported = false;
     boolean resolutionFront720pSupported = false;
     boolean resolutionFront1080pSupported = false;
     boolean resolutionFront2160pSupported = false;
+
     if(camera2Settings.isBackCamera720pSupported())
       resolutionBack720pSupported = true;
     if(camera2Settings.isBackCamera1080pSupported())
@@ -69,7 +70,7 @@ public class InitAppPresenter {
             resolutionBack2160pSupported, resolutionFront720pSupported,
             resolutionFront1080pSupported, resolutionFront2160pSupported);
 
-    addCameraPreferenceUseCase.setResolutionPreference(resolutionPreference);
+    addCameraPreferenceUseCase.setResolutionPreferencesSupported(resolutionPreference);
 
   }
 
@@ -103,6 +104,6 @@ public class InitAppPresenter {
       FrameRatePreference frameRatePreference = new FrameRatePreference(defaultFrameRate,
               frameRate24FpsSupported, frameRate25FpsSupported, frameRate30FpsSupported);
 
-      addCameraPreferenceUseCase.setFrameRatePreference(frameRatePreference);
+      addCameraPreferenceUseCase.setFrameRatePreferencesSupported(frameRatePreference);
   }
 }

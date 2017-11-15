@@ -15,8 +15,9 @@ public class CameraToRealmCameraMapper  implements Mapper<CameraPreferences, Rea
     ResolutionPreference resolutionPreference = cameraPreferences.getResolutionPreference();
     FrameRatePreference frameRatePreference = cameraPreferences.getFrameRatePreference();
     RealmCamera realmCamera = new RealmCamera("cameraPreferences",
-        cameraPreferences.isInterfaceProSelected(), cameraPreferences.getResolution(),
-        cameraPreferences.getQuality(), cameraPreferences.getFrameRate(),
+        cameraPreferences.isInterfaceProSelected(),
+        cameraPreferences.getResolutionPreference().getResolution(),
+        cameraPreferences.getQuality(), cameraPreferences.getFrameRatePreference().getFrameRate(),
         resolutionPreference.isResolutionBack720pSupported(),
         resolutionPreference.isResolutionBack1080pSupported(),
         resolutionPreference.isResolutionBack2160pSupported(),

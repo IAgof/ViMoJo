@@ -13,7 +13,7 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
+import com.videonasocialmedia.vimojo.record.domain.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
@@ -43,7 +43,6 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.ShareVideoPrese
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;

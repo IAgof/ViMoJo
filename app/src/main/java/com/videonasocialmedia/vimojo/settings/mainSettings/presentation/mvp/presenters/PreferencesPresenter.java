@@ -59,9 +59,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private UserEventTracker userEventTracker;
     private SharedPreferences sharedPreferences;
     private PreferencesView preferencesView;
-    private PreferenceCategory cameraSettingsPref;
-    private ListPreference resolutionPref;
-    private ListPreference qualityPref;
     private Preference transitionVideoPref;
     private Preference transitionAudioPref;
     private Preference watermarkPref;
@@ -84,16 +81,12 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     /**
      * Constructor
      *  @param preferencesView
-     * @param resolutionPref
-     * @param qualityPref
      * @param emailPref
      * @param context
      * @param sharedPreferences
      */
     public PreferencesPresenter(PreferencesView preferencesView,
             Context context, SharedPreferences sharedPreferences,
-            PreferenceCategory cameraSettingsPref,
-            ListPreference resolutionPref, ListPreference qualityPref,
             Preference transitionVideoPref, Preference themeApp,
             Preference transitionAudioPref, Preference watermarkPref, Preference emailPref,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
@@ -112,9 +105,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.preferencesView = preferencesView;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
-        this.cameraSettingsPref = cameraSettingsPref;
-        this.resolutionPref = resolutionPref;
-        this.qualityPref = qualityPref;
         this.transitionVideoPref = transitionVideoPref;
         this.transitionAudioPref = transitionAudioPref;
         this.watermarkPref = watermarkPref;
@@ -172,9 +162,9 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             // Visibility FTP gone
             preferencesView.hideFtpsViews();
         }
-        checkCameraSettingsEnabled();
-        checkAvailableResolution();
-        checkAvailableQuality();
+        //checkCameraSettingsEnabled();
+        //checkAvailableResolution();
+        //checkAvailableQuality();
         checkTransitions();
         checkWatermark(BuildConfig.FEATURE_WATERMARK);
         checkThemeApp(ConfigPreferences.THEME_APP_DARK);
@@ -208,17 +198,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             preferencesView.setWatermarkSwitchPref(data);
         } else {
             preferencesView.hideWatermarkView();
-        }
-    }
-
-    private void checkCameraSettingsEnabled() {
-        List<Media> media = getMediaListFromProjectUseCase.getMediaListFromProject();
-        if (media.size() > 0) {
-            cameraSettingsPref.setEnabled(false);
-            isPreferenceAvailable = false;
-        } else {
-            cameraSettingsPref.setEnabled(true);
-            isPreferenceAvailable = true;
         }
     }
 
@@ -270,96 +249,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         }
         if (key.equals(ConfigPreferences.EMAIL)) {
             preferencesView.setUserPropertyToMixpanel("$account_email", data);
-        }
-    }
-
-    /**
-     * Checks supported resolutions on camera
-     */
-    private void checkAvailableResolution() {
-        ArrayList<String> resolutionNames = new ArrayList<>();
-        ArrayList<String> resolutionValues = new ArrayList<>();
-        String defaultResolution = null;
-        String key = ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION;
-
-        if (!isPreferenceAvailable) {
-            resolutionPref.setTitle(R.string.resolution);
-            resolutionPref.setSummary(R.string.preference_not_available);
-            return;
-        }
-
-        if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, false)) {
-            resolutionNames.add(context.getResources().getString(R.string.good_resolution_name));
-            resolutionValues.add(context.getResources().getString(R.string.good_resolution_value));
-            if (defaultResolution == null) {
-                defaultResolution = context.getResources().getString(R.string.good_resolution_name);
-            }
-        }
-        if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false)) {
-            resolutionNames.add(context.getResources().getString(R.string.low_resolution_name));
-            resolutionValues.add(context.getResources().getString(R.string.low_resolution_value));
-            if (defaultResolution == null) {
-                defaultResolution = context.getResources().getString(R.string.low_resolution_name);
-            }
-        }
-        if (sharedPreferences.getBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, false)) {
-            resolutionNames.add(context.getResources().getString(R.string.high_resolution_name));
-            resolutionValues.add(context.getResources().getString(R.string.high_resolution_value));
-            if (defaultResolution == null) {
-                defaultResolution = context.getResources().getString(R.string.high_resolution_name);
-            }
-        }
-        if (resolutionNames.size() > 0 && defaultResolution != null) {
-            preferencesView.setAvailablePreferences(resolutionPref, resolutionNames,
-                    resolutionValues);
-            if (updateDefaultPreference(key, resolutionNames)) {
-                preferencesView.setDefaultPreference(resolutionPref, defaultResolution, key);
-            } else {
-                preferencesView.setPreference(resolutionPref, sharedPreferences.getString(key, ""));
-            }
-        } else {
-            resolutionNames.add(context.getResources().getString(R.string.good_resolution_name));
-            resolutionValues.add(context.getResources().getString(R.string.good_resolution_value));
-            preferencesView.setAvailablePreferences(resolutionPref, resolutionNames,
-                    resolutionValues);
-        }
-    }
-
-
-    /**
-     * Checks supported qualities on camera
-     */
-    private void checkAvailableQuality() {
-        ArrayList<String> qualityNames = new ArrayList<>();
-        ArrayList<String> qualityValues = new ArrayList<>();
-        String defaultQuality = context.getResources()
-                .getString(ProfileSharedPreferencesRepository.DEFAULT_VIDEO_QUALITY_NAME);
-        String qualityKey = ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY;
-
-        if (!isPreferenceAvailable) {
-            qualityPref.setTitle(R.string.quality);
-            qualityPref.setSummary(R.string.preference_not_available);
-            return;
-        }
-
-        qualityNames.add(context.getResources().getString(R.string.low_quality_name));
-        qualityValues.add(context.getResources().getString(R.string.low_quality_value));
-        qualityNames.add(context.getResources().getString(R.string.good_quality_name));
-        qualityValues.add(context.getResources().getString(R.string.good_quality_value));
-        qualityNames.add(context.getResources().getString(R.string.high_quality_name));
-        qualityValues.add(context.getResources().getString(R.string.high_quality_value));
-
-        if (qualityNames.size() > 0) {
-            preferencesView.setAvailablePreferences(qualityPref, qualityNames, qualityValues);
-            if (updateDefaultPreference(qualityKey, qualityNames)) {
-                preferencesView.setDefaultPreference(qualityPref, defaultQuality, qualityKey);
-            } else {
-                preferencesView.setPreference(qualityPref,
-                        sharedPreferences.getString(qualityKey, ""));
-            }
-        } else {
-            qualityNames.add(context.getResources().getString(R.string.good_quality_name));
-            preferencesView.setAvailablePreferences(qualityPref, qualityNames, qualityValues);
         }
     }
 

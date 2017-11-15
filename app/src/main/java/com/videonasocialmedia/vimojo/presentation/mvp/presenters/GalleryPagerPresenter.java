@@ -12,7 +12,6 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
@@ -21,7 +20,7 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
+import com.videonasocialmedia.vimojo.record.domain.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;

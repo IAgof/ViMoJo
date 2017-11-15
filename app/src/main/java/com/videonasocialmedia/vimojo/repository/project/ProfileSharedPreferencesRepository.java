@@ -13,7 +13,7 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 /**
  * Created by alvaro on 24/10/16.
  */
-
+// TODO: 15/11/2017 Delete this class before merging story
 public class ProfileSharedPreferencesRepository implements ProfileRepository {
   public static final VideoQuality.Quality DEFAULT_VIDEO_QUALITY = VideoQuality.Quality.LOW;
   public static final int DEFAULT_VIDEO_QUALITY_NAME = R.string.low_quality_name;

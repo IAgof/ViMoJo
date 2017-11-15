@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.domain.editor;
+package com.videonasocialmedia.vimojo.record.domain;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;

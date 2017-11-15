@@ -1,7 +1,7 @@
-package com.videonasocialmedia.vimojo.domain.editor;
+package com.videonasocialmedia.vimojo.record.domain;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import javax.inject.Inject;
@@ -10,7 +10,7 @@ import javax.inject.Inject;
  * Created by alvaro on 20/10/16.
  */
 
-public class UpdateVideoQualityToProjectUseCase {
+public class UpdateVideoResolutionToProjectUseCase {
 
     private Project currentProject;
     protected ProjectRepository projectRepository;
@@ -20,13 +20,13 @@ public class UpdateVideoQualityToProjectUseCase {
    *
    * @param projectRepository the project repository.
    */
-  @Inject public UpdateVideoQualityToProjectUseCase(ProjectRepository projectRepository) {
+  @Inject public UpdateVideoResolutionToProjectUseCase(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
     }
 
-    public void updateQuality(VideoQuality.Quality quality) {
+    public void updateResolution(VideoResolution.Resolution resolution) {
         currentProject = Project.getInstance(null, null, null, null);
-        currentProject.getProfile().setQuality(quality);
+        currentProject.getProfile().setResolution(resolution);
         projectRepository.update(currentProject);
     }
 }
