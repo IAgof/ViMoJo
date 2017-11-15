@@ -192,6 +192,15 @@
             />
 
         <activity
+            android:name=".settings.cameraSettings.presentation.view.activity.CameraSettingsActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:screenOrientation="landscape"
+            android:parentActivityName=".record.presentation.views.activity.RecordCamera2Activity"
+            />
+
+
+        <activity
         android:name=".trim.presentation.views.activity.VideoTrimActivity"
         android:label="@string/app_name"
         android:launchMode="singleTop"

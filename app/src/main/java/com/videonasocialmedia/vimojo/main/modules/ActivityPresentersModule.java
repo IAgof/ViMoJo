@@ -54,6 +54,9 @@ import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.settings.cameraSettings.domain.GetCameraSettingListUseCase;
+import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.mvp.presenters.CameraSettingsPresenter;
+import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.source.VimojoLicensesProvider;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.domain.GetLicenseVimojoListUseCase;
@@ -200,6 +203,11 @@ public class ActivityPresentersModule {
   LicenseListPresenter provideLicenseListPresenter(GetLicenseVimojoListUseCase
                                                        getLicenseVimojoListUseCase) {
     return new LicenseListPresenter((LicenseListView) activity, activity, getLicenseVimojoListUseCase);
+  }
+
+  @Provides @PerActivity
+  CameraSettingsPresenter provideCameraSettingPresenter(GetCameraSettingListUseCase getCameraSettingListUseCase) {
+    return new CameraSettingsPresenter((CameraSettingsView) activity, activity, getCameraSettingListUseCase);
   }
 
   @Provides @PerActivity
@@ -369,6 +377,10 @@ public class ActivityPresentersModule {
   @Provides GetLicenseVimojoListUseCase provideLicenseListUseCase(
       VimojoLicensesProvider vimojoLicencesProvider) {
     return new GetLicenseVimojoListUseCase(vimojoLicencesProvider);
+  }
+
+  @Provides GetCameraSettingListUseCase provideCameraSettingUseCase() {
+    return new GetCameraSettingListUseCase(activity);
   }
 
   @Provides GetMediaListFromProjectUseCase provideMediaListRetriever() {

@@ -220,6 +220,8 @@
     <string name="cancelSettingsCamera">Cancelar</string>
     <string name="preference_not_available">Ajuste no disponible con vídeos en el proyecto actual</string>
 
+    <string name="title_camera_settings_activity">Ajuste de cámara</string>
+
     <!-- Transition Settings -->
     <string name="title_fade_transition">Transiciones</string>
     <string name="title_video_fade_transition">Transición entre vídeos</string>

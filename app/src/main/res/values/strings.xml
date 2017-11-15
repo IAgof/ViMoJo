@@ -238,6 +238,8 @@
     <string name="cancelSettingsCamera">Cancel</string>
     <string name="preference_not_available">Preference not available while videos in current project</string>
 
+    <string name="title_camera_settings_activity">Camera Settings</string>
+
     <!-- Transition Settings -->
     <string name="title_fade_transition">Transition</string>
     <string name="title_video_fade_transition">Video fade transition</string>

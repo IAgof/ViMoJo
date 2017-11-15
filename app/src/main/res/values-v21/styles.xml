@@ -40,6 +40,7 @@
         <item name="android:preferenceCategoryStyle">@style/VideonaCategoryPreference</item>
 
         <item name="android:editTextStyle">@style/VideonaEditText</item>
+        <item name="android:radioButtonStyle">@style/VideonaRadioButton</item>
 
         <item name="cardViewStyle">@style/CardViewStyleLight</item>
     </style>
@@ -91,6 +92,7 @@
 
         <item name="android:editTextStyle">@style/VideonaEditText</item>
         <item name="android:buttonTint">@color/colorWhite</item>
+        <item name="android:radioButtonStyle">@style/VideonaRadioButton</item>
     </style>
 
     <style name="CardViewStyleDark" parent="CardView.Dark">
@@ -114,6 +116,12 @@
         <item name="android:backgroundTint">?attr/android:textColorSecondary</item>
         <item name="android:textColor">?attr/android:textColorPrimary</item>
         <item name="android:textCursorDrawable">@null</item>
+    </style>
+
+    <style name="VideonaRadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:backgroundTint">?attr/android:textColorSecondary</item>
+        <item name="android:textColor">?attr/android:textColorPrimary</item>
+        <item name="android:buttonTint">?attr/colorAccent</item>
     </style>
 
     <style name="ViMoJoTutorial" parent="Theme.AppCompat.Light">

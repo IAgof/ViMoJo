@@ -44,6 +44,7 @@ import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageV
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.dialogs.AlertDialogWithInfoIntoCircle;
+import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.view.activity.CameraSettingsActivity;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialRecordActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -1277,7 +1278,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnClick(R.id.button_navigate_settings)
   public void navigateToSettings() {
     if (!isRecording) {
-      navigateTo(SettingsActivity.class);
+      navigateTo(CameraSettingsActivity.class);
     }
   }
 
