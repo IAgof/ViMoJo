@@ -65,9 +65,10 @@ public class CameraSettingsActivity extends VimojoActivity implements CameraSett
     super.onResume();
   }
 
-  @Override
-  public void onClickCameraPreferencesItem() {
 
+  @Override
+  public void onChechedChangeCameraPreference(int checkedId) {
+    //poner método para actualizar preferencia según id
   }
 
   @Override

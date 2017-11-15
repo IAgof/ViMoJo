@@ -12,13 +12,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.settings.cameraSettings.model.CameraSettingsItem;
 import com.videonasocialmedia.vimojo.settings.cameraSettings.model.CameraSettingsPackage;
 
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 
 public class CameraSettingsAdapter extends
@@ -47,12 +47,12 @@ public class CameraSettingsAdapter extends
 
   @Override
   public void onBindViewHolder(CameraSettingsAdapterItemViewHolder holder, int position) {
-
     CameraSettingsPackage cameraSettingsPackage = cameraSettingsList.get(position);
-    holder.settingCameraTitlePackage.setText(cameraSettingsPackage.getTitlePreferencePackage());
+    holder.settingCameraTitlePackage.setText(cameraSettingsPackage.getTitleCameraSettingsPackage());
+
     if(!cameraSettingsPackage.isAvailable()) {
       holder.textNotAvailable.setText(context.getString(R.string.preference_camera_not_available)
-          + " " + cameraSettingsPackage.getTitlePreferencePackage());
+          + " " + cameraSettingsPackage.getTitleCameraSettingsPackage());
       holder.textNotAvailable.setVisibility(View.VISIBLE);
       holder.cameraSettingGroup.setVisibility(View.GONE);
     } else {
@@ -60,12 +60,10 @@ public class CameraSettingsAdapter extends
       holder.cameraSettingGroup.setVisibility(View.VISIBLE);
     }
 
-    int id = (position+1)*100;
-
-    for (String preference : cameraSettingsPackage.getPreferencesList()){
+    for (CameraSettingsItem preference : cameraSettingsPackage.getPreferencesList()){
       RadioButton preferenceOption = new RadioButton(CameraSettingsAdapter.this.context);
-      preferenceOption.setId(id++);
-      preferenceOption.setText(preference);
+      preferenceOption.setId(preference.getId());
+      preferenceOption.setText(preference.getTitleCameraSettingsItem());
 
       holder.cameraSettingGroup.addView(preferenceOption);
     }
@@ -94,28 +92,19 @@ public class CameraSettingsAdapter extends
       super(itemView);
       ButterKnife.bind(this, itemView);
       this.cameraSettingsList = cameraSettingsList;
-
       cameraSettingGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-
         @Override
         public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId) {
 
           if (radioGroup!= null) {
+            listener.onChechedChangeCameraPreference(radioGroup.getCheckedRadioButtonId());
+
             Toast.makeText(CameraSettingsAdapter.this.context,
                 "Radio button clicked " + radioGroup.getCheckedRadioButtonId(),
                 Toast.LENGTH_SHORT).show();
           }
         }
       });
-    }
-
-    @OnClick({})
-    public void onClick() {
-      CameraSettingsPackage cameraSetting = getData(getAdapterPosition());
-      listener.onClickCameraPreferencesItem();
-    }
-      CameraSettingsPackage getData(int adapterPosition) {
-      return cameraSettingsList == null ? null : cameraSettingsList.get(adapterPosition);
     }
   }
 }

@@ -3,7 +3,7 @@ package com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.mvp.p
 
 import android.content.Context;
 
-import com.videonasocialmedia.vimojo.settings.cameraSettings.domain.GetCameraSettingListUseCase;
+import com.videonasocialmedia.vimojo.settings.cameraSettings.domain.GetCameraSettingsListUseCase;
 import com.videonasocialmedia.vimojo.settings.cameraSettings.model.CameraSettingsPackage;
 import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.mvp.views.CameraSettingsView;
 
@@ -15,10 +15,10 @@ public class CameraSettingsPresenter {
   private Context context;
   private List<CameraSettingsPackage> preferencesList;
   private CameraSettingsView preferenceListView;
-  private GetCameraSettingListUseCase getSettingListUseCase;
+  private GetCameraSettingsListUseCase getSettingListUseCase;
 
   @Inject
-  public CameraSettingsPresenter(CameraSettingsView preferenceListView, Context context, GetCameraSettingListUseCase getSettingListUseCase) {
+  public CameraSettingsPresenter(CameraSettingsView preferenceListView, Context context, GetCameraSettingsListUseCase getSettingListUseCase) {
     this.context = context;
     preferencesList = getSettingListUseCase.getCameraSettingsList();
     this.preferenceListView = preferenceListView;
