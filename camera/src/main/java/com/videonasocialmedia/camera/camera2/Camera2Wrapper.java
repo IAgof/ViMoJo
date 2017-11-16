@@ -1,9 +1,7 @@
 package com.videonasocialmedia.camera.camera2;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -23,7 +21,6 @@ import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Range;
 import android.util.Size;
@@ -34,11 +31,11 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.samsung.android.sdk.SsdkUnsupportedException;
 import com.samsung.android.sdk.camera.SCamera;
-import com.samsung.android.sdk.camera.SCameraDevice;
 import com.samsung.android.sdk.camera.SCameraManager;
 import com.videonasocialmedia.camera.camera2.wrappers.VideonaCameraCaptureSession;
 import com.videonasocialmedia.camera.camera2.wrappers.VideonaCameraCharacteristics;
 import com.videonasocialmedia.camera.camera2.wrappers.VideonaCameraDevice;
+import com.videonasocialmedia.camera.camera2.wrappers.VideonaCameraManager;
 import com.videonasocialmedia.camera.camera2.wrappers.VideonaCaptureRequest;
 import com.videonasocialmedia.camera.camera2.wrappers.VideonaCaptureResult;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
@@ -429,7 +426,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
       mediaRecorder = new MediaRecorderWrapper(new MediaRecorder(), cameraIdSelected,
               sensorOrientation, rotation, createVideoFilePath(), videoCameraFormat);
-      manager.openCamera(cameraId, stateCallback, null);
+      manager.openCamera(cameraId, stateCallback, null, contextWeakReference);
     } catch (CameraAccessException e) {
       Toast.makeText(activity, "Cannot access the camera.", Toast.LENGTH_SHORT).show();
       activity.finish();
@@ -958,6 +955,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     private Float captureResultLensAperture;
     private boolean captureResultHasFocalLength;
     private Float captureResultFocalLength;
+    public boolean captureResultHasFocusDistance;
+    public Float captureResultFocusDistance;
   }
 
   private CaptureResultSettings captureResultSettings = new CaptureResultSettings();
@@ -1025,98 +1024,16 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
               } else {
                 captureResultSettings.captureResultHasFocalLength = false;
               }
+              if (result.get(CaptureResult.LENS_FOCUS_DISTANCE) != null) {
+                captureResultSettings.captureResultHasFocusDistance = true;
+                captureResultSettings.captureResultFocusDistance =
+                        result.get(CaptureResult.LENS_FOCUS_DISTANCE);
+                Log.d(LOG_TAG, "Capture result focus distance: "
+                        + captureResultSettings.captureResultFocusDistance);
+              } else {
+                captureResultSettings.captureResultHasFocusDistance = false;
+              }
             }
           };
-
-  private class VideonaCameraManager {
-    // TODO(jliarte): 16/11/17 move this class up? a parameter for context weak reference would be needed
-    private CameraManager systemCameraManager;
-    private SCameraManager sCameraManager;
-    private boolean isSamsungCamera = false;
-
-    public VideonaCameraManager(CameraManager systemCameraManager) {
-      this.systemCameraManager = systemCameraManager;
-    }
-
-    public VideonaCameraManager(SCameraManager sCameraManager) {
-      isSamsungCamera = true;
-      this.sCameraManager = sCameraManager;
-    }
-
-    public VideonaCameraCharacteristics getCameraCharacteristics(String cameraId)
-            throws CameraAccessException {
-      // TODO(jliarte): 14/11/17 maybe we need to wrap CameraCharacteristics here too
-      if (isSamsungCamera) {
-        return new VideonaCameraCharacteristics(
-                sCameraManager.getCameraCharacteristics(cameraId));
-      } else {
-        return new VideonaCameraCharacteristics(
-                systemCameraManager.getCameraCharacteristics(cameraId));
-      }
-    }
-
-    public String[] getCameraIdList() throws CameraAccessException {
-      if (isSamsungCamera) {
-        return sCameraManager.getCameraIdList();
-      } else {
-        return systemCameraManager.getCameraIdList();
-      }
-    }
-
-    public void openCamera(String cameraId, final VideonaCameraDevice.StateCallback stateCallback,
-                           Handler handler) throws CameraAccessException {
-      if (isSamsungCamera) {
-        // TODO(jliarte): 14/11/17 implement this method
-        SCameraDevice.StateCallback samsungStateCallback = new SCameraDevice.StateCallback() {
-          @Override
-          public void onOpened(SCameraDevice sCameraDevice) {
-            stateCallback.onOpened(new VideonaCameraDevice(sCameraDevice));
-          }
-
-          @Override
-          public void onDisconnected(SCameraDevice sCameraDevice) {
-            stateCallback.onDisconnected(new VideonaCameraDevice(sCameraDevice));
-          }
-
-          @Override
-          public void onError(SCameraDevice sCameraDevice, int error) {
-            stateCallback.onError(new VideonaCameraDevice(sCameraDevice), error);
-          }
-        };
-        sCameraManager.openCamera(cameraId, samsungStateCallback, handler);
-      } else {
-        CameraDevice.StateCallback systemCameraStateCallback = new CameraDevice.StateCallback() {
-          @Override
-          public void onOpened(@NonNull CameraDevice cameraDevice) {
-            stateCallback.onOpened(new VideonaCameraDevice(cameraDevice));
-          }
-
-          @Override
-          public void onDisconnected(@NonNull CameraDevice cameraDevice) {
-            stateCallback.onDisconnected(new VideonaCameraDevice(cameraDevice));
-          }
-
-          @Override
-          public void onError(@NonNull CameraDevice cameraDevice, int error) {
-            stateCallback.onError(new VideonaCameraDevice(cameraDevice), error);
-          }
-        };
-        if (contextWeakReference.get() != null) {
-          if (ActivityCompat.checkSelfPermission(contextWeakReference.get(),
-                  Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-          }
-          systemCameraManager.openCamera(cameraId, systemCameraStateCallback, handler);
-        }
-      }
-    }
-  }
 
 }

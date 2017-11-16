@@ -60,8 +60,11 @@ public class Camera2FocusHelper {
       maxAFRegions = camera2Wrapper.getCurrentCameraCharacteristics()
           .get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF);
       for (int focusSelectionSetting : returnedValues) {
-        if(focusSelectionSetting == CONTROL_AF_MODE_OFF) {
-          focusSelectionStringArrayList.add(AF_MODE_MANUAL);
+        if (focusSelectionSetting == CONTROL_AF_MODE_OFF) {
+          if (camera2Wrapper.getCurrentCameraCharacteristics()
+                  .get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE) != null) {
+            focusSelectionStringArrayList.add(AF_MODE_MANUAL);
+          }
         }
         if (focusSelectionSetting == CONTROL_AF_MODE_CONTINUOUS_VIDEO) {
           focusSelectionStringArrayList.add(AF_MODE_AUTO);

@@ -27,6 +27,7 @@ public class VideonaCaptureResult {
     captureResultMap.put(CaptureResult.SENSOR_FRAME_DURATION, SCaptureResult.SENSOR_FRAME_DURATION);
     captureResultMap.put(CaptureResult.LENS_APERTURE, SCaptureResult.LENS_APERTURE);
     captureResultMap.put(CaptureResult.LENS_FOCAL_LENGTH, SCaptureResult.LENS_FOCAL_LENGTH);
+    captureResultMap.put(CaptureResult.LENS_FOCUS_DISTANCE, SCaptureResult.LENS_FOCUS_DISTANCE);
 //    captureResultMap.put(, S);
   }
 
