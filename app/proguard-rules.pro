@@ -184,3 +184,8 @@
 
 # Mp4parser
 -dontwarn com.googlecode.mp4parser.**
+
+# Samsung SDK
+-keep class com.samsung.** { *; }
+-keep class com.samsung.**$* { *; }
+-dontwarn com.samsung.**
