@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.settings.cameraSettings.model;
+package com.videonasocialmedia.vimojo.cameraSettings.model;
 
 /**
  * Created by ruth on 15/11/17.
@@ -6,12 +6,14 @@ package com.videonasocialmedia.vimojo.settings.cameraSettings.model;
 
 public class CameraSettingsItem {
 
-    private int id;
+  private boolean isSelected;
+  private int id;
     private String titleCameraSettingsItem;
 
-    public CameraSettingsItem(int id, String titleCameraSettingsItem) {
+    public CameraSettingsItem(int id, String titleCameraSettingsItem, boolean isSelected) {
       this.id = id;
       this.titleCameraSettingsItem = titleCameraSettingsItem;
+      this.isSelected = isSelected;
     }
 
     public int getId() {
@@ -26,9 +28,9 @@ public class CameraSettingsItem {
       return titleCameraSettingsItem;
     }
 
-    public void setTitleCameraSettingsItem(String titleCameraSettingsItem) {
-      this.titleCameraSettingsItem = titleCameraSettingsItem;
-    }
+  public boolean isSelected() {
+    return isSelected;
   }
+}
 
 

@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.view.adapter;
+package com.videonasocialmedia.vimojo.cameraSettings.presentation.view.adapter;
 
 import android.widget.RadioGroup;
 
@@ -7,6 +7,5 @@ import android.widget.RadioGroup;
  */
 
 public interface CameraSettingsListClickListener {
-
   void onCheckedChangeCameraPreference(RadioGroup radioGroup, int checkedId);
 }

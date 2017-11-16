@@ -13,6 +13,8 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
+import com.videonasocialmedia.vimojo.record.domain.UpdateVideoFrameRateToProjectUseCase;
+import com.videonasocialmedia.vimojo.record.domain.UpdateVideoQualityToProjectUseCase;
 import com.videonasocialmedia.vimojo.record.domain.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
@@ -49,7 +51,6 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateA
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.record.domain.AddCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.record.domain.GetCameraPreferencesUseCase;
-import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRealmRepository;
 import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRepository;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
@@ -57,9 +58,9 @@ import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCa
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.settings.cameraSettings.domain.GetCameraSettingsListUseCase;
-import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.mvp.presenters.CameraSettingsPresenter;
-import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.mvp.views.CameraSettingsView;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsListUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.presenters.CameraSettingsPresenter;
+import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.source.VimojoLicensesProvider;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.domain.GetLicenseVimojoListUseCase;
@@ -209,8 +210,21 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  CameraSettingsPresenter provideCameraSettingPresenter(GetCameraSettingsListUseCase getCameraSettingsListUseCase) {
-    return new CameraSettingsPresenter((CameraSettingsView) activity, activity, getCameraSettingsListUseCase);
+  CameraSettingsPresenter provideCameraSettingPresenter(GetCameraSettingsListUseCase
+                                                            getCameraSettingsListUseCase,
+                                                        AddCameraPreferencesUseCase
+                                                            addCameraPreferencesUseCase,
+                                                        UpdateVideoResolutionToProjectUseCase
+                                                          updateVideoResolutionToProjectUseCase,
+                                                        UpdateVideoFrameRateToProjectUseCase
+                                                          updateVideoFrameRateToProjectUseCase,
+                                                        UpdateVideoQualityToProjectUseCase
+                                                         updateVideoQualityToProjectUseCase
+                                                        ) {
+    return new CameraSettingsPresenter((CameraSettingsView) activity, activity,
+        getCameraSettingsListUseCase, addCameraPreferencesUseCase,
+        updateVideoResolutionToProjectUseCase, updateVideoFrameRateToProjectUseCase,
+        updateVideoQualityToProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -523,5 +537,23 @@ public class ActivityPresentersModule {
   GetCameraPreferencesUseCase provideGetCameraPreferencesUseCase(CameraPrefRepository
                                                                      cameraPrefRepository) {
     return new GetCameraPreferencesUseCase(cameraPrefRepository);
+  }
+
+  @Provides
+  UpdateVideoResolutionToProjectUseCase
+    provideUpdateVideoResolutionToProjectUseCase(ProjectRepository projectRepository) {
+      return new UpdateVideoResolutionToProjectUseCase(projectRepository);
+  }
+
+  @Provides
+  UpdateVideoFrameRateToProjectUseCase
+    provideUpdateVideoFrameRateToProjectUseCase(ProjectRepository projectRepository) {
+      return new UpdateVideoFrameRateToProjectUseCase(projectRepository);
+  }
+
+  @Provides
+  UpdateVideoQualityToProjectUseCase
+    provideUpdateVideoQualityToProjectUseCase (ProjectRepository projectRepository) {
+     return new UpdateVideoQualityToProjectUseCase(projectRepository);
   }
 }

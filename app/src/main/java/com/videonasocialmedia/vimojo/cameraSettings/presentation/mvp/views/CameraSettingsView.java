@@ -1,6 +1,6 @@
-package com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.mvp.views;
+package com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views;
 
-import com.videonasocialmedia.vimojo.settings.cameraSettings.model.CameraSettingsPackage;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingsPackage;
 
 import java.util.List;
 

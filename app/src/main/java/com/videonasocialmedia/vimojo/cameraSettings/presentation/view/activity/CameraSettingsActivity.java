@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.view.activity;
+package com.videonasocialmedia.vimojo.cameraSettings.presentation.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,11 +11,11 @@ import android.widget.RadioGroup;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
-import com.videonasocialmedia.vimojo.settings.cameraSettings.model.CameraSettingsPackage;
-import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.mvp.presenters.CameraSettingsPresenter;
-import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.mvp.views.CameraSettingsView;
-import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.view.adapter.CameraSettingsAdapter;
-import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.view.adapter.CameraSettingsListClickListener;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingsPackage;
+import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.presenters.CameraSettingsPresenter;
+import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
+import com.videonasocialmedia.vimojo.cameraSettings.presentation.view.adapter.CameraSettingsAdapter;
+import com.videonasocialmedia.vimojo.cameraSettings.presentation.view.adapter.CameraSettingsListClickListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
@@ -32,12 +32,13 @@ public class CameraSettingsActivity extends VimojoActivity implements CameraSett
   @Inject
   CameraSettingsPresenter presenter;
   @Bind(R.id.camera_setting_recycler_view)
-  RecyclerView preferenceList;
+  RecyclerView recyclerCameraSettingsList;
   @Bind(R.id.camera_setting_ok)
   Button okButton;
 
   private final int NUM_COLUMNS_GRID_RECYCLER = 2;
   private CameraSettingsAdapter adapter;
+  private List<CameraSettingsPackage> cameraSettingPackageList;
 
 
   @Override
@@ -47,7 +48,6 @@ public class CameraSettingsActivity extends VimojoActivity implements CameraSett
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
     initCameraSettingsRecycler();
-    presenter.getCameraSettingsList();
   }
 
   private void initCameraSettingsRecycler() {
@@ -58,19 +58,21 @@ public class CameraSettingsActivity extends VimojoActivity implements CameraSett
     adapter.setCameraSettingsListClickListener(this);
     RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, num_grid_columns,
         orientation, false);
-    preferenceList.setLayoutManager(layoutManager);
-    preferenceList.setAdapter(adapter);
+    recyclerCameraSettingsList.setLayoutManager(layoutManager);
+    recyclerCameraSettingsList.setAdapter(adapter);
   }
 
   @Override
   protected void onResume() {
+    if(cameraSettingPackageList == null || cameraSettingPackageList.size() == 0) {
+      presenter.getCameraSettingsList();
+    }
     super.onResume();
   }
 
 
   @Override
   public void onCheckedChangeCameraPreference(RadioGroup radioGroup, int checkedId) {
-
     switch (checkedId){
       case Constants.CAMERA_PREF_INTERFACE_PRO_ID | Constants.CAMERA_PREF_INTERFACE_PRO_ID:
         presenter.setCameraInterfacePreference(checkedId);
@@ -92,6 +94,7 @@ public class CameraSettingsActivity extends VimojoActivity implements CameraSett
 
   @Override
   public void showCameraSettingsList(List<CameraSettingsPackage> list) {
+    cameraSettingPackageList = list;
     adapter.setCameraSettingsItemsList(list);
   }
 

@@ -1,10 +1,13 @@
-package com.videonasocialmedia.vimojo.settings.cameraSettings.domain;
+package com.videonasocialmedia.vimojo.cameraSettings.domain;
 
 import android.content.Context;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.settings.cameraSettings.model.CameraSettingsItem;
-import com.videonasocialmedia.vimojo.settings.cameraSettings.model.CameraSettingsPackage;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingsItem;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingsPackage;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.record.domain.GetCameraPreferencesUseCase;
+import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRealmRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.ArrayList;
@@ -18,6 +21,7 @@ import javax.inject.Inject;
 
 public class GetCameraSettingsListUseCase {
   private Context context;
+  private boolean DEFAULT_INTERFACE_PRO_BASIC_AVAILABLE = true;
 
   @Inject
   public GetCameraSettingsListUseCase(Context context) {
@@ -26,52 +30,78 @@ public class GetCameraSettingsListUseCase {
 
   public List<CameraSettingsPackage> getCameraSettingsList() {
 
+    GetCameraPreferencesUseCase getCameraPreferencesUseCase = new
+        GetCameraPreferencesUseCase(new CameraPrefRealmRepository());
+    Project project = Project.getInstance(null, null, null, null);
+
     List <CameraSettingsPackage> preferenceList = new ArrayList();
 
-    List<CameraSettingsItem> optionList = new ArrayList();
-    optionList.add(new CameraSettingsItem(Constants.CAMERA_PREF_INTERFACE_PRO_ID,
-        context.getString(R.string.camera_pro)));
-    optionList.add(new CameraSettingsItem(Constants.CAMERA_PREF_INTERFACE_BASIC_ID,
-        context.getString(R.string.camera_basic)));
+    List<CameraSettingsItem> interfaceProList = new ArrayList();
+
+    interfaceProList.add(new CameraSettingsItem(Constants.CAMERA_PREF_INTERFACE_PRO_ID,
+        context.getString(R.string.camera_pro), getCameraPreferencesUseCase.isInterfaceProSelected()));
+    interfaceProList.add(new CameraSettingsItem(Constants.CAMERA_PREF_INTERFACE_BASIC_ID,
+        context.getString(R.string.camera_basic), !getCameraPreferencesUseCase.isInterfaceProSelected()));
+    DEFAULT_INTERFACE_PRO_BASIC_AVAILABLE = true;
     preferenceList.add(new CameraSettingsPackage(context.getString(R.string.camera_pro_o_basic),
-        optionList, true));
+        interfaceProList, DEFAULT_INTERFACE_PRO_BASIC_AVAILABLE));
 
-    optionList = new ArrayList();
-    optionList.add(new CameraSettingsItem(Constants.CAMERA_PREF_RESOLUTION_720_ID,
-        context.getString(R.string.low_resolution_name)));
-    optionList.add(new CameraSettingsItem(Constants.CAMERA_PREF_RESOLUTION_1080_ID,
-        context.getString(R.string.good_resolution_name)));
-    optionList.add(new CameraSettingsItem(Constants.CAMERA_PREF_RESOLUTION_2160_ID,
-        context.getString(R.string.high_resolution_name)));
+    List<CameraSettingsItem> resolutionList = new ArrayList();
+    String resolutionSelected = getCameraPreferencesUseCase.getResolutionPreference().getResolution();
+    if(getCameraPreferencesUseCase.getResolutionPreference().isResolutionBack720pSupported()) {
+      resolutionList.add(new CameraSettingsItem(Constants.CAMERA_PREF_RESOLUTION_720_ID,
+          context.getString(R.string.low_resolution_name),
+          isResolution720Selected(resolutionSelected)));
+    }
+    if(getCameraPreferencesUseCase.getResolutionPreference().isResolutionBack1080pSupported()) {
+      resolutionList.add(new CameraSettingsItem(Constants.CAMERA_PREF_RESOLUTION_1080_ID,
+          context.getString(R.string.good_resolution_name), resolutionSelected.compareTo(Constants.CAMERA_PREF_RESOLUTION_1080) == 0));
+    }
+    if(getCameraPreferencesUseCase.getResolutionPreference().isResolutionBack2160pSupported()) {
+      resolutionList.add(new CameraSettingsItem(Constants.CAMERA_PREF_RESOLUTION_2160_ID,
+          context.getString(R.string.high_resolution_name), resolutionSelected.compareTo(Constants.CAMERA_PREF_RESOLUTION_2160) == 0));
+    }
+    preferenceList.add(new CameraSettingsPackage(context.getString(R.string.resolution),
+        resolutionList, isCameraSettingAvailable(project)));
 
-    preferenceList.add(new CameraSettingsPackage(context.getString(R.string.resolution), optionList,
-        true));
+    List<CameraSettingsItem> frameRateList = new ArrayList();
+    String frameRateSelected = getCameraPreferencesUseCase.getFrameRatePreference().getFrameRate();
+    if(getCameraPreferencesUseCase.getFrameRatePreference().isFrameRate24FpsSupported()) {
+      frameRateList.add(new CameraSettingsItem(Constants.CAMERA_PREF_FRAME_RATE_24_ID,
+          context.getString(R.string.low_frame_rate_name), frameRateSelected.compareTo(Constants.CAMERA_PREF_FRAME_RATE_24) == 0));
+    }
+    if(getCameraPreferencesUseCase.getFrameRatePreference().isFrameRate25FpsSupported()) {
+      frameRateList.add(new CameraSettingsItem(Constants.CAMERA_PREF_FRAME_RATE_25_ID,
+          context.getString(R.string.good_frame_rate_name), frameRateSelected.compareTo(Constants.CAMERA_PREF_FRAME_RATE_25) == 0));
+    }
+    if(getCameraPreferencesUseCase.getFrameRatePreference().isFrameRate30FpsSupported()) {
+      frameRateList.add(new CameraSettingsItem(Constants.CAMERA_PREF_FRAME_RATE_30_ID,
+          context.getString(R.string.high_frame_rate_name), frameRateSelected.compareTo(Constants.CAMERA_PREF_FRAME_RATE_30) == 0));
+    }
+    preferenceList.add(new CameraSettingsPackage(context.getString(R.string.frame_rate), frameRateList,
+        isCameraSettingAvailable(project)));
 
-    optionList = new ArrayList();
-    optionList.add(new CameraSettingsItem(Constants.CAMERA_PREF_FRAME_RATE_24_ID,
-        context.getString(R.string.low_frame_rate_name)));
-    optionList.add(new CameraSettingsItem(Constants.CAMERA_PREF_FRAME_RATE_25_ID,
-        context.getString(R.string.good_frame_rate_name)));
-    optionList.add(new CameraSettingsItem(Constants.CAMERA_PREF_FRAME_RATE_30_ID,
-        context.getString(R.string.high_frame_rate_name)));
-
-    preferenceList.add(new CameraSettingsPackage(context.getString(R.string.frame_rate), optionList,
-        true));
-
-    optionList = new ArrayList();
-    optionList.add(new CameraSettingsItem(Constants.CAMERA_PREF_QUALITY_16_ID,
-        context.getString(R.string.low_quality_name)));
-    optionList.add(new CameraSettingsItem(Constants.CAMERA_PREF_QUALITY_32_ID,
-        context.getString(R.string.good_quality_name)));
-    optionList.add(new CameraSettingsItem(Constants.CAMERA_PREF_QUALITY_50_ID,
-        context.getString(R.string.high_quality_name)));
-
-    preferenceList.add(new CameraSettingsPackage(context.getString(R.string.quality), optionList,
-        true));
+    List<CameraSettingsItem> qualityList = new ArrayList();
+    String qualitySelected = getCameraPreferencesUseCase.getQualityPreference();
+    qualityList.add(new CameraSettingsItem(Constants.CAMERA_PREF_QUALITY_16_ID,
+        context.getString(R.string.low_quality_name), qualitySelected.compareTo(Constants.CAMERA_PREF_QUALITY_16) == 0));
+    qualityList.add(new CameraSettingsItem(Constants.CAMERA_PREF_QUALITY_32_ID,
+        context.getString(R.string.good_quality_name), qualitySelected.compareTo(Constants.CAMERA_PREF_QUALITY_32) == 0));
+    qualityList.add(new CameraSettingsItem(Constants.CAMERA_PREF_QUALITY_50_ID,
+        context.getString(R.string.high_quality_name), qualitySelected.compareTo(Constants.CAMERA_PREF_QUALITY_50) == 0));
+    preferenceList.add(new CameraSettingsPackage(context.getString(R.string.quality), qualityList,
+        isCameraSettingAvailable(project)));
 
     return preferenceList;
   }
 
+  private boolean isResolution720Selected(String resolutionSelected) {
+    return resolutionSelected.compareTo(Constants.CAMERA_PREF_RESOLUTION_720) == 0;
+  }
+
+  private boolean isCameraSettingAvailable(Project project) {
+    return !project.getVMComposition().hasVideos();
+  }
 
 
 }

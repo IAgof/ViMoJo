@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.view.adapter;
+package com.videonasocialmedia.vimojo.cameraSettings.presentation.view.adapter;
 
 import android.content.Context;
 import android.support.annotation.IdRes;
@@ -9,11 +9,10 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.settings.cameraSettings.model.CameraSettingsItem;
-import com.videonasocialmedia.vimojo.settings.cameraSettings.model.CameraSettingsPackage;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingsItem;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingsPackage;
 
 import java.util.List;
 
@@ -64,7 +63,7 @@ public class CameraSettingsAdapter extends
       RadioButton preferenceOption = new RadioButton(CameraSettingsAdapter.this.context);
       preferenceOption.setId(preference.getId());
       preferenceOption.setText(preference.getTitleCameraSettingsItem());
-
+      preferenceOption.setChecked(preference.isSelected());
       holder.cameraSettingGroup.addView(preferenceOption);
     }
 
@@ -95,7 +94,6 @@ public class CameraSettingsAdapter extends
       cameraSettingGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId) {
-
           if (radioGroup!= null) {
             listener.onCheckedChangeCameraPreference(radioGroup, checkedId);
           }

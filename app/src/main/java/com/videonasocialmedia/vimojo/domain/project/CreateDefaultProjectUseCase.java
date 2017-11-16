@@ -79,10 +79,12 @@ public class CreateDefaultProjectUseCase {
   private void initCameraPrefs() {
     AddCameraPreferencesUseCase addCameraPreferencesUseCase = new
         AddCameraPreferencesUseCase(cameraPrefRepository);
-    ResolutionPreference resolutionPreference = new ResolutionPreference("1080p", true, true, true,
+    ResolutionPreference resolutionPreference = new ResolutionPreference(
+        Constants.DEFAULT_CAMERA_PREF_RESOLUTION, true, true, true,
         true, true, false);
-    FrameRatePreference frameRatePreference = new FrameRatePreference("30 fps", false, false, true);
-    String quality = "16 Mbps";
+    FrameRatePreference frameRatePreference = new FrameRatePreference(
+        Constants.DEFAULT_CAMERA_PREF_FRAME_RATE, false, false, true);
+    String quality = Constants.DEFAULT_CAMERA_PREF_QUALITY;
     boolean interfaceProSelected = true;
     CameraPreferences defaultCameraPreferences = new CameraPreferences(resolutionPreference,
         frameRatePreference, quality, interfaceProSelected);
