@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.camera;
+package com.videonasocialmedia.vimojo.repository.camerapref;
 
 import com.videonasocialmedia.vimojo.record.model.CameraPreferences;
 import com.videonasocialmedia.vimojo.repository.Mapper;
@@ -19,7 +19,7 @@ public class CameraPrefRealmRepository implements CameraPrefRepository {
   protected Mapper<RealmCameraPref, CameraPreferences> toCameraPreferencesMapper;
   protected Mapper<CameraPreferences, RealmCameraPref> toRealmCameraMapper;
 
-  public CameraPrefRealmRepository(){
+  public CameraPrefRealmRepository() {
     this.toCameraPreferencesMapper = new RealmCameraPrefToCameraPrefMapper();
     this.toRealmCameraMapper = new CameraPrefToRealmCameraPrefMapper();
   }
@@ -39,16 +39,12 @@ public class CameraPrefRealmRepository implements CameraPrefRepository {
   public CameraPreferences getCameraPreferences() {
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmCameraPref> realmResults = realm.where(RealmCameraPref.class).findAll();
-    if(realmResults.size() > 0) {
+    if (realmResults.size() > 0) {
       return toCameraPreferencesMapper.map(realm.copyFromRealm(realmResults.first()));
     } else {
-      RealmCameraPref defaultRealmCameraPref = new RealmCameraPref("cameraPreferenceId",
-              Constants.DEFAULT_CAMERA_PREF_INTERFACE_PRO_SELECTED,
-              Constants.DEFAULT_CAMERA_PREF_RESOLUTION, Constants.DEFAULT_CAMERA_PREF_QUALITY,
-              Constants.DEFAULT_CAMERA_PREF_FRAME_RATE, true, true, false, true, true, false, false,
-              false, true);
-        return toCameraPreferencesMapper.map(defaultRealmCameraPref);
-      }
+      //Managed this null in CreateDefaultProjectUseCase.
+      return null;
+    }
   }
 
   @Override

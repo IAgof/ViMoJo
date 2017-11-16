@@ -101,10 +101,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private String initState;
     private CompositeMultiplePermissionsListener compositePermissionsListener;
 
-    // Camera 1 deprecated, RecordActivity
-    private Camera camera;
-    private int numSupportedCameras;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -215,17 +211,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         requestPermissionsAndPerformSetup();
     }
 
-    /**
-     * Releases the camera object
-     */
-    private void releaseCamera() {
-        if (camera != null) {
-            //camera.stopPreview();
-            camera.release();
-            camera = null;
-        }
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -233,8 +218,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     private void setup() throws CameraAccessException {
         androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        setupStartApp();
         setupPathsApp(this);
+        setupStartApp();
         trackUserProfileGeneralTraits();
     }
 
@@ -397,207 +382,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
             fEdited.mkdirs();
         }
     }
-
-    /**
-     * Checks the available cameras on the device (back/front)
-     */
-    private void checkAvailableCameras() {
-        if (camera != null) {
-            releaseCamera();
-        }
-        camera = getCameraInstance(sharedPreferences.getInt(ConfigPreferences.CAMERA_ID,
-            ConfigPreferences.BACK_CAMERA));
-        editor.putBoolean(ConfigPreferences.BACK_CAMERA_SUPPORTED, true).commit();
-
-        numSupportedCameras = Camera.getNumberOfCameras();
-        if (numSupportedCameras > 1) {
-            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_SUPPORTED, true).commit();
-        }
-        releaseCamera();
-    }
-
-    /**
-     * Checks if the device supports the flash mode
-     */
-    private void checkFlashMode() {
-        if (camera != null) {
-            releaseCamera();
-        }
-        if (numSupportedCameras > 1) {
-            camera = getCameraInstance(ConfigPreferences.FRONT_CAMERA);
-            if (camera.getParameters().getSupportedFlashModes() != null) {
-                editor.putBoolean(ConfigPreferences.FRONT_CAMERA_FLASH_SUPPORTED, true).commit();
-            } else {
-                editor.putBoolean(ConfigPreferences.FRONT_CAMERA_FLASH_SUPPORTED, false).commit();
-            }
-            releaseCamera();
-        }
-        camera = getCameraInstance(ConfigPreferences.BACK_CAMERA);
-        if (camera.getParameters().getSupportedFlashModes() != null) {
-            editor.putBoolean(ConfigPreferences.BACK_CAMERA_FLASH_SUPPORTED, true).commit();
-        } else {
-            editor.putBoolean(ConfigPreferences.BACK_CAMERA_FLASH_SUPPORTED, false).commit();
-        }
-        releaseCamera();
-    }
-
-    /**
-     * Checks the supported resolutions by the device
-     */
-    private void checkCameraVideoSize() {
-        List<Camera.Size> supportedVideoSizes;
-        if (camera != null) {
-            releaseCamera();
-        }
-        if (numSupportedCameras > 1) {
-            camera = getCameraInstance(ConfigPreferences.FRONT_CAMERA);
-            supportedVideoSizes = camera.getParameters().getSupportedVideoSizes();
-            boolean frontCameraResolutionSupported = false;
-            if (supportedVideoSizes != null) {
-                for (Camera.Size size : supportedVideoSizes) {
-                    if (size.width == 1280 && size.height == 720) {
-                        editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, true)
-                                .commit();
-                        frontCameraResolutionSupported = true;
-                        Log.d(LOG_TAG, "FRONT_CAMERA_720P_SUPPORTED");
-                    }
-                    if (size.width == 1920 && size.height == 1080) {
-                        editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, true)
-                                .commit();
-                        frontCameraResolutionSupported = true;
-                        Log.d(LOG_TAG, "FRONT_CAMERA_1080P_SUPPORTED");
-                    }
-                    if (size.width == 3840 && size.height == 2160) {
-                        editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, true)
-                                .commit();
-                        frontCameraResolutionSupported = true;
-                        Log.d(LOG_TAG, "FRONT_CAMERA_2160P_SUPPORTED");
-                    }
-                }
-            } else {
-                supportedVideoSizes = camera.getParameters().getSupportedPreviewSizes();
-                if (supportedVideoSizes != null) {
-                    for (Camera.Size size : supportedVideoSizes) {
-                        if (size.width == 1280 && size.height == 720) {
-                            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, true)
-                                    .commit();
-                            frontCameraResolutionSupported = true;
-                        }
-                        if (size.width == 1920 && size.height == 1080) {
-                            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, true)
-                                    .commit();
-                            frontCameraResolutionSupported = true;
-                        }
-                        if (size.width == 3840 && size.height == 2160) {
-                            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, true)
-                                    .commit();
-                            frontCameraResolutionSupported = true;
-                        }
-                    }
-                } else {
-                    editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, false)
-                            .commit();
-                    editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, false)
-                            .commit();
-                    editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, false)
-                            .commit();
-                }
-            }
-            if (!frontCameraResolutionSupported) {
-                editor.putBoolean(ConfigPreferences.FRONT_CAMERA_SUPPORTED, false).commit();
-                Log.d(LOG_TAG, "FRONT_CAMERA_SUPPORTED");
-            }
-            releaseCamera();
-        }
-        camera = getCameraInstance(ConfigPreferences.BACK_CAMERA);
-        supportedVideoSizes = camera.getParameters().getSupportedVideoSizes();
-        if (supportedVideoSizes != null) {
-            for (Camera.Size size : camera.getParameters().getSupportedVideoSizes()) {
-                if (size.width == 1280 && size.height == 720) {
-                    editor.putBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, true).commit();
-                }
-                if (size.width == 1920 && size.height == 1080) {
-                    editor.putBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, true).commit();
-                }
-                if (size.width == 3840 && size.height == 2160) {
-                    editor.putBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, true).commit();
-                }
-            }
-        } else {
-            supportedVideoSizes = camera.getParameters().getSupportedPreviewSizes();
-            if (supportedVideoSizes != null) {
-                for (Camera.Size size : camera.getParameters().getSupportedPreviewSizes()) {
-                    if (size.width == 1280 && size.height == 720) {
-                        editor.putBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, true)
-                                .commit();
-                    }
-                    if (size.width == 1920 && size.height == 1080) {
-                        editor.putBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, true)
-                                .commit();
-                    }
-                    if (size.width == 3840 && size.height == 2160) {
-                        editor.putBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, true)
-                                .commit();
-                    }
-                }
-            } else {
-                editor.putBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false).commit();
-                editor.putBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, false).commit();
-                editor.putBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, false).commit();
-                editor.putBoolean(ConfigPreferences.BACK_CAMERA_SUPPORTED, false).commit();
-            }
-        }
-        releaseCamera();
-    }
-
-    private void checkCameraFrameRate(){
-        List<Integer> supportedFrameRates;
-        if (camera != null) {
-            releaseCamera();
-        }
-        camera = getCameraInstance(ConfigPreferences.BACK_CAMERA);
-        supportedFrameRates = camera.getParameters().getSupportedPreviewFrameRates();
-        if (supportedFrameRates != null) {
-            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_SUPPORTED, true).commit();
-            for (int  frameRate : supportedFrameRates) {
-                if(frameRate == 24) {
-                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, true)
-                            .commit();
-                }
-                if(frameRate == 25) {
-                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, true)
-                            .commit();
-                }
-                if(frameRate == 30) {
-                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, true)
-                            .commit();
-                }
-            }
-        } else {
-            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false).commit();
-            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false).commit();
-            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, false).commit();
-            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_SUPPORTED, false).commit();
-        }
-        releaseCamera();
-    }
-
-    /**
-     * Gets an instance of the camera object
-     *
-     * @param cameraId
-     * @return
-     */
-    public Camera getCameraInstance(int cameraId) {
-        Camera c = null;
-        try {
-            c = Camera.open(cameraId);
-        } catch (Exception e) {
-            Log.e("DEBUG", "Camera did not open", e);
-        }
-        return c;
-    }
-
 
     private void trackAppStartup() {
         JSONObject initAppProperties = new JSONObject();

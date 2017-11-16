@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.camera;
+package com.videonasocialmedia.vimojo.repository.camerapref;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -42,7 +42,7 @@ public class RealmCameraPref extends RealmObject {
                          boolean resolutionBack1080pSupported, boolean resolutionBack2160pSupported,
                          boolean resolutionFront720pSupported, boolean resolutionFront1080pSupported,
                          boolean resolutionFront2160pSupported, boolean frameRate24FpsSupported,
-                         boolean frameRate25FpsSupported, boolean frameRate30FpsSupported){
+                         boolean frameRate25FpsSupported, boolean frameRate30FpsSupported) {
 
     this.cameraPreferenceId = cameraPreferenceId;
     this.interfaceProSelected = interfaceProSelected;

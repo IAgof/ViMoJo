@@ -9,10 +9,12 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.record.domain.AddCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.record.model.CameraPreferences;
 import com.videonasocialmedia.vimojo.record.model.FrameRatePreference;
 import com.videonasocialmedia.vimojo.record.model.ResolutionPreference;
-import com.videonasocialmedia.vimojo.repository.camera.CameraPrefRealmRepository;
+import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRealmRepository;
+import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -29,7 +31,7 @@ public class CreateDefaultProjectUseCase {
 
   public static final VideoQuality.Quality DEFAULT_VIDEO_QUALITY = VideoQuality.Quality.LOW;
   public static final VideoFrameRate.FrameRate DEFAULT_VIDEO_FRAME_RATE = VideoFrameRate.FrameRate.FPS30;
-  protected CameraPrefRealmRepository cameraPrefRepository;
+  protected CameraPrefRepository cameraPrefRepository;
   protected ProjectRepository projectRepository;
   protected TrackRepository trackRepository;
   private final Drawable drawableFadeTransitionVideo;
@@ -39,7 +41,7 @@ public class CreateDefaultProjectUseCase {
    *
    * @param projectRepository the project repository.
    */
-  @Inject public CreateDefaultProjectUseCase(ProjectRepository projectRepository, CameraPrefRealmRepository
+  @Inject public CreateDefaultProjectUseCase(ProjectRepository projectRepository, CameraPrefRepository
           cameraPrefRepository, TrackRepository trackRepository) {
     this.projectRepository = projectRepository;
     this.cameraPrefRepository = cameraPrefRepository;
@@ -61,8 +63,12 @@ public class CreateDefaultProjectUseCase {
       isProjectCreated = true;
     }
 
+   if(cameraPrefRepository.getCameraPreferences() == null) {
+      initCameraPrefs();
+    }
+
     Project currentProject = Project.getInstance(projectTitle, rootPath, privatePath,
-            getCurrentProfile());
+            getCurrentProfile(cameraPrefRepository));
     currentProject.getVMComposition().setDrawableFadeTransitionVideo(drawableFadeTransitionVideo);
     if ((isProjectCreated && isWatermarkFeatured)) {
       currentProject.setWatermarkActivated(true);
@@ -70,10 +76,23 @@ public class CreateDefaultProjectUseCase {
     projectRepository.update(currentProject);
   }
 
+  private void initCameraPrefs() {
+    AddCameraPreferencesUseCase addCameraPreferencesUseCase = new
+        AddCameraPreferencesUseCase(cameraPrefRepository);
+    ResolutionPreference resolutionPreference = new ResolutionPreference("1080p", true, true, true,
+        true, true, false);
+    FrameRatePreference frameRatePreference = new FrameRatePreference("30 fps", false, false, true);
+    String quality = "16 Mbps";
+    boolean interfaceProSelected = true;
+    CameraPreferences defaultCameraPreferences = new CameraPreferences(resolutionPreference,
+        frameRatePreference, quality, interfaceProSelected);
+    addCameraPreferencesUseCase.createCameraPref(defaultCameraPreferences);
+  }
+
   public void createProject(String rootPath, String privatePath, boolean isWatermarkFeatured) {
     String projectTitle = DateUtils.getDateRightNow();
     Project currentProject = new Project(projectTitle, rootPath, privatePath,
-            getCurrentProfile());
+            getCurrentProfile(cameraPrefRepository));
     if (isWatermarkFeatured) {
       currentProject.setWatermarkActivated(true);
     }
@@ -81,10 +100,10 @@ public class CreateDefaultProjectUseCase {
     projectRepository.update(currentProject);
   }
 
-  private Profile getCurrentProfile() {
-    VideoResolution.Resolution resolution = getResolutionFromPreferencesSetting();
-    VideoQuality.Quality quality = getQualityFromPreferenceSettings();
-    VideoFrameRate.FrameRate frameRate = getFrameRateFromPreferenceSettings();
+  private Profile getCurrentProfile(CameraPrefRepository cameraPrefRepository) {
+    VideoResolution.Resolution resolution = getResolutionFromPreferencesSetting(cameraPrefRepository);
+    VideoQuality.Quality quality = getQualityFromPreferenceSettings(cameraPrefRepository);
+    VideoFrameRate.FrameRate frameRate = getFrameRateFromPreferenceSettings(cameraPrefRepository);
 
     Profile currentProfileInstance = Profile.getInstance(resolution, quality, frameRate);
     currentProfileInstance.setResolution(resolution);
@@ -93,7 +112,7 @@ public class CreateDefaultProjectUseCase {
     return currentProfileInstance;
   }
 
-  private VideoResolution.Resolution getResolutionFromPreferencesSetting() {
+  private VideoResolution.Resolution getResolutionFromPreferencesSetting(CameraPrefRepository cameraPrefRepository) {
     ResolutionPreference resolutionPreference = cameraPrefRepository.getCameraPreferences()
             .getResolutionPreference();
     String resolution = resolutionPreference.getResolution();
@@ -119,7 +138,7 @@ public class CreateDefaultProjectUseCase {
     }
   }
 
-  private VideoQuality.Quality getQualityFromPreferenceSettings() {
+  private VideoQuality.Quality getQualityFromPreferenceSettings(CameraPrefRepository cameraPrefRepository) {
     CameraPreferences cameraPreferences = cameraPrefRepository.getCameraPreferences();
     String quality = cameraPreferences.getQuality();
     if (quality.compareTo(Constants.CAMERA_PREF_QUALITY_16) == 0) {
@@ -135,7 +154,7 @@ public class CreateDefaultProjectUseCase {
     return DEFAULT_VIDEO_QUALITY;
   }
 
-  private VideoFrameRate.FrameRate getFrameRateFromPreferenceSettings() {
+  private VideoFrameRate.FrameRate getFrameRateFromPreferenceSettings(CameraPrefRepository cameraPrefRepository) {
     FrameRatePreference frameRatePreference = cameraPrefRepository.getCameraPreferences()
             .getFrameRatePreference();
     String frameRate = frameRatePreference.getFrameRate();

@@ -2,7 +2,7 @@ package com.videonasocialmedia.vimojo.record.domain;
 
 import com.videonasocialmedia.vimojo.record.model.FrameRatePreference;
 import com.videonasocialmedia.vimojo.record.model.ResolutionPreference;
-import com.videonasocialmedia.vimojo.repository.camera.CameraPrefRepository;
+import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRepository;
 
 import javax.inject.Inject;
 
@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 public class GetCameraPreferencesUseCase {
 
-  private final CameraPrefRepository cameraPrefRepository;
+  protected CameraPrefRepository cameraPrefRepository;
 
   @Inject
   public GetCameraPreferencesUseCase(CameraPrefRepository cameraPrefRepository) {

@@ -3,8 +3,8 @@ package com.videonasocialmedia.vimojo.main.modules;
 
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmRepository;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
-import com.videonasocialmedia.vimojo.repository.camera.CameraPrefRealmRepository;
-import com.videonasocialmedia.vimojo.repository.camera.CameraPrefRepository;
+import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRealmRepository;
+import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRepository;
 import com.videonasocialmedia.vimojo.repository.music.MusicRealmRepository;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;

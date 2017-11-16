@@ -12,7 +12,7 @@ public class CameraPreferences {
   private String quality;
 
   public CameraPreferences(ResolutionPreference resolutionPreference, FrameRatePreference
-                           frameRatePreference, String quality, boolean interfaceProSelected) {
+      frameRatePreference, String quality, boolean interfaceProSelected) {
     this.resolutionPreference = resolutionPreference;
     this.frameRatePreference = frameRatePreference;
     this.quality = quality;
@@ -26,7 +26,7 @@ public class CameraPreferences {
   public String getQuality() {
     return quality;
   }
-  
+
   public ResolutionPreference getResolutionPreference() {
     return resolutionPreference;
   }

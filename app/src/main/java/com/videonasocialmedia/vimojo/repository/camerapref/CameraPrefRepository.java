@@ -1,6 +1,5 @@
-package com.videonasocialmedia.vimojo.repository.camera;
+package com.videonasocialmedia.vimojo.repository.camerapref;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.record.model.CameraPreferences;
 import com.videonasocialmedia.vimojo.repository.Repository;
 
@@ -11,5 +10,6 @@ import com.videonasocialmedia.vimojo.repository.Repository;
 public interface CameraPrefRepository extends Repository<CameraPreferences> {
 
   void update(CameraPreferences item);
+
   CameraPreferences getCameraPreferences();
 }

@@ -4,6 +4,7 @@ import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.repository.camerapref.RealmCameraPref;
 import com.videonasocialmedia.vimojo.sources.MusicSource;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
@@ -18,6 +19,7 @@ import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
 
 import static com.videonasocialmedia.vimojo.model.entities.editor.Project.INTERMEDIATE_FILES;
+import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
 /**
  * Created by jliarte on 24/10/16.
@@ -260,8 +262,8 @@ public class VimojoMigration implements RealmMigration {
               String title = obj.getString("musicTitle");
               float volume = obj.getFloat("musicVolume");
               if (title != null) {
-                if (title.compareTo(com.videonasocialmedia.vimojo.utils.Constants
-                    .MUSIC_AUDIO_VOICEOVER_TITLE) == 0) {
+                if (title.compareTo(
+                    MUSIC_AUDIO_VOICEOVER_TITLE) == 0) {
                   DynamicRealmObject voiceOverTrack = realm.createObject("RealmTrack");
                   voiceOverTrack.setString("uuid", UUID.randomUUID().toString());
                   voiceOverTrack.setInt("id", Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
@@ -349,25 +351,110 @@ public class VimojoMigration implements RealmMigration {
 
     // Migrate from version 8 to 9, new RealmCameraPref
     if (oldVersion == 8) {
-      //  RealmObjectSchema realmCameraPrefTable = schema.get("RealmCameraPref");
-      //  if(schema.get("RealmCameraPref") == null) {
+        RealmObjectSchema realmCameraPrefTable = schema.get("RealmCameraPref");
+        if(schema.get("RealmCameraPref") == null) {
             RealmObjectSchema cameraPrefSchema = schema.create("RealmCameraPref")
-                    .addField("RealmCameraPref", String.class, FieldAttribute.PRIMARY_KEY,
-                            FieldAttribute.REQUIRED)
+                    .addField("cameraPreferenceId", String.class, FieldAttribute.PRIMARY_KEY,
+                            FieldAttribute.REQUIRED).transform(new RealmObjectSchema.Function() {
+                  @Override
+                  public void apply(DynamicRealmObject obj) {
+                    obj.setString("cameraPreferenceId", "RealmCameraPref");
+                  }
+                })
                     .addField("interfaceProSelected", Boolean.class, FieldAttribute.REQUIRED)
+                      .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                          obj.setBoolean("interfaceProSelected",
+                              DEFAULT_CAMERA_PREF_INTERFACE_PRO_SELECTED);
+                        }
+                      })
                     .addField("resolution", String.class, FieldAttribute.REQUIRED)
+                      .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                          obj.setString("resolution", DEFAULT_CAMERA_PREF_RESOLUTION);
+                        }
+                      })
                     .addField("quality", String.class, FieldAttribute.REQUIRED)
+                      .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                          obj.setString("quality", DEFAULT_CAMERA_PREF_QUALITY);
+                        }
+                      })
                     .addField("frameRate", String.class, FieldAttribute.REQUIRED)
+                      .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                          obj.setString("frameRate", DEFAULT_CAMERA_PREF_FRAME_RATE);
+                        }
+                      })
                     .addField("resolutionBack720pSupported", Boolean.class, FieldAttribute.REQUIRED)
+                      .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                          obj.setBoolean("resolutionBack720pSupported", true);
+                        }
+                      })
                     .addField("resolutionBack1080pSupported", Boolean.class, FieldAttribute.REQUIRED)
+                      .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                          obj.setBoolean("resolutionBack1080pSupported", false);
+                        }
+                      })
                     .addField("resolutionBack2160pSupported", Boolean.class, FieldAttribute.REQUIRED)
+                      .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                          obj.setBoolean("resolutionBack2160pSupported", false);
+                        }
+                      })
                     .addField("resolutionFront720pSupported", Boolean.class, FieldAttribute.REQUIRED)
+                      .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                          obj.setBoolean("resolutionFront720pSupported", false);
+                        }
+                      })
                     .addField("resolutionFront1080pSupported", Boolean.class, FieldAttribute.REQUIRED)
+                      .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                          obj.setBoolean("resolutionFront1080pSupported", false);
+                        }
+                      })
                     .addField("resolutionFront2160pSupported", Boolean.class, FieldAttribute.REQUIRED)
+                      .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                          obj.setBoolean("resolutionFront2160pSupported", false);
+                        }
+                      })
                     .addField("frameRate24FpsSupported", Boolean.class, FieldAttribute.REQUIRED)
+                      .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                          obj.setBoolean("frameRate24FpsSupported", false);
+                        }
+                      })
                     .addField("frameRate25FpsSupported", Boolean.class, FieldAttribute.REQUIRED)
-                    .addField("frameRate30FpsSupported", Boolean.class, FieldAttribute.REQUIRED);
-       // }
+                      .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                          obj.setBoolean("frameRate25FpsSupported", false);
+                        }
+                      })
+                    .addField("frameRate30FpsSupported", Boolean.class, FieldAttribute.REQUIRED)
+                      .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                          obj.setBoolean("frameRate30FpsSupported", true);
+                        }
+                      });
+        }
+
         oldVersion++;
     }
 

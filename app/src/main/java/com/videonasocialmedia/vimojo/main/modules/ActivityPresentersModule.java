@@ -49,8 +49,8 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateA
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.record.domain.AddCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.record.domain.GetCameraPreferencesUseCase;
-import com.videonasocialmedia.vimojo.repository.camera.CameraPrefRealmRepository;
-import com.videonasocialmedia.vimojo.repository.camera.CameraPrefRepository;
+import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRealmRepository;
+import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRepository;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
@@ -359,9 +359,9 @@ public class ActivityPresentersModule {
 
   @Provides
   CreateDefaultProjectUseCase provideDefaultProjectCreator(
-          ProjectRepository projectRepository, CameraPrefRealmRepository cameraPrefRealmRepository,
+          ProjectRepository projectRepository, CameraPrefRepository cameraPrefRepository,
           TrackRepository trackRepository) {
-    return new CreateDefaultProjectUseCase(projectRepository, cameraPrefRealmRepository, trackRepository);
+    return new CreateDefaultProjectUseCase(projectRepository, cameraPrefRepository, trackRepository);
   }
 
   @Provides
@@ -500,13 +500,15 @@ public class ActivityPresentersModule {
     return new BillingManager();
   }
 
-  @Provides AddCameraPreferencesUseCase provideAddCameraPreferenceUseCase(CameraPrefRepository
-                                                                                  cameraPrefRepository) {
+  @Provides
+  AddCameraPreferencesUseCase provideAddCameraPreferenceUseCase(CameraPrefRepository
+                                                                    cameraPrefRepository) {
     return new AddCameraPreferencesUseCase(cameraPrefRepository);
   }
 
-  @Provides GetCameraPreferencesUseCase provideGetCameraPreferencesUseCase(CameraPrefRepository
-                                                                                   cameraPrefRepository) {
+  @Provides
+  GetCameraPreferencesUseCase provideGetCameraPreferencesUseCase(CameraPrefRepository
+                                                                     cameraPrefRepository) {
     return new GetCameraPreferencesUseCase(cameraPrefRepository);
   }
 }

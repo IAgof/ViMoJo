@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.camera;
+package com.videonasocialmedia.vimojo.repository.camerapref;
 
 import com.videonasocialmedia.vimojo.record.model.CameraPreferences;
 import com.videonasocialmedia.vimojo.record.model.FrameRatePreference;

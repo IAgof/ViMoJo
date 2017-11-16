@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.camera;
+package com.videonasocialmedia.vimojo.repository.camerapref;
 
 import com.videonasocialmedia.vimojo.record.model.CameraPreferences;
 import com.videonasocialmedia.vimojo.record.model.FrameRatePreference;
@@ -9,7 +9,7 @@ import com.videonasocialmedia.vimojo.repository.Mapper;
  * Created by alvaro on 14/11/17.
  */
 
-public class RealmCameraPrefToCameraPrefMapper implements Mapper<RealmCameraPref,CameraPreferences> {
+public class RealmCameraPrefToCameraPrefMapper implements Mapper<RealmCameraPref, CameraPreferences> {
 
   @Override
   public CameraPreferences map(RealmCameraPref realmCameraPref) {
