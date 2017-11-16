@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -98,7 +96,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     private void setupActivityButtons() {
-        tintEditButtons(R.color.button_color);
+        tintEditButtons(R.color.button_color_theme_light);
     }
 
     private void tintEditButtons(int tintList) {

@@ -114,7 +114,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     }
 
     private void setupActivityButtons() {
-        tintTrimButtons(R.color.button_color_trim_split_activity);
+        tintTrimButtons(R.color.button_color_theme_light);
     }
 
     private void tintTrimButtons(int button_color) {

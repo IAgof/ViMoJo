@@ -57,6 +57,9 @@ import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCa
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.settings.cameraSettings.domain.GetCameraSettingsListUseCase;
+import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.mvp.presenters.CameraSettingsPresenter;
+import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.source.VimojoLicensesProvider;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.domain.GetLicenseVimojoListUseCase;
@@ -168,7 +171,7 @@ public class ActivityPresentersModule {
                                      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                      GetPreferencesTransitionFromProjectUseCase
                                      getPreferencesTransitionFromProjectUseCase) {
-    return new EditPresenter((EditActivity) activity, (EditActivity) activity,
+    return new EditPresenter((EditActivity) activity, (EditActivity) activity, (EditActivity) activity,
             userEventTracker, removeVideosFromProjectUseCase, reorderMediaItemUseCase,
         getAudioFromProjectUseCase, getMediaListFromProjectUseCase,
             getPreferencesTransitionFromProjectUseCase);
@@ -203,6 +206,11 @@ public class ActivityPresentersModule {
   LicenseListPresenter provideLicenseListPresenter(GetLicenseVimojoListUseCase
                                                        getLicenseVimojoListUseCase) {
     return new LicenseListPresenter((LicenseListView) activity, activity, getLicenseVimojoListUseCase);
+  }
+
+  @Provides @PerActivity
+  CameraSettingsPresenter provideCameraSettingPresenter(GetCameraSettingsListUseCase getCameraSettingsListUseCase) {
+    return new CameraSettingsPresenter((CameraSettingsView) activity, activity, getCameraSettingsListUseCase);
   }
 
   @Provides @PerActivity
@@ -376,6 +384,11 @@ public class ActivityPresentersModule {
   @Provides GetLicenseVimojoListUseCase provideLicenseListUseCase(
       VimojoLicensesProvider vimojoLicencesProvider) {
     return new GetLicenseVimojoListUseCase(vimojoLicencesProvider);
+  }
+
+  @Provides
+  GetCameraSettingsListUseCase provideCameraSettingUseCase() {
+    return new GetCameraSettingsListUseCase(activity);
   }
 
   @Provides GetMediaListFromProjectUseCase provideMediaListRetriever() {

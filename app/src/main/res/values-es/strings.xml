@@ -217,8 +217,14 @@
     <string name="title_camera_section">Cámara</string>
     <string name="resolution">Resolución</string>
     <string name="quality">Calidad</string>
+    <string name="camera_pro_o_basic">Cámara Pro/Básica</string>
+    <string name="camera_pro">Cámara Pro</string>
+    <string name="camera_basic">Cámara básica</string>
     <string name="cancelSettingsCamera">Cancelar</string>
     <string name="preference_not_available">Ajuste no disponible con vídeos en el proyecto actual</string>
+    <string name="preference_camera_not_available">Ajuste no disponible. Todos los vídeos del
+        proyecto actual deben tener el mismo valor de </string>
+    <string name="title_camera_settings_activity">Ajuste de cámara</string>
 
     <!-- Transition Settings -->
     <string name="title_fade_transition">Transiciones</string>

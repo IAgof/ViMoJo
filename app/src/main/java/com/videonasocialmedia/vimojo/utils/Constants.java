@@ -124,4 +124,21 @@ public class Constants {
     public static final String CAMERA_PREF_FRAME_RATE_30 = "30 fps";
     public static final String DEFAULT_CAMERA_PREF_FRAME_RATE = CAMERA_PREF_FRAME_RATE_30;
 
+
+  // Default camera setting
+
+    public static final int CAMERA_PREF_RESOLUTION_720_ID = 720;
+    public static final int CAMERA_PREF_RESOLUTION_1080_ID = 1080;
+    public static final int CAMERA_PREF_RESOLUTION_2160_ID = 2160;
+
+    public static final int CAMERA_PREF_QUALITY_16_ID = 16;
+    public static final int CAMERA_PREF_QUALITY_32_ID = 32;
+    public static final int CAMERA_PREF_QUALITY_50_ID = 50;
+
+    public static final int CAMERA_PREF_FRAME_RATE_24_ID = 24;
+    public static final int CAMERA_PREF_FRAME_RATE_25_ID = 25;
+    public static final int CAMERA_PREF_FRAME_RATE_30_ID = 30;
+
+    public static final int CAMERA_PREF_INTERFACE_PRO_ID = 1;
+    public static final int CAMERA_PREF_INTERFACE_BASIC_ID = 2;
 }
