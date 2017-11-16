@@ -41,10 +41,10 @@ public class VideonaCaptureRequest {
     private SCaptureRequest.Builder samsungCaptureRequest;
     private boolean isSamsungCamera = false;
 
-    private static HashMap<CaptureRequest.Key, SCaptureRequest.Key> captureResultMap;
+    private HashMap<CaptureRequest.Key, SCaptureRequest.Key> captureResultMap =
+            new HashMap<>();
 
-    static {
-      captureResultMap = new HashMap<>();
+    protected void captureResultMapInit() {
       captureResultMap.put(CaptureRequest.CONTROL_AF_MODE, SCaptureRequest.CONTROL_AF_MODE);
       captureResultMap.put(CaptureRequest.CONTROL_AF_REGIONS, SCaptureRequest.CONTROL_AF_REGIONS);
       captureResultMap.put(CaptureRequest.CONTROL_AF_TRIGGER, SCaptureRequest.CONTROL_AF_TRIGGER);
@@ -64,10 +64,10 @@ public class VideonaCaptureRequest {
 //        captureResultMap.put(, S);
     }
 
-    private static HashMap<Integer, Integer> captureMetadataMap;
+    private HashMap<Integer, Integer> captureMetadataMap = new HashMap<>();
 
-    static {
-      captureMetadataMap = new HashMap<>();
+    private void captureMetadataMapInit() {
+      //      captureMetadataMap = new HashMap<>();
       captureMetadataMap.put(CaptureRequest.CONTROL_AE_MODE_ON, SCaptureRequest.CONTROL_AE_MODE_ON);
       captureMetadataMap.put(CaptureRequest.CONTROL_AE_MODE_OFF, SCaptureRequest.CONTROL_AE_MODE_OFF);
       captureMetadataMap.put(CameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_START, SCameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_START);
@@ -98,10 +98,14 @@ public class VideonaCaptureRequest {
     }
 
     public Builder(CaptureRequest.Builder systemCameraCaptureRequest) {
+      captureResultMapInit();
+      captureMetadataMapInit();
       this.systemCameraCaptureRequest = systemCameraCaptureRequest;
     }
 
     public Builder(SCaptureRequest.Builder captureRequest) {
+      captureResultMapInit();
+      captureMetadataMapInit();
       this.isSamsungCamera = true;
       this.samsungCaptureRequest = captureRequest;
     }

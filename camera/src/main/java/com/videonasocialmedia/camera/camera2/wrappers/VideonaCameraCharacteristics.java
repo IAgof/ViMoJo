@@ -32,13 +32,10 @@ public class VideonaCameraCharacteristics {
   public static boolean isSamsung = isGalaxyS4 || isGalaxyS4Mini || isGalaxyS5 || isGalaxyNote5 ||
           isGalaxyS6 || isGalaxyS7 || isGalaxyS8;
 
-
-
   public static HashMap<CameraCharacteristics.Key<?>, SCameraCharacteristics.Key<?>>
-          characteristicsMap;
-  static
-  {
-    characteristicsMap = new HashMap<>();
+          characteristicsMap = new HashMap<>();
+
+  private void characteristicsMapInit() {
     characteristicsMap.put(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE, SCameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
     characteristicsMap.put(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE, SCameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE);
     characteristicsMap.put(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP, SCameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
@@ -66,10 +63,12 @@ public class VideonaCameraCharacteristics {
   private boolean isSamsungDevice = false;
 
   public VideonaCameraCharacteristics(CameraCharacteristics systemCameraCharacteristics) {
+    characteristicsMapInit();
     this.systemCameraCharacteristics = systemCameraCharacteristics;
   }
 
   public VideonaCameraCharacteristics(SCameraCharacteristics cameraCharacteristics) {
+    characteristicsMapInit();
     this.isSamsungDevice = true;
     this.samsungCameraCharacteristics = cameraCharacteristics;
   }
