@@ -401,8 +401,9 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  GetCameraSettingsListUseCase provideCameraSettingUseCase() {
-    return new GetCameraSettingsListUseCase(activity);
+  GetCameraSettingsListUseCase provideCameraSettingUseCase(GetCameraPreferencesUseCase
+                                                               getCameraPreferencesUseCase) {
+    return new GetCameraSettingsListUseCase(activity, getCameraPreferencesUseCase);
   }
 
   @Provides GetMediaListFromProjectUseCase provideMediaListRetriever() {
