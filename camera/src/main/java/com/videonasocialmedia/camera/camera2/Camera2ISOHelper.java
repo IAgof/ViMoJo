@@ -7,7 +7,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.util.Log;
 import android.util.Range;
 
-import com.samsung.android.sdk.camera.SCaptureRequest;
+import com.videonasocialmedia.camera.camera2.wrappers.VideonaCaptureRequest;
 
 /**
  * Created by jliarte on 26/05/17.
@@ -28,7 +28,6 @@ class Camera2ISOHelper {
 
   public Camera2ISOHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;
-//    setupSupportedValues();
   }
 
   public void setup() {
@@ -76,7 +75,7 @@ class Camera2ISOHelper {
 
   void setISO(Integer iso) {
     currentIso = iso;
-    CaptureRequest.Builder previewBuilder = this.camera2Wrapper.getPreviewBuilder();
+    VideonaCaptureRequest.Builder previewBuilder = this.camera2Wrapper.getPreviewBuilder();
     if (iso == 0) {
       previewBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_ON);
     } else {
