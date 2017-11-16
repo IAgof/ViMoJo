@@ -1,3 +1,4 @@
-v0.7.2
-- Moved position editor action buttons to improve user experience.
-- Minor bug fixed
+v0.7.3
+- Pro camera features improvements:
+- Fixed problems with metering and focus in samsung phones
+- Improved tap to focus for all phones
