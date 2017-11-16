@@ -95,7 +95,7 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     }
 
     private void setupActivityButtons() {
-        tintVideoDuplicateButtons(R.color.button_color);
+        tintVideoDuplicateButtons(R.color.button_color_theme_light);
     }
 
     private void tintVideoDuplicateButtons(int tintList) {
