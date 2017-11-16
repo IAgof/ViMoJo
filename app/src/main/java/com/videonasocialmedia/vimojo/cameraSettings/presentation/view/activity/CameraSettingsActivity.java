@@ -74,19 +74,23 @@ public class CameraSettingsActivity extends VimojoActivity implements CameraSett
   @Override
   public void onCheckedChangeCameraPreference(RadioGroup radioGroup, int checkedId) {
     switch (checkedId){
-      case Constants.CAMERA_PREF_INTERFACE_PRO_ID | Constants.CAMERA_PREF_INTERFACE_PRO_ID:
+      case Constants.CAMERA_PREF_INTERFACE_PRO_ID:
+      case Constants.CAMERA_PREF_INTERFACE_BASIC_ID:
         presenter.setCameraInterfacePreference(checkedId);
         break;
-      case Constants.CAMERA_PREF_RESOLUTION_720_ID |Constants.CAMERA_PREF_RESOLUTION_1080_ID |
-          Constants.CAMERA_PREF_RESOLUTION_2160_ID:
+      case Constants.CAMERA_PREF_RESOLUTION_720_ID:
+      case Constants.CAMERA_PREF_RESOLUTION_1080_ID:
+      case Constants.CAMERA_PREF_RESOLUTION_2160_ID:
         presenter.setCameraResolutionPreference(checkedId);
         break;
-      case Constants.CAMERA_PREF_QUALITY_16_ID |Constants.CAMERA_PREF_QUALITY_32_ID |
-          Constants.CAMERA_PREF_QUALITY_50_ID:
+      case Constants.CAMERA_PREF_QUALITY_16_ID:
+      case Constants.CAMERA_PREF_QUALITY_32_ID:
+      case Constants.CAMERA_PREF_QUALITY_50_ID:
         presenter.setCameraQualityPreference(checkedId);
         break;
-      case Constants.CAMERA_PREF_FRAME_RATE_24_ID | Constants.CAMERA_PREF_FRAME_RATE_25_ID |
-          Constants.CAMERA_PREF_FRAME_RATE_30_ID:
+      case Constants.CAMERA_PREF_FRAME_RATE_24_ID:
+      case Constants.CAMERA_PREF_FRAME_RATE_25_ID:
+      case Constants.CAMERA_PREF_FRAME_RATE_30_ID:
         presenter.setCameraFrameRatePreference(checkedId);
         break;
     }

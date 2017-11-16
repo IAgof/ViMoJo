@@ -221,7 +221,7 @@ public class ActivityPresentersModule {
                                                         UpdateVideoQualityToProjectUseCase
                                                          updateVideoQualityToProjectUseCase
                                                         ) {
-    return new CameraSettingsPresenter((CameraSettingsView) activity, activity,
+    return new CameraSettingsPresenter((CameraSettingsView) activity,
         getCameraSettingsListUseCase, addCameraPreferencesUseCase,
         updateVideoResolutionToProjectUseCase, updateVideoFrameRateToProjectUseCase,
         updateVideoQualityToProjectUseCase);

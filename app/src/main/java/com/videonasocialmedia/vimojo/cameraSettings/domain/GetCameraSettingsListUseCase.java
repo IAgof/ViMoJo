@@ -6,10 +6,12 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingsItem;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingsPackage;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.record.domain.GetCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRealmRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +26,8 @@ public class GetCameraSettingsListUseCase {
   private Context context;
   private boolean DEFAULT_INTERFACE_PRO_BASIC_AVAILABLE = true;
   private Project currentProject;
+  private WeakReference<GetCameraSettingsListUseCase.CameraSettingListUseCaseListener>
+      cameraSettingListListener;
 
   @Inject
   public GetCameraSettingsListUseCase(Context context, GetCameraPreferencesUseCase
@@ -37,8 +41,8 @@ public class GetCameraSettingsListUseCase {
     return Project.getInstance(null, null, null, null);
   }
 
-  public List<CameraSettingsPackage> getCameraSettingsList() {
-
+  public void checkCameraSettingsList(CameraSettingListUseCaseListener listener) {
+    this.cameraSettingListListener = new WeakReference<>(listener);
     List <CameraSettingsPackage> preferenceList = new ArrayList();
 
     List<CameraSettingsItem> interfaceProList = new ArrayList();
@@ -99,7 +103,8 @@ public class GetCameraSettingsListUseCase {
     preferenceList.add(new CameraSettingsPackage(context.getString(R.string.quality), qualityList,
         isCameraSettingAvailable(currentProject)));
 
-    return preferenceList;
+    CameraSettingListUseCaseListener listUseCaseListener = cameraSettingListListener.get();
+    listUseCaseListener.onSuccessGettingList(preferenceList);
   }
 
   private boolean isResolution2160Selected(String resolutionSelected) {
@@ -118,5 +123,9 @@ public class GetCameraSettingsListUseCase {
     return !project.getVMComposition().hasVideos();
   }
 
+  public interface CameraSettingListUseCaseListener {
+    void onSuccessGettingList(List<CameraSettingsPackage> cameraSettingsPackages);
+    void onErrorGettingList(String message);
+  }
 
 }

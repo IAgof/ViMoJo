@@ -21,9 +21,9 @@ import javax.inject.Inject;
 
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
-public class CameraSettingsPresenter {
-  private Context context;
-  private List<CameraSettingsPackage> cameraSettingsPackageList;
+public class CameraSettingsPresenter implements
+    GetCameraSettingsListUseCase.CameraSettingListUseCaseListener {
+
   private CameraSettingsView cameraSettingsListView;
   private GetCameraSettingsListUseCase getSettingListUseCase;
   private AddCameraPreferencesUseCase addCameraPreferencesUseCase;
@@ -32,7 +32,7 @@ public class CameraSettingsPresenter {
   private UpdateVideoQualityToProjectUseCase updateVideoQualityToProjectUseCase;
 
   @Inject
-  public CameraSettingsPresenter(CameraSettingsView cameraSettingsListView, Context context,
+  public CameraSettingsPresenter(CameraSettingsView cameraSettingsListView,
                                  GetCameraSettingsListUseCase getSettingListUseCase,
                                  AddCameraPreferencesUseCase addCameraPreferencesUseCase,
                                  UpdateVideoResolutionToProjectUseCase
@@ -41,7 +41,6 @@ public class CameraSettingsPresenter {
                                        updateVideoFrameRateToProjectUseCase,
                                  UpdateVideoQualityToProjectUseCase
                                        updateVideoQualityToProjectUseCase) {
-    this.context = context;
     this.getSettingListUseCase = getSettingListUseCase;
     this.cameraSettingsListView = cameraSettingsListView;
     this.addCameraPreferencesUseCase = addCameraPreferencesUseCase;
@@ -51,8 +50,7 @@ public class CameraSettingsPresenter {
   }
 
   public void getCameraSettingsList() {
-    cameraSettingsPackageList = getSettingListUseCase.getCameraSettingsList();
-    cameraSettingsListView.showCameraSettingsList(cameraSettingsPackageList);
+    getSettingListUseCase.checkCameraSettingsList(this);
   }
 
   public void setCameraInterfacePreference(int interfaceProId) {
@@ -139,5 +137,15 @@ public class CameraSettingsPresenter {
     }
     addCameraPreferencesUseCase.setQualityPreference(quality);
     updateVideoQualityToProjectUseCase.updateQuality(videoQuality);
+  }
+
+  @Override
+  public void onSuccessGettingList(List<CameraSettingsPackage> cameraSettingsPackagesList) {
+    cameraSettingsListView.showCameraSettingsList(cameraSettingsPackagesList);
+  }
+
+  @Override
+  public void onErrorGettingList(String message) {
+
   }
 }
