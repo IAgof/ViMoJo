@@ -6,6 +6,9 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.util.Log;
 
+import com.videonasocialmedia.camera.camera2.wrappers.VideonaCameraCharacteristics;
+import com.videonasocialmedia.camera.camera2.wrappers.VideonaCaptureRequest;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,8 +32,8 @@ import static org.mockito.Mockito.verify;
 @PrepareForTest({Log.class})
 public class Camera2WhiteBalanceHelperTest {
   @Mock private Camera2Wrapper mockedCameraWrapper;
-  @Mock private CaptureRequest.Builder mockedPreviewBuilder;
-  @Mock private CameraCharacteristics mockedCharacteristics;
+  @Mock private VideonaCaptureRequest.Builder mockedPreviewBuilder;
+  @Mock private VideonaCameraCharacteristics mockedCharacteristics;
 
   @Before
   public void injectTestDoubles() {
