@@ -27,4 +27,16 @@ public class CameraSettingsPresenter {
   public void getCameraSettingsList() {
     preferenceListView.showCameraSettingsList(preferencesList);
   }
+
+  public void setCameraInterfacePreference(int checkedId) {
+  }
+
+  public void setCameraResolutionPreference(int checkedId) {
+  }
+
+  public void setCameraQualityPreference(int checkedId) {
+  }
+
+  public void setCameraFrameRatePreference(int checkedId) {
+  }
 }

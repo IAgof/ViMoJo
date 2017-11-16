@@ -6,6 +6,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
+import android.widget.RadioGroup;
 
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -15,6 +16,7 @@ import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.mvp.pr
 import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.view.adapter.CameraSettingsAdapter;
 import com.videonasocialmedia.vimojo.settings.cameraSettings.presentation.view.adapter.CameraSettingsListClickListener;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
 
@@ -67,8 +69,25 @@ public class CameraSettingsActivity extends VimojoActivity implements CameraSett
 
 
   @Override
-  public void onChechedChangeCameraPreference(int checkedId) {
-    //poner método para actualizar preferencia según id
+  public void onCheckedChangeCameraPreference(RadioGroup radioGroup, int checkedId) {
+
+    switch (checkedId){
+      case Constants.CAMERA_PREF_INTERFACE_PRO_ID | Constants.CAMERA_PREF_INTERFACE_PRO_ID:
+        presenter.setCameraInterfacePreference(checkedId);
+        break;
+      case Constants.CAMERA_PREF_RESOLUTION_720_ID |Constants.CAMERA_PREF_RESOLUTION_1080_ID |
+          Constants.CAMERA_PREF_RESOLUTION_2160_ID:
+        presenter.setCameraResolutionPreference(checkedId);
+        break;
+      case Constants.CAMERA_PREF_QUALITY_16_ID |Constants.CAMERA_PREF_QUALITY_32_ID |
+          Constants.CAMERA_PREF_QUALITY_50_ID:
+        presenter.setCameraQualityPreference(checkedId);
+        break;
+      case Constants.CAMERA_PREF_FRAME_RATE_24_ID | Constants.CAMERA_PREF_FRAME_RATE_25_ID |
+          Constants.CAMERA_PREF_FRAME_RATE_30_ID:
+        presenter.setCameraFrameRatePreference(checkedId);
+        break;
+    }
   }
 
   @Override

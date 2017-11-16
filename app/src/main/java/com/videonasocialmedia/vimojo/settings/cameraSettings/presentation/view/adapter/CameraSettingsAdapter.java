@@ -97,11 +97,7 @@ public class CameraSettingsAdapter extends
         public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId) {
 
           if (radioGroup!= null) {
-            listener.onChechedChangeCameraPreference(radioGroup.getCheckedRadioButtonId());
-
-            Toast.makeText(CameraSettingsAdapter.this.context,
-                "Radio button clicked " + radioGroup.getCheckedRadioButtonId(),
-                Toast.LENGTH_SHORT).show();
+            listener.onCheckedChangeCameraPreference(radioGroup, checkedId);
           }
         }
       });
