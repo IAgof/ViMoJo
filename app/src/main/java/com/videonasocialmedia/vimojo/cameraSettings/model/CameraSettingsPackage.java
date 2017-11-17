@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.cameraSettings.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,7 +13,7 @@ public class CameraSettingsPackage {
   private boolean isAvailable;
 
   public CameraSettingsPackage(String titleCameraSettingsPackage, List<CameraSettingsItem>
-      optionList, boolean isAvailable) {
+          optionList, boolean isAvailable) {
     this.titleCameraSettingsPackage = titleCameraSettingsPackage;
     this.cameraSettingsItemList = optionList;
     this.isAvailable = isAvailable;

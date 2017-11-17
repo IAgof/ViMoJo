@@ -1,18 +1,18 @@
 package com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.presenters;
 
-
 import android.content.Context;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsListUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingsPackage;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
-import com.videonasocialmedia.vimojo.record.domain.AddCameraPreferencesUseCase;
-import com.videonasocialmedia.vimojo.record.domain.UpdateVideoFrameRateToProjectUseCase;
-import com.videonasocialmedia.vimojo.record.domain.UpdateVideoQualityToProjectUseCase;
-import com.videonasocialmedia.vimojo.record.domain.UpdateVideoResolutionToProjectUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.CameraPreferencesUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateVideoFrameRateToProjectUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateVideoQualityToProjectUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
@@ -22,28 +22,30 @@ import javax.inject.Inject;
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
 public class CameraSettingsPresenter implements
-    GetCameraSettingsListUseCase.CameraSettingListUseCaseListener {
+        GetCameraSettingsListUseCase.CameraSettingListUseCaseListener {
 
+  private Context context;
   private CameraSettingsView cameraSettingsListView;
   private GetCameraSettingsListUseCase getSettingListUseCase;
-  private AddCameraPreferencesUseCase addCameraPreferencesUseCase;
+  private CameraPreferencesUseCase cameraPreferencesUseCase;
   private UpdateVideoFrameRateToProjectUseCase updateVideoFrameRateToProjectUseCase;
   private UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase;
   private UpdateVideoQualityToProjectUseCase updateVideoQualityToProjectUseCase;
 
   @Inject
-  public CameraSettingsPresenter(CameraSettingsView cameraSettingsListView,
+  public CameraSettingsPresenter(Context context, CameraSettingsView cameraSettingsListView,
                                  GetCameraSettingsListUseCase getSettingListUseCase,
-                                 AddCameraPreferencesUseCase addCameraPreferencesUseCase,
+                                 CameraPreferencesUseCase cameraPreferencesUseCase,
                                  UpdateVideoResolutionToProjectUseCase
-                                     updateVideoResolutionToProjectUseCase,
+                                         updateVideoResolutionToProjectUseCase,
                                  UpdateVideoFrameRateToProjectUseCase
-                                       updateVideoFrameRateToProjectUseCase,
+                                         updateVideoFrameRateToProjectUseCase,
                                  UpdateVideoQualityToProjectUseCase
-                                       updateVideoQualityToProjectUseCase) {
+                                         updateVideoQualityToProjectUseCase) {
+    this.context = context;
     this.getSettingListUseCase = getSettingListUseCase;
     this.cameraSettingsListView = cameraSettingsListView;
-    this.addCameraPreferencesUseCase = addCameraPreferencesUseCase;
+    this.cameraPreferencesUseCase = cameraPreferencesUseCase;
     this.updateVideoResolutionToProjectUseCase = updateVideoResolutionToProjectUseCase;
     this.updateVideoFrameRateToProjectUseCase = updateVideoFrameRateToProjectUseCase;
     this.updateVideoQualityToProjectUseCase = updateVideoQualityToProjectUseCase;
@@ -65,7 +67,7 @@ public class CameraSettingsPresenter implements
       default:
         interfaceProSelected = Constants.DEFAULT_CAMERA_PREF_INTERFACE_PRO_SELECTED;
     }
-    addCameraPreferencesUseCase.setInterfaceProSelected(interfaceProSelected);
+    cameraPreferencesUseCase.setInterfaceProSelected(interfaceProSelected);
   }
 
   public void setCameraResolutionPreference(int resolutionSelectedId) {
@@ -88,9 +90,10 @@ public class CameraSettingsPresenter implements
         resolution = DEFAULT_CAMERA_PREF_RESOLUTION;
         videoResolution = VideoResolution.Resolution.HD1080;
     }
-    addCameraPreferencesUseCase.setResolutionPreference(resolution);
+    cameraPreferencesUseCase.setResolutionPreference(resolution);
     updateVideoResolutionToProjectUseCase.updateResolution(videoResolution);
   }
+
   public void setCameraFrameRatePreference(int frameRateSelected) {
     String frameRate;
     VideoFrameRate.FrameRate videoFrameRate;
@@ -111,7 +114,7 @@ public class CameraSettingsPresenter implements
         frameRate = DEFAULT_CAMERA_PREF_FRAME_RATE;
         videoFrameRate = VideoFrameRate.FrameRate.FPS30;
     }
-    addCameraPreferencesUseCase.setFrameRatePreference(frameRate);
+    cameraPreferencesUseCase.setFrameRatePreference(frameRate);
     updateVideoFrameRateToProjectUseCase.updateFrameRate(videoFrameRate);
   }
 
@@ -135,7 +138,7 @@ public class CameraSettingsPresenter implements
         quality = DEFAULT_CAMERA_PREF_QUALITY;
         videoQuality = VideoQuality.Quality.LOW;
     }
-    addCameraPreferencesUseCase.setQualityPreference(quality);
+    cameraPreferencesUseCase.setQualityPreference(quality);
     updateVideoQualityToProjectUseCase.updateQuality(videoQuality);
   }
 
@@ -145,7 +148,7 @@ public class CameraSettingsPresenter implements
   }
 
   @Override
-  public void onErrorGettingList(String message) {
-
+  public void onErrorGettingList() {
+    cameraSettingsListView.showError(context.getString(R.string.activity_camera_settings_no_list));
   }
 }

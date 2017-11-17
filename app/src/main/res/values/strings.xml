@@ -27,6 +27,8 @@
     <string name="dialog_message_record_adapting_video">Working …</string>
     <string name="alert_dialog_info_detail">Info detail</string>
 
+    <string name="activity_camera_settings_no_list">Camera settings empty</string>
+
     <!-- Share Activity -->
     <string name="shareError">Ups, we couldn\'t share this video. Sorry</string>
     <string name="share_using">"Share video using "</string>
@@ -2426,5 +2428,6 @@ and Conditions.\n\n
     <string name="title_track_clip_voice_over">Voice over track volume</string>
     <string name="mute">Mute</string>
     <string name="solo">Solo</string>
+
 
 </resources>

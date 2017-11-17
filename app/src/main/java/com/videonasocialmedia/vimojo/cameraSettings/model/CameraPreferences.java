@@ -1,4 +1,11 @@
-package com.videonasocialmedia.vimojo.record.model;
+/*
+ * Copyright (C) 2017 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+
+package com.videonasocialmedia.vimojo.cameraSettings.model;
 
 /**
  * Created by alvaro on 14/11/17.
@@ -12,7 +19,7 @@ public class CameraPreferences {
   private String quality;
 
   public CameraPreferences(ResolutionPreference resolutionPreference, FrameRatePreference
-      frameRatePreference, String quality, boolean interfaceProSelected) {
+          frameRatePreference, String quality, boolean interfaceProSelected) {
     this.resolutionPreference = resolutionPreference;
     this.frameRatePreference = frameRatePreference;
     this.quality = quality;

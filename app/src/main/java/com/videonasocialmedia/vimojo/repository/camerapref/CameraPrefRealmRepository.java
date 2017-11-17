@@ -1,9 +1,8 @@
 package com.videonasocialmedia.vimojo.repository.camerapref;
 
-import com.videonasocialmedia.vimojo.record.model.CameraPreferences;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraPreferences;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
-import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
 

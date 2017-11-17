@@ -8,25 +8,25 @@ public class CameraSettingsItem {
 
   private boolean isSelected;
   private int id;
-    private String titleCameraSettingsItem;
+  private String titleCameraSettingsItem;
 
-    public CameraSettingsItem(int id, String titleCameraSettingsItem, boolean isSelected) {
-      this.id = id;
-      this.titleCameraSettingsItem = titleCameraSettingsItem;
-      this.isSelected = isSelected;
-    }
+  public CameraSettingsItem(int id, String titleCameraSettingsItem, boolean isSelected) {
+    this.id = id;
+    this.titleCameraSettingsItem = titleCameraSettingsItem;
+    this.isSelected = isSelected;
+  }
 
-    public int getId() {
-      return id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public void setId(int id) {
-      this.id = id;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public String getTitleCameraSettingsItem() {
-      return titleCameraSettingsItem;
-    }
+  public String getTitleCameraSettingsItem() {
+    return titleCameraSettingsItem;
+  }
 
   public boolean isSelected() {
     return isSelected;

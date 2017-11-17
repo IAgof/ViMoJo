@@ -9,11 +9,10 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.record.domain.AddCameraPreferencesUseCase;
-import com.videonasocialmedia.vimojo.record.model.CameraPreferences;
-import com.videonasocialmedia.vimojo.record.model.FrameRatePreference;
-import com.videonasocialmedia.vimojo.record.model.ResolutionPreference;
-import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRealmRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.CameraPreferencesUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraPreferences;
+import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRatePreference;
+import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionPreference;
 import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
@@ -77,8 +76,8 @@ public class CreateDefaultProjectUseCase {
   }
 
   private void initCameraPrefs() {
-    AddCameraPreferencesUseCase addCameraPreferencesUseCase = new
-        AddCameraPreferencesUseCase(cameraPrefRepository);
+    CameraPreferencesUseCase cameraPreferencesUseCase = new
+            CameraPreferencesUseCase(cameraPrefRepository);
     ResolutionPreference resolutionPreference = new ResolutionPreference(
         Constants.DEFAULT_CAMERA_PREF_RESOLUTION, true, true, true,
         true, true, false);
@@ -88,7 +87,7 @@ public class CreateDefaultProjectUseCase {
     boolean interfaceProSelected = true;
     CameraPreferences defaultCameraPreferences = new CameraPreferences(resolutionPreference,
         frameRatePreference, quality, interfaceProSelected);
-    addCameraPreferencesUseCase.createCameraPref(defaultCameraPreferences);
+    cameraPreferencesUseCase.createCameraPref(defaultCameraPreferences);
   }
 
   public void createProject(String rootPath, String privatePath, boolean isWatermarkFeatured) {

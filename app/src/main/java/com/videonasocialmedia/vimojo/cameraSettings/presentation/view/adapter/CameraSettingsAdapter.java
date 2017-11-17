@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 
 
 public class CameraSettingsAdapter extends
-    RecyclerView.Adapter<CameraSettingsAdapter.CameraSettingsAdapterItemViewHolder> {
+        RecyclerView.Adapter<CameraSettingsAdapter.CameraSettingsAdapterItemViewHolder> {
 
   private List<CameraSettingsPackage> cameraSettingsList;
   private CameraSettingsListClickListener listener;
@@ -38,10 +38,10 @@ public class CameraSettingsAdapter extends
 
   @Override
   public CameraSettingsAdapterItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-      View rowView = LayoutInflater.from(viewGroup.getContext()).
-          inflate(R.layout.camera_settings_list_view_holder, viewGroup, false);
-      this.context = viewGroup.getContext();
-      return new CameraSettingsAdapterItemViewHolder(rowView, cameraSettingsList);
+    View rowView = LayoutInflater.from(viewGroup.getContext()).
+            inflate(R.layout.camera_settings_list_view_holder, viewGroup, false);
+    this.context = viewGroup.getContext();
+    return new CameraSettingsAdapterItemViewHolder(rowView);
   }
 
   @Override
@@ -49,9 +49,9 @@ public class CameraSettingsAdapter extends
     CameraSettingsPackage cameraSettingsPackage = cameraSettingsList.get(position);
     holder.settingCameraTitlePackage.setText(cameraSettingsPackage.getTitleCameraSettingsPackage());
 
-    if(!cameraSettingsPackage.isAvailable()) {
+    if (!cameraSettingsPackage.isAvailable()) {
       holder.textNotAvailable.setText(context.getString(R.string.preference_camera_not_available)
-          + " " + cameraSettingsPackage.getTitleCameraSettingsPackage());
+              + " " + cameraSettingsPackage.getTitleCameraSettingsPackage());
       holder.textNotAvailable.setVisibility(View.VISIBLE);
       holder.cameraSettingGroup.setVisibility(View.GONE);
     } else {
@@ -59,7 +59,7 @@ public class CameraSettingsAdapter extends
       holder.cameraSettingGroup.setVisibility(View.VISIBLE);
     }
 
-    for (CameraSettingsItem preference : cameraSettingsPackage.getPreferencesList()){
+    for (CameraSettingsItem preference : cameraSettingsPackage.getPreferencesList()) {
       RadioButton preferenceOption = new RadioButton(CameraSettingsAdapter.this.context);
       preferenceOption.setId(preference.getId());
       preferenceOption.setText(preference.getTitleCameraSettingsItem());
@@ -85,16 +85,13 @@ public class CameraSettingsAdapter extends
     @Bind(R.id.camera_setting_text_not_available)
     TextView textNotAvailable;
 
-    private List<CameraSettingsPackage> cameraSettingsList;
-
-    public CameraSettingsAdapterItemViewHolder(View itemView, List<CameraSettingsPackage> cameraSettingsList) {
+    private CameraSettingsAdapterItemViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
-      this.cameraSettingsList = cameraSettingsList;
       cameraSettingGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId) {
-          if (radioGroup!= null) {
+          if (radioGroup != null) {
             listener.onCheckedChangeCameraPreference(radioGroup, checkedId);
           }
         }

@@ -1,4 +1,11 @@
-package com.videonasocialmedia.vimojo.record.model;
+/*
+ * Copyright (C) 2017 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+
+package com.videonasocialmedia.vimojo.cameraSettings.model;
 
 /**
  * Created by alvaro on 14/11/17.
@@ -12,7 +19,7 @@ public class FrameRatePreference {
   private boolean frameRate30FpsSupported;
 
   public FrameRatePreference(String frameRate, boolean frameRate24FpsSupported, boolean
-                             frameRate25FpsSupported, boolean frameRate30FpsSupported) {
+          frameRate25FpsSupported, boolean frameRate30FpsSupported) {
     this.frameRate = frameRate;
     this.frameRate24FpsSupported = frameRate24FpsSupported;
     this.frameRate25FpsSupported = frameRate25FpsSupported;

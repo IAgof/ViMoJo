@@ -1,8 +1,15 @@
-package com.videonasocialmedia.vimojo.record.domain;
+/*
+ * Copyright (C) 2017 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
 
-import com.videonasocialmedia.vimojo.record.model.CameraPreferences;
-import com.videonasocialmedia.vimojo.record.model.FrameRatePreference;
-import com.videonasocialmedia.vimojo.record.model.ResolutionPreference;
+package com.videonasocialmedia.vimojo.cameraSettings.domain;
+
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraPreferences;
+import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRatePreference;
+import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionPreference;
 import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRepository;
 
 import javax.inject.Inject;
@@ -11,17 +18,33 @@ import javax.inject.Inject;
  * Created by alvaro on 14/11/17.
  */
 
-public class AddCameraPreferencesUseCase {
+public class CameraPreferencesUseCase {
 
   protected CameraPrefRepository cameraPrefRepository;
 
   @Inject
-  public AddCameraPreferencesUseCase(CameraPrefRepository cameraPrefRepository) {
+  public CameraPreferencesUseCase(CameraPrefRepository cameraPrefRepository) {
     this.cameraPrefRepository = cameraPrefRepository;
   }
 
   public void createCameraPref(CameraPreferences cameraPreferences) {
     cameraPrefRepository.update(cameraPreferences);
+  }
+
+  public ResolutionPreference getResolutionPreference() {
+    return cameraPrefRepository.getCameraPreferences().getResolutionPreference();
+  }
+
+  public FrameRatePreference getFrameRatePreference() {
+    return cameraPrefRepository.getCameraPreferences().getFrameRatePreference();
+  }
+
+  public String getQualityPreference() {
+    return cameraPrefRepository.getCameraPreferences().getQuality();
+  }
+
+  public boolean isInterfaceProSelected() {
+    return cameraPrefRepository.getCameraPreferences().isInterfaceProSelected();
   }
 
   public void setResolutionPreferencesSupported(ResolutionPreference resolutionPreference) {

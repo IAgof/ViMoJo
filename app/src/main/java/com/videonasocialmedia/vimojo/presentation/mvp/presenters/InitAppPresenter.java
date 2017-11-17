@@ -5,9 +5,9 @@ import android.hardware.camera2.CameraAccessException;
 
 import com.videonasocialmedia.camera.utils.Camera2Settings;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
-import com.videonasocialmedia.vimojo.record.domain.AddCameraPreferencesUseCase;
-import com.videonasocialmedia.vimojo.record.model.FrameRatePreference;
-import com.videonasocialmedia.vimojo.record.model.ResolutionPreference;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.CameraPreferencesUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRatePreference;
+import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionPreference;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import javax.inject.Inject;
@@ -17,15 +17,15 @@ import javax.inject.Inject;
  */
 public class InitAppPresenter {
   private final Context context;
-  private final AddCameraPreferencesUseCase addCameraPreferenceUseCase;
+  private final CameraPreferencesUseCase addCameraPreferenceUseCase;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
 
   @Inject
   public InitAppPresenter(Context context, CreateDefaultProjectUseCase
-          createDefaultProjectUseCase, AddCameraPreferencesUseCase addCameraPreferencesUseCase) {
+          createDefaultProjectUseCase, CameraPreferencesUseCase cameraPreferencesUseCase) {
     this.context = context;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
-    this.addCameraPreferenceUseCase = addCameraPreferencesUseCase;
+    this.addCameraPreferenceUseCase = cameraPreferencesUseCase;
   }
 
   public void startLoadingProject(String rootPath, String privatePath,

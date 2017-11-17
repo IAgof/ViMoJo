@@ -1,8 +1,8 @@
 package com.videonasocialmedia.vimojo.repository.camerapref;
 
-import com.videonasocialmedia.vimojo.record.model.CameraPreferences;
-import com.videonasocialmedia.vimojo.record.model.FrameRatePreference;
-import com.videonasocialmedia.vimojo.record.model.ResolutionPreference;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraPreferences;
+import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRatePreference;
+import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionPreference;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 
 /**

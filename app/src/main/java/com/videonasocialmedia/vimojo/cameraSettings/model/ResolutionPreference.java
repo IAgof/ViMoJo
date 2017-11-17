@@ -1,4 +1,11 @@
-package com.videonasocialmedia.vimojo.record.model;
+/*
+ * Copyright (C) 2017 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+
+package com.videonasocialmedia.vimojo.cameraSettings.model;
 
 /**
  * Created by alvaro on 14/11/17.

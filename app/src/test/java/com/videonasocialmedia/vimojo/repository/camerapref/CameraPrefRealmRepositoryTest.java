@@ -12,7 +12,7 @@ import static org.junit.Assert.assertThat;
 public class CameraPrefRealmRepositoryTest {
 
   @Test
-  public void testMusicRealmRepositoryConstructorSetsMappers() {
+  public void cameraPrefRealmRepositoryConstructorSetsMappers() {
     CameraPrefRealmRepository repository = new CameraPrefRealmRepository();
 
     assertThat(repository.toCameraPreferencesMapper, notNullValue());

@@ -29,6 +29,8 @@
 
     <string name="alert_dialog_info_detail">Información detallada</string>
 
+    <string name="activity_camera_settings_no_list">Ajuste de cámara vacío</string>
+
     <!-- Share Activity -->
     <string name="shareError">Uy, no hemos podido compartir el vídeo.</string>
     <string name="share_using">Compartir vídeo con</string>
