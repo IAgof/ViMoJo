@@ -1003,6 +1003,23 @@ limitations under the License. \n
         limitations under the License.\n\n
     </string>
 
+    <string name="licenseSamsungSDK">
+        Some software component of this product incorporate source code covered under the Apache
+        License version 2.0.\n
+        \n
+        libscamera_core.so uses libexifa, libjpega (LGPL) to decode/encode EXIF tags in JPEG files.\n
+        \n
+        To obtain the source code covered under licenses which have the obligation of publishing
+        source code(LGPL), please visit http://opensource.samsung.com/ and search by application
+        name.\n
+        If the source code cannot be found on our website, please contact oss.request@samsung.com.\n
+        A complete corresponding source code may be obtained for a period of three years after our
+        last shipment of this product by sending us an email or visiting our website.\n
+        If you want to obtain a complete corresponding source code in the physical medium such as
+        CD-ROM, the cost of physically performing source distribution may be charged.\n
+        This offer is valid to anyone in receipt of this information.\n
+    </string>
+
     <string name="licenseAppIntro">
         Copyright 2015 Paolo Rotolo\n\nCopyright 2016 Maximilian Narr\n\nLicensed under the Apache
         License, Version 2.0 (the "License"); you may not use this file except in compliance
