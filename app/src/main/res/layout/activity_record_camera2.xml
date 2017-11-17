@@ -39,7 +39,7 @@
 
         <android.support.v7.widget.CardView
             android:id="@+id/edit_or_gallery_cardview"
-            android:layout_width="38dp"
+            android:layout_width="44dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginRight="8dp"
@@ -56,7 +56,9 @@
                 <RelativeLayout
                     android:id="@+id/edit_or_gallery_relative"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    >
 
                     <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
                         android:id="@+id/button_navigate_edit"

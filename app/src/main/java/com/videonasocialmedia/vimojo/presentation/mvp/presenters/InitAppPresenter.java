@@ -8,6 +8,7 @@ import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.record.domain.AddCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.record.model.FrameRatePreference;
 import com.videonasocialmedia.vimojo.record.model.ResolutionPreference;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import javax.inject.Inject;
 
@@ -43,7 +44,7 @@ public class InitAppPresenter {
           return;
       }
 
-    String defaultResolution = "";
+    String defaultResolution = Constants.DEFAULT_CAMERA_PREF_RESOLUTION;
     boolean resolutionBack720pSupported = false;
     boolean resolutionBack1080pSupported = false;
     boolean resolutionBack2160pSupported = false;
@@ -84,7 +85,7 @@ public class InitAppPresenter {
           return;
       }
 
-      String defaultFrameRate = "";
+      String defaultFrameRate = Constants.DEFAULT_CAMERA_PREF_FRAME_RATE;
       boolean frameRate24FpsSupported = false;
       boolean frameRate25FpsSupported = false;
       boolean frameRate30FpsSupported = false;
