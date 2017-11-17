@@ -8,6 +8,8 @@ import android.hardware.camera2.params.MeteringRectangle;
 import android.util.Log;
 import android.util.Range;
 
+import com.videonasocialmedia.camera.camera2.wrappers.VideonaCameraCharacteristics;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -16,13 +18,13 @@ import java.util.Arrays;
  */
 
 public class Camera2MeteringModeHelper {
-  private static final String TAG = Camera2MeteringModeHelper.class.getCanonicalName();
+  private static final String LOG_TAG = Camera2MeteringModeHelper.class.getCanonicalName();
   public static final String AE_MODE_ON = "ae_on";
   public static final String AE_MODE_OFF = "ae_off";
   public static final String AE_MODE_EXPOSURE_COMPENSATION = "ae_exposure_compensation";
   public static final String AE_MODE_REGIONS = "ae_mode_regions";
   private static final String DEFAULT_AE_MODE = AE_MODE_ON;
-  public static final int AE_METERING_AREA_SIZE = 50;
+  public static final int AE_METERING_AREA_SIZE = 500;
   private final Camera2Wrapper camera2Wrapper;
   private CameraFeatures.SupportedValues supportedAEValues;
   private int[] aeAvailableModes;
@@ -60,7 +62,7 @@ public class Camera2MeteringModeHelper {
 
   private void getCameraMeteringCapabilities() {
     try {
-      CameraCharacteristics cameraCharacteristics = camera2Wrapper.getCurrentCameraCharacteristics();
+      VideonaCameraCharacteristics cameraCharacteristics = camera2Wrapper.getCurrentCameraCharacteristics();
       aeAvailableModes = cameraCharacteristics
               .get(CameraCharacteristics.CONTROL_AE_AVAILABLE_MODES);
       Range<Integer> exposure_range = cameraCharacteristics
@@ -75,11 +77,11 @@ public class Camera2MeteringModeHelper {
 //        this.defaultAERegions = cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_REGIONS);
 //      }
     } catch (CameraAccessException e) {
-      Log.e(TAG, "failed to get camera characteristics");
-      Log.e(TAG, "reason: " + e.getReason());
-      Log.e(TAG, "message: " + e.getMessage());
+      Log.e(LOG_TAG, "failed to get camera characteristics");
+      Log.e(LOG_TAG, "reason: " + e.getReason());
+      Log.e(LOG_TAG, "message: " + e.getMessage());
     } catch (NullPointerException npe) {
-      Log.e(TAG, "Caught NullPointerException while getting camera metering capabilities", npe);
+      Log.e(LOG_TAG, "Caught NullPointerException while getting camera metering capabilities", npe);
     }
   }
 
@@ -106,7 +108,7 @@ public class Camera2MeteringModeHelper {
     setAutoCameraControlMode();
     supportedAEValues.selectedValue = AE_MODE_EXPOSURE_COMPENSATION;
     currentExposureCompensation = exposureCompensation;
-    Log.d(TAG, "---------------- set exposure compensation to "
+    Log.d(LOG_TAG, "---------------- set exposure compensation to "
             +exposureCompensation+" .............");
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION,
             exposureCompensation);
@@ -128,12 +130,21 @@ public class Camera2MeteringModeHelper {
 
   private void setMeteringRectangles(MeteringRectangle[] lastMeteringRectangles) {
     if (maxAERegions > 0) {
+      camera2Wrapper.getPreviewBuilder().disableSamsungJunk();
+      camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
       camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-              CameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_CANCEL);
-      camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_REGIONS,
-              lastMeteringRectangles);
+              CameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
+      camera2Wrapper.updatePreview();
+
       camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
               CameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+      camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_LOCK, false);
+
+      camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_REGIONS,
+              lastMeteringRectangles);
+      if (lastMeteringRectangles != null) {
+        Log.e(LOG_TAG, "ae region set to " + lastMeteringRectangles[0]);
+      }
       camera2Wrapper.updatePreview();
     }
   }
