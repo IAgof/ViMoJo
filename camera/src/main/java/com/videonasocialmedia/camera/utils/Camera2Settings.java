@@ -10,6 +10,13 @@ import android.media.MediaRecorder;
 import android.util.Range;
 import android.util.Size;
 
+import com.samsung.android.sdk.SsdkUnsupportedException;
+import com.samsung.android.sdk.camera.SCamera;
+import com.samsung.android.sdk.camera.SCameraManager;
+import com.videonasocialmedia.camera.camera2.wrappers.VideonaCameraCharacteristics;
+import com.videonasocialmedia.camera.camera2.wrappers.VideonaCameraManager;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +29,7 @@ public class Camera2Settings {
 
   public static final int BACK_CAMERA_ID = 0;
   public static final int FRONT_CAMERA_ID = 1;
-  private final Context context;
+  private final WeakReference<Context> contextWeakReference;
 
   private boolean isBackCamera720pSupported = false;
   private boolean isBackCamera1080pSupported = false;
@@ -37,30 +44,78 @@ public class Camera2Settings {
   private boolean isFrameRate25fpsSupported = false;
   private boolean isFrameRate30fpsSupported = false;
 
-  private CameraManager manager;
+  private VideonaCameraManager manager;
   private Size[] supportedVideoSizes;
+
+  private SCamera sCamera;
+  private SCameraManager sCameraManager;
 
   public Camera2Settings(Context context) throws CameraAccessException {
 
-    this.context = context;
+    contextWeakReference = new WeakReference<>(context);
 
-    final Activity activity = (Activity) context;
+    /*final Activity activity = (Activity) context;
     if (null == activity || activity.isFinishing()) {
       return;
     }
-    manager = (CameraManager) activity.getSystemService(context.CAMERA_SERVICE);
+    manager = (CameraManager) activity.getSystemService(context.CAMERA_SERVICE);*/
+    setupSamsungCamera();
 
     checkVideoSize(BACK_CAMERA_ID);
     if(manager.getCameraIdList().length > 0) {
       checkVideoSize(FRONT_CAMERA_ID);
     }
-    checkFrameRateSupport();
+    checkFrameRateSupport(BACK_CAMERA_ID);
   }
 
+  private void setupSamsungCamera() {
+    if (contextWeakReference.get() != null) {
+      sCamera = new SCamera();
+      try {
+        sCamera.initialize(contextWeakReference.get());
+        sCameraManager = sCamera.getSCameraManager();
+        manager = new VideonaCameraManager(sCameraManager);
+        return;
+      } catch (SsdkUnsupportedException sCameraInitError) {
+        if (sCameraInitError.getType() == SsdkUnsupportedException.VENDOR_NOT_SUPPORTED) {
+          // The device is not a Samsung device.
+        } else if (sCameraInitError.getType() == SsdkUnsupportedException.DEVICE_NOT_SUPPORTED) {
+          // The device does not support Camera.
+//      } else if (sCameraInitError.getType() == SsdkUnsupportedException.SDK_VERSION_MISMATCH) {
+          // There is a SDK version mismatch.
+        }
+      }
+    }
+  }
+
+  private String getCameraId(int cameraIdSelected) throws CameraAccessException {
+    getCameraManager();
+    return manager.getCameraIdList()[cameraIdSelected];
+  }
+
+  VideonaCameraCharacteristics getCurrentCameraCharacteristics(int cameraId) throws CameraAccessException {
+    return manager.getCameraCharacteristics(getCameraId(cameraId));
+  }
+
+  private void getCameraManager() {
+    if (manager != null) {
+      return;
+    }
+    if (contextWeakReference.get() != null) {
+      final Activity activity = (Activity) contextWeakReference.get();
+      if (sCameraManager != null) {
+        manager = new VideonaCameraManager(sCameraManager);
+      } else {
+        manager = new VideonaCameraManager
+            ((CameraManager) activity.getSystemService(activity.CAMERA_SERVICE));
+      }
+    }
+  }
+
+
   private void checkVideoSize(int cameraId) throws CameraAccessException {
-   String camera = manager.getCameraIdList()[cameraId];
     // Choose the sizes for camera preview and video isRecording
-    CameraCharacteristics characteristics = manager.getCameraCharacteristics(camera);
+    VideonaCameraCharacteristics characteristics = getCurrentCameraCharacteristics(cameraId);
     StreamConfigurationMap map = characteristics
         .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
     supportedVideoSizes = map.getOutputSizes(MediaRecorder.class);
@@ -119,8 +174,8 @@ public class Camera2Settings {
     return isFrontCamera2160pSupported;
   }
 
-  private void checkFrameRateSupport() throws CameraAccessException {
-    Range<Integer>[] fpsRangeSupported = getFPSRange();
+  private void checkFrameRateSupport(int cameraId) throws CameraAccessException {
+    Range<Integer>[] fpsRangeSupported = getFPSRange(cameraId);
     List<Range<Integer>> constantsFpsRangeSupported = new ArrayList<>();
     for(Range<Integer> fps: fpsRangeSupported) {
       if(fps.getLower() == fps.getUpper()){
@@ -144,9 +199,8 @@ public class Camera2Settings {
 
   }
 
-  private Range<Integer>[] getFPSRange() throws CameraAccessException {
-    String camera = manager.getCameraIdList()[0];
-    CameraCharacteristics characteristics = manager.getCameraCharacteristics(camera);
+  private Range<Integer>[] getFPSRange(int cameraId) throws CameraAccessException {
+    VideonaCameraCharacteristics characteristics = getCurrentCameraCharacteristics(cameraId);
     return characteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
   }
 

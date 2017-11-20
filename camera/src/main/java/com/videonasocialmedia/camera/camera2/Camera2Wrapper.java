@@ -568,7 +568,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       //getPreviewBuilder().set(CaptureRequest.SENSOR_FRAME_DURATION, Long.valueOf(40000000));
       Range<Integer> fpsRange = new Range<>(videoCameraFormat.getFrameRate(),
           videoCameraFormat.getFrameRate());
-      //getPreviewBuilder().set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, fpsRange);
+      this.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, fpsRange);
       previewSession.setRepeatingRequest(previewBuilder.build(), previewCaptureCallback,
               backgroundHandler);
       Log.d(LOG_TAG, "Updated preview");
