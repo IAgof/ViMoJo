@@ -9,7 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.CameraPreferencesUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraPreferences;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRatePreference;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionPreference;
@@ -76,8 +76,8 @@ public class CreateDefaultProjectUseCase {
   }
 
   private void initCameraPrefs() {
-    CameraPreferencesUseCase cameraPreferencesUseCase = new
-            CameraPreferencesUseCase(cameraPrefRepository);
+    UpdateCameraPreferencesUseCase updateCameraPreferencesUseCase = new
+        UpdateCameraPreferencesUseCase(cameraPrefRepository);
     ResolutionPreference resolutionPreference = new ResolutionPreference(
         Constants.DEFAULT_CAMERA_PREF_RESOLUTION, true, true, true,
         true, true, false);
@@ -87,7 +87,7 @@ public class CreateDefaultProjectUseCase {
     boolean interfaceProSelected = true;
     CameraPreferences defaultCameraPreferences = new CameraPreferences(resolutionPreference,
         frameRatePreference, quality, interfaceProSelected);
-    cameraPreferencesUseCase.createCameraPref(defaultCameraPreferences);
+    updateCameraPreferencesUseCase.createCameraPref(defaultCameraPreferences);
   }
 
   public void createProject(String rootPath, String privatePath, boolean isWatermarkFeatured) {

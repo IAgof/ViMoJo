@@ -18,33 +18,17 @@ import javax.inject.Inject;
  * Created by alvaro on 14/11/17.
  */
 
-public class CameraPreferencesUseCase {
+public class UpdateCameraPreferencesUseCase {
 
   protected CameraPrefRepository cameraPrefRepository;
 
   @Inject
-  public CameraPreferencesUseCase(CameraPrefRepository cameraPrefRepository) {
+  public UpdateCameraPreferencesUseCase(CameraPrefRepository cameraPrefRepository) {
     this.cameraPrefRepository = cameraPrefRepository;
   }
 
   public void createCameraPref(CameraPreferences cameraPreferences) {
     cameraPrefRepository.update(cameraPreferences);
-  }
-
-  public ResolutionPreference getResolutionPreference() {
-    return cameraPrefRepository.getCameraPreferences().getResolutionPreference();
-  }
-
-  public FrameRatePreference getFrameRatePreference() {
-    return cameraPrefRepository.getCameraPreferences().getFrameRatePreference();
-  }
-
-  public String getQualityPreference() {
-    return cameraPrefRepository.getCameraPreferences().getQuality();
-  }
-
-  public boolean isInterfaceProSelected() {
-    return cameraPrefRepository.getCameraPreferences().isInterfaceProSelected();
   }
 
   public void setResolutionPreferencesSupported(ResolutionPreference resolutionPreference) {

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
@@ -49,7 +50,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.CameraPreferencesUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefRepository;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
@@ -212,8 +213,8 @@ public class ActivityPresentersModule {
   CameraSettingsPresenter provideCameraSettingPresenter(UserEventTracker userEventTracker,
                                                         GetCameraSettingsListUseCase
                                                             getCameraSettingsListUseCase,
-                                                        CameraPreferencesUseCase
-                                                                cameraPreferencesUseCase,
+                                                        UpdateCameraPreferencesUseCase
+                                                            updateCameraPreferencesUseCase,
                                                         UpdateVideoResolutionToProjectUseCase
                                                           updateVideoResolutionToProjectUseCase,
                                                         UpdateVideoFrameRateToProjectUseCase
@@ -222,7 +223,7 @@ public class ActivityPresentersModule {
                                                          updateVideoQualityToProjectUseCase
                                                         ) {
     return new CameraSettingsPresenter(activity, (CameraSettingsView) activity, userEventTracker,
-        getCameraSettingsListUseCase, cameraPreferencesUseCase,
+        getCameraSettingsListUseCase, updateCameraPreferencesUseCase,
         updateVideoResolutionToProjectUseCase, updateVideoFrameRateToProjectUseCase,
         updateVideoQualityToProjectUseCase);
   }
@@ -273,11 +274,11 @@ public class ActivityPresentersModule {
   RecordCamera2Presenter provideRecordCamera2Presenter(
           UserEventTracker userEventTracker, SharedPreferences sharedPreferences,
           AddVideoToProjectUseCase addVideoToProjectUseCase, Camera2Wrapper camera2wrapper,
-          NewClipImporter newClipImporter, CameraPreferencesUseCase
-                  cameraPreferencesUseCase) {
+          NewClipImporter newClipImporter, GetCameraPreferencesUseCase
+              getCameraPreferencesUseCase) {
     return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity, userEventTracker,
             sharedPreferences, addVideoToProjectUseCase, newClipImporter, camera2wrapper,
-            cameraPreferencesUseCase);
+        getCameraPreferencesUseCase);
   }
 
   @Provides @PerActivity
@@ -312,10 +313,10 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   InitAppPresenter provideInitAppPresenter(
-          CreateDefaultProjectUseCase createDefaultProjectUseCase, CameraPreferencesUseCase
-          cameraPreferencesUseCase) {
+          CreateDefaultProjectUseCase createDefaultProjectUseCase, UpdateCameraPreferencesUseCase
+      updateCameraPreferencesUseCase) {
     return new InitAppPresenter(activity, createDefaultProjectUseCase,
-            cameraPreferencesUseCase);
+        updateCameraPreferencesUseCase);
   }
 
   @Provides @PerActivity
@@ -401,9 +402,9 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  GetCameraSettingsListUseCase provideCameraSettingUseCase(CameraPreferencesUseCase
-                                                               cameraPreferencesUseCase) {
-    return new GetCameraSettingsListUseCase(activity, cameraPreferencesUseCase);
+  GetCameraSettingsListUseCase provideCameraSettingUseCase(CameraPrefRepository
+                                                           cameraPrefRepository) {
+    return new GetCameraSettingsListUseCase(activity, cameraPrefRepository);
   }
 
   @Provides GetMediaListFromProjectUseCase provideMediaListRetriever() {
@@ -529,9 +530,15 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  CameraPreferencesUseCase provideAddCameraPreferenceUseCase(CameraPrefRepository
+  UpdateCameraPreferencesUseCase provideAddCameraPreferenceUseCase(CameraPrefRepository
                                                                     cameraPrefRepository) {
-    return new CameraPreferencesUseCase(cameraPrefRepository);
+    return new UpdateCameraPreferencesUseCase(cameraPrefRepository);
+  }
+
+  @Provides
+  GetCameraPreferencesUseCase provideGetCameraPreferencesUseCase(CameraPrefRepository
+                                                                     cameraPrefRepository) {
+    return new GetCameraPreferencesUseCase(cameraPrefRepository);
   }
 
   @Provides

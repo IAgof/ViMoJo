@@ -17,6 +17,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
@@ -103,7 +104,7 @@ public class RecordCamera2PresenterTest {
     presenter.initViews();
 
     verify(mockedRecordView).hideRecordPointIndicator();
-    verify(mockedRecordView).setCameraSettingSelected("720", "16Mbps", "25 fps");
+    verify(mockedRecordView).setCameraSettingSelected(anyString(), anyString(), anyString());
     verify(mockedRecordView).showPrincipalViews();
     verify(mockedRecordView).showRightControlsView();
   }
@@ -115,7 +116,7 @@ public class RecordCamera2PresenterTest {
     presenter.initViews();
 
     verify(mockedRecordView).hideRecordPointIndicator();
-    verify(mockedRecordView).setCameraSettingSelected("720", "16Mbps", "25 fps");
+    verify(mockedRecordView).setCameraSettingSelected(anyString(), anyString(), anyString());
     verify(mockedRecordView).showPrincipalViews();
     verify(mockedRecordView).showRightControlsView();
   }

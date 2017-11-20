@@ -1,7 +1,5 @@
 package com.videonasocialmedia.vimojo.cameraSettings.repository;
 
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefRealmRepository;
-
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.notNullValue;

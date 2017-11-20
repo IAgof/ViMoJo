@@ -30,6 +30,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
@@ -37,7 +38,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.CameraPreferencesUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerAmplitudeDbListener;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoopThread;
@@ -61,7 +62,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private static final String TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
-  private CameraPreferencesUseCase cameraPreferencesUseCase;
+  private GetCameraPreferencesUseCase getCameraPreferencesUseCase;
   private SharedPreferences sharedPreferences;
   protected UserEventTracker userEventTracker;
   private final NewClipImporter newClipImporter;
@@ -95,13 +96,13 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
       UserEventTracker userEventTracker,
       SharedPreferences sharedPreferences,
       AddVideoToProjectUseCase addVideoToProjectUseCase, NewClipImporter newClipImporter,
-      Camera2Wrapper camera, CameraPreferencesUseCase cameraPreferencesUseCase) {
+      Camera2Wrapper camera, GetCameraPreferencesUseCase getCameraPreferencesUseCase) {
     this.context = context;
     this.recordView = recordView;
     this.userEventTracker = userEventTracker;
     this.sharedPreferences = sharedPreferences;
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-    this.cameraPreferencesUseCase = cameraPreferencesUseCase;
+    this.getCameraPreferencesUseCase = getCameraPreferencesUseCase;
     this.currentProject = loadProject();
     // TODO:(alvaro.martinez) 25/01/17 Support camera1, api <21 or combine both. Make Camera1Wrapper
 //    camera = new Camera2Wrapper(context, DEFAULT_CAMERA_ID, textureView, directorySaveVideos,
@@ -129,7 +130,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   private void checkCameraPreferences() {
-    if(cameraPreferencesUseCase.isInterfaceProSelected()) {
+    if(getCameraPreferencesUseCase.isInterfaceProSelected()) {
       cameraProSelected = true;
     }
   }
