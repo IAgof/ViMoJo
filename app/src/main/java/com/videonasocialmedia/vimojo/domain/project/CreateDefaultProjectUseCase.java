@@ -13,7 +13,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.domain.CameraPreferencesUseC
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraPreferences;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRatePreference;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionPreference;
-import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;

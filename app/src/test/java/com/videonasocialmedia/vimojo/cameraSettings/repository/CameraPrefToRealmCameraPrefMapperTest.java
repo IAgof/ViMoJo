@@ -1,8 +1,10 @@
-package com.videonasocialmedia.vimojo.repository.camerapref;
+package com.videonasocialmedia.vimojo.cameraSettings.repository;
 
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraPreferences;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRatePreference;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionPreference;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefToRealmCameraPrefMapper;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.RealmCameraPref;
 
 import org.junit.Test;
 

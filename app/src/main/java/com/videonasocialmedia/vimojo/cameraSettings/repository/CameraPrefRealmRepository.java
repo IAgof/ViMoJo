@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.camerapref;
+package com.videonasocialmedia.vimojo.cameraSettings.repository;
 
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraPreferences;
 import com.videonasocialmedia.vimojo.repository.Mapper;

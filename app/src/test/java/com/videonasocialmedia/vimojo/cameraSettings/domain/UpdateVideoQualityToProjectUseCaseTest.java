@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.domain.editor;
+package com.videonasocialmedia.vimojo.cameraSettings.domain;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;

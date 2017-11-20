@@ -14,6 +14,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateVideoFrameRateT
 import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateVideoQualityToProjectUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
 
@@ -22,10 +23,11 @@ import javax.inject.Inject;
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
 public class CameraSettingsPresenter implements
-        GetCameraSettingsListUseCase.CameraSettingListUseCaseListener {
+    GetCameraSettingsListUseCase.CameraSettingListUseCaseListener {
 
   private Context context;
   private CameraSettingsView cameraSettingsListView;
+  private UserEventTracker userEventTracker;
   private GetCameraSettingsListUseCase getSettingListUseCase;
   private CameraPreferencesUseCase cameraPreferencesUseCase;
   private UpdateVideoFrameRateToProjectUseCase updateVideoFrameRateToProjectUseCase;
@@ -34,17 +36,19 @@ public class CameraSettingsPresenter implements
 
   @Inject
   public CameraSettingsPresenter(Context context, CameraSettingsView cameraSettingsListView,
+                                 UserEventTracker userEventTracker,
                                  GetCameraSettingsListUseCase getSettingListUseCase,
                                  CameraPreferencesUseCase cameraPreferencesUseCase,
                                  UpdateVideoResolutionToProjectUseCase
-                                         updateVideoResolutionToProjectUseCase,
+                                     updateVideoResolutionToProjectUseCase,
                                  UpdateVideoFrameRateToProjectUseCase
-                                         updateVideoFrameRateToProjectUseCase,
+                                     updateVideoFrameRateToProjectUseCase,
                                  UpdateVideoQualityToProjectUseCase
-                                         updateVideoQualityToProjectUseCase) {
+                                     updateVideoQualityToProjectUseCase) {
     this.context = context;
     this.getSettingListUseCase = getSettingListUseCase;
     this.cameraSettingsListView = cameraSettingsListView;
+    this.userEventTracker = userEventTracker;
     this.cameraPreferencesUseCase = cameraPreferencesUseCase;
     this.updateVideoResolutionToProjectUseCase = updateVideoResolutionToProjectUseCase;
     this.updateVideoFrameRateToProjectUseCase = updateVideoFrameRateToProjectUseCase;
@@ -68,6 +72,7 @@ public class CameraSettingsPresenter implements
         interfaceProSelected = Constants.DEFAULT_CAMERA_PREF_INTERFACE_PRO_SELECTED;
     }
     cameraPreferencesUseCase.setInterfaceProSelected(interfaceProSelected);
+    userEventTracker.trackChangeCameraInterface(interfaceProSelected);
   }
 
   public void setCameraResolutionPreference(int resolutionSelectedId) {
@@ -92,6 +97,7 @@ public class CameraSettingsPresenter implements
     }
     cameraPreferencesUseCase.setResolutionPreference(resolution);
     updateVideoResolutionToProjectUseCase.updateResolution(videoResolution);
+    userEventTracker.trackChangeResolution(resolution);
   }
 
   public void setCameraFrameRatePreference(int frameRateSelected) {
@@ -116,6 +122,7 @@ public class CameraSettingsPresenter implements
     }
     cameraPreferencesUseCase.setFrameRatePreference(frameRate);
     updateVideoFrameRateToProjectUseCase.updateFrameRate(videoFrameRate);
+    userEventTracker.trackChangeFrameRate(frameRate);
   }
 
   public void setCameraQualityPreference(int qualitySelectedId) {
@@ -140,6 +147,7 @@ public class CameraSettingsPresenter implements
     }
     cameraPreferencesUseCase.setQualityPreference(quality);
     updateVideoQualityToProjectUseCase.updateQuality(videoQuality);
+    userEventTracker.trackChangeQuality(quality);
   }
 
   @Override

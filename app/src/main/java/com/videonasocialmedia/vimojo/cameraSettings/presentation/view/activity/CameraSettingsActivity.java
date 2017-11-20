@@ -29,7 +29,7 @@ import butterknife.OnClick;
 
 
 public class CameraSettingsActivity extends VimojoActivity implements
-        CameraSettingsListClickListener, CameraSettingsView {
+    CameraSettingsListClickListener, CameraSettingsView {
 
   @Inject
   CameraSettingsPresenter presenter;
@@ -57,7 +57,7 @@ public class CameraSettingsActivity extends VimojoActivity implements
     adapter.setCameraSettingsListClickListener(this);
     int NUM_COLUMNS_GRID_RECYCLER = 2;
     RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this,
-            NUM_COLUMNS_GRID_RECYCLER, orientation, false);
+        NUM_COLUMNS_GRID_RECYCLER, orientation, false);
     recyclerCameraSettingsList.setLayoutManager(layoutManager);
     recyclerCameraSettingsList.setAdapter(adapter);
   }

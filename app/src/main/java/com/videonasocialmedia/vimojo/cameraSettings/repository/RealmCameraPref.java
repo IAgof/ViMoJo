@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.camerapref;
+package com.videonasocialmedia.vimojo.cameraSettings.repository;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;

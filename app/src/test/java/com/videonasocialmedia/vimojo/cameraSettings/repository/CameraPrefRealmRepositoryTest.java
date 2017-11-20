@@ -1,4 +1,6 @@
-package com.videonasocialmedia.vimojo.repository.camerapref;
+package com.videonasocialmedia.vimojo.cameraSettings.repository;
+
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefRealmRepository;
 
 import org.junit.Test;
 

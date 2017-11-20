@@ -50,7 +50,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.CameraPreferencesUseCase;
-import com.videonasocialmedia.vimojo.repository.camerapref.CameraPrefRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefRepository;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
@@ -209,7 +209,8 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  CameraSettingsPresenter provideCameraSettingPresenter(GetCameraSettingsListUseCase
+  CameraSettingsPresenter provideCameraSettingPresenter(UserEventTracker userEventTracker,
+                                                        GetCameraSettingsListUseCase
                                                             getCameraSettingsListUseCase,
                                                         CameraPreferencesUseCase
                                                                 cameraPreferencesUseCase,
@@ -220,7 +221,7 @@ public class ActivityPresentersModule {
                                                         UpdateVideoQualityToProjectUseCase
                                                          updateVideoQualityToProjectUseCase
                                                         ) {
-    return new CameraSettingsPresenter(activity, (CameraSettingsView) activity,
+    return new CameraSettingsPresenter(activity, (CameraSettingsView) activity, userEventTracker,
         getCameraSettingsListUseCase, cameraPreferencesUseCase,
         updateVideoResolutionToProjectUseCase, updateVideoFrameRateToProjectUseCase,
         updateVideoQualityToProjectUseCase);

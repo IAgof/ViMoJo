@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 
 
 public class CameraSettingsAdapter extends
-        RecyclerView.Adapter<CameraSettingsAdapter.CameraSettingsAdapterItemViewHolder> {
+    RecyclerView.Adapter<CameraSettingsAdapter.CameraSettingsAdapterItemViewHolder> {
 
   private List<CameraSettingsPackage> cameraSettingsList;
   private CameraSettingsListClickListener listener;
@@ -39,7 +39,7 @@ public class CameraSettingsAdapter extends
   @Override
   public CameraSettingsAdapterItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
     View rowView = LayoutInflater.from(viewGroup.getContext()).
-            inflate(R.layout.camera_settings_list_view_holder, viewGroup, false);
+        inflate(R.layout.camera_settings_list_view_holder, viewGroup, false);
     this.context = viewGroup.getContext();
     return new CameraSettingsAdapterItemViewHolder(rowView);
   }
@@ -51,7 +51,7 @@ public class CameraSettingsAdapter extends
 
     if (!cameraSettingsPackage.isAvailable()) {
       holder.textNotAvailable.setText(context.getString(R.string.preference_camera_not_available)
-              + " " + cameraSettingsPackage.getTitleCameraSettingsPackage());
+          + " " + cameraSettingsPackage.getTitleCameraSettingsPackage());
       holder.textNotAvailable.setVisibility(View.VISIBLE);
       holder.cameraSettingGroup.setVisibility(View.GONE);
     } else {
