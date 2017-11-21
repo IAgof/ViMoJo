@@ -189,7 +189,6 @@ public class Camera2Settings {
     if(constantsFpsRangeSupported.size() > 0) {
       isFrameRateSupported = true;
     }
-
   }
 
   private Range<Integer>[] getFPSRange(int cameraId) throws CameraAccessException {
