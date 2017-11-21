@@ -75,8 +75,10 @@ public class GetCameraSettingsListUseCase {
           context.getString(R.string.high_resolution_name),
           isResolution2160Selected(resolutionSelected)));
     }
-    preferenceList.add(new CameraSettingsPackage(context.getString(R.string.resolution),
-        resolutionList, isCameraSettingAvailable(currentProject)));
+    if(resolutionList.size() > 0) {
+      preferenceList.add(new CameraSettingsPackage(context.getString(R.string.resolution),
+          resolutionList, isCameraSettingAvailable(currentProject)));
+    }
 
     List<CameraSettingsItem> frameRateList = new ArrayList<>();
     String frameRateSelected = frameRatePreference.getFrameRate();
@@ -92,8 +94,10 @@ public class GetCameraSettingsListUseCase {
       frameRateList.add(new CameraSettingsItem(Constants.CAMERA_PREF_FRAME_RATE_30_ID,
           context.getString(R.string.high_frame_rate_name), frameRateSelected.compareTo(Constants.CAMERA_PREF_FRAME_RATE_30) == 0));
     }
-    preferenceList.add(new CameraSettingsPackage(context.getString(R.string.frame_rate), frameRateList,
-        isCameraSettingAvailable(currentProject)));
+    if(frameRateList.size() > 0) {
+      preferenceList.add(new CameraSettingsPackage(context.getString(R.string.frame_rate), frameRateList,
+          isCameraSettingAvailable(currentProject)));
+    }
 
     List<CameraSettingsItem> qualityList = new ArrayList<>();
     String qualitySelected = cameraPreferences.getQuality();

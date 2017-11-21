@@ -53,14 +53,7 @@ public class Camera2Settings {
   public Camera2Settings(Context context) throws CameraAccessException {
 
     contextWeakReference = new WeakReference<>(context);
-
-    /*final Activity activity = (Activity) context;
-    if (null == activity || activity.isFinishing()) {
-      return;
-    }
-    manager = (CameraManager) activity.getSystemService(context.CAMERA_SERVICE);*/
     setupSamsungCamera();
-
     checkVideoSize(BACK_CAMERA_ID);
     if(manager.getCameraIdList().length > 0) {
       checkVideoSize(FRONT_CAMERA_ID);

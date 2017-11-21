@@ -96,6 +96,9 @@ public class InitAppPresenter {
           if(camera2Settings.isFrameRate30fpsSupported()) {
               frameRate30FpsSupported = true;
           }
+      } else {
+        //default preference
+        frameRate30FpsSupported = true;
       }
 
       FrameRatePreference frameRatePreference = new FrameRatePreference(defaultFrameRate,
