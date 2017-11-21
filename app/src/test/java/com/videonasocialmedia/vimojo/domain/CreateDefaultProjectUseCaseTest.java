@@ -3,6 +3,10 @@ package com.videonasocialmedia.vimojo.domain;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraPreferences;
+import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRatePreference;
+import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionPreference;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefRepository;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -12,6 +16,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
+import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +33,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 23/10/16.
@@ -39,11 +45,15 @@ public class CreateDefaultProjectUseCaseTest {
 
   @Mock ProjectRepository mockedProjectRepository;
   @Mock VimojoApplication mockedVimojoApplication;
+  @Mock CameraPrefRepository mockedCameraPrefRepository;
   @InjectMocks CreateDefaultProjectUseCase injectedUseCase;
+  private CameraPreferences cameraPreferences;
 
   @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
+    initCameraPreferences();
+    when(mockedCameraPrefRepository.getCameraPreferences()).thenReturn(cameraPreferences);
   }
 
   @Before
@@ -51,6 +61,30 @@ public class CreateDefaultProjectUseCaseTest {
     if (Project.INSTANCE != null) {
       Project.INSTANCE.clear();
     }
+  }
+
+  private void initCameraPreferences() {
+    String defaultResolution = Constants.DEFAULT_CAMERA_PREF_RESOLUTION;
+    boolean resolutionBack720pSupported = true;
+    boolean resolutionBack1080pSupported = true;
+    boolean resolutionBack2160pSupported = false;
+    boolean resolutionFront720pSupported = true;
+    boolean resolutionFront1080pSupported = true;
+    boolean resolutionFront2160pSupported = false;
+    ResolutionPreference resolutionPreference = new ResolutionPreference(defaultResolution,
+        resolutionBack720pSupported, resolutionBack1080pSupported,
+        resolutionBack2160pSupported, resolutionFront720pSupported,
+        resolutionFront1080pSupported, resolutionFront2160pSupported);
+    String defaultFrameRate = Constants.DEFAULT_CAMERA_PREF_FRAME_RATE;
+    boolean frameRate24FpsSupported = false;
+    boolean frameRate25FpsSupported = false;
+    boolean frameRate30FpsSupported = true;
+    FrameRatePreference frameRatePreference = new FrameRatePreference(defaultFrameRate,
+        frameRate24FpsSupported, frameRate25FpsSupported, frameRate30FpsSupported);
+    String quality = Constants.DEFAULT_CAMERA_PREF_QUALITY;
+    boolean interfaceProSelected = false;
+    cameraPreferences = new CameraPreferences(resolutionPreference,
+        frameRatePreference, quality, interfaceProSelected);
   }
 
 //  @Test

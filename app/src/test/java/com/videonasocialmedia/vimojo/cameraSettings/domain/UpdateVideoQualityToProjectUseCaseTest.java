@@ -25,8 +25,7 @@ import static org.mockito.Mockito.verify;
 public class UpdateVideoQualityToProjectUseCaseTest {
 
   @Mock ProjectRepository mockedProjectRepository;
-  @InjectMocks
-  UpdateVideoQualityToProjectUseCase injectedUseCase;
+  @InjectMocks UpdateVideoQualityToProjectUseCase injectedUseCase;
   private Project currentProject;
 
   @Before

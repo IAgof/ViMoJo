@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by alvaro on 20/11/17.
@@ -28,7 +29,31 @@ public class UpdateCameraPreferencesUseCaseTest {
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
-    cameraPreferences = mockedCameraPrefRepository.getCameraPreferences();
+    initCameraPreferences();
+  }
+
+  private void initCameraPreferences() {
+    String defaultResolution = Constants.DEFAULT_CAMERA_PREF_RESOLUTION;
+    boolean resolutionBack720pSupported = true;
+    boolean resolutionBack1080pSupported = true;
+    boolean resolutionBack2160pSupported = false;
+    boolean resolutionFront720pSupported = true;
+    boolean resolutionFront1080pSupported = true;
+    boolean resolutionFront2160pSupported = false;
+    ResolutionPreference resolutionPreference = new ResolutionPreference(defaultResolution,
+        resolutionBack720pSupported, resolutionBack1080pSupported,
+        resolutionBack2160pSupported, resolutionFront720pSupported,
+        resolutionFront1080pSupported, resolutionFront2160pSupported);
+    String defaultFrameRate = Constants.DEFAULT_CAMERA_PREF_FRAME_RATE;
+    boolean frameRate24FpsSupported = false;
+    boolean frameRate25FpsSupported = false;
+    boolean frameRate30FpsSupported = true;
+    FrameRatePreference frameRatePreference = new FrameRatePreference(defaultFrameRate,
+        frameRate24FpsSupported, frameRate25FpsSupported, frameRate30FpsSupported);
+    String quality = Constants.DEFAULT_CAMERA_PREF_QUALITY;
+    boolean interfaceProSelected = false;
+    cameraPreferences = new CameraPreferences(resolutionPreference,
+        frameRatePreference, quality, interfaceProSelected);
   }
 
   @Test
@@ -44,6 +69,8 @@ public class UpdateCameraPreferencesUseCaseTest {
         resolutionBack720pSupported, resolutionBack1080pSupported,
         resolutionBack2160pSupported, resolutionFront720pSupported,
         resolutionFront1080pSupported, resolutionFront2160pSupported);
+    when(mockedCameraPrefRepository.getCameraPreferences()).thenReturn(cameraPreferences);
+
     injectedUpdateCameraPreferencesUseCase.setResolutionPreferencesSupported(resolutionPreference);
 
     verify(mockedCameraPrefRepository).update(cameraPreferences);
@@ -52,6 +79,7 @@ public class UpdateCameraPreferencesUseCaseTest {
   @Test
   public void setResolutionPreferencesUpdateRepository() {
     String resolution = Constants.DEFAULT_CAMERA_PREF_RESOLUTION;
+    when(mockedCameraPrefRepository.getCameraPreferences()).thenReturn(cameraPreferences);
 
     injectedUpdateCameraPreferencesUseCase.setResolutionPreference(resolution);
 
@@ -66,6 +94,7 @@ public class UpdateCameraPreferencesUseCaseTest {
     boolean frameRate30FpsSupported = true;
     FrameRatePreference frameRatePreference = new FrameRatePreference(defaultFrameRate,
         frameRate24FpsSupported, frameRate25FpsSupported, frameRate30FpsSupported);
+    when(mockedCameraPrefRepository.getCameraPreferences()).thenReturn(cameraPreferences);
 
     injectedUpdateCameraPreferencesUseCase.setFrameRatePreferencesSupported(frameRatePreference);
 
@@ -75,6 +104,7 @@ public class UpdateCameraPreferencesUseCaseTest {
   @Test
   public void setFrameRatePreferenceUpdateRepository() {
     String frameRate = Constants.DEFAULT_CAMERA_PREF_FRAME_RATE;
+    when(mockedCameraPrefRepository.getCameraPreferences()).thenReturn(cameraPreferences);
 
     injectedUpdateCameraPreferencesUseCase.setFrameRatePreference(frameRate);
 
@@ -84,6 +114,7 @@ public class UpdateCameraPreferencesUseCaseTest {
   @Test
   public void setInterfaceProSelectedUpdateRepository() {
     boolean interfaceProSelected = false;
+    when(mockedCameraPrefRepository.getCameraPreferences()).thenReturn(cameraPreferences);
 
     injectedUpdateCameraPreferencesUseCase.setInterfaceProSelected(interfaceProSelected);
 
@@ -93,6 +124,7 @@ public class UpdateCameraPreferencesUseCaseTest {
   @Test
   public void setQualityPreferenceUpdateRepository() {
     String quality = Constants.DEFAULT_CAMERA_PREF_QUALITY;
+    when(mockedCameraPrefRepository.getCameraPreferences()).thenReturn(cameraPreferences);
 
     injectedUpdateCameraPreferencesUseCase.setQualityPreference(quality);
 
@@ -101,27 +133,6 @@ public class UpdateCameraPreferencesUseCaseTest {
 
   @Test
   public void createCameraPreferenceUpdateRepository() {
-    String defaultResolution = Constants.DEFAULT_CAMERA_PREF_RESOLUTION;
-    boolean resolutionBack720pSupported = true;
-    boolean resolutionBack1080pSupported = true;
-    boolean resolutionBack2160pSupported = false;
-    boolean resolutionFront720pSupported = true;
-    boolean resolutionFront1080pSupported = true;
-    boolean resolutionFront2160pSupported = false;
-    ResolutionPreference resolutionPreference = new ResolutionPreference(defaultResolution,
-        resolutionBack720pSupported, resolutionBack1080pSupported,
-        resolutionBack2160pSupported, resolutionFront720pSupported,
-        resolutionFront1080pSupported, resolutionFront2160pSupported);
-    String defaultFrameRate = Constants.DEFAULT_CAMERA_PREF_FRAME_RATE;
-    boolean frameRate24FpsSupported = false;
-    boolean frameRate25FpsSupported = false;
-    boolean frameRate30FpsSupported = true;
-    FrameRatePreference frameRatePreference = new FrameRatePreference(defaultFrameRate,
-        frameRate24FpsSupported, frameRate25FpsSupported, frameRate30FpsSupported);
-    String quality = Constants.DEFAULT_CAMERA_PREF_QUALITY;
-    boolean interfaceProSelected = false;
-    CameraPreferences cameraPreferences = new CameraPreferences(resolutionPreference,
-        frameRatePreference, quality, interfaceProSelected);
 
     injectedUpdateCameraPreferencesUseCase.createCameraPref(cameraPreferences);
 
