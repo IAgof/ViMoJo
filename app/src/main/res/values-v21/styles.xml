@@ -41,7 +41,6 @@
 
         <item name="android:editTextStyle">@style/VideonaEditText</item>
         <item name="android:radioButtonStyle">@style/VideonaRadioButton</item>
-        <item name="android:textViewStyle">@style/VideonaTextView</item>
         <item name="cardViewStyle">@style/CardViewStyleLight</item>
     </style>
 
@@ -91,7 +90,6 @@
         <item name="cardViewStyle">@style/CardViewStyleDark</item>
 
         <item name="android:editTextStyle">@style/VideonaEditText</item>
-        <item name="android:textViewStyle">@style/VideonaTextView</item>
         <item name="android:buttonTint">@color/colorWhite</item>
         <item name="android:radioButtonStyle">@style/VideonaRadioButton</item>
     </style>

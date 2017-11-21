@@ -231,8 +231,8 @@
     <string name="good_quality_value">32000000</string>
     <string name="high_quality_value">50000000</string>
     <string name="camera_pro_o_basic">Camera Pro/Basic</string>
-    <string name="camera_pro">Cámara Pro</string>
-    <string name="camera_basic">Cámara básica</string>
+    <string name="camera_pro">Camera Pro</string>
+    <string name="camera_basic">Camera basic</string>
     <string name="frame_rate">Frame rate</string>
     <string name="low_frame_rate_name">24 fps</string>
     <string name="good_frame_rate_name">25 fps</string>
