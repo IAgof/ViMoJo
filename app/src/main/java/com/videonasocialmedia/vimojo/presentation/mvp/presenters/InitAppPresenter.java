@@ -17,7 +17,7 @@ import javax.inject.Inject;
  */
 public class InitAppPresenter {
   private final Context context;
-  private final UpdateCameraPreferencesUseCase addCameraPreferenceUseCase;
+  private final UpdateCameraPreferencesUseCase updateCameraPreferencesUseCase;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
 
   @Inject
@@ -25,7 +25,7 @@ public class InitAppPresenter {
           createDefaultProjectUseCase, UpdateCameraPreferencesUseCase updateCameraPreferencesUseCase) {
     this.context = context;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
-    this.addCameraPreferenceUseCase = updateCameraPreferencesUseCase;
+    this.updateCameraPreferencesUseCase = updateCameraPreferencesUseCase;
   }
 
   public void startLoadingProject(String rootPath, String privatePath,
@@ -71,7 +71,7 @@ public class InitAppPresenter {
             resolutionBack2160pSupported, resolutionFront720pSupported,
             resolutionFront1080pSupported, resolutionFront2160pSupported);
 
-    addCameraPreferenceUseCase.setResolutionPreferencesSupported(resolutionPreference);
+    updateCameraPreferencesUseCase.setResolutionPreferencesSupported(resolutionPreference);
 
   }
 
@@ -105,6 +105,6 @@ public class InitAppPresenter {
       FrameRatePreference frameRatePreference = new FrameRatePreference(defaultFrameRate,
               frameRate24FpsSupported, frameRate25FpsSupported, frameRate30FpsSupported);
 
-      addCameraPreferenceUseCase.setFrameRatePreferencesSupported(frameRatePreference);
+      updateCameraPreferencesUseCase.setFrameRatePreferencesSupported(frameRatePreference);
   }
 }
