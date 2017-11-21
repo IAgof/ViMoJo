@@ -330,9 +330,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         e.printStackTrace();
       }
       mediaRecorder.stop();
+      // TODO(jliarte): 17/11/17 should we set is recording false before in case an exception is produced? 
       isRecordingVideo = false;
     } catch (RuntimeException runtimeException) {
-      Log.d(LOG_TAG, runtimeException.toString() + " - Caugth error stopping record");
+      Log.d(LOG_TAG, runtimeException.toString() + " - Caught error stopping record");
       throw runtimeException;
     }
   }
@@ -1028,8 +1029,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
                 captureResultSettings.captureResultHasFocusDistance = true;
                 captureResultSettings.captureResultFocusDistance =
                         result.get(CaptureResult.LENS_FOCUS_DISTANCE);
-                Log.d(LOG_TAG, "Capture result focus distance: "
-                        + captureResultSettings.captureResultFocusDistance);
+//                Log.d(LOG_TAG, "Capture result focus distance: "
+//                        + captureResultSettings.captureResultFocusDistance);
               } else {
                 captureResultSettings.captureResultHasFocusDistance = false;
               }

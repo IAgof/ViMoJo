@@ -160,6 +160,8 @@ public class Camera2FocusHelper {
               CameraMetadata.CONTROL_AF_TRIGGER_IDLE);
     } catch (CameraAccessException e) {
       e.printStackTrace();
+    } catch (NullPointerException npe) {
+      // (jliarte): 17/11/17 when capture session is not yet initialized .capture throws an NPE
     }
   }
 

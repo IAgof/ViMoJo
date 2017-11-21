@@ -58,7 +58,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
   private static final int SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE = 100;
   public static final int PREVIEW_RECORD_PICOMETER_SCALE_CORRECTION_RATIO = 2;
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
-  private static final String TAG = RecordCamera2Presenter.class.getCanonicalName();
+  private static final String LOG_TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
   private SharedPreferences sharedPreferences;
   protected UserEventTracker userEventTracker;
@@ -168,7 +168,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
 
   public void onResume() {
     showThumbAndNumber();
-    Log.d(TAG, "resume presenter");
+    Log.d(LOG_TAG, "resume presenter");
     try {
       camera.onResume();
       startSamplingPicometerPreview();
@@ -186,7 +186,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
         new PicometerAmplitudeDbListener() {
       @Override
       public void setMaxAmplituedDb(double maxAmplituedDb) {
-//        Log.d(TAG, "maxAmplitudePreview Dbs " + maxAmplituedDb);
+//        Log.d(LOG_TAG, "maxAmplitudePreview Dbs " + maxAmplituedDb);
         setPicometerProgressAndColor(getProgressPicometerPreview(maxAmplituedDb));
       }
     });
@@ -225,7 +225,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
   private void updatePicometerRecording() {
     int maxAmplitude = camera.getMaxAmplitudeRecording();
     double dBs = getAmplitudePicometerFromRecorderDbs(maxAmplitude);
-    //Log.d(TAG, "maxAmplitudeRecording " + maxAmplitude + " dBs " + dBs);
+    //Log.d(LOG_TAG, "maxAmplitudeRecording " + maxAmplitude + " dBs " + dBs);
     int progress = getProgressPicometerRecording(dBs);
     if (maxAmplitude > 0) {
       setPicometerProgressAndColor(progress);
@@ -258,11 +258,11 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
       color = R.color.recordActivityInfoRed;
     }
     recordView.showProgressPicometer(progress, color);
-//    Log.d(TAG, "Picometer progress " + progress + " isRecording " + camera.isRecordingVideo());
+//    Log.d(LOG_TAG, "Picometer progress " + progress + " isRecording " + camera.isRecordingVideo());
   }
 
   public void onPause() {
-    if(camera.isRecordingVideo()){
+    if (camera.isRecordingVideo()) {
       stopVideoRecording();
     }
     camera.onPause();
@@ -318,8 +318,12 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
       restartPreview();
       recordView.updateAudioGainSeekbarDisability();
     } catch (RuntimeException runtimeException) {
-      // do nothing as it's already managed in camera wrapper
+      Log.e(LOG_TAG, "Error stopping video recording!!");
+      // TODO(jliarte): 21/11/17 handle this error - occurred in samsung galaxy s7 with front camera
+//      camera.stopRecordVideo();
+//      camera.onResume();
     }
+
     incrementSharedPreferencesTotalVideosRecorded();
     trackVideoRecorded();
   }
@@ -364,10 +368,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
   public void setFlashSupport() {
     if (camera.isFlashSupported()) {
       recordView.setFlashSupported(true);
-      Log.d(TAG, "checkSupportFlash flash Supported camera");
+      Log.d(LOG_TAG, "checkSupportFlash flash Supported camera");
     } else {
        recordView.setFlashSupported(false);
-      Log.d(TAG, "checkSupportFlash flash NOT Supported camera");
+      Log.d(LOG_TAG, "checkSupportFlash flash NOT Supported camera");
     }
   }
 
@@ -494,13 +498,13 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
 //              // TODO(jliarte): 5/07/17 check these two listener, code is the else {} part
 //              @Override
 //              public void onSuccessTranscoding(Video video) {
-//                Log.d(TAG, "onSuccessTranscoding " + video.getTempPath());
+//                Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
 //                videoRepository.setSuccessTranscodingVideo(video);
 //              }
 //
 //              @Override
 //              public void onErrorTranscoding(Video video, String message) {
-//                Log.d(TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
+//                Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
 //                if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
 //                  video.increaseNumTriesToExportVideo();
 //                  Project currentProject = Project.getInstance(null, null, null, null);
