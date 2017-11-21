@@ -340,13 +340,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
      * supported resolutions
      */
     private void setupCameraSettings() {
-       presenter.checkCamera2ResolutionSupported();
-       presenter.checkCamera2FrameRateSupported();
-        // Camera 1 deprecated, RecordActivity
-        // checkAvailableCameras();
-      //  checkFlashMode();
-      //  checkCameraVideoSize();
-       // checkCameraFrameRate();
+       presenter.checkCamera2FrameRateAndResolutionSupported();
     }
 
     private void trackUserProfile() {

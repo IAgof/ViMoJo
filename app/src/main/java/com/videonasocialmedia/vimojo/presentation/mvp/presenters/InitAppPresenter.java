@@ -33,16 +33,20 @@ public class InitAppPresenter {
     createDefaultProjectUseCase.loadOrCreateProject(rootPath, privatePath, isWatermarkFeatured);
   }
 
-  public void checkCamera2ResolutionSupported() {
+  public void checkCamera2FrameRateAndResolutionSupported() {
+    Camera2Settings camera2Settings = null;
+    try {
+      camera2Settings = new Camera2Settings(context);
+    } catch (CameraAccessException e) {
+      e.printStackTrace();
+      // TODO: 15/11/2017 Manage Error
+      return;
+    }
+    checkCamera2FrameRateSupported(camera2Settings);
+    checkCamera2ResolutionSupported(camera2Settings);
+  }
 
-      Camera2Settings camera2Settings = null;
-      try {
-          camera2Settings = new Camera2Settings(context);
-      } catch (CameraAccessException e) {
-          e.printStackTrace();
-          // TODO: 15/11/2017 Manage Error
-          return;
-      }
+  private void checkCamera2ResolutionSupported(Camera2Settings camera2Settings) {
 
     String defaultResolution = Constants.DEFAULT_CAMERA_PREF_RESOLUTION;
     boolean resolutionBack720pSupported = false;
@@ -75,15 +79,7 @@ public class InitAppPresenter {
 
   }
 
-  public void checkCamera2FrameRateSupported() {
-      Camera2Settings camera2Settings = null;
-      try {
-          camera2Settings = new Camera2Settings(context);
-      } catch (CameraAccessException e) {
-          e.printStackTrace();
-          // TODO: 15/11/2017 Manage Error
-          return;
-      }
+  private void checkCamera2FrameRateSupported(Camera2Settings camera2Settings) {
 
       String defaultFrameRate = Constants.DEFAULT_CAMERA_PREF_FRAME_RATE;
       boolean frameRate24FpsSupported = false;
