@@ -71,6 +71,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private final Camera2ISOHelper camera2ISOHelper;
   private final Camera2WhiteBalanceHelper camera2WhiteBalanceHelper;
   private final Camera2MeteringModeHelper camera2MeteringModeHelper;
+  private final Camera2FrameRateHelper camera2FrameRateHelper;
 
   /**
    * A reference to the opened {@link VideonaCameraDevice}.
@@ -192,6 +193,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2ISOHelper = new Camera2ISOHelper(this);
     camera2WhiteBalanceHelper = new Camera2WhiteBalanceHelper(this);
     camera2MeteringModeHelper = new Camera2MeteringModeHelper(this);
+    camera2FrameRateHelper = new Camera2FrameRateHelper(this);
 
     setupCamera();
   }
@@ -203,6 +205,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2ISOHelper.setup();
     camera2WhiteBalanceHelper.setup();
     camera2MeteringModeHelper.setup();
+    camera2FrameRateHelper.setup();
   }
 
   private void setupSamsungCamera() {
@@ -566,9 +569,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       //                Tested on M5 and working at 25FPS.
       //                Seems not to crash if camera doesnt support FPS, it aproximates to next available FPS setting
       //getPreviewBuilder().set(CaptureRequest.SENSOR_FRAME_DURATION, Long.valueOf(40000000));
-      Range<Integer> fpsRange = new Range<>(videoCameraFormat.getFrameRate(),
-          videoCameraFormat.getFrameRate());
-      this.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, fpsRange);
+      if(camera2FrameRateHelper.isFrameRateSupported()) {
+        Range<Integer> fpsRange = new Range<>(videoCameraFormat.getFrameRate(),
+                videoCameraFormat.getFrameRate());
+        this.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, fpsRange);
+      }
       previewSession.setRepeatingRequest(previewBuilder.build(), previewCaptureCallback,
               backgroundHandler);
       Log.d(LOG_TAG, "Updated preview");

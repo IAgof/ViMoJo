@@ -2,12 +2,10 @@ package com.videonasocialmedia.camera.camera2;
 
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraMetadata;
 import android.util.Log;
 import android.util.Range;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -26,7 +24,11 @@ public class Camera2FrameRateHelper {
     this.camera2Wrapper = camera2Wrapper;
   }
 
-  public void setupSupportedValues() {
+  public void setup() {
+    setupSupportedValues();
+  }
+
+  private void setupSupportedValues() {
     try {
       Range<Integer>[] fpsRangeSupported = camera2Wrapper.getCurrentCameraCharacteristics()
           .get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
@@ -34,7 +36,7 @@ public class Camera2FrameRateHelper {
       for(Range<Integer> fps: fpsRangeSupported) {
         if(fps.getLower() == fps.getUpper()){
           constantsFpsRangeSupported.add(fps);
-          /*if(fps.getLower() == 24) {
+          if(fps.getLower() == 24) {
             isFrameRate24fpsSupported = true;
           } else {
             if(fps.getLower() == 25) {
@@ -44,10 +46,10 @@ public class Camera2FrameRateHelper {
                 isFrameRate30fpsSupported = true;
               }
             }
-          }*/
+          }
         }
       }
-      if(constantsFpsRangeSupported.size() > 0) {
+      if(isFrameRate24fpsSupported || isFrameRate25fpsSupported || isFrameRate30fpsSupported) {
         isFrameRateSupported = true;
       }
     } catch (CameraAccessException e) {
@@ -61,4 +63,5 @@ public class Camera2FrameRateHelper {
   public boolean isFrameRateSupported() {
     return isFrameRateSupported;
   }
+
 }
