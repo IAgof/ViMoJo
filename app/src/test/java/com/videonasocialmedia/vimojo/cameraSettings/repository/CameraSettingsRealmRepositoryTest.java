@@ -9,11 +9,11 @@ import static org.junit.Assert.assertThat;
  * Created by alvaro on 16/11/17.
  */
 
-public class CameraPrefRealmRepositoryTest {
+public class CameraSettingsRealmRepositoryTest {
 
   @Test
   public void cameraPrefRealmRepositoryConstructorSetsMappers() {
-    CameraPrefRealmRepository repository = new CameraPrefRealmRepository();
+    CameraSettingsRealmRepository repository = new CameraSettingsRealmRepository();
 
     assertThat(repository.toCameraPreferencesMapper, notNullValue());
     assertThat(repository.toRealmCameraMapper, notNullValue());

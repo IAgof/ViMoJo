@@ -6,7 +6,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsListUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -29,7 +29,8 @@ public class CameraSettingsPresenterTest {
   @Mock CameraSettingsView mockedCameraSettingsListView;
   @Mock UserEventTracker mockedUserEventTracker;
   @Mock GetCameraSettingsListUseCase mockedGetSettingListUseCase;
-  @Mock CameraPrefRepository mockedCameraPrefRepository;
+  @Mock
+  CameraSettingsRepository mockedCameraSettingsRepository;
   @Mock ProjectRepository mockedProjectRepository;
 
   @Mock private MixpanelAPI mockedMixpanelAPI;
@@ -44,7 +45,7 @@ public class CameraSettingsPresenterTest {
     UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
     CameraSettingsPresenter presenter = new CameraSettingsPresenter(
         mockedCameraSettingsListView, userEventTracker, mockedGetSettingListUseCase,
-        mockedCameraPrefRepository, mockedProjectRepository);
+            mockedCameraSettingsRepository, mockedProjectRepository);
 
     assertThat(presenter.userEventTracker, is(userEventTracker));
   }
@@ -56,18 +57,18 @@ public class CameraSettingsPresenterTest {
 
     presenter.setCameraInterfacePreference(interfaceProSelectedId);
 
-    verify(mockedCameraPrefRepository).setInterfaceProSelected(true);
+    verify(mockedCameraSettingsRepository).setInterfaceProSelected(true);
     verify(mockedUserEventTracker).trackChangeCameraInterface(true);
   }
 
   @Test
   public void setCameraResolutionPreferenceUpdateRepositoriesAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
-    int resolutionPreferenceId = Constants.CAMERA_PREF_RESOLUTION_720_ID;
+    int resolutionPreferenceId = Constants.CAMERA_PREF_RESOLUTION_720_BACK_ID;
 
     presenter.setCameraResolutionPreference(resolutionPreferenceId);
 
-    verify(mockedCameraPrefRepository).setResolutionPreference("720p");
+    verify(mockedCameraSettingsRepository).setResolutionPreference("720p");
     verify(mockedProjectRepository).updateResolution(VideoResolution.Resolution.HD720);
     verify(mockedUserEventTracker).trackChangeResolution("720p");
   }
@@ -79,7 +80,7 @@ public class CameraSettingsPresenterTest {
 
     presenter.setCameraFrameRatePreference(frameRatePreferenceId);
 
-    verify(mockedCameraPrefRepository).setFrameRatePreference("30 fps");
+    verify(mockedCameraSettingsRepository).setFrameRatePreference("30 fps");
     verify(mockedProjectRepository).updateFrameRate(VideoFrameRate.FrameRate.FPS30);
     verify(mockedUserEventTracker).trackChangeFrameRate("30 fps");
   }
@@ -92,14 +93,14 @@ public class CameraSettingsPresenterTest {
 
     presenter.setCameraQualityPreference(qualityPreferenceId);
 
-    verify(mockedCameraPrefRepository).setQualityPreference("16 Mbps");
+    verify(mockedCameraSettingsRepository).setQualityPreference("16 Mbps");
     verify(mockedProjectRepository).updateQuality(VideoQuality.Quality.LOW);
     verify(mockedUserEventTracker).trackChangeQuality("16 Mbps");
   }
 
   private CameraSettingsPresenter getCameraSettingsPresenter() {
     return new CameraSettingsPresenter(mockedCameraSettingsListView,
-        mockedUserEventTracker, mockedGetSettingListUseCase, mockedCameraPrefRepository,
+        mockedUserEventTracker, mockedGetSettingListUseCase, mockedCameraSettingsRepository,
         mockedProjectRepository);
   }
 }

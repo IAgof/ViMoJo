@@ -11,8 +11,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingsItem;
-import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingsPackage;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingItems;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingSelectable;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 public class CameraSettingsAdapter extends
     RecyclerView.Adapter<CameraSettingsAdapter.CameraSettingsAdapterItemViewHolder> {
 
-  private List<CameraSettingsPackage> cameraSettingsList;
+  private List<CameraSettingSelectable> cameraSettingsList;
   private CameraSettingsListClickListener listener;
   private Context context;
 
@@ -31,7 +31,7 @@ public class CameraSettingsAdapter extends
     this.listener = listener;
   }
 
-  public void setCameraSettingsItemsList(List<CameraSettingsPackage> cameraSettingsList) {
+  public void setCameraSettingsItemsList(List<CameraSettingSelectable> cameraSettingsList) {
     this.cameraSettingsList = cameraSettingsList;
     notifyDataSetChanged();
   }
@@ -46,12 +46,12 @@ public class CameraSettingsAdapter extends
 
   @Override
   public void onBindViewHolder(CameraSettingsAdapterItemViewHolder holder, int position) {
-    CameraSettingsPackage cameraSettingsPackage = cameraSettingsList.get(position);
-    holder.settingCameraTitlePackage.setText(cameraSettingsPackage.getTitleCameraSettingsPackage());
+    CameraSettingSelectable cameraSettingSelectable = cameraSettingsList.get(position);
+    holder.settingCameraTitlePackage.setText(cameraSettingSelectable.getTitleCameraSettingsSelectable());
 
-    if (!cameraSettingsPackage.isAvailable()) {
+    if (!cameraSettingSelectable.isAvailable()) {
       holder.textNotAvailable.setText(context.getString(R.string.preference_camera_not_available)
-          + " " + cameraSettingsPackage.getTitleCameraSettingsPackage());
+          + " " + cameraSettingSelectable.getTitleCameraSettingsSelectable());
       holder.textNotAvailable.setVisibility(View.VISIBLE);
       holder.cameraSettingGroup.setVisibility(View.GONE);
     } else {
@@ -59,7 +59,7 @@ public class CameraSettingsAdapter extends
       holder.cameraSettingGroup.setVisibility(View.VISIBLE);
     }
 
-    for (CameraSettingsItem preference : cameraSettingsPackage.getPreferencesList()) {
+    for (CameraSettingItems preference : cameraSettingSelectable.getPreferencesList()) {
       RadioButton preferenceOption = new RadioButton(CameraSettingsAdapter.this.context);
       preferenceOption.setId(preference.getId());
       preferenceOption.setText(preference.getTitleCameraSettingsItem());

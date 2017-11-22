@@ -4,13 +4,13 @@ package com.videonasocialmedia.vimojo.cameraSettings.model;
  * Created by ruth on 15/11/17.
  */
 
-public class CameraSettingsItem {
+public class CameraSettingItems {
 
   private boolean isSelected;
   private int id;
   private String titleCameraSettingsItem;
 
-  public CameraSettingsItem(int id, String titleCameraSettingsItem, boolean isSelected) {
+  public CameraSettingItems(int id, String titleCameraSettingsItem, boolean isSelected) {
     this.id = id;
     this.titleCameraSettingsItem = titleCameraSettingsItem;
     this.isSelected = isSelected;

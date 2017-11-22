@@ -11,7 +11,7 @@ import android.widget.RadioGroup;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
-import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingsPackage;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingSelectable;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.presenters.CameraSettingsPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.view.adapter.CameraSettingsAdapter;
@@ -38,7 +38,7 @@ public class CameraSettingsActivity extends VimojoActivity implements
   Button okButton;
 
   private CameraSettingsAdapter adapter;
-  private List<CameraSettingsPackage> cameraSettingPackageList;
+  private List<CameraSettingSelectable> cameraSettingPackageList;
 
 
   @Override
@@ -76,9 +76,9 @@ public class CameraSettingsActivity extends VimojoActivity implements
       case Constants.CAMERA_PREF_INTERFACE_BASIC_ID:
         presenter.setCameraInterfacePreference(checkedId);
         break;
-      case Constants.CAMERA_PREF_RESOLUTION_720_ID:
-      case Constants.CAMERA_PREF_RESOLUTION_1080_ID:
-      case Constants.CAMERA_PREF_RESOLUTION_2160_ID:
+      case Constants.CAMERA_PREF_RESOLUTION_720_BACK_ID:
+      case Constants.CAMERA_PREF_RESOLUTION_1080_BACK_ID:
+      case Constants.CAMERA_PREF_RESOLUTION_2160_BACK_ID:
         presenter.setCameraResolutionPreference(checkedId);
         break;
       case Constants.CAMERA_PREF_QUALITY_16_ID:
@@ -95,7 +95,7 @@ public class CameraSettingsActivity extends VimojoActivity implements
   }
 
   @Override
-  public void showCameraSettingsList(List<CameraSettingsPackage> list) {
+  public void showCameraSettingsList(List<CameraSettingSelectable> list) {
     cameraSettingPackageList = list;
     adapter.setCameraSettingsItemsList(list);
   }

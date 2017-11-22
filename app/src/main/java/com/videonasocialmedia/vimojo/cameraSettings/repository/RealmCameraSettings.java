@@ -8,11 +8,11 @@ import io.realm.annotations.Required;
  * Created by alvaro on 14/11/17.
  */
 
-public class RealmCameraPref extends RealmObject {
+public class RealmCameraSettings extends RealmObject {
 
   @PrimaryKey
   @Required
-  public String cameraPreferenceId = "RealmCameraPref";
+  public String cameraSettingsId = "RealmCameraSettings";
 
   public boolean interfaceProSelected;
   @Required
@@ -33,18 +33,18 @@ public class RealmCameraPref extends RealmObject {
   public boolean frameRate25FpsSupported;
   public boolean frameRate30FpsSupported;
 
-  public RealmCameraPref() {
+  public RealmCameraSettings() {
 
   }
 
-  public RealmCameraPref(String cameraPreferenceId, boolean interfaceProSelected, String resolution,
-                         String quality, String frameRate, boolean resolutionBack720pSupported,
-                         boolean resolutionBack1080pSupported, boolean resolutionBack2160pSupported,
-                         boolean resolutionFront720pSupported, boolean resolutionFront1080pSupported,
-                         boolean resolutionFront2160pSupported, boolean frameRate24FpsSupported,
-                         boolean frameRate25FpsSupported, boolean frameRate30FpsSupported) {
+  public RealmCameraSettings(String cameraSettingsId, boolean interfaceProSelected, String resolution,
+                             String quality, String frameRate, boolean resolutionBack720pSupported,
+                             boolean resolutionBack1080pSupported, boolean resolutionBack2160pSupported,
+                             boolean resolutionFront720pSupported, boolean resolutionFront1080pSupported,
+                             boolean resolutionFront2160pSupported, boolean frameRate24FpsSupported,
+                             boolean frameRate25FpsSupported, boolean frameRate30FpsSupported) {
 
-    this.cameraPreferenceId = cameraPreferenceId;
+    this.cameraSettingsId = cameraSettingsId;
     this.interfaceProSelected = interfaceProSelected;
     this.resolution = resolution;
     this.quality = quality;

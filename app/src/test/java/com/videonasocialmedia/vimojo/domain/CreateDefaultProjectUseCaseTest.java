@@ -3,10 +3,10 @@ package com.videonasocialmedia.vimojo.domain;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.cameraSettings.model.CameraPreferences;
-import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRatePreference;
-import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionPreference;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
+import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
+import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -45,15 +45,16 @@ public class CreateDefaultProjectUseCaseTest {
 
   @Mock ProjectRepository mockedProjectRepository;
   @Mock VimojoApplication mockedVimojoApplication;
-  @Mock CameraPrefRepository mockedCameraPrefRepository;
+  @Mock
+  CameraSettingsRepository mockedCameraSettingsRepository;
   @InjectMocks CreateDefaultProjectUseCase injectedUseCase;
-  private CameraPreferences cameraPreferences;
+  private CameraSettings cameraSettings;
 
   @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
     initCameraPreferences();
-    when(mockedCameraPrefRepository.getCameraPreferences()).thenReturn(cameraPreferences);
+    when(mockedCameraSettingsRepository.getCameraPreferences()).thenReturn(cameraSettings);
   }
 
   @Before
@@ -71,7 +72,7 @@ public class CreateDefaultProjectUseCaseTest {
     boolean resolutionFront720pSupported = true;
     boolean resolutionFront1080pSupported = true;
     boolean resolutionFront2160pSupported = false;
-    ResolutionPreference resolutionPreference = new ResolutionPreference(defaultResolution,
+    ResolutionSetting resolutionSetting = new ResolutionSetting(defaultResolution,
         resolutionBack720pSupported, resolutionBack1080pSupported,
         resolutionBack2160pSupported, resolutionFront720pSupported,
         resolutionFront1080pSupported, resolutionFront2160pSupported);
@@ -79,12 +80,12 @@ public class CreateDefaultProjectUseCaseTest {
     boolean frameRate24FpsSupported = false;
     boolean frameRate25FpsSupported = false;
     boolean frameRate30FpsSupported = true;
-    FrameRatePreference frameRatePreference = new FrameRatePreference(defaultFrameRate,
+    FrameRateSetting frameRateSetting = new FrameRateSetting(defaultFrameRate,
         frameRate24FpsSupported, frameRate25FpsSupported, frameRate30FpsSupported);
     String quality = Constants.DEFAULT_CAMERA_PREF_QUALITY;
     boolean interfaceProSelected = false;
-    cameraPreferences = new CameraPreferences(resolutionPreference,
-        frameRatePreference, quality, interfaceProSelected);
+    cameraSettings = new CameraSettings(resolutionSetting,
+            frameRateSetting, quality, interfaceProSelected);
   }
 
 //  @Test

@@ -127,9 +127,12 @@ public class Constants {
 
   // Default camera setting
 
-    public static final int CAMERA_PREF_RESOLUTION_720_ID = 720;
-    public static final int CAMERA_PREF_RESOLUTION_1080_ID = 1080;
-    public static final int CAMERA_PREF_RESOLUTION_2160_ID = 2160;
+    public static final int CAMERA_PREF_RESOLUTION_720_BACK_ID = 720;
+  public static final int CAMERA_PREF_RESOLUTION_720_FRONT_ID = 721;
+    public static final int CAMERA_PREF_RESOLUTION_1080_BACK_ID = 1080;
+  public static final int CAMERA_PREF_RESOLUTION_1080_FRONT_ID = 1081;
+    public static final int CAMERA_PREF_RESOLUTION_2160_BACK_ID = 2160;
+  public static final int CAMERA_PREF_RESOLUTION_2160_FRONT_ID = 2161;
 
     public static final int CAMERA_PREF_QUALITY_16_ID = 16;
     public static final int CAMERA_PREF_QUALITY_32_ID = 32;
@@ -141,4 +144,7 @@ public class Constants {
 
     public static final int CAMERA_PREF_INTERFACE_PRO_ID = 1;
     public static final int CAMERA_PREF_INTERFACE_BASIC_ID = 2;
+
+  public static final int BACK_CAMERA_ID = 0;
+  public static final int FRONT_CAMERA_ID = 1;
 }

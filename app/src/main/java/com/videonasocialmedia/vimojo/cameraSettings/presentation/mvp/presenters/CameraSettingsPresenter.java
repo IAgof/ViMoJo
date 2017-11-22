@@ -5,7 +5,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsListUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -19,20 +19,20 @@ public class CameraSettingsPresenter {
   private CameraSettingsView cameraSettingsListView;
   protected UserEventTracker userEventTracker;
   private GetCameraSettingsListUseCase getSettingListUseCase;
-  private CameraPrefRepository cameraPrefRepository;
+  private CameraSettingsRepository cameraSettingsRepository;
   private ProjectRepository projectRepository;
 
   @Inject
   public CameraSettingsPresenter(CameraSettingsView cameraSettingsListView,
                                  UserEventTracker userEventTracker,
                                  GetCameraSettingsListUseCase getSettingListUseCase,
-                                 CameraPrefRepository cameraPrefRepository,
+                                 CameraSettingsRepository cameraSettingsRepository,
                                  ProjectRepository
                                            projectRepository) {
     this.getSettingListUseCase = getSettingListUseCase;
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;
-    this.cameraPrefRepository = cameraPrefRepository;
+    this.cameraSettingsRepository = cameraSettingsRepository;
     this.projectRepository = projectRepository;
   }
 
@@ -52,7 +52,7 @@ public class CameraSettingsPresenter {
       default:
         interfaceProSelected = Constants.DEFAULT_CAMERA_PREF_INTERFACE_PRO_SELECTED;
     }
-    cameraPrefRepository.setInterfaceProSelected(interfaceProSelected);
+    cameraSettingsRepository.setInterfaceProSelected(interfaceProSelected);
     userEventTracker.trackChangeCameraInterface(interfaceProSelected);
   }
 
@@ -60,15 +60,15 @@ public class CameraSettingsPresenter {
     String resolution;
     VideoResolution.Resolution videoResolution;
     switch (resolutionSelectedId) {
-      case CAMERA_PREF_RESOLUTION_720_ID:
+      case CAMERA_PREF_RESOLUTION_720_BACK_ID:
         resolution = CAMERA_PREF_RESOLUTION_720;
         videoResolution = VideoResolution.Resolution.HD720;
         break;
-      case CAMERA_PREF_RESOLUTION_1080_ID:
+      case CAMERA_PREF_RESOLUTION_1080_BACK_ID:
         resolution = CAMERA_PREF_RESOLUTION_1080;
         videoResolution = VideoResolution.Resolution.HD1080;
         break;
-      case CAMERA_PREF_RESOLUTION_2160_ID:
+      case CAMERA_PREF_RESOLUTION_2160_BACK_ID:
         resolution = CAMERA_PREF_RESOLUTION_2160;
         videoResolution = VideoResolution.Resolution.HD4K;
         break;
@@ -76,7 +76,7 @@ public class CameraSettingsPresenter {
         resolution = DEFAULT_CAMERA_PREF_RESOLUTION;
         videoResolution = VideoResolution.Resolution.HD1080;
     }
-    cameraPrefRepository.setResolutionPreference(resolution);
+    cameraSettingsRepository.setResolutionPreference(resolution);
     projectRepository.updateResolution(videoResolution);
     userEventTracker.trackChangeResolution(resolution);
   }
@@ -101,7 +101,7 @@ public class CameraSettingsPresenter {
         frameRate = DEFAULT_CAMERA_PREF_FRAME_RATE;
         videoFrameRate = VideoFrameRate.FrameRate.FPS30;
     }
-    cameraPrefRepository.setFrameRatePreference(frameRate);
+    cameraSettingsRepository.setFrameRatePreference(frameRate);
     projectRepository.updateFrameRate(videoFrameRate);
     userEventTracker.trackChangeFrameRate(frameRate);
   }
@@ -126,7 +126,7 @@ public class CameraSettingsPresenter {
         quality = DEFAULT_CAMERA_PREF_QUALITY;
         videoQuality = VideoQuality.Quality.LOW;
     }
-    cameraPrefRepository.setQualityPreference(quality);
+    cameraSettingsRepository.setQualityPreference(quality);
     projectRepository.updateQuality(videoQuality);
     userEventTracker.trackChangeQuality(quality);
   }

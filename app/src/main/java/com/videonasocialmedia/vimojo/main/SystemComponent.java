@@ -2,11 +2,11 @@ package com.videonasocialmedia.vimojo.main;
 
 import android.content.SharedPreferences;
 
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefRepository;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
@@ -31,6 +31,6 @@ public interface SystemComponent {
   MusicRepository getMusicRepository();
   UserEventTracker getUserEventTracker();
   SharedPreferences getSharedPreferences();
-  CameraPrefRepository getCameraRepository();
+  CameraSettingsRepository getCameraRepository();
   void inject(VimojoActivity activity);
 }

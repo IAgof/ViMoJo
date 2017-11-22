@@ -348,16 +348,16 @@ public class VimojoMigration implements RealmMigration {
       oldVersion++;
     }
 
-    // Migrate from version 8 to 9, new RealmCameraPref
+    // Migrate from version 8 to 9, new RealmCameraSettings
     if (oldVersion == 8) {
-        RealmObjectSchema realmCameraPrefTable = schema.get("RealmCameraPref");
-        if(schema.get("RealmCameraPref") == null) {
-            RealmObjectSchema cameraPrefSchema = schema.create("RealmCameraPref")
-                    .addField("cameraPreferenceId", String.class, FieldAttribute.PRIMARY_KEY,
+        RealmObjectSchema realmCameraPrefTable = schema.get("RealmCameraSettings");
+        if(schema.get("RealmCameraSettings") == null) {
+            RealmObjectSchema cameraPrefSchema = schema.create("RealmCameraSettings")
+                    .addField("cameraSettingsId", String.class, FieldAttribute.PRIMARY_KEY,
                             FieldAttribute.REQUIRED).transform(new RealmObjectSchema.Function() {
                   @Override
                   public void apply(DynamicRealmObject obj) {
-                    obj.setString("cameraPreferenceId", "RealmCameraPref");
+                    obj.setString("cameraSettingsId", "RealmCameraSettings");
                   }
                 })
                     .addField("interfaceProSelected", Boolean.class, FieldAttribute.REQUIRED)

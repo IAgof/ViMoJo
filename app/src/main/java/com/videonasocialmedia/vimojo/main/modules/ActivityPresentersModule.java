@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraPreferencesUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
@@ -47,7 +47,6 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefRepository;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
@@ -209,12 +208,12 @@ public class ActivityPresentersModule {
   CameraSettingsPresenter provideCameraSettingPresenter(UserEventTracker userEventTracker,
                                                         GetCameraSettingsListUseCase
                                                             getCameraSettingsListUseCase,
-                                                        CameraPrefRepository
-                                                                cameraPrefRepository,
+                                                        CameraSettingsRepository
+                                                                cameraSettingsRepository,
                                                         ProjectRepository
                                                           projectRepository) {
     return new CameraSettingsPresenter((CameraSettingsView) activity, userEventTracker,
-        getCameraSettingsListUseCase, cameraPrefRepository, projectRepository);
+        getCameraSettingsListUseCase, cameraSettingsRepository, projectRepository);
   }
 
   @Provides @PerActivity
@@ -263,11 +262,10 @@ public class ActivityPresentersModule {
   RecordCamera2Presenter provideRecordCamera2Presenter(
           UserEventTracker userEventTracker, SharedPreferences sharedPreferences,
           AddVideoToProjectUseCase addVideoToProjectUseCase, Camera2Wrapper camera2wrapper,
-          NewClipImporter newClipImporter, GetCameraPreferencesUseCase
-              getCameraPreferencesUseCase) {
+          NewClipImporter newClipImporter, CameraSettingsRepository cameraSettingsRepository) {
     return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity, userEventTracker,
             sharedPreferences, addVideoToProjectUseCase, newClipImporter, camera2wrapper,
-        getCameraPreferencesUseCase);
+            cameraSettingsRepository);
   }
 
   @Provides @PerActivity
@@ -302,9 +300,9 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   InitAppPresenter provideInitAppPresenter(
-          CreateDefaultProjectUseCase createDefaultProjectUseCase, CameraPrefRepository
-          cameraPrefRepository) {
-    return new InitAppPresenter(activity, createDefaultProjectUseCase, cameraPrefRepository);
+          CreateDefaultProjectUseCase createDefaultProjectUseCase, CameraSettingsRepository
+          cameraSettingsRepository) {
+    return new InitAppPresenter(activity, createDefaultProjectUseCase, cameraSettingsRepository);
   }
 
   @Provides @PerActivity
@@ -370,9 +368,9 @@ public class ActivityPresentersModule {
 
   @Provides
   CreateDefaultProjectUseCase provideDefaultProjectCreator(
-          ProjectRepository projectRepository, CameraPrefRepository cameraPrefRepository,
+          ProjectRepository projectRepository, CameraSettingsRepository cameraSettingsRepository,
           TrackRepository trackRepository) {
-    return new CreateDefaultProjectUseCase(projectRepository, cameraPrefRepository, trackRepository);
+    return new CreateDefaultProjectUseCase(projectRepository, cameraSettingsRepository, trackRepository);
   }
 
   @Provides
@@ -390,9 +388,9 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  GetCameraSettingsListUseCase provideCameraSettingUseCase(CameraPrefRepository
-                                                           cameraPrefRepository) {
-    return new GetCameraSettingsListUseCase(activity, cameraPrefRepository);
+  GetCameraSettingsListUseCase provideCameraSettingUseCase(CameraSettingsRepository
+                                                                   cameraSettingsRepository) {
+    return new GetCameraSettingsListUseCase(activity, cameraSettingsRepository);
   }
 
   @Provides GetMediaListFromProjectUseCase provideMediaListRetriever() {
@@ -515,11 +513,5 @@ public class ActivityPresentersModule {
 
   @Provides BillingManager provideBillingManager() {
     return new BillingManager();
-  }
-
-  @Provides
-  GetCameraPreferencesUseCase provideGetCameraPreferencesUseCase(CameraPrefRepository
-                                                                     cameraPrefRepository) {
-    return new GetCameraPreferencesUseCase(cameraPrefRepository);
   }
 }
