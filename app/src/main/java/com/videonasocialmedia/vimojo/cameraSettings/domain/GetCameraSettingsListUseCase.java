@@ -39,9 +39,8 @@ public class GetCameraSettingsListUseCase {
     return Project.getInstance(null, null, null, null);
   }
 
-  public void checkCameraSettingsList(CameraSettingListUseCaseListener listener) {
-    WeakReference<GetCameraSettingsListUseCase.CameraSettingListUseCaseListener>
-            cameraSettingListListener = new WeakReference<>(listener);
+  public List<CameraSettingsPackage> checkCameraSettingsList() {
+
     ResolutionPreference resolutionPreference = cameraPreferences.getResolutionPreference();
     FrameRatePreference frameRatePreference = cameraPreferences.getFrameRatePreference();
 
@@ -110,12 +109,7 @@ public class GetCameraSettingsListUseCase {
     preferenceList.add(new CameraSettingsPackage(context.getString(R.string.quality), qualityList,
         isCameraSettingAvailable(currentProject)));
 
-    CameraSettingListUseCaseListener listUseCaseListener = cameraSettingListListener.get();
-    if(preferenceList.size() > 0) {
-      listUseCaseListener.onSuccessGettingList(preferenceList);
-    } else {
-      listUseCaseListener.onErrorGettingList();
-    }
+    return preferenceList;
   }
 
   private boolean isResolution2160Selected(String resolutionSelected) {
@@ -132,11 +126,6 @@ public class GetCameraSettingsListUseCase {
 
   private boolean isCameraSettingAvailable(Project project) {
     return !project.getVMComposition().hasVideos();
-  }
-
-  public interface CameraSettingListUseCaseListener {
-    void onSuccessGettingList(List<CameraSettingsPackage> cameraSettingsPackages);
-    void onErrorGettingList();
   }
 
 }

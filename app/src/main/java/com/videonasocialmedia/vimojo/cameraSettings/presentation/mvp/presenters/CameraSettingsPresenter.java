@@ -5,9 +5,7 @@ import android.content.Context;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsListUseCase;
-import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingsPackage;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateVideoFrameRateToProjectUseCase;
@@ -16,16 +14,12 @@ import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateVideoResolution
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
-public class CameraSettingsPresenter implements
-    GetCameraSettingsListUseCase.CameraSettingListUseCaseListener {
+public class CameraSettingsPresenter {
 
-  private Context context;
   private CameraSettingsView cameraSettingsListView;
   protected UserEventTracker userEventTracker;
   private GetCameraSettingsListUseCase getSettingListUseCase;
@@ -35,7 +29,7 @@ public class CameraSettingsPresenter implements
   private UpdateVideoQualityToProjectUseCase updateVideoQualityToProjectUseCase;
 
   @Inject
-  public CameraSettingsPresenter(Context context, CameraSettingsView cameraSettingsListView,
+  public CameraSettingsPresenter(CameraSettingsView cameraSettingsListView,
                                  UserEventTracker userEventTracker,
                                  GetCameraSettingsListUseCase getSettingListUseCase,
                                  UpdateCameraPreferencesUseCase updateCameraPreferencesUseCase,
@@ -45,7 +39,6 @@ public class CameraSettingsPresenter implements
                                      updateVideoFrameRateToProjectUseCase,
                                  UpdateVideoQualityToProjectUseCase
                                      updateVideoQualityToProjectUseCase) {
-    this.context = context;
     this.getSettingListUseCase = getSettingListUseCase;
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;
@@ -56,7 +49,7 @@ public class CameraSettingsPresenter implements
   }
 
   public void getCameraSettingsList() {
-    getSettingListUseCase.checkCameraSettingsList(this);
+    cameraSettingsListView.showCameraSettingsList(getSettingListUseCase.checkCameraSettingsList());
   }
 
   public void setCameraInterfacePreference(int interfaceProId) {
@@ -150,13 +143,4 @@ public class CameraSettingsPresenter implements
     userEventTracker.trackChangeQuality(quality);
   }
 
-  @Override
-  public void onSuccessGettingList(List<CameraSettingsPackage> cameraSettingsPackagesList) {
-    cameraSettingsListView.showCameraSettingsList(cameraSettingsPackagesList);
-  }
-
-  @Override
-  public void onErrorGettingList() {
-    cameraSettingsListView.showError(context.getString(R.string.activity_camera_settings_no_list));
-  }
 }

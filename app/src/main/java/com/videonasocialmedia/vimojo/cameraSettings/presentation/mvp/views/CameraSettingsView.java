@@ -7,6 +7,4 @@ import java.util.List;
 
 public interface CameraSettingsView {
   void showCameraSettingsList(List<CameraSettingsPackage> list);
-
-  void showError(String error);
 }

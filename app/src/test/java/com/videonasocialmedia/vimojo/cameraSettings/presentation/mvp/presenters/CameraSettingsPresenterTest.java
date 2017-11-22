@@ -30,25 +30,15 @@ import static org.mockito.Mockito.verify;
 
 public class CameraSettingsPresenterTest {
 
-  @Mock
-  Context mockedContext;
-  @Mock
-  CameraSettingsView mockedCameraSettingsListView;
-  @Mock
-  UserEventTracker mockedUserEventTracker;
-  @Mock
-  GetCameraSettingsListUseCase mockedGetSettingListUseCase;
-  @Mock
-  UpdateCameraPreferencesUseCase mockedUpdateCameraPreferencesUseCase;
-  @Mock
-  UpdateVideoFrameRateToProjectUseCase mockedUpdateVideoFrameRateToProjectUseCase;
-  @Mock
-  UpdateVideoResolutionToProjectUseCase mockedUpdateVideoResolutionToProjectUseCase;
-  @Mock
-  UpdateVideoQualityToProjectUseCase mockedUpdateVideoQualityToProjectUseCase;
+  @Mock CameraSettingsView mockedCameraSettingsListView;
+  @Mock UserEventTracker mockedUserEventTracker;
+  @Mock GetCameraSettingsListUseCase mockedGetSettingListUseCase;
+  @Mock UpdateCameraPreferencesUseCase mockedUpdateCameraPreferencesUseCase;
+  @Mock UpdateVideoFrameRateToProjectUseCase mockedUpdateVideoFrameRateToProjectUseCase;
+  @Mock UpdateVideoResolutionToProjectUseCase mockedUpdateVideoResolutionToProjectUseCase;
+  @Mock UpdateVideoQualityToProjectUseCase mockedUpdateVideoQualityToProjectUseCase;
 
-  @Mock
-  private MixpanelAPI mockedMixpanelAPI;
+  @Mock private MixpanelAPI mockedMixpanelAPI;
 
   @Before
   public void injectMocks() {
@@ -58,7 +48,7 @@ public class CameraSettingsPresenterTest {
   @Test
   public void constructorSetsUserTracker() {
     UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
-    CameraSettingsPresenter presenter = new CameraSettingsPresenter(mockedContext,
+    CameraSettingsPresenter presenter = new CameraSettingsPresenter(
         mockedCameraSettingsListView, userEventTracker, mockedGetSettingListUseCase,
         mockedUpdateCameraPreferencesUseCase, mockedUpdateVideoResolutionToProjectUseCase,
         mockedUpdateVideoFrameRateToProjectUseCase, mockedUpdateVideoQualityToProjectUseCase);
@@ -118,7 +108,7 @@ public class CameraSettingsPresenterTest {
   }
 
   private CameraSettingsPresenter getCameraSettingsPresenter() {
-    return new CameraSettingsPresenter(mockedContext, mockedCameraSettingsListView,
+    return new CameraSettingsPresenter(mockedCameraSettingsListView,
         mockedUserEventTracker, mockedGetSettingListUseCase, mockedUpdateCameraPreferencesUseCase,
         mockedUpdateVideoResolutionToProjectUseCase, mockedUpdateVideoFrameRateToProjectUseCase,
         mockedUpdateVideoQualityToProjectUseCase);

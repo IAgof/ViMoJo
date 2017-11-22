@@ -2,7 +2,6 @@ package com.videonasocialmedia.vimojo.cameraSettings.presentation.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -99,11 +98,6 @@ public class CameraSettingsActivity extends VimojoActivity implements
   public void showCameraSettingsList(List<CameraSettingsPackage> list) {
     cameraSettingPackageList = list;
     adapter.setCameraSettingsItemsList(list);
-  }
-
-  @Override
-  public void showError(String errorMessage) {
-    Snackbar.make(okButton, errorMessage, Snackbar.LENGTH_LONG).show();
   }
 
   @OnClick(R.id.camera_setting_ok)
