@@ -710,4 +710,15 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
     return "";
   }
 
+  public void setShuttedSpeed(int seekbarProgress) {
+    camera.setShuttedSpeed(seekbarProgress);
+  }
+
+  public int getMaximumExposureTime() {
+    return camera.getMaximumExposureTime();
+  }
+
+  public int getMinimunExposureTime() {
+    return camera.getMinimunExposureTime();
+  }
 }

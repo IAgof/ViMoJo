@@ -175,6 +175,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private Rect sensorActiveArray;
   private SCamera sCamera;
   private SCameraManager sCameraManager;
+  private Camera2ShutterSpeedHelper camera2ShutterSpeedHelper;
 
   public Camera2Wrapper(Context context, int cameraIdSelected,
                         AutoFitTextureView textureView, String directorySaveVideos,
@@ -192,6 +193,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2ISOHelper = new Camera2ISOHelper(this);
     camera2WhiteBalanceHelper = new Camera2WhiteBalanceHelper(this);
     camera2MeteringModeHelper = new Camera2MeteringModeHelper(this);
+    camera2ShutterSpeedHelper = new Camera2ShutterSpeedHelper(this);
 
     setupCamera();
   }
@@ -203,6 +205,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2ISOHelper.setup();
     camera2WhiteBalanceHelper.setup();
     camera2MeteringModeHelper.setup();
+    camera2ShutterSpeedHelper.setup();
   }
 
   private void setupSamsungCamera() {
@@ -939,6 +942,18 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public void setFocusModeManual(int seekbarProgress) {
     camera2FocusHelper.setFocusModeManual(seekbarProgress);
+  }
+
+  public void setShuttedSpeed(int seekbarProgress) {
+    camera2ShutterSpeedHelper.setShuttedSpeed(seekbarProgress);
+  }
+
+  public int getMaximumExposureTime() {
+    return camera2ShutterSpeedHelper.getMaximumExposureTime();
+  }
+
+  public int getMinimunExposureTime() {
+    return camera2ShutterSpeedHelper.getMinimunExposureTime();
   }
 
   public interface RecordStartedCallback {

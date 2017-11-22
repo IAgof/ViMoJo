@@ -14,9 +14,8 @@ import com.videonasocialmedia.camera.camera2.wrappers.VideonaCaptureRequest;
  */
 
 class Camera2ISOHelper {
-  private static final String TAG = Camera2ISOHelper.class.getCanonicalName();
+  private static final String LOG_TAG = Camera2ISOHelper.class.getCanonicalName();
   private static Integer currentIso = 0;
-  private static Long MINIMUM_VIDEO_EXPOSURE_TIME = Long.valueOf(20000000); // (jliarte): 28/06/17 1/50 - in nanoseconds
   private final Camera2Wrapper camera2Wrapper;
   private Range<Integer> sensitivityRange;
   private Integer minSensitivity = 0;
@@ -47,13 +46,13 @@ class Camera2ISOHelper {
       maxSensitivity = sensitivityRange.getUpper();
       Integer maxSensitivity = camera2Wrapper.getCurrentCameraCharacteristics()
               .get(CameraCharacteristics.SENSOR_MAX_ANALOG_SENSITIVITY);
-      Log.e(TAG, "Max sensitivity. " + maxSensitivity);
+      Log.e(LOG_TAG, "Max sensitivity. " + maxSensitivity);
     } catch (CameraAccessException e) {
-      Log.e(TAG, "failed to get camera characteristics");
-      Log.e(TAG, "reason: " + e.getReason());
-      Log.e(TAG, "message: " + e.getMessage());
+      Log.e(LOG_TAG, "failed to get camera characteristics");
+      Log.e(LOG_TAG, "reason: " + e.getReason());
+      Log.e(LOG_TAG, "message: " + e.getMessage());
     } catch (NullPointerException npe) {
-      Log.d(TAG, "Caught NullPointerException while getting camera metering capabilities", npe);
+      Log.d(LOG_TAG, "Caught NullPointerException while getting camera metering capabilities", npe);
     }
   }
 
@@ -83,9 +82,9 @@ class Camera2ISOHelper {
       Long currentExposureTime = previewBuilder.get(CaptureRequest.SENSOR_EXPOSURE_TIME);
       previewBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_OFF);
 //      previewBuilder.set(SCaptureRequest.METERING_MODE, CameraMetadata.CONTROL_AE_MODE_OFF);
-      Log.d(TAG, "Manual exposure settings: current exposure time " + currentExposureTime
+      Log.d(LOG_TAG, "Manual exposure settings: current exposure time " + currentExposureTime
               + " def setting: " + exposureTime);
-      Log.d(TAG, "Setting ISO value to: " + iso);
+      Log.d(LOG_TAG, "Setting ISO value to: " + iso);
 
       previewBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exposureTime);
       previewBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, iso);
@@ -105,17 +104,17 @@ class Camera2ISOHelper {
       // exposure compensation
       exposureTime1 = (long) (
               camera2Wrapper.getCaptureResultSettings().captureResultExposureTime * iso_ratio);
-      if (exposureTime1 < MINIMUM_VIDEO_EXPOSURE_TIME) {
+      if (exposureTime1 < Camera2ShutterSpeedHelper.MINIMUM_VIDEO_EXPOSURE_TIME) {
         isSubExposed = true;
-        subExposureRatio = (double) exposureTime1 / (double) MINIMUM_VIDEO_EXPOSURE_TIME;
-        Log.d(TAG, "Subexposure ratio: " + subExposureRatio);
+        subExposureRatio = (double) exposureTime1 / (double) Camera2ShutterSpeedHelper.MINIMUM_VIDEO_EXPOSURE_TIME;
+        Log.d(LOG_TAG, "Subexposure ratio: " + subExposureRatio);
       }
 //    exposureTime = camera2Wrapper.getCaptureResultSettings().captureResultExposureTime;
 //    previewBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
-      exposureTime = Math.min(exposureTime1, MINIMUM_VIDEO_EXPOSURE_TIME);
+      exposureTime = Math.min(exposureTime1, Camera2ShutterSpeedHelper.MINIMUM_VIDEO_EXPOSURE_TIME);
 //      exposureTime = exposureTime1;
       exposureTime = Math.min(camera2Wrapper.getCaptureResultSettings().captureResultExposureTime,
-              MINIMUM_VIDEO_EXPOSURE_TIME);
+              Camera2ShutterSpeedHelper.MINIMUM_VIDEO_EXPOSURE_TIME);
     }
     return exposureTime;
   }

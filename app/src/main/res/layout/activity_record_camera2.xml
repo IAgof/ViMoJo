@@ -611,6 +611,17 @@
                     />
 
                 <ImageButton
+                    android:id="@+id/button_shutter_speed"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/activity_record_ic_shutter_speed"
+                    />
+
+                <ImageButton
                     android:id="@+id/button_white_balance"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -767,20 +778,6 @@
                     android:orientation="vertical"
                     android:visibility="visible">
 
-                    <TextView
-                        android:id="@+id/seekBar_upper_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginTop="4dp"
-                        android:background="#00ffffff"
-                        android:gravity="center"
-                        android:padding="4dp"
-                        android:text="100%"
-                        android:textColor="@color/colorWhite"
-                        android:textSize="8sp"
-                        tools:visibility="visible"/>
-
                     <ImageView
                         android:id="@+id/seekBar_upper_image"
                         android:layout_width="wrap_content"
@@ -794,6 +791,21 @@
                         android:paddingTop="4dp"
                         android:text="100%"
                         tools:src="@drawable/activity_record_ic_focus_macro"/>
+
+                    <TextView
+                        android:id="@+id/seekBar_upper_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#00ffffff"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:paddingTop="30dp"
+                        android:text="100%"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="8sp"
+                        tools:visibility="visible"
+                        android:layout_below="@+id/seekBar_upper_image"
+                        android:layout_alignParentStart="true"/>
 
                     <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
                         android:layout_width="wrap_content"

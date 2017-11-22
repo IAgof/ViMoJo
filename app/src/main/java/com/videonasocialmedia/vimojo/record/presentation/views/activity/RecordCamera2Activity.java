@@ -32,6 +32,7 @@ import com.bumptech.glide.Glide;
 import com.videonasocialmedia.avrecorder.view.CustomManualFocusView;
 import com.videonasocialmedia.camera.camera2.Camera2FocusHelper;
 import com.videonasocialmedia.camera.camera2.Camera2MeteringModeHelper;
+import com.videonasocialmedia.camera.camera2.Camera2ShutterSpeedHelper;
 import com.videonasocialmedia.camera.camera2.Camera2WhiteBalanceHelper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.R;
@@ -77,6 +78,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public static final int SLIDE_SEEKBAR_MODE_ZOOM = 2;
   public static final int SLIDE_SEEKBAR_MODE_FOCUS_MANUAL = 3;
   private static final int SLIDE_SEEKBAR_MODE_AUDIO_GAIN = 4;
+  private static final int SLIDE_SEEKBAR_MODE_SHUTTER_SPEED = 5;
   public static final int DEFAULT_AUDIO_GAIN = 100;
   public static final float SCALE_Y_PICOMETER_PROGRESS = 2f;
   private final String LOG_TAG = getClass().getSimpleName();
@@ -149,6 +151,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   LinearLayout isoSubmenunLinearLayout;
   @Bind(R.id.iso_auto)
   TextView isoSettingAuto;
+
+  @Bind(R.id.button_shutter_speed)
+  ImageButton shutterSpeedButton;
 
   @Bind(R.id.button_af_selection)
   ImageButton afSelectionButton;
@@ -1341,6 +1346,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void onClickIsoListener() {
     if (isoButton.isSelected()) {
       hideISOSelectionSubmenu();
+      hideShutterSpeedSumbenu();
     } else {
       hideZoomSelectionSubmenu();
       hideAFSelectionSubmenu();
@@ -1348,7 +1354,58 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       hideMeteringModeSelectionSubmenu();
       hideSoundVolumeSubmenu();
       showISOSelectionSubmenu();
+      showShutterSpeedSumbenu();
     }
+  }
+
+  @OnClick (R.id.button_shutter_speed)
+  public void onClickShutterSppedListener() {
+    onClickIsoListener();
+  }
+
+  private void showShutterSpeedSumbenu() {
+    seekbarUpperText.setVisibility(View.VISIBLE);
+    seekbarLowerText.setVisibility(View.VISIBLE);
+    seekBarUpperImage.setVisibility(View.VISIBLE);
+    seekBarLowerImage.setVisibility(View.GONE);
+    // TODO(jliarte): 22/11/17 need a way smaller icon
+    seekBarUpperImage.setImageResource(R.drawable.activity_record_ic_shutter_speed_60);
+//    seekBarLowerImage.setImageResource(R.drawable.activity_record_ic_focus_macro);
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_SHUTTER_SPEED;
+    slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to
+    // call the listener when setting up the progress bar to match the existing state
+    int maxShutterSpeed = presenter.getMaximumExposureTime();
+    // TODO(jliarte): 22/11/17 maybe increase constant value?
+    maxShutterSpeed = Camera2ShutterSpeedHelper.MINIMUM_VIDEO_EXPOSURE_TIME.intValue()*4;
+    final int minShutterSpeed = presenter.getMinimunExposureTime();
+    seekbarUpperText.setText("1/" + new Double(1/(maxShutterSpeed/1000000000d)).toString());
+    seekbarLowerText.setText(new Double(minShutterSpeed/1000000000d).toString());
+    slideSeekBar.setMax(maxShutterSpeed - minShutterSpeed);
+    // TODO(jliarte): 22/11/17 get current progress by shutter speed
+//    slideSeekBar.setProgress(50);
+    slideSeekBar.setEnabled(true);
+    // TODO(jliarte): 22/11/17 unify listeners
+    slideSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int seekbarProgress, boolean b) {
+        presenter.setShuttedSpeed(minShutterSpeed + seekbarProgress);
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+
+      }
+    });
+    slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
+  }
+
+  private void hideShutterSpeedSumbenu() {
+    slideSeekbarSubmenuView.setVisibility(View.GONE);
   }
 
   @OnClick (R.id.button_af_selection)
