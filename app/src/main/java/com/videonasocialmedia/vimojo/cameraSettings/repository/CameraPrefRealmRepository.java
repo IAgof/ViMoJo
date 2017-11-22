@@ -1,6 +1,8 @@
 package com.videonasocialmedia.vimojo.cameraSettings.repository;
 
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraPreferences;
+import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRatePreference;
+import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionPreference;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
 
@@ -44,6 +46,53 @@ public class CameraPrefRealmRepository implements CameraPrefRepository {
       //Managed this null in CreateDefaultProjectUseCase.
       return null;
     }
+  }
+
+  @Override
+  public void setResolutionPreferencesSupported(ResolutionPreference resolutionPreference) {
+    CameraPreferences cameraPreferences = getCameraPreferences();
+    cameraPreferences.setResolutionPreference(resolutionPreference);
+    update(cameraPreferences);
+  }
+
+  @Override
+  public void setFrameRatePreferencesSupported(FrameRatePreference frameRatePreference) {
+    CameraPreferences cameraPreferences = getCameraPreferences();
+    cameraPreferences.setFrameRatePreferences(frameRatePreference);
+    update(cameraPreferences);
+  }
+
+  @Override
+  public void setInterfaceProSelected(boolean interfaceProSelected) {
+    CameraPreferences cameraPreferences = getCameraPreferences();
+    cameraPreferences.setInterfaceProSelected(interfaceProSelected);
+    update(cameraPreferences);
+  }
+
+  @Override
+  public void setResolutionPreference(String resolution) {
+    CameraPreferences cameraPreferences = getCameraPreferences();
+    cameraPreferences.getResolutionPreference().setResolutionPreference(resolution);
+    update(cameraPreferences);
+  }
+
+  @Override
+  public void setFrameRatePreference(String frameRate) {
+    CameraPreferences cameraPreferences = getCameraPreferences();
+    cameraPreferences.getFrameRatePreference().setFrameRatePreference(frameRate);
+    update(cameraPreferences);
+  }
+
+  @Override
+  public void setQualityPreference(String quality) {
+    CameraPreferences cameraPreferences = getCameraPreferences();
+    cameraPreferences.setQuality(quality);
+    update(cameraPreferences);
+  }
+
+  @Override
+  public void createCameraPref(CameraPreferences defaultCameraPreferences) {
+    update(defaultCameraPreferences);
   }
 
   @Override

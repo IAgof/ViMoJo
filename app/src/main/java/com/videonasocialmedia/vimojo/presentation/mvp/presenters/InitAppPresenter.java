@@ -4,8 +4,8 @@ import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 
 import com.videonasocialmedia.camera.utils.Camera2Settings;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefRepository;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRatePreference;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionPreference;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -17,15 +17,15 @@ import javax.inject.Inject;
  */
 public class InitAppPresenter {
   private final Context context;
-  private final UpdateCameraPreferencesUseCase updateCameraPreferencesUseCase;
+  private final CameraPrefRepository cameraPrefRepository;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
 
   @Inject
   public InitAppPresenter(Context context, CreateDefaultProjectUseCase
-          createDefaultProjectUseCase, UpdateCameraPreferencesUseCase updateCameraPreferencesUseCase) {
+          createDefaultProjectUseCase, CameraPrefRepository cameraPrefRepository) {
     this.context = context;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
-    this.updateCameraPreferencesUseCase = updateCameraPreferencesUseCase;
+    this.cameraPrefRepository = cameraPrefRepository;
   }
 
   public void startLoadingProject(String rootPath, String privatePath,
@@ -75,7 +75,7 @@ public class InitAppPresenter {
             resolutionBack2160pSupported, resolutionFront720pSupported,
             resolutionFront1080pSupported, resolutionFront2160pSupported);
 
-    updateCameraPreferencesUseCase.setResolutionPreferencesSupported(resolutionPreference);
+    cameraPrefRepository.setResolutionPreferencesSupported(resolutionPreference);
 
   }
 
@@ -104,6 +104,6 @@ public class InitAppPresenter {
       FrameRatePreference frameRatePreference = new FrameRatePreference(defaultFrameRate,
               frameRate24FpsSupported, frameRate25FpsSupported, frameRate30FpsSupported);
 
-      updateCameraPreferencesUseCase.setFrameRatePreferencesSupported(frameRatePreference);
+    cameraPrefRepository.setFrameRatePreferencesSupported(frameRatePreference);
   }
 }

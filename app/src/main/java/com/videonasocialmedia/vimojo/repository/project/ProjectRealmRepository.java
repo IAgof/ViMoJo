@@ -1,5 +1,8 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
@@ -119,6 +122,27 @@ public class ProjectRealmRepository implements ProjectRepository {
       projectList.add(toProjectMapper.map(realm.copyFromRealm(realmProject)));
     }
     return projectList;
+  }
+
+  @Override
+  public void updateResolution(VideoResolution.Resolution videoResolution) {
+    Project project = getCurrentProject();
+    project.getProfile().setResolution(videoResolution);
+    update(project);
+  }
+
+  @Override
+  public void updateFrameRate(VideoFrameRate.FrameRate videoFrameRate) {
+    Project project = getCurrentProject();
+    project.getProfile().setFrameRate(videoFrameRate);
+    update(project);
+  }
+
+  @Override
+  public void updateQuality(VideoQuality.Quality videoQuality) {
+    Project project = getCurrentProject();
+    project.getProfile().setQuality(videoQuality);
+    update(project);
   }
 
 }

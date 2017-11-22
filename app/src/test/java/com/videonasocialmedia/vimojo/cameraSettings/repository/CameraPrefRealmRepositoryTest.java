@@ -18,4 +18,5 @@ public class CameraPrefRealmRepositoryTest {
     assertThat(repository.toCameraPreferencesMapper, notNullValue());
     assertThat(repository.toRealmCameraMapper, notNullValue());
   }
+
 }

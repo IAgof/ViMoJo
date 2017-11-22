@@ -1,16 +1,12 @@
 package com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.presenters;
 
-import android.content.Context;
-
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsListUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateCameraPreferencesUseCase;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateVideoFrameRateToProjectUseCase;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateVideoQualityToProjectUseCase;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateVideoResolutionToProjectUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -23,29 +19,21 @@ public class CameraSettingsPresenter {
   private CameraSettingsView cameraSettingsListView;
   protected UserEventTracker userEventTracker;
   private GetCameraSettingsListUseCase getSettingListUseCase;
-  private UpdateCameraPreferencesUseCase updateCameraPreferencesUseCase;
-  private UpdateVideoFrameRateToProjectUseCase updateVideoFrameRateToProjectUseCase;
-  private UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase;
-  private UpdateVideoQualityToProjectUseCase updateVideoQualityToProjectUseCase;
+  private CameraPrefRepository cameraPrefRepository;
+  private ProjectRepository projectRepository;
 
   @Inject
   public CameraSettingsPresenter(CameraSettingsView cameraSettingsListView,
                                  UserEventTracker userEventTracker,
                                  GetCameraSettingsListUseCase getSettingListUseCase,
-                                 UpdateCameraPreferencesUseCase updateCameraPreferencesUseCase,
-                                 UpdateVideoResolutionToProjectUseCase
-                                     updateVideoResolutionToProjectUseCase,
-                                 UpdateVideoFrameRateToProjectUseCase
-                                     updateVideoFrameRateToProjectUseCase,
-                                 UpdateVideoQualityToProjectUseCase
-                                     updateVideoQualityToProjectUseCase) {
+                                 CameraPrefRepository cameraPrefRepository,
+                                 ProjectRepository
+                                           projectRepository) {
     this.getSettingListUseCase = getSettingListUseCase;
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;
-    this.updateCameraPreferencesUseCase = updateCameraPreferencesUseCase;
-    this.updateVideoResolutionToProjectUseCase = updateVideoResolutionToProjectUseCase;
-    this.updateVideoFrameRateToProjectUseCase = updateVideoFrameRateToProjectUseCase;
-    this.updateVideoQualityToProjectUseCase = updateVideoQualityToProjectUseCase;
+    this.cameraPrefRepository = cameraPrefRepository;
+    this.projectRepository = projectRepository;
   }
 
   public void getCameraSettingsList() {
@@ -64,7 +52,7 @@ public class CameraSettingsPresenter {
       default:
         interfaceProSelected = Constants.DEFAULT_CAMERA_PREF_INTERFACE_PRO_SELECTED;
     }
-    updateCameraPreferencesUseCase.setInterfaceProSelected(interfaceProSelected);
+    cameraPrefRepository.setInterfaceProSelected(interfaceProSelected);
     userEventTracker.trackChangeCameraInterface(interfaceProSelected);
   }
 
@@ -88,8 +76,8 @@ public class CameraSettingsPresenter {
         resolution = DEFAULT_CAMERA_PREF_RESOLUTION;
         videoResolution = VideoResolution.Resolution.HD1080;
     }
-    updateCameraPreferencesUseCase.setResolutionPreference(resolution);
-    updateVideoResolutionToProjectUseCase.updateResolution(videoResolution);
+    cameraPrefRepository.setResolutionPreference(resolution);
+    projectRepository.updateResolution(videoResolution);
     userEventTracker.trackChangeResolution(resolution);
   }
 
@@ -113,8 +101,8 @@ public class CameraSettingsPresenter {
         frameRate = DEFAULT_CAMERA_PREF_FRAME_RATE;
         videoFrameRate = VideoFrameRate.FrameRate.FPS30;
     }
-    updateCameraPreferencesUseCase.setFrameRatePreference(frameRate);
-    updateVideoFrameRateToProjectUseCase.updateFrameRate(videoFrameRate);
+    cameraPrefRepository.setFrameRatePreference(frameRate);
+    projectRepository.updateFrameRate(videoFrameRate);
     userEventTracker.trackChangeFrameRate(frameRate);
   }
 
@@ -138,8 +126,8 @@ public class CameraSettingsPresenter {
         quality = DEFAULT_CAMERA_PREF_QUALITY;
         videoQuality = VideoQuality.Quality.LOW;
     }
-    updateCameraPreferencesUseCase.setQualityPreference(quality);
-    updateVideoQualityToProjectUseCase.updateQuality(videoQuality);
+    cameraPrefRepository.setQualityPreference(quality);
+    projectRepository.updateQuality(videoQuality);
     userEventTracker.trackChangeQuality(quality);
   }
 

@@ -14,9 +14,6 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateVideoFrameRateToProjectUseCase;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateVideoQualityToProjectUseCase;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
@@ -50,7 +47,6 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.UpdateCameraPreferencesUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraPrefRepository;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
@@ -213,19 +209,12 @@ public class ActivityPresentersModule {
   CameraSettingsPresenter provideCameraSettingPresenter(UserEventTracker userEventTracker,
                                                         GetCameraSettingsListUseCase
                                                             getCameraSettingsListUseCase,
-                                                        UpdateCameraPreferencesUseCase
-                                                            updateCameraPreferencesUseCase,
-                                                        UpdateVideoResolutionToProjectUseCase
-                                                          updateVideoResolutionToProjectUseCase,
-                                                        UpdateVideoFrameRateToProjectUseCase
-                                                          updateVideoFrameRateToProjectUseCase,
-                                                        UpdateVideoQualityToProjectUseCase
-                                                         updateVideoQualityToProjectUseCase
-                                                        ) {
+                                                        CameraPrefRepository
+                                                                cameraPrefRepository,
+                                                        ProjectRepository
+                                                          projectRepository) {
     return new CameraSettingsPresenter((CameraSettingsView) activity, userEventTracker,
-        getCameraSettingsListUseCase, updateCameraPreferencesUseCase,
-        updateVideoResolutionToProjectUseCase, updateVideoFrameRateToProjectUseCase,
-        updateVideoQualityToProjectUseCase);
+        getCameraSettingsListUseCase, cameraPrefRepository, projectRepository);
   }
 
   @Provides @PerActivity
@@ -251,11 +240,11 @@ public class ActivityPresentersModule {
           AddVideoToProjectUseCase addVideoToProjectUseCase,
           GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
           ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
-          UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase,
+          ProjectRepository projectRepository,
           SharedPreferences sharedPreferences, VideoRepository videoRepository) {
     return new GalleryPagerPresenter((GalleryActivity) activity, activity, addVideoToProjectUseCase,
             getVideonaFormatFromCurrentProjectUseCase, applyAVTransitionsUseCase,
-            updateVideoResolutionToProjectUseCase, videoRepository, sharedPreferences);
+            projectRepository, videoRepository, sharedPreferences);
   }
 
   @Provides @PerActivity
@@ -313,10 +302,9 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   InitAppPresenter provideInitAppPresenter(
-          CreateDefaultProjectUseCase createDefaultProjectUseCase, UpdateCameraPreferencesUseCase
-      updateCameraPreferencesUseCase) {
-    return new InitAppPresenter(activity, createDefaultProjectUseCase,
-        updateCameraPreferencesUseCase);
+          CreateDefaultProjectUseCase createDefaultProjectUseCase, CameraPrefRepository
+          cameraPrefRepository) {
+    return new InitAppPresenter(activity, createDefaultProjectUseCase, cameraPrefRepository);
   }
 
   @Provides @PerActivity
@@ -530,32 +518,8 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  UpdateCameraPreferencesUseCase provideAddCameraPreferenceUseCase(CameraPrefRepository
-                                                                    cameraPrefRepository) {
-    return new UpdateCameraPreferencesUseCase(cameraPrefRepository);
-  }
-
-  @Provides
   GetCameraPreferencesUseCase provideGetCameraPreferencesUseCase(CameraPrefRepository
                                                                      cameraPrefRepository) {
     return new GetCameraPreferencesUseCase(cameraPrefRepository);
-  }
-
-  @Provides
-  UpdateVideoResolutionToProjectUseCase
-    provideUpdateVideoResolutionToProjectUseCase(ProjectRepository projectRepository) {
-      return new UpdateVideoResolutionToProjectUseCase(projectRepository);
-  }
-
-  @Provides
-  UpdateVideoFrameRateToProjectUseCase
-    provideUpdateVideoFrameRateToProjectUseCase(ProjectRepository projectRepository) {
-      return new UpdateVideoFrameRateToProjectUseCase(projectRepository);
-  }
-
-  @Provides
-  UpdateVideoQualityToProjectUseCase
-    provideUpdateVideoQualityToProjectUseCase (ProjectRepository projectRepository) {
-     return new UpdateVideoQualityToProjectUseCase(projectRepository);
   }
 }
