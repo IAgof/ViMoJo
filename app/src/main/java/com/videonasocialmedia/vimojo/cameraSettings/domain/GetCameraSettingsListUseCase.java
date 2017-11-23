@@ -30,7 +30,8 @@ public class GetCameraSettingsListUseCase {
   private Project currentProject;
 
   @Inject
-  public GetCameraSettingsListUseCase(Context context, CameraSettingsRepository cameraSettingsRepository) {
+  public GetCameraSettingsListUseCase(Context context, CameraSettingsRepository
+      cameraSettingsRepository) {
     this.context = context;
     currentProject = loadCurrentProject();
     cameraSettings = cameraSettingsRepository.getCameraSettings();

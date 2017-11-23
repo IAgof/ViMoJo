@@ -16,6 +16,7 @@ import android.os.Environment;
 import com.videonasocialmedia.vimojo.BuildConfig;
 
 import java.io.File;
+import java.util.HashMap;
 
 public class Constants {
 
@@ -123,6 +124,12 @@ public class Constants {
     public static final String CAMERA_PREF_FRAME_RATE_25 = "25 fps";
     public static final String CAMERA_PREF_FRAME_RATE_30 = "30 fps";
     public static final String DEFAULT_CAMERA_PREF_FRAME_RATE = CAMERA_PREF_FRAME_RATE_30;
+
+  public static final HashMap<Integer, String> map;
+  static {
+    map = new HashMap<>();
+    map.put(1, "a");
+  }
 
 
   // Default camera setting

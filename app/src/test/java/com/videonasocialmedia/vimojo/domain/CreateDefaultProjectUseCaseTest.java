@@ -27,6 +27,17 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.HashMap;
+
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_24_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_25_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_30_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_1080_BACK_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_1080_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_2160_BACK_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_2160_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_720_BACK_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_720_FRONT_ID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -65,23 +76,22 @@ public class CreateDefaultProjectUseCaseTest {
   }
 
   private void initCameraPreferences() {
-    String defaultResolution = Constants.DEFAULT_CAMERA_PREF_RESOLUTION;
-    boolean resolutionBack720pSupported = true;
-    boolean resolutionBack1080pSupported = true;
-    boolean resolutionBack2160pSupported = false;
-    boolean resolutionFront720pSupported = true;
-    boolean resolutionFront1080pSupported = true;
-    boolean resolutionFront2160pSupported = false;
-    ResolutionSetting resolutionSetting = new ResolutionSetting(defaultResolution,
-        resolutionBack720pSupported, resolutionBack1080pSupported,
-        resolutionBack2160pSupported, resolutionFront720pSupported,
-        resolutionFront1080pSupported, resolutionFront2160pSupported);
-    String defaultFrameRate = Constants.DEFAULT_CAMERA_PREF_FRAME_RATE;
-    boolean frameRate24FpsSupported = false;
-    boolean frameRate25FpsSupported = false;
-    boolean frameRate30FpsSupported = true;
-    FrameRateSetting frameRateSetting = new FrameRateSetting(defaultFrameRate,
-        frameRate24FpsSupported, frameRate25FpsSupported, frameRate30FpsSupported);
+
+    HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
+    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_720_BACK_ID, true);
+    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_1080_BACK_ID, true);
+    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_2160_BACK_ID, false);
+    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_720_FRONT_ID, true);
+    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_1080_FRONT_ID, true);
+    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_2160_FRONT_ID, false);
+    ResolutionSetting resolutionSetting = new ResolutionSetting(
+        Constants.DEFAULT_CAMERA_PREF_RESOLUTION, resolutionsSupportedMap);
+    HashMap<Integer, Boolean> frameRateSupportedMap = new HashMap<>();
+    frameRateSupportedMap.put(CAMERA_PREF_FRAME_RATE_24_ID, false);
+    frameRateSupportedMap.put(CAMERA_PREF_FRAME_RATE_25_ID, false);
+    frameRateSupportedMap.put(CAMERA_PREF_FRAME_RATE_30_ID, true);
+    FrameRateSetting frameRateSetting = new FrameRateSetting(
+        Constants.DEFAULT_CAMERA_PREF_FRAME_RATE, frameRateSupportedMap);
     String quality = Constants.DEFAULT_CAMERA_PREF_QUALITY;
     boolean interfaceProSelected = false;
     cameraSettings = new CameraSettings(resolutionSetting,

@@ -76,7 +76,7 @@ public class CreateDefaultProjectUseCase {
     }
 
    if(cameraSettingsRepository.getCameraSettings() == null) {
-      initCameraPrefs();
+      initCameraSettings();
     }
 
     Project currentProject = Project.getInstance(projectTitle, rootPath, privatePath,
@@ -88,7 +88,7 @@ public class CreateDefaultProjectUseCase {
     projectRepository.update(currentProject);
   }
 
-  private void initCameraPrefs() {
+  private void initCameraSettings() {
     HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
     resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_720_BACK_ID, true);
     resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_1080_BACK_ID, true);
