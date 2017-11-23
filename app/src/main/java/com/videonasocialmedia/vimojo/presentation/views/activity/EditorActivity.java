@@ -100,7 +100,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     public void onCheckedChanged(CompoundButton buttonView, boolean isDarkThemeChecked) {
       if (isDarkThemeAvailable()) {
         editorPresenter.switchPreference(isDarkThemeChecked, ConfigPreferences.THEME_APP_DARK);
-        drawerLayout.closeDrawers();
       } else {
         switchTheme.setChecked(false);
         navigateTo(VimojoStoreActivity.class);
