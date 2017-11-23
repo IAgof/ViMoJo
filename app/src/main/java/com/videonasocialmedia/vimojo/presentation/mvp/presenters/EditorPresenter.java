@@ -17,6 +17,7 @@ import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -43,6 +44,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   private SharedPreferences.Editor preferencesEditor;
   private Context context;
   private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+  private UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase;
   private final NewClipImporter newClipImporter;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
 
@@ -57,6 +59,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+          UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
           NewClipImporter newClipImporter, BillingManager billingManager) {
     this.editorActivityView = editorActivityView;
     this.sharedPreferences = sharedPreferences;
@@ -65,6 +68,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
+    this.updateWatermarkPreferenceToProjectUseCase = updateWatermarkPreferenceToProjectUseCase;
     this.currentProject = getCurrentProject();
     this.newClipImporter = newClipImporter;
     this.billingManager = billingManager;
@@ -159,7 +163,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     preferencesEditor = sharedPreferences.edit();
     preferencesEditor.putBoolean(preference, isChecked);
     preferencesEditor.apply();
-    if (preference.compareTo(ConfigPreferences.THEME_APP_DARK) == 0) {
+    if (preference.equals(ConfigPreferences.THEME_APP_DARK)) {
       userEventTracker.trackThemeAppDrawerChanged(isChecked);
       if (isShareActivity()) {
         editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
@@ -167,8 +171,9 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
         editorActivityView.restartActivity();
       }
     }
-    if (preference.compareTo(ConfigPreferences.WATERMARK) == 0) {
+    if (preference.equals(ConfigPreferences.WATERMARK)) {
       // TODO:(alvaro.martinez) 2/11/17 track watermark applied
+      updateWatermarkPreferenceToProjectUseCase.setWatermarkActivated(isChecked);
     }
   }
 
