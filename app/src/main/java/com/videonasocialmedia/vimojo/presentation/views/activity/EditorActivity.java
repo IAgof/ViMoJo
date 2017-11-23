@@ -88,7 +88,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
       if (isWatermarkAvailable()) {
         editorPresenter.switchPreference(isChecked, ConfigPreferences.WATERMARK);
-        drawerLayout.closeDrawers();
       } else {
         switchWatermark.setChecked(true);
         navigateTo(VimojoStoreActivity.class);
