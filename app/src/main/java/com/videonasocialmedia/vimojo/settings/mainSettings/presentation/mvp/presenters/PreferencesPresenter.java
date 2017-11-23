@@ -159,9 +159,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
             // Visibility FTP gone
             preferencesView.hideFtpsViews();
         }
-        //checkCameraSettingsEnabled();
-        //checkAvailableResolution();
-        //checkAvailableQuality();
         checkTransitions();
         checkWatermark(BuildConfig.FEATURE_WATERMARK);
         checkThemeApp(ConfigPreferences.THEME_APP_DARK);

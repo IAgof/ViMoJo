@@ -26,6 +26,12 @@ import javax.inject.Inject;
 import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_24_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_25_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_30_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_1080_BACK_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_1080_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_2160_BACK_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_2160_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_720_BACK_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_720_FRONT_ID;
 
 
 /**
@@ -34,8 +40,8 @@ import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RA
 public class CreateDefaultProjectUseCase {
 
   public static final VideoQuality.Quality DEFAULT_VIDEO_QUALITY = VideoQuality.Quality.LOW;
-  public static final VideoFrameRate.FrameRate DEFAULT_VIDEO_FRAME_RATE = VideoFrameRate.FrameRate.FPS30;
-  private static final int MAX_NUM_FRAME_RATE_CHECKED = 3;
+  public static final VideoFrameRate.FrameRate DEFAULT_VIDEO_FRAME_RATE = VideoFrameRate
+      .FrameRate.FPS30;
   protected CameraSettingsRepository cameraSettingsRepository;
   protected ProjectRepository projectRepository;
   protected TrackRepository trackRepository;
@@ -46,7 +52,8 @@ public class CreateDefaultProjectUseCase {
    *
    * @param projectRepository the project repository.
    */
-  @Inject public CreateDefaultProjectUseCase(ProjectRepository projectRepository, CameraSettingsRepository
+  @Inject public CreateDefaultProjectUseCase(ProjectRepository projectRepository,
+                                             CameraSettingsRepository
           cameraSettingsRepository, TrackRepository trackRepository) {
     this.projectRepository = projectRepository;
     this.cameraSettingsRepository = cameraSettingsRepository;
@@ -68,7 +75,7 @@ public class CreateDefaultProjectUseCase {
       isProjectCreated = true;
     }
 
-   if(cameraSettingsRepository.getCameraPreferences() == null) {
+   if(cameraSettingsRepository.getCameraSettings() == null) {
       initCameraPrefs();
     }
 
@@ -82,16 +89,23 @@ public class CreateDefaultProjectUseCase {
   }
 
   private void initCameraPrefs() {
+    HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
+    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_720_BACK_ID, true);
+    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_1080_BACK_ID, true);
+    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_2160_BACK_ID, false);
+    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_720_FRONT_ID, true);
+    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_1080_FRONT_ID, true);
+    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_2160_FRONT_ID, false);
     ResolutionSetting resolutionSetting = new ResolutionSetting(
-        Constants.DEFAULT_CAMERA_PREF_RESOLUTION, true, true, true,
-        true, true, false);
+        Constants.DEFAULT_CAMERA_PREF_RESOLUTION, resolutionsSupportedMap);
+
     HashMap<Integer, Boolean> frameRateSupportedMap = new HashMap<>();
     frameRateSupportedMap.put(CAMERA_PREF_FRAME_RATE_24_ID, false);
     frameRateSupportedMap.put(CAMERA_PREF_FRAME_RATE_25_ID, false);
     frameRateSupportedMap.put(CAMERA_PREF_FRAME_RATE_30_ID, true);
-
     FrameRateSetting frameRateSetting = new FrameRateSetting(
         Constants.DEFAULT_CAMERA_PREF_FRAME_RATE, frameRateSupportedMap);
+
     String quality = Constants.DEFAULT_CAMERA_PREF_QUALITY;
     boolean interfaceProSelected = true;
     CameraSettings defaultCameraSettings = new CameraSettings(resolutionSetting,
@@ -111,9 +125,11 @@ public class CreateDefaultProjectUseCase {
   }
 
   private Profile getCurrentProfile(CameraSettingsRepository cameraSettingsRepository) {
-    VideoResolution.Resolution resolution = getResolutionFromPreferencesSetting(cameraSettingsRepository);
+    VideoResolution.Resolution resolution =
+        getResolutionFromPreferencesSetting(cameraSettingsRepository);
     VideoQuality.Quality quality = getQualityFromPreferenceSettings(cameraSettingsRepository);
-    VideoFrameRate.FrameRate frameRate = getFrameRateFromPreferenceSettings(cameraSettingsRepository);
+    VideoFrameRate.FrameRate frameRate =
+        getFrameRateFromPreferenceSettings(cameraSettingsRepository);
 
     Profile currentProfileInstance = Profile.getInstance(resolution, quality, frameRate);
     currentProfileInstance.setResolution(resolution);
@@ -122,34 +138,38 @@ public class CreateDefaultProjectUseCase {
     return currentProfileInstance;
   }
 
-  private VideoResolution.Resolution getResolutionFromPreferencesSetting(CameraSettingsRepository cameraSettingsRepository) {
-    ResolutionSetting resolutionSetting = cameraSettingsRepository.getCameraPreferences()
+  private VideoResolution.Resolution getResolutionFromPreferencesSetting(CameraSettingsRepository
+                                                                         cameraSettingsRepository) {
+    ResolutionSetting resolutionSetting = cameraSettingsRepository.getCameraSettings()
             .getResolutionSetting();
+    HashMap<Integer, Boolean> resolutionSupportedMap = resolutionSetting
+        .getResolutionsSupportedMap();
     String resolution = resolutionSetting.getResolution();
-    if(resolutionSetting.isResolutionBack720pSupported())
-      if (resolution.compareTo(Constants.CAMERA_PREF_RESOLUTION_720) == 0) {
+    if(resolutionSupportedMap.get(CAMERA_PREF_RESOLUTION_720_BACK_ID))
+      if (resolution.equals(Constants.CAMERA_PREF_RESOLUTION_720)) {
         return VideoResolution.Resolution.HD720;
       }
-    if(resolutionSetting.isResolutionBack1080pSupported()) {
-      if (resolution.compareTo(Constants.CAMERA_PREF_RESOLUTION_1080) == 0) {
+    if(resolutionSupportedMap.get(CAMERA_PREF_RESOLUTION_1080_BACK_ID)) {
+      if (resolution.equals(Constants.CAMERA_PREF_RESOLUTION_1080)) {
         return VideoResolution.Resolution.HD1080;
       }
     }
-    if(resolutionSetting.isResolutionBack2160pSupported()) {
-      if (resolution.compareTo(Constants.CAMERA_PREF_RESOLUTION_2160) == 0) {
+    if(resolutionSupportedMap.get(CAMERA_PREF_RESOLUTION_2160_BACK_ID)) {
+      if (resolution.equals(Constants.CAMERA_PREF_RESOLUTION_2160)) {
         return VideoResolution.Resolution.HD4K;
       }
     }
     // default 1080p. We suppose that 720p is the minimum supported, 1080p not is always presented if all phones,ex Videona MotoG.
-    if (resolutionSetting.isResolutionBack1080pSupported()) {
+    if (resolutionSupportedMap.get(CAMERA_PREF_RESOLUTION_1080_BACK_ID)) {
       return VideoResolution.Resolution.HD1080;
     } else {
       return VideoResolution.Resolution.HD720;
     }
   }
 
-  private VideoQuality.Quality getQualityFromPreferenceSettings(CameraSettingsRepository cameraSettingsRepository) {
-    CameraSettings cameraSettings = cameraSettingsRepository.getCameraPreferences();
+  private VideoQuality.Quality getQualityFromPreferenceSettings(CameraSettingsRepository
+                                                                    cameraSettingsRepository) {
+    CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     String quality = cameraSettings.getQuality();
     if (quality.equals(Constants.CAMERA_PREF_QUALITY_16)) {
       return VideoQuality.Quality.LOW;
@@ -164,23 +184,24 @@ public class CreateDefaultProjectUseCase {
     return DEFAULT_VIDEO_QUALITY;
   }
 
-  private VideoFrameRate.FrameRate getFrameRateFromPreferenceSettings(CameraSettingsRepository cameraSettingsRepository) {
-    FrameRateSetting frameRateSetting = cameraSettingsRepository.getCameraPreferences()
+  private VideoFrameRate.FrameRate getFrameRateFromPreferenceSettings(CameraSettingsRepository
+                                                                        cameraSettingsRepository) {
+    FrameRateSetting frameRateSetting = cameraSettingsRepository.getCameraSettings()
             .getFrameRateSetting();
-    HashMap<Integer, Boolean> frameRateMap = frameRateSetting.getFrameRatesSupportedMap();
+    HashMap<Integer, Boolean> frameRateResolutionMap = frameRateSetting.getFrameRatesSupportedMap();
     String frameRate = frameRateSetting.getFrameRate();
-    if (frameRateMap.get(CAMERA_PREF_FRAME_RATE_24_ID)) {
-      if (frameRate.compareTo(Constants.CAMERA_PREF_FRAME_RATE_24) == 0) {
+    if (frameRateResolutionMap.get(CAMERA_PREF_FRAME_RATE_24_ID)) {
+      if (frameRate.equals(Constants.CAMERA_PREF_FRAME_RATE_24)) {
         return VideoFrameRate.FrameRate.FPS24;
       }
     }
-    if (frameRateMap.get(CAMERA_PREF_FRAME_RATE_25_ID)) {
-      if (frameRate.compareTo(Constants.CAMERA_PREF_FRAME_RATE_25) == 0) {
+    if (frameRateResolutionMap.get(CAMERA_PREF_FRAME_RATE_25_ID)) {
+      if (frameRate.equals(Constants.CAMERA_PREF_FRAME_RATE_25)) {
         return VideoFrameRate.FrameRate.FPS25;
       }
     }
-    if (frameRateMap.get(CAMERA_PREF_FRAME_RATE_30_ID)) {
-      if (frameRate.compareTo(Constants.CAMERA_PREF_FRAME_RATE_30) == 0) {
+    if (frameRateResolutionMap.get(CAMERA_PREF_FRAME_RATE_30_ID)) {
+      if (frameRate.equals(Constants.CAMERA_PREF_FRAME_RATE_30)) {
         return VideoFrameRate.FrameRate.FPS30;
       }
     }

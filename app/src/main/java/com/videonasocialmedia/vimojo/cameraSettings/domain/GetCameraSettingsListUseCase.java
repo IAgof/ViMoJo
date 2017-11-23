@@ -33,7 +33,7 @@ public class GetCameraSettingsListUseCase {
   public GetCameraSettingsListUseCase(Context context, CameraSettingsRepository cameraSettingsRepository) {
     this.context = context;
     currentProject = loadCurrentProject();
-    cameraSettings = cameraSettingsRepository.getCameraPreferences();
+    cameraSettings = cameraSettingsRepository.getCameraSettings();
   }
 
   private Project loadCurrentProject() {

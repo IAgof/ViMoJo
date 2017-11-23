@@ -27,8 +27,8 @@ public class FrameRateSetting {
     return frameRate;
   }
 
-  public void setFrameRate(String frameRatePreference) {
-    this.frameRate = frameRatePreference;
+  public void setFrameRateSetting(String frameRateSetting) {
+    this.frameRate = frameRateSetting;
   }
 
   public HashMap<Integer, Boolean> getFrameRatesSupportedMap() {

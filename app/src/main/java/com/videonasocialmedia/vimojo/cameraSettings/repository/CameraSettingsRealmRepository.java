@@ -37,7 +37,7 @@ public class CameraSettingsRealmRepository implements CameraSettingsRepository {
   }
 
   @Override
-  public CameraSettings getCameraPreferences() {
+  public CameraSettings getCameraSettings() {
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmCameraSettings> realmResults = realm.where(RealmCameraSettings.class).findAll();
     if (realmResults.size() > 0) {
@@ -49,43 +49,43 @@ public class CameraSettingsRealmRepository implements CameraSettingsRepository {
   }
 
   @Override
-  public void setResolutionPreferencesSupported(ResolutionSetting resolutionSetting) {
-    CameraSettings cameraSettings = getCameraPreferences();
+  public void setResolutionSettingSupported(ResolutionSetting resolutionSetting) {
+    CameraSettings cameraSettings = getCameraSettings();
     cameraSettings.setResolutionSetting(resolutionSetting);
     update(cameraSettings);
   }
 
   @Override
-  public void setFrameRatePreferencesSupported(FrameRateSetting frameRateSetting) {
-    CameraSettings cameraSettings = getCameraPreferences();
+  public void setFrameRateSettingSupported(FrameRateSetting frameRateSetting) {
+    CameraSettings cameraSettings = getCameraSettings();
     cameraSettings.setFrameRatePreferences(frameRateSetting);
     update(cameraSettings);
   }
 
   @Override
   public void setInterfaceProSelected(boolean interfaceProSelected) {
-    CameraSettings cameraSettings = getCameraPreferences();
+    CameraSettings cameraSettings = getCameraSettings();
     cameraSettings.setInterfaceProSelected(interfaceProSelected);
     update(cameraSettings);
   }
 
   @Override
-  public void setResolutionPreference(String resolution) {
-    CameraSettings cameraSettings = getCameraPreferences();
-    cameraSettings.getResolutionSetting().setResolutionPreference(resolution);
+  public void setResolutionSetting(String resolution) {
+    CameraSettings cameraSettings = getCameraSettings();
+    cameraSettings.getResolutionSetting().setResolutionSetting(resolution);
     update(cameraSettings);
   }
 
   @Override
-  public void setFrameRatePreference(String frameRate) {
-    CameraSettings cameraSettings = getCameraPreferences();
-    cameraSettings.getFrameRateSetting().setFrameRate(frameRate);
+  public void setFrameRateSetting(String frameRate) {
+    CameraSettings cameraSettings = getCameraSettings();
+    cameraSettings.getFrameRateSetting().setFrameRateSetting(frameRate);
     update(cameraSettings);
   }
 
   @Override
-  public void setQualityPreference(String quality) {
-    CameraSettings cameraSettings = getCameraPreferences();
+  public void setQualitySetting(String quality) {
+    CameraSettings cameraSettings = getCameraSettings();
     cameraSettings.setQuality(quality);
     update(cameraSettings);
   }

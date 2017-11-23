@@ -1,31 +1,23 @@
 package com.videonasocialmedia.vimojo.cameraSettings.presentation.view.adapter;
 
 import android.content.Context;
-import android.support.annotation.IdRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingItems;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingSelectable;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
-
 public class CameraSettingsAdapter extends
-    RecyclerView.Adapter<CameraSettingsAdapter.CameraSettingsAdapterItemViewHolder> {
+    RecyclerView.Adapter<CameraSettingsViewHolder> {
 
   private List<CameraSettingSelectable> cameraSettingsList;
-  private CameraSettingsListClickListener listener;
   private Context context;
+  private CameraSettingsListClickListener listener;
 
   public void setCameraSettingsListClickListener(CameraSettingsListClickListener listener) {
     this.listener = listener;
@@ -37,36 +29,17 @@ public class CameraSettingsAdapter extends
   }
 
   @Override
-  public CameraSettingsAdapterItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+  public CameraSettingsViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
     View rowView = LayoutInflater.from(viewGroup.getContext()).
         inflate(R.layout.camera_settings_list_view_holder, viewGroup, false);
     this.context = viewGroup.getContext();
-    return new CameraSettingsAdapterItemViewHolder(rowView);
+    return new CameraSettingsViewHolder(rowView, this, context);
   }
 
   @Override
-  public void onBindViewHolder(CameraSettingsAdapterItemViewHolder holder, int position) {
+  public void onBindViewHolder(CameraSettingsViewHolder holder, int position) {
     CameraSettingSelectable cameraSettingSelectable = cameraSettingsList.get(position);
-    holder.settingCameraTitlePackage.setText(cameraSettingSelectable.getTitleCameraSettingsSelectable());
-
-    if (!cameraSettingSelectable.isAvailable()) {
-      holder.textNotAvailable.setText(context.getString(R.string.preference_camera_not_available)
-          + " " + cameraSettingSelectable.getTitleCameraSettingsSelectable());
-      holder.textNotAvailable.setVisibility(View.VISIBLE);
-      holder.cameraSettingGroup.setVisibility(View.GONE);
-    } else {
-      holder.textNotAvailable.setVisibility(View.GONE);
-      holder.cameraSettingGroup.setVisibility(View.VISIBLE);
-    }
-
-    for (CameraSettingItems preference : cameraSettingSelectable.getPreferencesList()) {
-      RadioButton preferenceOption = new RadioButton(CameraSettingsAdapter.this.context);
-      preferenceOption.setId(preference.getId());
-      preferenceOption.setText(preference.getTitleCameraSettingsItem());
-      preferenceOption.setChecked(preference.isSelected());
-      holder.cameraSettingGroup.addView(preferenceOption);
-    }
-
+    holder.bindData(cameraSettingSelectable);
   }
 
   @Override
@@ -77,25 +50,7 @@ public class CameraSettingsAdapter extends
     return result;
   }
 
-  class CameraSettingsAdapterItemViewHolder extends RecyclerView.ViewHolder {
-    @Bind(R.id.camera_setting_title_package)
-    TextView settingCameraTitlePackage;
-    @Bind(R.id.camera_setting_radio_group)
-    RadioGroup cameraSettingGroup;
-    @Bind(R.id.camera_setting_text_not_available)
-    TextView textNotAvailable;
-
-    private CameraSettingsAdapterItemViewHolder(View itemView) {
-      super(itemView);
-      ButterKnife.bind(this, itemView);
-      cameraSettingGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId) {
-          if (radioGroup != null) {
-            listener.onCheckedChangeCameraPreference(radioGroup, checkedId);
-          }
-        }
-      });
-    }
+  public void onCheckedChangeCameraSetting(RadioGroup radioGroup, int checkedId) {
+    listener.onCheckedChangeCameraPreference(radioGroup, checkedId);
   }
 }

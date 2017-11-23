@@ -39,6 +39,7 @@ public class CameraSettingsActivity extends VimojoActivity implements
 
   private CameraSettingsAdapter adapter;
   private List<CameraSettingSelectable> cameraSettingPackageList;
+  public static final int NUM_COLUMNS_GRID_RECYCLER = 2;
 
 
   @Override
@@ -54,7 +55,6 @@ public class CameraSettingsActivity extends VimojoActivity implements
     int orientation = LinearLayoutManager.VERTICAL;
     adapter = new CameraSettingsAdapter();
     adapter.setCameraSettingsListClickListener(this);
-    int NUM_COLUMNS_GRID_RECYCLER = 2;
     RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this,
         NUM_COLUMNS_GRID_RECYCLER, orientation, false);
     recyclerCameraSettingsList.setLayoutManager(layoutManager);
@@ -74,22 +74,22 @@ public class CameraSettingsActivity extends VimojoActivity implements
     switch (checkedId) {
       case Constants.CAMERA_PREF_INTERFACE_PRO_ID:
       case Constants.CAMERA_PREF_INTERFACE_BASIC_ID:
-        presenter.setCameraInterfacePreference(checkedId);
+        presenter.setCameraInterfaceSetting(checkedId);
         break;
       case Constants.CAMERA_PREF_RESOLUTION_720_BACK_ID:
       case Constants.CAMERA_PREF_RESOLUTION_1080_BACK_ID:
       case Constants.CAMERA_PREF_RESOLUTION_2160_BACK_ID:
-        presenter.setCameraResolutionPreference(checkedId);
+        presenter.setCameraResolutionSetting(checkedId);
         break;
       case Constants.CAMERA_PREF_QUALITY_16_ID:
       case Constants.CAMERA_PREF_QUALITY_32_ID:
       case Constants.CAMERA_PREF_QUALITY_50_ID:
-        presenter.setCameraQualityPreference(checkedId);
+        presenter.setCameraQualitySetting(checkedId);
         break;
       case Constants.CAMERA_PREF_FRAME_RATE_24_ID:
       case Constants.CAMERA_PREF_FRAME_RATE_25_ID:
       case Constants.CAMERA_PREF_FRAME_RATE_30_ID:
-        presenter.setCameraFrameRatePreference(checkedId);
+        presenter.setCameraFrameRateSetting(checkedId);
         break;
     }
   }

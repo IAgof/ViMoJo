@@ -54,7 +54,7 @@ public class CreateDefaultProjectUseCaseTest {
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
     initCameraPreferences();
-    when(mockedCameraSettingsRepository.getCameraPreferences()).thenReturn(cameraSettings);
+    when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
   }
 
   @Before

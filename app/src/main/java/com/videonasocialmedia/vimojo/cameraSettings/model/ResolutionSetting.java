@@ -26,8 +26,8 @@ public class ResolutionSetting {
     return resolution;
   }
 
-  public void setResolutionPreference(String resolutionPreference) {
-    this.resolution = resolutionPreference;
+  public void setResolutionSetting(String resolutionSetting) {
+    this.resolution = resolutionSetting;
   }
 
   public HashMap<Integer, Boolean> getResolutionsSupportedMap() {

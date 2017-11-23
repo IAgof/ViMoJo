@@ -40,7 +40,7 @@ public class CameraSettingsPresenter {
     cameraSettingsListView.showCameraSettingsList(getSettingListUseCase.checkCameraSettingsList());
   }
 
-  public void setCameraInterfacePreference(int interfaceProId) {
+  public void setCameraInterfaceSetting(int interfaceProId) {
     boolean interfaceProSelected;
     switch (interfaceProId) {
       case CAMERA_PREF_INTERFACE_BASIC_ID:
@@ -56,7 +56,7 @@ public class CameraSettingsPresenter {
     userEventTracker.trackChangeCameraInterface(interfaceProSelected);
   }
 
-  public void setCameraResolutionPreference(int resolutionSelectedId) {
+  public void setCameraResolutionSetting(int resolutionSelectedId) {
     String resolution;
     VideoResolution.Resolution videoResolution;
     switch (resolutionSelectedId) {
@@ -76,12 +76,12 @@ public class CameraSettingsPresenter {
         resolution = DEFAULT_CAMERA_PREF_RESOLUTION;
         videoResolution = VideoResolution.Resolution.HD1080;
     }
-    cameraSettingsRepository.setResolutionPreference(resolution);
+    cameraSettingsRepository.setResolutionSetting(resolution);
     projectRepository.updateResolution(videoResolution);
     userEventTracker.trackChangeResolution(resolution);
   }
 
-  public void setCameraFrameRatePreference(int frameRateSelected) {
+  public void setCameraFrameRateSetting(int frameRateSelected) {
     String frameRate;
     VideoFrameRate.FrameRate videoFrameRate;
     switch (frameRateSelected) {
@@ -101,12 +101,12 @@ public class CameraSettingsPresenter {
         frameRate = DEFAULT_CAMERA_PREF_FRAME_RATE;
         videoFrameRate = VideoFrameRate.FrameRate.FPS30;
     }
-    cameraSettingsRepository.setFrameRatePreference(frameRate);
+    cameraSettingsRepository.setFrameRateSetting(frameRate);
     projectRepository.updateFrameRate(videoFrameRate);
     userEventTracker.trackChangeFrameRate(frameRate);
   }
 
-  public void setCameraQualityPreference(int qualitySelectedId) {
+  public void setCameraQualitySetting(int qualitySelectedId) {
     String quality;
     VideoQuality.Quality videoQuality;
     switch (qualitySelectedId) {
@@ -126,7 +126,7 @@ public class CameraSettingsPresenter {
         quality = DEFAULT_CAMERA_PREF_QUALITY;
         videoQuality = VideoQuality.Quality.LOW;
     }
-    cameraSettingsRepository.setQualityPreference(quality);
+    cameraSettingsRepository.setQualitySetting(quality);
     projectRepository.updateQuality(videoQuality);
     userEventTracker.trackChangeQuality(quality);
   }

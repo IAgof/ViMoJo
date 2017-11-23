@@ -13,19 +13,19 @@ public interface CameraSettingsRepository extends Repository<CameraSettings> {
 
   void update(CameraSettings item);
 
-  CameraSettings getCameraPreferences();
+  CameraSettings getCameraSettings();
 
-  void setResolutionPreferencesSupported(ResolutionSetting resolutionSetting);
+  void setResolutionSettingSupported(ResolutionSetting resolutionSetting);
 
-  void setFrameRatePreferencesSupported(FrameRateSetting frameRateSetting);
+  void setFrameRateSettingSupported(FrameRateSetting frameRateSetting);
 
   void setInterfaceProSelected(boolean interfaceProSelected);
 
-  void setResolutionPreference(String resolution);
+  void setResolutionSetting(String resolution);
 
-  void setFrameRatePreference(String frameRate);
+  void setFrameRateSetting(String frameRate);
 
-  void setQualityPreference(String quality);
+  void setQualitySetting(String quality);
 
   void createCameraPref(CameraSettings defaultCameraSettings);
 }

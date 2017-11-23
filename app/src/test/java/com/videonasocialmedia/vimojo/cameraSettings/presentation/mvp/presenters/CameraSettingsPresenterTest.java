@@ -55,7 +55,7 @@ public class CameraSettingsPresenterTest {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int interfaceProSelectedId = Constants.CAMERA_PREF_INTERFACE_PRO_ID;
 
-    presenter.setCameraInterfacePreference(interfaceProSelectedId);
+    presenter.setCameraInterfaceSetting(interfaceProSelectedId);
 
     verify(mockedCameraSettingsRepository).setInterfaceProSelected(true);
     verify(mockedUserEventTracker).trackChangeCameraInterface(true);
@@ -66,9 +66,9 @@ public class CameraSettingsPresenterTest {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int resolutionPreferenceId = Constants.CAMERA_PREF_RESOLUTION_720_BACK_ID;
 
-    presenter.setCameraResolutionPreference(resolutionPreferenceId);
+    presenter.setCameraResolutionSetting(resolutionPreferenceId);
 
-    verify(mockedCameraSettingsRepository).setResolutionPreference("720p");
+    verify(mockedCameraSettingsRepository).setResolutionSetting("720p");
     verify(mockedProjectRepository).updateResolution(VideoResolution.Resolution.HD720);
     verify(mockedUserEventTracker).trackChangeResolution("720p");
   }
@@ -78,9 +78,9 @@ public class CameraSettingsPresenterTest {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int frameRatePreferenceId = Constants.CAMERA_PREF_FRAME_RATE_30_ID;
 
-    presenter.setCameraFrameRatePreference(frameRatePreferenceId);
+    presenter.setCameraFrameRateSetting(frameRatePreferenceId);
 
-    verify(mockedCameraSettingsRepository).setFrameRatePreference("30 fps");
+    verify(mockedCameraSettingsRepository).setFrameRateSetting("30 fps");
     verify(mockedProjectRepository).updateFrameRate(VideoFrameRate.FrameRate.FPS30);
     verify(mockedUserEventTracker).trackChangeFrameRate("30 fps");
   }
@@ -91,9 +91,9 @@ public class CameraSettingsPresenterTest {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int qualityPreferenceId = Constants.CAMERA_PREF_QUALITY_16_ID;
 
-    presenter.setCameraQualityPreference(qualityPreferenceId);
+    presenter.setCameraQualitySetting(qualityPreferenceId);
 
-    verify(mockedCameraSettingsRepository).setQualityPreference("16 Mbps");
+    verify(mockedCameraSettingsRepository).setQualitySetting("16 Mbps");
     verify(mockedProjectRepository).updateQuality(VideoQuality.Quality.LOW);
     verify(mockedUserEventTracker).trackChangeQuality("16 Mbps");
   }

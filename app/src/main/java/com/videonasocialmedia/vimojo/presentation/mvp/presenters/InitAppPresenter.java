@@ -113,7 +113,7 @@ public class InitAppPresenter {
     ResolutionSetting resolutionSetting = new ResolutionSetting(defaultResolution,
             resolutionsSupportedMap);
 
-    cameraSettingsRepository.setResolutionPreferencesSupported(resolutionSetting);
+    cameraSettingsRepository.setResolutionSettingSupported(resolutionSetting);
 
   }
 
@@ -148,6 +148,6 @@ public class InitAppPresenter {
 
     FrameRateSetting frameRateSetting = new FrameRateSetting(defaultFrameRate, frameRateMap);
 
-    cameraSettingsRepository.setFrameRatePreferencesSupported(frameRateSetting);
+    cameraSettingsRepository.setFrameRateSettingSupported(frameRateSetting);
   }
 }

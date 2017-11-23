@@ -48,6 +48,13 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_24;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_25;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_30;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_QUALITY_16;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_QUALITY_32;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_QUALITY_50;
+
 /**
  *  Created by alvaro on 16/01/17.
  */
@@ -117,10 +124,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   public void initViews() {
-    checkCameraPreferences();
-    recordView.setCameraSettingSelected(getResolution(currentProject.getProfile().getResolution()),
-        getQuality(currentProject.getProfile().getQuality()),
-        getFrameRate(currentProject.getProfile().getFrameRate()));
+    checkCameraInterface();
+    recordView.setCameraSettingSelected(getResolution(), getQuality(), getFrameRate());
     recordView.showPrincipalViews();
     recordView.showRightControlsView();
     recordView.showSettingsCameraView();
@@ -128,22 +133,24 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     setupAdvancedCameraControls();
   }
 
-  private void checkCameraPreferences() {
-    if(cameraSettingsRepository.getCameraPreferences().isInterfaceProSelected()) {
+  private void checkCameraInterface() {
+    if(cameraSettingsRepository.getCameraSettings().isInterfaceProSelected()) {
       cameraProSelected = true;
     }
   }
 
-  private String getResolution(VideoResolution.Resolution resolution) {
+  private String getResolution() {
+    String resolutionSettingValue = cameraSettingsRepository.getCameraSettings()
+        .getResolutionSettingValue();
     String resolutionName;
-    switch (resolution) {
-      case HD1080:
+    switch (resolutionSettingValue) {
+      case Constants.CAMERA_PREF_RESOLUTION_1080:
         resolutionName = "1080p";
         break;
-      case HD4K:
+      case Constants.CAMERA_PREF_RESOLUTION_2160:
         resolutionName = "4k";
         break;
-      case HD720:
+      case Constants.CAMERA_PREF_RESOLUTION_720:
       default:
         resolutionName = "720p";
     }
@@ -151,32 +158,34 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
 
-  private String getQuality(VideoQuality.Quality quality) {
+  private String getQuality() {
+    String qualityValue = cameraSettingsRepository.getCameraSettings().getQuality();
     String qualityName;
-    switch (quality) {
-      case HIGH:
+    switch (qualityValue) {
+      case CAMERA_PREF_QUALITY_50:
         qualityName = "50 Mbps";
         break;
-      case GOOD:
+      case CAMERA_PREF_QUALITY_32:
         qualityName = "32 Mbps";
         break;
-      case LOW:
+      case CAMERA_PREF_QUALITY_16:
       default:
         qualityName = "16 Mbps";
     }
     return qualityName;
   }
 
-  private String getFrameRate(VideoFrameRate.FrameRate frameRate) {
+  private String getFrameRate() {
+    String qualityValue = cameraSettingsRepository.getCameraSettings().getFrameRateSettingValue();
     String frameRateName;
-    switch(frameRate) {
-      case FPS24:
+    switch(qualityValue) {
+      case CAMERA_PREF_FRAME_RATE_24:
         frameRateName = "24 fps";
         break;
-      case FPS25:
+      case CAMERA_PREF_FRAME_RATE_25:
         frameRateName = "25 fps";
         break;
-      case FPS30:
+      case CAMERA_PREF_FRAME_RATE_30:
       default:
         frameRateName = "30 fps";
     }

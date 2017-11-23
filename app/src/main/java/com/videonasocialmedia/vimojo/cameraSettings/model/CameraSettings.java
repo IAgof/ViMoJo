@@ -57,4 +57,12 @@ public class CameraSettings {
   public void setQuality(String quality) {
     this.quality = quality;
   }
+
+  public String getResolutionSettingValue() {
+    return resolutionSetting.getResolution();
+  }
+
+  public String getFrameRateSettingValue() {
+    return frameRateSetting.getFrameRate();
+  }
 }
