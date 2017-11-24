@@ -101,7 +101,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     this.sharedPreferences = sharedPreferences;
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
-    this.cameraSettings = cameraSettingsRepository.getCameraSettings();
+
     this.currentProject = loadProject();
     // TODO:(alvaro.martinez) 25/01/17 Support camera1, api <21 or combine both. Make Camera1Wrapper
 //    camera = new Camera2Wrapper(context, DEFAULT_CAMERA_ID, textureView, directorySaveVideos,
@@ -117,7 +117,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   public void initViews() {
-    checkCameraInterface();
+    cameraSettings = cameraSettingsRepository.getCameraSettings();
+    checkCameraInterface(cameraSettings);
     recordView.setCameraSettingSelected(cameraSettings.getResolutionSettingValue(),
             cameraSettings.getQuality(), cameraSettings.getFrameRateSettingValue());
     recordView.showPrincipalViews();
@@ -127,7 +128,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     setupAdvancedCameraControls();
   }
 
-  private void checkCameraInterface() {
+  private void checkCameraInterface(CameraSettings cameraSettings) {
     if(cameraSettings.getInterfaceSelected()
             .equals(Constants.CAMERA_SETTING_INTERFACE_PRO)) {
       cameraProSelected = true;
