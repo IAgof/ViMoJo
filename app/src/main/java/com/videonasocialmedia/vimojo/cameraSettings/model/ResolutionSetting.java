@@ -11,6 +11,9 @@ import java.util.HashMap;
 
 /**
  * Created by alvaro on 14/11/17.
+ *
+ * ResolutionSetting
+ * Model for resolutions selected by user and values supported by hardware device
  */
 
 public class ResolutionSetting {

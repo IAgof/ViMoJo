@@ -19,8 +19,6 @@ public interface CameraSettingsRepository extends Repository<CameraSettings> {
 
   void setFrameRateSettingSupported(FrameRateSetting frameRateSetting);
 
-  void setInterfaceProSelected(boolean interfaceProSelected);
-
   void setResolutionSetting(String resolution);
 
   void setFrameRateSetting(String frameRate);
@@ -28,4 +26,6 @@ public interface CameraSettingsRepository extends Repository<CameraSettings> {
   void setQualitySetting(String quality);
 
   void createCameraPref(CameraSettings defaultCameraSettings);
+
+  void setInterfaceSelected(String interfaceSelected);
 }

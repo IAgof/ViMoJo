@@ -14,7 +14,8 @@ public class RealmCameraSettings extends RealmObject {
   @Required
   public String cameraSettingsId = "RealmCameraSettings";
 
-  public boolean interfaceProSelected;
+  @Required
+  public String interfaceSelected;
   @Required
   public String resolution;
   @Required
@@ -37,7 +38,7 @@ public class RealmCameraSettings extends RealmObject {
 
   }
 
-  public RealmCameraSettings(String cameraSettingsId, boolean interfaceProSelected, String resolution,
+  public RealmCameraSettings(String cameraSettingsId, String interfaceSelected, String resolution,
                              String quality, String frameRate, boolean resolutionBack720pSupported,
                              boolean resolutionBack1080pSupported, boolean resolutionBack2160pSupported,
                              boolean resolutionFront720pSupported, boolean resolutionFront1080pSupported,
@@ -45,7 +46,7 @@ public class RealmCameraSettings extends RealmObject {
                              boolean frameRate25FpsSupported, boolean frameRate30FpsSupported) {
 
     this.cameraSettingsId = cameraSettingsId;
-    this.interfaceProSelected = interfaceProSelected;
+    this.interfaceSelected = interfaceSelected;
     this.resolution = resolution;
     this.quality = quality;
     this.frameRate = frameRate;

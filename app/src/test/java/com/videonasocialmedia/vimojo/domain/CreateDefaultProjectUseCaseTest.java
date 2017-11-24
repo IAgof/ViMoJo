@@ -29,15 +29,15 @@ import org.robolectric.annotation.Config;
 
 import java.util.HashMap;
 
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_24_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_25_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_30_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_1080_BACK_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_1080_FRONT_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_2160_BACK_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_2160_FRONT_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_720_BACK_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_720_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_FRAME_RATE_24_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_FRAME_RATE_25_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_FRAME_RATE_30_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_1080_BACK_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_2160_BACK_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -78,21 +78,21 @@ public class CreateDefaultProjectUseCaseTest {
   private void initCameraPreferences() {
 
     HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
-    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_720_BACK_ID, true);
-    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_1080_BACK_ID, true);
-    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_2160_BACK_ID, false);
-    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_720_FRONT_ID, true);
-    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_1080_FRONT_ID, true);
-    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_2160_FRONT_ID, false);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID, false);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_FRONT_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, false);
     ResolutionSetting resolutionSetting = new ResolutionSetting(
-        Constants.DEFAULT_CAMERA_PREF_RESOLUTION, resolutionsSupportedMap);
+        Constants.DEFAULT_CAMERA_SETTING_RESOLUTION, resolutionsSupportedMap);
     HashMap<Integer, Boolean> frameRateSupportedMap = new HashMap<>();
-    frameRateSupportedMap.put(CAMERA_PREF_FRAME_RATE_24_ID, false);
-    frameRateSupportedMap.put(CAMERA_PREF_FRAME_RATE_25_ID, false);
-    frameRateSupportedMap.put(CAMERA_PREF_FRAME_RATE_30_ID, true);
+    frameRateSupportedMap.put(CAMERA_SETTING_FRAME_RATE_24_ID, false);
+    frameRateSupportedMap.put(CAMERA_SETTING_FRAME_RATE_25_ID, false);
+    frameRateSupportedMap.put(CAMERA_SETTING_FRAME_RATE_30_ID, true);
     FrameRateSetting frameRateSetting = new FrameRateSetting(
-        Constants.DEFAULT_CAMERA_PREF_FRAME_RATE, frameRateSupportedMap);
-    String quality = Constants.DEFAULT_CAMERA_PREF_QUALITY;
+        Constants.DEFAULT_CAMERA_SETTING_FRAME_RATE, frameRateSupportedMap);
+    String quality = Constants.DEFAULT_CAMERA_SETTING_QUALITY;
     boolean interfaceProSelected = false;
     cameraSettings = new CameraSettings(resolutionSetting,
             frameRateSetting, quality, interfaceProSelected);

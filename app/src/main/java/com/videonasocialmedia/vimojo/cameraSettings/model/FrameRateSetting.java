@@ -11,6 +11,9 @@ import java.util.HashMap;
 
 /**
  * Created by alvaro on 14/11/17.
+ *
+ * FrameRateSetting
+ * Model for frame rate selected by user and values supported by hardware device
  */
 
 public class FrameRateSetting {

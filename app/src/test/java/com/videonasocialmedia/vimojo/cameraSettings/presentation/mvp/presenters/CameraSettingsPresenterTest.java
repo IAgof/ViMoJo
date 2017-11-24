@@ -10,7 +10,6 @@ import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.Camer
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -20,6 +19,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
@@ -62,18 +62,20 @@ public class CameraSettingsPresenterTest {
   @Test
   public void setCameraInterfacePreferenceUpdateRepositoryAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
-    int interfaceProSelectedId = Constants.CAMERA_PREF_INTERFACE_PRO_ID;
+    int interfaceProSelectedId = Constants.CAMERA_SETTING_INTERFACE_PRO_ID;
 
     presenter.setCameraInterfaceSetting(interfaceProSelectedId);
 
-    verify(mockedCameraSettingsRepository).setInterfaceProSelected(true);
-    verify(mockedUserEventTracker).trackChangeCameraInterface(true);
+    verify(mockedCameraSettingsRepository)
+            .setInterfaceSelected(DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED);
+    verify(mockedUserEventTracker)
+            .trackChangeCameraInterface(DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED);
   }
 
   @Test
   public void setCameraResolutionPreferenceUpdateRepositoriesProjectAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
-    int resolutionPreferenceId = Constants.CAMERA_PREF_RESOLUTION_720_BACK_ID;
+    int resolutionPreferenceId = Constants.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
     Project project = getAProject();
 
     presenter.setCameraResolutionSetting(resolutionPreferenceId);
@@ -87,7 +89,7 @@ public class CameraSettingsPresenterTest {
   @Test
   public void setCameraFrameRatePreferenceUpdateRepositoriesProjectAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
-    int frameRatePreferenceId = Constants.CAMERA_PREF_FRAME_RATE_30_ID;
+    int frameRatePreferenceId = Constants.CAMERA_SETTING_FRAME_RATE_30_ID;
     Project project = getAProject();
 
     presenter.setCameraFrameRateSetting(frameRatePreferenceId);
@@ -102,7 +104,7 @@ public class CameraSettingsPresenterTest {
   @Test
   public void setCameraQualityPreferenceUpdateRepositoriesProjectAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
-    int qualityPreferenceId = Constants.CAMERA_PREF_QUALITY_16_ID;
+    int qualityPreferenceId = Constants.CAMERA_SETTING_QUALITY_16_ID;
     Project project = getAProject();
 
     presenter.setCameraQualitySetting(qualityPreferenceId);

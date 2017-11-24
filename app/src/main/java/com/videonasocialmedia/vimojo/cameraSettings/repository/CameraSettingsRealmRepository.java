@@ -63,13 +63,6 @@ public class CameraSettingsRealmRepository implements CameraSettingsRepository {
   }
 
   @Override
-  public void setInterfaceProSelected(boolean interfaceProSelected) {
-    CameraSettings cameraSettings = getCameraSettings();
-    cameraSettings.setInterfaceProSelected(interfaceProSelected);
-    update(cameraSettings);
-  }
-
-  @Override
   public void setResolutionSetting(String resolution) {
     CameraSettings cameraSettings = getCameraSettings();
     cameraSettings.getResolutionSetting().setResolutionSetting(resolution);
@@ -87,6 +80,13 @@ public class CameraSettingsRealmRepository implements CameraSettingsRepository {
   public void setQualitySetting(String quality) {
     CameraSettings cameraSettings = getCameraSettings();
     cameraSettings.setQuality(quality);
+    update(cameraSettings);
+  }
+
+  @Override
+  public void setInterfaceSelected(String interfaceSelected) {
+    CameraSettings cameraSettings = getCameraSettings();
+    cameraSettings.setInterfaceSelected(interfaceSelected);
     update(cameraSettings);
   }
 

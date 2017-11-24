@@ -16,7 +16,6 @@ import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.presenters.
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.view.adapter.CameraSettingsAdapter;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.view.adapter.CameraSettingsListClickListener;
-import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
 
@@ -40,7 +39,6 @@ public class CameraSettingsActivity extends VimojoActivity implements
   private CameraSettingsAdapter adapter;
   private List<CameraSettingSelectable> cameraSettingPackageList;
   public static final int NUM_COLUMNS_GRID_RECYCLER = 2;
-
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -71,26 +69,21 @@ public class CameraSettingsActivity extends VimojoActivity implements
 
   @Override
   public void onCheckedChangeCameraPreference(RadioGroup radioGroup, int checkedId) {
-    switch (checkedId) {
-      case Constants.CAMERA_PREF_INTERFACE_PRO_ID:
-      case Constants.CAMERA_PREF_INTERFACE_BASIC_ID:
-        presenter.setCameraInterfaceSetting(checkedId);
-        break;
-      case Constants.CAMERA_PREF_RESOLUTION_720_BACK_ID:
-      case Constants.CAMERA_PREF_RESOLUTION_1080_BACK_ID:
-      case Constants.CAMERA_PREF_RESOLUTION_2160_BACK_ID:
-        presenter.setCameraResolutionSetting(checkedId);
-        break;
-      case Constants.CAMERA_PREF_QUALITY_16_ID:
-      case Constants.CAMERA_PREF_QUALITY_32_ID:
-      case Constants.CAMERA_PREF_QUALITY_50_ID:
-        presenter.setCameraQualitySetting(checkedId);
-        break;
-      case Constants.CAMERA_PREF_FRAME_RATE_24_ID:
-      case Constants.CAMERA_PREF_FRAME_RATE_25_ID:
-      case Constants.CAMERA_PREF_FRAME_RATE_30_ID:
-        presenter.setCameraFrameRateSetting(checkedId);
-        break;
+    if(presenter.getResolutionNames().containsKey(checkedId)) {
+      presenter.setCameraResolutionSetting(checkedId);
+      return;
+    }
+    if(presenter.getFrameRateNames().containsKey(checkedId)) {
+      presenter.setCameraFrameRateSetting(checkedId);
+      return;
+    }
+    if(presenter.getQualityNames().containsKey(checkedId)) {
+      presenter.setCameraQualitySetting(checkedId);
+      return;
+    }
+    if(presenter.getInterfaceNames().containsKey(checkedId)) {
+      presenter.setCameraInterfaceSetting(checkedId);
+      return;
     }
   }
 

@@ -26,10 +26,8 @@ import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -41,20 +39,12 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerAmplitudeDbListener;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoopThread;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.text.DecimalFormat;
 import java.util.List;
-
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_24;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_25;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_30;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_QUALITY_16;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_QUALITY_32;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_QUALITY_50;
 
 /**
  *  Created by alvaro on 16/01/17.
@@ -70,6 +60,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   private static final String TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
   private CameraSettingsRepository cameraSettingsRepository;
+  private CameraSettings cameraSettings;
   private SharedPreferences sharedPreferences;
   protected UserEventTracker userEventTracker;
   private final NewClipImporter newClipImporter;
@@ -110,6 +101,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     this.sharedPreferences = sharedPreferences;
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
+    this.cameraSettings = cameraSettingsRepository.getCameraSettings();
     this.currentProject = loadProject();
     // TODO:(alvaro.martinez) 25/01/17 Support camera1, api <21 or combine both. Make Camera1Wrapper
 //    camera = new Camera2Wrapper(context, DEFAULT_CAMERA_ID, textureView, directorySaveVideos,
@@ -126,9 +118,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 
   public void initViews() {
     checkCameraInterface();
-    recordView.setCameraSettingSelected(getResolution(currentProject.getProfile().getResolution()),
-        getQuality(currentProject.getProfile().getQuality()),
-        getFrameRate(currentProject.getProfile().getFrameRate()));
+    recordView.setCameraSettingSelected(cameraSettings.getResolutionSettingValue(),
+            cameraSettings.getQuality(), cameraSettings.getFrameRateSettingValue());
     recordView.showPrincipalViews();
     recordView.showRightControlsView();
     recordView.showSettingsCameraView();
@@ -137,58 +128,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   private void checkCameraInterface() {
-    if(cameraSettingsRepository.getCameraSettings().isInterfaceProSelected()) {
+    if(cameraSettings.getInterfaceSelected()
+            .equals(Constants.CAMERA_SETTING_INTERFACE_PRO)) {
       cameraProSelected = true;
     }
-  }
-
-  private String getResolution(VideoResolution.Resolution resolution) {
-    String resolutionName;
-    switch (resolution) {
-      case HD1080:
-        resolutionName = "1080p";
-        break;
-      case HD4K:
-        resolutionName = "4k";
-        break;
-      case HD720:
-      default:
-        resolutionName = "720p";
-    }
-    return resolutionName;
-  }
-
-
-  private String getQuality(VideoQuality.Quality quality) {
-    String qualityName;
-    switch (quality) {
-      case HIGH:
-        qualityName = "50 Mbps";
-        break;
-      case GOOD:
-        qualityName = "32 Mbps";
-        break;
-      case LOW:
-      default:
-        qualityName = "16 Mbps";
-    }
-    return qualityName;
-  }
-
-  private String getFrameRate(VideoFrameRate.FrameRate frameRate) {
-    String frameRateName;
-    switch(frameRate) {
-      case FPS24:
-        frameRateName = "24 fps";
-        break;
-      case FPS25:
-        frameRateName = "25 fps";
-        break;
-      case FPS30:
-      default:
-        frameRateName = "30 fps";
-    }
-    return frameRateName;
   }
 
   private void setupAdvancedCameraControls() {

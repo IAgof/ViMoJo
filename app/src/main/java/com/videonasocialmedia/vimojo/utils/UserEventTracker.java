@@ -346,13 +346,13 @@ public class UserEventTracker {
         }
     }
 
-    public void trackChangeCameraInterface(boolean interfaceProSelected) {
+    public void trackChangeCameraInterface(String interfaceSelected) {
         JSONObject eventProperties = new JSONObject();
         try {
             eventProperties.put(AnalyticsConstants.INTERACTION,
                 AnalyticsConstants.ACTION_INTERFACE_CAMERA_CHANGED);
             eventProperties.put(AnalyticsConstants.ACTION_INTERFACE_CAMERA_SELECTED,
-                interfaceProSelected);
+                    interfaceSelected);
             Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {

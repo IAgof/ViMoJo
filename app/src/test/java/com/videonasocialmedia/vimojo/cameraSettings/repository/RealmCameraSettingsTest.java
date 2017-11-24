@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import io.realm.RealmObject;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -39,6 +40,7 @@ public class RealmCameraSettingsTest {
     realmCameraSettings.resolutionFront1080pSupported = true;
     realmCameraSettings.resolutionFront2160pSupported = false;
     realmCameraSettings.quality = "16 Mbps";
+    realmCameraSettings.interfaceSelected = DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
 
     assertThat(realmCameraSettings.cameraSettingsId, is("RealmCameraSettings"));
     assertThat(realmCameraSettings.frameRate, is("30 fps"));
@@ -53,6 +55,7 @@ public class RealmCameraSettingsTest {
     assertThat(realmCameraSettings.resolutionFront1080pSupported, is(true));
     assertThat(realmCameraSettings.resolutionFront2160pSupported, is(false));
     assertThat(realmCameraSettings.quality, is("16 Mbps"));
+    assertThat(realmCameraSettings.interfaceSelected, is(DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED));
 
   }
 

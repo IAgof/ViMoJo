@@ -350,9 +350,9 @@ public class VimojoMigration implements RealmMigration {
 
     // Migrate from version 8 to 9, new RealmCameraSettings
     if (oldVersion == 8) {
-        RealmObjectSchema realmCameraPrefTable = schema.get("RealmCameraSettings");
+        RealmObjectSchema realmCameraSettingsTable = schema.get("RealmCameraSettings");
         if(schema.get("RealmCameraSettings") == null) {
-            RealmObjectSchema cameraPrefSchema = schema.create("RealmCameraSettings")
+            RealmObjectSchema cameraSettingsSchema = schema.create("RealmCameraSettings")
                     .addField("cameraSettingsId", String.class, FieldAttribute.PRIMARY_KEY,
                             FieldAttribute.REQUIRED).transform(new RealmObjectSchema.Function() {
                   @Override
@@ -360,33 +360,33 @@ public class VimojoMigration implements RealmMigration {
                     obj.setString("cameraSettingsId", "RealmCameraSettings");
                   }
                 })
-                    .addField("interfaceProSelected", Boolean.class, FieldAttribute.REQUIRED)
+                    .addField("interfaceSelected", String.class, FieldAttribute.REQUIRED)
                       .transform(new RealmObjectSchema.Function() {
                         @Override
                         public void apply(DynamicRealmObject obj) {
-                          obj.setBoolean("interfaceProSelected",
-                              DEFAULT_CAMERA_PREF_INTERFACE_PRO_SELECTED);
+                          obj.setString("interfaceSelected",
+                                  DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED);
                         }
                       })
                     .addField("resolution", String.class, FieldAttribute.REQUIRED)
                       .transform(new RealmObjectSchema.Function() {
                         @Override
                         public void apply(DynamicRealmObject obj) {
-                          obj.setString("resolution", DEFAULT_CAMERA_PREF_RESOLUTION);
+                          obj.setString("resolution", DEFAULT_CAMERA_SETTING_RESOLUTION);
                         }
                       })
                     .addField("quality", String.class, FieldAttribute.REQUIRED)
                       .transform(new RealmObjectSchema.Function() {
                         @Override
                         public void apply(DynamicRealmObject obj) {
-                          obj.setString("quality", DEFAULT_CAMERA_PREF_QUALITY);
+                          obj.setString("quality", DEFAULT_CAMERA_SETTING_QUALITY);
                         }
                       })
                     .addField("frameRate", String.class, FieldAttribute.REQUIRED)
                       .transform(new RealmObjectSchema.Function() {
                         @Override
                         public void apply(DynamicRealmObject obj) {
-                          obj.setString("frameRate", DEFAULT_CAMERA_PREF_FRAME_RATE);
+                          obj.setString("frameRate", DEFAULT_CAMERA_SETTING_FRAME_RATE);
                         }
                       })
                     .addField("resolutionBack720pSupported", Boolean.class, FieldAttribute.REQUIRED)

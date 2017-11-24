@@ -17,15 +17,15 @@ import java.util.HashMap;
 import javax.inject.Inject;
 
 import static com.videonasocialmedia.vimojo.utils.Constants.BACK_CAMERA_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_24_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_25_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_FRAME_RATE_30_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_1080_BACK_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_1080_FRONT_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_2160_BACK_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_2160_FRONT_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_720_BACK_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_PREF_RESOLUTION_720_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_FRAME_RATE_24_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_FRAME_RATE_25_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_FRAME_RATE_30_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_1080_BACK_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_2160_BACK_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 
 /**
@@ -67,7 +67,7 @@ public class InitAppPresenter {
   private void checkCamera2ResolutionSupported(Camera2Settings camera2Settings)
           throws CameraAccessException {
 
-    String defaultResolution = Constants.DEFAULT_CAMERA_PREF_RESOLUTION;
+    String defaultResolution = Constants.DEFAULT_CAMERA_SETTING_RESOLUTION;
     HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
 
     boolean resolutionBack720pSupported = false;
@@ -103,12 +103,12 @@ public class InitAppPresenter {
       }
     }
 
-    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_720_BACK_ID, resolutionBack720pSupported);
-    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_1080_BACK_ID, resolutionBack1080pSupported);
-    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_2160_BACK_ID, resolutionBack2160pSupported);
-    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_720_FRONT_ID, resolutionFront720pSupported);
-    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_1080_FRONT_ID, resolutionFront1080pSupported);
-    resolutionsSupportedMap.put(CAMERA_PREF_RESOLUTION_2160_FRONT_ID, resolutionFront2160pSupported);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, resolutionBack720pSupported);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID, resolutionBack1080pSupported);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID, resolutionBack2160pSupported);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_FRONT_ID, resolutionFront720pSupported);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, resolutionFront1080pSupported);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, resolutionFront2160pSupported);
 
     ResolutionSetting resolutionSetting = new ResolutionSetting(defaultResolution,
             resolutionsSupportedMap);
@@ -124,7 +124,7 @@ public class InitAppPresenter {
     boolean frameRate24FpsSupported = false;
     boolean frameRate25FpsSupported = false;
     boolean frameRate30FpsSupported = false;
-    String defaultFrameRate = Constants.DEFAULT_CAMERA_PREF_FRAME_RATE;
+    String defaultFrameRate = Constants.DEFAULT_CAMERA_SETTING_FRAME_RATE;
 
     for(Range<Integer> fps: fpsRange) {
       if (fps.getLower().equals(fps.getUpper())) {
@@ -142,9 +142,9 @@ public class InitAppPresenter {
       }
     }
 
-    frameRateMap.put(CAMERA_PREF_FRAME_RATE_24_ID, frameRate24FpsSupported);
-    frameRateMap.put(CAMERA_PREF_FRAME_RATE_25_ID, frameRate25FpsSupported);
-    frameRateMap.put(CAMERA_PREF_FRAME_RATE_30_ID, frameRate30FpsSupported);
+    frameRateMap.put(CAMERA_SETTING_FRAME_RATE_24_ID, frameRate24FpsSupported);
+    frameRateMap.put(CAMERA_SETTING_FRAME_RATE_25_ID, frameRate25FpsSupported);
+    frameRateMap.put(CAMERA_SETTING_FRAME_RATE_30_ID, frameRate30FpsSupported);
 
     FrameRateSetting frameRateSetting = new FrameRateSetting(defaultFrameRate, frameRateMap);
 
