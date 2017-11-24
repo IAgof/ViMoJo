@@ -1460,7 +1460,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       presenter.setAudioGain(audioGainSeekBarProgress);
     }
 
-    if(flashButton.isSelected()) {
+    if (flashButton.isSelected()) {
       presenter.setFlashOff();
     }
   }
@@ -1468,6 +1468,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void setupManualExposureTime(int minimumExposureCompensation) {
     this.minExposureTime = presenter.getMinimunExposureTime();
+  }
+
+  @Override
+  public void disabileAudioGainControls() {
+    soundVolumeButton.setVisibility(View.GONE);
   }
 
   private void setAutoSettingsFocusModeByDefault() {

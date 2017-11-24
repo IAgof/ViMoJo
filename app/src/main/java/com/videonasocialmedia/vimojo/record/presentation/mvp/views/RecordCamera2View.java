@@ -151,4 +151,6 @@ public interface RecordCamera2View {
     void setCameraDefaultSettings();
 
     void setupManualExposureTime(int minimumExposureCompensation);
+
+    void disabileAudioGainControls();
 }
