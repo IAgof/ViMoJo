@@ -136,6 +136,22 @@ android {
             ext.fabricApiSecret = "2c2a5661adbf7258c3dfb8711f48b40ed43d5291f9474ba8e4cda6d05b917b55"
             manifestPlaceholders = [appName: "Vimojo Thomson Foundation", fabricApiKey: "c5e050918c143441f6b23e7936f7f83faa1330b4"]
         }
+
+        nemsummit {
+            applicationId "com.videonasocialmedia.vimojo.nemsummit"
+            versionCode 1 // 20171123
+            versionName "0.7.4.fNemSummit" // 20171123
+            resValue "string", "app_out_of_date", "2017-12-15"
+            resValue "string", "app_name", "Vimojo Nem Summit"
+            buildConfigField "boolean", "FEATURE_FTP", "false"
+            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
+            buildConfigField "boolean", "FEATURE_WATERMARK", "false"
+            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
+            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
+            ext.fabricApiKey = "cc4515beda76fe1e841888650366e5a069c590a1"
+            ext.fabricApiSecret = "4381a2ca62cb21c2118e3319917e7ccc53fd659bd726bdd1175f540e14e7186d"
+            manifestPlaceholders = [appName: "Vimojo Nem Summit", fabricApiKey: "cc4515beda76fe1e841888650366e5a069c590a1"]
+        }
     }
     File fabricProperties = new File("${project.projectDir.absolutePath}/fabric.properties")
     applicationVariants.all { variant ->
