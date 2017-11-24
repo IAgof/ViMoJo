@@ -24,4 +24,6 @@ public interface ProjectRepository extends Repository<Project> {
   void updateFrameRate(VideoFrameRate.FrameRate videoFrameRate);
 
   void updateQuality(VideoQuality.Quality videoQuality);
+
+  void setWatermarkActivated(boolean isChecked);
 }

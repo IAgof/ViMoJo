@@ -93,9 +93,9 @@ public class CreateDefaultProjectUseCaseTest {
     FrameRateSetting frameRateSetting = new FrameRateSetting(
         Constants.DEFAULT_CAMERA_SETTING_FRAME_RATE, frameRateSupportedMap);
     String quality = Constants.DEFAULT_CAMERA_SETTING_QUALITY;
-    boolean interfaceProSelected = false;
+    String interfaceSelected = Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
     cameraSettings = new CameraSettings(resolutionSetting,
-            frameRateSetting, quality, interfaceProSelected);
+            frameRateSetting, quality, interfaceSelected);
   }
 
 //  @Test

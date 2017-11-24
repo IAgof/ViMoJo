@@ -313,12 +313,12 @@ public class ActivityPresentersModule {
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
+          ProjectRepository projectRepository,
           NewClipImporter newClipImporter, BillingManager billingManager) {
     return new EditorPresenter((EditorActivity) activity, sharedPreferences, activity,
             userEventTracker, createDefaultProjectUseCase, getMediaListFromProjectUseCase,
-            relaunchTranscoderTempBackgroundUseCase,
-            updateWatermarkPreferenceToProjectUseCase, newClipImporter, billingManager);
+            relaunchTranscoderTempBackgroundUseCase, projectRepository, newClipImporter,
+            billingManager);
   }
 
   @Provides @PerActivity

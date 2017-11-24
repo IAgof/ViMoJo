@@ -145,4 +145,11 @@ public class ProjectRealmRepository implements ProjectRepository {
     update(project);
   }
 
+  @Override
+  public void setWatermarkActivated(boolean watermarkActivated) {
+    Project project = getCurrentProject();
+    project.setWatermarkActivated(watermarkActivated);
+    update(project);
+  }
+
 }

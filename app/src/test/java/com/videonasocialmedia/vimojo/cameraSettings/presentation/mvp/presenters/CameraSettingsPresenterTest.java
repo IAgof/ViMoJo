@@ -33,8 +33,7 @@ public class CameraSettingsPresenterTest {
   @Mock CameraSettingsView mockedCameraSettingsListView;
   @Mock UserEventTracker mockedUserEventTracker;
   @Mock GetCameraSettingsListUseCase mockedGetSettingListUseCase;
-  @Mock
-  CameraSettingsRepository mockedCameraSettingsRepository;
+  @Mock CameraSettingsRepository mockedCameraSettingsRepository;
   @Mock ProjectRepository mockedProjectRepository;
 
   @Mock private MixpanelAPI mockedMixpanelAPI;
