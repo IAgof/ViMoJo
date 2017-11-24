@@ -88,15 +88,25 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   private void checkFeaturesAvailable() {
-    if (BuildConfig.FEATURE_WATERMARK) {
-      editorActivityView.watermarkFeatureAvailable();
-    }
+    checkWatermark();
+    checkVimojoStore();
+  }
+
+  private void checkVimojoStore() {
     if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
       playStoreBillingDelegate.initBilling((Activity) editorActivityView);
       editorActivityView.setIconsPurchaseInApp();
     } else {
       editorActivityView.setIconsFeatures();
       editorActivityView.hideVimojoStoreViews();
+    }
+  }
+
+  private void checkWatermark() {
+    if (BuildConfig.FEATURE_WATERMARK) {
+      editorActivityView.watermarkFeatureAvailable();
+    } else {
+      editorActivityView.hideWatermarkView();
     }
   }
 

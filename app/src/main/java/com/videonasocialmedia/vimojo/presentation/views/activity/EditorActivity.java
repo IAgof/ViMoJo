@@ -385,6 +385,13 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
+  public void hideWatermarkView() {
+    Menu menu = navigationView.getMenu();
+    MenuItem target = menu.findItem(R.id.switch_watermark);
+    target.setVisible(false);
+  }
+
+  @Override
   public void setIconsFeatures() {
     updateNavigationIcon(R.id.switch_theme_dark, R.drawable.activity_editor_drawer_dark_theme);
     updateNavigationIcon(R.id.switch_watermark, R.drawable.activity_editor_drawer_watermark);
