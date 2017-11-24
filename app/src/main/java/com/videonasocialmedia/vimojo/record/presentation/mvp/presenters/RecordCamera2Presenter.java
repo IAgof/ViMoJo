@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.videonasocialmedia.camera.camera2.Camera2ExposureTimeHelper;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
@@ -125,6 +126,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
     } else {
       recordView.showISOSelection();
       recordView.setupISOSupportedModesButtons(camera.getSupportedISORange());
+      recordView.setupManualExposureTime(getMinimumExposureCompensation());
     }
     if (!camera.focusSelectionSupported()) {
       recordView.hideAdvancedAFSelection();
@@ -298,7 +300,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
           recordView.hideNavigateToSettingsActivity();
           recordView.hideVideosRecordedNumber();
           recordView.hideRecordedVideoThumbWithText();
-          recordView.hideChangeCamera();
+          recordView.disableChangeCameraIcon();
           recordView.updateAudioGainSeekbarDisability();
           userEventTracker.trackVideoStartRecording();
           startSamplingPicometerRecording();
@@ -360,7 +362,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
     recordView.stopChronometer();
     recordView.hideRecordPointIndicator();
     recordView.resetChronometer();
-    recordView.showChangeCamera();
+    recordView.enableChangeCameraIcon();
 //    setFlashOff();
   }
 
@@ -691,34 +693,45 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
 
   private String toFormattedMemorySpaceWithBytes(long memorySpace) {
     double memorySpaceInBytes;
-    if (memorySpace<ONE_KB) {
+    if (memorySpace < ONE_KB) {
       memorySpaceInBytes = memorySpace;
       return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " bytes";
     }
-    if (memorySpace>=ONE_KB && memorySpace<ONE_MB) {
+    if (memorySpace >= ONE_KB && memorySpace < ONE_MB) {
       memorySpaceInBytes = (double) memorySpace / ONE_KB;
       return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Kb";
     }
-    if (memorySpace>=ONE_MB && memorySpace<ONE_GB) {
+    if (memorySpace >= ONE_MB && memorySpace < ONE_GB) {
       memorySpaceInBytes = (double) memorySpace / ONE_MB;
       return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Mb";
     }
-    if (memorySpace>=ONE_GB) {
+    if (memorySpace >= ONE_GB) {
       memorySpaceInBytes = (double) memorySpace / ONE_GB;
       return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Gb";
     }
     return "";
   }
 
-  public void setShuttedSpeed(int seekbarProgress) {
-    camera.setShuttedSpeed(seekbarProgress);
+  public void setExposureTime(int seekbarProgress) {
+    camera.setExposureTime(seekbarProgress);
   }
 
   public int getMaximumExposureTime() {
-    return camera.getMaximumExposureTime();
+    // TODO(jliarte): 22/11/17 maybe increase constant value?
+    int maxShutterSpeed = Camera2ExposureTimeHelper.MINIMUM_VIDEO_EXPOSURE_TIME.intValue() * 4;
+    return maxShutterSpeed;
+//    return camera.getMaximumExposureTime();
   }
 
   public int getMinimunExposureTime() {
     return camera.getMinimunExposureTime();
+  }
+
+  public int getCurrentFocusSeekBarProgress() {
+    return camera.getCurrentFocusSeekBarProgress();
+  }
+
+  public int getCurrentExposureTimeSeekBarProgress() {
+    return camera.getCurrentExposureTimeSeekBarProgress();
   }
 }

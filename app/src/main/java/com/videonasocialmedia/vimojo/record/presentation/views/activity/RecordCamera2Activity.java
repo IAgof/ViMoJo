@@ -32,7 +32,6 @@ import com.bumptech.glide.Glide;
 import com.videonasocialmedia.avrecorder.view.CustomManualFocusView;
 import com.videonasocialmedia.camera.camera2.Camera2FocusHelper;
 import com.videonasocialmedia.camera.camera2.Camera2MeteringModeHelper;
-import com.videonasocialmedia.camera.camera2.Camera2ShutterSpeedHelper;
 import com.videonasocialmedia.camera.camera2.Camera2WhiteBalanceHelper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.R;
@@ -72,15 +71,14 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
  */
 
 public class RecordCamera2Activity extends VimojoActivity implements RecordCamera2View  {
-
   private static final int SLIDE_SEEKBAR_MODE_UNACTIVE = 0;
-  public static final int SLIDE_SEEKBAR_MODE_EXPOSURE_COMPENSATION = 1;
-  public static final int SLIDE_SEEKBAR_MODE_ZOOM = 2;
-  public static final int SLIDE_SEEKBAR_MODE_FOCUS_MANUAL = 3;
+  private static final int SLIDE_SEEKBAR_MODE_EXPOSURE_COMPENSATION = 1;
+  private static final int SLIDE_SEEKBAR_MODE_ZOOM = 2;
+  private static final int SLIDE_SEEKBAR_MODE_FOCUS_MANUAL = 3;
   private static final int SLIDE_SEEKBAR_MODE_AUDIO_GAIN = 4;
-  private static final int SLIDE_SEEKBAR_MODE_SHUTTER_SPEED = 5;
+  private static final int SLIDE_SEEKBAR_MODE_MANUAL_EXPOSURE_TIME = 5;
   public static final int DEFAULT_AUDIO_GAIN = 100;
-  public static final float SCALE_Y_PICOMETER_PROGRESS = 2f;
+  public static final float SCALE_AND_PICOMETER_PROGRESS = 2f;
   private final String LOG_TAG = getClass().getSimpleName();
 
   @Inject
@@ -237,8 +235,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private final int RESOLUTION_SELECTED_HD4K = 2160;
   private OrientationHelper orientationHelper;
 
-//  private ProgressDialog progressDialogAdaptVideo;
-
   private BatteryReceiver batteryReceiver = new BatteryReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -273,13 +269,37 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
   };
   public int audioGainSeekBarProgress = DEFAULT_AUDIO_GAIN;
-  private final SeekBar.OnSeekBarChangeListener audioGainSeekbarListener =
+
+  private final SeekBar.OnSeekBarChangeListener recordActivitySeekBarChangeListener =
           new SeekBar.OnSeekBarChangeListener() {
     @Override
-    public void onProgressChanged(SeekBar seekBar, int gainProgress, boolean b) {
-      // TODO(jliarte): 13/07/17 should we save these adjusts on activity pause???
-      audioGainSeekBarProgress = gainProgress;
-      presenter.setAudioGain(audioGainSeekBarProgress);
+    public void onProgressChanged(SeekBar seekBar, int seekbarProgress, boolean fromUser) {
+      if (!fromUser) {
+        return;
+      }
+      switch (slideSeekBarMode) {
+        case SLIDE_SEEKBAR_MODE_EXPOSURE_COMPENSATION:
+          presenter.setExposureCompensation(minExposureCompensation + seekbarProgress);
+          break;
+        case SLIDE_SEEKBAR_MODE_ZOOM:
+          currentSeekbarZoom = seekbarProgress;
+          presenter.onSeekBarZoom((float) (seekbarProgress * 0.01));
+          break;
+        case SLIDE_SEEKBAR_MODE_FOCUS_MANUAL:
+          presenter.setFocusSelectionModeManual(seekbarProgress);
+          break;
+        case SLIDE_SEEKBAR_MODE_AUDIO_GAIN:
+          // TODO(jliarte): 13/07/17 should we save these adjusts on activity pause???
+          audioGainSeekBarProgress = seekbarProgress;
+          presenter.setAudioGain(audioGainSeekBarProgress);
+          break;
+        case SLIDE_SEEKBAR_MODE_MANUAL_EXPOSURE_TIME:
+          presenter.setExposureTime(minExposureTime + seekbarProgress);
+          break;
+        case SLIDE_SEEKBAR_MODE_UNACTIVE:
+        default:
+//          do nothing
+      }
     }
 
     @Override
@@ -292,6 +312,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
     }
   };
+  private int minExposureCompensation;
+  private int minExposureTime;
+
+  @Override
+  public ActivityPresentersModule getActivityPresentersModule() {
+    return new ActivityPresentersModule(this, Constants.PATH_APP_TEMP, textureView);
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -300,31 +327,43 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     keepScreenOn();
     ButterKnife.bind(this);
     setupActivityButtons();
+    setupSlideSeekBar();
 //    configChronometer(); // TODO(jliarte): 26/06/17 make sure this is not needed anymore
     configShowThumbAndNumberClips();
 
     this.getActivityPresentersComponent().inject(this);
 
-//    createProgressDialogAdaptVideo();
     createAlertDialogBatteryAndStorage();
     initWhiteBalanceModesMap();
     initFocusSelectionModesMap();
     initPicometer();
   }
 
+  @Override
+  public void onResume() {
+    super.onResume();
+    initOrientationHelper();
+    presenter.onResume();
+    presenter.initViews();
+    hideSystemUi();
+    registerReceiver(batteryReceiver,new IntentFilter(IntentConstants.BATTERY_NOTIFICATION));
+    registerReceiver(jackConnectorReceiver,new IntentFilter(Intent.ACTION_HEADSET_PLUG));
+    updateBatteryStatus();
+    updatePercentFreeStorage();
+  }
+
+  @Override
+  public void onPause() {
+    unregisterReceiver(batteryReceiver);
+    unregisterReceiver(jackConnectorReceiver);
+    presenter.onPause();
+    super.onPause();
+  }
+
   private void initPicometer() {
     tintProgress(ColorStateList.valueOf(getResources().getColor(R.color.recordActivityInfoGreen)));
-    picometerProgress.setScaleY(SCALE_Y_PICOMETER_PROGRESS);
+    picometerProgress.setScaleY(SCALE_AND_PICOMETER_PROGRESS);
   }
-//
-//  private void createProgressDialogAdaptVideo() {
-//    progressDialogAdaptVideo = new ProgressDialog(this);
-//    progressDialogAdaptVideo.setTitle(getString(R.string.dialog_title_record_adapting_video));
-//    progressDialogAdaptVideo.setMessage(getString(R.string.dialog_message_record_adapting_video));
-//    progressDialogAdaptVideo.setIndeterminate(false);
-//    progressDialogAdaptVideo.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-//        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-//  }
 
   private void createAlertDialogBatteryAndStorage() {
     alertDialogBattery = new AlertDialogWithInfoIntoCircle(this, getString(R.string.battery));
@@ -332,12 +371,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);*/
 
     alertDialogStorage = new AlertDialogWithInfoIntoCircle(this, getString(R.string.storage));
-  }
-
-  @Override
-  public ActivityPresentersModule getActivityPresentersModule() {
-    return new ActivityPresentersModule(this, Constants.PATH_APP_TEMP,
-        textureView);
   }
 
   private void keepScreenOn() {
@@ -384,6 +417,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(soundVolumeButton, button_color);
   }
 
+  private void setupSlideSeekBar() {
+    slideSeekBar.setOnSeekBarChangeListener(recordActivitySeekBarChangeListener);
+  }
+
   private void configChronometer() {
     // TODO(jliarte): 26/06/17 make sure this is not needed anymore
     chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
@@ -410,19 +447,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     orientationHelper = new OrientationHelper(this);
   }
 
-  @Override
-  public void onResume() {
-    super.onResume();
-    initOrientationHelper();
-    presenter.onResume();
-    presenter.initViews();
-    hideSystemUi();
-    registerReceiver(batteryReceiver,new IntentFilter(IntentConstants.BATTERY_NOTIFICATION));
-    registerReceiver(jackConnectorReceiver,new IntentFilter(Intent.ACTION_HEADSET_PLUG));
-    updateBatteryStatus();
-    updatePercentFreeStorage();
-  }
-
   private void tintProgress(final ColorStateList tint) {
     runOnUiThread(new Runnable() {
       @Override
@@ -441,14 +465,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
             | View.SYSTEM_UI_FLAG_FULLSCREEN
             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
     );
-  }
-
-  @Override
-  public void onPause() {
-    unregisterReceiver(batteryReceiver);
-    unregisterReceiver(jackConnectorReceiver);
-    presenter.onPause();
-    super.onPause();
   }
 
   /*.*.*.*.*.*.*.*.*.*.*.*.*. RecordCamera2View *.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*/
@@ -528,13 +544,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
-  public void showChangeCamera() {
+  public void enableChangeCameraIcon() {
     changeCameraButton.setEnabled(true);
     changeCameraButton.setActivated(true);
   }
 
   @Override
-  public void hideChangeCamera() {
+  public void disableChangeCameraIcon() {
     changeCameraButton.setEnabled(false);
     changeCameraButton.setActivated(false);
   }
@@ -796,6 +812,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     meteringModeAuto.setSelected(true);
     if (supportedMeteringModes.contains(Camera2MeteringModeHelper.AE_MODE_EXPOSURE_COMPENSATION)) {
       meteringModeExposureCompensation.setVisibility(View.VISIBLE);
+      this.minExposureCompensation = presenter.getMinimumExposureCompensation();
     }
     if (supportedMeteringModes.contains(Camera2MeteringModeHelper.AE_MODE_REGIONS)) {
       meteringModeCenter.setVisibility(View.VISIBLE);
@@ -889,39 +906,16 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void showExposureCompensationSubmenu() {
-    seekbarUpperText.setVisibility(View.VISIBLE);
-    seekbarLowerText.setVisibility(View.VISIBLE);
-    seekBarUpperImage.setVisibility(View.GONE);
-    seekBarLowerImage.setVisibility(View.GONE);
     float maxEV = Math.round(presenter.getMaximumExposureCompensation()
             * presenter.getExposureCompensationStep());
     float minEV = Math.round(presenter.getMinimumExposureCompensation()
             * presenter.getExposureCompensationStep());
-    seekbarUpperText.setText(maxEV + "EV");
-    seekbarLowerText.setText(minEV + "EV");
+    hideSlideSeekBarIcons();
+    setSlideSeekBarTexts(maxEV + "EV", minEV + "EV");
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_EXPOSURE_COMPENSATION;
-    final int minExposure = presenter.getMinimumExposureCompensation();
-    slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to
-    // call the listener when setting up the progress bar to match the existing state
-    slideSeekBar.setMax( presenter.getMaximumExposureCompensation() - minExposure );
-    slideSeekBar.setProgress( presenter.getCurrentExposureCompensation() - minExposure );
+    slideSeekBar.setMax( presenter.getMaximumExposureCompensation() - minExposureCompensation);
+    slideSeekBar.setProgress( presenter.getCurrentExposureCompensation() - minExposureCompensation);
     slideSeekBar.setEnabled(true);
-    slideSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-      @Override
-      public void onProgressChanged(SeekBar seekBar, int seekbarProgress, boolean b) {
-        presenter.setExposureCompensation(minExposure + seekbarProgress);
-      }
-
-      @Override
-      public void onStartTrackingTouch(SeekBar seekBar) {
-
-      }
-
-      @Override
-      public void onStopTrackingTouch(SeekBar seekBar) {
-
-      }
-    });
     slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
   }
 
@@ -952,7 +946,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private void selectFocusSelectionButton(ImageButton focusSelectionModeButton) {
     deselectAllFocusSelectionButtons();
     focusSelectionModeButton.setSelected(true);
-
   }
 
   private void deselectAllFocusSelectionButtons() {
@@ -973,8 +966,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void onClickFocusModeManual() {
     deselectAllFocusSelectionButtons();
     selectFocusSelectionButton(afSettingManual);
-    showFocusModeManualSlider();
     presenter.setFocusSelectionMode(AF_MODE_MANUAL);
+    showFocusModeManualSlider();
   }
 
   @OnClick(R.id.af_setting_selective)
@@ -985,35 +978,26 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void showFocusModeManualSlider() {
-    seekbarUpperText.setVisibility(View.GONE);
-    seekbarLowerText.setVisibility(View.GONE);
+    hideSlideSeekBarTexts();
+    showSlideSeekBarIcons(R.drawable.activity_record_ic_focus_infinite,
+            R.drawable.activity_record_ic_focus_macro);
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_FOCUS_MANUAL;
+    slideSeekBar.setMax(100);
+    slideSeekBar.setProgress(presenter.getCurrentFocusSeekBarProgress());
+    slideSeekBar.setEnabled(true);
+    slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
+  }
+
+  private void showSlideSeekBarIcons(int upperImageResource, int lowerImageResource) {
     seekBarUpperImage.setVisibility(View.VISIBLE);
     seekBarLowerImage.setVisibility(View.VISIBLE);
-    seekBarUpperImage.setImageResource(R.drawable.activity_record_ic_focus_infinite);
-    seekBarLowerImage.setImageResource(R.drawable.activity_record_ic_focus_macro);
-    slideSeekBarMode = SLIDE_SEEKBAR_MODE_FOCUS_MANUAL;
-    slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to
-    // call the listener when setting up the progress bar to match the existing state
-    slideSeekBar.setMax(100);
-    slideSeekBar.setProgress(50);
-    slideSeekBar.setEnabled(true);
-    slideSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-      @Override
-      public void onProgressChanged(SeekBar seekBar, int seekbarProgress, boolean b) {
-        presenter.setFocusSelectionModeManual(seekbarProgress);
-      }
+    seekBarUpperImage.setImageResource(upperImageResource);
+    seekBarLowerImage.setImageResource(lowerImageResource);
+  }
 
-      @Override
-      public void onStartTrackingTouch(SeekBar seekBar) {
-
-      }
-
-      @Override
-      public void onStopTrackingTouch(SeekBar seekBar) {
-
-      }
-    });
-    slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
+  private void hideSlideSeekBarTexts() {
+    seekbarUpperText.setVisibility(View.GONE);
+    seekbarLowerText.setVisibility(View.GONE);
   }
 
   private void hideFocusModeManualSlider() {
@@ -1354,7 +1338,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       hideMeteringModeSelectionSubmenu();
       hideSoundVolumeSubmenu();
       showISOSelectionSubmenu();
-      showShutterSpeedSumbenu();
+      showExposureTimeSumbenu();
     }
   }
 
@@ -1363,45 +1347,27 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     onClickIsoListener();
   }
 
-  private void showShutterSpeedSumbenu() {
-    seekbarUpperText.setVisibility(View.VISIBLE);
-    seekbarLowerText.setVisibility(View.VISIBLE);
+  private void showExposureTimeSumbenu() {
+    shutterSpeedButton.setSelected(true);
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_MANUAL_EXPOSURE_TIME;
     seekBarUpperImage.setVisibility(View.VISIBLE);
     seekBarLowerImage.setVisibility(View.GONE);
     // TODO(jliarte): 22/11/17 need a way smaller icon
     seekBarUpperImage.setImageResource(R.drawable.activity_record_ic_shutter_speed_60);
-//    seekBarLowerImage.setImageResource(R.drawable.activity_record_ic_focus_macro);
-    slideSeekBarMode = SLIDE_SEEKBAR_MODE_SHUTTER_SPEED;
-    slideSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to
-    // call the listener when setting up the progress bar to match the existing state
     int maxShutterSpeed = presenter.getMaximumExposureTime();
-    // TODO(jliarte): 22/11/17 maybe increase constant value?
-    maxShutterSpeed = Camera2ShutterSpeedHelper.MINIMUM_VIDEO_EXPOSURE_TIME.intValue()*4;
-    final int minShutterSpeed = presenter.getMinimunExposureTime();
-    seekbarUpperText.setText("1/" + new Double(1/(maxShutterSpeed/1000000000d)).toString());
-    seekbarLowerText.setText(new Double(minShutterSpeed/1000000000d).toString());
-    slideSeekBar.setMax(maxShutterSpeed - minShutterSpeed);
-    // TODO(jliarte): 22/11/17 get current progress by shutter speed
-//    slideSeekBar.setProgress(50);
+    setSlideSeekBarTexts("1/" + new Double(1/(maxShutterSpeed/1000000000d)).toString(),
+            new Double(minExposureTime /1000000000d).toString());
+    slideSeekBar.setMax(maxShutterSpeed - minExposureTime);
+    slideSeekBar.setProgress(presenter.getCurrentExposureTimeSeekBarProgress());
     slideSeekBar.setEnabled(true);
-    // TODO(jliarte): 22/11/17 unify listeners
-    slideSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-      @Override
-      public void onProgressChanged(SeekBar seekBar, int seekbarProgress, boolean b) {
-        presenter.setShuttedSpeed(minShutterSpeed + seekbarProgress);
-      }
-
-      @Override
-      public void onStartTrackingTouch(SeekBar seekBar) {
-
-      }
-
-      @Override
-      public void onStopTrackingTouch(SeekBar seekBar) {
-
-      }
-    });
     slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
+  }
+
+  private void setSlideSeekBarTexts(String upperText, String lowerText) {
+    seekbarUpperText.setVisibility(View.VISIBLE);
+    seekbarLowerText.setVisibility(View.VISIBLE);
+    seekbarUpperText.setText(upperText);
+    seekbarLowerText.setText(lowerText);
   }
 
   private void hideShutterSpeedSumbenu() {
@@ -1499,40 +1465,24 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
   }
 
+  @Override
+  public void setupManualExposureTime(int minimumExposureCompensation) {
+    this.minExposureTime = presenter.getMinimunExposureTime();
+  }
+
   private void setAutoSettingsFocusModeByDefault() {
     afSettingSelective.setSelected(true);
   }
 
   private void showZoomSelectionSubmenu() {
-    slideSeekBarMode = SLIDE_SEEKBAR_MODE_ZOOM;
-    slideSeekBar.setOnSeekBarChangeListener(null);
-    slideSeekBar.setEnabled(true);
     zoomButton.setSelected(true);
-    slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
-    seekbarUpperText.setVisibility(View.VISIBLE);
-    seekbarLowerText.setVisibility(View.VISIBLE);
-    seekBarUpperImage.setVisibility(View.GONE);
-    seekBarLowerImage.setVisibility(View.GONE);
-    seekbarUpperText.setText("100%");
-    seekbarLowerText.setText("0%");
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_ZOOM;
+    hideSlideSeekBarIcons();
+    setSlideSeekBarTexts("100%", "0%");
+    slideSeekBar.setMax(100);
     slideSeekBar.setProgress(currentSeekbarZoom);
-    slideSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-      @Override
-      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        currentSeekbarZoom = progress;
-        presenter.onSeekBarZoom((float) (progress * 0.01));
-      }
-
-      @Override
-      public void onStartTrackingTouch(SeekBar seekBar) {
-
-      }
-
-      @Override
-      public void onStopTrackingTouch(SeekBar seekBar) {
-
-      }
-    });
+    slideSeekBar.setEnabled(true);
+    slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
   }
 
   private void hideZoomSelectionSubmenu() {
@@ -1596,38 +1546,37 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void showSoundVolumeSubmenu() {
-    slideSeekBarMode = SLIDE_SEEKBAR_MODE_AUDIO_GAIN;
-    slideSeekBar.setOnSeekBarChangeListener(null);
     soundVolumeButton.setSelected(true);
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_AUDIO_GAIN;
+    hideSlideSeekBarIcons();
+    setSlideSeekBarTexts("100%", "0%");
+    slideSeekBar.setMax(100);
+    slideSeekBar.setProgress(audioGainSeekBarProgress);
+    updateAudioGainSeekbarDisability();
     slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
-    seekbarUpperText.setVisibility(View.VISIBLE);
-    seekbarLowerText.setVisibility(View.VISIBLE);
+  }
+
+  private void hideSlideSeekBarIcons() {
     seekBarUpperImage.setVisibility(View.GONE);
     seekBarLowerImage.setVisibility(View.GONE);
-    seekbarUpperText.setText("100%");
-    seekbarLowerText.setText("0%");
-    slideSeekBar.setProgress(audioGainSeekBarProgress);
-    slideSeekBar.setOnSeekBarChangeListener(audioGainSeekbarListener);
-    updateAudioGainSeekbarDisability();
   }
 
   private void hideSoundVolumeSubmenu() {
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_UNACTIVE;
-    slideSeekBar.setOnSeekBarChangeListener(null);
     soundVolumeButton.setSelected(false);
     slideSeekbarSubmenuView.setVisibility(View.GONE);
   }
 
   @OnClick(R.id.button_record)
- public void onClickRecordButton() {
-   if (!isRecording) {
+  public void onClickRecordButton() {
+    if (!isRecording) {
      presenter.startRecord();
-   } else {
+    } else {
      presenter.stopRecord();
      updatePercentFreeStorage();
      updateBatteryStatus();
-   }
- }
+    }
+  }
 
   @OnTouch(R.id.customManualFocusView)
   boolean onTouchCustomManualFocusView(MotionEvent event) {
@@ -1767,20 +1716,21 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       h.postDelayed(r, 300);
     }
 
-
     private void checkShowRotateDeviceImage(int orientation) {
       if (( orientation > 345 || orientation < 15 ) && orientation != -1) {
         rotateDeviceHint.setRotation(270);
         rotateDeviceHint.setRotationX(0);
         rotateDeviceHint.setVisibility(View.VISIBLE);
-        if(!isRecording)
+        if (!isRecording) {
           recordButton.setEnabled(false);
+        }
       } else if (orientation > 165 && orientation < 195) {
         rotateDeviceHint.setRotation(-270);
         rotateDeviceHint.setRotationX(180);
         rotateDeviceHint.setVisibility(View.VISIBLE);
-        if(!isRecording)
+        if (!isRecording) {
           recordButton.setEnabled(false);
+        }
       } else {
         rotateDeviceHint.setVisibility(View.GONE);
         recordButton.setEnabled(true);

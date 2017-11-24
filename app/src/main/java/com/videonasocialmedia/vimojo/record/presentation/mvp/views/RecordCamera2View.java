@@ -41,9 +41,9 @@ public interface RecordCamera2View {
 
     void hideNavigateToSettingsActivity();
 
-    void showChangeCamera();
+    void enableChangeCameraIcon();
 
-    void hideChangeCamera();
+    void disableChangeCameraIcon();
 
     void showRecordedVideoThumbWithText(String path);
 
@@ -149,4 +149,6 @@ public interface RecordCamera2View {
     void showSmartphoneMicrophoneWorking();
 
     void setCameraDefaultSettings();
+
+    void setupManualExposureTime(int minimumExposureCompensation);
 }
