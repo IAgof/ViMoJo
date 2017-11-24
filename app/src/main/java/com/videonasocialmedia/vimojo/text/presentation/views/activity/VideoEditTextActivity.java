@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -67,6 +68,8 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     ImageButton button_ediText_bottom;
     @Bind(R.id.imageVideoText)
     ImageView image_view_text;
+    @Bind(R.id.button_ok_or_edit_text)
+    Button buttonHideKeyboard;
 
     private Video video;
     int videoIndexOnTrack;
@@ -122,6 +125,8 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         super.onResume();
         videonaPlayer.onShown(this);
         presenter.init(videoIndexOnTrack);
+        clipText.requestFocus();
+        showKeyboard();
     }
 
     @Override
@@ -236,6 +241,20 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         presenter.setTextToVideo(getTextFromEditText(), getTextPositionSelected());
         navigateTo(EditActivity.class, videoIndexOnTrack);
         //finish();
+    }
+
+    @OnClick (R.id.button_ok_or_edit_text)
+    public void onClickOkOrEditText() {
+        if(clipText.isEnabled()) {
+            hideKeyboard(clipText);
+            buttonHideKeyboard.setText(getString(R.string.edit));
+            clipText.setEnabled(false);
+
+        } else {
+            showKeyboard();
+            buttonHideKeyboard.setText(getString(R.string.ok));
+            clipText.setEnabled(true);
+        }
     }
 
     @OnClick(R.id.button_editText_cancel)
@@ -353,5 +372,10 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         InputMethodManager keyboard =
                 (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
+
+    private void showKeyboard(){
+        InputMethodManager imm = (InputMethodManager)getSystemService(this.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 }

@@ -119,6 +119,17 @@
                     android:maxLines="2"
                     />
 
+                <Button
+                    android:id="@+id/button_ok_or_edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorTransparent"
+                    android:gravity="center|bottom"
+                    android:text="@string/ok"
+                    android:textColor="?attr/colorAccent"
+                    android:layout_alignBottom="@+id/text_activityText"
+                    android:layout_alignParentEnd="true"/>
+
                 <ImageButton
                     android:id="@+id/button_edit_inputText"
                     android:layout_width="wrap_content"
