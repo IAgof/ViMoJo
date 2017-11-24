@@ -33,7 +33,7 @@ public class Camera2FocusHelper {
   private int focusSeekBarProgress = 50;
   private MeteringRectangle[] focusMeteringRectangle;
   private Integer maxAFRegions;
-  private Float minimumFocusDistance;
+  Float minimumFocusDistance;
 
   public Camera2FocusHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;

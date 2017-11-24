@@ -977,7 +977,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     void onRecordStarted();
   }
 
-  public class CaptureResultParams {
+  public static class CaptureResultParams {
     boolean captureResultHasIso;
     Integer captureResultIso;
     boolean captureResultHasExposureTime;
