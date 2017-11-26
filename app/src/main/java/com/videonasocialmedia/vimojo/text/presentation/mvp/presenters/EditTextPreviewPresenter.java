@@ -3,10 +3,12 @@ package com.videonasocialmedia.vimojo.text.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.TypedValue;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
@@ -102,5 +104,11 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
     public void onObjectUpdated() {
         editTextView.updateProject();
     }
+
+  public String getCurrentTheme() {
+    TypedValue outValue = new TypedValue();
+    context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
+    return (String) outValue.string;
+  }
 }
 

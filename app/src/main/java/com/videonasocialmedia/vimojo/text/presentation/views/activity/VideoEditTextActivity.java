@@ -50,6 +50,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     private final String STATE_BUTTON_BOTTOM ="state_button_bottom" ;
     private final String VIDEO_POSITION = "video_position";
     private final String CURRENT_TEXT = "current_text";
+     private final String THEME_DARK = "dark";
     boolean hasTypedMoreThanTwoLines = false;
 
     @Inject EditTextPreviewPresenter presenter;
@@ -99,7 +100,12 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     private void setupActivityButtons() {
+      String currentTheme= presenter.getCurrentTheme();
+      if (currentTheme.equals(THEME_DARK)) {
+        tintEditButtons(R.color.button_color_theme_dark);
+      } else {
         tintEditButtons(R.color.button_color_theme_light);
+      }
     }
 
     private void tintEditButtons(int tintList) {
@@ -210,7 +216,8 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     private void createDrawableFromText(String text, TextEffect.TextPosition textPosition) {
         text = getTextFromEditText();
-        presenter.createDrawableWithText(text, textPosition.name(), Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+        presenter.createDrawableWithText(text, textPosition.name(), Constants.DEFAULT_VIMOJO_WIDTH,
+            Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 
     @NonNull
