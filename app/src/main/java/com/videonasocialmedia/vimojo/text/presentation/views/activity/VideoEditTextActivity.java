@@ -290,11 +290,13 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         video = new Video(movieList.get(0));
         ArrayList<Video> clipList = new ArrayList<>();
         clipList.add(video);
+        if(movieList.get(0).hasText()) {
+            initTextToVideoAdded(video.getClipText(), video.getClipTextPosition());
+            video.setClipText("");
+        }
         videonaPlayer.initPreviewLists(clipList);
         videonaPlayer.initPreview(currentPosition);
-        if(movieList.get(0).hasText())
-            initTextToVideoAdded(video.getClipText(),video.getClipTextPosition());
-        MaxCharPerLineInputFilter.applyAutoWrap(clipText,MAX_CHARS_PER_LINE);
+        MaxCharPerLineInputFilter.applyAutoWrap(clipText, MAX_CHARS_PER_LINE);
         onTextChanged();
     }
 
