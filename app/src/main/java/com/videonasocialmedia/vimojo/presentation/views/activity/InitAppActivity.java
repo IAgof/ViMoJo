@@ -213,10 +213,9 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         super.onStop();
     }
 
-    private void setup() throws CameraAccessException {
+    private void setup() {
         androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         setupPathsApp(this);
-        setupStartApp();
         trackUserProfileGeneralTraits();
     }
 
@@ -231,6 +230,9 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
             listener.onCheckPathsAppSuccess();
         } catch (IOException e) {
             Log.e("CHECK PATH", "error", e);
+        } catch (CameraAccessException e) {
+          e.printStackTrace();
+          Log.e(LOG_TAG, " CameraAccessException " + e.getMessage());
         }
     }
 
@@ -386,9 +388,10 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     }
 
     @Override
-    public void onCheckPathsAppSuccess() {
+    public void onCheckPathsAppSuccess() throws CameraAccessException {
         presenter.startLoadingProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
             BuildConfig.FEATURE_WATERMARK);
+        setupStartApp();
     }
 
     @Override

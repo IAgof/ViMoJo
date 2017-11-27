@@ -26,10 +26,10 @@ import static org.junit.Assert.assertThat;
  * Created by alvaro on 16/11/17.
  */
 
-public class CameraPrefToRealmCameraSettingsMapperTest {
+public class CameraSettingsToRealmCameraSettingsMapperTest {
 
   @Test
-  public void testMapReturnsARealmCameraPrefInstance() {
+  public void testMapReturnsARealmCameraSettingsInstance() {
     HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, true);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID, true);
@@ -55,7 +55,7 @@ public class CameraPrefToRealmCameraSettingsMapperTest {
   }
 
   @Test
-  public void testMapReturnsCameraPrefObjectWithMappedFields() {
+  public void testMapReturnsCameraSettingsObjectWithMappedFields() {
     HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, true);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID, true);

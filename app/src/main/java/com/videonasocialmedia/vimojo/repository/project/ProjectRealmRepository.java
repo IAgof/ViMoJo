@@ -125,29 +125,25 @@ public class ProjectRealmRepository implements ProjectRepository {
   }
 
   @Override
-  public void updateResolution(VideoResolution.Resolution videoResolution) {
-    Project project = getCurrentProject();
+  public void updateResolution(Project project, VideoResolution.Resolution videoResolution) {
     project.getProfile().setResolution(videoResolution);
     update(project);
   }
 
   @Override
-  public void updateFrameRate(VideoFrameRate.FrameRate videoFrameRate) {
-    Project project = getCurrentProject();
+  public void updateFrameRate(Project project, VideoFrameRate.FrameRate videoFrameRate) {
     project.getProfile().setFrameRate(videoFrameRate);
     update(project);
   }
 
   @Override
-  public void updateQuality(VideoQuality.Quality videoQuality) {
-    Project project = getCurrentProject();
+  public void updateQuality(Project project, VideoQuality.Quality videoQuality) {
     project.getProfile().setQuality(videoQuality);
     update(project);
   }
 
   @Override
-  public void setWatermarkActivated(boolean watermarkActivated) {
-    Project project = getCurrentProject();
+  public void setWatermarkActivated(Project project, boolean watermarkActivated) {
     project.setWatermarkActivated(watermarkActivated);
     update(project);
   }

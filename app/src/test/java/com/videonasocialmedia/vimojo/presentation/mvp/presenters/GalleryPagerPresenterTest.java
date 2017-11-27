@@ -126,7 +126,7 @@ public class GalleryPagerPresenterTest {
 
     ArgumentCaptor<VideoResolution.Resolution> resolutionCaptor =
             ArgumentCaptor.forClass(VideoResolution.Resolution.class);
-    verify(mockedProjectRepository).updateResolution(resolutionCaptor.capture());
+    verify(mockedProjectRepository).updateResolution(project, resolutionCaptor.capture());
     VideoResolution.Resolution resolutionCaptorValue = resolutionCaptor.getValue();
     assertThat(resolutionCaptorValue, is(VideoResolution.Resolution.HD720));
 
@@ -155,7 +155,7 @@ public class GalleryPagerPresenterTest {
     galleryPagerPresenter.updateProfileForEmptyProject(project, videoList);
 
     verify(mockedProjectRepository, never())
-            .updateResolution(Mockito.any(VideoResolution.Resolution.class));
+            .updateResolution(project, Mockito.any(VideoResolution.Resolution.class));
     verify(mockedPreferencesEditor, never())
             .putString(eq(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION),
             Mockito.anyString());
@@ -180,7 +180,7 @@ public class GalleryPagerPresenterTest {
     galleryPagerPresenter.updateProfileForEmptyProject(project, videoList);
 
     verify(mockedProjectRepository, never())
-            .updateResolution(Mockito.any(VideoResolution.Resolution.class));
+            .updateResolution(project, Mockito.any(VideoResolution.Resolution.class));
   }
 
   @Test
@@ -197,7 +197,7 @@ public class GalleryPagerPresenterTest {
     galleryPagerPresenter.updateProfileForEmptyProject(project, videoList);
 
     verify(mockedProjectRepository, never())
-            .updateResolution(Mockito.any(VideoResolution.Resolution.class));
+            .updateResolution(project, Mockito.any(VideoResolution.Resolution.class));
   }
 
   private GalleryPagerPresenter getGalleryPresenter() {

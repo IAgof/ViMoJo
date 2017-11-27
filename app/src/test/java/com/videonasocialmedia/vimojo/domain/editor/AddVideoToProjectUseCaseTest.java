@@ -14,6 +14,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinis
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnLaunchAVTransitionTempFileListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +47,11 @@ public class AddVideoToProjectUseCaseTest {
   @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
+  }
+
+  @After
+  public void tearDown() {
+    Project.getInstance(null, null, null, null).clear();
   }
 
   @Test

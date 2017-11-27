@@ -2,10 +2,12 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
+import android.util.Log;
 import android.util.Range;
 import android.util.Size;
 
 import com.videonasocialmedia.camera.utils.Camera2Settings;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
@@ -35,6 +37,8 @@ public class InitAppPresenter {
   private final Context context;
   private final CameraSettingsRepository cameraSettingsRepository;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
+  private CameraSettings cameraSettings;
+  private String LOG_TAG = InitAppPresenter.class.getCanonicalName();
 
 
   @Inject
@@ -54,11 +58,12 @@ public class InitAppPresenter {
     Camera2Settings camera2Settings = null;
     try {
       camera2Settings = new Camera2Settings(context);
-      checkCamera2FrameRateSupported(camera2Settings.getFPSRange(BACK_CAMERA_ID));
       checkCamera2ResolutionSupported(camera2Settings);
+      checkCamera2FrameRateSupported(camera2Settings.getFPSRange(BACK_CAMERA_ID));
     } catch (CameraAccessException e) {
       e.printStackTrace();
-      // TODO: 15/11/2017 Manage Error
+      Log.d(LOG_TAG, "CameraAccessException " + e.getMessage());
+      // TODO: 15/11/2017 Manage Error ¿?
       return;
     }
 
@@ -113,7 +118,10 @@ public class InitAppPresenter {
     ResolutionSetting resolutionSetting = new ResolutionSetting(defaultResolution,
             resolutionsSupportedMap);
 
-    cameraSettingsRepository.setResolutionSettingSupported(resolutionSetting);
+    cameraSettings = cameraSettingsRepository.getCameraSettings();
+    if(cameraSettings != null) {
+      cameraSettingsRepository.setResolutionSettingSupported(cameraSettings, resolutionSetting);
+    }
 
   }
 
@@ -125,18 +133,19 @@ public class InitAppPresenter {
     boolean frameRate25FpsSupported = false;
     boolean frameRate30FpsSupported = false;
     String defaultFrameRate = Constants.DEFAULT_CAMERA_SETTING_FRAME_RATE;
+    Range<Integer> fps24 = new Range<>(24, 24);
+    Range<Integer> fps25 = new Range<>(25, 25);
+    Range<Integer> fps30 = new Range<>(30, 30);
 
     for(Range<Integer> fps: fpsRange) {
-      if (fps.getLower().equals(fps.getUpper())) {
-        if (fps.getLower() == 24) {
-          frameRate24FpsSupported = true;
+      if (fps.equals(fps24)) {
+        frameRate24FpsSupported = true;
+      } else {
+        if (fps.equals(fps25)) {
+          frameRate25FpsSupported = true;
         } else {
-          if (fps.getLower() == 25) {
-            frameRate25FpsSupported = true;
-          } else {
-            if (fps.getLower() == 30) {
-              frameRate30FpsSupported = true;
-            }
+          if (fps.equals(fps30)) {
+            frameRate30FpsSupported = true;
           }
         }
       }
@@ -147,7 +156,9 @@ public class InitAppPresenter {
     frameRateMap.put(CAMERA_SETTING_FRAME_RATE_30_ID, frameRate30FpsSupported);
 
     FrameRateSetting frameRateSetting = new FrameRateSetting(defaultFrameRate, frameRateMap);
-
-    cameraSettingsRepository.setFrameRateSettingSupported(frameRateSetting);
+    cameraSettings = cameraSettingsRepository.getCameraSettings();
+    if(cameraSettings != null) {
+      cameraSettingsRepository.setFrameRateSettingSupported(cameraSettings, frameRateSetting);
+    }
   }
 }

@@ -5,11 +5,11 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsListUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingSelectable;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.HashMap;
@@ -21,6 +21,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
 public class CameraSettingsPresenter {
 
+  private CameraSettings cameraSettings;
   private CameraSettingsView cameraSettingsListView;
   protected UserEventTracker userEventTracker;
   private GetCameraSettingsListUseCase getSettingListUseCase;
@@ -46,6 +47,7 @@ public class CameraSettingsPresenter {
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;
     this.cameraSettingsRepository = cameraSettingsRepository;
+    this.cameraSettings = cameraSettingsRepository.getCameraSettings();
     this.projectRepository = projectRepository;
 
     setupResolutionMappers();
@@ -110,7 +112,7 @@ public class CameraSettingsPresenter {
   public void setCameraInterfaceSetting(int interfaceProId) {
     String interfaceSelected = interfaceNames.get(interfaceProId);
     if(interfaceSelected == null) { interfaceSelected = DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED; }
-    cameraSettingsRepository.setInterfaceSelected(interfaceSelected);
+    cameraSettingsRepository.setInterfaceSelected(cameraSettings, interfaceSelected);
     userEventTracker.trackChangeCameraInterface(interfaceSelected);
   }
 
@@ -118,12 +120,11 @@ public class CameraSettingsPresenter {
     Project currentProject = loadCurrentProject();
     String resolution = resolutionNames.get(resolutionSelectedId);
     if (resolution == null) { resolution = DEFAULT_CAMERA_SETTING_RESOLUTION; }
-    cameraSettingsRepository.setResolutionSetting(resolution);
+    cameraSettingsRepository.setResolutionSetting(cameraSettings, resolution);
     userEventTracker.trackChangeResolution(resolution);
     VideoResolution.Resolution videoResolution = videoResolutionValues.get(resolutionSelectedId);
-    if (videoResolution == null) { videoResolution = VideoResolution.Resolution.HD1080; }
-    projectRepository.updateResolution(videoResolution);
-    currentProject.getProfile().setResolution(videoResolution);
+    if (videoResolution == null) { videoResolution = DEFAULT_CAMERA_SETTING_VIDEO_RESOLUTION; }
+    projectRepository.updateResolution(currentProject, videoResolution);
   }
 
   public void setCameraFrameRateSetting(int frameRateSelectedId) {
@@ -132,9 +133,8 @@ public class CameraSettingsPresenter {
     VideoFrameRate.FrameRate videoFrameRate = frameRateValues.get(frameRateSelectedId);
     if(videoFrameRate == null) { videoFrameRate = DEFAULT_CAMERA_SETTING_VIDEO_FRAME_RATE; }
     Project currentProject = loadCurrentProject();
-    cameraSettingsRepository.setFrameRateSetting(frameRate);
-    projectRepository.updateFrameRate(videoFrameRate);
-    currentProject.getProfile().setFrameRate(videoFrameRate);
+    cameraSettingsRepository.setFrameRateSetting(cameraSettings, frameRate);
+    projectRepository.updateFrameRate(currentProject, videoFrameRate);
     userEventTracker.trackChangeFrameRate(frameRate);
   }
 
@@ -144,9 +144,8 @@ public class CameraSettingsPresenter {
     VideoQuality.Quality videoQuality = qualityValues.get(qualitySelectedId);
     if(videoQuality == null) { videoQuality = DEFAULT_CAMERA_SETTING_VIDEO_QUALITY; }
     Project currentProject = loadCurrentProject();
-    cameraSettingsRepository.setQualitySetting(quality);
-    projectRepository.updateQuality(videoQuality);
-    currentProject.getProfile().setQuality(videoQuality);
+    cameraSettingsRepository.setQualitySetting(cameraSettings, quality);
+    projectRepository.updateQuality(currentProject, videoQuality);
     userEventTracker.trackChangeQuality(quality);
   }
 

@@ -16,10 +16,10 @@ import static org.junit.Assert.assertThat;
  * Created by alvaro on 16/11/17.
  */
 
-public class RealmCameraPrefToCameraSettingsMapperTest {
+public class RealmCameraSettingsToCameraSettingsMapperTest {
 
   @Test
-  public void testMapReturnsCameraPrefObject() {
+  public void testMapReturnsCameraSettingsObject() {
     RealmCameraSettings realmCameraSettings = new RealmCameraSettings();
     RealmCameraSettingsToCameraSettingsMapper mapper = new RealmCameraSettingsToCameraSettingsMapper();
 
@@ -29,7 +29,7 @@ public class RealmCameraPrefToCameraSettingsMapperTest {
   }
 
   @Test
-  public void testMapReturnsCameraPrefWithFieldsMapped() {
+  public void testMapReturnsCameraSettingsWithFieldsMapped() {
     RealmCameraSettings defaultRealmCameraSettings = new RealmCameraSettings("cameraSettingsId",
         Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED,
         Constants.DEFAULT_CAMERA_SETTING_RESOLUTION, Constants.DEFAULT_CAMERA_SETTING_QUALITY,

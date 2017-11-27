@@ -172,7 +172,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
             VideoResolution.Resolution resolutionForWidth = getResolutionForWidth(videoWidth);
 
             if (resolutionForWidth != null) {
-                projectRepository.updateResolution(resolutionForWidth);
+                projectRepository.updateResolution(currentProject, resolutionForWidth);
                 SharedPreferences.Editor preferencesEditor = preferences.edit();
                 preferencesEditor.putString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
                         getPreferenceResolutionForWidth(videoWidth));

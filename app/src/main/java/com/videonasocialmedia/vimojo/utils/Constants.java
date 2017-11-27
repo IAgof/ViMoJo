@@ -118,7 +118,7 @@ public class Constants {
   public static final String CAMERA_SETTING_RESOLUTION_1080 = "1080p";
   public static final String CAMERA_SETTING_RESOLUTION_2160 = "4k";
   public static final String DEFAULT_CAMERA_SETTING_RESOLUTION = CAMERA_SETTING_RESOLUTION_1080;
-  public static final VideoResolution.Resolution DEFAULT_CAMERA_PREF_SETTING_RESOLUTION =
+  public static final VideoResolution.Resolution DEFAULT_CAMERA_SETTING_VIDEO_RESOLUTION =
           VideoResolution.Resolution.HD1080;
   public static final String CAMERA_SETTING_QUALITY_16 = "16 Mbps";
   public static final String CAMERA_SETTING_QUALITY_32 = "32 Mbps";

@@ -49,43 +49,40 @@ public class CameraSettingsRealmRepository implements CameraSettingsRepository {
   }
 
   @Override
-  public void setResolutionSettingSupported(ResolutionSetting resolutionSetting) {
-    CameraSettings cameraSettings = getCameraSettings();
+  public void setResolutionSettingSupported(CameraSettings cameraSettings,
+                                            ResolutionSetting resolutionSetting) {
     cameraSettings.setResolutionSetting(resolutionSetting);
     update(cameraSettings);
   }
 
   @Override
-  public void setFrameRateSettingSupported(FrameRateSetting frameRateSetting) {
-    CameraSettings cameraSettings = getCameraSettings();
+  public void setFrameRateSettingSupported(CameraSettings cameraSettings,
+                                           FrameRateSetting frameRateSetting) {
     cameraSettings.setFrameRatePreferences(frameRateSetting);
     update(cameraSettings);
   }
 
   @Override
-  public void setResolutionSetting(String resolution) {
-    CameraSettings cameraSettings = getCameraSettings();
+  public void setResolutionSetting(CameraSettings cameraSettings, String resolution) {
     cameraSettings.getResolutionSetting().setResolutionSetting(resolution);
     update(cameraSettings);
   }
 
   @Override
-  public void setFrameRateSetting(String frameRate) {
-    CameraSettings cameraSettings = getCameraSettings();
+  public void setFrameRateSetting(CameraSettings cameraSettings,
+                                  String frameRate) {
     cameraSettings.getFrameRateSetting().setFrameRateSetting(frameRate);
     update(cameraSettings);
   }
 
   @Override
-  public void setQualitySetting(String quality) {
-    CameraSettings cameraSettings = getCameraSettings();
+  public void setQualitySetting(CameraSettings cameraSettings, String quality) {
     cameraSettings.setQuality(quality);
     update(cameraSettings);
   }
 
   @Override
-  public void setInterfaceSelected(String interfaceSelected) {
-    CameraSettings cameraSettings = getCameraSettings();
+  public void setInterfaceSelected(CameraSettings cameraSettings, String interfaceSelected) {
     cameraSettings.setInterfaceSelected(interfaceSelected);
     update(cameraSettings);
   }

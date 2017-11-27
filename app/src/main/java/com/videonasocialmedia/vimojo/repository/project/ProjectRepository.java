@@ -19,11 +19,11 @@ public interface ProjectRepository extends Repository<Project> {
 
   List<Project> getListProjectsByLastModificationDescending();
 
-  void updateResolution(VideoResolution.Resolution videoResolution);
+  void updateResolution(Project project, VideoResolution.Resolution videoResolution);
 
-  void updateFrameRate(VideoFrameRate.FrameRate videoFrameRate);
+  void updateFrameRate(Project project, VideoFrameRate.FrameRate videoFrameRate);
 
-  void updateQuality(VideoQuality.Quality videoQuality);
+  void updateQuality(Project project, VideoQuality.Quality videoQuality);
 
-  void setWatermarkActivated(boolean isChecked);
+  void setWatermarkActivated(Project project, boolean isChecked);
 }
