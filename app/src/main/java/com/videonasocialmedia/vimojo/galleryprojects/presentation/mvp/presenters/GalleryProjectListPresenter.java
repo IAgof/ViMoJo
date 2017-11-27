@@ -1,6 +1,9 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters;
 
+import android.content.SharedPreferences;
+
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
@@ -11,6 +14,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 
 import java.util.List;
@@ -25,7 +29,7 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
   private ProjectRepository projectRepository;
   private GalleryProjectListView galleryProjectListView;
   private UpdateCurrentProjectUseCase updateCurrentProjectUseCase;
-
+  private SharedPreferences sharedPreferences;
   private DuplicateProjectUseCase duplicateProjectUseCase;
   private DeleteProjectUseCase deleteProjectUseCase;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
@@ -33,6 +37,7 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
 
   @Inject
   public GalleryProjectListPresenter(GalleryProjectListView galleryProjectListView,
+                                     SharedPreferences sharedPreferences,
                                      ProjectRepository projectRepository,
                                      CreateDefaultProjectUseCase createDefaultProjectUseCase,
                                      UpdateCurrentProjectUseCase updateCurrentProjectUseCase,
@@ -41,6 +46,7 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
                                      CheckIfProjectHasBeenExportedUseCase
                                          checkIfProjectHasBeenExportedUseCase) {
     this.galleryProjectListView = galleryProjectListView;
+    this.sharedPreferences = sharedPreferences;
     this.projectRepository = projectRepository;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.updateCurrentProjectUseCase = updateCurrentProjectUseCase;
@@ -74,9 +80,17 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
     }
   }
 
-  public void createNewDefaultProject(String rootPath, String privatePath,
-                                      boolean isWatermarkFeatured) {
+  public void createNewDefaultProject(String rootPath, String privatePath) {
+    boolean isWatermarkFeatured = isWatermarkActivated();
     createDefaultProjectUseCase.createProject(rootPath, privatePath, isWatermarkFeatured);
+  }
+
+
+  private boolean isWatermarkActivated() {
+    if(BuildConfig.FEATURE_FORCE_WATERMARK) {
+      return true;
+    }
+    return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
   }
 
   public void updateCurrentProject(Project project) {

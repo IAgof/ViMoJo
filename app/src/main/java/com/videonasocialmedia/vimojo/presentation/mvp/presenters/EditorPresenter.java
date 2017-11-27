@@ -221,8 +221,10 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   public boolean getPreferenceWaterMark() {
-    boolean isActivateWatermark = sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
-    return isActivateWatermark;
+    if(BuildConfig.FEATURE_FORCE_WATERMARK) {
+      return true;
+    }
+    return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
   }
 
   private void activateWatermarkPreference() {

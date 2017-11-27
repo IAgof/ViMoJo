@@ -154,10 +154,17 @@ public class ShareVideoPresenter {
         userEventTracker.trackVideoSharedUserTraits();
     }
 
-    public void newDefaultProject(String rootPath, String privatePath,
-                                  boolean isWatermarkFeatured) {
+    public void newDefaultProject(String rootPath, String privatePath) {
         clearProjectDataFromSharedPreferences();
+        boolean isWatermarkFeatured = isWatermarkActivated();
         createDefaultProjectUseCase.createProject(rootPath, privatePath, isWatermarkFeatured);
+    }
+
+    private boolean isWatermarkActivated() {
+        if(BuildConfig.FEATURE_FORCE_WATERMARK) {
+            return true;
+        }
+        return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
     }
 
     // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?

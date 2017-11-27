@@ -285,9 +285,9 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  InitAppPresenter provideInitAppPresenter(
+  InitAppPresenter provideInitAppPresenter(SharedPreferences sharedPreferences,
           CreateDefaultProjectUseCase createDefaultProjectUseCase) {
-    return new InitAppPresenter(createDefaultProjectUseCase);
+    return new InitAppPresenter(sharedPreferences, createDefaultProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -308,14 +308,15 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   GalleryProjectListPresenter provideGalleryProjectListPresenter(
       ProjectRepository projectRepository,
+      SharedPreferences sharedPreferences,
       CreateDefaultProjectUseCase createDefaultProjectUseCase,
       UpdateCurrentProjectUseCase updateCurrentProjectUseCase,
       DuplicateProjectUseCase duplicateProjectUseCase,
       DeleteProjectUseCase deleteProjectUseCase,
       CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCase) {
-    return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, projectRepository,
-        createDefaultProjectUseCase, updateCurrentProjectUseCase, duplicateProjectUseCase,
-        deleteProjectUseCase, checkIfProjectHasBeenExportedUseCase);
+    return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, sharedPreferences,
+        projectRepository, createDefaultProjectUseCase, updateCurrentProjectUseCase,
+        duplicateProjectUseCase, deleteProjectUseCase, checkIfProjectHasBeenExportedUseCase);
   }
 
   @Provides @PerActivity
