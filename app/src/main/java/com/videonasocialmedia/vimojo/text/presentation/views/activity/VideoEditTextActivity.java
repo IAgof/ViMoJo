@@ -1,16 +1,19 @@
 package com.videonasocialmedia.vimojo.text.presentation.views.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
@@ -70,7 +73,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @Bind(R.id.imageVideoText)
     ImageView image_view_text;
     @Bind(R.id.button_ok_or_edit_text)
-    Button buttonHideKeyboard;
+    Button buttonOkOrEditText;
 
     private Video video;
     int videoIndexOnTrack;
@@ -95,8 +98,18 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         button_editText_top.setSelected(false);
         button_editText_center.setSelected(true);
         button_ediText_bottom.setSelected(false);
-
         restoreState(savedInstanceState);
+        presenter.init(videoIndexOnTrack);
+        clipText.requestFocus();
+        clipText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (!clipText.hasFocus()) {
+                    buttonOkOrEditText.setText(getResources().getString(R.string.ok));
+                }
+                return false;
+            }
+        });
     }
 
     private void setupActivityButtons() {
@@ -130,8 +143,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
-        presenter.init(videoIndexOnTrack);
-        clipText.requestFocus();
         showKeyboard();
     }
 
@@ -252,15 +263,15 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @OnClick (R.id.button_ok_or_edit_text)
     public void onClickOkOrEditText() {
-        if(clipText.isEnabled()) {
+        if(clipText.hasFocus()) {
             hideKeyboard(clipText);
-            buttonHideKeyboard.setText(getString(R.string.edit));
-            clipText.setEnabled(false);
-
+            buttonOkOrEditText.setText(getString(R.string.edit));
+            clipText.clearFocus();
         } else {
             showKeyboard();
-            buttonHideKeyboard.setText(getString(R.string.ok));
-            clipText.setEnabled(true);
+            buttonOkOrEditText.setText(getString(R.string.ok));
+            clipText.setFocusable(true);
+            clipText.requestFocus();
         }
     }
 
@@ -340,11 +351,21 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         if (null != clipText.getLayout() && clipText.getLayout().getLineCount() > MAX_LINES) {
             if(!hasTypedMoreThanTwoLines){
                 showError(getString(R.string.error_videoEdit));
-                hideKeyboard(clipText);
                 hasTypedMoreThanTwoLines =true;
+                clipText.setTextColor(Color.RED);
             }
         } else {
             hasTypedMoreThanTwoLines =false;
+            changeColorText();
+        }
+    }
+
+    private void changeColorText() {
+        String currentTheme= presenter.getCurrentTheme();
+        if (currentTheme.equals(THEME_DARK) ){
+           clipText.setTextColor(getResources().getColor(R.color.colorWhite));
+        } else {
+            clipText.setTextColor(getResources().getColor(R.color.textColorPrimary));
         }
     }
 
