@@ -56,7 +56,8 @@ public class AddVideoToProjectUseCaseTest {
 
   @Test
   public void testAddVideoToProjectAtPositionCallsUpdateProject() {
-    Project currentProject = Project.getInstance(null, null, null, null);
+    getAProject().clear();
+    Project currentProject = getAProject();
     Video video = new Video("media/path", 1f);
 
     injectedUseCase.addVideoToProjectAtPosition(video, 0, mockedOnAddMediaFinishedListener);
@@ -66,6 +67,7 @@ public class AddVideoToProjectUseCaseTest {
 
   @Test
   public void testAddVideoListToTrackCallsUpdateProject() {
+    getAProject().clear();
     Project currentProject = getAProject();
     Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
@@ -99,6 +101,7 @@ public class AddVideoToProjectUseCaseTest {
 
   @Test
   public void ifVideoTransitionActivatedAddVideoToProjectCallsApplyAVTransitions() {
+    getAProject().clear();
     Project project = getAProject();
     project.getVMComposition().setVideoFadeTransitionActivated(true);
     assertThat("Video transition is activated ",
