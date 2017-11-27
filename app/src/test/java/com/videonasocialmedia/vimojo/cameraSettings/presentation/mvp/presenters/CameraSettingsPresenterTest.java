@@ -34,9 +34,11 @@ import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOL
 import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_RESOLUTION;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by alvaro on 20/11/17.
@@ -77,11 +79,13 @@ public class CameraSettingsPresenterTest {
   public void setCameraInterfacePreferenceUpdateRepositoryAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int interfaceProSelectedId = Constants.CAMERA_SETTING_INTERFACE_PRO_ID;
+    CameraSettings cameraSettings = getCameraSettings();
+    when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
 
     presenter.setCameraInterfaceSetting(interfaceProSelectedId);
 
     verify(mockedCameraSettingsRepository)
-            .setInterfaceSelected(mockedCameraSettings, DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED);
+            .setInterfaceSelected(cameraSettings, DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED);
     verify(mockedUserEventTracker)
             .trackChangeCameraInterface(DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED);
   }
@@ -91,14 +95,14 @@ public class CameraSettingsPresenterTest {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int resolutionPreferenceId = Constants.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
     Project project = getAProject();
-    CameraSettings cameraSettings = mockedCameraSettingsRepository.getCameraSettings();
+    CameraSettings cameraSettings = getCameraSettings();
+    when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
 
     presenter.setCameraResolutionSetting(resolutionPreferenceId);
 
     verify(mockedCameraSettingsRepository).setResolutionSetting(cameraSettings, "720p");
     verify(mockedProjectRepository).updateResolution(project, VideoResolution.Resolution.HD720);
     verify(mockedUserEventTracker).trackChangeResolution("720p");
-    assertThat(project.getProfile().getResolution(), is(VideoResolution.Resolution.HD720));
   }
 
   @Test
@@ -106,14 +110,14 @@ public class CameraSettingsPresenterTest {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int frameRatePreferenceId = Constants.CAMERA_SETTING_FRAME_RATE_30_ID;
     Project project = getAProject();
-    CameraSettings cameraSettings = mockedCameraSettingsRepository.getCameraSettings();
+    CameraSettings cameraSettings = getCameraSettings();
+    when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
 
     presenter.setCameraFrameRateSetting(frameRatePreferenceId);
 
     verify(mockedCameraSettingsRepository).setFrameRateSetting(cameraSettings, "30 fps");
     verify(mockedProjectRepository).updateFrameRate(project, VideoFrameRate.FrameRate.FPS30);
     verify(mockedUserEventTracker).trackChangeFrameRate("30 fps");
-    assertThat(project.getProfile().getFrameRate(), is(VideoFrameRate.FrameRate.FPS30));
   }
 
 
@@ -122,7 +126,8 @@ public class CameraSettingsPresenterTest {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int qualityPreferenceId = Constants.CAMERA_SETTING_QUALITY_16_ID;
     Project project = getAProject();
-    CameraSettings cameraSettings = mockedCameraSettingsRepository.getCameraSettings();
+    CameraSettings cameraSettings = getCameraSettings();
+    when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
 
     presenter.setCameraQualitySetting(qualityPreferenceId);
 
@@ -135,6 +140,28 @@ public class CameraSettingsPresenterTest {
     return new CameraSettingsPresenter(mockedCameraSettingsListView,
         mockedUserEventTracker, mockedGetSettingListUseCase, mockedCameraSettingsRepository,
         mockedProjectRepository);
+  }
+
+
+  private CameraSettings getCameraSettings() {
+    HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_FRONT_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, false);
+    ResolutionSetting resolutionSetting = new ResolutionSetting(DEFAULT_CAMERA_SETTING_RESOLUTION,
+        resolutionsSupportedMap);
+    HashMap<Integer, Boolean> frameRatesSupportedMap = new HashMap<>();
+    frameRatesSupportedMap.put(CAMERA_SETTING_FRAME_RATE_24_ID, false);
+    frameRatesSupportedMap.put(CAMERA_SETTING_FRAME_RATE_25_ID, false);
+    frameRatesSupportedMap.put(CAMERA_SETTING_FRAME_RATE_30_ID, true);
+    FrameRateSetting frameRateSetting = new FrameRateSetting("30 fps", frameRatesSupportedMap);
+    String quality = "16 Mbps";
+    String interfaceSelected = DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
+    return new CameraSettings(resolutionSetting,
+        frameRateSetting, quality, interfaceSelected);
   }
 
   public Project getAProject() {

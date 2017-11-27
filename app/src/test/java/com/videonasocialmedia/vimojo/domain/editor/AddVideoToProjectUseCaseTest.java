@@ -66,7 +66,7 @@ public class AddVideoToProjectUseCaseTest {
 
   @Test
   public void testAddVideoListToTrackCallsUpdateProject() {
-    Project currentProject = Project.getInstance(null, null, null, null);
+    Project currentProject = getAProject();
     Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();

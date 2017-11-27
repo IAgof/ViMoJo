@@ -84,7 +84,6 @@ public class EditorPresenterTest {
     editorPresenter.switchPreference(watermarkActivated, ConfigPreferences.WATERMARK);
 
     verify(mockedProjectRepository).setWatermarkActivated(project, watermarkActivated);
-    assertThat(project.hasWatermark(), is(watermarkActivated));
   }
 
   private EditorPresenter getEditorPresenter() {

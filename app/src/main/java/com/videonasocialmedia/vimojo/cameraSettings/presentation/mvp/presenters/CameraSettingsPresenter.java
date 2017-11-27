@@ -112,6 +112,7 @@ public class CameraSettingsPresenter {
   public void setCameraInterfaceSetting(int interfaceProId) {
     String interfaceSelected = interfaceNames.get(interfaceProId);
     if(interfaceSelected == null) { interfaceSelected = DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED; }
+    CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setInterfaceSelected(cameraSettings, interfaceSelected);
     userEventTracker.trackChangeCameraInterface(interfaceSelected);
   }
@@ -120,6 +121,7 @@ public class CameraSettingsPresenter {
     Project currentProject = loadCurrentProject();
     String resolution = resolutionNames.get(resolutionSelectedId);
     if (resolution == null) { resolution = DEFAULT_CAMERA_SETTING_RESOLUTION; }
+    CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setResolutionSetting(cameraSettings, resolution);
     userEventTracker.trackChangeResolution(resolution);
     VideoResolution.Resolution videoResolution = videoResolutionValues.get(resolutionSelectedId);
@@ -133,6 +135,7 @@ public class CameraSettingsPresenter {
     VideoFrameRate.FrameRate videoFrameRate = frameRateValues.get(frameRateSelectedId);
     if(videoFrameRate == null) { videoFrameRate = DEFAULT_CAMERA_SETTING_VIDEO_FRAME_RATE; }
     Project currentProject = loadCurrentProject();
+    CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setFrameRateSetting(cameraSettings, frameRate);
     projectRepository.updateFrameRate(currentProject, videoFrameRate);
     userEventTracker.trackChangeFrameRate(frameRate);
@@ -144,6 +147,7 @@ public class CameraSettingsPresenter {
     VideoQuality.Quality videoQuality = qualityValues.get(qualitySelectedId);
     if(videoQuality == null) { videoQuality = DEFAULT_CAMERA_SETTING_VIDEO_QUALITY; }
     Project currentProject = loadCurrentProject();
+    CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setQualitySetting(cameraSettings, quality);
     projectRepository.updateQuality(currentProject, videoQuality);
     userEventTracker.trackChangeQuality(quality);
