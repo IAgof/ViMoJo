@@ -47,22 +47,24 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import static com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity.DEFAULT_AUDIO_GAIN;
+
 /**
  *  Created by alvaro on 16/01/17.
  */
 
 public class RecordCamera2Presenter implements Camera2WrapperListener {
   public static final int DEFAULT_CAMERA_ID = 0;
+  public static final int PREVIEW_RECORD_PICOMETER_SCALE_CORRECTION_RATIO = 2;
   private static final int NORMALIZE_PICOMETER_VALUE = 108;
   private static final double MAX_AMPLITUDE_VALUE_PICOMETER = 32768;
   private static final int SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE = 100;
-  public static final int PREVIEW_RECORD_PICOMETER_SCALE_CORRECTION_RATIO = 2;
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private static final String LOG_TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
-  private SharedPreferences sharedPreferences;
-  protected UserEventTracker userEventTracker;
   private final NewClipImporter newClipImporter;
+  protected UserEventTracker userEventTracker;
+  private SharedPreferences sharedPreferences;
   private RecordCamera2View recordView;
   private AddVideoToProjectUseCase addVideoToProjectUseCase;
   private int videosRecorded = 0;
@@ -84,6 +86,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
       updatePicometerRecording();
     }
   };
+  private boolean flashEnabled = false;
 
   public RecordCamera2Presenter(
           Context context, RecordCamera2View recordView,
@@ -149,7 +152,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
               camera.getSupportedMeteringModes().values);
     }
     if (!BuildConfig.FEATURE_RECORD_AUDIO_GAIN) {
-      recordView.disabileAudioGainControls();
+      recordView.disableAudioGainControls();
     }
   }
 
@@ -429,13 +432,15 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     recordView.setFlash(false);
   }
 
-  public void isFlashEnabled(boolean isSelected) {
+  public void toggleFlash(boolean isSelected) {
     if (isSelected) {
       camera.setFlashOff();
       recordView.setFlash(false);
+      flashEnabled = false;
     } else {
       camera.setFlashOn();
       recordView.setFlash(true);
+      flashEnabled = true;
     }
     userEventTracker.trackChangeFlashMode(isSelected);
   }
@@ -483,7 +488,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   public void switchCamera() {
     isFrontCameraSelected = !isFrontCameraSelected;
     resetViewSwitchCamera();
-    recordView.setCameraDefaultSettings();
+    setCameraDefaultSettings();
     camera.switchCamera(isFrontCameraSelected);
     setupAdvancedCameraControls();
     userEventTracker.trackChangeCamera(isFrontCameraSelected);
@@ -521,6 +526,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   // ------------------ metering-exposure settings --------------------
 
   public void resetMeteringMode() {
+    recordView.deselectAllMeteringModeButtons();
+    recordView.disableSpotMeteringControl();
+    recordView.deselectExposureCompensation();
+    recordView.hideExposureCompensationSubmenu();
+    recordView.resetManualExposure();
+    recordView.setMeteringModeAuto();
+
+    recordView.resetSpotMeteringSelector();
     camera.resetMeteringMode();
   }
 
@@ -566,16 +579,24 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   public void setFocusSelectionModeManual(int seekbarProgress) {
     camera.setFocusModeManual(seekbarProgress);
   }
+
   public Integer getMaximumSensitivity() {
     return camera.getMaximumSensitivity();
   }
 
   public void setISO(Integer isoValue) {
+    if (isoValue != 0) {
+      recordView.disableSpotMeteringControl();
+      recordView.enableExposureTimeSeekBar();
+      recordView.setManualExposure();
+    } else {
+      recordView.disableExposureTimeSeekBar();
+    }
     camera.setISO(isoValue);
   }
 
   public void setMicrophoneStatus(int state, int microphone) {
-    if(isAJackMicrophoneConnected(state, microphone)){
+    if (isAJackMicrophoneConnected(state, microphone)) {
       recordView.showExternalMicrophoneConnected();
     } else {
       recordView.showSmartphoneMicrophoneWorking();
@@ -593,7 +614,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   // --------------------------------------------------------------
 
   public void updateBatteryStatus(int batteryStatus, int batteryLevel, int batteryScale) {
-    int batteryPercent= getPercentLevel(batteryLevel, batteryScale);
+    int batteryPercent = getPercentLevel(batteryLevel, batteryScale);
     recordView.showBatteryStatus(getBatteryStatus(batteryStatus, batteryPercent),batteryPercent);
   }
 
@@ -691,5 +712,43 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 
   public int getCurrentExposureTimeSeekBarProgress() {
     return camera.getCurrentExposureTimeSeekBarProgress();
+  }
+
+  public void setCameraDefaultSettings() {
+    recordView.disableGrid();
+    // default zoom settings
+    recordView.hideZoomSelectionSubmenu();
+    recordView.setZoom(0f);
+    resetZoom();
+    // default metering settings
+    recordView.hideManualExposureSubmenu();
+    recordView.deselectAllISOButtons();
+    setISO(0);
+    recordView.setAutoExposure();
+    recordView.hideMeteringModeSelectionSubmenu();
+    // default focus settings
+    recordView.hideAFSelectionSubmenu();
+    recordView.deselectAllFocusSelectionButtons();
+    resetFocusSelectionMode();
+    recordView.setAutoSettingsFocusModeByDefault();
+    // default white balance settings
+    recordView.hideWhiteBalanceSubmenu();
+    recordView.deselectAllWhiteBalanceButtons();
+    recordView.selectWbSettingAuto();
+    resetWhiteBalanceMode();
+    //default audio gain settings
+    recordView.hideSoundVolumeSubmenu();
+    resetAudioGain();
+    // default flash settings
+    if (flashEnabled) {
+      setFlashOff();
+    }
+  }
+
+  private void resetAudioGain() {
+    if (!camera.isRecordingVideo()) {
+      recordView.setAudioGain(DEFAULT_AUDIO_GAIN);
+      setAudioGain(DEFAULT_AUDIO_GAIN);
+    }
   }
 }

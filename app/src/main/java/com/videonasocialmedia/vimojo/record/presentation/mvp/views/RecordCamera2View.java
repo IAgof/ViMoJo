@@ -91,7 +91,17 @@ public interface RecordCamera2View {
 
     void setupWhiteBalanceSupportedModesButtons(List<String> values);
 
+    void hideWhiteBalanceSubmenu();
+
+    void deselectAllWhiteBalanceButtons();
+
+    void selectWbSettingAuto();
+
     // Metering - exposure settings
+
+    void setManualExposure();
+
+    void setAutoExposure();
 
     void resetSpotMeteringSelector();
 
@@ -99,10 +109,31 @@ public interface RecordCamera2View {
 
     void hideMetteringModeSelection();
 
+    void hideManualExposureSubmenu();
+
+    void deselectAllISOButtons();
+
+    void setupManualExposureTime(int minimumExposureCompensation);
+
+    void enableExposureTimeSeekBar();
+
+    void disableExposureTimeSeekBar();
+
+    void hideMeteringModeSelectionSubmenu();
+
+    // focus methods
+
     void setupFocusSelectionSupportedModesButtons(List<String> values);
 
-
     void setupMeteringModeSupportedModesButtons(List<String> values);
+
+    void hideAFSelectionSubmenu();
+
+    void deselectAllFocusSelectionButtons();
+
+    void setAutoSettingsFocusModeByDefault();
+
+    void setFocusModeManual(MotionEvent event);
 
     // Setters camera
 
@@ -112,17 +143,15 @@ public interface RecordCamera2View {
 
     void setResolutionSelected(int height);
 
-    void setFocusModeManual(MotionEvent event);
-
     void setZoom(float value);
+
+    void hideZoomSelectionSubmenu();
+
+    void disableGrid();
 
     // Others
 
     void showError(String message);
-
-//    void showProgressAdaptingVideo();
-//
-//    void hideProgressAdaptingVideo();
 
     void navigateTo(Class cls);
 
@@ -135,7 +164,15 @@ public interface RecordCamera2View {
 
     void showAlertDialogStorage();
 
+    /* Audio gain methods */
+
     void updateAudioGainSeekbarDisability();
+
+    void disableAudioGainControls();
+
+    void setAudioGain(int defaultAudioGain);
+
+    void hideSoundVolumeSubmenu();
 
     /**
      * Sets recordview picometer value and color
@@ -148,9 +185,15 @@ public interface RecordCamera2View {
 
     void showSmartphoneMicrophoneWorking();
 
-    void setCameraDefaultSettings();
+    void deselectAllMeteringModeButtons();
 
-    void setupManualExposureTime(int minimumExposureCompensation);
+    void hideExposureCompensationSubmenu();
 
-    void disabileAudioGainControls();
+    void disableSpotMeteringControl();
+
+    void setMeteringModeAuto();
+
+    void deselectExposureCompensation();
+
+    void resetManualExposure();
 }

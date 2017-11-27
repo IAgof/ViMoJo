@@ -321,7 +321,7 @@ public class RecordCamera2PresenterTest {
     presenter = getRecordCamera2Presenter();
     boolean isFlashSelected = false;
 
-    presenter.isFlashEnabled(isFlashSelected);
+    presenter.toggleFlash(isFlashSelected);
 
     verify(mockedUserEventTracker).trackChangeFlashMode(anyBoolean());
   }
