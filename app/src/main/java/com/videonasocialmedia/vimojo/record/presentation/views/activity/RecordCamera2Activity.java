@@ -141,17 +141,26 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Bind(R.id.slide_seekbar_submenu_cardview)
   CardView slideSeekbarSubmenuView;
 
-  @Bind(R.id.button_iso)
-  ImageButton isoButton;
+  @Bind(R.id.button_manual_exposure)
+  ImageButton manualExposureButton;
   @Bind(R.id.iso_submenu_cardview)
   CardView isoSubmenuCardView;
   @Bind(R.id.iso_submenu)
   LinearLayout isoSubmenunLinearLayout;
-  @Bind(R.id.iso_auto)
-  TextView isoSettingAuto;
+//  @Bind(R.id.iso_auto)
+//  TextView isoSettingAuto;
+  @Bind(R.id.icon_iso)
+  ImageView iconISO;
 
-  @Bind(R.id.button_shutter_speed)
-  ImageButton shutterSpeedButton;
+  @Bind(R.id.exposure_time_seekbar)
+  SeekBar exposureTimeSeekBar;
+  @Bind(R.id.exposure_time_seekBar_text_max)
+  TextView maxExposureText;
+  @Bind(R.id.exposure_time_seekBar_text_min)
+  TextView minExposureText;
+
+//  @Bind(R.id.button_shutter_speed)
+//  ImageButton shutterSpeedButton;
 
   @Bind(R.id.button_af_selection)
   ImageButton afSelectionButton;
@@ -390,7 +399,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(navigateSettingsButtons, button_color);
     tintButton(settingsCameraButton, button_color);
     tintButton(zoomButton, button_color);
-    tintButton(isoButton, button_color);
+    tintButton(manualExposureButton, button_color);
 
     tintButton(afSelectionButton, button_color);
     tintButton(afSettingAuto, button_color);
@@ -419,6 +428,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private void setupSlideSeekBar() {
     slideSeekBar.setOnSeekBarChangeListener(recordActivitySeekBarChangeListener);
+    exposureTimeSeekBar.setOnSeekBarChangeListener(recordActivitySeekBarChangeListener);
+    exposureTimeSeekBar.setEnabled(false);
   }
 
   private void configChronometer() {
@@ -620,7 +631,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
       return;
     }
-    if (isoButton.isSelected()) {
+    if (manualExposureButton.isSelected()) {
       isoSubmenuCardView.setVisibility(View.VISIBLE);
       return;
     }
@@ -646,7 +657,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
       return;
     }
-    if (isoButton.isSelected()) {
+    if (manualExposureButton.isSelected()) {
       isoSubmenuCardView.setVisibility(View.VISIBLE);
       return;
     }
@@ -688,27 +699,27 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void showISOSelection() {
-    isoButton.setVisibility(View.VISIBLE);
+    manualExposureButton.setVisibility(View.VISIBLE);
   }
 
   @Override
   public void hideISOSelection() {
-    isoButton.setVisibility(View.GONE);
+    manualExposureButton.setVisibility(View.GONE);
   }
 
   @Override
   public void setupISOSupportedModesButtons(Range<Integer> supportedISORange) {
-    isoSettingAuto.setSelected(true);
-    isoSettingAuto.setTextColor(getResources().getColor(R.color.button_selected));
+//    isoSettingAuto.setSelected(true);
+//    isoSettingAuto.setTextColor(getResources().getColor(R.color.button_selected));
     clearISObuttons();
-    isoButtons.put(isoSettingAuto, 0); // (jliarte): 27/06/17 convention for auto ISO setting
-    isoSubmenunLinearLayout.addView(isoSettingAuto);
-    setIsoModeOnClickListener(0, isoSettingAuto);
+//    isoButtons.put(isoSettingAuto, 0); // (jliarte): 27/06/17 convention for auto ISO setting
+//    isoSubmenunLinearLayout.addView(isoSettingAuto);
+//    setIsoModeOnClickListener(0, isoSettingAuto);
     int[] isoValues = {50, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200};
     for (final int isoValue : isoValues) {
       if (supportedISORange.contains(isoValue)) {
         final TextView isoModeButton = new TextView(this);
-        isoModeButton.setLayoutParams(isoSettingAuto.getLayoutParams());
+        isoModeButton.setLayoutParams(iconISO.getLayoutParams());
         isoModeButton.setText(String.valueOf(isoValue));
         isoModeButton.setTextColor(getResources().getColor(R.color.button_color_record_activity));
         setIsoModeOnClickListener(isoValue, isoModeButton);
@@ -719,7 +730,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void clearISObuttons() {
-    isoSubmenunLinearLayout.removeAllViews();
+//    isoSubmenunLinearLayout.removeAllViews();
+    for (TextView button : isoButtons.keySet()) {
+      isoSubmenunLinearLayout.removeView(button);
+    }
     isoButtons.clear();
   }
 
@@ -731,6 +745,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
                 deselectAllISOButtons();
                 isoModeButton.setSelected(true);
                 isoModeButton.setTextColor(getResources().getColor(R.color.button_selected));
+                exposureTimeSeekBar.setEnabled(true);
                 presenter.setISO(isoValue);
               }
             });
@@ -1326,41 +1341,44 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
   }
 
-  @OnClick (R.id.button_iso)
-  public void onClickIsoListener() {
-    if (isoButton.isSelected()) {
-      hideISOSelectionSubmenu();
-      hideShutterSpeedSumbenu();
-    } else {
-      hideZoomSelectionSubmenu();
-      hideAFSelectionSubmenu();
-      hideWhiteBalanceSubmenu();
-      hideMeteringModeSelectionSubmenu();
-      hideSoundVolumeSubmenu();
-      showISOSelectionSubmenu();
-      showExposureTimeSumbenu();
-    }
+  @OnClick (R.id.button_manual_exposure)
+  public void onClickManualExposure() {
+    hideMeteringModeSelectionSubmenu();
+    showISOSelectionSubmenu();
+    showExposureTimeSumbenu();
+//    if (manualExposureButton.isSelected()) {
+//      hideISOSelectionSubmenu();
+//      hideShutterSpeedSumbenu();
+//    } else {
+//      hideZoomSelectionSubmenu();
+//      hideAFSelectionSubmenu();
+//      hideWhiteBalanceSubmenu();
+//      hideMeteringModeSelectionSubmenu();
+//      hideSoundVolumeSubmenu();
+//      showISOSelectionSubmenu();
+//      showExposureTimeSumbenu();
+//    }
   }
 
-  @OnClick (R.id.button_shutter_speed)
-  public void onClickShutterSppedListener() {
-    onClickIsoListener();
-  }
+//  @OnClick (R.id.button_shutter_speed)
+//  public void onClickShutterSppedListener() {
+//    onClickIsoListener();
+//  }
 
   private void showExposureTimeSumbenu() {
-    shutterSpeedButton.setSelected(true);
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_MANUAL_EXPOSURE_TIME;
-    seekBarUpperImage.setVisibility(View.VISIBLE);
-    seekBarLowerImage.setVisibility(View.GONE);
+//    seekBarUpperImage.setVisibility(View.VISIBLE);
+//    seekBarLowerImage.setVisibility(View.GONE);
     // TODO(jliarte): 22/11/17 need a way smaller icon
-    seekBarUpperImage.setImageResource(R.drawable.activity_record_ic_shutter_speed_60);
+//    seekBarUpperImage.setImageResource(R.drawable.activity_record_ic_shutter_speed_60);
     int maxShutterSpeed = presenter.getMaximumExposureTime();
-    setSlideSeekBarTexts("1/" + new Double(1/(maxShutterSpeed/1000000000d)).toString(),
-            new Double(minExposureTime /1000000000d).toString());
-    slideSeekBar.setMax(maxShutterSpeed - minExposureTime);
-    slideSeekBar.setProgress(presenter.getCurrentExposureTimeSeekBarProgress());
-    slideSeekBar.setEnabled(true);
-    slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
+//    setSlideSeekBarTexts("1/" + new Double(1/(maxShutterSpeed/1000000000d)).toString(),
+//            new Double(minExposureTime /1000000000d).toString());
+    maxExposureText.setText("1/" + new Double(1/(maxShutterSpeed/1000000000d)).toString());
+    minExposureText.setText(new Double(minExposureTime /1000000000d).toString());
+    exposureTimeSeekBar.setMax(maxShutterSpeed - minExposureTime);
+    exposureTimeSeekBar.setProgress(presenter.getCurrentExposureTimeSeekBarProgress());
+//    slideSeekbarSubmenuView.setVisibility(View.VISIBLE);
   }
 
   private void setSlideSeekBarTexts(String upperText, String lowerText) {
@@ -1438,7 +1456,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     presenter.resetZoom();
 
     hideISOSelectionSubmenu();
-    setAutoISO();
+//    setAutoISO();
+    presenter.setISO(0);
 
     disableGrid();
 
@@ -1496,21 +1515,21 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   private void showISOSelectionSubmenu() {
-    isoButton.setSelected(true);
+    manualExposureButton.setSelected(true);
     isoSubmenuCardView.setVisibility(View.VISIBLE);
   }
 
   private void hideISOSelectionSubmenu() {
-    isoButton.setSelected(false);
+    manualExposureButton.setSelected(false);
     isoSubmenuCardView.setVisibility(View.INVISIBLE);
   }
 
-  private void setAutoISO() {
-    deselectAllISOButtons();
-    isoSettingAuto.setSelected(true);
-    isoSettingAuto.setTextColor(getResources().getColor(R.color.button_selected));
-    presenter.setISO(0);
-  }
+//  private void setAutoISO() {
+//    deselectAllISOButtons();
+//    isoSettingAuto.setSelected(true);
+//    isoSettingAuto.setTextColor(getResources().getColor(R.color.button_selected));
+//    presenter.setISO(0);
+//  }
 
   private void showAFSelectionSubmenu() {
     afSelectionButton.setSelected(true);

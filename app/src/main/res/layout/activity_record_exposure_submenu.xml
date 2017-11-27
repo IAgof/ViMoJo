@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:backgroundTint="@color/colorGreyTransparent"
+    android:id="@+id/iso_submenu_cardview"
+    android:layout_above="@+id/settings_bar_cardview"
+    android:layout_centerInParent="true"
+    android:layout_gravity="center_horizontal"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_width="wrap_content"
+    android:visibility="invisible"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="@null"
+    >
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/iso_submenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/settings_bar_cardview"
+        android:layout_centerHorizontal="true"
+        tools:showIn="@layout/activity_record_camera2">
+
+        <ImageView
+            android:id="@+id/exposure_time_seekBar_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center"
+            android:background="#00ffffff"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:src="@drawable/activity_record_ic_shutter_speed_60"
+            android:text="100%"/>
+
+        <TextView
+            android:id="@+id/exposure_time_seekBar_text_min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center"
+            android:layout_marginLeft="2dp"
+            android:background="#00ffffff"
+            android:text="max"
+            android:textColor="@color/colorWhite"
+            android:textSize="8sp"
+            tools:visibility="visible"/>
+
+        <SeekBar
+            android:id="@+id/exposure_time_seekbar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:indeterminate="false"
+            android:minHeight="16dp"
+            android:minWidth="100dp"
+            android:progressTint="@color/colorWhite"
+            android:secondaryProgressTint="@color/colorWhite"/>
+
+        <TextView
+            android:id="@+id/exposure_time_seekBar_text_max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:background="#00ffffff"
+            android:text="min"
+            android:textColor="@color/colorWhite"
+            android:textSize="8sp"
+            tools:visibility="visible"/>
+
+        <!--<TextView-->
+        <!--android:id="@+id/iso_auto"-->
+        <!--android:layout_width="32dp"-->
+        <!--android:layout_height="32dp"-->
+        <!--android:layout_gravity="center_vertical"-->
+        <!--android:layout_margin="8dp"-->
+        <!--android:background="#00ffffff"-->
+        <!--android:scaleType="fitCenter"-->
+        <!--android:text="Auto"-->
+        <!--android:textColor="@color/colorWhite"-->
+        <!--/>-->
+
+        <ImageView
+            android:id="@+id/icon_iso"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:layout_margin="8dp"
+            android:background="#00ffffff"
+            android:scaleType="fitCenter"
+            android:src="@drawable/activity_record_ic_iso"
+            />
+    </LinearLayout>
+</android.support.v7.widget.CardView>
