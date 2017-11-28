@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import android.content.SharedPreferences;
+
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 
 import org.junit.Before;
@@ -10,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -17,9 +21,10 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class InitAppPresenterTest {
-  @Mock CreateDefaultProjectUseCase mockedUseCase;
 
   @InjectMocks InitAppPresenter injectedPresenter;
+
+  @Mock CreateDefaultProjectUseCase mockedUseCase;
 
   @Before
   public void initDoubles() {
@@ -29,7 +34,8 @@ public class InitAppPresenterTest {
   @Test
   public void startLoadingProjectCallsLoadOrCreateProject() {
     injectedPresenter.startLoadingProject("root/path", "private/path");
+// TODO:(alvaro.martinez) 28/11/17 Learn how to mock BuildConfig values and check values in verify method, not anyString, anyString, anyBoolean 
 
-    verify(mockedUseCase).loadOrCreateProject("root/path","private/path", false);
+    verify(mockedUseCase).loadOrCreateProject(anyString(),anyString(), anyBoolean());
   }
 }

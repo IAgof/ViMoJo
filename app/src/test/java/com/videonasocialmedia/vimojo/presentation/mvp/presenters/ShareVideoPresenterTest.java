@@ -84,7 +84,9 @@ public class ShareVideoPresenterTest {
         Project videonaProject = getAProject();
         String socialNetwokId = "SocialNetwork";
         int totalVideosShared = 0;
+
         shareVideoPresenter.trackVideoShared(socialNetwokId);
+
         Mockito.verify(mockedUserEventTracker).trackVideoShared(socialNetwokId,videonaProject,
                 totalVideosShared);
     }

@@ -26,7 +26,7 @@ public class InitAppPresenter {
     createDefaultProjectUseCase.loadOrCreateProject(rootPath, privatePath, isWatermarkActivated());
   }
 
-  private boolean isWatermarkActivated() {
+  public boolean isWatermarkActivated() {
     if(BuildConfig.FEATURE_FORCE_WATERMARK) {
       return true;
     }
