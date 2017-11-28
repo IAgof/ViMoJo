@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 
 import com.crashlytics.android.Crashlytics;
@@ -21,6 +23,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
+import com.videonasocialmedia.vimojo.upload.domain.OnUploadVideoListener;
+import com.videonasocialmedia.vimojo.upload.domain.UploadVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -37,6 +41,8 @@ import javax.inject.Inject;
  * Created by jca on 11/12/15.
  */
 public class ShareVideoPresenter {
+
+    private Context context;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetFtpListUseCase getFtpListUseCase;
     private CreateDefaultProjectUseCase createDefaultProjectUseCase;
@@ -51,21 +57,25 @@ public class ShareVideoPresenter {
 
     private AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase;
     private ExportProjectUseCase exportUseCase;
+    private UploadVideoUseCase uploadVideoUseCase;
 
     @Inject
-    public ShareVideoPresenter(ShareVideoView shareVideoView, UserEventTracker userEventTracker,
+    public ShareVideoPresenter(Context context, ShareVideoView shareVideoView,
+                               UserEventTracker userEventTracker,
                                SharedPreferences sharedPreferences,
                                CreateDefaultProjectUseCase createDefaultProjectUseCase,
                                AddLastVideoExportedToProjectUseCase
                                        addLastVideoExportedProjectUseCase,
-                               ExportProjectUseCase exportProjectUseCase) {
+                               ExportProjectUseCase exportProjectUseCase,
+                               UploadVideoUseCase uploadVideoUseCase) {
+        this.context = context;
         this.shareVideoViewReference = new WeakReference<>(shareVideoView);
         this.userEventTracker = userEventTracker;
         this.sharedPreferences = sharedPreferences;
         this.createDefaultProjectUseCase = createDefaultProjectUseCase;
         this.addLastVideoExportedProjectUseCase = addLastVideoExportedProjectUseCase;
         this.exportUseCase = exportProjectUseCase;
-
+        this.uploadVideoUseCase = uploadVideoUseCase;
         currentProject = loadCurrentProject();
     }
 
@@ -219,5 +229,28 @@ public class ShareVideoPresenter {
                 }
             }
         });
+    }
+
+    public void uploadVideo(String apiBaseUrl, String mediaPath) {
+        if(!BuildConfig.FEATURE_UPLOAD_VIDEOS){
+            return;
+        }
+        ConnectivityManager connManager =
+            (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if(wifi.isConnected()) {
+            uploadVideoUseCase.uploadVideo(apiBaseUrl, mediaPath, new OnUploadVideoListener() {
+                @Override
+                public void onUploadVideoError(Causes causes) {
+
+                }
+
+                @Override
+                public void onUploadVideoSuccess() {
+
+                }
+            });
+        }
+
     }
 }

@@ -1,9 +1,11 @@
 package com.videonasocialmedia.vimojo.upload.domain;
 
-import android.provider.MediaStore;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.upload.repository.apiclient.VimojoApi;
+import com.videonasocialmedia.vimojo.upload.repository.localsource.CachedToken;
 import com.videonasocialmedia.vimojo.upload.repository.rest.ServiceGenerator;
 
 import java.io.File;
@@ -21,22 +23,27 @@ import retrofit2.Response;
 
 public class UploadVideoUseCase {
 
+  public static final String MIME_TYPE_VIDEO = "video/mp4";
+  public static final String MULTIPART_NAME_DATA = "file";
+  private static final String LOG_TAG = UploadVideoUseCase.class.getCanonicalName();
+
   public void uploadVideo(String apiBaseUrl, String mediaPath, final OnUploadVideoListener listener) {
 
     // create upload service client
-    VimojoApi service = new ServiceGenerator().generateService(VimojoApi.class);
+    VimojoApi service = new ServiceGenerator(apiBaseUrl).generateService(VimojoApi.class,
+        CachedToken.getToken());
 
     File file = new File(mediaPath);
 
     RequestBody requestFile = RequestBody
-        .create(okhttp3.MediaType.parse(MediaStore.Video.Media.CONTENT_TYPE), file);
+        .create(okhttp3.MediaType.parse(MIME_TYPE_VIDEO), file);
 
     // MultipartBody.Part is used to send also the actual file name
     MultipartBody.Part body =
-        MultipartBody.Part.createFormData("video", file.getName(), requestFile);
+        MultipartBody.Part.createFormData(MULTIPART_NAME_DATA, file.getName(), requestFile);
 
     // add another part within the multipart request
-    String descriptionString = "hello, this is description speaking";
+    String descriptionString = BuildConfig.FLAVOR;
     RequestBody description =
         RequestBody.create(
             okhttp3.MultipartBody.FORM, descriptionString);
@@ -47,7 +54,6 @@ public class UploadVideoUseCase {
       @Override
       public void onResponse(Call<ResponseBody> call,
                              Response<ResponseBody> response) {
-        Log.v("Upload", "success");
         if(response != null) {
           listener.onUploadVideoSuccess();
         } else {
@@ -57,8 +63,11 @@ public class UploadVideoUseCase {
 
       @Override
       public void onFailure(Call<ResponseBody> call, Throwable t) {
-        Log.e("Upload error:", t.getMessage());
         listener.onUploadVideoError(OnUploadVideoListener.Causes.UNKNOWN_ERROR);
+        Log.e(LOG_TAG, "Error while uploading videos " + t.getMessage());
+        Crashlytics.log("Error while uploading videos." +
+            " Cause " + t.getCause() + " Message " + t.getMessage());
+        Crashlytics.logException(t);
       }
     });
   }

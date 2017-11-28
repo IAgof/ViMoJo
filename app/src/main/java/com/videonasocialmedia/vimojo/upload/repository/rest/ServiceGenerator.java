@@ -1,5 +1,8 @@
 package com.videonasocialmedia.vimojo.upload.repository.rest;
 
+import com.videonasocialmedia.vimojo.upload.model.Token;
+import com.videonasocialmedia.vimojo.upload.repository.apiclient.AuthInterceptor;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -43,6 +46,18 @@ public class ServiceGenerator {
   }
 
   public <T> T generateService(Class<T> serviceClass) {
+
+    OkHttpClient okClient = httpClientBuilder.build();
+
+    Retrofit retrofit = retrofitBuilder.client(okClient).build();
+    return retrofit.create(serviceClass);
+  }
+
+  public <T> T generateService(Class<T> serviceClass, final Token token) {
+    if (token != null) {
+      AuthInterceptor authInterceptor = new AuthInterceptor(token);
+      httpClientBuilder.addInterceptor(authInterceptor);
+    }
 
     OkHttpClient okClient = httpClientBuilder.build();
 
