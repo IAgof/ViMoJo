@@ -81,8 +81,7 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
   }
 
   public void createNewDefaultProject(String rootPath, String privatePath) {
-    boolean isWatermarkFeatured = isWatermarkActivated();
-    createDefaultProjectUseCase.createProject(rootPath, privatePath, isWatermarkFeatured);
+    createDefaultProjectUseCase.createProject(rootPath, privatePath, isWatermarkActivated());
   }
 
 

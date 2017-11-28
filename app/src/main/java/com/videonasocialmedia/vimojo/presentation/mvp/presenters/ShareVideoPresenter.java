@@ -166,8 +166,7 @@ public class ShareVideoPresenter {
 
     public void newDefaultProject(String rootPath, String privatePath) {
         clearProjectDataFromSharedPreferences();
-        boolean isWatermarkFeatured = isWatermarkActivated();
-        createDefaultProjectUseCase.createProject(rootPath, privatePath, isWatermarkFeatured);
+        createDefaultProjectUseCase.createProject(rootPath, privatePath, isWatermarkActivated());
     }
 
     private boolean isWatermarkActivated() {
@@ -219,6 +218,9 @@ public class ShareVideoPresenter {
             public void onExportSuccess(Video video) {
                 if (shareVideoViewReference.get() != null) {
                     shareVideoViewReference.get().loadExportedVideoPreview(video.getMediaPath());
+                    if(BuildConfig.FEATURE_UPLOAD_VIDEOS) {
+                        uploadVideo(context.getString(R.string.api_base_url), video.getMediaPath());
+                    }
                 }
             }
 
@@ -231,14 +233,11 @@ public class ShareVideoPresenter {
         });
     }
 
-    public void uploadVideo(String apiBaseUrl, String mediaPath) {
-        if(!BuildConfig.FEATURE_UPLOAD_VIDEOS){
-            return;
-        }
+    private void uploadVideo(String apiBaseUrl, String mediaPath) {
         ConnectivityManager connManager =
             (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if(wifi.isConnected()) {
+        if (wifi.isConnected()) {
             uploadVideoUseCase.uploadVideo(apiBaseUrl, mediaPath, new OnUploadVideoListener() {
                 @Override
                 public void onUploadVideoError(Causes causes) {
@@ -251,6 +250,5 @@ public class ShareVideoPresenter {
                 }
             });
         }
-
     }
 }

@@ -378,7 +378,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
           if (destPath != null) {
             videoPath = destPath;
             presenter.addVideoExportedToProject(videoPath);
-            presenter.uploadVideo(getString(R.string.api_base_url), mediaPath);
             videonaPlayer.onShown(activity);
             showPreview();
           }

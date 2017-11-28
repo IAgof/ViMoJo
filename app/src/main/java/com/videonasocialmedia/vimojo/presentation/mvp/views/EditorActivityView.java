@@ -24,7 +24,7 @@ public interface EditorActivityView {
 
   void watermarkFeatureAvailable();
 
-  void hideWatermarkView();
+  void hideWatermarkSwitch();
 
   void setIconsFeatures();
 

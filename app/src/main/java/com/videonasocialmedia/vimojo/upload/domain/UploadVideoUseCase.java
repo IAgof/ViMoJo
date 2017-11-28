@@ -54,9 +54,10 @@ public class UploadVideoUseCase {
       @Override
       public void onResponse(Call<ResponseBody> call,
                              Response<ResponseBody> response) {
-        if(response != null) {
+        if(response != null && response.code() == 201) {
           listener.onUploadVideoSuccess();
         } else {
+          // TODO:(alvaro.martinez) 28/11/17 Manage API errors code ...
           listener.onUploadVideoError(OnUploadVideoListener.Causes.UNKNOWN_ERROR);
         }
       }

@@ -23,8 +23,7 @@ public class InitAppPresenter {
   }
 
   public void startLoadingProject(String rootPath, String privatePath) {
-    boolean isWatermarkFeatured = isWatermarkActivated();
-    createDefaultProjectUseCase.loadOrCreateProject(rootPath, privatePath, isWatermarkFeatured);
+    createDefaultProjectUseCase.loadOrCreateProject(rootPath, privatePath, isWatermarkActivated());
   }
 
   private boolean isWatermarkActivated() {

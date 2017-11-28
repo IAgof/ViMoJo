@@ -103,10 +103,10 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   private void checkWatermark() {
-    if (BuildConfig.FEATURE_WATERMARK) {
+    if (BuildConfig.FEATURE_WATERMARK_SWITCH && !BuildConfig.FEATURE_FORCE_WATERMARK) {
       editorActivityView.watermarkFeatureAvailable();
     } else {
-      editorActivityView.hideWatermarkView();
+      editorActivityView.hideWatermarkSwitch();
     }
   }
 

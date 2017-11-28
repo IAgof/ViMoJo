@@ -385,7 +385,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void hideWatermarkView() {
+  public void hideWatermarkSwitch() {
     Menu menu = navigationView.getMenu();
     MenuItem target = menu.findItem(R.id.switch_watermark);
     target.setVisible(false);
