@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import android.content.Context;
+
 import com.google.common.util.concurrent.ListenableFuture;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -52,6 +54,7 @@ public class EditPresenterTest {
 
   @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock private EditActivityView mockedEditorView;
+  @Mock private Context mockedContext;
   @Mock private VideonaPlayer mockedVideonaPlayer;
   @Mock private MixpanelAPI mockedMixpanelApi;
   @Mock private UserEventTracker mockedUserEventTracker;
@@ -106,7 +109,7 @@ public class EditPresenterTest {
     project.getVMComposition().getAudioTracks().get(com.videonasocialmedia.videonamediaframework
         .model.Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
     GetAudioFromProjectUseCase getAudioFromProjectUseCase = new GetAudioFromProjectUseCase();
-    EditPresenter presenter = new EditPresenter(mockedEditorView,
+    EditPresenter presenter = new EditPresenter(mockedEditorView, mockedContext,
             mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
             mockedVideoRemover, mockedMediaItemReorderer, getAudioFromProjectUseCase,
             mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionsFromProject);
@@ -132,7 +135,7 @@ public class EditPresenterTest {
     videoList.add(video2);
     MediaTrack mediaTrack = project.getMediaTrack();
     mediaTrack.insertItem(video1);
-    EditPresenter presenter = new EditPresenter(mockedEditorView,
+    EditPresenter presenter = new EditPresenter(mockedEditorView, mockedContext,
             mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
             mockedVideoRemover, mockedMediaItemReorderer, mockedGetAudioFromProjectUseCase,
             mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);

@@ -14,7 +14,7 @@ import com.videonasocialmedia.vimojo.R;
 public class UiUtils {
 
     public static void tintButton(@NonNull ImageButton button) {
-        ColorStateList editButtonsColors = button.getResources().getColorStateList(R.color.button_color);
+        ColorStateList editButtonsColors = button.getResources().getColorStateList(R.color.button_color_theme_light);
         Drawable button_image = DrawableCompat.wrap(button.getDrawable());
         DrawableCompat.setTintList(button_image, editButtonsColors);
         button.setImageDrawable(button_image);

@@ -15,7 +15,6 @@
         android:id="@+id/videona_player"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/videonaPlayerExo_marginTop"
         app:aspect="sixteen_nine"/>
 
     <ScrollView

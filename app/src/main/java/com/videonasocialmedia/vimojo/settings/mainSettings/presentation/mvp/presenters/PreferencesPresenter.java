@@ -18,11 +18,11 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -176,7 +176,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         checkAvailableResolution();
         checkAvailableQuality();
         checkTransitions();
-        checkWatermark(BuildConfig.FEATURE_WATERMARK);
+        checkWatermark();
         checkThemeApp(ConfigPreferences.THEME_APP_DARK);
     }
 
@@ -202,8 +202,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         }
     }
 
-    private void checkWatermark(boolean isWatermarkBuildConfigActivated) {
-        if (isWatermarkBuildConfigActivated) {
+    private void checkWatermark() {
+        if (BuildConfig.FEATURE_WATERMARK_SWITCH && !BuildConfig.FEATURE_FORCE_WATERMARK) {
             boolean data = getWatermarkPreferenceFromProjectUseCase.isWatermarkActivated();
             preferencesView.setWatermarkSwitchPref(data);
         } else {
