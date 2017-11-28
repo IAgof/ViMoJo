@@ -61,5 +61,7 @@ public class VimojoLicensesProvider {
     licenseList.add(new LicenseVimojo("Apache Commons Net",context.getString(R.string.licenseApacheCommonsNet)));
     licenseList.add(new LicenseVimojo("OmRecorder", context.getString(R.string.licenseOmRecorder)));
     licenseList.add(new LicenseVimojo("Samsung SDK", context.getString(R.string.licenseSamsungSDK)));
+    licenseList.add(new LicenseVimojo("Retrofit", context.getString(R.string.licenseRetrofit)));
+
   }
 }

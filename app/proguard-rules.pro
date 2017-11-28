@@ -82,6 +82,7 @@
 -dontwarn okio.**
 -dontwarn javax.xml.bind.DatatypeConverter
 -dontwarn org.apache.commons.codec.binary.Base64
+-dontwarn javax.annotation.**
 
 #Glide
 -keep class org.aspectj.**

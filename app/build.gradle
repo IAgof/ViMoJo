@@ -310,4 +310,6 @@ dependencies {
 
     compile 'com.kailashdabhi:om-recorder:1.1.5'
     compile 'com.android.billingclient:billing:1.0'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+
 }
