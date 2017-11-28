@@ -88,15 +88,25 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   private void checkFeaturesAvailable() {
-    if (BuildConfig.FEATURE_WATERMARK) {
-      editorActivityView.watermarkFeatureAvailable();
-    }
+    checkWatermark();
+    checkVimojoStore();
+  }
+
+  private void checkVimojoStore() {
     if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
       playStoreBillingDelegate.initBilling((Activity) editorActivityView);
       editorActivityView.setIconsPurchaseInApp();
     } else {
       editorActivityView.setIconsFeatures();
       editorActivityView.hideVimojoStoreViews();
+    }
+  }
+
+  private void checkWatermark() {
+    if (BuildConfig.FEATURE_WATERMARK_SWITCH && !BuildConfig.FEATURE_FORCE_WATERMARK) {
+      editorActivityView.watermarkFeatureAvailable();
+    } else {
+      editorActivityView.hideWatermarkSwitch();
     }
   }
 
@@ -211,8 +221,10 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   public boolean getPreferenceWaterMark() {
-    boolean isActivateWatermark = sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
-    return isActivateWatermark;
+    if(BuildConfig.FEATURE_FORCE_WATERMARK) {
+      return true;
+    }
+    return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
   }
 
   private void activateWatermarkPreference() {

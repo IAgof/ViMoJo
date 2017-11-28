@@ -64,6 +64,7 @@ node {
     sh "./gradlew crashlyticsUploadDistributionRtveDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
     sh "./gradlew crashlyticsUploadDistributionThomsonFoundationDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
     sh "./gradlew crashlyticsUploadDistributionVimojowatermarkDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
+    sh "./gradlew crashlyticsUploadDistributionVimojoNemSummitDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
   }
 }
 
