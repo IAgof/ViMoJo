@@ -29,9 +29,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class ProjectToRealmProjectMapperTest {
   @Test
   public void testMapReturnsRealmProjectInstance() {
-    Project project = new Project(null, null, null, Profile.getInstance(
-            VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
-            VideoFrameRate.FrameRate.FPS25));
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+    Project project = new Project(null, null, null, compositionProfile);
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
     RealmProject realmProject = mapper.map(project);

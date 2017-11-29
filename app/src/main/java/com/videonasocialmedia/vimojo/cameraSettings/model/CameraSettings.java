@@ -11,13 +11,18 @@ package com.videonasocialmedia.vimojo.cameraSettings.model;
  * Created by alvaro on 14/11/17.
  *
  * Model Camera settings.
- * Configure for camera interface selected and camera recording parameters.
- * User preferences saved on device.
+ * This model stores user preferences for camera interface selected and camera recording parameters
+ * and its intended for use in recording area.
+ * User preferences are saved on device in settings repository.
  * Resolution and frame rate need to be checked if are compatible with hardware user device.
  */
-
 public class CameraSettings {
-
+  public static final String CAMERA_SETTING_QUALITY_16 = "16 Mbps";
+  public static final String CAMERA_SETTING_QUALITY_32 = "32 Mbps";
+  public static final String CAMERA_SETTING_QUALITY_50 = "50 Mbps";
+  public static final int CAMERA_SETTING_QUALITY_16_ID = 16;
+  public static final int CAMERA_SETTING_QUALITY_32_ID = 32;
+  public static final int CAMERA_SETTING_QUALITY_50_ID = 50;
   private ResolutionSetting resolutionSetting;
   private FrameRateSetting frameRateSetting;
   private String quality;
@@ -51,7 +56,7 @@ public class CameraSettings {
     return frameRateSetting;
   }
 
-  public void setFrameRatePreferences(FrameRateSetting frameRateSetting) {
+  public void setFrameRateSetting(FrameRateSetting frameRateSetting) {
     this.frameRateSetting = frameRateSetting;
   }
 

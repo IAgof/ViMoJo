@@ -8,22 +8,22 @@ import android.view.ViewGroup;
 import android.widget.RadioGroup;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingSelectable;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingViewModel;
 
 import java.util.List;
 
 public class CameraSettingsAdapter extends
     RecyclerView.Adapter<CameraSettingsViewHolder> {
 
-  private List<CameraSettingSelectable> cameraSettingsList;
+  private List<CameraSettingViewModel> cameraSettingsList;
   private Context context;
-  private CameraSettingsListClickListener listener;
+  private CameraSettingsListClickListener settingsClickListener;
 
   public void setCameraSettingsListClickListener(CameraSettingsListClickListener listener) {
-    this.listener = listener;
+    this.settingsClickListener = listener;
   }
 
-  public void setCameraSettingsItemsList(List<CameraSettingSelectable> cameraSettingsList) {
+  public void setCameraSettingsItemsList(List<CameraSettingViewModel> cameraSettingsList) {
     this.cameraSettingsList = cameraSettingsList;
     notifyDataSetChanged();
   }
@@ -38,8 +38,8 @@ public class CameraSettingsAdapter extends
 
   @Override
   public void onBindViewHolder(CameraSettingsViewHolder holder, int position) {
-    CameraSettingSelectable cameraSettingSelectable = cameraSettingsList.get(position);
-    holder.bindData(cameraSettingSelectable);
+    CameraSettingViewModel cameraSettingViewModel = cameraSettingsList.get(position);
+    holder.bindData(cameraSettingViewModel);
   }
 
   @Override
@@ -51,6 +51,6 @@ public class CameraSettingsAdapter extends
   }
 
   public void onCheckedChangeCameraSetting(RadioGroup radioGroup, int checkedId) {
-    listener.onCheckedChangeCameraPreference(radioGroup, checkedId);
+    settingsClickListener.onCheckedChangeCameraPreference(radioGroup, checkedId);
   }
 }

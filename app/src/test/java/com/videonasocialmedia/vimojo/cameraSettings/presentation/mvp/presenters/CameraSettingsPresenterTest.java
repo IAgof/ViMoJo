@@ -24,15 +24,15 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.HashMap;
 
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_FRAME_RATE_24_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_FRAME_RATE_25_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_FRAME_RATE_30_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_1080_BACK_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_2160_BACK_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
-import static com.videonasocialmedia.vimojo.utils.Constants.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_24_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_RESOLUTION;
 import static org.hamcrest.CoreMatchers.is;
@@ -93,7 +93,7 @@ public class CameraSettingsPresenterTest {
   @Test
   public void setCameraResolutionPreferenceUpdateRepositoriesProjectAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
-    int resolutionPreferenceId = Constants.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
+    int resolutionPreferenceId = ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
     Project project = getAProject();
     CameraSettings cameraSettings = getCameraSettings();
     when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
@@ -108,7 +108,7 @@ public class CameraSettingsPresenterTest {
   @Test
   public void setCameraFrameRatePreferenceUpdateRepositoriesProjectAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
-    int frameRatePreferenceId = Constants.CAMERA_SETTING_FRAME_RATE_30_ID;
+    int frameRatePreferenceId = FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30_ID;
     Project project = getAProject();
     CameraSettings cameraSettings = getCameraSettings();
     when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
@@ -124,7 +124,7 @@ public class CameraSettingsPresenterTest {
   @Test
   public void setCameraQualityPreferenceUpdateRepositoriesProjectAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
-    int qualityPreferenceId = Constants.CAMERA_SETTING_QUALITY_16_ID;
+    int qualityPreferenceId = CameraSettings.CAMERA_SETTING_QUALITY_16_ID;
     Project project = getAProject();
     CameraSettings cameraSettings = getCameraSettings();
     when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
@@ -165,8 +165,8 @@ public class CameraSettingsPresenterTest {
   }
 
   public Project getAProject() {
-    return Project.getInstance("title", "/path", "private/path",
-        Profile.getInstance(VideoResolution.Resolution.HD1080, VideoQuality.Quality.HIGH,
-            VideoFrameRate.FrameRate.FPS25));
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD1080,
+            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+    return Project.getInstance("title", "/path", "private/path", compositionProfile);
   }
 }

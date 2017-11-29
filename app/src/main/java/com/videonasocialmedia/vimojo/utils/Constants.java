@@ -17,9 +17,11 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
+import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
+import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 
 import java.io.File;
-import java.util.HashMap;
 
 public class Constants {
 
@@ -113,44 +115,19 @@ public class Constants {
     public static final boolean DEFAULT_THEME_DARK_STATE = false;
     public static final boolean DEFAULT_WATERMARK_STATE = true;
 
-    // Default camera setting
-  public static final String CAMERA_SETTING_RESOLUTION_720 = "720p";
-  public static final String CAMERA_SETTING_RESOLUTION_1080 = "1080p";
-  public static final String CAMERA_SETTING_RESOLUTION_2160 = "4k";
-  public static final String DEFAULT_CAMERA_SETTING_RESOLUTION = CAMERA_SETTING_RESOLUTION_1080;
+  public static final String DEFAULT_CAMERA_SETTING_RESOLUTION = ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080;
   public static final VideoResolution.Resolution DEFAULT_CAMERA_SETTING_VIDEO_RESOLUTION =
           VideoResolution.Resolution.HD1080;
-  public static final String CAMERA_SETTING_QUALITY_16 = "16 Mbps";
-  public static final String CAMERA_SETTING_QUALITY_32 = "32 Mbps";
-  public static final String CAMERA_SETTING_QUALITY_50 = "50 Mbps";
-  public static final String DEFAULT_CAMERA_SETTING_QUALITY = CAMERA_SETTING_QUALITY_16;
+  public static final String DEFAULT_CAMERA_SETTING_QUALITY = CameraSettings.CAMERA_SETTING_QUALITY_16;
   public static final VideoQuality.Quality DEFAULT_CAMERA_SETTING_VIDEO_QUALITY =
           VideoQuality.Quality.LOW;
-  public static final String CAMERA_SETTING_FRAME_RATE_24 = "24 fps";
-  public static final String CAMERA_SETTING_FRAME_RATE_25 = "25 fps";
-  public static final String CAMERA_SETTING_FRAME_RATE_30 = "30 fps";
-  public static final String DEFAULT_CAMERA_SETTING_FRAME_RATE = CAMERA_SETTING_FRAME_RATE_30;
+  public static final String DEFAULT_CAMERA_SETTING_FRAME_RATE = FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30;
   public static final VideoFrameRate.FrameRate DEFAULT_CAMERA_SETTING_VIDEO_FRAME_RATE =
           VideoFrameRate.FrameRate.FPS30;
 
   // Default camera setting
 
-    public static final int CAMERA_SETTING_RESOLUTION_720_BACK_ID = 720;
-  public static final int CAMERA_SETTING_RESOLUTION_720_FRONT_ID = 721;
-    public static final int CAMERA_SETTING_RESOLUTION_1080_BACK_ID = 1080;
-  public static final int CAMERA_SETTING_RESOLUTION_1080_FRONT_ID = 1081;
-    public static final int CAMERA_SETTING_RESOLUTION_2160_BACK_ID = 2160;
-  public static final int CAMERA_SETTING_RESOLUTION_2160_FRONT_ID = 2161;
-
-    public static final int CAMERA_SETTING_QUALITY_16_ID = 16;
-    public static final int CAMERA_SETTING_QUALITY_32_ID = 32;
-    public static final int CAMERA_SETTING_QUALITY_50_ID = 50;
-
-    public static final int CAMERA_SETTING_FRAME_RATE_24_ID = 24;
-    public static final int CAMERA_SETTING_FRAME_RATE_25_ID = 25;
-    public static final int CAMERA_SETTING_FRAME_RATE_30_ID = 30;
-
-    public static final int CAMERA_SETTING_INTERFACE_PRO_ID = 1;
+  public static final int CAMERA_SETTING_INTERFACE_PRO_ID = 1;
   public static final String CAMERA_SETTING_INTERFACE_PRO = "Camera pro";
     public static final int CAMERA_SETTING_INTERFACE_BASIC_ID = 2;
   public static final String CAMERA_SETTING_INTERFACE_BASIC = "Camera basic";

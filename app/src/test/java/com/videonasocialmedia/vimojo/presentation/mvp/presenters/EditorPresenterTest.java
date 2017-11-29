@@ -94,8 +94,8 @@ public class EditorPresenterTest {
   }
 
   public Project getAProject() {
-    return Project.getInstance("title", "/path", "private/path",
-            Profile.getInstance(VideoResolution.Resolution.HD1080, VideoQuality.Quality.HIGH,
-                    VideoFrameRate.FrameRate.FPS25));
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD1080,
+            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+    return Project.getInstance("title", "/path", "private/path", compositionProfile);
   }
 }

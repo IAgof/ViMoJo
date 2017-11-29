@@ -3,16 +3,14 @@ package com.videonasocialmedia.vimojo.cameraSettings.model;
 /**
  * Created by ruth on 15/11/17.
  */
-
-public class CameraSettingItems {
-
+public class CameraSettingValue {
   private boolean isSelected;
   private int id;
-  private String titleCameraSettingsItem;
+  private String name;
 
-  public CameraSettingItems(int id, String titleCameraSettingsItem, boolean isSelected) {
+  public CameraSettingValue(int id, String name, boolean isSelected) {
     this.id = id;
-    this.titleCameraSettingsItem = titleCameraSettingsItem;
+    this.name = name;
     this.isSelected = isSelected;
   }
 
@@ -24,13 +22,11 @@ public class CameraSettingItems {
     this.id = id;
   }
 
-  public String getTitleCameraSettingsItem() {
-    return titleCameraSettingsItem;
+  public String getName() {
+    return name;
   }
 
   public boolean isSelected() {
     return isSelected;
   }
 }
-
-

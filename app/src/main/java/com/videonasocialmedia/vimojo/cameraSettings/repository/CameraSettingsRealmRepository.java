@@ -17,11 +17,11 @@ import io.realm.RealmResults;
 
 public class CameraSettingsRealmRepository implements CameraSettingsRepository {
 
-  protected Mapper<RealmCameraSettings, CameraSettings> toCameraPreferencesMapper;
+  protected Mapper<RealmCameraSettings, CameraSettings> toCameraSettingsMapper;
   protected Mapper<CameraSettings, RealmCameraSettings> toRealmCameraMapper;
 
   public CameraSettingsRealmRepository() {
-    this.toCameraPreferencesMapper = new RealmCameraSettingsToCameraSettingsMapper();
+    this.toCameraSettingsMapper = new RealmCameraSettingsToCameraSettingsMapper();
     this.toRealmCameraMapper = new CameraSettingsToRealmCameraSettingsMapper();
   }
 
@@ -41,7 +41,7 @@ public class CameraSettingsRealmRepository implements CameraSettingsRepository {
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmCameraSettings> realmResults = realm.where(RealmCameraSettings.class).findAll();
     if (realmResults.size() > 0) {
-      return toCameraPreferencesMapper.map(realm.copyFromRealm(realmResults.first()));
+      return toCameraSettingsMapper.map(realm.copyFromRealm(realmResults.first()));
     } else {
       //Managed this null in CreateDefaultProjectUseCase.
       return null;
@@ -58,7 +58,7 @@ public class CameraSettingsRealmRepository implements CameraSettingsRepository {
   @Override
   public void setFrameRateSettingSupported(CameraSettings cameraSettings,
                                            FrameRateSetting frameRateSetting) {
-    cameraSettings.setFrameRatePreferences(frameRateSetting);
+    cameraSettings.setFrameRateSetting(frameRateSetting);
     update(cameraSettings);
   }
 
@@ -88,7 +88,7 @@ public class CameraSettingsRealmRepository implements CameraSettingsRepository {
   }
 
   @Override
-  public void createCameraPref(CameraSettings defaultCameraSettings) {
+  public void createCameraSetting(CameraSettings defaultCameraSettings) {
     update(defaultCameraSettings);
   }
 

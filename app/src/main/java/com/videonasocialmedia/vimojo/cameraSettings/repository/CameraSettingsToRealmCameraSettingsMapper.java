@@ -4,7 +4,6 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.repository.Mapper;
-import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.HashMap;
 
@@ -25,15 +24,15 @@ public class CameraSettingsToRealmCameraSettingsMapper implements
         cameraSettings.getInterfaceSelected(),
         cameraSettings.getResolutionSetting().getResolution(),
         cameraSettings.getQuality(), cameraSettings.getFrameRateSetting().getFrameRate(),
-        resolutionsSupportedMap.get(Constants.CAMERA_SETTING_RESOLUTION_720_BACK_ID),
-        resolutionsSupportedMap.get(Constants.CAMERA_SETTING_RESOLUTION_1080_BACK_ID),
-        resolutionsSupportedMap.get(Constants.CAMERA_SETTING_RESOLUTION_2160_BACK_ID),
-        resolutionsSupportedMap.get(Constants.CAMERA_SETTING_RESOLUTION_720_FRONT_ID),
-        resolutionsSupportedMap.get(Constants.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID),
-        resolutionsSupportedMap.get(Constants.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID),
-        frameRateSupportedMap.get(Constants.CAMERA_SETTING_FRAME_RATE_24_ID),
-        frameRateSupportedMap.get(Constants.CAMERA_SETTING_FRAME_RATE_25_ID),
-        frameRateSupportedMap.get(Constants.CAMERA_SETTING_FRAME_RATE_30_ID));
+        resolutionsSupportedMap.get(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID),
+        resolutionsSupportedMap.get(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_BACK_ID),
+        resolutionsSupportedMap.get(ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_BACK_ID),
+        resolutionsSupportedMap.get(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID),
+        resolutionsSupportedMap.get(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID),
+        resolutionsSupportedMap.get(ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID),
+        frameRateSupportedMap.get(FrameRateSetting.CAMERA_SETTING_FRAME_RATE_24_ID),
+        frameRateSupportedMap.get(FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID),
+        frameRateSupportedMap.get(FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30_ID));
     return realmCameraSettings;
   }
 }

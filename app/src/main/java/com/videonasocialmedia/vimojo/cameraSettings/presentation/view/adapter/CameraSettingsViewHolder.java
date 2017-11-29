@@ -9,8 +9,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingItems;
-import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingSelectable;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingValue;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingViewModel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -43,31 +43,31 @@ public class CameraSettingsViewHolder extends RecyclerView.ViewHolder {
     });
   }
 
-  public void bindData(CameraSettingSelectable cameraSettingSelectable) {
+  public void bindData(CameraSettingViewModel cameraSettingViewModel) {
     settingCameraTitleSelectable
-        .setText(cameraSettingSelectable.getTitleCameraSettingsSelectable());
-    if (!cameraSettingSelectable.isAvailable()) {
-      showSettingNotAvailable(cameraSettingSelectable);
+        .setText(cameraSettingViewModel.getSettingTitle());
+    if (!cameraSettingViewModel.isAvailable()) {
+      showSettingNotAvailable(cameraSettingViewModel);
     } else {
-      showSettingsOptions(cameraSettingSelectable);
+      showSettingsOptions(cameraSettingViewModel);
     }
   }
 
-  private void showSettingsOptions(CameraSettingSelectable cameraSettingSelectable) {
+  private void showSettingsOptions(CameraSettingViewModel cameraSettingViewModel) {
     textNotAvailable.setVisibility(View.GONE);
     cameraSettingRadioGroup.setVisibility(View.VISIBLE);
-    for (CameraSettingItems preference : cameraSettingSelectable.getPreferencesList()) {
-      RadioButton preferenceOption = new RadioButton(context);
-      preferenceOption.setId(preference.getId());
-      preferenceOption.setText(preference.getTitleCameraSettingsItem());
-      preferenceOption.setChecked(preference.isSelected());
-      cameraSettingRadioGroup.addView(preferenceOption);
+    for (CameraSettingValue settingItems : cameraSettingViewModel.getSettingsList()) {
+      RadioButton settingOption = new RadioButton(context);
+      settingOption.setId(settingItems.getId());
+      settingOption.setText(settingItems.getName());
+      settingOption.setChecked(settingItems.isSelected());
+      cameraSettingRadioGroup.addView(settingOption);
     }
   }
 
-  private void showSettingNotAvailable(CameraSettingSelectable cameraSettingSelectable) {
+  private void showSettingNotAvailable(CameraSettingViewModel cameraSettingViewModel) {
     textNotAvailable.setText(context.getString(R.string.preference_camera_not_available)
-        + " " + cameraSettingSelectable.getTitleCameraSettingsSelectable());
+        + " " + cameraSettingViewModel.getSettingTitle());
     textNotAvailable.setVisibility(View.VISIBLE);
     cameraSettingRadioGroup.setVisibility(View.GONE);
   }

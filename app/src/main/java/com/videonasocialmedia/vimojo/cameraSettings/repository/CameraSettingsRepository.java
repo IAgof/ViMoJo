@@ -27,7 +27,7 @@ public interface CameraSettingsRepository extends Repository<CameraSettings> {
 
   void setQualitySetting(CameraSettings cameraSettings, String quality);
 
-  void createCameraPref(CameraSettings defaultCameraSettings);
+  void createCameraSetting(CameraSettings defaultCameraSettings);
 
   void setInterfaceSelected(CameraSettings cameraSettings, String interfaceSelected);
 }

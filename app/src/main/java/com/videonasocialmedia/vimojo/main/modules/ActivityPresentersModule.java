@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRealmRepository;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
@@ -50,6 +51,8 @@ import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
+import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProfileRepositoryFromCameraSettings;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
@@ -371,9 +374,9 @@ public class ActivityPresentersModule {
 
   @Provides
   CreateDefaultProjectUseCase provideDefaultProjectCreator(
-          ProjectRepository projectRepository, CameraSettingsRepository cameraSettingsRepository,
-          TrackRepository trackRepository) {
-    return new CreateDefaultProjectUseCase(projectRepository, cameraSettingsRepository, trackRepository);
+          ProjectRepository projectRepository, ProfileRepository profileRepository) {
+    return new CreateDefaultProjectUseCase(projectRepository, profileRepository
+    );
   }
 
   @Provides
@@ -521,5 +524,10 @@ public class ActivityPresentersModule {
 
   @Provides BillingManager provideBillingManager() {
     return new BillingManager();
+  }
+
+  @Provides ProfileRepository provideProfileRepository(
+          CameraSettingsRepository cameraSettingsRepository) {
+    return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository);
   }
 }

@@ -41,7 +41,7 @@ public interface ActivityPresentersComponent {
   void inject(MusicListActivity activity);
   void inject(LicensesActivity activity);
   void inject(CameraSettingsActivity activity);
-  void inject (LicenseDetailActivity activity);
+  void inject(LicenseDetailActivity activity);
   void inject(VoiceOverRecordActivity activity);
   void inject(VideoDuplicateActivity activity);
   void inject(GalleryActivity activity);
