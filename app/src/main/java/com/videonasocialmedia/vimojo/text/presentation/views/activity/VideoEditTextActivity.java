@@ -37,6 +37,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
+import butterknife.OnTouch;
 
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
@@ -99,15 +100,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         button_editText_center.setSelected(true);
         button_ediText_bottom.setSelected(false);
         restoreState(savedInstanceState);
-        clipText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (!clipText.hasFocus()) {
-                    buttonOkOrEditText.setText(getResources().getString(R.string.ok));
-                }
-                return false;
-            }
-        });
     }
 
     @Override
@@ -249,7 +241,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @OnClick (R.id.button_ok_or_edit_text)
     public void onClickOkOrEditText() {
-        if(clipText.hasFocus()) {
+        if (clipText.hasFocus()) {
             hideKeyboard(clipText);
             buttonOkOrEditText.setText(getString(R.string.edit));
             clipText.clearFocus();
@@ -264,6 +256,16 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @OnClick(R.id.button_editText_cancel)
     public void onClickEditTextCancel() {
         navigateTo(EditActivity.class, videoIndexOnTrack);
+    }
+
+    @OnTouch(R.id.text_activityText)
+    boolean onTouch(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (!clipText.hasFocus()) {
+                buttonOkOrEditText.setText(getResources().getString(R.string.ok));
+            }
+        }
+        return false;
     }
 
     @Override
