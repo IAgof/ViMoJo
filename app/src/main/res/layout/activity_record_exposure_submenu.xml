@@ -24,10 +24,10 @@
             android:id="@+id/icon_iso"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_gravity="center"
+            android:layout_gravity="center_horizontal|center"
             android:layout_margin="8dp"
             android:background="#00ffffff"
-            android:scaleType="fitCenter"
+            android:gravity="center"
             android:src="@drawable/activity_record_ic_iso"
             />
     </LinearLayout>
@@ -63,7 +63,7 @@
             android:background="#00ffffff"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:src="@drawable/activity_record_ic_shutter_speed_60"
+            android:src="@drawable/activity_record_ic_stopwatch"
             android:text="100%"/>
     </LinearLayout>
 

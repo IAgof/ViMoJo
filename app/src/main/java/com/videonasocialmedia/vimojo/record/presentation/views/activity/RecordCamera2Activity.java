@@ -16,6 +16,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.util.Range;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -697,6 +698,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
         final TextView isoModeButton = new TextView(this);
         isoModeButton.setLayoutParams(iconISO.getLayoutParams());
         isoModeButton.setText(String.valueOf(isoValue));
+        isoModeButton.setGravity(Gravity.CENTER);
         isoModeButton.setTextColor(getResources().getColor(R.color.button_color_record_activity));
         setIsoModeOnClickListener(isoValue, isoModeButton);
         isoButtons.put(isoModeButton, isoValue);
@@ -1337,7 +1339,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     slideSeekBarMode = SLIDE_SEEKBAR_MODE_MANUAL_EXPOSURE_TIME;
     int maxShutterSpeed = presenter.getMaximumExposureTime();
     maxExposureText.setText("1/" + new Double(1/(maxShutterSpeed/1000000000d)).toString());
-    minExposureText.setText(new Double(minExposureTime /1000000000d).toString());
+    minExposureText.setText("1/" + (1000000000 / minExposureTime));
     exposureTimeSeekBar.setMax(maxShutterSpeed - minExposureTime);
     exposureTimeSeekBar.setProgress(presenter.getCurrentExposureTimeSeekBarProgress());
   }
