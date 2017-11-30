@@ -18,6 +18,10 @@
 
     <color name="textColorTitle">@color/textColorPrimary</color>
 
+    <!--text-->
+    <color name="textColorDark">@color/colorWhite</color>
+    <color name="textColorLight">@color/colorSecondary</color>
+
     <color name="button">@color/colorSecondary</color>
     <color name="button_theme_dark">@color/colorWhite</color>
     <color name="button_pressed">@color/colorPrimary</color>
