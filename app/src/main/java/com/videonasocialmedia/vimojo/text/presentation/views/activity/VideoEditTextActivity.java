@@ -94,7 +94,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
         setupActivityButtons();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
-        stateWasRestored=false;
+        stateWasRestored = false;
         button_editText_top.setSelected(false);
         button_editText_center.setSelected(true);
         button_ediText_bottom.setSelected(false);
@@ -154,7 +154,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             currentPosition = savedInstanceState.getInt(VIDEO_POSITION, 0);
-            typedText=savedInstanceState.getString(CURRENT_TEXT,null);
+            typedText = savedInstanceState.getString(CURRENT_TEXT,null);
             button_ediText_bottom.setSelected(savedInstanceState.getBoolean(STATE_BUTTON_BOTTOM));
             button_editText_center.setSelected(savedInstanceState.getBoolean(STATE_BUTTON_CENTER));
             button_editText_top.setSelected(savedInstanceState.getBoolean(STATE_BUTTON_TOP));
@@ -165,6 +165,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @Override
     protected void onStop() {
         super.onStop();
+        stateWasRestored = true;
     }
 
     @Override
@@ -237,17 +238,17 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     public void paintPositionEditText(TextEffect.TextPosition position) {
-        if(position == TextEffect.TextPosition.BOTTOM) {
+        if (position == TextEffect.TextPosition.BOTTOM) {
             button_editText_top.setSelected(false);
             button_editText_center.setSelected(false);
             button_ediText_bottom.setSelected(true);
         }
-        if(position == TextEffect.TextPosition.CENTER) {
+        if (position == TextEffect.TextPosition.CENTER) {
             button_editText_top.setSelected(false);
             button_editText_center.setSelected(true);
             button_ediText_bottom.setSelected(false);
         }
-        if(position == TextEffect.TextPosition.TOP) {
+        if (position == TextEffect.TextPosition.TOP) {
             button_editText_top.setSelected(true);
             button_editText_center.setSelected(false);
             button_ediText_bottom.setSelected(false);
@@ -326,6 +327,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         if (stateWasRestored) {
             position = getTextPositionSelected().name();
             typedText = getTextFromEditText();
+            stateWasRestored = false;
         } else {
             clipText.setText(text);
         }
