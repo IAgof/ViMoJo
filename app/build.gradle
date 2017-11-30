@@ -63,8 +63,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 79 // 20171128
-            versionName "0.7.5" // 20171129
+            versionCode 80 // 20171130
+            versionName "0.7.6" // 20171130
             resValue "string", "app_out_of_date", "2017-12-31" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "api_base_url", "https://"
@@ -81,8 +81,8 @@ android {
         }
         hispanopost {
             applicationId "com.videonasocialmedia.vimojo.hispanopost"
-            versionCode 58 // 20171128
-            versionName "0.7.5.fHispanopost" // 20171128
+            versionCode 59 // 20171130
+            versionName "0.7.6.fHispanopost" // 20171130
             resValue "string", "app_out_of_date", "2017-12-01"
             resValue "string", "app_name", "HispanoPost"
             resValue "string", "api_base_url", "https://"
@@ -99,8 +99,8 @@ android {
         }
         rtve {
             applicationId "com.videonasocialmedia.vimojo.rtve"
-            versionCode 57 // 20171128
-            versionName "0.7.5.fRtve" // 20171128
+            versionCode 58 // 20171130
+            versionName "0.7.6.fRtve" // 20171130
             resValue "string", "app_out_of_date", "2017-12-31" // 20170731
             resValue "string", "app_name", "Vimojo Rtve"
             resValue "string", "api_base_url", "https://"
@@ -117,8 +117,8 @@ android {
         }
         vimojowatermark {
             applicationId "com.videonasocialmedia.vimojo.vimojowatermark"
-            versionCode 31 // 20171128
-            versionName "0.7.5.fVimojoWatermark" // 20171128
+            versionCode 32 // 20171130
+            versionName "0.7.6.fVimojoWatermark" // 20171130
             resValue "string", "app_out_of_date", "2017-12-31" //20170731
             resValue "string", "app_name", "Vimojo Videona"
             resValue "string", "api_base_url", "https://"
@@ -135,8 +135,8 @@ android {
         }
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 31 // 20171128
-            versionName "0.7.5.fThomsonFoundation" // 20171128
+            versionCode 32 // 20171130
+            versionName "0.7.6.fThomsonFoundation" // 20171130
             resValue "string", "app_out_of_date", "2017-12-31"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "api_base_url", "https://"
@@ -154,8 +154,8 @@ android {
 
         nemsummit {
             applicationId "com.videonasocialmedia.vimojo.nemsummit"
-            versionCode 2 // 20171128
-            versionName "0.7.5.fNemSummit" // 20171128
+            versionCode 3 // 20171130
+            versionName "0.7.6.fNemSummit" // 20171130
             resValue "string", "app_out_of_date", "2017-12-15"
             resValue "string", "app_name", "Vimojo Nem Summit"
             resValue "string", "api_base_url", "https://nemsummit.viday.co/"
