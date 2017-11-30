@@ -1,3 +1,6 @@
+v0.7.4
+- Fixed bug with add/delete watermark in videos when it is selected from drawer
+
 v0.7.3
 - Pro camera features improvements:
 - Fixed problems with metering and focus in samsung phones
