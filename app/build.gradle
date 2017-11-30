@@ -328,3 +328,6 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.9.1'
 
 }
+
+// ADD THIS AT THE BOTTOM
+apply plugin: 'com.google.gms.google-services'
