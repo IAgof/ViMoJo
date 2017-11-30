@@ -13,12 +13,12 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -61,7 +61,7 @@ public class GalleryPagerPresenterTest {
   ApplyAVTransitionsUseCase mockedApplyAVTransitionsUseCase;
   @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
   @Mock private MediaMetadataRetriever mockedMetadataRetriever;
-  @Mock private UpdateVideoResolutionToProjectUseCase mockedUpdateProjectResolution;
+  @Mock private ProjectRepository mockedProjectRepository;
   @Mock Context mockedContext;
   @Mock private SharedPreferences mockedSharedPreferences;
   @Mock private SharedPreferences.Editor mockedPreferencesEditor;
@@ -126,7 +126,7 @@ public class GalleryPagerPresenterTest {
 
     ArgumentCaptor<VideoResolution.Resolution> resolutionCaptor =
             ArgumentCaptor.forClass(VideoResolution.Resolution.class);
-    verify(mockedUpdateProjectResolution).updateResolution(resolutionCaptor.capture());
+    verify(mockedProjectRepository).updateResolution(Mockito.any(Project.class), resolutionCaptor.capture());
     VideoResolution.Resolution resolutionCaptorValue = resolutionCaptor.getValue();
     assertThat(resolutionCaptorValue, is(VideoResolution.Resolution.HD720));
 
@@ -154,8 +154,8 @@ public class GalleryPagerPresenterTest {
 
     galleryPagerPresenter.updateProfileForEmptyProject(project, videoList);
 
-    verify(mockedUpdateProjectResolution, never())
-            .updateResolution(Mockito.any(VideoResolution.Resolution.class));
+    verify(mockedProjectRepository, never())
+            .updateResolution(Mockito.any(Project.class), Mockito.any(VideoResolution.Resolution.class));
     verify(mockedPreferencesEditor, never())
             .putString(eq(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION),
             Mockito.anyString());
@@ -179,8 +179,8 @@ public class GalleryPagerPresenterTest {
 
     galleryPagerPresenter.updateProfileForEmptyProject(project, videoList);
 
-    verify(mockedUpdateProjectResolution, never())
-            .updateResolution(Mockito.any(VideoResolution.Resolution.class));
+    verify(mockedProjectRepository, never()).updateResolution(Mockito.any(Project.class),
+        Mockito.any(VideoResolution.Resolution.class));
   }
 
   @Test
@@ -196,20 +196,20 @@ public class GalleryPagerPresenterTest {
 
     galleryPagerPresenter.updateProfileForEmptyProject(project, videoList);
 
-    verify(mockedUpdateProjectResolution, never())
-            .updateResolution(Mockito.any(VideoResolution.Resolution.class));
+    verify(mockedProjectRepository, never()).updateResolution(Mockito.any(Project.class),
+        Mockito.any(VideoResolution.Resolution.class));
   }
 
   private GalleryPagerPresenter getGalleryPresenter() {
     return new GalleryPagerPresenter(mockedGalleryPagerView, mockedContext,
             mockedAddVideoToProjectUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
-            mockedApplyAVTransitionsUseCase, mockedUpdateProjectResolution,
+            mockedApplyAVTransitionsUseCase, mockedProjectRepository,
             mockedVideoRepository, mockedSharedPreferences);
   }
 
   public Project getAProject() {
-    return Project.getInstance("title", "/path", "private/path",
-        Profile.getInstance(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+    return Project.getInstance("title", "/path", "private/path", compositionProfile);
   }
 }

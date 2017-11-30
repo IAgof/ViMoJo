@@ -1,5 +1,6 @@
-v0.7.5
-- Fixed bug with add/delete watermark user preference
-- Created new flavor Nem summit. Out of date 15th Dec.
-- Added new feature toggle force watermark. Export always videos with watermark.
-- Added new feature toggle upload videos, With a Wifi connection upload video to api_base_url configure after exportation success.
+v0.7.6
+- Record screen, show camera setting parameter resolution, quality, frame rate selected.
+- New feature, select frame rate from camera setting.
+- New camera settings screen. Select interface camera pro or basic, select video quality,
+resolution and frame rate. Values approximate according to hardware device.
+- Update splash screen and launch icon application.

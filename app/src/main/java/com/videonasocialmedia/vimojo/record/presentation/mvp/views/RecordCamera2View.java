@@ -110,7 +110,7 @@ public interface RecordCamera2View {
 
     void setFlashSupported(boolean state);
 
-    void setResolutionSelected(int height);
+    void setCameraSettingSelected(String resolution, String quality, String frameRate);
 
     void setFocusModeManual(MotionEvent event);
 
@@ -149,4 +149,13 @@ public interface RecordCamera2View {
     void showSmartphoneMicrophoneWorking();
 
     void setCameraDefaultSettings();
+
+    // Show/hide default button
+    void showDefaultButton();
+
+    void hideDefaultButton();
+
+    void showAudioGainButton();
+
+    void hideAudioGainButton();
 }

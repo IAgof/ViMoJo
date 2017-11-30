@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.main.modules;
 
 import android.content.Context;
 
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
@@ -19,5 +20,10 @@ public class MockedDataRepositoriesModule extends DataRepositoriesModule {
   @Override
   VideoRepository provideDefaultVideoRepository() {
     return mock(VideoRepository.class);
+  }
+
+  @Override
+  CameraSettingsRepository provideDefaultCameraRepository() {
+    return mock(CameraSettingsRepository.class);
   }
 }

@@ -124,9 +124,9 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
   }
 
   private Project getCurrentProject() {
-    return Project.getInstance("title", testPath, testPath,
-        Profile.getInstance(VideoResolution.Resolution.HD720,VideoQuality.Quality.HIGH,
-            VideoFrameRate.FrameRate.FPS25));
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+            VideoFrameRate.FrameRate.FPS25);
+    return Project.getInstance("title", testPath, testPath, compositionProfile);
   }
 
 

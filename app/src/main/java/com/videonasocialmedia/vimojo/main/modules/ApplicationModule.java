@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProfileSharedPreferencesRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import javax.inject.Singleton;
@@ -35,11 +33,4 @@ public class ApplicationModule {
     return vimojoApplication.getSharedPreferences(
             ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
   }
-
-  @Provides @Singleton
-  ProfileRepository provideDefatulProfileRepository(SharedPreferences sharedPreferences,
-                                                    Context context) {
-    return new ProfileSharedPreferencesRepository(sharedPreferences, context);
-  }
-
 }

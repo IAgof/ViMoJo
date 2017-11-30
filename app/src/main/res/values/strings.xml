@@ -27,6 +27,8 @@
     <string name="dialog_message_record_adapting_video">Working …</string>
     <string name="alert_dialog_info_detail">Info detail</string>
 
+    <string name="activity_camera_settings_no_list">Camera settings empty</string>
+
     <!-- Share Activity -->
     <string name="shareError">Ups, we couldn\'t share this video. Sorry</string>
     <string name="share_using">"Share video using "</string>
@@ -215,28 +217,36 @@
     <!-- Camera Settings -->
     <string name="title_camera_section">Camera</string>
     <string name="resolution">Resolution</string>
-    <string name="low_resolution_value">720</string>
-    <string name="good_resolution_value">1080</string>
-    <string name="high_resolution_value">2160</string>
     <string name="low_resolution_name">720p</string>
     <string name="good_resolution_name">1080p</string>
     <string name="high_resolution_name">4K</string>
+    <string name="low_resolution_value">720</string>
+    <string name="good_resolution_value">1080</string>
+    <string name="high_resolution_value">2160</string>
     <string name="quality">Quality</string>
-    <string name="low_quality_value">16000000</string>
-    <string name="good_quality_value">32000000</string>
-    <string name="high_quality_value">50000000</string>
     <string name="low_quality_name">16 Mbps</string>
     <string name="good_quality_name">32 Mbps</string>
     <string name="high_quality_name">50 Mbps</string>
+    <string name="low_quality_value">16000000</string>
+    <string name="good_quality_value">32000000</string>
+    <string name="high_quality_value">50000000</string>
+    <string name="camera_pro_o_basic">Camera Pro/Basic</string>
+    <string name="camera_pro">Camera Pro</string>
+    <string name="camera_basic">Camera basic</string>
     <string name="frame_rate">Frame rate</string>
-    <string name="low_frame_rate_value">24</string>
-    <string name="good_frame_rate_value">25</string>
-    <string name="high_frame_rate_value">30</string>
     <string name="low_frame_rate_name">24 fps</string>
     <string name="good_frame_rate_name">25 fps</string>
     <string name="high_frame_rate_name">30 fps</string>
+    <string name="low_frame_rate_value">24</string>
+    <string name="good_frame_rate_value">25</string>
+    <string name="high_frame_rate_value">30</string>
+
     <string name="cancelSettingsCamera">Cancel</string>
     <string name="preference_not_available">Preference not available while videos in current project</string>
+    <string name="preference_camera_not_available">Preference not available. All videos in current
+        project must have the same </string>
+    <string name="title_camera_settings_activity">Camera Settings</string>
+
 
     <!-- Transition Settings -->
     <string name="title_fade_transition">Transition</string>
