@@ -55,21 +55,20 @@ public class DetailProjectPresenterTest {
   }
 
   @Test
-  public void initPresenterCallsProjectTitleAndInfo(){
-
+  public void initPresenterCallsProjectTitleAndInfo() {
     Project project = getAProject();
-    Profile profile = Profile.getInstance(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-    project.setProfile(profile);
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+    project.setProfile(compositionProfile);
     injectedPresenter.init();
     verify(mockedDetailProjectView).showTitleProject(null);
     verify(mockedDetailProjectView).showDetailProjectInfo(0,0,1280,50,25);
   }
 
   private Project getAProject() {
-    return Project.getInstance("title", "/path", "private/path",
-        Profile.getInstance(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+    return Project.getInstance("title", "/path", "private/path", compositionProfile);
   }
 
 }

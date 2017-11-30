@@ -1,7 +1,9 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 
 import org.junit.Before;
@@ -20,6 +22,9 @@ public class InitAppPresenterTest {
 
   @Mock CreateDefaultProjectUseCase mockedUseCase;
   @Mock SharedPreferences mockedSharedPreferences;
+  @Mock Context mockedContext;
+  @Mock CameraSettingsRepository mockedCameraSettingsRepository;
+
 
   @Before
   public void initDoubles() {
@@ -37,6 +42,7 @@ public class InitAppPresenterTest {
   }
 
   private InitAppPresenter getInitAppPresenter() {
-    return new InitAppPresenter(mockedSharedPreferences, mockedUseCase);
+    return new InitAppPresenter(mockedContext, mockedSharedPreferences, mockedUseCase,
+        mockedCameraSettingsRepository);
   }
 }

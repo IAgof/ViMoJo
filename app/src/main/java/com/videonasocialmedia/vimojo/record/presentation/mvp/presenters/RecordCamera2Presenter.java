@@ -26,8 +26,9 @@ import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
@@ -49,9 +50,7 @@ import java.util.List;
  *  Created by alvaro on 16/01/17.
  */
 
-public class RecordCamera2Presenter implements Camera2WrapperListener
-//        , OnLaunchAVTransitionTempFileListener
-{
+public class RecordCamera2Presenter implements Camera2WrapperListener {
   public static final int DEFAULT_CAMERA_ID = 0;
   private static final int NORMALIZE_PICOMETER_VALUE = 108;
   private static final double MAX_AMPLITUDE_VALUE_PICOMETER = 32768;
@@ -60,6 +59,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
   private static final String TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
+  private CameraSettingsRepository cameraSettingsRepository;
+  private CameraSettings cameraSettings;
   private SharedPreferences sharedPreferences;
   protected UserEventTracker userEventTracker;
   private final NewClipImporter newClipImporter;
@@ -85,17 +86,22 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
     }
   };
 
+  // TODO:(alvaro.martinez) 14/11/17 get data from realm camera repository
+  private boolean cameraProSelected = false;
+
   public RecordCamera2Presenter(
-          Context context, RecordCamera2View recordView,
-          UserEventTracker userEventTracker,
-          SharedPreferences sharedPreferences,
-          AddVideoToProjectUseCase addVideoToProjectUseCase, NewClipImporter newClipImporter,
-          Camera2Wrapper camera) {
+      Context context, RecordCamera2View recordView,
+      UserEventTracker userEventTracker,
+      SharedPreferences sharedPreferences,
+      AddVideoToProjectUseCase addVideoToProjectUseCase, NewClipImporter newClipImporter,
+      Camera2Wrapper camera, CameraSettingsRepository cameraSettingsRepository) {
     this.context = context;
     this.recordView = recordView;
     this.userEventTracker = userEventTracker;
     this.sharedPreferences = sharedPreferences;
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
+    this.cameraSettingsRepository = cameraSettingsRepository;
+
     this.currentProject = loadProject();
     // TODO:(alvaro.martinez) 25/01/17 Support camera1, api <21 or combine both. Make Camera1Wrapper
 //    camera = new Camera2Wrapper(context, DEFAULT_CAMERA_ID, textureView, directorySaveVideos,
@@ -111,7 +117,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
   }
 
   public void initViews() {
-    recordView.setResolutionSelected(getResolutionHeight(currentProject));
+    cameraSettings = cameraSettingsRepository.getCameraSettings();
+    checkCameraInterface(cameraSettings);
+    recordView.setCameraSettingSelected(cameraSettings.getResolutionSettingValue(),
+            cameraSettings.getQuality(), cameraSettings.getFrameRateSettingValue());
     recordView.showPrincipalViews();
     recordView.showRightControlsView();
     recordView.showSettingsCameraView();
@@ -119,51 +128,49 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
     setupAdvancedCameraControls();
   }
 
+  private void checkCameraInterface(CameraSettings cameraSettings) {
+    if(cameraSettings.getInterfaceSelected()
+            .equals(Constants.CAMERA_SETTING_INTERFACE_PRO)) {
+      cameraProSelected = true;
+    }
+  }
+
   private void setupAdvancedCameraControls() {
-    if (!camera.ISOSelectionSupported()) {
+    if (!camera.ISOSelectionSupported() || !cameraProSelected) {
       recordView.hideISOSelection();
     } else {
       recordView.showISOSelection();
       recordView.setupISOSupportedModesButtons(camera.getSupportedISORange());
     }
-    if (!camera.focusSelectionSupported()) {
+    if (!camera.focusSelectionSupported() || !cameraProSelected) {
       recordView.hideAdvancedAFSelection();
     } else {
       recordView.showAdvancedAFSelection();
       recordView.setupFocusSelectionSupportedModesButtons(
               camera.getSupportedFocusSelectionModes().values);
     }
-    if (!camera.whiteBalanceSelectionSupported()) {
+    if (!camera.whiteBalanceSelectionSupported() || !cameraProSelected) {
       recordView.hideWhiteBalanceSelection();
     } else {
       recordView.showWhiteBalanceSelection();
       recordView.setupWhiteBalanceSupportedModesButtons(
               camera.getSupportedWhiteBalanceModes().values);
     }
-    if (!camera.metteringModeSelectionSupported()) {
+    if (!camera.metteringModeSelectionSupported() || !cameraProSelected) {
       recordView.hideMetteringModeSelection();
     } else {
       recordView.showMetteringModeSelection();
       recordView.setupMeteringModeSupportedModesButtons(
               camera.getSupportedMeteringModes().values);
     }
-  }
 
-  private int getResolutionHeight(Project currentProject) {
-    VideoResolution.Resolution resolution = currentProject.getProfile().getResolution();
-    int height;
-    switch (resolution) {
-      case HD1080:
-        height = 1080;
-        break;
-      case HD4K:
-        height = 2160;
-        break;
-      case HD720:
-      default:
-        height = 720;
+    if (!cameraProSelected) {
+      recordView.hideDefaultButton();
+      recordView.hideAudioGainButton();
+    } else {
+      recordView.showDefaultButton();
+      recordView.showAudioGainButton();
     }
-    return height;
   }
 
   public void onResume() {
@@ -383,7 +390,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener
 
   private void addVideoToProject(Video recordedVideo) {
     addVideoToProjectUseCase.addVideoToProjectAtPosition(recordedVideo,
-            currentProject.numberOfClips(), new OnAddMediaFinishedListener() {
+        currentProject.numberOfClips(), new OnAddMediaFinishedListener() {
               @Override
               public void onAddMediaItemToTrackError() {
                 recordView.showError(context.getString(R.string.addMediaItemToTrackError));

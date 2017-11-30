@@ -56,8 +56,8 @@ public class UpdateAudioTransitionPreferenceToProjectUseCaseTest {
   }
 
   private Project getAProject() {
-    return new Project("title", "/path","private/path",
-        Profile.getInstance(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+    return new Project("title", "/path","private/path", compositionProfile);
   }
 }

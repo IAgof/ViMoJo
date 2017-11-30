@@ -67,9 +67,9 @@ public class UpdateCurrentProjectUseCaseTest {
   }
 
   private Project getAProject() {
-    return Project.getInstance("title", "/path", "private/path",
-        Profile.getInstance(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+    return Project.getInstance("title", "/path", "private/path", compositionProfile);
   }
 
 }
