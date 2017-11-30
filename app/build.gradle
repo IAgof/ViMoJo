@@ -63,8 +63,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 80 // 20171130
-            versionName "0.7.6" // 20171130
+            versionCode 81 // 20171130
+            versionName "0.7.6.1" // 20171130
             resValue "string", "app_out_of_date", "2017-12-31" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "api_base_url", "https://"
@@ -79,10 +79,10 @@ android {
             ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
             manifestPlaceholders = [appName: "Vimojo", fabricApiKey: "1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
         }
-        hispanopost {
+        /*hispanopost {
             applicationId "com.videonasocialmedia.vimojo.hispanopost"
-            versionCode 59 // 20171130
-            versionName "0.7.6.fHispanopost" // 20171130
+            versionCode 60 // 20171130
+            versionName "0.7.6.1.fHispanopost" // 20171130
             resValue "string", "app_out_of_date", "2017-12-01"
             resValue "string", "app_name", "HispanoPost"
             resValue "string", "api_base_url", "https://"
@@ -96,11 +96,11 @@ android {
             ext.fabricApiKey = "3fc92dd8023e505ebab31a962e1eb284f37696bb"
             ext.fabricApiSecret = "f88950e831f1f8c6d7402b96e4e93c1c2f71f1e021dc68b183b8b3d2456b9b67"
             manifestPlaceholders = [appName: "HispanoPost", fabricApiKey: "3fc92dd8023e505ebab31a962e1eb284f37696bb"]
-        }
+        }*/
         rtve {
             applicationId "com.videonasocialmedia.vimojo.rtve"
-            versionCode 58 // 20171130
-            versionName "0.7.6.fRtve" // 20171130
+            versionCode 59 // 20171130
+            versionName "0.7.6.1.fRtve" // 20171130
             resValue "string", "app_out_of_date", "2017-12-31" // 20170731
             resValue "string", "app_name", "Vimojo Rtve"
             resValue "string", "api_base_url", "https://"
@@ -115,10 +115,10 @@ android {
             ext.fabricApiSecret = "b3bf19cf86f8075700885f47ec7cf2813b8d8b6832a78a008ed9b757e5a56d91"
             manifestPlaceholders = [appName: "Vimojo Rtve", fabricApiKey: "9600ab9fda1b0c0991396ffc882a957bbcca8678"]
         }
-        vimojowatermark {
+       /* vimojowatermark {
             applicationId "com.videonasocialmedia.vimojo.vimojowatermark"
-            versionCode 32 // 20171130
-            versionName "0.7.6.fVimojoWatermark" // 20171130
+            versionCode 33 // 20171130
+            versionName "0.7.6.1.fVimojoWatermark" // 20171130
             resValue "string", "app_out_of_date", "2017-12-31" //20170731
             resValue "string", "app_name", "Vimojo Videona"
             resValue "string", "api_base_url", "https://"
@@ -132,11 +132,11 @@ android {
             ext.fabricApiKey = "ef7283ce8f2da3b2c5dc022a1d7952f349f659c5"
             ext.fabricApiSecret = "fdb53a8ca1d8e71f363963c0624f7606af4ed317c57340afc4a72303eef221b0"
             manifestPlaceholders = [appName: "Vimojo Videona", fabricApiKey: "ef7283ce8f2da3b2c5dc022a1d7952f349f659c5"]
-        }
+        }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
             versionCode 32 // 20171130
-            versionName "0.7.6.fThomsonFoundation" // 20171130
+            versionName "0.7.6.1.fThomsonFoundation" // 20171130
             resValue "string", "app_out_of_date", "2017-12-31"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "api_base_url", "https://"
@@ -152,10 +152,10 @@ android {
             manifestPlaceholders = [appName: "Vimojo Thomson Foundation", fabricApiKey: "c5e050918c143441f6b23e7936f7f83faa1330b4"]
         }
 
-        nemsummit {
+        /*nemsummit {
             applicationId "com.videonasocialmedia.vimojo.nemsummit"
-            versionCode 3 // 20171130
-            versionName "0.7.6.fNemSummit" // 20171130
+            versionCode 4 // 20171130
+            versionName "0.7.6.1.fNemSummit" // 20171130
             resValue "string", "app_out_of_date", "2017-12-15"
             resValue "string", "app_name", "Vimojo Nem Summit"
             resValue "string", "api_base_url", "https://nemsummit.viday.co/"
@@ -169,7 +169,7 @@ android {
             ext.fabricApiKey = "cc4515beda76fe1e841888650366e5a069c590a1"
             ext.fabricApiSecret = "4381a2ca62cb21c2118e3319917e7ccc53fd659bd726bdd1175f540e14e7186d"
             manifestPlaceholders = [appName: "Vimojo Nem Summit", fabricApiKey: "cc4515beda76fe1e841888650366e5a069c590a1"]
-        }
+        }*/
     }
     File fabricProperties = new File("${project.projectDir.absolutePath}/fabric.properties")
     applicationVariants.all { variant ->
@@ -328,3 +328,6 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.9.1'
 
 }
+
+// ADD THIS AT THE BOTTOM
+apply plugin: 'com.google.gms.google-services'
