@@ -99,8 +99,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         button_editText_center.setSelected(true);
         button_ediText_bottom.setSelected(false);
         restoreState(savedInstanceState);
-        presenter.init(videoIndexOnTrack);
-        clipText.requestFocus();
         clipText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -143,6 +141,8 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
+        presenter.init(videoIndexOnTrack);
+        clipText.requestFocus();
         showKeyboard();
     }
 
@@ -301,7 +301,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         video = new Video(movieList.get(0));
         ArrayList<Video> clipList = new ArrayList<>();
         clipList.add(video);
-        if(movieList.get(0).hasText()) {
+        if (video.hasText()) {
             initTextToVideoAdded(video.getClipText(), video.getClipTextPosition());
             video.setClipText("");
         }
@@ -323,7 +323,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @Override
     public void initTextToVideoAdded(String text, String position) {
-        if(stateWasRestored) {
+        if (stateWasRestored) {
             position = getTextPositionSelected().name();
             typedText = getTextFromEditText();
         } else {
@@ -349,7 +349,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         updateTextinPreview();
 
         if (null != clipText.getLayout() && clipText.getLayout().getLineCount() > MAX_LINES) {
-            if(!hasTypedMoreThanTwoLines){
+            if (!hasTypedMoreThanTwoLines){
                 showError(getString(R.string.error_videoEdit));
                 hasTypedMoreThanTwoLines =true;
                 clipText.setTextColor(Color.RED);
@@ -363,9 +363,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     private void changeColorText() {
         String currentTheme= presenter.getCurrentTheme();
         if (currentTheme.equals(THEME_DARK) ){
-           clipText.setTextColor(getResources().getColor(R.color.colorWhite));
+           clipText.setTextColor(getResources().getColor(R.color.textColorDark));
         } else {
-            clipText.setTextColor(getResources().getColor(R.color.textColorPrimary));
+            clipText.setTextColor(getResources().getColor(R.color.textColorLight));
         }
     }
 
