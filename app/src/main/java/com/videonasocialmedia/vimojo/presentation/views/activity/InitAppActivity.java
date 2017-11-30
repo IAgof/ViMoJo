@@ -389,8 +389,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     @Override
     public void onCheckPathsAppSuccess() throws CameraAccessException {
-        presenter.startLoadingProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
-            BuildConfig.FEATURE_WATERMARK);
+        presenter.startLoadingProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID);
         setupStartApp();
     }
 

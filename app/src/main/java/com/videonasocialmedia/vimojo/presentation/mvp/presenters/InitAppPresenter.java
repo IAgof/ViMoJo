@@ -1,5 +1,8 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import android.content.SharedPreferences;
+
+import com.videonasocialmedia.vimojo.BuildConfig;
 import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.util.Log;
@@ -10,6 +13,7 @@ import com.videonasocialmedia.camera.utils.Camera2Settings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -37,21 +41,31 @@ public class InitAppPresenter {
   private final Context context;
   private final CameraSettingsRepository cameraSettingsRepository;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
+  private SharedPreferences sharedPreferences;
   private CameraSettings cameraSettings;
   private String LOG_TAG = InitAppPresenter.class.getCanonicalName();
 
 
   @Inject
-  public InitAppPresenter(Context context, CreateDefaultProjectUseCase
-          createDefaultProjectUseCase, CameraSettingsRepository cameraSettingsRepository) {
+  public InitAppPresenter(Context context, SharedPreferences sharedPreferences,
+                          CreateDefaultProjectUseCase createDefaultProjectUseCase,
+                          CameraSettingsRepository cameraSettingsRepository) {
     this.context = context;
+    this.sharedPreferences = sharedPreferences;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
+
   }
 
-  public void startLoadingProject(String rootPath, String privatePath,
-                                  boolean isWatermarkFeatured) {
-    createDefaultProjectUseCase.loadOrCreateProject(rootPath, privatePath, isWatermarkFeatured);
+  public void startLoadingProject(String rootPath, String privatePath) {
+    createDefaultProjectUseCase.loadOrCreateProject(rootPath, privatePath, isWatermarkActivated());
+  }
+
+  public boolean isWatermarkActivated() {
+    if(BuildConfig.FEATURE_FORCE_WATERMARK) {
+      return true;
+    }
+    return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
   }
 
   public void checkCamera2FrameRateAndResolutionSupported() {

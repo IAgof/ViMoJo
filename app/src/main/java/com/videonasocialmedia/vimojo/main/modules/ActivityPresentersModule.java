@@ -91,6 +91,7 @@ import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditT
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
+import com.videonasocialmedia.vimojo.upload.domain.UploadVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import dagger.Module;
@@ -296,17 +297,19 @@ public class ActivityPresentersModule {
                              CreateDefaultProjectUseCase createDefaultProjectUseCase,
                              AddLastVideoExportedToProjectUseCase
                                      addLastVideoExportedProjectUseCase,
-                             ExportProjectUseCase exportProjectUseCase) {
-    return new ShareVideoPresenter((ShareActivity) activity, userEventTracker, sharedPreferences,
+                             ExportProjectUseCase exportProjectUseCase,
+                             UploadVideoUseCase uploadVideoUseCase) {
+    return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker, sharedPreferences,
             createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
-            exportProjectUseCase);
+            exportProjectUseCase, uploadVideoUseCase);
   }
 
   @Provides @PerActivity
-  InitAppPresenter provideInitAppPresenter(
+  InitAppPresenter provideInitAppPresenter(SharedPreferences sharedPreferences,
           CreateDefaultProjectUseCase createDefaultProjectUseCase, CameraSettingsRepository
           cameraSettingsRepository) {
-    return new InitAppPresenter(activity, createDefaultProjectUseCase, cameraSettingsRepository);
+    return new InitAppPresenter(activity, sharedPreferences, createDefaultProjectUseCase,
+        cameraSettingsRepository);
   }
 
   @Provides @PerActivity
@@ -327,14 +330,15 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   GalleryProjectListPresenter provideGalleryProjectListPresenter(
       ProjectRepository projectRepository,
+      SharedPreferences sharedPreferences,
       CreateDefaultProjectUseCase createDefaultProjectUseCase,
       UpdateCurrentProjectUseCase updateCurrentProjectUseCase,
       DuplicateProjectUseCase duplicateProjectUseCase,
       DeleteProjectUseCase deleteProjectUseCase,
       CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCase) {
-    return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, projectRepository,
-        createDefaultProjectUseCase, updateCurrentProjectUseCase, duplicateProjectUseCase,
-        deleteProjectUseCase, checkIfProjectHasBeenExportedUseCase);
+    return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, sharedPreferences,
+        projectRepository, createDefaultProjectUseCase, updateCurrentProjectUseCase,
+        duplicateProjectUseCase, deleteProjectUseCase, checkIfProjectHasBeenExportedUseCase);
   }
 
   @Provides @PerActivity
@@ -524,6 +528,10 @@ public class ActivityPresentersModule {
 
   @Provides BillingManager provideBillingManager() {
     return new BillingManager();
+  }
+
+  @Provides UploadVideoUseCase provideUploadVideoUseCase() {
+    return new UploadVideoUseCase();
   }
 
   @Provides ProfileRepository provideProfileRepository(
