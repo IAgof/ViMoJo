@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
@@ -92,8 +91,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
         Intent intent = getIntent();
 
-        setupActivityButtons();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
+        presenter.updateColorButton();
+        presenter.updateColorText();
         stateWasRestored = false;
         button_editText_top.setSelected(false);
         button_editText_center.setSelected(true);
@@ -108,21 +108,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
                 return false;
             }
         });
-    }
-
-    private void setupActivityButtons() {
-      String currentTheme= presenter.getCurrentTheme();
-      if (currentTheme.equals(THEME_DARK)) {
-        tintEditButtons(R.color.button_color_theme_dark);
-      } else {
-        tintEditButtons(R.color.button_color_theme_light);
-      }
-    }
-
-    private void tintEditButtons(int tintList) {
-        tintButton(button_editText_top, tintList);
-        tintButton(button_editText_center, tintList);
-        tintButton(button_ediText_bottom, tintList);
     }
 
     @Override
@@ -342,6 +327,36 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     @Override
+    public void updateButtonToThemeDark() {
+      tintEditButtons(R.color.button_color_theme_dark);
+    }
+
+    @Override
+    public void updateButtonToThemeLight() {
+        tintEditButtons(R.color.button_color_theme_light);
+    }
+
+    @Override
+    public void updateTextToThemeDark() {
+      tintText(R.color.textColorDark);
+    }
+
+    @Override
+    public void updateTextToThemeLight() {
+        tintText(R.color.textColorLight);
+    }
+
+    private void tintText(int textColor) {
+        clipText.setTextColor(getResources().getColor(textColor));
+    }
+
+    private void tintEditButtons(int tintList) {
+      tintButton(button_editText_top, tintList);
+      tintButton(button_editText_center, tintList);
+      tintButton(button_ediText_bottom, tintList);
+    }
+
+  @Override
     public void newClipPlayed(int currentClipIndex) {
     }
 
@@ -358,18 +373,10 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
             }
         } else {
             hasTypedMoreThanTwoLines =false;
-            changeColorText();
+            presenter.updateColorText();
         }
     }
 
-    private void changeColorText() {
-        String currentTheme= presenter.getCurrentTheme();
-        if (currentTheme.equals(THEME_DARK) ){
-           clipText.setTextColor(getResources().getColor(R.color.textColorDark));
-        } else {
-            clipText.setTextColor(getResources().getColor(R.color.textColorLight));
-        }
-    }
 
     private void updateTextinPreview() {
         if (button_editText_top.isSelected()) {

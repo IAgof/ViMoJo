@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.text.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.util.TypedValue;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
@@ -43,6 +44,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
     private Context context;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
+    private final String THEME_DARK = "dark";
 
 
     @Inject
@@ -105,10 +107,29 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
         editTextView.updateProject();
     }
 
-  public String getCurrentTheme() {
-    TypedValue outValue = new TypedValue();
-    context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
-    return (String) outValue.string;
+  public void updateColorButton() {
+      TypedValue currentTheme = getCurrentTheme();
+      if (currentTheme.string.equals(THEME_DARK)) {
+          editTextView.updateButtonToThemeDark();
+      } else {
+          editTextView.updateButtonToThemeLight();
+      }
   }
+
+    public void updateColorText() {
+        TypedValue currentTheme = getCurrentTheme();
+        if (currentTheme.string.equals(THEME_DARK)) {
+            editTextView.updateTextToThemeDark();
+        } else {
+            editTextView.updateTextToThemeLight();
+        }
+    }
+
+    @NonNull
+    public TypedValue getCurrentTheme() {
+        TypedValue outValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
+        return outValue;
+    }
 }
 
