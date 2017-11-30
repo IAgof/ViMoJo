@@ -19,6 +19,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.FirebaseApp;
 import com.karumi.dexter.Dexter;
 import com.squareup.leakcanary.LeakCanary;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -111,6 +112,8 @@ public class VimojoApplication extends Application {
         analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
         appTracker = analytics.newTracker(R.xml.app_tracker);
         appTracker.enableAdvertisingIdCollection(true);
+
+      FirebaseApp.initializeApp(this);
     }
 
     private void setupLeakCanary() {
