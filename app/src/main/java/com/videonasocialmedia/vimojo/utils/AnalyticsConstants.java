@@ -133,4 +133,16 @@ public class AnalyticsConstants {
     public static final String THEME_CHANGE_SOURCE_SETTINGS = "sourceThemeSettings";
     public static final String THEME_APP_ACTION_DARK = "Theme dark";
     public static final String THEME_APP_ACTION_LIGHT = "Theme light";
+
+    /**
+     * Camera Settings, user interactions
+     */
+    public static final String ACTION_RESOLUTION_CHANGED = "resolutionChanged";
+    public static final String ACTION_RESOLUTION_SELECTED = "resolutionSelected";
+    public static final String ACTION_QUALITY_CHANGED = "qualityChanged";
+    public static final String ACTION_QUALITY_SELECTED = "qualitySelected";
+    public static final String ACTION_FRAME_RATE_CHANGED = "frameRateChanged";
+    public static final String ACTION_FRAME_RATE_SELECTED = "frameRateSelected";
+    public static final String ACTION_INTERFACE_CAMERA_CHANGED = "interfaceCameraChanged";
+    public static final String ACTION_INTERFACE_CAMERA_SELECTED = "interfaceCameraSelected";
 }

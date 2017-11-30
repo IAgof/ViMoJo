@@ -30,7 +30,7 @@ public class TextPreviewPresenterTest {
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", "private/path",
-            Profile.getInstance(null, null, null));
+        Profile compositionProfile = new Profile(null, null, null);
+        return Project.getInstance("title", "/path", "private/path", compositionProfile);
     }
 }

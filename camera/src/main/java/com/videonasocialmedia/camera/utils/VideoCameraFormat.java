@@ -12,11 +12,13 @@ public class VideoCameraFormat {
   private int audioBitrate = 192 * 1000;
   private int audioChannels = 1;
   private int samplingRate = 48 * 1000;
+  private int frameRate = 30;
 
-  public VideoCameraFormat(int videoWidth, int videoHeight, int videoBitrate){
+  public VideoCameraFormat(int videoWidth, int videoHeight, int videoBitrate, int frameRate){
     this.videoWidth = videoWidth;
     this.videoHeight = videoHeight;
     this.videoBitrate = videoBitrate;
+    this.frameRate = frameRate;
   }
 
   public int getVideoWidth() {
@@ -41,5 +43,9 @@ public class VideoCameraFormat {
 
   public int getAudioSamplingRate() {
     return samplingRate;
+  }
+
+  public int getFrameRate() {
+    return frameRate;
   }
 }

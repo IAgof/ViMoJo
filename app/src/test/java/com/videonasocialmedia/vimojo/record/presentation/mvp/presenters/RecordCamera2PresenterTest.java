@@ -17,6 +17,10 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
+import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
+import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
+import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
@@ -40,6 +44,18 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import java.util.HashMap;
+
+import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_24_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
@@ -65,8 +81,7 @@ public class RecordCamera2PresenterTest {
   @Mock SharedPreferences mockedSharedPreferences;
   @Mock SharedPreferences.Editor mockedEditor;
   @Mock AutoFitTextureView mockedTextureView;
-  @Mock
-  ApplyAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionUseCase;
+  @Mock ApplyAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionUseCase;
   @Mock AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
   @Mock VideonaFormat mockedVideoFormat;
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
@@ -75,6 +90,8 @@ public class RecordCamera2PresenterTest {
   @Mock private Camera2Wrapper mockedCamera2Wrapper;
   @Mock private VideoRepository mockedVideoRepository;
   @Mock private NewClipImporter mockedNewClipImporter;
+  @Mock CameraSettingsRepository mockedCameraSettingsRepository;
+  @Mock CameraSettings mockedCameraSettings;
 
 
   @InjectMocks private RecordCamera2Presenter injectedPresenter;
@@ -98,11 +115,13 @@ public class RecordCamera2PresenterTest {
   @Test
   public void initViewsWithControlsViewAndSettingsCameraViewSelectedCallsCorrectRecordView() {
     presenter = getRecordCamera2Presenter();
+    CameraSettings cameraSettings = getCameraSettings();
+    when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
 
     presenter.initViews();
 
     verify(mockedRecordView).hideRecordPointIndicator();
-    verify(mockedRecordView).setResolutionSelected(720);
+    verify(mockedRecordView).setCameraSettingSelected(anyString(), anyString(), anyString());
     verify(mockedRecordView).showPrincipalViews();
     verify(mockedRecordView).showRightControlsView();
   }
@@ -110,11 +129,13 @@ public class RecordCamera2PresenterTest {
   @Test
   public void initViewsDefaultInitializationCallsCorrectRecordView() {
     presenter = getRecordCamera2Presenter();
+    CameraSettings cameraSettings = getCameraSettings();
+    when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
 
     presenter.initViews();
 
     verify(mockedRecordView).hideRecordPointIndicator();
-    verify(mockedRecordView).setResolutionSelected(720);
+    verify(mockedRecordView).setCameraSettingSelected(anyString(), anyString(), anyString());
     verify(mockedRecordView).showPrincipalViews();
     verify(mockedRecordView).showRightControlsView();
   }
@@ -335,6 +356,28 @@ public class RecordCamera2PresenterTest {
   private RecordCamera2Presenter getRecordCamera2Presenter() {
     return new RecordCamera2Presenter(mockedActivity,
             mockedRecordView, mockedUserEventTracker, mockedSharedPreferences,
-            mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper);
+            mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper,
+            mockedCameraSettingsRepository);
+  }
+
+  private CameraSettings getCameraSettings() {
+    HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_FRONT_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, false);
+    ResolutionSetting resolutionSetting = new ResolutionSetting("1080p", resolutionsSupportedMap);
+    HashMap<Integer, Boolean> frameRatesSupportedMap = new HashMap<>();
+    frameRatesSupportedMap.put(CAMERA_SETTING_FRAME_RATE_24_ID, false);
+    frameRatesSupportedMap.put(CAMERA_SETTING_FRAME_RATE_25_ID, false);
+    frameRatesSupportedMap.put(CAMERA_SETTING_FRAME_RATE_30_ID, true);
+    FrameRateSetting frameRateSetting = new FrameRateSetting("30 fps", frameRatesSupportedMap);
+    String quality = "16 Mbps";
+    String interfaceSelected = DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
+    CameraSettings cameraSettings = new CameraSettings(resolutionSetting,
+            frameRateSetting, quality, interfaceSelected);
+    return cameraSettings;
   }
 }

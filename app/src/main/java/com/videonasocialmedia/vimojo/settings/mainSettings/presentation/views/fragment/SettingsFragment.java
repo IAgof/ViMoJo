@@ -47,17 +47,11 @@ public class SettingsFragment extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener, PreferencesView {
     @Inject PreferencesPresenter preferencesPresenter;
 
-    protected PreferenceCategory cameraSettingsPref;
     protected PreferenceCategory ftp1Pref;
     protected PreferenceCategory ftp2Pref;
     protected PreferenceCategory transitionCategory;
     protected PreferenceCategory watermarkPrefCategory;
     protected Preference emailPref;
-    protected ListPreference resolutionPref;
-    protected ListPreference qualityPref;
-    protected Preference resolutionPrefNotAvailable;
-    protected Preference qualityPrefNotAvailable;
-    protected Preference frameRatePrefNotAvailable;
     protected SwitchPreference transitionsVideoPref;
     protected SwitchPreference transitionsAudioPref;
     protected SwitchPreference watermarkSwitchPref;
@@ -85,9 +79,8 @@ public class SettingsFragment extends PreferenceFragment implements
     private FragmentPresentersComponent initComponent() {
         return DaggerFragmentPresentersComponent.builder()
             .fragmentPresentersModule(new FragmentPresentersModule(this, context, sharedPreferences,
-                cameraSettingsPref, resolutionPref,qualityPref, transitionsVideoPref,
-                transitionsAudioPref,watermarkSwitchPref, themeappSwitchPref, emailPref,
-                this.getActivity()))
+                transitionsVideoPref, transitionsAudioPref, watermarkSwitchPref,
+                    themeappSwitchPref, emailPref, this.getActivity()))
             .systemComponent(((VimojoApplication)getActivity().getApplication()).getSystemComponent())
             .build();
     }
@@ -101,7 +94,6 @@ public class SettingsFragment extends PreferenceFragment implements
                 Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        setupCameraSettings();
         setupWatermark();
         setupMailValid();
         setupAboutUs();
@@ -147,17 +139,6 @@ public class SettingsFragment extends PreferenceFragment implements
         // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
         themeappSwitchPref = (SwitchPreference) findPreference(ConfigPreferences.THEME_APP_DARK);
     }
-
-    private void setupCameraSettings() {
-        cameraSettingsPref = (PreferenceCategory)
-                findPreference(getString(R.string.title_camera_section));
-
-        resolutionPref = (ListPreference)
-                findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION);
-        qualityPref = (ListPreference)
-                findPreference(ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY);
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -255,14 +236,6 @@ public class SettingsFragment extends PreferenceFragment implements
     @Override
     public void setThemeDarkAppPref(String key, boolean isActivate) {
         themeappSwitchPref.setChecked(isActivate);
-    }
-
-    @Override
-    public void setCameraSettingsAvailable(boolean isAvailable) {
-        if (isAvailable) {
-            resolutionPrefNotAvailable = findPreference(context.getString(R.string.resolution));
-            resolutionPrefNotAvailable.setShouldDisableView(true);
-        }
     }
 
     @Override

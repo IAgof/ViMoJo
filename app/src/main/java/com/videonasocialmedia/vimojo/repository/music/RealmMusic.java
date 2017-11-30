@@ -24,7 +24,7 @@ public class RealmMusic extends RealmObject {
   public int duration;
   public float volume;
 
-  public RealmMusic(){
+  public RealmMusic() {
 
   }
 

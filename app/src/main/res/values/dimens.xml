@@ -5,11 +5,12 @@
     <dimen name="text_big">25sp</dimen>
     <dimen name="text_small">10sp</dimen>
     <dimen name="button_margin">4dp</dimen>
-    <dimen name="fab_compat_margin">0dp</dimen>
+    <dimen name="fab_compat_margin">10dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="videonaPlayerExo_marginTop">8dp</dimen>
     <dimen name="grid_layout_margin">3dp</dimen>
     <dimen name="defaultbarHeight">48dp</dimen>
     <dimen name="header_left_padding">16dp</dimen>
     <dimen name="header_height">192dp</dimen>
+    <dimen name="camera_settings_selected">8sp</dimen>
 </resources>
