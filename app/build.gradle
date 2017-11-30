@@ -152,7 +152,7 @@ android {
             manifestPlaceholders = [appName: "Vimojo Thomson Foundation", fabricApiKey: "c5e050918c143441f6b23e7936f7f83faa1330b4"]
         }
 
-        nemsummit {
+        /*nemsummit {
             applicationId "com.videonasocialmedia.vimojo.nemsummit"
             versionCode 3 // 20171130
             versionName "0.7.5.1.fNemSummit" // 20171130
@@ -169,7 +169,7 @@ android {
             ext.fabricApiKey = "cc4515beda76fe1e841888650366e5a069c590a1"
             ext.fabricApiSecret = "4381a2ca62cb21c2118e3319917e7ccc53fd659bd726bdd1175f540e14e7186d"
             manifestPlaceholders = [appName: "Vimojo Nem Summit", fabricApiKey: "cc4515beda76fe1e841888650366e5a069c590a1"]
-        }
+        }*/
     }
     File fabricProperties = new File("${project.projectDir.absolutePath}/fabric.properties")
     applicationVariants.all { variant ->
