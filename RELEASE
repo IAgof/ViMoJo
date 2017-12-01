@@ -1,5 +1,4 @@
-v0.7.5
-- Fixed bug with add/delete watermark user preference
-- Created new flavor Nem summit. Out of date 15th Dec.
-- Added new feature toggle force watermark. Export always videos with watermark.
-- Added new feature toggle upload videos, With a Wifi connection upload video to api_base_url configure after exportation success.
+v0.7.6.1
+- Fix problem moving finish time and preview in trimming screen.
+- Fix problem with firebase analytics setup.
+- Fix override text selected in edit text screen and improved user experience.

@@ -8,6 +8,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.hamcrest.CoreMatchers;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -33,9 +34,16 @@ public class UpdateTitleProjectUseCaseTest {
     MockitoAnnotations.initMocks(this);
   }
 
+  @After
+  public void clearProject() {
+    if (Project.INSTANCE != null) {
+      Project.INSTANCE.clear();
+    }
+  }
+
   @Test
   public void setTitleProjectCallsUpdateProjectRepository(){
-    Project currentProject = Project.getInstance(null, null, null, null);
+    Project currentProject = getAProject();
     injectedUseCase.setTitle(currentProject, "some title");
     verify(mockedProjectRepository).update(currentProject);
   }
@@ -53,9 +61,9 @@ public class UpdateTitleProjectUseCaseTest {
   }
 
   private Project getAProject() {
-    return new Project("title", "/path", "private/path",
-        Profile.getInstance(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+    return new Project("title", "/path", "private/path", compositionProfile);
   }
 
 }

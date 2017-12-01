@@ -61,6 +61,7 @@ public class VideonaCaptureRequest {
       captureResultMap.put(CaptureRequest.SENSOR_SENSITIVITY, SCaptureRequest.SENSOR_SENSITIVITY);
       captureResultMap.put(CaptureRequest.SCALER_CROP_REGION, SCaptureRequest.SCALER_CROP_REGION);
       captureResultMap.put(CaptureRequest.SENSOR_FRAME_DURATION, SCaptureRequest.SENSOR_FRAME_DURATION);
+      captureResultMap.put(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, SCaptureRequest.CONTROL_AE_TARGET_FPS_RANGE);
 //        captureResultMap.put(, S);
     }
 

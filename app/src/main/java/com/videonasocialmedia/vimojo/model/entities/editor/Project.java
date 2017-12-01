@@ -45,8 +45,7 @@ public class Project implements ElementChangedListener {
   // folder name ".tempAudio";
   public static final String TEMP_FILES_AUDIO_MIXED = "tempMixedAudio";
   public static final String TEMP_FILES_AUDIO_MIXED_VOICE_OVER_RECORD = "voiceOverRecord";
-  private final String TAG = getClass().getCanonicalName();
-    public static String VIDEONA_PATH = "";
+
     /**
      * There could be just one project open at a time. So this converts Project in a Singleton.
      */
@@ -69,7 +68,6 @@ public class Project implements ElementChangedListener {
   private String uuid = UUID.randomUUID().toString();
 
   private LastVideoExported lastVideoExported;
-
 
     /**
      * Project profile. Defines some limitations and characteristic of the project based on user
@@ -107,7 +105,6 @@ public class Project implements ElementChangedListener {
   }
 
   public Project(Project project) throws IllegalItemOnTrack {
-
     title = DateUtils.getDateRightNow();
     vmComposition = new VMComposition(project.getVMComposition());
     profile = new Profile(project.getProfile());
@@ -116,7 +113,6 @@ public class Project implements ElementChangedListener {
     projectPath = new File(project.getProjectPath()).getParent() + File.separator + uuid;
     createFolder(projectPath);
   }
-
 
   public VMComposition getVMComposition() {
     return vmComposition;
@@ -188,10 +184,6 @@ public class Project implements ElementChangedListener {
 
     public void clear() {
         if (INSTANCE != null) {
-            Profile projectProfile = INSTANCE.getProfile();
-            if (projectProfile != null) {
-                projectProfile.clear();
-            }
             INSTANCE = null;
         }
     }
@@ -210,11 +202,11 @@ public class Project implements ElementChangedListener {
       return vmComposition.hasMusic();
     }
 
-    public Music getVoiceOver(){
+    public Music getVoiceOver() {
       return vmComposition.getVoiceOver();
     }
 
-    public boolean hasVoiceOver(){
+    public boolean hasVoiceOver() {
       return vmComposition.hasVoiceOver();
     }
 
@@ -239,27 +231,28 @@ public class Project implements ElementChangedListener {
     this.lastVideoExported = lastVideoExported;
   }
 
-  public boolean hasVideoExported(){
-    if(lastVideoExported!=null)
+  public boolean hasVideoExported() {
+    if (lastVideoExported != null) {
       return true;
+    }
     return false;
   }
 
-  public String getPathLastVideoExported(){
-    if(lastVideoExported!= null){
+  public String getPathLastVideoExported() {
+    if (lastVideoExported != null) {
       return lastVideoExported.getPathLastVideoExported();
     }
     return "";
   }
 
-  public String getDateLastVideoExported(){
-    if(lastVideoExported!= null){
+  public String getDateLastVideoExported() {
+    if (lastVideoExported != null) {
       return lastVideoExported.getDateLastVideoExported();
     }
     return "";
   }
 
-  public double getProjectSizeMbVideoToExport(){
+  public double getProjectSizeMbVideoToExport() {
     float scaleToMb = 0.125f;
     double durationSeconds =  getDuration()* 0.001;
     double videoBitRateMb = getProfile().getVideoQuality().getVideoBitRate()*0.000001;
@@ -280,37 +273,37 @@ public class Project implements ElementChangedListener {
     return projectPath;
   }
 
-  public String getProjectPathIntermediateFiles(){
+  public String getProjectPathIntermediateFiles() {
     String pathIntermediateFiles = getProjectPath() + File.separator + INTERMEDIATE_FILES;
     createFolder(pathIntermediateFiles);
     return pathIntermediateFiles;
   }
 
-  public String getProjectPathIntermediateFileAudioFade(){
+  public String getProjectPathIntermediateFileAudioFade() {
     String pathIntermediateFilesTempAudioFade = projectPath + File.separator + INTERMEDIATE_FILES
         + File.separator+ INTERMEDIATE_FILES_TEMP_AUDIO_FADE;
     createFolder(pathIntermediateFilesTempAudioFade);
     return pathIntermediateFilesTempAudioFade;
   }
 
-  public String getProjectPathIntermediateAudioMixedFiles(){
+  public String getProjectPathIntermediateAudioMixedFiles() {
     String pathTempFilesAudioMixed = getProjectPath() + File.separator + TEMP_FILES_AUDIO_MIXED;
     createFolder(pathTempFilesAudioMixed);
     return pathTempFilesAudioMixed;
   }
 
-  public String getProjectPathIntermediateAudioFilesVoiceOverRecord(){
+  public String getProjectPathIntermediateAudioFilesVoiceOverRecord() {
     String pathTempFilesAudioMixedVoiceOverRecord = getProjectPath() + File.separator
         + TEMP_FILES_AUDIO_MIXED + File.separator + TEMP_FILES_AUDIO_MIXED_VOICE_OVER_RECORD;
     createFolder(pathTempFilesAudioMixedVoiceOverRecord);
     return pathTempFilesAudioMixedVoiceOverRecord;
   }
 
-  public void setWatermarkActivated(boolean value){
+  public void setWatermarkActivated(boolean value) {
       this.vmComposition.setWatermarkActivated(value);
   }
 
-  public boolean hasWatermark(){
+  public boolean hasWatermark() {
     return vmComposition.hasWatermark();
   }
 
