@@ -66,6 +66,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private Camera2WrapperListener listener;
   private final WeakReference<Context> contextWeakReference;
   private final String directorySaveVideos;
+  private final long freeStorage;
   private final Camera2ZoomHelper camera2ZoomHelper;
   private final Camera2FocusHelper camera2FocusHelper;
   private final Camera2ISOHelper camera2ISOHelper;
@@ -179,12 +180,13 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public Camera2Wrapper(Context context, int cameraIdSelected,
                         AutoFitTextureView textureView, String directorySaveVideos,
-                        VideoCameraFormat videoCameraFormat) {
+                        VideoCameraFormat videoCameraFormat, long freeStorage) {
     contextWeakReference = new WeakReference<>(context);
     this.cameraIdSelected = cameraIdSelected;
     this.textureView = textureView;
     this.directorySaveVideos = directorySaveVideos;
     this.videoCameraFormat = videoCameraFormat;
+    this.freeStorage = freeStorage;
     setupSamsungCamera();
     getCameraManager(); // (jliarte): 19/06/17 manager is needed to ask for camera characteristics used in helpers
     // TODO(jliarte): 26/05/17 inject the components
@@ -428,7 +430,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
               " sensorOrientation " + sensorOrientation);
 
       mediaRecorder = new MediaRecorderWrapper(new MediaRecorder(), cameraIdSelected,
-              sensorOrientation, rotation, createVideoFilePath(), videoCameraFormat);
+              sensorOrientation, rotation, createVideoFilePath(), videoCameraFormat, freeStorage);
       manager.openCamera(cameraId, stateCallback, null, contextWeakReference);
     } catch (CameraAccessException e) {
       Toast.makeText(activity, "Cannot access the camera.", Toast.LENGTH_SHORT).show();
@@ -1037,8 +1039,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
                 captureResultSettings.captureResultHasFocusDistance = true;
                 captureResultSettings.captureResultFocusDistance =
                         result.get(CaptureResult.LENS_FOCUS_DISTANCE);
-                Log.d(LOG_TAG, "Capture result focus distance: "
-                        + captureResultSettings.captureResultFocusDistance);
+//                Log.d(LOG_TAG, "Capture result focus distance: "
+//                        + captureResultSettings.captureResultFocusDistance);
               } else {
                 captureResultSettings.captureResultHasFocusDistance = false;
               }

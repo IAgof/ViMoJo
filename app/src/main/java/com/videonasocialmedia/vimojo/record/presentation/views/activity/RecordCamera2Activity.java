@@ -336,7 +336,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public ActivityPresentersModule getActivityPresentersModule() {
     return new ActivityPresentersModule(this, Constants.PATH_APP_TEMP,
-        textureView);
+        textureView, getFreeStorage(new StatFs(Environment.getDataDirectory().getPath())));
   }
 
   private void keepScreenOn() {
