@@ -1037,8 +1037,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
                 captureResultSettings.captureResultHasFocusDistance = true;
                 captureResultSettings.captureResultFocusDistance =
                         result.get(CaptureResult.LENS_FOCUS_DISTANCE);
-                Log.d(LOG_TAG, "Capture result focus distance: "
-                        + captureResultSettings.captureResultFocusDistance);
+//                Log.d(LOG_TAG, "Capture result focus distance: "
+//                        + captureResultSettings.captureResultFocusDistance);
               } else {
                 captureResultSettings.captureResultHasFocusDistance = false;
               }
