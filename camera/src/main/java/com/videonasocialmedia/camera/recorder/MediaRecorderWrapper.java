@@ -1,5 +1,6 @@
 package com.videonasocialmedia.camera.recorder;
 
+import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.util.SparseIntArray;
 import android.view.Surface;
@@ -59,24 +60,23 @@ public class MediaRecorderWrapper {
   }
 
   public void setUpMediaRecorder() throws IOException {
+    // TODO: 12/12/2017 Update Profile. Get audio source preference from CameraSetting, MIC or CAMCORDER
     mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+    // Camera2 video source, surface.
     mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
-    mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
     if (nextVideoAbsolutePath == null || nextVideoAbsolutePath.isEmpty()) {
       nextVideoAbsolutePath = videoPath;
     }
+    CamcorderProfile  camcorderProfile = CamcorderProfile.get(cameraIdSelected,
+            CamcorderProfile.QUALITY_HIGH);
+    // Width and height are done by VideoSource.Surface, configured with correct resolution.
+    camcorderProfile.videoBitRate = videoCameraFormat.getVideoBitrate();
+    // TODO:(alvaro.martinez) 19/01/17 Update Profile, get Default num_channels, SamplingRate, BitRate. Get from CameraSetting user preference
+    camcorderProfile.audioChannels = videoCameraFormat.getAudioChannels();
+    camcorderProfile.audioSampleRate = videoCameraFormat.getAudioSamplingRate();
+    camcorderProfile.audioBitRate = videoCameraFormat.getAudioBitrate();
+    mediaRecorder.setProfile(camcorderProfile);
     mediaRecorder.setOutputFile(nextVideoAbsolutePath);
-    mediaRecorder.setVideoEncodingBitRate(videoCameraFormat.getVideoBitrate());
-    // TODO:(alvaro.martinez) 25/01/17 Check and support different bit rate
-    mediaRecorder.setVideoFrameRate(30);
-    //mediaRecorder.setCaptureRate(30);
-    mediaRecorder.setVideoSize(videoCameraFormat.getVideoWidth(), videoCameraFormat.getVideoHeight());
-    mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-    mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-    // TODO:(alvaro.martinez) 19/01/17 Update Profile, get Default num_channels, SamplingRate, BitRate
-    mediaRecorder.setAudioChannels(videoCameraFormat.getAudioChannels());
-    mediaRecorder.setAudioSamplingRate(videoCameraFormat.getAudioSamplingRate());
-    mediaRecorder.setAudioEncodingBitRate(videoCameraFormat.getAudioBitrate());
     if(cameraIdSelected == 1)
       sensorOrientation = (sensorOrientation - 180 + 360) % 360;
     switch (sensorOrientation) {
