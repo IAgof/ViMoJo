@@ -453,8 +453,24 @@ public class VimojoMigration implements RealmMigration {
                         }
                       });
         }
-
         oldVersion++;
+    }
+
+    // Migrate from version 9 to 10 Added new CameraIdSelected field to RealmCameraSettings
+    if(oldVersion == 9) {
+      RealmObjectSchema realmCameraSettingsTable = schema.get("RealmCameraSettings");
+      if (!realmCameraSettingsTable.hasField("cameraIdSelected")) {
+        realmCameraSettingsTable.addField("cameraIdSelected", Integer.class)
+            .transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                int DEFAULT_CAMERA_ID_SELECTED = 0; // Back camera
+                obj.setInt("cameraIdSelected", DEFAULT_CAMERA_ID_SELECTED);
+              }
+            });
+      }
+
+      oldVersion++;
     }
 
     }

@@ -170,6 +170,18 @@ public class CameraSettingsRealmRepositoryTest {
         .get(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID), is(resolutionFront4kSupported));
   }
 
+  @Test
+  public void setCameraIdSelectedUpdateCameraSettings() {
+    CameraSettingsRepository repo = Mockito.spy(new CameraSettingsRealmRepository());
+    CameraSettings cameraSettings = getCameraSettings();
+    int cameraIdSelected = Constants.FRONT_CAMERA_ID;
+    Mockito.doNothing().when(repo).update(any(CameraSettings.class));
+
+    repo.setCameraIdSelected(cameraSettings, cameraIdSelected);
+
+    assertThat(cameraSettings.getCameraIdSelected(), is(cameraIdSelected));
+  }
+
   private CameraSettings getCameraSettings() {
     HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, true);
@@ -187,8 +199,9 @@ public class CameraSettingsRealmRepositoryTest {
     FrameRateSetting frameRateSetting = new FrameRateSetting("30 fps", frameRatesSupportedMap);
     String quality = "16 Mbps";
     String interfaceSelected = DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
-    return new CameraSettings(resolutionSetting,
-        frameRateSetting, quality, interfaceSelected);
+    int cameraIdSelected = Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+    return new CameraSettings(resolutionSetting,frameRateSetting, quality, interfaceSelected,
+        cameraIdSelected);
   }
 
 }

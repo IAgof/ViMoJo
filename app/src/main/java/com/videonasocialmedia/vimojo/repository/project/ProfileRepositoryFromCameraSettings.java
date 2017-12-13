@@ -100,8 +100,9 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
 
     String quality = Constants.DEFAULT_CAMERA_SETTING_QUALITY;
     String interfaceSelected = Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
+    int cameraIdSelected = Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
     CameraSettings defaultCameraSettings = new CameraSettings(resolutionSetting,
-            frameRateSetting, quality, interfaceSelected);
+            frameRateSetting, quality, interfaceSelected, cameraIdSelected);
     cameraSettingsRepository.createCameraSetting(defaultCameraSettings);
   }
 
