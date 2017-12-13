@@ -24,8 +24,11 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSettin
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
 /**
@@ -90,23 +93,47 @@ public class GetCameraSettingsMapperSupportedListUseCase {
                                            ResolutionSetting resolutionSetting,
                                            List<CameraSettingViewModel> preferenceList) {
     String resolutionSelected = resolutionSetting.getResolution();
+    int cameraIdSelected = cameraSettings.getCameraIdSelected();
     List<CameraSettingValue> resolutionList = new ArrayList<>();
-    if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_720_BACK_ID)) {
-      resolutionList.add(new CameraSettingValue(
-              CAMERA_SETTING_RESOLUTION_720_BACK_ID,
+
+    if(cameraIdSelected == BACK_CAMERA_ID) {
+      if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_720_BACK_ID)) {
+        resolutionList.add(new CameraSettingValue(
+            CAMERA_SETTING_RESOLUTION_720_BACK_ID,
+            context.getString(R.string.low_resolution_name),
+            resolutionNames.get(CAMERA_SETTING_RESOLUTION_720_BACK_ID)
+                .equals(resolutionSelected)));
+      }
+      if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_1080_BACK_ID)) {
+        resolutionList.add(new CameraSettingValue(CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
+            context.getString(R.string.good_resolution_name),
+            resolutionNames.get(CAMERA_SETTING_RESOLUTION_1080_BACK_ID).equals(resolutionSelected)));
+      }
+      if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_2160_BACK_ID)) {
+        resolutionList.add(new CameraSettingValue(CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
+            context.getString(R.string.high_resolution_name),
+            resolutionNames.get(CAMERA_SETTING_RESOLUTION_2160_BACK_ID).equals(resolutionSelected)));
+      }
+    } else {
+      if(cameraIdSelected == FRONT_CAMERA_ID) {
+        if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_720_FRONT_ID)) {
+          resolutionList.add(new CameraSettingValue(
+              CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
               context.getString(R.string.low_resolution_name),
-              resolutionNames.get(CAMERA_SETTING_RESOLUTION_720_BACK_ID)
-                      .equals(resolutionSelected)));
-    }
-    if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_1080_BACK_ID)) {
-      resolutionList.add(new CameraSettingValue(CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
-          context.getString(R.string.good_resolution_name),
-          resolutionNames.get(CAMERA_SETTING_RESOLUTION_1080_BACK_ID).equals(resolutionSelected)));
-    }
-    if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_2160_BACK_ID)) {
-      resolutionList.add(new CameraSettingValue(CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
-          context.getString(R.string.high_resolution_name),
-          resolutionNames.get(CAMERA_SETTING_RESOLUTION_2160_BACK_ID).equals(resolutionSelected)));
+              resolutionNames.get(CAMERA_SETTING_RESOLUTION_720_FRONT_ID)
+                  .equals(resolutionSelected)));
+        }
+        if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID)) {
+          resolutionList.add(new CameraSettingValue(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
+              context.getString(R.string.good_resolution_name),
+              resolutionNames.get(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID).equals(resolutionSelected)));
+        }
+        if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID)) {
+          resolutionList.add(new CameraSettingValue(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
+              context.getString(R.string.high_resolution_name),
+              resolutionNames.get(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID).equals(resolutionSelected)));
+        }
+      }
     }
     if (resolutionList.size() > MINIMUM_OPTIONS_SUPPORTED_TO_SHOW_LIST) {
       preferenceList.add(new CameraSettingViewModel(context.getString(R.string.resolution),

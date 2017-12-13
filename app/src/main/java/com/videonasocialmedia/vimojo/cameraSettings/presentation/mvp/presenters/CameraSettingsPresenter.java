@@ -71,6 +71,12 @@ public class CameraSettingsPresenter {
             ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080);
     resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
             ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160);
+    resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
+        ResolutionSetting.CAMERA_SETTING_RESOLUTION_720);
+    resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
+        ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080);
+    resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
+        ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160);
 
     videoResolutionValues = new HashMap<Integer, VideoResolution.Resolution>();
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID,
@@ -79,6 +85,12 @@ public class CameraSettingsPresenter {
             VideoResolution.Resolution.HD1080);
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
             VideoResolution.Resolution.HD4K);
+    videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
+        VideoResolution.Resolution.HD720);
+    videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
+        VideoResolution.Resolution.HD1080);
+    videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
+        VideoResolution.Resolution.HD4K);
   }
 
   private void setupFrameRateMappers() {
