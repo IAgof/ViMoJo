@@ -38,7 +38,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.*;
  * This class maps from {@link CameraSettings} model to {@link CameraSettingViewModel} for
  * representing user selected camera settings in {@link com.videonasocialmedia.vimojo.cameraSettings.presentation.view.activity.CameraSettingsActivity}
  */
-public class GetCameraSettingsListUseCase {
+public class GetCameraSettingsMapperSupportedListUseCase {
   public static final int MINIMUM_OPTIONS_SUPPORTED_TO_SHOW_LIST = 1;
   private static boolean DEFAULT_INTERFACE_PRO_BASIC_AVAILABLE = true;
   private CameraSettings cameraSettings;
@@ -46,8 +46,8 @@ public class GetCameraSettingsListUseCase {
   private Project currentProject;
 
   @Inject
-  public GetCameraSettingsListUseCase(Context context,
-                                      CameraSettingsRepository cameraSettingsRepository) {
+  public GetCameraSettingsMapperSupportedListUseCase(Context context,
+                                                     CameraSettingsRepository cameraSettingsRepository) {
     this.context = context;
     currentProject = loadCurrentProject();
     cameraSettings = cameraSettingsRepository.getCameraSettings();

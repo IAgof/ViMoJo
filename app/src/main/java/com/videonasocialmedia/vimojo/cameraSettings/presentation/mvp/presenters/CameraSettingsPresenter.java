@@ -3,7 +3,7 @@ package com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.presenters
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsListUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsMapperSupportedListUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingViewModel;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
@@ -25,7 +25,7 @@ public class CameraSettingsPresenter {
   private CameraSettings cameraSettings;
   private CameraSettingsView cameraSettingsListView;
   protected UserEventTracker userEventTracker;
-  private GetCameraSettingsListUseCase getSettingListUseCase;
+  private GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase;
   private CameraSettingsRepository cameraSettingsRepository;
   private ProjectRepository projectRepository;
   private HashMap<Integer, String> resolutionNames;
@@ -40,7 +40,7 @@ public class CameraSettingsPresenter {
   @Inject
   public CameraSettingsPresenter(CameraSettingsView cameraSettingsListView,
                                  UserEventTracker userEventTracker,
-                                 GetCameraSettingsListUseCase getSettingListUseCase,
+                                 GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase,
                                  CameraSettingsRepository cameraSettingsRepository,
                                  ProjectRepository
                                            projectRepository) {

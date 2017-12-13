@@ -78,6 +78,11 @@ public class CameraSettingsActivity extends VimojoActivity implements
     adapter.setCameraSettingsItemsList(list);
   }
 
+  @Override
+  public void onBackPressed() {
+    navigateToRecord();
+  }
+
   @OnClick(R.id.camera_setting_ok)
   public void navigateToRecord() {
     Intent intent = new Intent(this, RecordCamera2Activity.class);

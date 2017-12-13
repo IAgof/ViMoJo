@@ -667,6 +667,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void hideAdvancedAFSelection() {
     afSelectionButton.setVisibility(View.GONE);
+    afSettingSelective.setSelected(false);
   }
 
   @Override

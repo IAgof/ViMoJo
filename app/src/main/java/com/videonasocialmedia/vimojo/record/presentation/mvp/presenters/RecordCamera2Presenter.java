@@ -46,6 +46,9 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import static com.videonasocialmedia.camera.camera2.Camera2Wrapper.CAMERA_ID_FRONT;
+import static com.videonasocialmedia.camera.camera2.Camera2Wrapper.CAMERA_ID_REAR;
+
 /**
  *  Created by alvaro on 16/01/17.
  */
@@ -107,8 +110,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 //    camera = new Camera2Wrapper(context, DEFAULT_CAMERA_ID, textureView, directorySaveVideos,
 //        getVideoFormatFromCurrentProjectUseCase.getVideoRecordedFormatFromCurrentProjectUseCase());
     this.camera = camera;
-    camera.setCameraListener(this);
-
+    cameraSettings = cameraSettingsRepository.getCameraSettings();
+    this.camera.setCameraListener(this);
     this.newClipImporter = newClipImporter;
   }
 
@@ -117,7 +120,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   public void initViews() {
-    cameraSettings = cameraSettingsRepository.getCameraSettings();
+    if(cameraSettings.getCameraIdSelected() == CAMERA_ID_FRONT) {
+      isFrontCameraSelected = true;
+    }
     checkCameraInterface(cameraSettings);
     recordView.setCameraSettingSelected(cameraSettings.getResolutionSettingValue(),
             cameraSettings.getQuality(), cameraSettings.getFrameRateSettingValue());
@@ -529,6 +534,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     recordView.setCameraDefaultSettings();
     camera.switchCamera(isFrontCameraSelected);
     setupAdvancedCameraControls();
+    int cameraIdSelected = isFrontCameraSelected ? CAMERA_ID_FRONT : CAMERA_ID_REAR;
+    cameraSettingsRepository.setCameraIdSelected(cameraSettings, cameraIdSelected);
     userEventTracker.trackChangeCamera(isFrontCameraSelected);
   }
 
