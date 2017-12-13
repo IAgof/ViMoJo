@@ -21,9 +21,6 @@ class Camera2ISOHelper {
   private Integer minSensitivity = 0;
   private Integer maxSensitivity = 0;
   private float[] apertureRange;
-//  private Range<Long> exposureTimeRange;
-  private boolean isSubExposed = false;
-  private double subExposureRatio;
 
   public Camera2ISOHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;
@@ -37,9 +34,6 @@ class Camera2ISOHelper {
     try { 
       apertureRange = camera2Wrapper.getCurrentCameraCharacteristics()
               .get(CameraCharacteristics.LENS_INFO_AVAILABLE_APERTURES);
-//      exposureTimeRange = camera2Wrapper.getCurrentCameraCharacteristics()
-//              .get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE);
-
       sensitivityRange = camera2Wrapper.getCurrentCameraCharacteristics()
               .get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
       minSensitivity = sensitivityRange.getLower();
@@ -73,22 +67,29 @@ class Camera2ISOHelper {
   }
 
   void setISO(Integer iso) {
-    currentIso = iso;
+    Log.d(LOG_TAG, "Setting ISO value to: " + iso);
     VideonaCaptureRequest.Builder previewBuilder = this.camera2Wrapper.getPreviewBuilder();
     if (iso == 0) {
       previewBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_ON);
     } else {
-      long exposureTime = camera2Wrapper.getNewExposureTime(currentIso);
-      Long currentExposureTime = previewBuilder.get(CaptureRequest.SENSOR_EXPOSURE_TIME);
+      if (currentIso == 0) {
+        long exposureTime = previewBuilder.get(CaptureRequest.SENSOR_EXPOSURE_TIME).longValue();
+        Log.d(LOG_TAG, "Manual exposure settings: current exposure time " + exposureTime);
+        if (currentIso == 0) {
+          exposureTime = camera2Wrapper.getNewExposureTime(iso);
+          Log.d(LOG_TAG, "Calculated new exposure time: " + exposureTime);
+        }
+        previewBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exposureTime);
+        camera2Wrapper.exposureTimeChanged(exposureTime);
+      }
       previewBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_OFF);
-      Log.d(LOG_TAG, "Manual exposure settings: current exposure time " + currentExposureTime
-              + " def setting: " + exposureTime);
-      Log.d(LOG_TAG, "Setting ISO value to: " + iso);
-
-      previewBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exposureTime);
       previewBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, iso);
     }
+    currentIso = iso;
     this.camera2Wrapper.updatePreview();
   }
 
+  public void resetISO() {
+    setISO(0);
+  }
 }

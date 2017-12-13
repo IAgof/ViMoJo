@@ -101,6 +101,8 @@ public interface RecordCamera2View {
 
     void setManualExposure();
 
+    void disableManualExposure();
+
     void setAutoExposure();
 
     void resetSpotMeteringSelector();
@@ -196,4 +198,6 @@ public interface RecordCamera2View {
     void deselectExposureCompensation();
 
     void resetManualExposure();
+
+    void exposureTimeChanged(long exposureTime);
 }

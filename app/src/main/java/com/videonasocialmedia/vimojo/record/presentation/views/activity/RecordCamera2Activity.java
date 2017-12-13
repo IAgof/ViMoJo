@@ -815,6 +815,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     if (supportedMeteringModes.contains(Camera2MeteringModeHelper.AE_MODE_REGIONS)) {
       meteringModeCenter.setVisibility(View.VISIBLE);
       meteringModeSpot.setVisibility(View.VISIBLE);
+      resetSpotMeteringSelector();
       cameraShutter.setOnTouchListener(new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -852,13 +853,28 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     meteringModeAuto.setSelected(false);
     meteringModeCenter.setSelected(false);
     meteringModeSpot.setSelected(false);
+    deselectManualExposureButton();
+  }
+
+  public void deselectManualExposureButton() {
     manualExposureButton.setSelected(false);
+  }
+
+  @Override
+  public void disableManualExposure() {
+    if (!meteringModeAuto.isSelected()) {
+      setMeteringModeAuto();
+    }
+    hideManualExposureSubmenu();
+    resetManualExposure();
+    deselectManualExposureButton();
   }
 
   @OnClick(R.id.metering_mode_auto)
   public void setAutoExposure() {
     presenter.resetMeteringMode();
   }
+
 
   @Override
   public void setManualExposure() {
@@ -879,6 +895,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnClick(R.id.metering_mode_center)
   public void clickCenterMeteringMode() {
     deselectAllMeteringModeButtons();
+    resetManualExposure();
     disableSpotMeteringControl();
     meteringModeCenter.setSelected(true);
     resetSpotMeteringSelector();
@@ -1331,17 +1348,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnClick (R.id.button_manual_exposure)
   public void onClickManualExposure() {
     hideMeteringModeSelectionSubmenu();
-    showManualExposureSelectionSubmenu();
-    showExposureTimeSumbenu();
-  }
-
-  private void showExposureTimeSumbenu() {
-    slideSeekBarMode = SLIDE_SEEKBAR_MODE_MANUAL_EXPOSURE_TIME;
-    int maxShutterSpeed = presenter.getMaximumExposureTime();
-    maxExposureText.setText("1/" + new Double(1/(maxShutterSpeed/1000000000d)).toString());
-    minExposureText.setText("1/" + (1000000000 / minExposureTime));
-    exposureTimeSeekBar.setMax(maxShutterSpeed - minExposureTime);
-    exposureTimeSeekBar.setProgress(presenter.getCurrentExposureTimeSeekBarProgress());
+    meteringModeButton.setSelected(true);
+    showManualExposureSubmenu();
   }
 
   private void setSlideSeekBarTexts(String upperText, String lowerText) {
@@ -1382,6 +1390,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnClick(R.id.button_metering_mode)
   public void onClickMeasurementeModeListener() {
     if (meteringModeButton.isSelected()) {
+      hideManualExposureSubmenu();
       hideMeteringModeSelectionSubmenu();
     } else {
       hideZoomSelectionSubmenu();
@@ -1395,7 +1404,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @OnClick(R.id.button_sound_volume)
   public void onClickAudioGainButton() {
-    if  (soundVolumeButton.isSelected()) {
+    if (soundVolumeButton.isSelected()) {
       hideSoundVolumeSubmenu();
     } else {
       hideZoomSelectionSubmenu();
@@ -1454,14 +1463,20 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     slideSeekbarSubmenuView.setVisibility(View.INVISIBLE);
   }
 
-  private void showManualExposureSelectionSubmenu() {
-    manualExposureButton.setSelected(true);
+  private void showManualExposureSubmenu() {
     manualExposureSubmenu.setVisibility(View.VISIBLE);
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_MANUAL_EXPOSURE_TIME;
+    int maxShutterSpeed = presenter.getMaximumExposureTime();
+    maxExposureText.setText("1/" + new Double(1/(maxShutterSpeed/1000000000d)).toString());
+    minExposureText.setText("1/" + (1000000000 / minExposureTime));
+    exposureTimeSeekBar.setMax(maxShutterSpeed - minExposureTime);
+    exposureTimeSeekBar.setProgress(presenter.getCurrentExposureTimeSeekBarProgress());
   }
 
   @Override
   public void hideManualExposureSubmenu() {
     manualExposureSubmenu.setVisibility(View.INVISIBLE);
+    slideSeekBarMode = SLIDE_SEEKBAR_MODE_UNACTIVE;
   }
 
   private void showAFSelectionSubmenu() {
@@ -1566,8 +1581,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnClick(R.id.metering_mode_spot)
   public void onClickSpotMetering() {
     deselectAllMeteringModeButtons();
+    resetManualExposure();
     meteringModeSpot.setSelected(true);
     enableSpotMeteringControl();
+    presenter.setMeteringPoint(touchEventX, touchEventY,
+            getCustomFocusViewWidth(), getCustomFocusViewHeight());
   }
 
   private void enableSpotMeteringControl() {
@@ -1595,6 +1613,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void resetManualExposure() {
     deselectAllISOButtons();
     disableExposureTimeSeekBar();
+  }
+
+  @Override
+  public void exposureTimeChanged(long exposureTime) {
+    if (slideSeekBarMode == SLIDE_SEEKBAR_MODE_MANUAL_EXPOSURE_TIME) {
+      exposureTimeSeekBar.setProgress((int) exposureTime);
+    }
   }
 
   @Override

@@ -104,4 +104,12 @@ public class Camera2ExposureTimeHelper {
   public void setCurrentExposureTime() {
     setExposureTime(currentExposureTime);
   }
+
+  public void setExposureTime(long exposureTime) {
+    setExposureTime((int) exposureTime);
+  }
+
+  public void resetExposureTime() {
+    // TODO(jliarte): 12/12/17 is there need to implement this method? as it's tied to resetISO
+  }
 }

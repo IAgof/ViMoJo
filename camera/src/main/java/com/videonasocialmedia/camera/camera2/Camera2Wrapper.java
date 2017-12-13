@@ -63,7 +63,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   public static final int CAMERA_ID_FRONT = 1;
   private final String LOG_TAG = getClass().getSimpleName();
 
-  private Camera2WrapperListener listener;
+  private WeakReference<Camera2WrapperListener> listener;
   private final WeakReference<Context> contextWeakReference;
   private final String directorySaveVideos;
   private final Camera2ZoomHelper camera2ZoomHelper;
@@ -229,7 +229,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   }
 
   public void setCameraListener(Camera2WrapperListener camera2WrapperListener) {
-    this.listener = camera2WrapperListener;
+    this.listener = new WeakReference<>(camera2WrapperListener);
   }
 
   private String getCameraId() throws CameraAccessException {
@@ -404,7 +404,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
       // Choose the sizes for camera preview and video isRecording
       characteristics = getCurrentCameraCharacteristics();
-      listener.setFlashSupport();
+      if (listener.get() != null) {
+        listener.get().setFlashSupport();
+      }
       StreamConfigurationMap map = characteristics
               .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
       sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
@@ -743,10 +745,11 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   public void onTouchZoom(float current_finger_spacing) {
     try {
       float zoomValue = camera2ZoomHelper.onTouchZoom(current_finger_spacing);
-      listener.setZoom(zoomValue);
-    } catch (CameraAccessException e) {
-      e.printStackTrace();
-      Log.e(LOG_TAG, "Error zooming - camera access", e);
+    if (listener.get() != null) {
+      listener.get().setZoom(zoomValue);
+    }
+    } catch (CameraAccessException cae) {
+      logExceptionAccessingCameraCharacteristics(cae);
     }
   }
 
@@ -971,6 +974,17 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
   public int getCurrentExposureTimeSeekBarProgress() {
     return camera2ExposureTimeHelper.getCurrentExposureTime();
+  }
+
+  public void exposureTimeChanged(long exposureTime) {
+    if (listener.get() != null) {
+      listener.get().exposureTimeChanged(exposureTime);
+    }
+  }
+
+  public void disableManualExposure() {
+    camera2ISOHelper.resetISO();
+    camera2ExposureTimeHelper.resetExposureTime();
   }
 
   public interface RecordStartedCallback {

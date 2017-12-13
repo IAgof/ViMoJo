@@ -413,6 +413,11 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   @Override
+  public void exposureTimeChanged(long exposureTime) {
+    recordView.exposureTimeChanged(exposureTime);
+  }
+
+  @Override
   public void setError(String message) {
     //recordView.showError(message);
   }
@@ -546,6 +551,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   public void setExposureCompensation(int exposureCompensation) {
+    recordView.disableManualExposure();
     camera.setExposureCompensation(exposureCompensation);
   }
 
@@ -595,6 +601,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     camera.setISO(isoValue);
   }
 
+  private void resetISO() {
+    setISO(0);
+  }
+
   public void setMicrophoneStatus(int state, int microphone) {
     if (isAJackMicrophoneConnected(state, microphone)) {
       recordView.showExternalMicrophoneConnected();
@@ -613,11 +623,11 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 
   // --------------------------------------------------------------
 
+
   public void updateBatteryStatus(int batteryStatus, int batteryLevel, int batteryScale) {
     int batteryPercent = getPercentLevel(batteryLevel, batteryScale);
     recordView.showBatteryStatus(getBatteryStatus(batteryStatus, batteryPercent),batteryPercent);
   }
-
 
   public int getPercentLevel(int batteryLevel, int batteryScale) {
     float level = batteryLevel / (float) batteryScale *100;
@@ -723,7 +733,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     // default metering settings
     recordView.hideManualExposureSubmenu();
     recordView.deselectAllISOButtons();
-    setISO(0);
+    resetISO();
     recordView.setAutoExposure();
     recordView.hideMeteringModeSelectionSubmenu();
     // default focus settings
