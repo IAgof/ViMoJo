@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -31,9 +31,9 @@ public class CameraSettingsActivity extends VimojoActivity implements
 
   @Inject
   CameraSettingsPresenter presenter;
-  @Bind(R.id.camera_setting_recycler_view)
+  @BindView(R.id.camera_setting_recycler_view)
   RecyclerView recyclerCameraSettingsList;
-  @Bind(R.id.camera_setting_ok)
+  @BindView(R.id.camera_setting_ok)
   Button okButton;
 
   private CameraSettingsAdapter adapter;

@@ -36,7 +36,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -50,35 +50,35 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Inject TrimPreviewPresenter presenter;
 
-    @Bind(R.id.text_time_trim)
+    @BindView(R.id.text_time_trim)
     TextView durationTag;
-    @Bind(R.id.trim_rangeSeekBar)
+    @BindView(R.id.trim_rangeSeekBar)
     RangeSeekBar trimmingRangeSeekBar;
-    @Bind(R.id.videona_player)
+    @BindView(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-    @Bind(R.id.player_advance_low_backward_start_trim)
+    @BindView(R.id.player_advance_low_backward_start_trim)
     ImageButton playerAdvanceLowBackwardStartTrim;
-    @Bind(R.id.player_advance_low_forward_start_trim)
+    @BindView(R.id.player_advance_low_forward_start_trim)
     ImageButton playerAdvanceLowForwardStartTrim;
-    @Bind(R.id.player_advance_low_backward_end_trim)
+    @BindView(R.id.player_advance_low_backward_end_trim)
     ImageButton playerAdvanceLowBackwardEndTrim;
-    @Bind(R.id.player_advance_low_forward_end_trim)
+    @BindView(R.id.player_advance_low_forward_end_trim)
     ImageButton playerAdvanceLowForwardEndTrim;
-    @Bind(R.id.player_advance_medium_backward_start_trim)
+    @BindView(R.id.player_advance_medium_backward_start_trim)
     ImageButton playerAdvanceMediumBackwardStartTrim;
-    @Bind(R.id.player_advance_medium_forward_start_trim)
+    @BindView(R.id.player_advance_medium_forward_start_trim)
     ImageButton playerAdvanceMediumForwardStartTrim;
-    @Bind(R.id.player_advance_medium_backward_end_trim)
+    @BindView(R.id.player_advance_medium_backward_end_trim)
     ImageButton playerAdvanceMediumBackwardEndTrim;
-    @Bind(R.id.player_advance_medium_forward_end_trim)
+    @BindView(R.id.player_advance_medium_forward_end_trim)
     ImageButton playerAdvanceMediumForwardEndTrim;
-    @Bind(R.id.player_advance_high_backward_start_trim)
+    @BindView(R.id.player_advance_high_backward_start_trim)
     ImageButton playerAdvanceHighBackwardStartTrim;
-    @Bind(R.id.player_advance_high_forward_start_trim)
+    @BindView(R.id.player_advance_high_forward_start_trim)
     ImageButton playerAdvanceHighForwardStartTrim;
-    @Bind(R.id.player_advance_high_backward_end_trim)
+    @BindView(R.id.player_advance_high_backward_end_trim)
     ImageButton playerAdvanceHighBackwardEndTrim;
-    @Bind(R.id.player_advance_high_forward_end_trim)
+    @BindView(R.id.player_advance_high_forward_end_trim)
     ImageButton playerAdvanceHighForwardEndTrim;
 
     int videoIndexOnTrack;

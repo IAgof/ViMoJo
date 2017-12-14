@@ -59,7 +59,7 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE;
@@ -85,11 +85,11 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     @Inject InitAppPresenter presenter;
 
     protected Handler handler = new Handler();
-    @Bind(R.id.videona_version)
+    @BindView(R.id.videona_version)
     TextView versionName;
-    @Bind(R.id.init_root_view)
+    @BindView(R.id.init_root_view)
     ViewGroup initRootView;
-    @Bind(R.id.splash_screen)
+    @BindView(R.id.splash_screen)
     ImageView splashScreen;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;

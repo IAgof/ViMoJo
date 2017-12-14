@@ -19,7 +19,7 @@ import com.videonasocialmedia.vimojo.utils.recyclerselectionsupport.MultiItemSel
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -118,16 +118,16 @@ public class VideoGalleryAdapter extends RecyclerView.Adapter<VideoGalleryAdapte
         RecyclerViewClickListener onClickListener;
         OnTransitionClickListener onTransitionClickListener;
 
-        @Bind(R.id.gallery_thumb)
+        @BindView(R.id.gallery_thumb)
         ImageView thumb;
 
-        @Bind(R.id.gallery_duration)
+        @BindView(R.id.gallery_duration)
         TextView duration;
 
-        @Bind(R.id.gallery_overlay)
+        @BindView(R.id.gallery_overlay)
         RelativeLayout overlay;
 
-        @Bind(R.id.gallery_overlay_icon)
+        @BindView(R.id.gallery_overlay_icon)
         ImageView overlayIcon;
 
         public VideoViewHolder(View itemView, RecyclerViewClickListener onClickListener,

@@ -67,7 +67,7 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
@@ -91,66 +91,66 @@ public class RecordActivity extends VimojoActivity implements RecordView {
     @Inject RecordPresenter recordPresenter;
     @Inject SharedPreferences sharedPreferences;
 
-    @Bind(R.id.button_record)
+    @BindView(R.id.button_record)
     ImageButton recButton;
-    @Bind(R.id.cameraPreview)
+    @BindView(R.id.cameraPreview)
     GLCameraView cameraView;
-    @Bind(R.id.button_change_camera)
+    @BindView(R.id.button_change_camera)
     ImageButton rotateCameraButton;
-    @Bind(R.id.button_navigate_settings)
+    @BindView(R.id.button_navigate_settings)
     ImageButton buttonNavigateSettings;
-    @Bind(R.id.button_settings_camera)
+    @BindView(R.id.button_settings_camera)
     ImageButton settingsCameraButton;
-    @Bind(R.id.button_grid)
+    @BindView(R.id.button_grid)
     ImageButton gridButton;
-    @Bind(R.id.button_navigate_edit)
+    @BindView(R.id.button_navigate_edit)
     CircleImageView buttonThumbClipRecorded;
-    @Bind(R.id.text_view_num_videos)
+    @BindView(R.id.text_view_num_videos)
     TextView numVideosRecorded;
-    @Bind(R.id.edit_or_gallery_text_view)
+    @BindView(R.id.edit_or_gallery_text_view)
     TextView editText;
-    @Bind(R.id.imageRecPoint)
+    @BindView(R.id.imageRecPoint)
     ImageView recordingIndicator;
-    @Bind(R.id.chronometer_record)
+    @BindView(R.id.chronometer_record)
     Chronometer chronometer;
-    @Bind(R.id.button_toggle_flash)
+    @BindView(R.id.button_toggle_flash)
     ImageButton flashButton;
-    @Bind(R.id.rotateDeviceHint)
+    @BindView(R.id.rotateDeviceHint)
     ImageView rotateDeviceHint;
-    @Bind(R.id.clear_button)
+    @BindView(R.id.clear_button)
     ImageButton clearButton;
-    @Bind(R.id.hud)
+    @BindView(R.id.hud)
     View hud;
-    @Bind(R.id.control_chronometer_and_rec_point)
+    @BindView(R.id.control_chronometer_and_rec_point)
     View chronometerAndRecPointView;
-    @Bind(R.id.picometer)
+    @BindView(R.id.picometer)
     View picometer;
-    @Bind(R.id.controls)
+    @BindView(R.id.controls)
     View controlsView;
-    @Bind(R.id.slide_seekbar_submenu)
+    @BindView(R.id.slide_seekbar_submenu)
     View zommBarView;
-    @Bind(R.id.settings_bar)
+    @BindView(R.id.settings_bar)
     View settingsBar;
-    @Bind(R.id.white_balance_submenu)
+    @BindView(R.id.white_balance_submenu)
     View settingsBarSubmenu;
-    @Bind(R.id.button_to_hide_controls)
+    @BindView(R.id.button_to_hide_controls)
     ImageButton buttonToHideControlsView;
-    @Bind (R.id.button_to_show_controls_right)
+    @BindView (R.id.button_to_show_controls_right)
     ImageButton buttonToShowControls;
-    @Bind(R.id.button_resolution_indicator)
+    @BindView(R.id.button_resolution_indicator)
     ImageView resolutionIndicator;
-    @Bind(R.id.image_view_grid)
+    @BindView(R.id.image_view_grid)
     ImageView imageViewGrid;
-    @Bind(R.id.activity_record_icon_battery)
+    @BindView(R.id.activity_record_icon_battery)
     ImageButton battery;
-    @Bind(R.id.activity_record_icon_storage)
+    @BindView(R.id.activity_record_icon_storage)
     ImageButton memory;
 
-    @Nullable @Bind(R.id.progressBar_level)
+    @Nullable @BindView(R.id.progressBar_level)
     ProgressBar progressBarBatteryOrMemory;
-    @Nullable @Bind(R.id.text_percent_level)
+    @Nullable @BindView(R.id.text_percent_level)
     TextView percentLevel;
-    @Nullable @Bind(R.id.text_message)
+    @Nullable @BindView(R.id.text_message)
     TextView freeMemorySpace;
 
 

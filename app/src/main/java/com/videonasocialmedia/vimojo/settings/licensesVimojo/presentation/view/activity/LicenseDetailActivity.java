@@ -17,7 +17,7 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -26,9 +26,9 @@ import butterknife.ButterKnife;
 
 public class LicenseDetailActivity extends VimojoActivity implements LicenseDetailView {
 
-  @Bind(R.id.toolbar_license_title)
+  @BindView(R.id.toolbar_license_title)
   TextView toolbarTitle;
-  @Bind (R.id.license_content)
+  @BindView (R.id.license_content)
   TextView licenseContent;
   private Toolbar toolbar;
 

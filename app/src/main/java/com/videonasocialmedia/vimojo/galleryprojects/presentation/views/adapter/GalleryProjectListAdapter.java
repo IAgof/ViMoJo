@@ -22,7 +22,7 @@ import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -102,15 +102,15 @@ public class GalleryProjectListAdapter extends
 
   class RetrieveProjectListItemViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.project_date)
+    @BindView(R.id.project_date)
     TextView dateProject;
-    @Bind(R.id.project_duration)
+    @BindView(R.id.project_duration)
     TextView durationProject;
-    @Bind(R.id.project_image)
+    @BindView(R.id.project_image)
     ImageView imagenProject;
-    @Bind(R.id.project_title)
+    @BindView(R.id.project_title)
     TextView titleProject;
-    @Bind(R.id.project_size_mb)
+    @BindView(R.id.project_size_mb)
     TextView sizeMbProject;
 
 

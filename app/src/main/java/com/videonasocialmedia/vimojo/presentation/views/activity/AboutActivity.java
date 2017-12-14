@@ -19,7 +19,7 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -31,7 +31,7 @@ import butterknife.OnClick;
  */
 public class AboutActivity extends VimojoActivity {
 
-    @Bind(R.id.videona_version)
+    @BindView(R.id.videona_version)
     TextView versionName;
 
     @Override
