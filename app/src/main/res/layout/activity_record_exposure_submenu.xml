@@ -63,7 +63,7 @@
             android:background="#00ffffff"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:src="@drawable/activity_record_ic_stopwatch"
+            android:src="@drawable/activity_record_ic_manual_exposure_time"
             android:text="100%"/>
     </LinearLayout>
 
