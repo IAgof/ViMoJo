@@ -218,9 +218,10 @@
 
     <!-- Camera Settings -->
     <string name="title_camera_section">Cámara</string>
-    <string name="resolution">Resolución</string>
-    <string name="quality">Calidad</string>
-    <string name="camera_pro_o_basic">Cámara Pro/Básica</string>
+    <string name="title_item_resolution">Resolución</string>
+    <string name="title_item_quality">Calidad</string>
+    <string name="title_item_camera_pro_o_basic">Cámara pro/básica</string>
+    <string name="title_item_frame_rate">Frame rate (aprox)</string>
     <string name="camera_pro">Cámara pro</string>
     <string name="camera_basic">Cámara básica</string>
     <string name="cancelSettingsCamera">Cancelar</string>

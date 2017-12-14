@@ -83,7 +83,7 @@ public class GetCameraSettingsMapperSupportedListUseCase {
     interfaceList.add(new CameraSettingValue(
             CAMERA_SETTING_INTERFACE_BASIC_ID, context.getString(R.string.camera_basic),
             interfaceNames.get(CAMERA_SETTING_INTERFACE_BASIC_ID).equals(interfaceSelected)));
-    String settingTitle = context.getString(R.string.camera_pro_o_basic);
+    String settingTitle = context.getString(R.string.title_item_camera_pro_o_basic);
     CameraSettingViewModel proInterfaceSetting = new CameraSettingViewModel(
             settingTitle, interfaceList, DEFAULT_INTERFACE_PRO_BASIC_AVAILABLE);
     preferenceList.add(proInterfaceSetting);
@@ -136,7 +136,7 @@ public class GetCameraSettingsMapperSupportedListUseCase {
       }
     }
     if (resolutionList.size() > MINIMUM_OPTIONS_SUPPORTED_TO_SHOW_LIST) {
-      preferenceList.add(new CameraSettingViewModel(context.getString(R.string.resolution),
+      preferenceList.add(new CameraSettingViewModel(context.getString(R.string.title_item_resolution),
           resolutionList, isCameraSettingAvailable(currentProject)));
     }
   }
@@ -163,7 +163,7 @@ public class GetCameraSettingsMapperSupportedListUseCase {
     }
     if (frameRateList.size() > MINIMUM_OPTIONS_SUPPORTED_TO_SHOW_LIST) {
       preferenceList.add(new CameraSettingViewModel(
-              context.getString(R.string.frame_rate), frameRateList,
+              context.getString(R.string.title_item_frame_rate), frameRateList,
               isCameraSettingAvailable(currentProject)));
     }
   }
@@ -181,7 +181,7 @@ public class GetCameraSettingsMapperSupportedListUseCase {
     qualityList.add(new CameraSettingValue(
             CAMERA_SETTING_QUALITY_50_ID, context.getString(R.string.high_quality_name),
             qualityNames.get(CAMERA_SETTING_QUALITY_50_ID).equals(qualitySelected)));
-    preferenceList.add(new CameraSettingViewModel(context.getString(R.string.quality), qualityList,
+    preferenceList.add(new CameraSettingViewModel(context.getString(R.string.title_item_quality), qualityList,
         isCameraSettingAvailable(currentProject)));
   }
 

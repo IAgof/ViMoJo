@@ -22,6 +22,7 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720;
 import static com.videonasocialmedia.vimojo.utils.Constants.BACK_CAMERA_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_24_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID;
@@ -128,6 +129,10 @@ public class InitAppPresenter {
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_FRONT_ID, resolutionFront720pSupported);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, resolutionFront1080pSupported);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, resolutionFront2160pSupported);
+
+    if(!resolutionBack1080pSupported){
+      defaultResolution = CAMERA_SETTING_RESOLUTION_720;
+    }
 
     ResolutionSetting resolutionSetting = new ResolutionSetting(defaultResolution,
             resolutionsSupportedMap);
