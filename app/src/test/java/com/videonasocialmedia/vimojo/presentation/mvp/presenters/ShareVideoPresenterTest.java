@@ -9,6 +9,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -20,6 +21,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
+import com.videonasocialmedia.vimojo.upload.domain.UploadVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 
@@ -45,6 +47,7 @@ public class ShareVideoPresenterTest {
     @Mock private CreateDefaultProjectUseCase mockedCreateDefaultProjectUseCase;
     @Mock private AddLastVideoExportedToProjectUseCase mockedAddLastVideoExportedUseCase;
     @Mock private ExportProjectUseCase mockedExportProjectUseCase;
+    @Mock private UploadVideoUseCase mockedUploadVideoUseCase;
 
     @Before
     public void injectMocks() {
@@ -60,10 +63,7 @@ public class ShareVideoPresenterTest {
     public void constructorSetsCurrentProject() {
         Project videonaProject = getAProject();
 
-        ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
-                mockedUserEventTracker, mockSharedPrefs,
-                mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
-                mockedExportProjectUseCase);
+        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
 
         assertThat(shareVideoPresenter.currentProject, is(videonaProject));
     }
@@ -71,29 +71,38 @@ public class ShareVideoPresenterTest {
     @Test
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
-        ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
-                userEventTracker, mockSharedPrefs, mockedCreateDefaultProjectUseCase,
-            mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase);
+        ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockContext,
+            mockedShareVideoView, userEventTracker, mockSharedPrefs,
+            mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
+            mockedExportProjectUseCase, mockedUploadVideoUseCase);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
 
     @Test
     public void shareVideoPresenterCallsTracking(){
-        ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockedShareVideoView,
-                mockedUserEventTracker, mockSharedPrefs,
-                mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
-                mockedExportProjectUseCase);
+        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
         Project videonaProject = getAProject();
         String socialNetwokId = "SocialNetwork";
         int totalVideosShared = 0;
+
         shareVideoPresenter.trackVideoShared(socialNetwokId);
+
         Mockito.verify(mockedUserEventTracker).trackVideoShared(socialNetwokId,videonaProject,
                 totalVideosShared);
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", "private/path",
-                Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
-                        VideoFrameRate.FrameRate.FPS25));
+        Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+        return Project.getInstance("title", "/path", "private/path", compositionProfile);
+    }
+
+
+    @NonNull
+    private ShareVideoPresenter getShareVideoPresenter() {
+        return new ShareVideoPresenter(mockContext,
+            mockedShareVideoView, mockedUserEventTracker, mockSharedPrefs,
+            mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
+            mockedExportProjectUseCase, mockedUploadVideoUseCase);
     }
 }

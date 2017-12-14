@@ -62,8 +62,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   public static final int CAMERA_ID_REAR = 0;
   public static final int CAMERA_ID_FRONT = 1;
   private final String LOG_TAG = getClass().getSimpleName();
-
   private WeakReference<Camera2WrapperListener> listener;
+
   private final WeakReference<Context> contextWeakReference;
   private final String directorySaveVideos;
   private final Camera2ZoomHelper camera2ZoomHelper;
@@ -71,6 +71,8 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private final Camera2ISOHelper camera2ISOHelper;
   private final Camera2WhiteBalanceHelper camera2WhiteBalanceHelper;
   private final Camera2MeteringModeHelper camera2MeteringModeHelper;
+  private final Camera2FrameRateHelper camera2FrameRateHelper;
+  private final Camera2ExposureTimeHelper camera2ExposureTimeHelper;
 
   /**
    * A reference to the opened {@link VideonaCameraDevice}.
@@ -175,7 +177,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private Rect sensorActiveArray;
   private SCamera sCamera;
   private SCameraManager sCameraManager;
-  private Camera2ExposureTimeHelper camera2ExposureTimeHelper;
 
   public Camera2Wrapper(Context context, int cameraIdSelected,
                         AutoFitTextureView textureView, String directorySaveVideos,
@@ -194,6 +195,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2WhiteBalanceHelper = new Camera2WhiteBalanceHelper(this);
     camera2MeteringModeHelper = new Camera2MeteringModeHelper(this);
     camera2ExposureTimeHelper = new Camera2ExposureTimeHelper(this);
+    camera2FrameRateHelper = new Camera2FrameRateHelper(this);
 
     setupCamera();
   }
@@ -206,6 +208,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2WhiteBalanceHelper.setup();
     camera2MeteringModeHelper.setup();
     camera2ExposureTimeHelper.setup();
+    camera2FrameRateHelper.setup();
   }
 
   private void setupSamsungCamera() {
@@ -567,11 +570,17 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       return;
     }
     try {
-//      setUpCaptureRequestBuilderAutoMode(previewBuilder);
+
+      // setUpCaptureRequestBuilderAutoMode(previewBuilder);
       // TODO(jliarte): 28/06/17 check if we can change frame rate with this.
       //                Tested on M5 and working at 25FPS.
       //                Seems not to crash if camera doesnt support FPS, it aproximates to next available FPS setting
-      getPreviewBuilder().set(CaptureRequest.SENSOR_FRAME_DURATION, Long.valueOf(40000000));
+      //getPreviewBuilder().set(CaptureRequest.SENSOR_FRAME_DURATION, Long.valueOf(40000000));
+      if(camera2FrameRateHelper.isFrameRateSupported()) {
+        Range<Integer> fpsRange = new Range<>(videoCameraFormat.getFrameRate(),
+                videoCameraFormat.getFrameRate());
+        this.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, fpsRange);
+      }
       previewSession.setRepeatingRequest(previewBuilder.build(), previewCaptureCallback,
               backgroundHandler);
       Log.d(LOG_TAG, "Updated preview");

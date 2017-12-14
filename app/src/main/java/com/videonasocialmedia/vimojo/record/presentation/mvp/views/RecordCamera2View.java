@@ -123,11 +123,11 @@ public interface RecordCamera2View {
 
     void hideMeteringModeSelectionSubmenu();
 
+    void setupMeteringModeSupportedModesButtons(List<String> values);
+
     // focus methods
 
     void setupFocusSelectionSupportedModesButtons(List<String> values);
-
-    void setupMeteringModeSupportedModesButtons(List<String> values);
 
     void hideAFSelectionSubmenu();
 
@@ -143,7 +143,7 @@ public interface RecordCamera2View {
 
     void setFlashSupported(boolean state);
 
-    void setResolutionSelected(int height);
+    void setCameraSettingSelected(String resolution, String quality, String frameRate);
 
     void setZoom(float value);
 
@@ -176,6 +176,9 @@ public interface RecordCamera2View {
 
     void hideSoundVolumeSubmenu();
 
+    void showAudioGainButton();
+
+    void hideAudioGainButton();
     /**
      * Sets recordview picometer value and color
      * @param progress value of picometer progress meassured from 0 to 100
@@ -200,4 +203,11 @@ public interface RecordCamera2View {
     void resetManualExposure();
 
     void exposureTimeChanged(long exposureTime);
+
+    void setCameraDefaultSettings();
+
+    // Show/hide default button
+    void showDefaultButton();
+
+    void hideDefaultButton();
 }

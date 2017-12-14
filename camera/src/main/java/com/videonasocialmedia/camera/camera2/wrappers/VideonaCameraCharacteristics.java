@@ -55,6 +55,8 @@ public class VideonaCameraCharacteristics {
     characteristicsMap.put(CameraCharacteristics.SENSOR_MAX_ANALOG_SENSITIVITY, SCameraCharacteristics.SENSOR_MAX_ANALOG_SENSITIVITY);
     characteristicsMap.put(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES, SCameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
     characteristicsMap.put(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM, SCameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
+
+    characteristicsMap.put(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES, SCameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
 //    captureResultMap.put(, S);
   }
 

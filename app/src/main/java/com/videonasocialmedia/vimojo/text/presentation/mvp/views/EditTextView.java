@@ -28,4 +28,12 @@ public interface EditTextView {
     void initTextToVideoAdded(String text, String position);
 
     void updateProject();
+
+    void updateButtonToThemeDark();
+
+    void updateButtonToThemeLight();
+
+    void updateTextToThemeDark();
+
+    void updateTextToThemeLight();
 }

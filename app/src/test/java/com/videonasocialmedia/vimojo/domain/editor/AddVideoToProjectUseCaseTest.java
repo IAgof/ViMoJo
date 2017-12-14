@@ -14,6 +14,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinis
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnLaunchAVTransitionTempFileListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,9 +49,15 @@ public class AddVideoToProjectUseCaseTest {
     MockitoAnnotations.initMocks(this);
   }
 
+  @After
+  public void tearDown() {
+    Project.getInstance(null, null, null, null).clear();
+  }
+
   @Test
   public void testAddVideoToProjectAtPositionCallsUpdateProject() {
-    Project currentProject = Project.getInstance(null, null, null, null);
+    getAProject().clear();
+    Project currentProject = getAProject();
     Video video = new Video("media/path", 1f);
 
     injectedUseCase.addVideoToProjectAtPosition(video, 0, mockedOnAddMediaFinishedListener);
@@ -60,7 +67,8 @@ public class AddVideoToProjectUseCaseTest {
 
   @Test
   public void testAddVideoListToTrackCallsUpdateProject() {
-    Project currentProject = Project.getInstance(null, null, null, null);
+    getAProject().clear();
+    Project currentProject = getAProject();
     Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
@@ -93,6 +101,7 @@ public class AddVideoToProjectUseCaseTest {
 
   @Test
   public void ifVideoTransitionActivatedAddVideoToProjectCallsApplyAVTransitions() {
+    getAProject().clear();
     Project project = getAProject();
     project.getVMComposition().setVideoFadeTransitionActivated(true);
     assertThat("Video transition is activated ",

@@ -1,4 +1,4 @@
-v0.7.3
-- Pro camera features improvements:
-- Fixed problems with metering and focus in samsung phones
-- Improved tap to focus for all phones
+v0.7.6.1
+- Fix problem moving finish time and preview in trimming screen.
+- Fix problem with firebase analytics setup.
+- Fix override text selected in edit text screen and improved user experience.

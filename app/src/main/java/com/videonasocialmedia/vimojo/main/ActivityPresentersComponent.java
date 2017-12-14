@@ -12,6 +12,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
+import com.videonasocialmedia.vimojo.cameraSettings.presentation.view.activity.CameraSettingsActivity;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.activity.LicenseDetailActivity;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.activity.LicensesActivity;
 import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
@@ -39,7 +40,8 @@ public interface ActivityPresentersComponent {
   void inject(SoundActivity activity);
   void inject(MusicListActivity activity);
   void inject(LicensesActivity activity);
-  void inject (LicenseDetailActivity activity);
+  void inject(CameraSettingsActivity activity);
+  void inject(LicenseDetailActivity activity);
   void inject(VoiceOverRecordActivity activity);
   void inject(VideoDuplicateActivity activity);
   void inject(GalleryActivity activity);

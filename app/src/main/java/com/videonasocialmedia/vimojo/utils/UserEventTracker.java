@@ -5,6 +5,7 @@ import android.util.Log;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -326,6 +327,67 @@ public class UserEventTracker {
         } catch (JSONException e) {
             Log.d(TAG, "trackThemeAppChanged: error sending mixpanel USER_INTERACTED settings theme"
                     + " dark event ");
+            e.printStackTrace();
+        }
+    }
+
+    public void trackChangeResolution(String resolution) {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.INTERACTION,
+                AnalyticsConstants.ACTION_RESOLUTION_CHANGED);
+            eventProperties.put(AnalyticsConstants.ACTION_RESOLUTION_SELECTED, resolution);
+            Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(TAG, "trackResolutionChanged: error sending mixpanel USER_INTERACTED camera "
+                + " resolution event ");
+            e.printStackTrace();
+        }
+    }
+
+    public void trackChangeCameraInterface(String interfaceSelected) {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.INTERACTION,
+                AnalyticsConstants.ACTION_INTERFACE_CAMERA_CHANGED);
+            eventProperties.put(AnalyticsConstants.ACTION_INTERFACE_CAMERA_SELECTED,
+                    interfaceSelected);
+            Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(TAG, "trackCameraInterfaceChanged: error sending mixpanel USER_INTERACTED camera "
+                + " interface event ");
+            e.printStackTrace();
+        }
+    }
+
+    public void trackChangeFrameRate(String frameRate) {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.INTERACTION,
+                AnalyticsConstants.ACTION_FRAME_RATE_CHANGED);
+            eventProperties.put(AnalyticsConstants.ACTION_FRAME_RATE_SELECTED, frameRate);
+            Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(TAG, "trackFrameRateChanged: error sending mixpanel USER_INTERACTED camera "
+                + " frame rate event ");
+            e.printStackTrace();
+        }
+    }
+
+    public void trackChangeQuality(String quality) {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.INTERACTION,
+                AnalyticsConstants.ACTION_QUALITY_CHANGED);
+            eventProperties.put(AnalyticsConstants.ACTION_QUALITY_SELECTED, quality);
+            Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(TAG, "trackQualityChanged: error sending mixpanel USER_INTERACTED camera "
+                + " quality event ");
             e.printStackTrace();
         }
     }
