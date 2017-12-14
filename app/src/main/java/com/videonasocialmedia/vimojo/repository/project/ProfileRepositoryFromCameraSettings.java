@@ -83,11 +83,12 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
   private void createDefaultCameraSettings() {
     HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, true);
-    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID, false);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID, false);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_FRONT_ID, true);
-    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, true);
+    resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, false);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, false);
+
     ResolutionSetting resolutionSetting = new ResolutionSetting(
             Constants.DEFAULT_CAMERA_SETTING_RESOLUTION, resolutionsSupportedMap);
 

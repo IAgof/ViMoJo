@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
+import android.os.Build;
 import android.util.Log;
 import android.util.Range;
 import android.util.Size;
@@ -123,6 +124,11 @@ public class InitAppPresenter {
       }
     }
 
+    if(!resolutionBack1080pSupported){
+      defaultResolution = CAMERA_SETTING_RESOLUTION_720;
+      //resolutionBack1080pSupported = true;
+    }
+
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, resolutionBack720pSupported);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID, resolutionBack1080pSupported);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID, resolutionBack2160pSupported);
@@ -130,10 +136,9 @@ public class InitAppPresenter {
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, resolutionFront1080pSupported);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, resolutionFront2160pSupported);
 
-    if(!resolutionBack1080pSupported){
-      defaultResolution = CAMERA_SETTING_RESOLUTION_720;
-    }
 
+
+    Log.d(LOG_TAG, "Build.Model A1 " + Build.MODEL);
     ResolutionSetting resolutionSetting = new ResolutionSetting(defaultResolution,
             resolutionsSupportedMap);
 

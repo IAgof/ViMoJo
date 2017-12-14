@@ -308,8 +308,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   private void checkTextureViewToOpenCamera() {
     if (textureView.isAvailable()) {
       openCamera(textureView.getWidth(), textureView.getHeight());
+      Log.d(LOG_TAG, "textureView is available");
     } else {
       textureView.setSurfaceTextureListener(this);
+      Log.d(LOG_TAG, "textureView is NOT available");
     }
   }
 
@@ -503,6 +505,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       matrix.postRotate(90 * (rotation - 2), centerX, centerY);
     }
     textureView.setTransform(matrix);
+
   }
 
   /**
