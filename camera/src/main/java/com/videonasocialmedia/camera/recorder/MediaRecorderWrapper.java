@@ -71,6 +71,8 @@ public class MediaRecorderWrapper {
             CamcorderProfile.QUALITY_HIGH);
     // Width and height are done by VideoSource.Surface, configured with correct resolution.
     camcorderProfile.videoBitRate = videoCameraFormat.getVideoBitrate();
+    camcorderProfile.videoFrameWidth = videoCameraFormat.getVideoWidth();
+    camcorderProfile.videoFrameHeight = videoCameraFormat.getVideoHeight();
     // TODO:(alvaro.martinez) 19/01/17 Update Profile, get Default num_channels, SamplingRate, BitRate. Get from CameraSetting user preference
     camcorderProfile.audioChannels = videoCameraFormat.getAudioChannels();
     camcorderProfile.audioSampleRate = videoCameraFormat.getAudioSamplingRate();
