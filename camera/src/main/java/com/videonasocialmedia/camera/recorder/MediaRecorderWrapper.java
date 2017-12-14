@@ -2,6 +2,7 @@ package com.videonasocialmedia.camera.recorder;
 
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Surface;
 
@@ -14,10 +15,12 @@ import java.io.IOException;
  * Created by alvaro on 18/01/17.
  */
 
-public class MediaRecorderWrapper {
+public class MediaRecorderWrapper implements MediaRecorder.OnErrorListener, MediaRecorder.OnInfoListener {
 
+  private static final String LOG_TAG = MediaRecorderWrapper.class.getCanonicalName();
   private final String videoPath;
   private final int cameraIdSelected;
+  private final long freeStorage;
 
   private MediaRecorder mediaRecorder;
 
@@ -48,8 +51,8 @@ public class MediaRecorderWrapper {
   }
 
   public MediaRecorderWrapper(MediaRecorder mediaRecorder, int cameraIdSelected,
-                              int sensorOrientation, int rotation, String videoPath, VideoCameraFormat
-                                  videoCameraFormat){
+                              int sensorOrientation, int rotation, String videoPath,
+                              VideoCameraFormat videoCameraFormat, long freeStorage){
 
     this.mediaRecorder = mediaRecorder;
     this.cameraIdSelected = cameraIdSelected;
@@ -57,6 +60,7 @@ public class MediaRecorderWrapper {
     this.rotation = rotation;
     this.videoPath = videoPath;
     this.videoCameraFormat = videoCameraFormat;
+    this.freeStorage = freeStorage;
   }
 
   public void setUpMediaRecorder() throws IOException {
@@ -89,6 +93,9 @@ public class MediaRecorderWrapper {
         mediaRecorder.setOrientationHint(INVERSE_ORIENTATIONS.get(rotation));
         break;
     }
+    mediaRecorder.setMaxFileSize(freeStorage);
+    mediaRecorder.setOnErrorListener(this);
+    mediaRecorder.setOnInfoListener(this);
     mediaRecorder.prepare();
   }
 
@@ -137,4 +144,37 @@ public class MediaRecorderWrapper {
     return mediaRecorder.getMaxAmplitude();
   }
 
+  @Override
+  public void onError(MediaRecorder mr, int what, int extra) {
+    Log.d(LOG_TAG, "error in media recorder detected: " + what + " ex: " + extra);
+    if (what == MediaRecorder.MEDIA_RECORDER_ERROR_UNKNOWN)
+    {
+      Log.d(LOG_TAG, "it was a media recorder error unknown");
+    }
+    else
+    {
+      Log.d(LOG_TAG, "unknown media error");
+    }
+  }
+
+  @Override
+  public void onInfo(MediaRecorder mr, int what, int extra) {
+    Log.d(LOG_TAG, "info in media recorder detected: " + what + " ex: " + extra);
+    if (what == MediaRecorder.MEDIA_RECORDER_INFO_UNKNOWN)
+    {
+      Log.d(LOG_TAG, "it was a MEDIA_INFO_UNKNOWN");
+    }
+    else if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED)
+    {
+      Log.d(LOG_TAG, "it was a MEDIA_RECORDER_INFO_MAX_DURATION_REACHED");
+    }
+    else if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED)
+    {
+      Log.d(LOG_TAG, "it was a MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED");
+    }
+    else
+    {
+      Log.d(LOG_TAG, "unknown info");
+    }
+  }
 }

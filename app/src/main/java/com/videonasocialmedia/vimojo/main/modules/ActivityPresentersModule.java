@@ -108,6 +108,7 @@ public class ActivityPresentersModule {
   private GLCameraView cameraView = null;
   private boolean externalIntent;
   private String directorySaveVideos;
+  private long freeStorage;
 
   public ActivityPresentersModule(VimojoActivity vimojoActivity) {
     this.activity = vimojoActivity;
@@ -122,10 +123,11 @@ public class ActivityPresentersModule {
 
   public ActivityPresentersModule(RecordCamera2Activity activity,
                                   String directorySaveVideos,
-                                  AutoFitTextureView textureView) {
+                                  AutoFitTextureView textureView, long freeStorage) {
     this.activity = activity;
     this.textureView = textureView;
     this.directorySaveVideos = directorySaveVideos;
+    this.freeStorage = freeStorage;
   }
 
   @Provides @PerActivity
@@ -514,7 +516,7 @@ public class ActivityPresentersModule {
     return new Camera2Wrapper(activity, getCameraSettingsUseCase.getCameraIdSelected(), textureView,
             directorySaveVideos,
             getVideoFormatFromCurrentProjectUseCase
-                    .getVideoRecordedFormatFromCurrentProjectUseCase());
+                    .getVideoRecordedFormatFromCurrentProjectUseCase(), freeStorage);
   }
 
   @Provides VimojoLicensesProvider provideLicenseProvider() {
