@@ -2,18 +2,16 @@ package com.videonasocialmedia.camera.recorder;
 
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Surface;
 
+import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.camera.utils.VideoCameraFormat;
 
 import java.io.File;
 import java.io.IOException;
-
-import static android.media.MediaRecorder.AudioEncoder.AAC;
-import static android.media.MediaRecorder.OutputFormat.MPEG_4;
-import static android.media.MediaRecorder.VideoEncoder.H264;
 
 /**
  * Created by alvaro on 18/01/17.
@@ -72,38 +70,13 @@ public class MediaRecorderWrapper implements MediaRecorder.OnErrorListener, Medi
     mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
     // Camera2 video source, surface.
     mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
-    mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
     if (nextVideoAbsolutePath == null || nextVideoAbsolutePath.isEmpty()) {
       nextVideoAbsolutePath = videoPath;
     }
-  /*  CamcorderProfile  camcorderProfile = CamcorderProfile.get(cameraIdSelected,
-            CamcorderProfile.QUALITY_HIGH);
-    // Width and height are done by VideoSource.Surface, configured with correct resolution.
-    camcorderProfile.videoBitRate = videoCameraFormat.getVideoBitrate();
-    camcorderProfile.videoFrameWidth = videoCameraFormat.getVideoWidth();
-    camcorderProfile.videoFrameHeight = videoCameraFormat.getVideoHeight();
-    camcorderProfile.videoCodec = H264;
-    // TODO:(alvaro.martinez) 19/01/17 Update Profile, get Default num_channels, SamplingRate, BitRate. Get from CameraSetting user preference
-    camcorderProfile.audioChannels = videoCameraFormat.getAudioChannels();
-    camcorderProfile.audioSampleRate = videoCameraFormat.getAudioSamplingRate();
-    camcorderProfile.audioBitRate = videoCameraFormat.getAudioBitrate();
-    camcorderProfile.audioCodec = AAC;
-    camcorderProfile.fileFormat = MPEG_4;
-    camcorderProfile.quality = CamcorderProfile.QUALITY_720P;
-    mediaRecorder.setProfile(camcorderProfile);*/
-
+    int camcorderQuality = getCamcorderProfile(videoCameraFormat.getVideoWidth(),
+        videoCameraFormat.getVideoHeight());
+    mediaRecorder.setProfile(getCamcorderProfile(camcorderQuality));
     mediaRecorder.setOutputFile(nextVideoAbsolutePath);
-    mediaRecorder.setVideoEncodingBitRate(videoCameraFormat.getVideoBitrate());
-    // TODO:(alvaro.martinez) 25/01/17 Check and support different bit rate
-    mediaRecorder.setVideoFrameRate(30);
-    //mediaRecorder.setCaptureRate(30);
-    mediaRecorder.setVideoSize(videoCameraFormat.getVideoWidth(), videoCameraFormat.getVideoHeight());
-    mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-    mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-    // TODO:(alvaro.martinez) 19/01/17 Update Profile, get Default num_channels, SamplingRate, BitRate
-    mediaRecorder.setAudioChannels(videoCameraFormat.getAudioChannels());
-    mediaRecorder.setAudioSamplingRate(videoCameraFormat.getAudioSamplingRate());
-    mediaRecorder.setAudioEncodingBitRate(videoCameraFormat.getAudioBitrate());
     if(cameraIdSelected == 1)
       sensorOrientation = (sensorOrientation - 180 + 360) % 360;
     switch (sensorOrientation) {
@@ -168,6 +141,7 @@ public class MediaRecorderWrapper implements MediaRecorder.OnErrorListener, Medi
   @Override
   public void onError(MediaRecorder mr, int what, int extra) {
     Log.d(LOG_TAG, "error in media recorder detected: " + what + " ex: " + extra);
+    Crashlytics.log("error in media recorder detected: " + what + " ex: " + extra);
     if (what == MediaRecorder.MEDIA_RECORDER_ERROR_UNKNOWN)
     {
       Log.d(LOG_TAG, "it was a media recorder error unknown");
@@ -184,18 +158,78 @@ public class MediaRecorderWrapper implements MediaRecorder.OnErrorListener, Medi
     if (what == MediaRecorder.MEDIA_RECORDER_INFO_UNKNOWN)
     {
       Log.d(LOG_TAG, "it was a MEDIA_INFO_UNKNOWN");
+      Crashlytics.log("it was a MEDIA_INFO_UNKNOWN");
     }
     else if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED)
     {
       Log.d(LOG_TAG, "it was a MEDIA_RECORDER_INFO_MAX_DURATION_REACHED");
+      Crashlytics.log("it was a MEDIA_RECORDER_INFO_MAX_DURATION_REACHED");
     }
     else if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED)
     {
+      stop();
       Log.d(LOG_TAG, "it was a MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED");
+      Crashlytics.log("it was a MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED");
     }
     else
     {
       Log.d(LOG_TAG, "unknown info");
+      Crashlytics.log("unknown info");
     }
+  }
+
+  @NonNull
+  public CamcorderProfile getCamcorderProfile(int camcorderQuality) {
+    CamcorderProfile  camcorderProfile = CamcorderProfile.get(cameraIdSelected, camcorderQuality);
+    // Width and height are done by VideoSource.Surface, configured with correct resolution.
+    camcorderProfile.videoBitRate = videoCameraFormat.getVideoBitrate();
+    camcorderProfile.videoFrameWidth = videoCameraFormat.getVideoWidth();
+    camcorderProfile.videoFrameHeight = videoCameraFormat.getVideoHeight();
+    camcorderProfile.videoCodec = videoCameraFormat.getVideoCodec();
+    // TODO:(alvaro.martinez) 19/01/17 Update Profile, get Default num_channels, SamplingRate, BitRate. Get from CameraSetting user preference
+    camcorderProfile.audioChannels = videoCameraFormat.getAudioChannels();
+    camcorderProfile.audioSampleRate = videoCameraFormat.getAudioSamplingRate();
+    camcorderProfile.audioBitRate = videoCameraFormat.getAudioBitrate();
+    camcorderProfile.audioCodec = videoCameraFormat.getAudioCodec();
+    camcorderProfile.fileFormat = videoCameraFormat.getFileFormat();
+    camcorderProfile.quality = camcorderQuality;
+    return camcorderProfile;
+  }
+
+  private int getCamcorderProfile(int videoWidth, int videoHeight) {
+    VideoResolution videoResolution = new VideoResolution(videoWidth, videoHeight);
+    if(videoResolution.is720p()){
+      return CamcorderProfile.QUALITY_720P;
+    }
+    if(videoResolution.is1080p()) {
+      return CamcorderProfile.QUALITY_1080P;
+    }
+    if(videoResolution.is4k()) {
+      return CamcorderProfile.QUALITY_2160P;
+    }
+    return CamcorderProfile.QUALITY_HIGH;
+  }
+
+  private static class VideoResolution {
+    private final int height;
+    private final int width;
+
+    public VideoResolution(int width, int height) {
+      this.height = height;
+      this.width = width;
+    }
+
+    public boolean is720p(){
+      return (width == 1280 && height == 720);
+    }
+
+    public boolean is1080p(){
+      return (width == 1920 && height == 1080);
+    }
+
+    public boolean is4k(){
+      return ((width == 4096 || width == 3840) && height == 2160);
+    }
+
   }
 }
