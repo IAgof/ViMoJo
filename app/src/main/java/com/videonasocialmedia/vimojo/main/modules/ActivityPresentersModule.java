@@ -286,7 +286,7 @@ public class ActivityPresentersModule {
   TrimPreviewPresenter provideTrimPresenter(UserEventTracker userEventTracker,
                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                     ModifyVideoDurationUseCase modifyVideoDurationUseCase) {
-    return new TrimPreviewPresenter((VideoTrimActivity) activity, userEventTracker,
+    return new TrimPreviewPresenter((VideoTrimActivity) activity, activity, userEventTracker,
         getMediaListFromProjectUseCase, modifyVideoDurationUseCase);
   }
 

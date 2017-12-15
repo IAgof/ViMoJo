@@ -7,8 +7,14 @@
 
 package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.util.TypedValue;
+import android.widget.RadioButton;
+
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
@@ -46,15 +52,18 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     // and we don't want to create a memory leak
     //private WeakReference<TrimView> trimView;
     private TrimView trimView;
+    private Context context;
     public UserEventTracker userEventTracker;
     public Project currentProject;
+    private final String THEME_DARK = "dark";
 
     @Inject
-    public TrimPreviewPresenter(TrimView trimView, UserEventTracker userEventTracker,
+    public TrimPreviewPresenter(TrimView trimView, Context context, UserEventTracker userEventTracker,
                                 GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                 ModifyVideoDurationUseCase modifyVideoDurationUseCase) {
         //this.trimView = new WeakReference<>(trimView);
         this.trimView = trimView;
+        this.context = context;
         this.currentProject = loadCurrentProject();
         currentProject.addListener(this);
         this.userEventTracker = userEventTracker;
@@ -64,7 +73,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
 
     private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null,null, null);
+        return Project.getInstance(null, null, null, null);
     }
 
     public void init(int videoToTrimIndex) {
@@ -93,7 +102,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     public void setTrim(int startTimeMs, int finishTimeMs) {
 
         modifyVideoDurationUseCase.trimVideo(videoToEdit, startTimeMs, finishTimeMs,
-                currentProject);
+            currentProject);
         trackVideoTrimmed();
     }
 
@@ -109,15 +118,15 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
 
     public void advanceForwardStartTrimming(int advancePrecision, int startTimeMs,
                                             int finishTimeMs) {
-        if(((finishTimeMs - startTimeMs) / MS_CORRECTION_FACTOR) <= MIN_TRIM_OFFSET){
+        if (((finishTimeMs - startTimeMs) / MS_CORRECTION_FACTOR) <= MIN_TRIM_OFFSET) {
             return;
         }
         float adjustSeekBarMinPosition = (float) (startTimeMs + advancePrecision)
             / MS_CORRECTION_FACTOR;
-        if(Math.abs(adjustSeekBarMinPosition - (float) finishTimeMs / MS_CORRECTION_FACTOR)
-                < MIN_TRIM_OFFSET){
+        if (Math.abs(adjustSeekBarMinPosition - (float) finishTimeMs / MS_CORRECTION_FACTOR)
+            < MIN_TRIM_OFFSET) {
             adjustSeekBarMinPosition = ((float) finishTimeMs / MS_CORRECTION_FACTOR)
-                    - MIN_TRIM_OFFSET;
+                - MIN_TRIM_OFFSET;
         }
         trimView.updateStartTrimmingRangeSeekBar(Math.min(adjustSeekBarMinPosition,
             ((float) finishTimeMs / MS_CORRECTION_FACTOR)));
@@ -125,31 +134,61 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
 
     public void advanceBackwardEndTrimming(int advancePrecision, int startTimeMs,
                                            int finishTimeMs) {
-        if(((finishTimeMs - startTimeMs) / MS_CORRECTION_FACTOR) <= MIN_TRIM_OFFSET){
+        if (((finishTimeMs - startTimeMs) / MS_CORRECTION_FACTOR) <= MIN_TRIM_OFFSET) {
             return;
         }
 
         float adjustSeekBarMaxPosition = (float) (finishTimeMs - advancePrecision)
             / MS_CORRECTION_FACTOR;
-        if(Math.abs(adjustSeekBarMaxPosition - (float) startTimeMs / MS_CORRECTION_FACTOR)
-                < MIN_TRIM_OFFSET){
+        if (Math.abs(adjustSeekBarMaxPosition - (float) startTimeMs / MS_CORRECTION_FACTOR)
+            < MIN_TRIM_OFFSET) {
             adjustSeekBarMaxPosition = (startTimeMs / MS_CORRECTION_FACTOR) + MIN_TRIM_OFFSET;
         }
         trimView.updateFinishTrimmingRangeSeekBar(Math.max(adjustSeekBarMaxPosition,
-                ((float) startTimeMs / MS_CORRECTION_FACTOR) - MIN_TRIM_OFFSET));
+            ((float) startTimeMs / MS_CORRECTION_FACTOR) - MIN_TRIM_OFFSET));
     }
 
     public void advanceForwardEndTrimming(int advancePrecision, int finishTimeMs) {
 
         float maxRangeSeekBarValue = (float) videoToEdit.getFileDuration() / MS_CORRECTION_FACTOR;
         float adjustSeekBarMaxPosition = Math.min(maxRangeSeekBarValue,
-                (float) (finishTimeMs + advancePrecision) / MS_CORRECTION_FACTOR);
+            (float) (finishTimeMs + advancePrecision) / MS_CORRECTION_FACTOR);
         trimView.updateFinishTrimmingRangeSeekBar(adjustSeekBarMaxPosition);
     }
 
     @Override
     public void onObjectUpdated() {
         trimView.updateProject();
+    }
+
+
+    public void updateColorRadioButtonSelected(RadioButton buttonSelected) {
+        trimView.updateColorRadioButtonSelected(buttonSelected);
+    }
+
+    public void updateColorRadioButtonNoSelected(RadioButton buttonNoSelected) {
+        TypedValue currentTheme = getCurrentTheme();
+        if (currentTheme.string.equals(THEME_DARK)) {
+            trimView.updateRadioButtonNoSelectedToThemeDark(buttonNoSelected);
+        } else {
+            trimView.updateRadioButtonNoSelectedToThemeLight(buttonNoSelected);
+        }
+    }
+
+    public void updateColorButton() {
+        TypedValue currentTheme = getCurrentTheme();
+        if (currentTheme.string.equals(THEME_DARK)) {
+            trimView.updateViewToThemeDark();
+        } else {
+            trimView.updateViewToThemeLight();
+        }
+    }
+
+    @NonNull
+    public TypedValue getCurrentTheme() {
+        TypedValue outValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
+        return outValue;
     }
 }
 

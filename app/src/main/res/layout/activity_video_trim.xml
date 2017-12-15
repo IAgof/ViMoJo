@@ -68,7 +68,7 @@
                         rsb:bar_height="48dp"
                         rsb:selected_bar_color="?android:attr/textColorPrimary"
                         rsb:showLabels="false"
-                        rsb:textAboveThumbsColor="?android:attr/textColorSecondary"
+                        rsb:textAboveThumbsColor="?android:attr/textColorPrimary"
                         rsb:thumbDisabled="@drawable/ic_circular_thumb_seekbar"
                         rsb:thumbNormal="@drawable/ic_circular_thumb_seekbar"
                         rsb:thumbPressed="@drawable/ic_circular_thumb_seekbar" />

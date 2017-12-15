@@ -12,9 +12,13 @@ package com.videonasocialmedia.vimojo.trim.presentation.views.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
@@ -46,7 +50,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECI
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoTrimActivity extends VimojoActivity implements TrimView,
-        RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayer.VideonaPlayerListener {
+        RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayer.VideonaPlayerListener, RadioGroup.OnCheckedChangeListener {
 
     @Inject TrimPreviewPresenter presenter;
 
@@ -80,6 +84,14 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     ImageButton playerAdvanceHighBackwardEndTrim;
     @Bind(R.id.player_advance_high_forward_end_trim)
     ImageButton playerAdvanceHighForwardEndTrim;
+    @Bind(R.id.radio_group_trim_advance)
+    RadioGroup radioGroupAdvanceTrim;
+    @Bind(R.id.radio_button_trim_advance_low)
+    RadioButton buttonSelectAdvanceLow;
+    @Bind(R.id.radio_button_trim_advance_medium)
+    RadioButton buttonSelectAdvanceMedium;
+    @Bind(R.id.radio_button_trim_advance_high)
+    RadioButton buttonSelectAdvanceHight;
 
     int videoIndexOnTrack;
 
@@ -107,6 +119,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         trimmingRangeSeekBar.setOnRangeSeekBarChangeListener(this);
         trimmingRangeSeekBar.setNotifyWhileDragging(true);
         videonaPlayer.setListener(this);
+        radioGroupAdvanceTrim.setOnCheckedChangeListener(this);
 
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
@@ -114,7 +127,19 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     }
 
     private void setupActivityButtons() {
+        presenter.updateColorButton();
+    }
+
+    @Override
+    public void updateViewToThemeDark() {
+        tintTrimButtons(R.color.button_color_theme_dark);
+        tintTrimText(R.color.textColorDark);
+    }
+
+    @Override
+    public void updateViewToThemeLight() {
         tintTrimButtons(R.color.button_color_theme_light);
+        tintTrimText(R.color.textColorLight);
     }
 
     private void tintTrimButtons(int button_color) {
@@ -130,6 +155,11 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         tintButton(playerAdvanceHighForwardStartTrim, button_color);
         tintButton(playerAdvanceHighBackwardEndTrim, button_color);
         tintButton(playerAdvanceHighForwardEndTrim, button_color);
+    }
+
+
+    private void tintTrimText(int color) {
+        durationTag.setTextColor(getResources().getColor(color));
     }
 
     @Override
@@ -457,4 +487,91 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     public void newClipPlayed(int currentClipIndex) {
       videonaPlayer.playPreview();
     }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+        if (buttonSelectAdvanceLow.isChecked()) {
+            showPlayerAdvanceLow();
+            presenter.updateColorRadioButtonSelected(buttonSelectAdvanceLow);
+            presenter.updateColorRadioButtonNoSelected (buttonSelectAdvanceHight);
+            presenter.updateColorRadioButtonNoSelected (buttonSelectAdvanceMedium);
+        }
+        if(buttonSelectAdvanceMedium.isChecked()) {
+            showPlayerAdvanceMedium();
+            presenter.updateColorRadioButtonSelected(buttonSelectAdvanceMedium);
+            presenter.updateColorRadioButtonNoSelected (buttonSelectAdvanceHight);
+            presenter.updateColorRadioButtonNoSelected (buttonSelectAdvanceLow);
+        }
+        if(buttonSelectAdvanceHight.isChecked()) {
+            showPlayerAdvanceHigh();
+            presenter.updateColorRadioButtonSelected(buttonSelectAdvanceHight);
+            presenter.updateColorRadioButtonNoSelected (buttonSelectAdvanceLow);
+            presenter.updateColorRadioButtonNoSelected (buttonSelectAdvanceMedium);
+        }
+        setupActivityButtons();
+    }
+
+    @Override
+    public void showPlayerAdvanceLow() {
+        playerAdvanceLowBackwardStartTrim.setVisibility(View.VISIBLE);
+        playerAdvanceLowBackwardEndTrim.setVisibility(View.VISIBLE);
+        playerAdvanceLowForwardEndTrim.setVisibility(View.VISIBLE);
+        playerAdvanceLowForwardStartTrim.setVisibility(View.VISIBLE);
+        playerAdvanceMediumBackwardStartTrim.setVisibility(View.GONE);
+        playerAdvanceMediumBackwardEndTrim.setVisibility(View.GONE);
+        playerAdvanceMediumForwardEndTrim.setVisibility(View.GONE);
+        playerAdvanceMediumForwardStartTrim.setVisibility(View.GONE);
+        playerAdvanceHighBackwardStartTrim.setVisibility(View.GONE);
+        playerAdvanceHighBackwardEndTrim.setVisibility(View.GONE);
+        playerAdvanceHighForwardEndTrim.setVisibility(View.GONE);
+        playerAdvanceHighForwardStartTrim.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showPlayerAdvanceMedium() {
+        playerAdvanceLowBackwardStartTrim.setVisibility(View.GONE);
+        playerAdvanceLowBackwardEndTrim.setVisibility(View.GONE);
+        playerAdvanceLowForwardEndTrim.setVisibility(View.GONE);
+        playerAdvanceLowForwardStartTrim.setVisibility(View.GONE);
+        playerAdvanceMediumBackwardStartTrim.setVisibility(View.VISIBLE);
+        playerAdvanceMediumBackwardEndTrim.setVisibility(View.VISIBLE);
+        playerAdvanceMediumForwardEndTrim.setVisibility(View.VISIBLE);
+        playerAdvanceMediumForwardStartTrim.setVisibility(View.VISIBLE);
+        playerAdvanceHighBackwardStartTrim.setVisibility(View.GONE);
+        playerAdvanceHighBackwardEndTrim.setVisibility(View.GONE);
+        playerAdvanceHighForwardEndTrim.setVisibility(View.GONE);
+        playerAdvanceHighForwardStartTrim.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showPlayerAdvanceHigh() {
+        playerAdvanceLowBackwardStartTrim.setVisibility(View.GONE);
+        playerAdvanceLowBackwardEndTrim.setVisibility(View.GONE);
+        playerAdvanceLowForwardEndTrim.setVisibility(View.GONE);
+        playerAdvanceLowForwardStartTrim.setVisibility(View.GONE);
+        playerAdvanceMediumBackwardStartTrim.setVisibility(View.GONE);
+        playerAdvanceMediumBackwardEndTrim.setVisibility(View.GONE);
+        playerAdvanceMediumForwardEndTrim.setVisibility(View.GONE);
+        playerAdvanceMediumForwardStartTrim.setVisibility(View.GONE);
+        playerAdvanceHighBackwardStartTrim.setVisibility(View.VISIBLE);
+        playerAdvanceHighBackwardEndTrim.setVisibility(View.VISIBLE);
+        playerAdvanceHighForwardEndTrim.setVisibility(View.VISIBLE);
+        playerAdvanceHighForwardStartTrim.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void updateRadioButtonNoSelectedToThemeDark(RadioButton buttonNoSelected) {
+        buttonNoSelected.setTextColor(getResources().getColor(R.color.button_color_theme_dark));
+    }
+
+    @Override
+    public void updateRadioButtonNoSelectedToThemeLight(RadioButton buttonNoSelected) {
+        buttonNoSelected.setTextColor(getResources().getColor(R.color.button_color_theme_light));
+    }
+
+    @Override
+    public void updateColorRadioButtonSelected(RadioButton buttonSelected) {
+        buttonSelected.setTextColor(getResources().getColor(R.color.colorAccent));
+    }
+
 }
