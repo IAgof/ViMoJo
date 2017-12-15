@@ -6,7 +6,8 @@
     xmlns:rsb="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    tools:context=".trim.presentation.views.activity.VideoTrimActivity">
 
     <LinearLayout
         android:id="@+id/trim_main_linearlayout"
@@ -72,7 +73,6 @@
                         rsb:thumbNormal="@drawable/ic_circular_thumb_seekbar"
                         rsb:thumbPressed="@drawable/ic_circular_thumb_seekbar" />
 
-
                 </RelativeLayout>
 
             </android.support.v7.widget.CardView>
@@ -92,46 +92,61 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp">
 
-                    <Button
-                        android:id="@+id/trim_info_low"
-                        android:layout_width="wrap_content"
+                    <RadioGroup
+                        android:id="@+id/radio_group_trim_advance"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/colorTransparent"
-                        android:layout_alignParentLeft="true"
-                        android:text="300 ms"
-                        android:textAllCaps="false"
-                        android:textSize="12sp"/>
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:orientation="horizontal">
 
-                    <Button
-                        android:id="@+id/trim_info_medium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@color/colorTransparent"
-                        android:text="600 ms"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:textSize="12sp"/>
+                        <RadioButton
+                            android:id="@+id/radio_button_trim_advance_low"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:button="@null"
+                            android:gravity="center"
+                            android:background="@color/colorTransparent"
+                            android:text="300 ms"
+                            android:checked="true"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="12sp"/>
 
-                    <Button
-                        android:id="@+id/trim_info_high"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@color/colorTransparent"
-                        android:layout_alignParentRight="true"
-                        android:text="1200 ms"
-                        android:textSize="12sp"/>
+                        <RadioButton
+                            android:id="@+id/radio_button_trim_advance_medium"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:button="@null"
+                            android:gravity="center"
+                            android:background="@color/colorTransparent"
+                            android:text="600 ms"
+                            android:textSize="12sp"/>
+
+                        <RadioButton
+                            android:id="@+id/radio_button_trim_advance_high"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:button="@null"
+                            android:gravity="center"
+                            android:background="@color/colorTransparent"
+                            android:text="1200 ms"
+                            android:textSize="12sp"/>
+
+                    </RadioGroup>
 
                     <ImageButton
                         android:id="@+id/player_advance_low_backward_start_trim"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
-                        android:layout_below="@+id/trim_info_low"
+                        android:layout_below="@+id/radio_group_trim_advance"
                         android:layout_marginRight="16dp"
                         android:background="@null"
                         android:paddingBottom="8dp"
                         android:paddingLeft="8dp"
-                        android:paddingRight="0dp"
                         android:paddingTop="8dp"
                         android:src="@drawable/activity_edit_player_advance_low" />
 
@@ -139,12 +154,11 @@
                         android:id="@+id/player_advance_low_forward_start_trim"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/trim_info_low"
+                        android:layout_below="@+id/radio_group_trim_advance"
                         android:layout_toRightOf="@+id/player_advance_low_backward_start_trim"
                         android:background="@null"
                         android:paddingBottom="8dp"
                         android:paddingLeft="8dp"
-                        android:paddingRight="0dp"
                         android:paddingTop="8dp"
                         android:rotation="180"
                         android:src="@drawable/activity_edit_player_advance_low" />
@@ -153,13 +167,12 @@
                         android:id="@+id/player_advance_low_backward_end_trim"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/trim_info_low"
+                        android:layout_below="@+id/radio_group_trim_advance"
                         android:layout_marginRight="16dp"
                         android:layout_toLeftOf="@+id/player_advance_low_forward_end_trim"
                         android:background="@null"
                         android:paddingBottom="8dp"
                         android:paddingLeft="8dp"
-                        android:paddingRight="0dp"
                         android:paddingTop="8dp"
                         android:src="@drawable/activity_edit_player_advance_low" />
 
@@ -168,12 +181,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_below="@+id/trim_info_low"
+                        android:layout_below="@+id/radio_group_trim_advance"
                         android:layout_gravity="end"
                         android:background="@null"
                         android:paddingBottom="8dp"
                         android:paddingLeft="8dp"
-                        android:paddingRight="0dp"
                         android:paddingTop="8dp"
                         android:rotation="180"
                         android:src="@drawable/activity_edit_player_advance_low" />
@@ -183,12 +195,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
-                        android:layout_below="@+id/trim_info_low"
+                        android:layout_below="@+id/radio_group_trim_advance"
                         android:layout_marginRight="16dp"
                         android:background="@null"
                         android:paddingBottom="8dp"
                         android:paddingLeft="8dp"
-                        android:paddingRight="0dp"
                         android:paddingTop="8dp"
                         android:visibility="gone"
                         android:src="@drawable/activity_edit_player_advance_medium"
@@ -198,12 +209,11 @@
                         android:id="@+id/player_advance_medium_forward_start_trim"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/trim_info_low"
-                        android:layout_toRightOf="@+id/player_advance_low_backward_start_trim"
+                        android:layout_below="@+id/radio_group_trim_advance"
+                        android:layout_toRightOf="@+id/player_advance_medium_backward_start_trim"
                         android:background="@null"
                         android:paddingBottom="8dp"
                         android:paddingLeft="8dp"
-                        android:paddingRight="0dp"
                         android:paddingTop="8dp"
                         android:rotation="180"
                         android:visibility="gone"
@@ -213,13 +223,12 @@
                         android:id="@+id/player_advance_medium_backward_end_trim"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/trim_info_low"
+                        android:layout_below="@+id/radio_group_trim_advance"
                         android:layout_marginRight="16dp"
-                        android:layout_toLeftOf="@+id/player_advance_low_forward_end_trim"
+                        android:layout_toLeftOf="@+id/player_advance_medium_forward_end_trim"
                         android:background="@null"
                         android:paddingBottom="8dp"
                         android:paddingLeft="8dp"
-                        android:paddingRight="0dp"
                         android:paddingTop="8dp"
                         android:visibility="gone"
                         android:src="@drawable/activity_edit_player_advance_medium" />
@@ -229,7 +238,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_below="@+id/trim_info_low"
+                        android:layout_below="@+id/radio_group_trim_advance"
                         android:layout_gravity="end"
                         android:background="@null"
                         android:paddingBottom="8dp"
@@ -245,12 +254,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
-                        android:layout_below="@+id/trim_info_low"
+                        android:layout_below="@+id/radio_group_trim_advance"
                         android:layout_marginRight="16dp"
                         android:background="@null"
                         android:paddingBottom="8dp"
                         android:paddingLeft="8dp"
-                        android:paddingRight="0dp"
                         android:paddingTop="8dp"
                         android:visibility="gone"
                         android:src="@drawable/activity_edit_player_advance_high" />
@@ -259,12 +267,11 @@
                         android:id="@+id/player_advance_high_forward_start_trim"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/trim_info_low"
-                        android:layout_toRightOf="@+id/player_advance_low_backward_start_trim"
+                        android:layout_below="@+id/radio_group_trim_advance"
+                        android:layout_toRightOf="@+id/player_advance_high_backward_start_trim"
                         android:background="@null"
                         android:paddingBottom="8dp"
                         android:paddingLeft="8dp"
-                        android:paddingRight="0dp"
                         android:paddingTop="8dp"
                         android:rotation="180"
                         android:visibility="gone"
@@ -274,13 +281,12 @@
                         android:id="@+id/player_advance_high_backward_end_trim"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/trim_info_low"
+                        android:layout_below="@+id/radio_group_trim_advance"
                         android:layout_marginRight="16dp"
-                        android:layout_toLeftOf="@+id/player_advance_low_forward_end_trim"
+                        android:layout_toLeftOf="@+id/player_advance_high_forward_end_trim"
                         android:background="@null"
                         android:paddingBottom="8dp"
                         android:paddingLeft="8dp"
-                        android:paddingRight="0dp"
                         android:paddingTop="8dp"
                         android:visibility="gone"
                         android:src="@drawable/activity_edit_player_advance_high" />
@@ -290,12 +296,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_below="@+id/trim_info_low"
+                        android:layout_below="@+id/radio_group_trim_advance"
                         android:layout_gravity="end"
                         android:background="@null"
                         android:paddingBottom="8dp"
                         android:paddingLeft="8dp"
-                        android:paddingRight="0dp"
                         android:paddingTop="8dp"
                         android:rotation="180"
                         android:visibility="gone"
