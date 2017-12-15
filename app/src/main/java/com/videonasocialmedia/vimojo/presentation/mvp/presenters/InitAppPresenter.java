@@ -136,9 +136,6 @@ public class InitAppPresenter {
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, resolutionFront1080pSupported);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, resolutionFront2160pSupported);
 
-
-
-    Log.d(LOG_TAG, "Build.Model A1 " + Build.MODEL);
     ResolutionSetting resolutionSetting = new ResolutionSetting(defaultResolution,
             resolutionsSupportedMap);
 
