@@ -91,7 +91,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     @Bind(R.id.radio_button_trim_advance_medium)
     RadioButton buttonSelectAdvanceMedium;
     @Bind(R.id.radio_button_trim_advance_high)
-    RadioButton buttonSelectAdvanceHight;
+    RadioButton buttonSelectAdvanceHigh;
 
     int videoIndexOnTrack;
 
@@ -106,7 +106,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     private String VIDEO_POSITION = "video_position";
     private String START_TIME_TAG = "start_time_tag";
     private String STOP_TIME_TAG = "stop_time_tag";
-    private boolean activityStateHasChanged = false;
+    private boolean stateWasRestored = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,22 +127,22 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     }
 
     private void setupActivityButtons() {
-        presenter.updateColorButton();
+        presenter.setupActivityButtons();
     }
 
     @Override
     public void updateViewToThemeDark() {
-        tintTrimButtons(R.color.button_color_theme_dark);
-        tintTrimText(R.color.textColorDark);
+        tintPlayerAdvanceButtons(R.color.button_color_theme_dark);
+        tintDurationTag(R.color.textColorDark);
     }
 
     @Override
     public void updateViewToThemeLight() {
-        tintTrimButtons(R.color.button_color_theme_light);
-        tintTrimText(R.color.textColorLight);
+        tintPlayerAdvanceButtons(R.color.button_color_theme_light);
+        tintDurationTag(R.color.textColorLight);
     }
 
-    private void tintTrimButtons(int button_color) {
+    private void tintPlayerAdvanceButtons(int button_color) {
         tintButton(playerAdvanceLowBackwardStartTrim, button_color);
         tintButton(playerAdvanceLowForwardStartTrim, button_color);
         tintButton(playerAdvanceLowBackwardEndTrim, button_color);
@@ -157,8 +157,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         tintButton(playerAdvanceHighForwardEndTrim, button_color);
     }
 
-
-    private void tintTrimText(int color) {
+    private void tintDurationTag(int color) {
         durationTag.setTextColor(getResources().getColor(color));
     }
 
@@ -191,14 +190,14 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             currentPosition = savedInstanceState.getInt(VIDEO_POSITION, 0);
             startTimeMs = savedInstanceState.getInt(START_TIME_TAG);
             finishTimeMs = savedInstanceState.getInt(STOP_TIME_TAG);
-
-            activityStateHasChanged = true;
+            stateWasRestored = true;
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        stateWasRestored = true;
     }
 
     @Override
@@ -319,10 +318,10 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void showTrimBar(int videoStartTime, int videoStopTime, int videoFileDuration) {
-        if (activityStateHasChanged) {
+        if (stateWasRestored) {
             updateTrimmingTextTags();
             updateTimeVideoPlaying();
-            activityStateHasChanged = false;
+            stateWasRestored = false;
         } else {
             startTimeMs = videoStartTime;
             finishTimeMs = videoStopTime;
@@ -491,24 +490,24 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     @Override
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         if (buttonSelectAdvanceLow.isChecked()) {
-            showPlayerAdvanceLow();
-            presenter.updateColorRadioButtonSelected(buttonSelectAdvanceLow);
-            presenter.updateColorRadioButtonNoSelected (buttonSelectAdvanceHight);
-            presenter.updateColorRadioButtonNoSelected (buttonSelectAdvanceMedium);
+            presenter.showPlayerAdvanceLow();
+            presenter.updateRadioButtonSelected(buttonSelectAdvanceLow);
+            presenter.updateRadioButtonNoSelected(buttonSelectAdvanceHigh);
+            presenter.updateRadioButtonNoSelected(buttonSelectAdvanceMedium);
         }
         if(buttonSelectAdvanceMedium.isChecked()) {
-            showPlayerAdvanceMedium();
-            presenter.updateColorRadioButtonSelected(buttonSelectAdvanceMedium);
-            presenter.updateColorRadioButtonNoSelected (buttonSelectAdvanceHight);
-            presenter.updateColorRadioButtonNoSelected (buttonSelectAdvanceLow);
+            presenter.showPlayerAdvanceMedium();
+            presenter.updateRadioButtonSelected(buttonSelectAdvanceMedium);
+            presenter.updateRadioButtonNoSelected(buttonSelectAdvanceHigh);
+            presenter.updateRadioButtonNoSelected(buttonSelectAdvanceLow);
         }
-        if(buttonSelectAdvanceHight.isChecked()) {
-            showPlayerAdvanceHigh();
-            presenter.updateColorRadioButtonSelected(buttonSelectAdvanceHight);
-            presenter.updateColorRadioButtonNoSelected (buttonSelectAdvanceLow);
-            presenter.updateColorRadioButtonNoSelected (buttonSelectAdvanceMedium);
+        if(buttonSelectAdvanceHigh.isChecked()) {
+            presenter.showPlayerAdvanceHigh();
+            presenter.updateRadioButtonSelected(buttonSelectAdvanceHigh);
+            presenter.updateRadioButtonNoSelected(buttonSelectAdvanceLow);
+            presenter.updateRadioButtonNoSelected(buttonSelectAdvanceMedium);
         }
-        setupActivityButtons();
+        presenter.setupActivityButtons();
     }
 
     @Override
@@ -570,7 +569,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     }
 
     @Override
-    public void updateColorRadioButtonSelected(RadioButton buttonSelected) {
+    public void updateRadioButtonSelected(RadioButton buttonSelected) {
         buttonSelected.setTextColor(getResources().getColor(R.color.colorAccent));
     }
 

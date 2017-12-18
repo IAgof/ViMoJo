@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -39,6 +40,7 @@ public class TrimPreviewPresenterTest {
     @InjectMocks private TrimPreviewPresenter trimPreviewPresenter;
     @Mock private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
     @Mock private TrimView mockedTrimView;
+    @Mock private Context mockedContext;
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
 
@@ -59,7 +61,7 @@ public class TrimPreviewPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(mockedTrimView,
-            userEventTracker, mockedGetMediaListFromProjectUseCase,
+            mockedContext, userEventTracker, mockedGetMediaListFromProjectUseCase,
             mockedModifyVideoDurationUseCase);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
@@ -168,7 +170,7 @@ public class TrimPreviewPresenterTest {
 
     @NonNull
     private TrimPreviewPresenter getTrimPreviewPresenter() {
-        return new TrimPreviewPresenter(mockedTrimView,
+        return new TrimPreviewPresenter(mockedTrimView, mockedContext,
             mockedUserEventTracker, mockedGetMediaListFromProjectUseCase,
             mockedModifyVideoDurationUseCase);
     }

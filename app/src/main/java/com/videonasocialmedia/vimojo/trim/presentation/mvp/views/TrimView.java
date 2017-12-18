@@ -52,5 +52,5 @@ public interface TrimView {
 
     void updateRadioButtonNoSelectedToThemeLight(RadioButton buttonNoSelected);
 
-    void updateColorRadioButtonSelected(RadioButton buttonSelected);
+    void updateRadioButtonSelected(RadioButton buttonSelected);
 }

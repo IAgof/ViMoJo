@@ -161,26 +161,37 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
         trimView.updateProject();
     }
 
-
-    public void updateColorRadioButtonSelected(RadioButton buttonSelected) {
-        trimView.updateColorRadioButtonSelected(buttonSelected);
+    public void setupActivityButtons() {
+      TypedValue currentTheme = getCurrentTheme();
+      if (currentTheme.string.equals(THEME_DARK)) {
+        trimView.updateViewToThemeDark();
+      } else {
+        trimView.updateViewToThemeLight();
+      }
     }
 
-    public void updateColorRadioButtonNoSelected(RadioButton buttonNoSelected) {
+    public void showPlayerAdvanceLow() {
+        trimView.showPlayerAdvanceLow();
+    }
+
+    public void showPlayerAdvanceMedium() {
+        trimView.showPlayerAdvanceMedium();
+    }
+
+    public void showPlayerAdvanceHigh() {
+        trimView.showPlayerAdvanceHigh();
+    }
+
+    public void updateRadioButtonSelected(RadioButton buttonSelected) {
+        trimView.updateRadioButtonSelected(buttonSelected);
+    }
+
+    public void updateRadioButtonNoSelected(RadioButton buttonNoSelected) {
         TypedValue currentTheme = getCurrentTheme();
         if (currentTheme.string.equals(THEME_DARK)) {
             trimView.updateRadioButtonNoSelectedToThemeDark(buttonNoSelected);
         } else {
             trimView.updateRadioButtonNoSelectedToThemeLight(buttonNoSelected);
-        }
-    }
-
-    public void updateColorButton() {
-        TypedValue currentTheme = getCurrentTheme();
-        if (currentTheme.string.equals(THEME_DARK)) {
-            trimView.updateViewToThemeDark();
-        } else {
-            trimView.updateViewToThemeLight();
         }
     }
 
