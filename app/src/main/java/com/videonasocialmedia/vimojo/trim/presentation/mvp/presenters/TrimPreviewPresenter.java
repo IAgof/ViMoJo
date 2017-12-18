@@ -161,34 +161,54 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
         trimView.updateProject();
     }
 
-
-    public void updateColorRadioButtonSelected(RadioButton buttonSelected) {
-        trimView.updateColorRadioButtonSelected(buttonSelected);
+    public void showPlayerAdvanceLow() {
+        trimView.showPlayerAdvanceLow();
     }
 
-    public void updateColorRadioButtonNoSelected(RadioButton buttonNoSelected) {
-        TypedValue currentTheme = getCurrentTheme();
-        if (currentTheme.string.equals(THEME_DARK)) {
-            trimView.updateRadioButtonNoSelectedToThemeDark(buttonNoSelected);
-        } else {
-            trimView.updateRadioButtonNoSelectedToThemeLight(buttonNoSelected);
-        }
+    public void showPlayerAdvanceMedium() {
+        trimView.showPlayerAdvanceMedium();
     }
 
-    public void updateColorButton() {
-        TypedValue currentTheme = getCurrentTheme();
-        if (currentTheme.string.equals(THEME_DARK)) {
+    public void showPlayerAdvanceHigh() {
+        trimView.showPlayerAdvanceHigh();
+    }
+
+    public void setupActivityViews() {
+        String currentTheme = getCurrentTheme();
+        updateViewsAccordingTheme(currentTheme);
+    }
+
+    public void updateRadioButtonSelected(RadioButton buttonSelected) {
+        trimView.updateButtonSelected(buttonSelected);
+    }
+
+    public void updateRadioButtonNoSelected(RadioButton buttonNoSelected) {
+        String currentTheme = getCurrentTheme();
+        updateRadioButtonAccordingTheme(buttonNoSelected, currentTheme);
+    }
+
+    public void updateViewsAccordingTheme(String currentTheme) {
+        if (currentTheme.equals(THEME_DARK)) {
             trimView.updateViewToThemeDark();
         } else {
             trimView.updateViewToThemeLight();
         }
     }
 
+    public void updateRadioButtonAccordingTheme(RadioButton buttonNoSelected,
+                                                String currentTheme) {
+        if (currentTheme.equals(THEME_DARK)) {
+            trimView.updateButtonNoSelectedToThemeDark(buttonNoSelected);
+        } else {
+            trimView.updateButtonNoSelectedToThemeLight(buttonNoSelected);
+        }
+    }
+
     @NonNull
-    public TypedValue getCurrentTheme() {
+    public String getCurrentTheme() {
         TypedValue outValue = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
-        return outValue;
+        return (String) outValue.string;
     }
 }
 

@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -27,7 +28,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Mockito.verify;
 
@@ -39,6 +39,7 @@ public class TrimPreviewPresenterTest {
     @InjectMocks private TrimPreviewPresenter trimPreviewPresenter;
     @Mock private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
     @Mock private TrimView mockedTrimView;
+    @Mock private Context mockedContext;
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
 
@@ -59,7 +60,7 @@ public class TrimPreviewPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(mockedTrimView,
-            userEventTracker, mockedGetMediaListFromProjectUseCase,
+            mockedContext, userEventTracker, mockedGetMediaListFromProjectUseCase,
             mockedModifyVideoDurationUseCase);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
@@ -166,9 +167,19 @@ public class TrimPreviewPresenterTest {
         verify(mockedTrimView).updateFinishTrimmingRangeSeekBar(anyFloat());
     }
 
+    @Test
+    public void setupActivityViewsCallsUpdateViewToThemeDarkIfThemeIsDark() {
+        trimPreviewPresenter = getTrimPreviewPresenter();
+        String currentTheme = "dark";
+
+        trimPreviewPresenter.updateViewsAccordingTheme(currentTheme);
+
+        verify(mockedTrimView).updateViewToThemeDark();
+    }
+
     @NonNull
     private TrimPreviewPresenter getTrimPreviewPresenter() {
-        return new TrimPreviewPresenter(mockedTrimView,
+        return new TrimPreviewPresenter(mockedTrimView, mockedContext,
             mockedUserEventTracker, mockedGetMediaListFromProjectUseCase,
             mockedModifyVideoDurationUseCase);
     }
