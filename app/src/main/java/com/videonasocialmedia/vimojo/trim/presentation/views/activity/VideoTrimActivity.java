@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -60,30 +59,15 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     RangeSeekBar trimmingRangeSeekBar;
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-    @Bind(R.id.player_advance_low_backward_start_trim)
-    ImageButton playerAdvanceLowBackwardStartTrim;
-    @Bind(R.id.player_advance_low_forward_start_trim)
-    ImageButton playerAdvanceLowForwardStartTrim;
-    @Bind(R.id.player_advance_low_backward_end_trim)
-    ImageButton playerAdvanceLowBackwardEndTrim;
-    @Bind(R.id.player_advance_low_forward_end_trim)
-    ImageButton playerAdvanceLowForwardEndTrim;
-    @Bind(R.id.player_advance_medium_backward_start_trim)
-    ImageButton playerAdvanceMediumBackwardStartTrim;
-    @Bind(R.id.player_advance_medium_forward_start_trim)
-    ImageButton playerAdvanceMediumForwardStartTrim;
-    @Bind(R.id.player_advance_medium_backward_end_trim)
-    ImageButton playerAdvanceMediumBackwardEndTrim;
-    @Bind(R.id.player_advance_medium_forward_end_trim)
-    ImageButton playerAdvanceMediumForwardEndTrim;
-    @Bind(R.id.player_advance_high_backward_start_trim)
-    ImageButton playerAdvanceHighBackwardStartTrim;
-    @Bind(R.id.player_advance_high_forward_start_trim)
-    ImageButton playerAdvanceHighForwardStartTrim;
-    @Bind(R.id.player_advance_high_backward_end_trim)
-    ImageButton playerAdvanceHighBackwardEndTrim;
-    @Bind(R.id.player_advance_high_forward_end_trim)
-    ImageButton playerAdvanceHighForwardEndTrim;
+    @Bind(R.id.player_advance_backward_start_trim)
+    ImageButton playerAdvanceBackwardStartTrim;
+    @Bind(R.id.player_advance_forward_start_trim)
+    ImageButton playerAdvanceForwardStartTrim;
+    @Bind(R.id.player_advance_backward_end_trim)
+    ImageButton playerAdvanceBackwardEndTrim;
+    @Bind(R.id.player_advance_forward_end_trim)
+    ImageButton playerAdvanceForwardEndTrim;
+
     @Bind(R.id.radio_group_trim_advance)
     RadioGroup radioGroupAdvanceTrim;
     @Bind(R.id.radio_button_trim_advance_low)
@@ -208,70 +192,62 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         super.onSaveInstanceState(outState);
     }
 
-    @OnClick(R.id.player_advance_low_backward_start_trim)
+    @OnClick(R.id.player_advance_backward_start_trim)
     public void onClickAdvanceLowBackwardStart(){
-        presenter.advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs);
+        if (buttonSelectAdvanceLow.isChecked()) {
+            presenter.advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs);
+        }
+        if (buttonSelectAdvanceMedium.isChecked()) {
+            presenter.advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs);
+        }
+        if (buttonSelectAdvanceHigh.isChecked()) {
+            presenter.advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs);
+        }
     }
 
-    @OnClick(R.id.player_advance_low_forward_start_trim)
+    @OnClick(R.id.player_advance_forward_start_trim)
     public void onClickAdvanceLowForwardStart(){
-        presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs,
+        if (buttonSelectAdvanceLow.isChecked()) {
+            presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs,
                 finishTimeMs);
+        }
+        if (buttonSelectAdvanceMedium.isChecked()) {
+            presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs,
+                finishTimeMs);
+        }
+        if (buttonSelectAdvanceHigh.isChecked()) {
+            presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs,
+                finishTimeMs);
+        }
     }
 
-    @OnClick(R.id.player_advance_low_backward_end_trim)
+    @OnClick(R.id.player_advance_backward_end_trim)
     public void onClickAdvanceLowBackwardEnd(){
-        presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs,
+        if (buttonSelectAdvanceLow.isChecked()) {
+            presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs,
                 finishTimeMs);
+        }
+        if (buttonSelectAdvanceMedium.isChecked()) {
+            presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs,
+                finishTimeMs);
+        }
+        if (buttonSelectAdvanceHigh.isChecked()) {
+            presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs,
+                finishTimeMs);
+        }
     }
 
-    @OnClick(R.id.player_advance_low_forward_end_trim)
+    @OnClick(R.id.player_advance_forward_end_trim)
     public void onClickAdvanceLowForwardEnd(){
-        presenter.advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_LOW, finishTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_medium_backward_start_trim)
-    public void onClickAdvanceMediumBackwardStart(){
-        presenter.advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_medium_forward_start_trim)
-    public void onClickAdvanceMediumForwardStart(){
-        presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs,
-                finishTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_medium_backward_end_trim)
-    public void onClickAdvanceMediumBackwardEnd(){
-        presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs,
-                finishTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_medium_forward_end_trim)
-    public void onClickAdvanceMediumForwardEnd(){
-        presenter.advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, finishTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_high_backward_start_trim)
-    public void onClickAdvanceHighBackwardStart(){
-        presenter.advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_high_forward_start_trim)
-    public void onClickAdvanceHighForwardStart(){
-        presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs,
-                finishTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_high_backward_end_trim)
-    public void onClickAdvanceHighBackwardEnd(){
-        presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs,
-                finishTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_high_forward_end_trim)
-    public void onClickAdvanceHighForwardEnd(){
-        presenter.advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_HIGH, finishTimeMs);
+        if (buttonSelectAdvanceLow.isChecked()) {
+            presenter.advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_LOW, finishTimeMs);
+        }
+        if (buttonSelectAdvanceMedium.isChecked()) {
+            presenter.advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, finishTimeMs);
+        }
+        if (buttonSelectAdvanceHigh.isChecked()) {
+            presenter.advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_HIGH, finishTimeMs);
+        }
     }
 
     @OnClick(R.id.button_trim_accept)
@@ -492,18 +468,10 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     }
 
     private void tintAdvanceButtons(int button_color) {
-        tintButton(playerAdvanceLowBackwardStartTrim, button_color);
-        tintButton(playerAdvanceLowForwardStartTrim, button_color);
-        tintButton(playerAdvanceLowBackwardEndTrim, button_color);
-        tintButton(playerAdvanceLowForwardEndTrim, button_color);
-        tintButton(playerAdvanceMediumBackwardStartTrim, button_color);
-        tintButton(playerAdvanceMediumForwardStartTrim, button_color);
-        tintButton(playerAdvanceMediumBackwardEndTrim, button_color);
-        tintButton(playerAdvanceMediumForwardEndTrim, button_color);
-        tintButton(playerAdvanceHighBackwardStartTrim, button_color);
-        tintButton(playerAdvanceHighForwardStartTrim, button_color);
-        tintButton(playerAdvanceHighBackwardEndTrim, button_color);
-        tintButton(playerAdvanceHighForwardEndTrim, button_color);
+        tintButton(playerAdvanceBackwardStartTrim, button_color);
+        tintButton(playerAdvanceForwardStartTrim, button_color);
+        tintButton(playerAdvanceBackwardEndTrim, button_color);
+        tintButton(playerAdvanceForwardEndTrim, button_color);
     }
 
     private void tintDurationTag(int color) {
@@ -512,50 +480,27 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void showPlayerAdvanceLow() {
-        playerAdvanceLowBackwardStartTrim.setVisibility(View.VISIBLE);
-        playerAdvanceLowBackwardEndTrim.setVisibility(View.VISIBLE);
-        playerAdvanceLowForwardEndTrim.setVisibility(View.VISIBLE);
-        playerAdvanceLowForwardStartTrim.setVisibility(View.VISIBLE);
-        playerAdvanceMediumBackwardStartTrim.setVisibility(View.GONE);
-        playerAdvanceMediumBackwardEndTrim.setVisibility(View.GONE);
-        playerAdvanceMediumForwardEndTrim.setVisibility(View.GONE);
-        playerAdvanceMediumForwardStartTrim.setVisibility(View.GONE);
-        playerAdvanceHighBackwardStartTrim.setVisibility(View.GONE);
-        playerAdvanceHighBackwardEndTrim.setVisibility(View.GONE);
-        playerAdvanceHighForwardEndTrim.setVisibility(View.GONE);
-        playerAdvanceHighForwardStartTrim.setVisibility(View.GONE);
+        playerAdvanceBackwardStartTrim.setImageResource(R.drawable.activity_edit_player_advance_low);
+        playerAdvanceBackwardEndTrim.setImageResource(R.drawable.activity_edit_player_advance_low);
+        playerAdvanceForwardEndTrim.setImageResource(R.drawable.activity_edit_player_advance_low);
+        playerAdvanceForwardStartTrim.setImageResource(R.drawable.activity_edit_player_advance_low);
+
     }
 
     @Override
     public void showPlayerAdvanceMedium() {
-        playerAdvanceLowBackwardStartTrim.setVisibility(View.GONE);
-        playerAdvanceLowBackwardEndTrim.setVisibility(View.GONE);
-        playerAdvanceLowForwardEndTrim.setVisibility(View.GONE);
-        playerAdvanceLowForwardStartTrim.setVisibility(View.GONE);
-        playerAdvanceMediumBackwardStartTrim.setVisibility(View.VISIBLE);
-        playerAdvanceMediumBackwardEndTrim.setVisibility(View.VISIBLE);
-        playerAdvanceMediumForwardEndTrim.setVisibility(View.VISIBLE);
-        playerAdvanceMediumForwardStartTrim.setVisibility(View.VISIBLE);
-        playerAdvanceHighBackwardStartTrim.setVisibility(View.GONE);
-        playerAdvanceHighBackwardEndTrim.setVisibility(View.GONE);
-        playerAdvanceHighForwardEndTrim.setVisibility(View.GONE);
-        playerAdvanceHighForwardStartTrim.setVisibility(View.GONE);
+        playerAdvanceBackwardStartTrim.setImageResource(R.drawable.activity_edit_player_advance_medium);
+        playerAdvanceBackwardEndTrim.setImageResource(R.drawable.activity_edit_player_advance_medium);
+        playerAdvanceForwardEndTrim.setImageResource(R.drawable.activity_edit_player_advance_medium);
+        playerAdvanceForwardStartTrim.setImageResource(R.drawable.activity_edit_player_advance_medium);
     }
 
     @Override
     public void showPlayerAdvanceHigh() {
-        playerAdvanceLowBackwardStartTrim.setVisibility(View.GONE);
-        playerAdvanceLowBackwardEndTrim.setVisibility(View.GONE);
-        playerAdvanceLowForwardEndTrim.setVisibility(View.GONE);
-        playerAdvanceLowForwardStartTrim.setVisibility(View.GONE);
-        playerAdvanceMediumBackwardStartTrim.setVisibility(View.GONE);
-        playerAdvanceMediumBackwardEndTrim.setVisibility(View.GONE);
-        playerAdvanceMediumForwardEndTrim.setVisibility(View.GONE);
-        playerAdvanceMediumForwardStartTrim.setVisibility(View.GONE);
-        playerAdvanceHighBackwardStartTrim.setVisibility(View.VISIBLE);
-        playerAdvanceHighBackwardEndTrim.setVisibility(View.VISIBLE);
-        playerAdvanceHighForwardEndTrim.setVisibility(View.VISIBLE);
-        playerAdvanceHighForwardStartTrim.setVisibility(View.VISIBLE);
+        playerAdvanceBackwardStartTrim.setImageResource(R.drawable.activity_edit_player_advance_high);
+        playerAdvanceBackwardEndTrim.setImageResource(R.drawable.activity_edit_player_advance_high);
+        playerAdvanceForwardEndTrim.setImageResource(R.drawable.activity_edit_player_advance_high);
+        playerAdvanceForwardStartTrim.setImageResource(R.drawable.activity_edit_player_advance_high);
     }
 
     @Override

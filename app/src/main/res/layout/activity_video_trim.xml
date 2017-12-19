@@ -138,7 +138,7 @@
                     </RadioGroup>
 
                     <ImageButton
-                        android:id="@+id/player_advance_low_backward_start_trim"
+                        android:id="@+id/player_advance_backward_start_trim"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
@@ -151,11 +151,11 @@
                         android:src="@drawable/activity_edit_player_advance_low" />
 
                     <ImageButton
-                        android:id="@+id/player_advance_low_forward_start_trim"
+                        android:id="@+id/player_advance_forward_start_trim"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/radio_group_trim_advance"
-                        android:layout_toRightOf="@+id/player_advance_low_backward_start_trim"
+                        android:layout_toRightOf="@+id/player_advance_backward_start_trim"
                         android:background="@null"
                         android:paddingBottom="8dp"
                         android:paddingLeft="8dp"
@@ -164,12 +164,12 @@
                         android:src="@drawable/activity_edit_player_advance_low" />
 
                     <ImageButton
-                        android:id="@+id/player_advance_low_backward_end_trim"
+                        android:id="@+id/player_advance_backward_end_trim"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/radio_group_trim_advance"
                         android:layout_marginRight="16dp"
-                        android:layout_toLeftOf="@+id/player_advance_low_forward_end_trim"
+                        android:layout_toLeftOf="@+id/player_advance_forward_end_trim"
                         android:background="@null"
                         android:paddingBottom="8dp"
                         android:paddingLeft="8dp"
@@ -177,7 +177,7 @@
                         android:src="@drawable/activity_edit_player_advance_low" />
 
                     <ImageButton
-                        android:id="@+id/player_advance_low_forward_end_trim"
+                        android:id="@+id/player_advance_forward_end_trim"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -189,122 +189,6 @@
                         android:paddingTop="8dp"
                         android:rotation="180"
                         android:src="@drawable/activity_edit_player_advance_low" />
-
-                    <ImageButton
-                        android:id="@+id/player_advance_medium_backward_start_trim"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_below="@+id/radio_group_trim_advance"
-                        android:layout_marginRight="16dp"
-                        android:background="@null"
-                        android:paddingBottom="8dp"
-                        android:paddingLeft="8dp"
-                        android:paddingTop="8dp"
-                        android:visibility="gone"
-                        android:src="@drawable/activity_edit_player_advance_medium"
-                        />
-
-                    <ImageButton
-                        android:id="@+id/player_advance_medium_forward_start_trim"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/radio_group_trim_advance"
-                        android:layout_toRightOf="@+id/player_advance_medium_backward_start_trim"
-                        android:background="@null"
-                        android:paddingBottom="8dp"
-                        android:paddingLeft="8dp"
-                        android:paddingTop="8dp"
-                        android:rotation="180"
-                        android:visibility="gone"
-                        android:src="@drawable/activity_edit_player_advance_medium" />
-
-                    <ImageButton
-                        android:id="@+id/player_advance_medium_backward_end_trim"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/radio_group_trim_advance"
-                        android:layout_marginRight="16dp"
-                        android:layout_toLeftOf="@+id/player_advance_medium_forward_end_trim"
-                        android:background="@null"
-                        android:paddingBottom="8dp"
-                        android:paddingLeft="8dp"
-                        android:paddingTop="8dp"
-                        android:visibility="gone"
-                        android:src="@drawable/activity_edit_player_advance_medium" />
-
-                    <ImageButton
-                        android:id="@+id/player_advance_medium_forward_end_trim"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@+id/radio_group_trim_advance"
-                        android:layout_gravity="end"
-                        android:background="@null"
-                        android:paddingBottom="8dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="0dp"
-                        android:paddingTop="8dp"
-                        android:rotation="180"
-                        android:visibility="gone"
-                        android:src="@drawable/activity_edit_player_advance_medium" />
-
-                    <ImageButton
-                        android:id="@+id/player_advance_high_backward_start_trim"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_below="@+id/radio_group_trim_advance"
-                        android:layout_marginRight="16dp"
-                        android:background="@null"
-                        android:paddingBottom="8dp"
-                        android:paddingLeft="8dp"
-                        android:paddingTop="8dp"
-                        android:visibility="gone"
-                        android:src="@drawable/activity_edit_player_advance_high" />
-
-                    <ImageButton
-                        android:id="@+id/player_advance_high_forward_start_trim"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/radio_group_trim_advance"
-                        android:layout_toRightOf="@+id/player_advance_high_backward_start_trim"
-                        android:background="@null"
-                        android:paddingBottom="8dp"
-                        android:paddingLeft="8dp"
-                        android:paddingTop="8dp"
-                        android:rotation="180"
-                        android:visibility="gone"
-                        android:src="@drawable/activity_edit_player_advance_high" />
-
-                    <ImageButton
-                        android:id="@+id/player_advance_high_backward_end_trim"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/radio_group_trim_advance"
-                        android:layout_marginRight="16dp"
-                        android:layout_toLeftOf="@+id/player_advance_high_forward_end_trim"
-                        android:background="@null"
-                        android:paddingBottom="8dp"
-                        android:paddingLeft="8dp"
-                        android:paddingTop="8dp"
-                        android:visibility="gone"
-                        android:src="@drawable/activity_edit_player_advance_high" />
-
-                    <ImageButton
-                        android:id="@+id/player_advance_high_forward_end_trim"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@+id/radio_group_trim_advance"
-                        android:layout_gravity="end"
-                        android:background="@null"
-                        android:paddingBottom="8dp"
-                        android:paddingLeft="8dp"
-                        android:paddingTop="8dp"
-                        android:rotation="180"
-                        android:visibility="gone"
-                        android:src="@drawable/activity_edit_player_advance_high" />
 
                 </RelativeLayout>
 
