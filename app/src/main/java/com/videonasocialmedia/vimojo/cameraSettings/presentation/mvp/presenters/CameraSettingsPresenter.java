@@ -19,6 +19,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
 public class CameraSettingsPresenter {
@@ -67,29 +73,29 @@ public class CameraSettingsPresenter {
     resolutionNames = new HashMap<Integer, String>();
     resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID,
             ResolutionSetting.CAMERA_SETTING_RESOLUTION_720);
-    resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
+    resolutionNames.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
             ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080);
-    resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
+    resolutionNames.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
             ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160);
     resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
         ResolutionSetting.CAMERA_SETTING_RESOLUTION_720);
     resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
         ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080);
-    resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
+    resolutionNames.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
         ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160);
 
     videoResolutionValues = new HashMap<Integer, VideoResolution.Resolution>();
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID,
             VideoResolution.Resolution.HD720);
-    videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
+    videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
             VideoResolution.Resolution.HD1080);
-    videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
+    videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
             VideoResolution.Resolution.HD4K);
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
         VideoResolution.Resolution.HD720);
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
         VideoResolution.Resolution.HD1080);
-    videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
+    videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
         VideoResolution.Resolution.HD4K);
   }
 
@@ -185,7 +191,11 @@ public class CameraSettingsPresenter {
 
   public void settingChanged(int settingId) {
     if (resolutionNames.containsKey(settingId)) {
-      setCameraResolutionSetting(settingId);
+      if(isResolutionSupportedInBackFrontCamera(settingId)) {
+        setCameraResolutionSetting(settingId);
+      } else {
+        cameraSettingsListView.showDialogResolutionNotSupportedInBothCameras(settingId);
+      }
       return;
     }
     if (frameRateNames.containsKey(settingId)) {
@@ -200,5 +210,42 @@ public class CameraSettingsPresenter {
       setCameraInterfaceSetting(settingId);
       return;
     }
+  }
+
+  private boolean isResolutionSupportedInBackFrontCamera(int settingId) {
+    boolean isResolutionSupportedInBackFrontCamera = false;
+    switch (settingId) {
+      case CAMERA_SETTING_RESOLUTION_720_BACK_ID:
+        if(cameraSettings.getResolutionSetting()
+                .deviceSupports(CAMERA_SETTING_RESOLUTION_720_FRONT_ID))
+          isResolutionSupportedInBackFrontCamera = true;
+        break;
+      case CAMERA_SETTING_RESOLUTION_1080_BACK_ID:
+        if(cameraSettings.getResolutionSetting()
+                .deviceSupports(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID))
+          isResolutionSupportedInBackFrontCamera = true;
+        break;
+      case CAMERA_SETTING_RESOLUTION_2160_BACK_ID:
+        if(cameraSettings.getResolutionSetting()
+                .deviceSupports(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID))
+          isResolutionSupportedInBackFrontCamera = true;
+        break;
+      case CAMERA_SETTING_RESOLUTION_720_FRONT_ID:
+        if(cameraSettings.getResolutionSetting()
+                .deviceSupports(CAMERA_SETTING_RESOLUTION_720_BACK_ID))
+          isResolutionSupportedInBackFrontCamera = true;
+        break;
+      case CAMERA_SETTING_RESOLUTION_1080_FRONT_ID:
+        if(cameraSettings.getResolutionSetting()
+                .deviceSupports(CAMERA_SETTING_RESOLUTION_1080_BACK_ID))
+          isResolutionSupportedInBackFrontCamera = true;
+        break;
+      case CAMERA_SETTING_RESOLUTION_2160_FRONT_ID:
+        if(cameraSettings.getResolutionSetting()
+                .deviceSupports(CAMERA_SETTING_RESOLUTION_2160_BACK_ID))
+          isResolutionSupportedInBackFrontCamera = true;
+        break;
+    }
+    return isResolutionSupportedInBackFrontCamera;
   }
 }

@@ -519,6 +519,15 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
+  public void setSwitchCameraSupported(boolean supported) {
+    if(supported) {
+      changeCameraButton.setEnabled(true);
+    } else {
+      changeCameraButton.setEnabled(false);
+    }
+  }
+
+  @Override
   public void setZoom(float value) {
     currentSeekbarZoom = (int) (value * 100);
     if (slideSeekBarMode == SLIDE_SEEKBAR_MODE_ZOOM) {

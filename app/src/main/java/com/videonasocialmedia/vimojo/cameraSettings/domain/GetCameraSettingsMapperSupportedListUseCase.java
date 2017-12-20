@@ -98,47 +98,88 @@ public class GetCameraSettingsMapperSupportedListUseCase {
 
     if(cameraIdSelected == BACK_CAMERA_ID) {
       if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_720_BACK_ID)) {
-        resolutionList.add(new CameraSettingValue(
-            CAMERA_SETTING_RESOLUTION_720_BACK_ID,
-            context.getString(R.string.low_resolution_name),
-            resolutionNames.get(CAMERA_SETTING_RESOLUTION_720_BACK_ID)
-                .equals(resolutionSelected)));
+        boolean isSupportedInFrontCamera = resolutionSetting
+                .deviceSupports(CAMERA_SETTING_RESOLUTION_720_FRONT_ID);
+        CameraSettingValue settingValue = new CameraSettingValue(
+                CAMERA_SETTING_RESOLUTION_720_BACK_ID,
+                getResolutionValueName(isSupportedInFrontCamera,
+                        context.getString(R.string.low_resolution_name)),
+                resolutionNames.get(CAMERA_SETTING_RESOLUTION_720_BACK_ID)
+                        .equals(resolutionSelected));
+        resolutionList.add(settingValue);
       }
       if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_1080_BACK_ID)) {
-        resolutionList.add(new CameraSettingValue(CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
-            context.getString(R.string.good_resolution_name),
-            resolutionNames.get(CAMERA_SETTING_RESOLUTION_1080_BACK_ID).equals(resolutionSelected)));
+        boolean isSupportedInFrontCamera = resolutionSetting
+                .deviceSupports(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID);
+        CameraSettingValue cameraSettingValue = new CameraSettingValue(
+                CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
+                getResolutionValueName(isSupportedInFrontCamera,
+                        context.getString(R.string.good_resolution_name)),
+                resolutionNames.get(CAMERA_SETTING_RESOLUTION_1080_BACK_ID)
+                        .equals(resolutionSelected));
+        resolutionList.add(cameraSettingValue);
       }
       if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_2160_BACK_ID)) {
-        resolutionList.add(new CameraSettingValue(CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
-            context.getString(R.string.high_resolution_name),
-            resolutionNames.get(CAMERA_SETTING_RESOLUTION_2160_BACK_ID).equals(resolutionSelected)));
+        boolean isSupportedInFrontCamera = resolutionSetting
+                .deviceSupports(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID);
+        CameraSettingValue cameraSettingValue = new CameraSettingValue(
+                CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
+                getResolutionValueName(isSupportedInFrontCamera,
+                        context.getString(R.string.high_resolution_name)),
+                resolutionNames.get(CAMERA_SETTING_RESOLUTION_2160_BACK_ID)
+                        .equals(resolutionSelected));
+        resolutionList.add(cameraSettingValue);
       }
     } else {
       if(cameraIdSelected == FRONT_CAMERA_ID) {
         if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_720_FRONT_ID)) {
-          resolutionList.add(new CameraSettingValue(
-              CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
-              context.getString(R.string.low_resolution_name),
-              resolutionNames.get(CAMERA_SETTING_RESOLUTION_720_FRONT_ID)
-                  .equals(resolutionSelected)));
+          boolean isSupportedInBackCamera = resolutionSetting
+                  .deviceSupports(CAMERA_SETTING_RESOLUTION_720_BACK_ID);
+          CameraSettingValue cameraSettingValue = new CameraSettingValue(
+                  CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
+                  getResolutionValueName(isSupportedInBackCamera,
+                          context.getString(R.string.low_resolution_name)),
+                  resolutionNames.get(CAMERA_SETTING_RESOLUTION_720_FRONT_ID)
+                          .equals(resolutionSelected));
+          resolutionList.add(cameraSettingValue);
         }
         if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID)) {
-          resolutionList.add(new CameraSettingValue(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
-              context.getString(R.string.good_resolution_name),
-              resolutionNames.get(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID).equals(resolutionSelected)));
+          boolean isSupportedInBackCamera = resolutionSetting
+                  .deviceSupports(CAMERA_SETTING_RESOLUTION_1080_BACK_ID);
+          CameraSettingValue cameraSettingValue = new CameraSettingValue(
+                  CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
+                  getResolutionValueName(isSupportedInBackCamera,
+                          context.getString(R.string.good_resolution_name)),
+                  resolutionNames.get(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID)
+                          .equals(resolutionSelected));
+          resolutionList.add(cameraSettingValue);
         }
         if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID)) {
-          resolutionList.add(new CameraSettingValue(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
-              context.getString(R.string.high_resolution_name),
-              resolutionNames.get(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID).equals(resolutionSelected)));
+          boolean isSupportedInBackCamera = resolutionSetting
+                  .deviceSupports(CAMERA_SETTING_RESOLUTION_2160_BACK_ID);
+          CameraSettingValue cameraSettingValue = new CameraSettingValue(
+                  CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
+                  getResolutionValueName(isSupportedInBackCamera,
+                          context.getString(R.string.high_resolution_name)),
+                  resolutionNames.get(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID)
+                          .equals(resolutionSelected));
+          resolutionList.add(cameraSettingValue);
         }
       }
     }
+
     if (resolutionList.size() > MINIMUM_OPTIONS_SUPPORTED_TO_SHOW_LIST) {
       preferenceList.add(new CameraSettingViewModel(context.getString(R.string.title_item_resolution),
           resolutionList, isCameraSettingAvailable(currentProject)));
     }
+  }
+
+  private String getResolutionValueName(boolean isSupportedInFrontCamera, String string) {
+    StringBuilder resolutionName = new StringBuilder(string);
+    if(isSupportedInFrontCamera) {
+      resolutionName.append(" " + context.getString(R.string.resolution_supported_back_front_camera));
+    }
+    return resolutionName.toString();
   }
 
   private void addFrameRateSettingsToList(HashMap<Integer, String> frameRateNames,

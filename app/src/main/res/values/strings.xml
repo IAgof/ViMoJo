@@ -221,6 +221,11 @@
     <string name="low_resolution_name">720p</string>
     <string name="good_resolution_name">1080p</string>
     <string name="high_resolution_name">4K</string>
+    <string name="resolution_supported_back_front_camera">(back/front camera)</string>
+    <string name="dialog_title_resolution_not_supported_back_front_camera">Resolution</string>
+    <string name="dialog_title_message_not_supported_back_front_camera">Resolution not supported in
+        both cameras. If you select this option, you will not be able to record videos with front
+        camera</string>
     <string name="low_resolution_value">720</string>
     <string name="good_resolution_value">1080</string>
     <string name="high_resolution_value">2160</string>
@@ -2456,6 +2461,7 @@ and Conditions.\n\n
     <string name="title_track_clip_voice_over">Voice over track volume</string>
     <string name="mute">Mute</string>
     <string name="solo">Solo</string>
+
 
 
 </resources>

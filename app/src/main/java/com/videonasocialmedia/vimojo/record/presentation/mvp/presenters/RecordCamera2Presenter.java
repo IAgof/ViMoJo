@@ -130,6 +130,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
       isFrontCameraSelected = true;
     }
     checkCameraInterface(cameraSettings);
+    checkSwitchCameraAvailable(cameraSettings);
     recordView.setCameraSettingSelected(cameraSettings.getResolutionSettingValue(),
             cameraSettings.getQuality(), cameraSettings.getFrameRateSettingValue());
     recordView.showPrincipalViews();
@@ -143,6 +144,16 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     if(cameraSettings.getInterfaceSelected()
             .equals(Constants.CAMERA_SETTING_INTERFACE_PRO)) {
       cameraProSelected = true;
+    }
+  }
+
+  private void checkSwitchCameraAvailable(CameraSettings cameraSettings) {
+    ResolutionSetting resolutionSetting = cameraSettings.getResolutionSetting();
+    String resolution = resolutionSetting.getResolution();
+    if(isBackCameraResolutionSupportedInFrontCamera(resolutionSetting, resolution)) {
+      recordView.setSwitchCameraSupported(true);
+    } else {
+      recordView.setSwitchCameraSupported(false);
     }
   }
 

@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.cameraSettings.presentation.view.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -76,6 +78,20 @@ public class CameraSettingsActivity extends VimojoActivity implements
   public void showCameraSettingsList(List<CameraSettingViewModel> list) {
     cameraSettingPackageList = list;
     adapter.setCameraSettingsItemsList(list);
+  }
+
+  @Override
+  public void showDialogResolutionNotSupportedInBothCameras(final int resolutionSelectedId) {
+    AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    dialog.setTitle(getString(R.string.dialog_title_resolution_not_supported_back_front_camera));
+    dialog.setMessage(getString(R.string.dialog_title_message_not_supported_back_front_camera));
+    dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        presenter.setCameraResolutionSetting(resolutionSelectedId);
+      }
+    });
+    dialog.show();
   }
 
   @Override

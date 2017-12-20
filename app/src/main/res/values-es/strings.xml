@@ -219,6 +219,11 @@
     <!-- Camera Settings -->
     <string name="title_camera_section">Cámara</string>
     <string name="title_item_resolution">Resolución</string>
+    <string name="resolution_supported_back_front_camera">(cámara trasera/delantera)</string>
+    <string name="dialog_title_resolution_not_supported_back_front_camera">Resolución</string>
+    <string name="dialog_title_message_not_supported_back_front_camera">Resolución no soportada en
+        cámara trasera y delantera Si seleccionas esta opción, no podrás grabar vídeos con la
+        cámara frontal.</string>
     <string name="title_item_quality">Calidad</string>
     <string name="title_item_camera_pro_o_basic">Cámara pro/básica</string>
     <string name="title_item_frame_rate">Frame rate (aprox)</string>

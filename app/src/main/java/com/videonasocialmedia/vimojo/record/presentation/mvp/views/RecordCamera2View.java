@@ -45,6 +45,8 @@ public interface RecordCamera2View {
 
     void hideChangeCamera();
 
+  void setSwitchCameraSupported(boolean b);
+
     void showRecordedVideoThumbWithText(String path);
 
     void hideRecordedVideoThumbWithText();
@@ -158,4 +160,6 @@ public interface RecordCamera2View {
     void showAudioGainButton();
 
     void hideAudioGainButton();
+
+
 }
