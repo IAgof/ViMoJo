@@ -120,9 +120,10 @@
     <string name="dialog_project_edit_title_cancel">No</string>
 
     <!--VoiceOverRecordRecordActivity-->
-    <string name="dialog_voice_over_cancel_title_message">Do you want to discard voice over and start a new one?</string>
-    <string name="dialog_voice_over_cancel_positive_button">Yes</string>
-    <string name="dialog_voice_over_cancel_negative_button">No</string>
+    <string name="dialog_voice_over_cancel_title_message"> You will cancel the current recording,
+         do you want to return to record again or leave this screen?</string>
+    <string name="dialog_voice_over_cancel_positive_button">Record</string>
+    <string name="dialog_voice_over_cancel_negative_button">Leave</string>
     <string name="alert_dialog_title_voice_over">Voice over</string>
     <string name="alert_dialog_title_message_adding_voice_over">Problem adding voice over in project</string>
     <string name="alert_dialog_title_message_start_record_voice_over">Please, record some voice over</string>
