@@ -13,6 +13,7 @@ package com.videonasocialmedia.vimojo.trim.presentation.views.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageButton;
@@ -436,21 +437,21 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         if (buttonSelectAdvanceLow.isChecked()) {
             presenter.showPlayerAdvanceLow();
-            presenter.updateRadioButtonSelected(buttonSelectAdvanceLow);
-            presenter.updateRadioButtonNoSelected(buttonSelectAdvanceHigh);
-            presenter.updateRadioButtonNoSelected(buttonSelectAdvanceMedium);
+            presenter.updateRadioButton(buttonSelectAdvanceLow);
+            presenter.updateRadioButton(buttonSelectAdvanceHigh);
+            presenter.updateRadioButton(buttonSelectAdvanceMedium);
         }
         if(buttonSelectAdvanceMedium.isChecked()) {
             presenter.showPlayerAdvanceMedium();
-            presenter.updateRadioButtonSelected(buttonSelectAdvanceMedium);
-            presenter.updateRadioButtonNoSelected(buttonSelectAdvanceHigh);
-            presenter.updateRadioButtonNoSelected(buttonSelectAdvanceLow);
+            presenter.updateRadioButton(buttonSelectAdvanceMedium);
+            presenter.updateRadioButton(buttonSelectAdvanceHigh);
+            presenter.updateRadioButton(buttonSelectAdvanceLow);
         }
         if(buttonSelectAdvanceHigh.isChecked()) {
             presenter.showPlayerAdvanceHigh();
-            presenter.updateRadioButtonSelected(buttonSelectAdvanceHigh);
-            presenter.updateRadioButtonNoSelected(buttonSelectAdvanceLow);
-            presenter.updateRadioButtonNoSelected(buttonSelectAdvanceMedium);
+            presenter.updateRadioButton(buttonSelectAdvanceHigh);
+            presenter.updateRadioButton(buttonSelectAdvanceLow);
+            presenter.updateRadioButton(buttonSelectAdvanceMedium);
         }
         presenter.setupActivityViews();
     }
@@ -480,42 +481,49 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void showPlayerAdvanceLow() {
-        playerAdvanceBackwardStartTrim.setImageResource(R.drawable.activity_edit_player_advance_low);
-        playerAdvanceBackwardEndTrim.setImageResource(R.drawable.activity_edit_player_advance_low);
-        playerAdvanceForwardEndTrim.setImageResource(R.drawable.activity_edit_player_advance_low);
-        playerAdvanceForwardStartTrim.setImageResource(R.drawable.activity_edit_player_advance_low);
-
+        playerAdvanceBackwardStartTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_low);
+        playerAdvanceBackwardEndTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_low);
+        playerAdvanceForwardEndTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_low);
+        playerAdvanceForwardStartTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_low);
     }
 
     @Override
     public void showPlayerAdvanceMedium() {
-        playerAdvanceBackwardStartTrim.setImageResource(R.drawable.activity_edit_player_advance_medium);
-        playerAdvanceBackwardEndTrim.setImageResource(R.drawable.activity_edit_player_advance_medium);
-        playerAdvanceForwardEndTrim.setImageResource(R.drawable.activity_edit_player_advance_medium);
-        playerAdvanceForwardStartTrim.setImageResource(R.drawable.activity_edit_player_advance_medium);
+        playerAdvanceBackwardStartTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_medium);
+        playerAdvanceBackwardEndTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_medium);
+        playerAdvanceForwardEndTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_medium);
+        playerAdvanceForwardStartTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_medium);
     }
 
     @Override
     public void showPlayerAdvanceHigh() {
-        playerAdvanceBackwardStartTrim.setImageResource(R.drawable.activity_edit_player_advance_high);
-        playerAdvanceBackwardEndTrim.setImageResource(R.drawable.activity_edit_player_advance_high);
-        playerAdvanceForwardEndTrim.setImageResource(R.drawable.activity_edit_player_advance_high);
-        playerAdvanceForwardStartTrim.setImageResource(R.drawable.activity_edit_player_advance_high);
+        playerAdvanceBackwardStartTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_high);
+        playerAdvanceBackwardEndTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_high);
+        playerAdvanceForwardEndTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_high);
+        playerAdvanceForwardStartTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_high);
     }
 
     @Override
-    public void updateButtonNoSelectedToThemeDark(RadioButton buttonNoSelected) {
-        buttonNoSelected.setTextColor(getResources().getColor(R.color.button_color_theme_dark));
+    public void updateRadioButtonToThemeDark(RadioButton radioButton) {
+        radioButton.setTextColor(ContextCompat.getColorStateList(this,
+            R.color.radiobutton_color_theme_dark));
     }
 
     @Override
-    public void updateButtonNoSelectedToThemeLight(RadioButton buttonNoSelected) {
-        buttonNoSelected.setTextColor(getResources().getColor(R.color.button_color_theme_light));
+    public void updateRadioButtonToThemeLight(RadioButton radioButton) {
+        radioButton.setTextColor(ContextCompat.getColorStateList(this,
+            R.color.radiobutton_color_theme_light));
     }
-
-    @Override
-    public void updateButtonSelected(RadioButton buttonSelected) {
-        buttonSelected.setTextColor(getResources().getColor(R.color.colorAccent));
-    }
-
 }

@@ -178,13 +178,9 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
         updateViewsAccordingTheme(currentTheme);
     }
 
-    public void updateRadioButtonSelected(RadioButton buttonSelected) {
-        trimView.updateButtonSelected(buttonSelected);
-    }
-
-    public void updateRadioButtonNoSelected(RadioButton buttonNoSelected) {
+    public void updateRadioButton(RadioButton radioButton) {
         String currentTheme = getCurrentTheme();
-        updateRadioButtonAccordingTheme(buttonNoSelected, currentTheme);
+        updateRadioButtonAccordingTheme(radioButton, currentTheme);
     }
 
     public void updateViewsAccordingTheme(String currentTheme) {
@@ -198,9 +194,9 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     public void updateRadioButtonAccordingTheme(RadioButton buttonNoSelected,
                                                 String currentTheme) {
         if (currentTheme.equals(THEME_DARK)) {
-            trimView.updateButtonNoSelectedToThemeDark(buttonNoSelected);
+            trimView.updateRadioButtonToThemeDark(buttonNoSelected);
         } else {
-            trimView.updateButtonNoSelectedToThemeLight(buttonNoSelected);
+            trimView.updateRadioButtonToThemeLight(buttonNoSelected);
         }
     }
 
