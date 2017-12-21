@@ -56,6 +56,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     public UserEventTracker userEventTracker;
     public Project currentProject;
     private final String THEME_DARK = "dark";
+    private String currentTheme;
 
     @Inject
     public TrimPreviewPresenter(TrimView trimView, Context context, UserEventTracker userEventTracker,
@@ -174,12 +175,11 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     }
 
     public void setupActivityViews() {
-        String currentTheme = getCurrentTheme();
+        currentTheme = getCurrentTheme();
         updateViewsAccordingTheme(currentTheme);
     }
 
     public void updateRadioButton(RadioButton radioButton) {
-        String currentTheme = getCurrentTheme();
         updateRadioButtonAccordingTheme(radioButton, currentTheme);
     }
 

@@ -442,10 +442,10 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             presenter.updateRadioButton(buttonSelectAdvanceMedium);
         }
         if(buttonSelectAdvanceMedium.isChecked()) {
-            presenter.showPlayerAdvanceMedium();
             presenter.updateRadioButton(buttonSelectAdvanceMedium);
             presenter.updateRadioButton(buttonSelectAdvanceHigh);
             presenter.updateRadioButton(buttonSelectAdvanceLow);
+            presenter.showPlayerAdvanceMedium();
         }
         if(buttonSelectAdvanceHigh.isChecked()) {
             presenter.showPlayerAdvanceHigh();
