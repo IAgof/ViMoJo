@@ -45,6 +45,8 @@ public interface RecordCamera2View {
 
     void disableChangeCameraIcon();
 
+    void setSwitchCameraSupported(boolean b);
+
     void showRecordedVideoThumbWithText(String path);
 
     void hideRecordedVideoThumbWithText();

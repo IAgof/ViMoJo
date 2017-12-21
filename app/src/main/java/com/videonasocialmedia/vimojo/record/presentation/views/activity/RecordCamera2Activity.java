@@ -324,11 +324,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private int minExposureTime;
 
   @Override
-  public ActivityPresentersModule getActivityPresentersModule() {
-    return new ActivityPresentersModule(this, Constants.PATH_APP_TEMP, textureView);
-  }
-
-  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_record_camera2);
@@ -376,6 +371,12 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private void createAlertDialogBatteryAndStorage() {
     alertDialogBattery = new AlertDialogWithInfoIntoCircle(this, getString(R.string.battery));
     alertDialogStorage = new AlertDialogWithInfoIntoCircle(this, getString(R.string.storage));
+  }
+
+  @Override
+  public ActivityPresentersModule getActivityPresentersModule() {
+    return new ActivityPresentersModule(this, Constants.PATH_APP_TEMP,
+        textureView, getFreeStorage(new StatFs(Environment.getDataDirectory().getPath())));
   }
 
   private void keepScreenOn() {
@@ -543,6 +544,15 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
+  public void setSwitchCameraSupported(boolean supported) {
+    if(supported) {
+      changeCameraButton.setEnabled(true);
+    } else {
+      changeCameraButton.setEnabled(false);
+    }
+  }
+
+  @Override
   public void setZoom(float value) {
     currentSeekbarZoom = (int) (value * 100);
     if (slideSeekBarMode == SLIDE_SEEKBAR_MODE_ZOOM) {
@@ -681,6 +691,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void hideAdvancedAFSelection() {
     afSelectionButton.setVisibility(View.GONE);
+    afSettingSelective.setSelected(false);
   }
 
   @Override

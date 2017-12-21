@@ -24,8 +24,11 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSettin
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
 /**
@@ -38,7 +41,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.*;
  * This class maps from {@link CameraSettings} model to {@link CameraSettingViewModel} for
  * representing user selected camera settings in {@link com.videonasocialmedia.vimojo.cameraSettings.presentation.view.activity.CameraSettingsActivity}
  */
-public class GetCameraSettingsListUseCase {
+public class GetCameraSettingsMapperSupportedListUseCase {
   public static final int MINIMUM_OPTIONS_SUPPORTED_TO_SHOW_LIST = 1;
   private static boolean DEFAULT_INTERFACE_PRO_BASIC_AVAILABLE = true;
   private CameraSettings cameraSettings;
@@ -46,8 +49,8 @@ public class GetCameraSettingsListUseCase {
   private Project currentProject;
 
   @Inject
-  public GetCameraSettingsListUseCase(Context context,
-                                      CameraSettingsRepository cameraSettingsRepository) {
+  public GetCameraSettingsMapperSupportedListUseCase(Context context,
+                                                     CameraSettingsRepository cameraSettingsRepository) {
     this.context = context;
     currentProject = loadCurrentProject();
     cameraSettings = cameraSettingsRepository.getCameraSettings();
@@ -80,7 +83,7 @@ public class GetCameraSettingsListUseCase {
     interfaceList.add(new CameraSettingValue(
             CAMERA_SETTING_INTERFACE_BASIC_ID, context.getString(R.string.camera_basic),
             interfaceNames.get(CAMERA_SETTING_INTERFACE_BASIC_ID).equals(interfaceSelected)));
-    String settingTitle = context.getString(R.string.camera_pro_o_basic);
+    String settingTitle = context.getString(R.string.title_item_camera_pro_o_basic);
     CameraSettingViewModel proInterfaceSetting = new CameraSettingViewModel(
             settingTitle, interfaceList, DEFAULT_INTERFACE_PRO_BASIC_AVAILABLE);
     preferenceList.add(proInterfaceSetting);
@@ -90,28 +93,93 @@ public class GetCameraSettingsListUseCase {
                                            ResolutionSetting resolutionSetting,
                                            List<CameraSettingViewModel> preferenceList) {
     String resolutionSelected = resolutionSetting.getResolution();
+    int cameraIdSelected = cameraSettings.getCameraIdSelected();
     List<CameraSettingValue> resolutionList = new ArrayList<>();
-    if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_720_BACK_ID)) {
-      resolutionList.add(new CameraSettingValue(
-              CAMERA_SETTING_RESOLUTION_720_BACK_ID,
-              context.getString(R.string.low_resolution_name),
-              resolutionNames.get(CAMERA_SETTING_RESOLUTION_720_BACK_ID)
-                      .equals(resolutionSelected)));
+
+    if(cameraIdSelected == BACK_CAMERA_ID) {
+      if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_720_BACK_ID)) {
+        boolean isSupportedInFrontCamera = resolutionSetting
+                .deviceSupports(CAMERA_SETTING_RESOLUTION_720_FRONT_ID);
+        CameraSettingValue settingValue = new CameraSettingValue(
+                CAMERA_SETTING_RESOLUTION_720_BACK_ID,
+                getResolutionValueName(isSupportedInFrontCamera,
+                        context.getString(R.string.low_resolution_name)),
+                resolutionNames.get(CAMERA_SETTING_RESOLUTION_720_BACK_ID)
+                        .equals(resolutionSelected));
+        resolutionList.add(settingValue);
+      }
+      if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_1080_BACK_ID)) {
+        boolean isSupportedInFrontCamera = resolutionSetting
+                .deviceSupports(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID);
+        CameraSettingValue cameraSettingValue = new CameraSettingValue(
+                CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
+                getResolutionValueName(isSupportedInFrontCamera,
+                        context.getString(R.string.good_resolution_name)),
+                resolutionNames.get(CAMERA_SETTING_RESOLUTION_1080_BACK_ID)
+                        .equals(resolutionSelected));
+        resolutionList.add(cameraSettingValue);
+      }
+      if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_2160_BACK_ID)) {
+        boolean isSupportedInFrontCamera = resolutionSetting
+                .deviceSupports(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID);
+        CameraSettingValue cameraSettingValue = new CameraSettingValue(
+                CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
+                getResolutionValueName(isSupportedInFrontCamera,
+                        context.getString(R.string.high_resolution_name)),
+                resolutionNames.get(CAMERA_SETTING_RESOLUTION_2160_BACK_ID)
+                        .equals(resolutionSelected));
+        resolutionList.add(cameraSettingValue);
+      }
+    } else {
+      if(cameraIdSelected == FRONT_CAMERA_ID) {
+        if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_720_FRONT_ID)) {
+          boolean isSupportedInBackCamera = resolutionSetting
+                  .deviceSupports(CAMERA_SETTING_RESOLUTION_720_BACK_ID);
+          CameraSettingValue cameraSettingValue = new CameraSettingValue(
+                  CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
+                  getResolutionValueName(isSupportedInBackCamera,
+                          context.getString(R.string.low_resolution_name)),
+                  resolutionNames.get(CAMERA_SETTING_RESOLUTION_720_FRONT_ID)
+                          .equals(resolutionSelected));
+          resolutionList.add(cameraSettingValue);
+        }
+        if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID)) {
+          boolean isSupportedInBackCamera = resolutionSetting
+                  .deviceSupports(CAMERA_SETTING_RESOLUTION_1080_BACK_ID);
+          CameraSettingValue cameraSettingValue = new CameraSettingValue(
+                  CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
+                  getResolutionValueName(isSupportedInBackCamera,
+                          context.getString(R.string.good_resolution_name)),
+                  resolutionNames.get(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID)
+                          .equals(resolutionSelected));
+          resolutionList.add(cameraSettingValue);
+        }
+        if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID)) {
+          boolean isSupportedInBackCamera = resolutionSetting
+                  .deviceSupports(CAMERA_SETTING_RESOLUTION_2160_BACK_ID);
+          CameraSettingValue cameraSettingValue = new CameraSettingValue(
+                  CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
+                  getResolutionValueName(isSupportedInBackCamera,
+                          context.getString(R.string.high_resolution_name)),
+                  resolutionNames.get(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID)
+                          .equals(resolutionSelected));
+          resolutionList.add(cameraSettingValue);
+        }
+      }
     }
-    if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_1080_BACK_ID)) {
-      resolutionList.add(new CameraSettingValue(CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
-          context.getString(R.string.good_resolution_name),
-          resolutionNames.get(CAMERA_SETTING_RESOLUTION_1080_BACK_ID).equals(resolutionSelected)));
-    }
-    if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_2160_BACK_ID)) {
-      resolutionList.add(new CameraSettingValue(CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
-          context.getString(R.string.high_resolution_name),
-          resolutionNames.get(CAMERA_SETTING_RESOLUTION_2160_BACK_ID).equals(resolutionSelected)));
-    }
+
     if (resolutionList.size() > MINIMUM_OPTIONS_SUPPORTED_TO_SHOW_LIST) {
-      preferenceList.add(new CameraSettingViewModel(context.getString(R.string.resolution),
+      preferenceList.add(new CameraSettingViewModel(context.getString(R.string.title_item_resolution),
           resolutionList, isCameraSettingAvailable(currentProject)));
     }
+  }
+
+  private String getResolutionValueName(boolean isSupportedInFrontCamera, String string) {
+    StringBuilder resolutionName = new StringBuilder(string);
+    if(isSupportedInFrontCamera) {
+      resolutionName.append(" " + context.getString(R.string.resolution_supported_back_front_camera));
+    }
+    return resolutionName.toString();
   }
 
   private void addFrameRateSettingsToList(HashMap<Integer, String> frameRateNames,
@@ -136,7 +204,7 @@ public class GetCameraSettingsListUseCase {
     }
     if (frameRateList.size() > MINIMUM_OPTIONS_SUPPORTED_TO_SHOW_LIST) {
       preferenceList.add(new CameraSettingViewModel(
-              context.getString(R.string.frame_rate), frameRateList,
+              context.getString(R.string.title_item_frame_rate), frameRateList,
               isCameraSettingAvailable(currentProject)));
     }
   }
@@ -154,7 +222,7 @@ public class GetCameraSettingsListUseCase {
     qualityList.add(new CameraSettingValue(
             CAMERA_SETTING_QUALITY_50_ID, context.getString(R.string.high_quality_name),
             qualityNames.get(CAMERA_SETTING_QUALITY_50_ID).equals(qualitySelected)));
-    preferenceList.add(new CameraSettingViewModel(context.getString(R.string.quality), qualityList,
+    preferenceList.add(new CameraSettingViewModel(context.getString(R.string.title_item_quality), qualityList,
         isCameraSettingAvailable(currentProject)));
   }
 

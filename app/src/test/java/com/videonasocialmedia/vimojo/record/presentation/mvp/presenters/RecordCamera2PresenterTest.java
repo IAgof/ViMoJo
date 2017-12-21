@@ -59,6 +59,8 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_RESOLUTION;
+import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
@@ -96,7 +98,6 @@ public class RecordCamera2PresenterTest {
   @Mock private NewClipImporter mockedNewClipImporter;
   @Mock CameraSettingsRepository mockedCameraSettingsRepository;
   @Mock CameraSettings mockedCameraSettings;
-
 
   @InjectMocks private RecordCamera2Presenter injectedPresenter;
 
@@ -329,13 +330,18 @@ public class RecordCamera2PresenterTest {
   }
 
   @Test
-  public void changeCameraCallsTrackChangeCamera(){
+  public void changeCameraCallsTrackChangeCameraAndUpdateCameraSettingsRepository(){
     presenter = getRecordCamera2Presenter();
+    int cameraIdSelected = FRONT_CAMERA_ID;
+    CameraSettings cameraSettings = getCameraSettings();
+    PowerMockito.when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
 
     presenter.switchCamera();
 
     verify(mockedUserEventTracker).trackChangeCamera(anyBoolean());
+    verify(mockedCameraSettingsRepository).setCameraIdSelected(cameraSettings, cameraIdSelected);
   }
+
 
   @Test
   public void changeFlashStateCallsTrackFlashCamera(){
@@ -373,7 +379,8 @@ public class RecordCamera2PresenterTest {
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_FRONT_ID, true);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, true);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, false);
-    ResolutionSetting resolutionSetting = new ResolutionSetting("1080p", resolutionsSupportedMap);
+    ResolutionSetting resolutionSetting = new ResolutionSetting(DEFAULT_CAMERA_SETTING_RESOLUTION,
+        resolutionsSupportedMap);
     HashMap<Integer, Boolean> frameRatesSupportedMap = new HashMap<>();
     frameRatesSupportedMap.put(CAMERA_SETTING_FRAME_RATE_24_ID, false);
     frameRatesSupportedMap.put(CAMERA_SETTING_FRAME_RATE_25_ID, false);
@@ -381,8 +388,9 @@ public class RecordCamera2PresenterTest {
     FrameRateSetting frameRateSetting = new FrameRateSetting("30 fps", frameRatesSupportedMap);
     String quality = "16 Mbps";
     String interfaceSelected = DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
-    CameraSettings cameraSettings = new CameraSettings(resolutionSetting,
-            frameRateSetting, quality, interfaceSelected);
+    int cameraIdSelected = Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+    CameraSettings cameraSettings = new CameraSettings(resolutionSetting, frameRateSetting, quality,
+        interfaceSelected, cameraIdSelected);
     return cameraSettings;
   }
 }

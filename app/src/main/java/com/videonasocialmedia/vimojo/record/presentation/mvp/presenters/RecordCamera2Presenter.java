@@ -23,6 +23,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
+import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -41,6 +42,15 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import static com.videonasocialmedia.camera.camera2.Camera2Wrapper.CAMERA_ID_FRONT;
+import static com.videonasocialmedia.camera.camera2.Camera2Wrapper.CAMERA_ID_REAR;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
+
 import static com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity.DEFAULT_AUDIO_GAIN;
 
 /**
@@ -48,7 +58,6 @@ import static com.videonasocialmedia.vimojo.record.presentation.views.activity.R
  */
 
 public class RecordCamera2Presenter implements Camera2WrapperListener {
-  public static final int DEFAULT_CAMERA_ID = 0;
   private static final int NORMALIZE_PICOMETER_VALUE = 108;
   private static final double MAX_AMPLITUDE_VALUE_PICOMETER = 32768;
   private static final int SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE = 100;
@@ -104,8 +113,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 //    camera = new Camera2Wrapper(context, DEFAULT_CAMERA_ID, textureView, directorySaveVideos,
 //        getVideoFormatFromCurrentProjectUseCase.getVideoRecordedFormatFromCurrentProjectUseCase());
     this.camera = camera;
-    camera.setCameraListener(this);
-
+    this.camera.setCameraListener(this);
     this.newClipImporter = newClipImporter;
   }
 
@@ -115,7 +123,11 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 
   public void initViews() {
     cameraSettings = cameraSettingsRepository.getCameraSettings();
+    if(cameraSettings.getCameraIdSelected() == CAMERA_ID_FRONT) {
+      isFrontCameraSelected = true;
+    }
     checkCameraInterface(cameraSettings);
+    checkSwitchCameraAvailable(cameraSettings);
     recordView.setCameraSettingSelected(cameraSettings.getResolutionSettingValue(),
             cameraSettings.getQuality(), cameraSettings.getFrameRateSettingValue());
     recordView.showPrincipalViews();
@@ -129,6 +141,16 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     if(cameraSettings.getInterfaceSelected()
             .equals(Constants.CAMERA_SETTING_INTERFACE_PRO)) {
       cameraProSelected = true;
+    }
+  }
+
+  private void checkSwitchCameraAvailable(CameraSettings cameraSettings) {
+    ResolutionSetting resolutionSetting = cameraSettings.getResolutionSetting();
+    String resolution = resolutionSetting.getResolution();
+    if(isBackCameraResolutionSupportedInFrontCamera(resolutionSetting, resolution)) {
+      recordView.setSwitchCameraSupported(true);
+    } else {
+      recordView.setSwitchCameraSupported(false);
     }
   }
 
@@ -495,7 +517,36 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     setCameraDefaultSettings();
     camera.switchCamera(isFrontCameraSelected);
     setupAdvancedCameraControls();
+    int cameraIdSelected = isFrontCameraSelected ? CAMERA_ID_FRONT : CAMERA_ID_REAR;
+    CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
+    cameraSettingsRepository.setCameraIdSelected(cameraSettings, cameraIdSelected);
     userEventTracker.trackChangeCamera(isFrontCameraSelected);
+  }
+
+  private boolean isBackCameraResolutionSupportedInFrontCamera(ResolutionSetting resolutionSetting,
+                                                               String resolution) {
+    Integer resolutionId = resolutionSetting.getBackCameraResolutionIdsMap().get(resolution);
+    switch (resolutionId){
+      case CAMERA_SETTING_RESOLUTION_720_BACK_ID:
+        if(resolutionSetting.getResolutionsSupportedMap()
+            .get(CAMERA_SETTING_RESOLUTION_720_FRONT_ID)) {
+          return true;
+        }
+        break;
+      case CAMERA_SETTING_RESOLUTION_1080_BACK_ID:
+        if(resolutionSetting.getResolutionsSupportedMap()
+            .get(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID)) {
+          return true;
+        }
+        break;
+      case CAMERA_SETTING_RESOLUTION_2160_BACK_ID:
+        if(resolutionSetting.getResolutionsSupportedMap()
+            .get(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID)) {
+          return true;
+        }
+        break;
+    }
+    return false;
   }
 
   private void resetViewSwitchCamera() {
