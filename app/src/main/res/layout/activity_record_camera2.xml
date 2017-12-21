@@ -303,49 +303,13 @@
 
         <ImageView
             android:id="@+id/camera_shutter"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_centerInParent="true"
             android:src="@drawable/activity_record_ic_metering_shutter"
             android:visibility="gone"/>
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/iso_submenu_cardview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/settings_bar_cardview"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/colorGreyTransparent"
-            android:visibility="invisible"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="@null">
-
-            <LinearLayout
-                android:id="@+id/iso_submenu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/settings_bar_cardview"
-                android:layout_centerHorizontal="true"
-                >
-
-                <TextView
-                    android:id="@+id/iso_auto"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="8dp"
-                    android:background="#00ffffff"
-                    android:scaleType="fitCenter"
-                    android:text="Auto"
-                    android:textColor="@color/colorWhite"
-                    />
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
+        <include layout="@layout/activity_record_exposure_submenu"/>
 
         <android.support.v7.widget.CardView
             android:id="@+id/af_selection_submenu_cardview"
@@ -564,6 +528,18 @@
                     android:scaleType="fitCenter"
                     android:src="@drawable/activity_record_ic_metering_manual"
                     android:visibility="invisible"/>
+
+                <ImageButton
+                    android:id="@+id/button_manual_exposure"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:background="#00ffffff"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/activity_record_ic_manual_exposure"
+                    android:visibility="invisible"
+                    />
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
@@ -613,17 +589,6 @@
                     android:background="#00ffffff"
                     android:scaleType="fitXY"
                     android:src="@drawable/activity_record_ic_grid"
-                    />
-
-                <ImageButton
-                    android:id="@+id/button_iso"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center"
-                    android:layout_margin="8dp"
-                    android:background="#00ffffff"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/activity_record_ic_iso"
                     />
 
                 <ImageButton
@@ -783,20 +748,6 @@
                     android:orientation="vertical"
                     android:visibility="visible">
 
-                    <TextView
-                        android:id="@+id/seekBar_upper_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginTop="4dp"
-                        android:background="#00ffffff"
-                        android:gravity="center"
-                        android:padding="4dp"
-                        android:text="100%"
-                        android:textColor="@color/colorWhite"
-                        android:textSize="8sp"
-                        tools:visibility="visible"/>
-
                     <ImageView
                         android:id="@+id/seekBar_upper_image"
                         android:layout_width="wrap_content"
@@ -810,6 +761,21 @@
                         android:paddingTop="4dp"
                         android:text="100%"
                         tools:src="@drawable/activity_record_ic_focus_macro"/>
+
+                    <TextView
+                        android:id="@+id/seekBar_upper_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#00ffffff"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:paddingTop="30dp"
+                        android:text="100%"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="8sp"
+                        tools:visibility="visible"
+                        android:layout_below="@+id/seekBar_upper_image"
+                        android:layout_alignParentStart="true"/>
 
                     <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
                         android:layout_width="wrap_content"

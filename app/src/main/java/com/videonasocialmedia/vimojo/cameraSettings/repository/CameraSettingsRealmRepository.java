@@ -88,6 +88,12 @@ public class CameraSettingsRealmRepository implements CameraSettingsRepository {
   }
 
   @Override
+  public void setCameraIdSelected(CameraSettings cameraSettings, int cameraIdSelected) {
+    cameraSettings.setCameraIdSelected(cameraIdSelected);
+    update(cameraSettings);
+  }
+
+  @Override
   public void createCameraSetting(CameraSettings defaultCameraSettings) {
     update(defaultCameraSettings);
   }

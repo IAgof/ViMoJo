@@ -27,13 +27,15 @@ public class CameraSettings {
   private FrameRateSetting frameRateSetting;
   private String quality;
   private String interfaceSelected;
+  private int cameraIdSelected;
 
   public CameraSettings(ResolutionSetting resolutionSetting, FrameRateSetting
-          frameRateSetting, String quality, String interfaceSelected) {
+          frameRateSetting, String quality, String interfaceSelected, int cameraIdSelected) {
     this.resolutionSetting = resolutionSetting;
     this.frameRateSetting = frameRateSetting;
     this.quality = quality;
     this.interfaceSelected = interfaceSelected;
+    this.cameraIdSelected = cameraIdSelected;
   }
 
   public String getInterfaceSelected() {
@@ -74,5 +76,13 @@ public class CameraSettings {
 
   public void setInterfaceSelected(String interfaceSelected) {
     this.interfaceSelected = interfaceSelected;
+  }
+
+  public int getCameraIdSelected() {
+    return cameraIdSelected;
+  }
+
+  public void setCameraIdSelected(int cameraIdSelected) {
+    this.cameraIdSelected = cameraIdSelected;
   }
 }
