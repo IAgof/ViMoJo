@@ -41,9 +41,9 @@ public interface RecordCamera2View {
 
     void hideNavigateToSettingsActivity();
 
-    void showChangeCamera();
+    void enableChangeCameraIcon();
 
-    void hideChangeCamera();
+    void disableChangeCameraIcon();
 
     void showRecordedVideoThumbWithText(String path);
 
@@ -91,7 +91,19 @@ public interface RecordCamera2View {
 
     void setupWhiteBalanceSupportedModesButtons(List<String> values);
 
+    void hideWhiteBalanceSubmenu();
+
+    void deselectAllWhiteBalanceButtons();
+
+    void selectWbSettingAuto();
+
     // Metering - exposure settings
+
+    void setManualExposure();
+
+    void disableManualExposure();
+
+    void setAutoExposure();
 
     void resetSpotMeteringSelector();
 
@@ -99,10 +111,31 @@ public interface RecordCamera2View {
 
     void hideMetteringModeSelection();
 
-    void setupFocusSelectionSupportedModesButtons(List<String> values);
+    void hideManualExposureSubmenu();
 
+    void deselectAllISOButtons();
+
+    void setupManualExposureTime(int minimumExposureCompensation);
+
+    void enableExposureTimeSeekBar();
+
+    void disableExposureTimeSeekBar();
+
+    void hideMeteringModeSelectionSubmenu();
 
     void setupMeteringModeSupportedModesButtons(List<String> values);
+
+    // focus methods
+
+    void setupFocusSelectionSupportedModesButtons(List<String> values);
+
+    void hideAFSelectionSubmenu();
+
+    void deselectAllFocusSelectionButtons();
+
+    void setAutoSettingsFocusModeByDefault();
+
+    void setFocusModeManual(MotionEvent event);
 
     // Setters camera
 
@@ -112,17 +145,15 @@ public interface RecordCamera2View {
 
     void setCameraSettingSelected(String resolution, String quality, String frameRate);
 
-    void setFocusModeManual(MotionEvent event);
-
     void setZoom(float value);
+
+    void hideZoomSelectionSubmenu();
+
+    void disableGrid();
 
     // Others
 
     void showError(String message);
-
-//    void showProgressAdaptingVideo();
-//
-//    void hideProgressAdaptingVideo();
 
     void navigateTo(Class cls);
 
@@ -135,8 +166,19 @@ public interface RecordCamera2View {
 
     void showAlertDialogStorage();
 
+    /* Audio gain methods */
+
     void updateAudioGainSeekbarDisability();
 
+    void disableAudioGainControls();
+
+    void setAudioGain(int defaultAudioGain);
+
+    void hideSoundVolumeSubmenu();
+
+    void showAudioGainButton();
+
+    void hideAudioGainButton();
     /**
      * Sets recordview picometer value and color
      * @param progress value of picometer progress meassured from 0 to 100
@@ -148,14 +190,24 @@ public interface RecordCamera2View {
 
     void showSmartphoneMicrophoneWorking();
 
+    void deselectAllMeteringModeButtons();
+
+    void hideExposureCompensationSubmenu();
+
+    void disableSpotMeteringControl();
+
+    void selectMeteringModeAutoButton();
+
+    void deselectExposureCompensation();
+
+    void resetManualExposure();
+
+    void exposureTimeChanged(long exposureTime);
+
     void setCameraDefaultSettings();
 
     // Show/hide default button
     void showDefaultButton();
 
     void hideDefaultButton();
-
-    void showAudioGainButton();
-
-    void hideAudioGainButton();
 }

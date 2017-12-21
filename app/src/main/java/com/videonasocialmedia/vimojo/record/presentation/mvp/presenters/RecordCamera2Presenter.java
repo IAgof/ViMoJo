@@ -5,13 +5,6 @@
  * All rights reserved
  */
 
-/*
- * Copyright (c) 2015. Videona Socialmedia SL
- * http://www.videona.com
- * info@videona.com
- * All rights reserved
- */
-
 package com.videonasocialmedia.vimojo.record.presentation.mvp.presenters;
 
 import android.content.Context;
@@ -21,11 +14,13 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.videonasocialmedia.camera.camera2.Camera2ExposureTimeHelper;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
@@ -46,6 +41,8 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import static com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity.DEFAULT_AUDIO_GAIN;
+
 /**
  *  Created by alvaro on 16/01/17.
  */
@@ -57,7 +54,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   private static final int SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE = 100;
   public static final int PREVIEW_RECORD_PICOMETER_SCALE_CORRECTION_RATIO = 2;
   // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
-  private static final String TAG = RecordCamera2Presenter.class.getCanonicalName();
+  private static final String LOG_TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
   private CameraSettingsRepository cameraSettingsRepository;
   private CameraSettings cameraSettings;
@@ -85,7 +82,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
       updatePicometerRecording();
     }
   };
-
+  private boolean flashEnabled = false;
   // TODO:(alvaro.martinez) 14/11/17 get data from realm camera repository
   private boolean cameraProSelected = false;
 
@@ -141,6 +138,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     } else {
       recordView.showISOSelection();
       recordView.setupISOSupportedModesButtons(camera.getSupportedISORange());
+      recordView.setupManualExposureTime(getMinimumExposureCompensation());
     }
     if (!camera.focusSelectionSupported() || !cameraProSelected) {
       recordView.hideAdvancedAFSelection();
@@ -163,7 +161,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
       recordView.setupMeteringModeSupportedModesButtons(
               camera.getSupportedMeteringModes().values);
     }
-
     if (!cameraProSelected) {
       recordView.hideDefaultButton();
       recordView.hideAudioGainButton();
@@ -171,11 +168,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
       recordView.showDefaultButton();
       recordView.showAudioGainButton();
     }
+    if (!BuildConfig.FEATURE_RECORD_AUDIO_GAIN) {
+      recordView.disableAudioGainControls();
+    }
   }
 
   public void onResume() {
     showThumbAndNumber();
-    Log.d(TAG, "resume presenter");
+    Log.d(LOG_TAG, "resume presenter");
     try {
       camera.onResume();
       startSamplingPicometerPreview();
@@ -193,7 +193,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
         new PicometerAmplitudeDbListener() {
       @Override
       public void setMaxAmplituedDb(double maxAmplituedDb) {
-//        Log.d(TAG, "maxAmplitudePreview Dbs " + maxAmplituedDb);
+//        Log.d(LOG_TAG, "maxAmplitudePreview Dbs " + maxAmplituedDb);
         setPicometerProgressAndColor(getProgressPicometerPreview(maxAmplituedDb));
       }
     });
@@ -232,7 +232,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   private void updatePicometerRecording() {
     int maxAmplitude = camera.getMaxAmplitudeRecording();
     double dBs = getAmplitudePicometerFromRecorderDbs(maxAmplitude);
-    //Log.d(TAG, "maxAmplitudeRecording " + maxAmplitude + " dBs " + dBs);
+    //Log.d(LOG_TAG, "maxAmplitudeRecording " + maxAmplitude + " dBs " + dBs);
     int progress = getProgressPicometerRecording(dBs);
     if (maxAmplitude > 0) {
       setPicometerProgressAndColor(progress);
@@ -265,11 +265,11 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
       color = R.color.recordActivityInfoRed;
     }
     recordView.showProgressPicometer(progress, color);
-//    Log.d(TAG, "Picometer progress " + progress + " isRecording " + camera.isRecordingVideo());
+//    Log.d(LOG_TAG, "Picometer progress " + progress + " isRecording " + camera.isRecordingVideo());
   }
 
   public void onPause() {
-    if(camera.isRecordingVideo()){
+    if (camera.isRecordingVideo()) {
       stopVideoRecording();
     }
     camera.onPause();
@@ -305,7 +305,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
           recordView.hideNavigateToSettingsActivity();
           recordView.hideVideosRecordedNumber();
           recordView.hideRecordedVideoThumbWithText();
-          recordView.hideChangeCamera();
+          recordView.disableChangeCameraIcon();
           recordView.updateAudioGainSeekbarDisability();
           userEventTracker.trackVideoStartRecording();
           startSamplingPicometerRecording();
@@ -325,7 +325,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
       restartPreview();
       recordView.updateAudioGainSeekbarDisability();
     } catch (RuntimeException runtimeException) {
-      // do nothing as it's already managed in camera wrapper
+      Log.e(LOG_TAG, "Error stopping video recording!!");
+      // TODO(jliarte): 21/11/17 handle this error - occurred in samsung galaxy s7 with front camera
+//      camera.stopRecordVideo();
+//      camera.onResume();
     }
     incrementSharedPreferencesTotalVideosRecorded();
     trackVideoRecorded();
@@ -363,7 +366,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     recordView.stopChronometer();
     recordView.hideRecordPointIndicator();
     recordView.resetChronometer();
-    recordView.showChangeCamera();
+    recordView.enableChangeCameraIcon();
 //    setFlashOff();
   }
 
@@ -371,10 +374,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   public void setFlashSupport() {
     if (camera.isFlashSupported()) {
       recordView.setFlashSupported(true);
-      Log.d(TAG, "checkSupportFlash flash Supported camera");
+      Log.d(LOG_TAG, "checkSupportFlash flash Supported camera");
     } else {
        recordView.setFlashSupported(false);
-      Log.d(TAG, "checkSupportFlash flash NOT Supported camera");
+      Log.d(LOG_TAG, "checkSupportFlash flash NOT Supported camera");
     }
   }
 
@@ -398,23 +401,19 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 
               @Override
               public void onAddMediaItemToTrackSuccess(Media media) {
-//                checkIfVideoAddedNeedLaunchAVTransitionJob((Video) media);
                 // TODO(jliarte): 31/08/17 should we do anything here?
               }
             });
   }
 
-//  private void checkIfVideoAddedNeedLaunchAVTransitionJob(Video video) {
-//    if (currentProject.getVMComposition().isAudioFadeTransitionActivated()
-//            || currentProject.getVMComposition().isVideoFadeTransitionActivated()) {
-//      videoToLaunchAVTransitionTempFile(video,
-//          currentProject.getProjectPathIntermediateFileAudioFade());
-//    }
-//  }
-
   @Override
   public void setZoom(float zoomValue) {
     recordView.setZoom(zoomValue);
+  }
+
+  @Override
+  public void exposureTimeChanged(long exposureTime) {
+    recordView.exposureTimeChanged(exposureTime);
   }
 
   @Override
@@ -437,13 +436,15 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     recordView.setFlash(false);
   }
 
-  public void isFlashEnabled(boolean isSelected) {
+  public void toggleFlash(boolean isSelected) {
     if (isSelected) {
       camera.setFlashOff();
       recordView.setFlash(false);
+      flashEnabled = false;
     } else {
       camera.setFlashOn();
       recordView.setFlash(true);
+      flashEnabled = true;
     }
     userEventTracker.trackChangeFlashMode(isSelected);
   }
@@ -488,45 +489,10 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     return currentProject.getVMComposition().hasVideos();
   }
 
-//  @Override
-//  public void videoToLaunchAVTransitionTempFile(Video video,
-//                                                String intermediatesTempAudioFadeDirectory) {
-//    video.setTempPath(currentProject.getProjectPathIntermediateFiles());
-//
-//    videoFormat = currentProject.getVMComposition().getVideoFormat();
-//    Drawable drawableFadeTransitionVideo = currentProject.getVMComposition()
-//            .getDrawableFadeTransitionVideo();
-//    launchTranscoderAddAVTransitionUseCase.applyAVTransitions(drawableFadeTransitionVideo, video,
-//            videoFormat, intermediatesTempAudioFadeDirectory, new TranscoderHelperListener() {
-//              // TODO(jliarte): 5/07/17 check these two listener, code is the else {} part
-//              @Override
-//              public void onSuccessTranscoding(Video video) {
-//                Log.d(TAG, "onSuccessTranscoding " + video.getTempPath());
-//                videoRepository.setSuccessTranscodingVideo(video);
-//              }
-//
-//              @Override
-//              public void onErrorTranscoding(Video video, String message) {
-//                Log.d(TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-//                if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
-//                  video.increaseNumTriesToExportVideo();
-//                  Project currentProject = Project.getInstance(null, null, null, null);
-//                  launchTranscoderAddAVTransitionUseCase.applyAVTransitions(
-//                          context.getDrawable(R.drawable.alpha_transition_white), video,
-//                          videoFormat, currentProject.getProjectPathIntermediateFileAudioFade(),
-//                          this);
-//                } else {
-//                  videoRepository.setErrorTranscodingVideo(video,
-//                          Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
-//                }
-//              }
-//            });
-//  }
-
   public void switchCamera() {
     isFrontCameraSelected = !isFrontCameraSelected;
     resetViewSwitchCamera();
-    recordView.setCameraDefaultSettings();
+    setCameraDefaultSettings();
     camera.switchCamera(isFrontCameraSelected);
     setupAdvancedCameraControls();
     userEventTracker.trackChangeCamera(isFrontCameraSelected);
@@ -564,6 +530,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   // ------------------ metering-exposure settings --------------------
 
   public void resetMeteringMode() {
+    recordView.deselectAllMeteringModeButtons();
+    recordView.disableSpotMeteringControl();
+    recordView.deselectExposureCompensation();
+    recordView.hideExposureCompensationSubmenu();
+    recordView.resetManualExposure();
+    recordView.selectMeteringModeAutoButton();
+
+    recordView.resetSpotMeteringSelector();
     camera.resetMeteringMode();
   }
 
@@ -576,6 +550,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   public void setExposureCompensation(int exposureCompensation) {
+    recordView.disableManualExposure();
     camera.setExposureCompensation(exposureCompensation);
   }
 
@@ -609,16 +584,28 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   public void setFocusSelectionModeManual(int seekbarProgress) {
     camera.setFocusModeManual(seekbarProgress);
   }
+
   public Integer getMaximumSensitivity() {
     return camera.getMaximumSensitivity();
   }
 
   public void setISO(Integer isoValue) {
+    if (isoValue != 0) {
+      recordView.disableSpotMeteringControl();
+      recordView.enableExposureTimeSeekBar();
+      recordView.setManualExposure();
+    } else {
+      recordView.disableExposureTimeSeekBar();
+    }
     camera.setISO(isoValue);
   }
 
+  private void resetISO() {
+    setISO(0);
+  }
+
   public void setMicrophoneStatus(int state, int microphone) {
-    if(isAJackMicrophoneConnected(state, microphone)){
+    if (isAJackMicrophoneConnected(state, microphone)) {
       recordView.showExternalMicrophoneConnected();
     } else {
       recordView.showSmartphoneMicrophoneWorking();
@@ -636,10 +623,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   // --------------------------------------------------------------
 
   public void updateBatteryStatus(int batteryStatus, int batteryLevel, int batteryScale) {
-    int batteryPercent= getPercentLevel(batteryLevel, batteryScale);
+    int batteryPercent = getPercentLevel(batteryLevel, batteryScale);
     recordView.showBatteryStatus(getBatteryStatus(batteryStatus, batteryPercent),batteryPercent);
   }
-
 
   public int getPercentLevel(int batteryLevel, int batteryScale) {
     float level = batteryLevel / (float) batteryScale *100;
@@ -694,23 +680,83 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 
   private String toFormattedMemorySpaceWithBytes(long memorySpace) {
     double memorySpaceInBytes;
-    if (memorySpace<ONE_KB) {
+    if (memorySpace < ONE_KB) {
       memorySpaceInBytes = memorySpace;
       return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " bytes";
     }
-    if (memorySpace>=ONE_KB && memorySpace<ONE_MB) {
+    if (memorySpace >= ONE_KB && memorySpace < ONE_MB) {
       memorySpaceInBytes = (double) memorySpace / ONE_KB;
       return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Kb";
     }
-    if (memorySpace>=ONE_MB && memorySpace<ONE_GB) {
+    if (memorySpace >= ONE_MB && memorySpace < ONE_GB) {
       memorySpaceInBytes = (double) memorySpace / ONE_MB;
       return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Mb";
     }
-    if (memorySpace>=ONE_GB) {
+    if (memorySpace >= ONE_GB) {
       memorySpaceInBytes = (double) memorySpace / ONE_GB;
       return new DecimalFormat("#.#").format(memorySpaceInBytes)+ " Gb";
     }
     return "";
   }
 
+  public void setExposureTime(int seekbarProgress) {
+    camera.setExposureTime(seekbarProgress);
+  }
+
+  public int getMaximumExposureTime() {
+    // TODO(jliarte): 22/11/17 maybe increase constant value?
+    int maxShutterSpeed = Camera2ExposureTimeHelper.MINIMUM_VIDEO_EXPOSURE_TIME.intValue() * 4;
+    return maxShutterSpeed;
+//    return camera.getMaximumExposureTime();
+  }
+
+  public int getMinimunExposureTime() {
+    return camera.getMinimunExposureTime();
+  }
+
+  public int getCurrentFocusSeekBarProgress() {
+    return camera.getCurrentFocusSeekBarProgress();
+  }
+
+  public int getCurrentExposureTimeSeekBarProgress() {
+    return camera.getCurrentExposureTimeSeekBarProgress();
+  }
+
+  public void setCameraDefaultSettings() {
+    recordView.disableGrid();
+    // default zoom settings
+    recordView.hideZoomSelectionSubmenu();
+    recordView.setZoom(0f);
+    resetZoom();
+    // default metering settings
+    recordView.hideManualExposureSubmenu();
+    recordView.deselectAllISOButtons();
+    resetISO();
+    recordView.setAutoExposure();
+    recordView.hideMeteringModeSelectionSubmenu();
+    // default focus settings
+    recordView.hideAFSelectionSubmenu();
+    recordView.deselectAllFocusSelectionButtons();
+    resetFocusSelectionMode();
+    recordView.setAutoSettingsFocusModeByDefault();
+    // default white balance settings
+    recordView.hideWhiteBalanceSubmenu();
+    recordView.deselectAllWhiteBalanceButtons();
+    recordView.selectWbSettingAuto();
+    resetWhiteBalanceMode();
+    //default audio gain settings
+    recordView.hideSoundVolumeSubmenu();
+    resetAudioGain();
+    // default flash settings
+    if (flashEnabled) {
+      setFlashOff();
+    }
+  }
+
+  private void resetAudioGain() {
+    if (!camera.isRecordingVideo()) {
+      recordView.setAudioGain(DEFAULT_AUDIO_GAIN);
+      setAudioGain(DEFAULT_AUDIO_GAIN);
+    }
+  }
 }
