@@ -113,7 +113,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 //    camera = new Camera2Wrapper(context, DEFAULT_CAMERA_ID, textureView, directorySaveVideos,
 //        getVideoFormatFromCurrentProjectUseCase.getVideoRecordedFormatFromCurrentProjectUseCase());
     this.camera = camera;
-    cameraSettings = cameraSettingsRepository.getCameraSettings();
     this.camera.setCameraListener(this);
     this.newClipImporter = newClipImporter;
   }
@@ -123,6 +122,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   public void initViews() {
+    cameraSettings = cameraSettingsRepository.getCameraSettings();
     if(cameraSettings.getCameraIdSelected() == CAMERA_ID_FRONT) {
       isFrontCameraSelected = true;
     }
@@ -512,21 +512,15 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   public void switchCamera() {
-    ResolutionSetting resolutionSetting = cameraSettingsRepository.getCameraSettings()
-        .getResolutionSetting();
-    String resolution = resolutionSetting.getResolution();
-    if(isBackCameraResolutionSupportedInFrontCamera(resolutionSetting, resolution)) {
-      isFrontCameraSelected = !isFrontCameraSelected;
-      resetViewSwitchCamera();
-      setCameraDefaultSettings();
-      camera.switchCamera(isFrontCameraSelected);
-      setupAdvancedCameraControls();
-      int cameraIdSelected = isFrontCameraSelected ? CAMERA_ID_FRONT : CAMERA_ID_REAR;
-      cameraSettingsRepository.setCameraIdSelected(cameraSettings, cameraIdSelected);
-      userEventTracker.trackChangeCamera(isFrontCameraSelected);
-    } else {
-      recordView.showError("Erro change camera not available with this resolution value");
-    }
+    isFrontCameraSelected = !isFrontCameraSelected;
+    resetViewSwitchCamera();
+    setCameraDefaultSettings();
+    camera.switchCamera(isFrontCameraSelected);
+    setupAdvancedCameraControls();
+    int cameraIdSelected = isFrontCameraSelected ? CAMERA_ID_FRONT : CAMERA_ID_REAR;
+    CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
+    cameraSettingsRepository.setCameraIdSelected(cameraSettings, cameraIdSelected);
+    userEventTracker.trackChangeCamera(isFrontCameraSelected);
   }
 
   private boolean isBackCameraResolutionSupportedInFrontCamera(ResolutionSetting resolutionSetting,

@@ -324,11 +324,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private int minExposureTime;
 
   @Override
-  public ActivityPresentersModule getActivityPresentersModule() {
-    return new ActivityPresentersModule(this, Constants.PATH_APP_TEMP, textureView);
-  }
-
-  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_record_camera2);

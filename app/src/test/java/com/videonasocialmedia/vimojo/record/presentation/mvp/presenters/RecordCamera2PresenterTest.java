@@ -59,6 +59,7 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_RESOLUTION;
 import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotEquals;
@@ -97,7 +98,6 @@ public class RecordCamera2PresenterTest {
   @Mock private NewClipImporter mockedNewClipImporter;
   @Mock CameraSettingsRepository mockedCameraSettingsRepository;
   @Mock CameraSettings mockedCameraSettings;
-
 
   @InjectMocks private RecordCamera2Presenter injectedPresenter;
 
@@ -332,8 +332,9 @@ public class RecordCamera2PresenterTest {
   @Test
   public void changeCameraCallsTrackChangeCameraAndUpdateCameraSettingsRepository(){
     presenter = getRecordCamera2Presenter();
-    CameraSettings cameraSettings = getCameraSettings();
     int cameraIdSelected = FRONT_CAMERA_ID;
+    CameraSettings cameraSettings = getCameraSettings();
+    PowerMockito.when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
 
     presenter.switchCamera();
 
@@ -378,7 +379,8 @@ public class RecordCamera2PresenterTest {
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_FRONT_ID, true);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, true);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, false);
-    ResolutionSetting resolutionSetting = new ResolutionSetting("1080p", resolutionsSupportedMap);
+    ResolutionSetting resolutionSetting = new ResolutionSetting(DEFAULT_CAMERA_SETTING_RESOLUTION,
+        resolutionsSupportedMap);
     HashMap<Integer, Boolean> frameRatesSupportedMap = new HashMap<>();
     frameRatesSupportedMap.put(CAMERA_SETTING_FRAME_RATE_24_ID, false);
     frameRatesSupportedMap.put(CAMERA_SETTING_FRAME_RATE_25_ID, false);

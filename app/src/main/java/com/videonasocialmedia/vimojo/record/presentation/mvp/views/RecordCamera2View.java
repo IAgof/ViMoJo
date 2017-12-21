@@ -212,10 +212,4 @@ public interface RecordCamera2View {
     void showDefaultButton();
 
     void hideDefaultButton();
-
-    void showAudioGainButton();
-
-    void hideAudioGainButton();
-
-
 }

@@ -15,7 +15,7 @@ import com.videonasocialmedia.camera.camera2.wrappers.VideonaCaptureRequest;
 
 class Camera2ISOHelper {
   private static final String LOG_TAG = Camera2ISOHelper.class.getCanonicalName();
-  private static Integer currentIso = 0;
+  private Integer currentIso = 0;
   private final Camera2Wrapper camera2Wrapper;
   private Range<Integer> sensitivityRange;
   private Integer minSensitivity = 0;

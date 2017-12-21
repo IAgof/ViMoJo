@@ -17,6 +17,7 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSettin
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings.CAMERA_SETTING_QUALITY_50;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_BACK_ID;
@@ -57,7 +58,7 @@ public class CameraSettingsRealmRepositoryTest {
   public void setResolutionUpdateCameraSettings() {
     CameraSettingsRepository repo = Mockito.spy(new CameraSettingsRealmRepository());
     CameraSettings cameraSettings = getCameraSettings();
-    String resolution = CAMERA_SETTING_RESOLUTION_720;
+    String resolution = CAMERA_SETTING_RESOLUTION_1080;
     Mockito.doNothing().when(repo).update(any(CameraSettings.class));
     assertThat(cameraSettings.getResolutionSettingValue(), not(resolution));
 
