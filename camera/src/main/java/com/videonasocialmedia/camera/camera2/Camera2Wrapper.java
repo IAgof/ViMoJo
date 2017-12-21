@@ -195,7 +195,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     camera2WhiteBalanceHelper = new Camera2WhiteBalanceHelper(this);
     camera2MeteringModeHelper = new Camera2MeteringModeHelper(this);
     camera2ExposureTimeHelper = new Camera2ExposureTimeHelper(this);
-    camera2FrameRateHelper = new Camera2FrameRateHelper(this);
+    camera2FrameRateHelper = new Camera2FrameRateHelper(this, videoCameraFormat);
 
     setupCamera();
   }
@@ -525,7 +525,6 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
 
       Surface previewSurface = new Surface(texture);
       previewBuilder.addTarget(previewSurface);
-
       cameraDevice.createCaptureSession(Arrays.asList(previewSurface),
               new VideonaCameraCaptureSession.StateCallback() {
                 @Override
@@ -570,17 +569,7 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
       return;
     }
     try {
-
-      // setUpCaptureRequestBuilderAutoMode(previewBuilder);
-      // TODO(jliarte): 28/06/17 check if we can change frame rate with this.
-      //                Tested on M5 and working at 25FPS.
-      //                Seems not to crash if camera doesnt support FPS, it aproximates to next available FPS setting
-      //getPreviewBuilder().set(CaptureRequest.SENSOR_FRAME_DURATION, Long.valueOf(40000000));
-      if(camera2FrameRateHelper.isFrameRateSupported()) {
-        Range<Integer> fpsRange = new Range<>(videoCameraFormat.getFrameRate(),
-                videoCameraFormat.getFrameRate());
-        this.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, fpsRange);
-      }
+      camera2FrameRateHelper.setCurrentFrameRate();
       previewSession.setRepeatingRequest(previewBuilder.build(), previewCaptureCallback,
               backgroundHandler);
       Log.d(LOG_TAG, "Updated preview");

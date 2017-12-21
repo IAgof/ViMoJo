@@ -161,15 +161,15 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
       recordView.setupMeteringModeSupportedModesButtons(
               camera.getSupportedMeteringModes().values);
     }
-    if (!BuildConfig.FEATURE_RECORD_AUDIO_GAIN) {
-      recordView.disableAudioGainControls();
-    }
     if (!cameraProSelected) {
       recordView.hideDefaultButton();
       recordView.hideAudioGainButton();
     } else {
       recordView.showDefaultButton();
       recordView.showAudioGainButton();
+    }
+    if (!BuildConfig.FEATURE_RECORD_AUDIO_GAIN) {
+      recordView.disableAudioGainControls();
     }
   }
 
@@ -535,7 +535,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     recordView.deselectExposureCompensation();
     recordView.hideExposureCompensationSubmenu();
     recordView.resetManualExposure();
-    recordView.setMeteringModeAuto();
+    recordView.selectMeteringModeAutoButton();
 
     recordView.resetSpotMeteringSelector();
     camera.resetMeteringMode();

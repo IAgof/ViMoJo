@@ -196,7 +196,7 @@ public interface RecordCamera2View {
 
     void disableSpotMeteringControl();
 
-    void setMeteringModeAuto();
+    void selectMeteringModeAutoButton();
 
     void deselectExposureCompensation();
 
