@@ -4,13 +4,14 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
+        //classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'io.fabric.tools:gradle:1.25.1'
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
 apply plugin: 'io.fabric'
 apply plugin: 'checkstyle'
-apply plugin: 'realm-android'
 
 checkstyle {
     toolVersion = '7.1.1'
@@ -240,6 +241,9 @@ android {
             systemProperty 'robolectric.offline', 'true'
             systemProperty 'robolectric.dependency.dir', "$System.env.ROBOLECTRIC_LIB_PATH"
         }
+        unitTests {
+            includeAndroidResources = true
+        }
     }
 }
 
@@ -250,7 +254,7 @@ dependencies {
     testAnnotationProcessor 'com.google.dagger:dagger-compiler:2.7'
     implementation 'com.google.dagger:dagger:2.7' // dagger itself
     androidTestImplementation 'com.google.dagger:dagger:2.7' // dagger itself
-    provided 'org.glassfish:javax.annotation:10.0-b28' // needed to resolve compilation errors
+    compileOnly 'org.glassfish:javax.annotation:10.0-b28' // needed to resolve compilation errors
     androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
     androidTestImplementation 'org.hamcrest:hamcrest-core:1.3'
     androidTestImplementation('junit:junit:4.12') {
@@ -259,30 +263,31 @@ dependencies {
     androidTestImplementation('org.mockito:mockito-core:2.6.3') {
         exclude group: "org.hamcrest"
     }
-    testCompile 'org.robolectric:robolectric:3.1.2'
-    testCompile 'org.powermock:powermock-api-mockito2:1.7.1'
-    testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.7.1'
-    testCompile 'org.powermock:powermock-module-junit4:1.7.1'
+    testImplementation "org.robolectric:robolectric:3.6.1"
+    testImplementation "org.robolectric:shadows-multidex:3.3.2"
+    testImplementation 'org.powermock:powermock-api-mockito2:1.7.1'
+    testImplementation 'org.powermock:powermock-module-junit4-rule-agent:1.7.1'
+    testImplementation 'org.powermock:powermock-module-junit4:1.7.1'
     androidTestImplementation 'org.json:json:20140107'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':avrecorder')
-    implementation 'com.android.support:appcompat-v7:27.0.0'
-    implementation 'com.android.support:multidex:1.0.1'
-    implementation 'com.android.support:recyclerview-v7:27.0.0'
-    implementation 'com.android.support:cardview-v7:27.0.0'
-    implementation 'com.android.support:percent:27.0.0'
-    implementation 'com.android.support:support-v13:27.0.0'
-    implementation 'com.android.support:design:27.0.0'
+    //implementation project(':avrecorder')
+    implementation 'com.android.support:appcompat-v7:27.0.2'
+    implementation 'com.android.support:multidex:1.0.2'
+    implementation 'com.android.support:recyclerview-v7:27.0.2'
+    implementation 'com.android.support:cardview-v7:27.0.2'
+    implementation 'com.android.support:percent:27.0.2'
+    implementation 'com.android.support:support-v13:27.0.2'
+    implementation 'com.android.support:design:27.0.2'
     implementation 'com.github.bumptech.glide:glide:3.8.0'
     implementation 'jp.wasabeef:glide-transformations:2.0.2'
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'de.greenrobot:eventbus:2.4.0'
     implementation 'com.mixpanel.android:mixpanel-android:5.+'
-    implementation 'com.google.android.gms:play-services-identity:11.0.4'
-    implementation 'com.google.android.gms:play-services-gcm:11.0.4'
-    implementation 'com.google.android.gms:play-services-analytics:11.0.4'
-    implementation 'com.google.firebase:firebase-core:11.0.4'
+    implementation 'com.google.android.gms:play-services-identity:11.8.0'
+    implementation 'com.google.android.gms:play-services-gcm:11.8.0'
+    implementation 'com.google.android.gms:play-services-analytics:11.8.0'
+    implementation 'com.google.firebase:firebase-core:11.8.0'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
     implementation 'com.karumi:dexter:2.2.2'
     implementation 'commons-net:commons-net:3.5'
@@ -299,12 +304,12 @@ dependencies {
     implementation 'com.github.apl-devs:appintro:v4.2.2'
     implementation project(':sdk')
     implementation 'org.jcodec:jcodec:0.1.9'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
-    androidTestImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
-    androidTestCompile 'org.hamcrest:hamcrest-library:1.3'
-    androidTestCompile 'org.hamcrest:hamcrest-core:1.3'
-    androidTestCompile('junit:junit:4.12') {
+    androidTestImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
+    androidTestImplementation 'org.hamcrest:hamcrest-core:1.3'
+    androidTestImplementation('junit:junit:4.12') {
         exclude group: "org.hamcrest"
     }
 //    androidTestCompile('org.mockito:mockito-core:1.10.19') {
@@ -312,18 +317,18 @@ dependencies {
 //    }
 //    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
 //    androidTestCompile 'com.linkedin.dexmaker:dexmaker-mockito:2.2.0'
-    testCompile('org.mockito:mockito-core:2.6.3') {
+    testImplementation('org.mockito:mockito-core:2.6.3') {
         exclude group: "org.hamcrest"
     }
-    testCompile 'org.mockito:mockito-android:2.6.3'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.6.3@aar') {
+    testImplementation 'org.mockito:mockito-android:2.6.3'
+    implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true;
     }
-    testCompile  'junit:junit:4.12'
-    androidTestCompile 'io.reactivex:rxjava:1.1.0'
-    androidTestCompile 'com.android.support.test:runner:0.4.1'
-    androidTestCompile 'com.android.support.test:rules:0.4.1'
-    androidTestCompile 'com.android.support:support-annotations:25.3.1'
+    testImplementation  'junit:junit:4.12'
+    androidTestImplementation 'io.reactivex:rxjava:1.1.0'
+    androidTestImplementation 'com.android.support.test:runner:0.4.1'
+    androidTestImplementation 'com.android.support.test:rules:0.4.1'
+    androidTestImplementation 'com.android.support:support-annotations:25.3.1'
     implementation project(path: ':camera')
 
     implementation 'com.kailashdabhi:om-recorder:1.1.5'
@@ -333,6 +338,18 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
 
+    implementation 'com.google.guava:guava:19.0'
+}
+
+// Ensure the no-op dependency is always used in JVM tests.
+configurations.all { config ->
+    if (config.name.contains('UnitTest')) {
+        config.resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'com.squareup.leakcanary' && details.requested.name == 'leakcanary-android') {
+                details.useTarget(group: details.requested.group, name: 'leakcanary-android-no-op', version: details.requested.version)
+            }
+        }
+    }
 }
 
 // ADD THIS AT THE BOTTOM

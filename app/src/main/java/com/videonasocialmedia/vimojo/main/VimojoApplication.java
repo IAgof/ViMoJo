@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
@@ -60,7 +61,11 @@ public class VimojoApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initSystemComponent();
-        Fabric.with(this, new Crashlytics());
+        // Set up Crashlytics, disabled for debug builds
+        Crashlytics crashlyticsKit = new Crashlytics.Builder()
+            .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+            .build();
+        Fabric.with(this, crashlyticsKit);
         context = getApplicationContext();
         setupGoogleAnalytics();
 //        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -113,11 +118,16 @@ public class VimojoApplication extends Application {
         appTracker = analytics.newTracker(R.xml.app_tracker);
         appTracker.enableAdvertisingIdCollection(true);
 
-      FirebaseApp.initializeApp(this);
+      FirebaseApp.initializeApp(context);
     }
 
     private void setupLeakCanary() {
         if (BuildConfig.DEBUG) {
+            if (LeakCanary.isInAnalyzerProcess(this)) {
+                // This process is dedicated to LeakCanary for heap analysis.
+                // You should not init your app in this process.
+                return;
+            }
             LeakCanary.install(this);
         }
     }

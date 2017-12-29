@@ -29,11 +29,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.videonasocialmedia.avrecorder.view.CustomManualFocusView;
 import com.videonasocialmedia.camera.camera2.Camera2FocusHelper;
 import com.videonasocialmedia.camera.camera2.Camera2MeteringModeHelper;
 import com.videonasocialmedia.camera.camera2.Camera2WhiteBalanceHelper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
+import com.videonasocialmedia.camera.customview.CustomManualFocusView;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;

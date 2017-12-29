@@ -2,7 +2,6 @@ package com.videonasocialmedia.vimojo.main.modules;
 
 import android.content.SharedPreferences;
 
-import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRealmRepository;
@@ -39,12 +38,10 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GalleryPagerPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.RecordPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
@@ -105,7 +102,7 @@ import dagger.Provides;
 public class ActivityPresentersModule {
   private final VimojoActivity activity;
   private AutoFitTextureView textureView;
-  private GLCameraView cameraView = null;
+ // private GLCameraView cameraView = null;
   private boolean externalIntent;
   private String directorySaveVideos;
 
@@ -113,12 +110,12 @@ public class ActivityPresentersModule {
     this.activity = vimojoActivity;
   }
 
-  public ActivityPresentersModule(RecordActivity activity, boolean externalIntent,
+/*  public ActivityPresentersModule(RecordActivity activity, boolean externalIntent,
                                   GLCameraView cameraView) {
     this.activity = activity;
     this.externalIntent = externalIntent;
     this.cameraView = cameraView;
-  }
+  }*/
 
   public ActivityPresentersModule(RecordCamera2Activity activity,
                                   String directorySaveVideos,
@@ -251,7 +248,7 @@ public class ActivityPresentersModule {
             projectRepository, videoRepository, sharedPreferences);
   }
 
-  @Provides @PerActivity
+ /* @Provides @PerActivity
   RecordPresenter provideRecordPresenter(
           UserEventTracker userEventTracker, SharedPreferences sharedPreferences,
           AddVideoToProjectUseCase addVideoToProjectUseCase,
@@ -261,7 +258,7 @@ public class ActivityPresentersModule {
     return new RecordPresenter(activity, (RecordActivity) activity, userEventTracker, cameraView,
         sharedPreferences, externalIntent, addVideoToProjectUseCase, videoRepository,
             applyAVTransitionsUseCase, getVideonaFormatFromCurrentProjectUseCase);
-  }
+  }*/
 
   @Provides @PerActivity
   RecordCamera2Presenter provideRecordCamera2Presenter(
