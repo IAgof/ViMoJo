@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface CameraSettingsView {
   void showCameraSettingsList(List<CameraSettingViewModel> list);
+
+  void showDialogResolutionNotSupportedInBothCameras(int resolutionSelectedId);
 }
