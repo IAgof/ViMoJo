@@ -35,7 +35,7 @@ public class RealmCameraSettingsToCameraSettingsMapperTest {
         Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED,
         Constants.DEFAULT_CAMERA_SETTING_RESOLUTION, Constants.DEFAULT_CAMERA_SETTING_QUALITY,
         Constants.DEFAULT_CAMERA_SETTING_FRAME_RATE, true, true, false, true, true, false, false,
-        false, true);
+        false, true, Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED);
     RealmCameraSettingsToCameraSettingsMapper mapper = new RealmCameraSettingsToCameraSettingsMapper();
 
     CameraSettings cameraSettings = mapper.map(defaultRealmCameraSettings);
@@ -65,5 +65,7 @@ public class RealmCameraSettingsToCameraSettingsMapperTest {
             .get(CAMERA_SETTING_FRAME_RATE_25_ID), is(false));
     assertThat(cameraSettings.getFrameRateSetting().getFrameRatesSupportedMap()
             .get(CAMERA_SETTING_FRAME_RATE_30_ID), is(true));
+    assertThat(cameraSettings.getCameraIdSelected(),
+        is(Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED));
   }
 }

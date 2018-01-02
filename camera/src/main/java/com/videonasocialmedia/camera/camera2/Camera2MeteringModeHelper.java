@@ -117,6 +117,7 @@ public class Camera2MeteringModeHelper {
 
   private void setAutoCameraControlMode() {
     // TODO(jliarte): 29/06/17 should update camera activity ISO submenu?
+    camera2Wrapper.disableManualExposure();
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_ON);
     camera2Wrapper.setUpCaptureRequestBuilderAutoMode(camera2Wrapper.getPreviewBuilder());
   }

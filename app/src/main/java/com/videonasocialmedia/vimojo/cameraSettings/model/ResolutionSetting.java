@@ -28,7 +28,8 @@ public class ResolutionSetting {
   public static final int CAMERA_SETTING_RESOLUTION_2160_FRONT_ID = 2161;
   private String resolution;
   private HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
-  private HashMap<String, Integer> backFacingCameraResolutionIdsMap;
+
+  private HashMap<String, Integer> backCameraResolutionIdsMap;
 
   public ResolutionSetting(String resolution, HashMap<Integer, Boolean> resolutionsSupportedMap) {
     this.resolution = resolution;
@@ -37,12 +38,12 @@ public class ResolutionSetting {
   }
 
   private void initResolutionIdsMap() {
-    this.backFacingCameraResolutionIdsMap = new HashMap<>();
-    backFacingCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_720,
+    this.backCameraResolutionIdsMap = new HashMap<>();
+    backCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_720,
             CAMERA_SETTING_RESOLUTION_720_BACK_ID);
-    backFacingCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_1080,
+    backCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_1080,
             CAMERA_SETTING_RESOLUTION_1080_BACK_ID);
-    backFacingCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_2160,
+    backCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_2160,
             CAMERA_SETTING_RESOLUTION_2160_BACK_ID);
   }
 
@@ -51,7 +52,7 @@ public class ResolutionSetting {
   }
 
   public boolean isSupportedByDeviceBackFacingCamera() {
-    Integer resolutionId = backFacingCameraResolutionIdsMap.get(resolution);
+    Integer resolutionId = backCameraResolutionIdsMap.get(resolution);
     return resolutionId == null ? false : resolutionsSupportedMap.get(resolutionId);
   }
 
@@ -65,5 +66,9 @@ public class ResolutionSetting {
 
   public boolean deviceSupports(int resolutionId) {
     return resolutionsSupportedMap.get(resolutionId);
+  }
+
+  public HashMap<String, Integer> getBackCameraResolutionIdsMap() {
+    return backCameraResolutionIdsMap;
   }
 }

@@ -48,7 +48,8 @@ public class RealmCameraSettingsToCameraSettingsMapper implements
     FrameRateSetting frameRateSetting = new FrameRateSetting(realmCameraSettings.frameRate,
         frameRatesSupportedMap);
     CameraSettings cameraSettings = new CameraSettings(resolutionSetting,
-            frameRateSetting, realmCameraSettings.quality, realmCameraSettings.interfaceSelected);
+            frameRateSetting, realmCameraSettings.quality, realmCameraSettings.interfaceSelected,
+            realmCameraSettings.cameraIdSelected);
     return cameraSettings;
   }
 }

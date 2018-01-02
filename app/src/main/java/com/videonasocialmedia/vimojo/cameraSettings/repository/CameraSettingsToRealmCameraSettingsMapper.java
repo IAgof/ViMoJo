@@ -32,7 +32,8 @@ public class CameraSettingsToRealmCameraSettingsMapper implements
         resolutionsSupportedMap.get(ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID),
         frameRateSupportedMap.get(FrameRateSetting.CAMERA_SETTING_FRAME_RATE_24_ID),
         frameRateSupportedMap.get(FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID),
-        frameRateSupportedMap.get(FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30_ID));
+        frameRateSupportedMap.get(FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30_ID),
+        cameraSettings.getCameraIdSelected());
     return realmCameraSettings;
   }
 }

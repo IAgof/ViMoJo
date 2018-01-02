@@ -42,8 +42,8 @@
     <string name="credentialFTPNull">Conexión a FTP no establecida. Por favor, configure los datos FTP en ajustes.</string>
 
     <!-- Editor Activity -->
-    <string name="new_project">Nuevo projecto</string>
-    <string name="clear_project">Clean project</string>
+    <string name="new_project">Nuevo proyecto</string>
+    <string name="clear_project">Borrar proyecto</string>
     <string name="other_options">Otras opciones</string>
     <string name="record">Grabar</string>
     <string name="gallery">Galería</string>
@@ -219,9 +219,15 @@
 
     <!-- Camera Settings -->
     <string name="title_camera_section">Cámara</string>
-    <string name="resolution">Resolución</string>
-    <string name="quality">Calidad</string>
-    <string name="camera_pro_o_basic">Cámara Pro/Básica</string>
+    <string name="title_item_resolution">Resolución</string>
+    <string name="resolution_supported_back_front_camera">(cámara trasera/delantera)</string>
+    <string name="dialog_title_resolution_not_supported_back_front_camera">Resolución</string>
+    <string name="dialog_title_message_not_supported_back_front_camera">Resolución no soportada en
+        cámara trasera y delantera Si seleccionas esta opción, no podrás grabar vídeos con la
+        cámara frontal.</string>
+    <string name="title_item_quality">Calidad</string>
+    <string name="title_item_camera_pro_o_basic">Cámara pro/básica</string>
+    <string name="title_item_frame_rate">Frame rate (aprox)</string>
     <string name="camera_pro">Cámara pro</string>
     <string name="camera_basic">Cámara básica</string>
     <string name="cancelSettingsCamera">Cancelar</string>
