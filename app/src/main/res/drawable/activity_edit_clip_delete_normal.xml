@@ -4,7 +4,7 @@
     android:viewportWidth="59.0"
     android:width="32dp"
     android:tintMode="multiply"
-    android:tint="@color/button_color_toolbar"
+    android:tint="@color/button_color_theme_light"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <path
         android:fillColor="@color/colorWhite"
