@@ -42,6 +42,7 @@
         <item name="android:editTextStyle">@style/VideonaEditText</item>
         <item name="android:radioButtonStyle">@style/VideonaRadioButton</item>
         <item name="cardViewStyle">@style/CardViewStyleLight</item>
+        <item name="popupMenuStyle">@style/PopupMenu</item>
     </style>
 
     <style name="CardViewStyleLight" parent="CardView.Light"></style>
@@ -92,6 +93,7 @@
         <item name="android:editTextStyle">@style/VideonaEditText</item>
         <item name="android:buttonTint">@color/colorWhite</item>
         <item name="android:radioButtonStyle">@style/VideonaRadioButton</item>
+        <item name="popupMenuStyle">@style/PopupMenu</item>
     </style>
 
     <style name="CardViewStyleDark" parent="CardView.Dark">
@@ -102,6 +104,10 @@
 
     <style name="VideonaDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
         <item name="android:background">?attr/colorBackgroundFloating</item>
+    </style>
+
+    <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
+        <item name="android:popupBackground">?attr/colorBackgroundFloating</item>
     </style>
 
     <style name="VideonaCategoryPreference" parent="Theme.AppCompat.Light">

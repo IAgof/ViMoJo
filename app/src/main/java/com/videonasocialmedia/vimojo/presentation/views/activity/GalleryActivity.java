@@ -3,13 +3,17 @@ package com.videonasocialmedia.vimojo.presentation.views.activity;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
@@ -26,6 +30,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoGalleryPre
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.presentation.views.fragment.VideoGalleryFragment;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnSelectionModeListener;
+import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.activity.SettingsActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,7 +48,7 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
  * Created by jca on 20/5/15.
  */
 public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageChangeListener,
-        GalleryPagerView, OnSelectionModeListener {
+        GalleryPagerView, OnSelectionModeListener, PopupMenu.OnMenuItemClickListener {
     public final String TAG = getClass().getCanonicalName();
     private final String MASTERS_FRAGMENT_TAG="MASTERS";
     private final String EDITED_FRAGMENT_TAG="EDITED";
@@ -60,6 +65,8 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     LinearLayout selectionMode;
     @Bind(R.id.button_trash)
     ImageButton buttonTrash;
+    @Bind(R.id.menu_gallery)
+    ImageButton menuGallery;
 
     private MyPagerAdapter adapterViewPager;
     private int selectedPage = 0;
@@ -157,6 +164,14 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         this.finish();
     }
 
+    @OnClick(R.id.menu_gallery)
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.setOnMenuItemClickListener(this);
+        popup.inflate(R.menu.menu_gallery_activity);
+        popup.show();
+    }
+
     @OnClick(R.id.button_trash)
     public void deleteFiles() {
         final List<Video> videoList = getSelectedVideos();
@@ -215,6 +230,31 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         if (countVideosSelected == 0) {
             selectionMode.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings_edit_options:
+                navigateTo(SettingsActivity.class);
+                return true;
+            case R.id.action_settings_suggestions:
+                navigateToMail("mailto:info@videona.com");
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public void navigateTo(Class cls) {
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
+        startActivity(intent);
+    }
+
+    private void navigateToMail(String url) {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
     }
 
     @Override
@@ -283,6 +323,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     private void tintButtons(int color) {
         tintButton(buttonTrash, color);
+        tintButton(menuGallery, color);
     }
 
     private void setupPagerTabStrip(int color) {
