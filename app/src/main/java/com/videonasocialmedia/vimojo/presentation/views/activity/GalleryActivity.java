@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -36,6 +37,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
+
 /**
  * Created by jca on 20/5/15.
  */
@@ -55,6 +58,8 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     ImageView galleryImageViewClips;
     @Bind(R.id.selection_mode)
     LinearLayout selectionMode;
+    @Bind(R.id.button_trash)
+    ImageButton buttonTrash;
 
     private MyPagerAdapter adapterViewPager;
     private int selectedPage = 0;
@@ -68,15 +73,14 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         setContentView(R.layout.activity_gallery);
         ButterKnife.bind(this);
         getActivityPresentersComponent().inject(this);
-
-        PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_header);
-        pagerTabStrip.setDrawFullUnderline(true);
-        pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorSecondary));
-        pagerTabStrip.setTextColor(getResources().getColor(R.color.colorSecondary));
+        setupActivityViews();
         Log.d(TAG, "Creating Activity");
         setupViewPager(savedInstanceState);
-        setupPagerTabStrip();
         Log.d(TAG, "....done!!");
+    }
+
+    private void setupActivityViews() {
+        galleryPagerPresenter.setupActivityViews();
     }
 
     @Override
@@ -88,13 +92,6 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     public void onPause() {
         super.onPause();
         countVideosSelected = getSelectedVideos().size();
-    }
-
-    private void setupPagerTabStrip() {
-        PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_header);
-        pagerTabStrip.setDrawFullUnderline(true);
-        pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.colorSecondary));
-        pagerTabStrip.setTextColor(getResources().getColor(R.color.colorSecondary));
     }
 
     private void setupViewPager(Bundle savedInstanceState) {
@@ -254,6 +251,45 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         });
 
         dialog.show();
+    }
+
+    @Override
+    public void setupViewsToThemeDark() {
+        tintButtons(R.color.button_color_theme_dark);
+        tintImages(R.color.button_theme_dark);
+        tintText(R.color.textColorDark);
+        setupPagerTabStrip(R.color.textColorDark);
+    }
+
+    @Override
+    public void setupViewsToThemeLight() {
+        tintButtons(R.color.button_color_theme_light);
+        tintImages(R.color.button);
+        tintText(R.color.textColorLight);
+        setupPagerTabStrip(R.color.textColorLight);
+    }
+
+    private void tintText(int color) {
+        videoCounter.setTextColor(ContextCompat.getColor(this, color));
+        PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_header);
+        pagerTabStrip.setDrawFullUnderline(true);
+        pagerTabStrip.setTabIndicatorColor(ContextCompat.getColor(this, color));
+        pagerTabStrip.setTextColor(ContextCompat.getColor(this, color));
+    }
+
+    private void tintImages(int color) {
+        galleryImageViewClips.setColorFilter(ContextCompat.getColor(this, color));
+    }
+
+    private void tintButtons(int color) {
+        tintButton(buttonTrash, color);
+    }
+
+    private void setupPagerTabStrip(int color) {
+        PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_header);
+        pagerTabStrip.setDrawFullUnderline(true);
+        pagerTabStrip.setTabIndicatorColor(ContextCompat.getColor(this, color));
+        pagerTabStrip.setTextColor(ContextCompat.getColor(this, color));
     }
 
     @Override

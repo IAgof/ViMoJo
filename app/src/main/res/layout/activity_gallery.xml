@@ -28,8 +28,8 @@
 
                 <ImageButton
                     android:id="@+id/button_trash"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:layout_marginRight="48dp"
                     android:background="@android:color/transparent"

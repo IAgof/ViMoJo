@@ -13,7 +13,9 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.MediaMetadataRetriever;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.TypedValue;
 
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
@@ -44,6 +46,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
 //        , OnLaunchAVTransitionTempFileListener
 //        , TranscoderHelperListener
 {
+    private static final String THEME_DARK = "dark";
     private final String LOG_TAG = "GalleryPagerPresenter";
 
     private final SharedPreferences preferences;
@@ -234,6 +237,26 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         if (!differentVideoFormat) {
             galleryPagerView.navigate();
         }
+    }
+
+    public void setupActivityViews() {
+      String currentTheme = getCurrentTheme();
+      updateViewsAccordingTheme(currentTheme);
+    }
+
+    private void updateViewsAccordingTheme(String currentTheme) {
+        if (currentTheme.equals(THEME_DARK)) {
+            galleryPagerView.setupViewsToThemeDark();
+        } else {
+            galleryPagerView.setupViewsToThemeLight();
+        }
+    }
+
+    @NonNull
+    private String getCurrentTheme() {
+        TypedValue outValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
+        return (String) outValue.string;
     }
 
 //    @Override
