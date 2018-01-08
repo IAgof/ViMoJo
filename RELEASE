@@ -1,5 +1,2 @@
-v0.7.7
-- Added support for manual exposure time.
-- Redesign of metering capabilities and user flow in record activity
-- Added show resolution depending on camera selected in camera settings screen. Check compatibility to allow switch camera.
-- Save camera selected. Open camera according user preference.
+v0.7.8-RC1
+- Fixed bug in camera recording view
