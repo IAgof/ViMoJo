@@ -52,7 +52,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = VimojoTestApplication.class, constants = BuildConfig.class, sdk = 21,
-        shadows = {ShadowMultiDex.class}, packageName = "com.videonasocialmedia.vimojo.debug")
+  shadows = {ShadowMultiDex.class}, packageName = "com.videonasocialmedia.vimojo.debug")
 public class CreateDefaultProjectUseCaseTest {
 
   @Mock ProjectRepository mockedProjectRepository;

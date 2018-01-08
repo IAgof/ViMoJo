@@ -3,9 +3,7 @@ package com.videonasocialmedia.vimojo.repository.project;
 import android.content.Context;
 import android.os.Environment;
 
-import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -27,7 +25,6 @@ import java.io.File;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
-import io.realm.log.RealmLog;
 
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -35,14 +32,13 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 20/10/16.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Realm.class, RealmLog.class, RealmQuery.class, RealmResults.class, Environment.class})
+@PrepareForTest(Environment.class)
 public class ProjectRealmRepositoryTest {
   private Realm mockedRealm;
   private File mockedStorageDir;
