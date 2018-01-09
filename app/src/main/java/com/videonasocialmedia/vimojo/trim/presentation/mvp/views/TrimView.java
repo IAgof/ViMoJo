@@ -37,13 +37,6 @@ public interface TrimView {
 
     void updateProject();
 
-    void showPlayerAdvanceLow();
-
-    void showPlayerAdvanceMedium();
-
-    void showPlayerAdvanceHigh();
-
-
     void updateViewToThemeDark();
 
     void updateViewToThemeLight();

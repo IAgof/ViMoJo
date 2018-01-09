@@ -7,21 +7,21 @@
 
 package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.util.TypedValue;
+import android.content.SharedPreferences;
 import android.widget.RadioButton;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -52,19 +52,18 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     // and we don't want to create a memory leak
     //private WeakReference<TrimView> trimView;
     private TrimView trimView;
-    private Context context;
+    private SharedPreferences sharedPreferences;
     public UserEventTracker userEventTracker;
     public Project currentProject;
-    private final String THEME_DARK = "dark";
-    private String currentTheme;
 
     @Inject
-    public TrimPreviewPresenter(TrimView trimView, Context context, UserEventTracker userEventTracker,
+    public TrimPreviewPresenter(TrimView trimView, SharedPreferences sharedPreferences,
+                                UserEventTracker userEventTracker,
                                 GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                 ModifyVideoDurationUseCase modifyVideoDurationUseCase) {
         //this.trimView = new WeakReference<>(trimView);
         this.trimView = trimView;
-        this.context = context;
+        this.sharedPreferences = sharedPreferences;
         this.currentProject = loadCurrentProject();
         currentProject.addListener(this);
         this.userEventTracker = userEventTracker;
@@ -162,49 +161,37 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
         trimView.updateProject();
     }
 
-    public void showPlayerAdvanceLow() {
-        trimView.showPlayerAdvanceLow();
-    }
-
-    public void showPlayerAdvanceMedium() {
-        trimView.showPlayerAdvanceMedium();
-    }
-
-    public void showPlayerAdvanceHigh() {
-        trimView.showPlayerAdvanceHigh();
-    }
-
     public void setupActivityViews() {
-        currentTheme = getCurrentTheme();
-        updateViewsAccordingTheme(currentTheme);
+        updateViewsAccordingTheme();
     }
 
-    public void updateRadioButton(RadioButton radioButton) {
-        updateRadioButtonAccordingTheme(radioButton, currentTheme);
+    public void updateRadioButtonsWithTheme(RadioButton radioButtonLow,
+                                            RadioButton radioButtonMedium,
+                                            RadioButton radioButtonHigh) {
+        updateRadioButtonAccordingTheme(radioButtonLow);
+        updateRadioButtonAccordingTheme(radioButtonMedium);
+        updateRadioButtonAccordingTheme(radioButtonHigh);
     }
 
-    public void updateViewsAccordingTheme(String currentTheme) {
-        if (currentTheme.equals(THEME_DARK)) {
+    public void updateViewsAccordingTheme() {
+        if (isThemeDarkActivated()) {
             trimView.updateViewToThemeDark();
         } else {
             trimView.updateViewToThemeLight();
         }
     }
 
-    public void updateRadioButtonAccordingTheme(RadioButton buttonNoSelected,
-                                                String currentTheme) {
-        if (currentTheme.equals(THEME_DARK)) {
+    public void updateRadioButtonAccordingTheme(RadioButton buttonNoSelected) {
+        if (isThemeDarkActivated()) {
             trimView.updateRadioButtonToThemeDark(buttonNoSelected);
         } else {
             trimView.updateRadioButtonToThemeLight(buttonNoSelected);
         }
     }
 
-    @NonNull
-    public String getCurrentTheme() {
-        TypedValue outValue = new TypedValue();
-        context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
-        return (String) outValue.string;
+    private boolean isThemeDarkActivated() {
+        return sharedPreferences.getBoolean(ConfigPreferences.THEME_APP_DARK,
+            com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE);
     }
 }
 
