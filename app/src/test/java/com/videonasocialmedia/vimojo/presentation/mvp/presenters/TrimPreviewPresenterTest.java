@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 
-import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -15,6 +15,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.After;
@@ -30,6 +31,7 @@ import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 10/06/16.
@@ -39,7 +41,7 @@ public class TrimPreviewPresenterTest {
     @InjectMocks private TrimPreviewPresenter trimPreviewPresenter;
     @Mock private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
     @Mock private TrimView mockedTrimView;
-    @Mock private Context mockedContext;
+    @Mock private SharedPreferences mockedSharedPreferences;
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
 
@@ -60,7 +62,7 @@ public class TrimPreviewPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(mockedTrimView,
-            mockedContext, userEventTracker, mockedGetMediaListFromProjectUseCase,
+            mockedSharedPreferences, userEventTracker, mockedGetMediaListFromProjectUseCase,
             mockedModifyVideoDurationUseCase);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
@@ -170,16 +172,17 @@ public class TrimPreviewPresenterTest {
     @Test
     public void setupActivityViewsCallsUpdateViewToThemeDarkIfThemeIsDark() {
         trimPreviewPresenter = getTrimPreviewPresenter();
-        String currentTheme = "dark";
+        when(mockedSharedPreferences.getBoolean(ConfigPreferences.THEME_APP_DARK,
+            com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE)).thenReturn(true);
 
-        trimPreviewPresenter.updateViewsAccordingTheme(currentTheme);
+        trimPreviewPresenter.updateViewsAccordingTheme();
 
         verify(mockedTrimView).updateViewToThemeDark();
     }
 
     @NonNull
     private TrimPreviewPresenter getTrimPreviewPresenter() {
-        return new TrimPreviewPresenter(mockedTrimView, mockedContext,
+        return new TrimPreviewPresenter(mockedTrimView, mockedSharedPreferences,
             mockedUserEventTracker, mockedGetMediaListFromProjectUseCase,
             mockedModifyVideoDurationUseCase);
     }
