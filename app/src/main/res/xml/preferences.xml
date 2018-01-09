@@ -21,7 +21,11 @@
             android:inputType="textEmailAddress"
             android:dialogTitle="@string/enterEmail">
         </EditTextPreference>
-    </PreferenceCategory>
+         <Preference
+             android:key="auth"
+             android:title="@string/title_activity_login"/>
+
+     </PreferenceCategory>
 
     <PreferenceCategory
         android:title="@string/title_fade_transition"

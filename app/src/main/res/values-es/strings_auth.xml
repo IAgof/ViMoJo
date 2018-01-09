@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_activity_login">Registro / Iniciar Sesión</string>
+    <string name="sign_out_title_dialog">Cerrar sesión</string>
+    <string name="sign_out_message_dialog">¿Estás seguro de cerrar sesión?</string>
+    <string name="accept_sign_out">Sí</string>
+    <string name="cancel_sign_out">No</string>
+    <string name="sign_out">Cerrar sesión</string>
+    <string name="sign_in_register">Registro / Iniciar Sesión</string>
+    <string name="register_progress">Registro en curso...</string>
+    <string name="prompt_email_register">Email</string>
+    <string name="action_email_register_short">Ocultar</string>
+    <string name="prompt_password_register">Contraseña</string>
+    <string name="action_register_short">Hecho</string>
+    <string name="title_checkbox_termService">Acepto las condiciones de servicio y la política de privacidad</string>
+    <string name="action_register">Hecho</string>
+    <string name="terms_of_service">Condiciones de servicio</string>
+    <string name="have_account">¿Ya tienes una cuenta?</string>
+    <string name="sign_in">Inicia sesión</string>
+    <string name="and"> y </string>
+    <string name="privacy_policy">Política de privacidad</string>
+    <string name="first_string_link_for_create_account">¿No tienes una cuenta?</string>
+    <string name="second_string_link_for_create_account">Créate una</string>
+</resources>

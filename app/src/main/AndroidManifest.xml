@@ -125,14 +125,14 @@
             android:name=".presentation.views.activity.PrivacyPolicyActivity"
             android:label="@string/app_name"
             android:screenOrientation="sensorPortrait"
-            android:parentActivityName="com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.activity.SettingsActivity">
+            >
         </activity>
 
         <activity
             android:name=".presentation.views.activity.TermsOfServiceActivity"
             android:label="@string/app_name"
             android:screenOrientation="sensorPortrait"
-            android:parentActivityName="com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.activity.SettingsActivity">
+            >
         </activity>
 
         <activity
@@ -295,6 +295,11 @@
             android:name=".store.presentation.view.activity.VimojoStoreActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".auth.view.activity.UserAuthActivity"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"/>
 
 

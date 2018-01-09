@@ -1,6 +1,8 @@
 package com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 
+import com.videonasocialmedia.vimojo.auth.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.main.DaggerFragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.FragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -31,7 +34,6 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.LegalNoticeActi
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.activity.LicensesActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity;
-import com.videonasocialmedia.vimojo.presentation.views.dialog.VideonaDialog;
 import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -60,7 +62,6 @@ public class SettingsFragment extends PreferenceFragment implements
     protected SharedPreferences sharedPreferences;
     protected SharedPreferences.Editor editor;
     protected MixpanelAPI mixpanel;
-    protected VideonaDialog dialog;
     private boolean darkThemePurchased = false;
     private boolean watermarkPurchased = false;
     private boolean isVimojoStoreSupported = false;
@@ -163,6 +164,7 @@ public class SettingsFragment extends PreferenceFragment implements
         preferencesPresenter.checkAvailablePreferences();
         preferencesPresenter.checkMailValid();
         preferencesPresenter.checkVimojoStore(getActivity());
+        preferencesPresenter.setupUserAuthPreference();
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferencesPresenter);
     }
@@ -300,6 +302,51 @@ public class SettingsFragment extends PreferenceFragment implements
     public void activateWatermark() {
         watermarkPurchased = false;
         watermarkSwitchPref.setChecked(true);
+    }
+
+    @Override
+    public void setupUserAuthentication(final boolean userLoggedIn) {
+        final Preference signInSetting = findPreference("auth");
+        if (userLoggedIn) {
+            signInSetting.setTitle(R.string.sign_out);
+        } else {
+            signInSetting.setTitle(R.string.sign_in_register);
+        }
+        signInSetting.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (userLoggedIn) {
+                    AlertDialog dialog = createLogoutDialog();
+                    dialog.show();
+                } else {
+                    Intent intent = new Intent(context, UserAuthActivity.class);
+                    startActivity(intent);
+                }
+                return true;
+            }
+        });
+    }
+
+    private AlertDialog createLogoutDialog() {
+        DialogInterface.OnClickListener signOutListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                getActivity(), R.style.VideonaDialog);
+        return builder.setMessage(getString(R.string.sign_out_message_dialog))
+                .setTitle(getString(R.string.sign_out_title_dialog))
+                .setPositiveButton(getString(R.string.accept_sign_out), signOutListener)
+                .setNegativeButton(getString(R.string.cancel_sign_out), signOutListener)
+//                            .withCode(REQUEST_CODE_SIGN_OUT)
+                .create();
     }
 
     private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {

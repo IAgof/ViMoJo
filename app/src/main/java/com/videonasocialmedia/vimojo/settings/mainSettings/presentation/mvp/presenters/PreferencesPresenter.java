@@ -20,6 +20,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.auth.domain.usecase.UserAuthenticator;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
@@ -354,5 +355,14 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
           initBilling(activity);
           preferencesView.vimojoStoreSupported();
         }
+    }
+
+    public void setupUserAuthPreference() {
+        UserAuthenticator userAuthenticator = new UserAuthenticator();
+        boolean userIsLoggedIn = userAuthenticator.userIsLoggedIn();
+        if (userIsLoggedIn)
+            preferencesView.setupUserAuthentication(true);
+        else
+            preferencesView.setupUserAuthentication(false);
     }
 }

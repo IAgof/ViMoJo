@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_activity_login">Register / Sign in</string>
+    <string name="sign_out_title_dialog">Sign Out</string>
+    <string name="sign_out_message_dialog">Sign out now?</string>
+    <string name="accept_sign_out">Yes</string>
+    <string name="cancel_sign_out">No</string>
+    <string name="sign_out">Sign out</string>
+    <string name="sign_in_register">Register / Sign in</string>
+    <string name="register_progress">Register in progress...</string>
+    <string name="prompt_email_register">Email</string>
+    <string name="action_email_register_short">Close Keyboard</string>
+    <string name="prompt_password_register">Password</string>
+    <string name="action_register_short">Done</string>
+    <string name="title_checkbox_termService">I agree to the Terms of Service and Privacy Policy</string>
+    <string name="action_register">Register</string>
+    <string name="terms_of_service">Terms of Service</string>
+    <string name="have_account">Already have an account?</string>
+    <string name="sign_in">Sign in</string>
+    <string name="and">and</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="first_string_link_for_create_account">Don\'t have an account?</string>
+    <string name="second_string_link_for_create_account">Create one</string>
+</resources>

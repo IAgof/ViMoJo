@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
+import com.videonasocialmedia.vimojo.auth.view.presenter.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
@@ -356,6 +357,11 @@ public class ActivityPresentersModule {
               ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase) {
     return new EditTextPreviewPresenter((VideoEditTextActivity) activity, activity,
         userEventTracker, getMediaListFromProjectUseCase, modifyVideoTextAndPositionUseCase);
+  }
+
+  @Provides @PerActivity
+  UserAuthPresenter provideUserAuthPresenter() {
+    return new UserAuthPresenter((UserAuthPresenter.View) activity);
   }
 
   @Provides
