@@ -106,6 +106,7 @@
 
     <!-- Detail project activity -->
     <string name="projectTitleDurationMinSec">Duration:</string>
+    <string name="projectTitleNumClips">Clips:</string>
     <string name="projectTitleSizeMb">Size:</string>
     <string name="detail_project_hint_title">Enter your name here</string>
     <string name="detail_project_info_duration">Duration</string>
