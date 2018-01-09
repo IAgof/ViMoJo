@@ -33,6 +33,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTra
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.OnRelaunchTemporalFileListener;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
+import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -358,7 +359,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     }
 
     public void setupUserAuthPreference() {
-        UserAuthenticator userAuthenticator = new UserAuthenticator();
+        Activity activity = ((SettingsFragment) preferencesView).getActivity();
+        UserAuthenticator userAuthenticator = new UserAuthenticator(activity);
         boolean userIsLoggedIn = userAuthenticator.userIsLoggedIn();
         if (userIsLoggedIn)
             preferencesView.setupUserAuthentication(true);

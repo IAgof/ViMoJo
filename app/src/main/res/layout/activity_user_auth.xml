@@ -113,7 +113,7 @@
                             app:errorEnabled="true">
 
                             <EditText
-                                android:id="@+id/email_edit_text"
+                                android:id="@+id/email_field"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="@string/prompt_email_register"
@@ -134,7 +134,7 @@
                             app:errorEnabled="true">
 
                             <EditText
-                                android:id="@+id/password_edit_text"
+                                android:id="@+id/password_field"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="@string/prompt_password_register"

@@ -3,6 +3,8 @@ package com.videonasocialmedia.vimojo.auth.view.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.videonasocialmedia.vimojo.R;
@@ -28,6 +31,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by jliarte on 8/01/18.
@@ -40,6 +44,14 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
   @Inject
   UserAuthPresenter userAuthPresenter;
 
+  @Bind(R.id.text_input_email)
+  TextInputLayout textInputEmail;
+  @Bind(R.id.email_field)
+  EditText emailField;
+  @Bind(R.id.password_text_input)
+  TextInputLayout passwordTextInput;
+  @Bind(R.id.password_field)
+  EditText passwordField;
   @Nullable
   @Bind(R.id.check_box_Accept_Term)
   CheckBox checkBoxAcceptTerm;
@@ -81,6 +93,32 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
   public void setRegisterFooterText() {
     footerTextView.setMovementMethod(LinkMovementMethod.getInstance());
     footerTextView.setText(createFooterTextForRegister());
+  }
+
+  @Override
+  public void showInvalidMailError() {
+    textInputEmail.setError(getString(R.string.error_invalid_email));
+  }
+
+  @Override
+  public void showPasswordFieldRequired() {
+    passwordTextInput.setError(getString(R.string.error_invalid_password));
+  }
+
+  @Override
+  public void showPasswordInvalidError() {
+    passwordTextInput.setError(getString(R.string.error_invalid_password));
+  }
+
+  @Override
+  public void showTermsNotAcceptedError() {
+    showMessage(R.string.error_No_Cheked_PrivacyTerm, authButton);
+  }
+
+  @Override
+  public void resetErrorFields() {
+    textInputEmail.setError(null);
+    passwordTextInput.setError(null);
   }
 
   @Override
@@ -179,6 +217,18 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
     };
     spannableClickable.setSpan(clickableSpan, 0, spannableClickable.length(), 0);
     return spannableClickable;
+  }
+
+  @OnClick(R.id.auth_button)
+  public void perform_auth() {
+    String email = emailField.getText().toString();
+    String password = passwordField.getText().toString();
+    userAuthPresenter.performAuth(email, password, checkBoxAcceptTerm.isChecked());
+  }
+
+  private void showMessage(int stringResource, Button button) {
+    Snackbar snackbar = Snackbar.make(button, stringResource, Snackbar.LENGTH_LONG);
+    snackbar.show();
   }
 
 }

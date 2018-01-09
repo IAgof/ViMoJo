@@ -21,4 +21,7 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="first_string_link_for_create_account">Don\'t have an account?</string>
     <string name="second_string_link_for_create_account">Create one</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_No_Cheked_PrivacyTerm">You must agree to the terms of service before continuing</string>
 </resources>
