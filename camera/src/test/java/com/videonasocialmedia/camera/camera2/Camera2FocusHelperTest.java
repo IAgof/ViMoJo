@@ -87,14 +87,20 @@ public class Camera2FocusHelperTest {
   public void setFocusModeManualSetsCameraSettingsAndUpdatesPreview() throws CameraAccessException {
     setupCameraWrapperAllModesSupported();
     Camera2FocusHelper focusHelper = new Camera2FocusHelper(mockedCameraWrapper);
+    Camera2Wrapper.CaptureResultParams captureResultParams = new Camera2Wrapper.CaptureResultParams();
+    captureResultParams.captureResultHasFocusDistance = true;
+    captureResultParams.captureResultFocusDistance = 0.03f;
+    doReturn(captureResultParams).when(mockedCameraWrapper).getLastCaptureResultParams();
     focusHelper.setup();
 
     focusHelper.setFocusSelectionMode(Camera2FocusHelper.AF_MODE_MANUAL);
 
     verify(mockedPreviewBuilder)
         .set(CaptureRequest.CONTROL_AF_MODE, CameraMetadata.CONTROL_AF_MODE_OFF);
+    int value = (int) (100 - (100 * 0.03f) / focusHelper.minimumFocusDistance);
+    float focusDistance = ((float) (100 - value)) * focusHelper.minimumFocusDistance / 100;
     verify(mockedPreviewBuilder)
-        .set(CaptureRequest.LENS_FOCUS_DISTANCE, 5.0f);
+        .set(CaptureRequest.LENS_FOCUS_DISTANCE, focusDistance);
     verify(mockedCameraWrapper).updatePreview();
   }
 
@@ -137,8 +143,11 @@ public class Camera2FocusHelperTest {
     int[] supportedValues = {CameraMetadata.CONTROL_AF_MODE_OFF,
         CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_VIDEO};
 
-    doReturn(supportedValues).doReturn(0).when(mockedCharacteristics)
-        .get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
+    doReturn(supportedValues).doReturn(0).doReturn(10f).when(mockedCharacteristics)
+            .get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE);
+
+//    doReturn(supportedValues).doReturn(0).when(mockedCharacteristics)
+//            .get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
 
     doReturn(mockedCharacteristics)
         .when(mockedCameraWrapper).getCurrentCameraCharacteristics();

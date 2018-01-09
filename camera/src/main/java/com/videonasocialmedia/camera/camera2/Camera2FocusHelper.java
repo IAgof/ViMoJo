@@ -30,9 +30,10 @@ public class Camera2FocusHelper {
   private final Camera2Wrapper camera2Wrapper;
   private final HashMap<Integer, String> focusSelectionMap = new HashMap<>();
   private CameraFeatures.SupportedValues supportedFocusSelectionValues;
-  private int seekBarProgress;
+  private int focusSeekBarProgress = 50;
   private MeteringRectangle[] focusMeteringRectangle;
   private Integer maxAFRegions;
+  Float minimumFocusDistance;
 
   public Camera2FocusHelper(Camera2Wrapper camera2Wrapper) {
     this.camera2Wrapper = camera2Wrapper;
@@ -48,7 +49,6 @@ public class Camera2FocusHelper {
   public void setup() {
     setupSupportedValues();
     focusMeteringRectangle = camera2Wrapper.getFullSensorAreaMeteringRectangle();
-    seekBarProgress = 50;
   }
 
   void setupSupportedValues() {
@@ -75,6 +75,8 @@ public class Camera2FocusHelper {
       }
       this.supportedFocusSelectionValues = new CameraFeatures.SupportedValues(
           focusSelectionStringArrayList, getDefaultFocusSelectionSetting());
+      minimumFocusDistance = camera2Wrapper.getCurrentCameraCharacteristics()
+              .get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE);
     } catch (CameraAccessException e) {
       Log.e(TAG, "failed to get camera characteristics");
       Log.e(TAG, "reason: " + e.getReason());
@@ -104,7 +106,6 @@ public class Camera2FocusHelper {
 
   public void resetFocusSelectionMode() {
     focusMeteringRectangle = camera2Wrapper.getFullSensorAreaMeteringRectangle();
-    seekBarProgress = 50;
     if (isFocusModeSelectiveSupported()) {
       setFocusSelectionMode(AF_MODE_REGIONS);
     }
@@ -113,17 +114,20 @@ public class Camera2FocusHelper {
 
   public void setFocusSelectionMode(String afMode) {
     if (isFocusSelectionSupported() && modeIsSupported(afMode)) {
-      supportedFocusSelectionValues.selectedValue = afMode;
-      Log.d(TAG, "---------------- set focus selection to "+afMode+" .............");
-      if (afMode.compareTo(AF_MODE_AUTO) == 0) {
+      if (afMode.equals(AF_MODE_AUTO)) {
         setFocusModeAuto();
       }
-      if (afMode.compareTo(AF_MODE_MANUAL) == 0) {
-        setFocusModeManual(seekBarProgress);
+      if (afMode.equals(AF_MODE_MANUAL)) {
+        if (supportedFocusSelectionValues.selectedValue != afMode) {
+          focusSeekBarProgress = getSeekBarProgressForCurrentFocusDistance();
+        }
+        setFocusModeManual(focusSeekBarProgress);
       }
-      if (afMode.compareTo(AF_MODE_REGIONS) == 0) {
+      if (afMode.equals(AF_MODE_REGIONS)) {
         applyModeFocusRegion(focusMeteringRectangle);
       }
+      supportedFocusSelectionValues.selectedValue = afMode;
+      Log.d(TAG, "---------------- set focus selection to "+afMode+" .............");
     }
   }
 
@@ -160,36 +164,41 @@ public class Camera2FocusHelper {
               CameraMetadata.CONTROL_AF_TRIGGER_IDLE);
     } catch (CameraAccessException e) {
       e.printStackTrace();
+    } catch (NullPointerException npe) {
+      // (jliarte): 17/11/17 when capture session is not yet initialized .capture throws an NPE
     }
   }
 
   public void setFocusModeManual(int seekbarProgress) {
-    seekBarProgress = seekbarProgress;
-    float minimumLens = 0;
-    try {
-      minimumLens = camera2Wrapper.getCurrentCameraCharacteristics()
-          .get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE);
-    } catch (CameraAccessException e) {
-      e.printStackTrace();
-      Log.e(TAG, "failed to get camera characteristics");
-      Log.e(TAG, "reason: " + e.getReason());
-      Log.e(TAG, "message: " + e.getMessage());
-    } catch (NullPointerException npe) {
-      Log.e(TAG, "failed to get minimun focus distance");
-    }
-    float num = (((float) (100 - seekbarProgress)) * minimumLens / 100);
+    focusSeekBarProgress = seekbarProgress;
+    float focusDistance = (((float) (100 - seekbarProgress)) * minimumFocusDistance / 100);
 
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AF_MODE,
         CaptureRequest.CONTROL_AF_MODE_OFF);
-    camera2Wrapper.getPreviewBuilder().set(CaptureRequest.LENS_FOCUS_DISTANCE, num);
+    camera2Wrapper.getPreviewBuilder().set(CaptureRequest.LENS_FOCUS_DISTANCE, focusDistance);
     camera2Wrapper.updatePreview();
   }
 
-  public void setFocusModeAuto(){
+  public void setFocusModeAuto() {
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AF_TRIGGER,
         CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
     camera2Wrapper.getPreviewBuilder().set(CaptureRequest.CONTROL_AF_MODE,
         CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO);
     camera2Wrapper.updatePreview();
+  }
+
+  public int getSeekBarProgressForCurrentFocusDistance() {
+    Camera2Wrapper.CaptureResultParams lastCaptureResultParams =
+            camera2Wrapper.getLastCaptureResultParams();
+    if (camera2Wrapper.getLastCaptureResultParams().captureResultHasFocusDistance) {
+      Float focusDistance = lastCaptureResultParams.captureResultFocusDistance;
+      return (int) (100 - (100 * focusDistance) / minimumFocusDistance);
+    } else {
+      return focusSeekBarProgress;
+    }
+  }
+
+  public int getCurrentFocusSeekBarProgress() {
+    return focusSeekBarProgress;
   }
 }

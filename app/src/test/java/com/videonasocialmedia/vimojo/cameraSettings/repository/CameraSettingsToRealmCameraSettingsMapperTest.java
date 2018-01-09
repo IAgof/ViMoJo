@@ -17,6 +17,7 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -45,9 +46,11 @@ public class CameraSettingsToRealmCameraSettingsMapperTest {
     FrameRateSetting frameRateSetting = new FrameRateSetting("30 fps", frameRatesSupportedMap);
     String quality = "16 Mbps";
     String interfaceSelected = DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
-    CameraSettings cameraSettings = new CameraSettings(resolutionSetting,
-            frameRateSetting, quality, interfaceSelected);
-    CameraSettingsToRealmCameraSettingsMapper mapper = new CameraSettingsToRealmCameraSettingsMapper();
+    int cameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+    CameraSettings cameraSettings = new CameraSettings(resolutionSetting, frameRateSetting, quality,
+        interfaceSelected, cameraIdSelected);
+    CameraSettingsToRealmCameraSettingsMapper mapper =
+        new CameraSettingsToRealmCameraSettingsMapper();
 
     RealmCameraSettings realmCameraSettings = mapper.map(cameraSettings);
 
@@ -71,8 +74,9 @@ public class CameraSettingsToRealmCameraSettingsMapperTest {
     FrameRateSetting frameRateSetting = new FrameRateSetting("30 fps", frameRatesSupportedMap);
     String quality = "16 Mbps";
     String interfaceSelected = DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
+    int cameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
     CameraSettings cameraSettings = new CameraSettings(resolutionSetting,
-            frameRateSetting, quality, interfaceSelected);
+            frameRateSetting, quality, interfaceSelected, cameraIdSelected);
     CameraSettingsToRealmCameraSettingsMapper mapper = new CameraSettingsToRealmCameraSettingsMapper();
 
     RealmCameraSettings realmCameraSettings = mapper.map(cameraSettings);
@@ -99,5 +103,6 @@ public class CameraSettingsToRealmCameraSettingsMapperTest {
         is(frameRatesSupportedMap.get(CAMERA_SETTING_FRAME_RATE_30_ID)));
     assertThat(realmCameraSettings.quality, is(quality));
     assertThat(realmCameraSettings.interfaceSelected, is(interfaceSelected));
+    assertThat(realmCameraSettings.cameraIdSelected, is(cameraIdSelected));
   }
 }

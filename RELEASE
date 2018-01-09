@@ -1,4 +1,5 @@
-v0.7.6.1
-- Fix problem moving finish time and preview in trimming screen.
-- Fix problem with firebase analytics setup.
-- Fix override text selected in edit text screen and improved user experience.
+v0.7.7
+- Added support for manual exposure time.
+- Redesign of metering capabilities and user flow in record activity
+- Added show resolution depending on camera selected in camera settings screen. Check compatibility to allow switch camera.
+- Save camera selected. Open camera according user preference.

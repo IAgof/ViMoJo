@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/manual_exposure_submenu"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_above="@+id/settings_bar_cardview"
+    android:layout_centerInParent="true"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginBottom="4dp"
+    android:layout_marginTop="8dp"
+    android:backgroundTint="@color/colorGreyTransparent"
+    android:visibility="invisible"
+    >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/record_activity_rounded_layout_bg"
+        android:padding="2dp"
+        android:layout_marginRight="2dp">
+
+        <ImageView
+            android:id="@+id/icon_iso"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_horizontal|center"
+            android:layout_margin="8dp"
+            android:background="#00ffffff"
+            android:gravity="center"
+            android:src="@drawable/activity_record_ic_iso"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/iso_submenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/settings_bar_cardview"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/record_activity_rounded_layout_bg"
+        android:orientation="horizontal"
+        tools:showIn="@layout/activity_record_camera2"
+        android:layout_marginRight="10dp"
+        >
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/record_activity_rounded_layout_bg"
+        android:padding="2dp"
+        android:layout_marginRight="2dp">
+
+        <ImageView
+            android:id="@+id/exposure_time_seekBar_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center"
+            android:background="#00ffffff"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:src="@drawable/activity_record_ic_manual_exposure_time"
+            android:text="100%"/>
+    </LinearLayout>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/manual_exposure_time_seekbar"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="4dp"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        tools:showIn="@layout/activity_record_camera2"
+        android:background="@drawable/record_activity_rounded_layout_bg"
+        >
+
+        <TextView
+            android:id="@+id/exposure_time_seekBar_text_min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center"
+            android:layout_marginLeft="2dp"
+            android:background="#00ffffff"
+            android:text="max"
+            android:textColor="@color/colorWhite"
+            android:textSize="8sp"/>
+
+        <SeekBar
+            android:id="@+id/exposure_time_seekbar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:indeterminate="false"
+            android:minHeight="16dp"
+            android:minWidth="100dp"
+            android:progressTint="@color/colorWhite"
+            android:secondaryProgressTint="@color/colorWhite"/>
+
+        <TextView
+            android:id="@+id/exposure_time_seekBar_text_max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:background="#00ffffff"
+            android:text="min"
+            android:textColor="@color/colorWhite"
+            android:textSize="8sp"
+            tools:visibility="visible"/>
+    </LinearLayout>
+
+</LinearLayout>

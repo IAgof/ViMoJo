@@ -5,7 +5,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsListUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsMapperSupportedListUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
@@ -48,7 +48,8 @@ public class CameraSettingsPresenterTest {
 
   @Mock CameraSettingsView mockedCameraSettingsListView;
   @Mock UserEventTracker mockedUserEventTracker;
-  @Mock GetCameraSettingsListUseCase mockedGetSettingListUseCase;
+  @Mock
+  GetCameraSettingsMapperSupportedListUseCase mockedGetSettingListUseCase;
   @Mock CameraSettingsRepository mockedCameraSettingsRepository;
   @Mock CameraSettings mockedCameraSettings;
   @Mock ProjectRepository mockedProjectRepository;
@@ -160,8 +161,9 @@ public class CameraSettingsPresenterTest {
     FrameRateSetting frameRateSetting = new FrameRateSetting("30 fps", frameRatesSupportedMap);
     String quality = "16 Mbps";
     String interfaceSelected = DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
-    return new CameraSettings(resolutionSetting,
-        frameRateSetting, quality, interfaceSelected);
+    int cameraIdSelected = Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+    return new CameraSettings(resolutionSetting,frameRateSetting, quality, interfaceSelected,
+        cameraIdSelected);
   }
 
   public Project getAProject() {
