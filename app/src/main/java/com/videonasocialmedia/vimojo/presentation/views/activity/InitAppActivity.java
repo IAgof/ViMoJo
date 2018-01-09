@@ -493,7 +493,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         @Override
         public void onPermissionsChecked(MultiplePermissionsReport report) {
             if (report.areAllPermissionsGranted()) {
-                if(isBetaAppOutOfDate() && !BuildConfig.DEBUG && BuildConfig.FEATURE_OUT_OF_DATE) {
+                if (isBetaAppOutOfDate() && !BuildConfig.DEBUG && BuildConfig.FEATURE_OUT_OF_DATE) {
                     showDialogOutOfDate();
                 } else {
                     activity.startSplashThread();
@@ -502,7 +502,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         }
 
         @Override
-        public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+        public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions,
+                                                       PermissionToken token) {
             activity.showPermissionRationale(token);
         }
     }

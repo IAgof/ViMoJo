@@ -359,13 +359,15 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
    * Stops the background thread and its {@link Handler}.
    */
   private void stopBackgroundThread() {
-    backgroundThread.quitSafely();
-    try {
-      backgroundThread.join();
-      backgroundThread = null;
-      backgroundThread = null;
-    } catch (InterruptedException e) {
-      e.printStackTrace();
+    if (backgroundThread != null) {
+      backgroundThread.quitSafely();
+      try {
+        backgroundThread.join();
+        backgroundThread = null;
+        backgroundThread = null;
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
     }
   }
 
