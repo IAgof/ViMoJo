@@ -7,6 +7,7 @@ import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
@@ -361,8 +362,11 @@ public class ActivityPresentersModule {
         userEventTracker, getMediaListFromProjectUseCase, modifyVideoTextAndPositionUseCase);
   }
   @Provides @PerActivity
-  UserProfilePresenter provideUserProfilePresenter(SharedPreferences sharedPreferences) {
-    return new  UserProfilePresenter((UserProfileActivityView) activity, activity, sharedPreferences);
+  UserProfilePresenter provideUserProfilePresenter(SharedPreferences sharedPreferences,
+                                                   ObtainLocalVideosUseCase
+                                                       obtainLocalVideosUseCase) {
+    return new  UserProfilePresenter((UserProfileActivityView) activity, activity,
+        sharedPreferences, obtainLocalVideosUseCase);
   }
 
   @Provides
@@ -553,5 +557,9 @@ public class ActivityPresentersModule {
   @Provides ProfileRepository provideProfileRepository(
           CameraSettingsRepository cameraSettingsRepository) {
     return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository);
+  }
+
+  @Provides ObtainLocalVideosUseCase provideObtainLocalVideosUseCase() {
+    return new ObtainLocalVideosUseCase();
   }
 }

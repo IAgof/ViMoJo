@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -52,6 +53,11 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
   @Nullable
   @Bind(R.id.text_dialog)
   EditText editTextDialog;
+  @Bind(R.id.number_clips_recorded)
+  TextView numberClipsRecorded;
+  @Bind(R.id.number_projects_edited)
+  TextView numberProjectsEdited;
+  private ProgressDialog progressDialog;
 
   String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_PROFILE_THUMB;
   private int REQUEST_ICON_USER_PROFILE = 200;
@@ -63,6 +69,19 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
     setupToolbar();
+    createProgressDialog();
+  }
+
+  private void createProgressDialog() {
+    progressDialog = new ProgressDialog(UserProfileActivity.this, R.style.VideonaDialog);
+    progressDialog.setTitle(R.string.alert_dialog_title_user_profile);
+    progressDialog.setMessage(getString(R.string.dialog_getting_user_profile));
+    progressDialog.setProgressStyle(progressDialog.STYLE_HORIZONTAL);
+    progressDialog.setIndeterminate(true);
+    progressDialog.setProgressNumberFormat(null);
+    progressDialog.setProgressPercentFormat(null);
+    progressDialog.setCanceledOnTouchOutside(false);
+    progressDialog.setCancelable(false);
   }
 
   private void setupToolbar() {
@@ -146,6 +165,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
   protected void onResume() {
     super.onResume();
     setUpAndCheckUserThumb();
+    presenter.getInfoVideosRecordedEdited();
     presenter.getUserNameFromPreferences();
     presenter.getEmailFromPreferences();
   }
@@ -180,6 +200,50 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
   @Override
   public void showPreferenceEmail(String emailPreference) {
     email.setText(emailPreference);
+  }
+
+  @Override
+  public void showLoading() {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        if (!isFinishing()) {
+          progressDialog.show();
+        }
+      }
+    });
+  }
+
+  @Override
+  public void hideLoading() {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+          progressDialog.dismiss();
+        }
+      }
+    });
+  }
+
+  @Override
+  public void showVideosRecorded(final String videosRecorded) {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        numberClipsRecorded.setText(videosRecorded);
+      }
+    });
+  }
+
+  @Override
+  public void showVideosEdited(final String videosEdited) {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        numberProjectsEdited.setText(videosEdited);
+      }
+    });
   }
 
   @OnClick(R.id.user_profile_username)

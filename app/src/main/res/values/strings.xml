@@ -324,6 +324,12 @@
     <string name="error_message_store_purchasing_items">Buying item, error </string>
     <string name="error_message_store_not_available">Connection with store not available</string>
 
+    <!-- UserProfileActivity -->
+    <string name="title_number_projects_edited">Projects edited</string>
+    <string name="title_number_clips_recorded">Clips recorded</string>
+    <string name="alert_dialog_title_user_profile">User profile</string>
+    <string name="dialog_getting_user_profile">Getting user profile info</string>
+
     <!-- About Activity -->
 
     <string name="aboutUsContent">

@@ -2,7 +2,9 @@
 <menu xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
+    <!-- visibility false until implement these group of features -->
+    <group android:checkableBehavior="single"
+        android:visible="false">
         <item
             android:id="@+id/menu_navview_watch_projects"
             android:icon="@drawable/activity_drawer_watch_project"
@@ -71,8 +73,6 @@
                     android:id="@+id/menu_navview_vimojo_store_section"
                     android:icon="@drawable/ic_activity_drawer_shopping"
                     android:title="@string/drawer_go_to_store"/>
-
-
             </menu>
         </item>
 

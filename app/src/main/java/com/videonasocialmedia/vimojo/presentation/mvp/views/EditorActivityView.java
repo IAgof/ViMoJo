@@ -35,4 +35,6 @@ public interface EditorActivityView {
   void deactivateDarkTheme();
 
   void activateWatermark();
+
+  void setHeaderViewCurrentProject(String pathThumbProject, String projectName, String projectDate);
 }

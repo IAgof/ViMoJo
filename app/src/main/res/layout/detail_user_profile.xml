@@ -23,16 +23,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Clips Recorder"
+            android:text="@string/title_number_clips_recorded"
             android:textColor="@color/colorWhite"
             android:layout_gravity="center"/>
 
         <TextView
-            android:id="@+id/number_clips_recorder"
+            android:id="@+id/number_clips_recorded"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorWhite"
-            android:text="0"
+            android:text="-"
             android:layout_gravity="center"/>
 
     </LinearLayout>
@@ -53,7 +53,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Projects_edited"
+            android:text="@string/title_number_projects_edited"
             android:textColor="@color/colorWhite"
             android:layout_gravity="center"/>
 
@@ -62,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorWhite"
-            android:text="0"
+            android:text="-"
             android:layout_gravity="center"/>
     </LinearLayout>
 

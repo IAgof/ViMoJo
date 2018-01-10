@@ -22,6 +22,7 @@ import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.List;
@@ -254,5 +255,13 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
 
   private Project loadCurrentProject() {
     return Project.getInstance(null, null, null, null);
+  }
+
+  public void updateHeaderViewCurrentProject() {
+    // Thumb from first video in current project
+    String pathThumbProject = currentProject.getMediaTrack().getItems().get(0).getMediaPath();
+    String name = currentProject.getTitle();
+    String date = DateUtils.toFormatDateDayMonthYear(currentProject.getLastModification());
+    editorActivityView.setHeaderViewCurrentProject(pathThumbProject, name, date);
   }
 }

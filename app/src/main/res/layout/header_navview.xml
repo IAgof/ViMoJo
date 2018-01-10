@@ -14,7 +14,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
         <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
-            android:id="@+id/image_drawer_user"
+            android:id="@+id/image_drawer_thumb_project"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="fitCenter"
@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_toRightOf="@+id/image_drawer_user"
+            android:layout_toRightOf="@+id/image_drawer_thumb_project"
             android:layout_marginLeft="32dp">
 
             <TextView
@@ -36,9 +36,10 @@
                 android:layout_marginBottom="4dp"
                 android:text="@string/drawerProjectName"
                 android:textColor="@color/colorWhite"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold"/>
 
+            <!-- project location visibility gone until implement feature -->
             <TextView
                 android:id="@+id/project_location"
                 android:layout_width="match_parent"
@@ -47,8 +48,9 @@
                 android:layout_marginBottom="4dp"
                 android:text="@string/drawerProjectLocation"
                 android:textColor="@color/colorWhite"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:textStyle="normal"
+                android:visibility="gone"
                 />
 
             <TextView
@@ -59,7 +61,7 @@
                 android:layout_marginBottom="4dp"
                 android:text="@string/drawerProjectDate"
                 android:textColor="@color/colorWhite"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:textStyle="normal"
                 />
         </LinearLayout>
