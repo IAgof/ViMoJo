@@ -73,7 +73,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   SwitchCompat switchWatermark;
   private boolean darkThemePurchased = false;
   private boolean watermarkPurchased = false;
-  CircleImageView imageUserThumb;
+  CircleImageView imageProjectThumb;
   TextView projectName;
   TextView projectDate;
   String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_THUMB;
@@ -114,7 +114,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   private void setUpAndCheckHeaderViewCurrentProject() {
-    imageUserThumb = (CircleImageView) navigationView.getHeaderView(0)
+    imageProjectThumb = (CircleImageView) navigationView.getHeaderView(0)
             .findViewById(R.id.image_drawer_thumb_project);
     projectName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.project_name);
     projectDate = (TextView) navigationView.getHeaderView(0).findViewById(R.id.project_date);
@@ -392,7 +392,11 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   public void setHeaderViewCurrentProject(String pathThumbProject, String currentProjectName,
                                           String currentProjectDate) {
-    updateCurrentProjectThumb(pathThumbProject);
+    if(pathThumbProject != null) {
+      updateCurrentProjectThumb(pathThumbProject);
+    } else {
+      updateCurrentProjectDefaultThumb();
+    }
     projectName.setText(currentProjectName);
     projectDate.setText(currentProjectDate);
   }
@@ -418,8 +422,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
           .load(path)
           .centerCrop()
           .error(R.drawable.fragment_gallery_no_image)
-          .into(imageUserThumb);
+          .into(imageProjectThumb);
     }
+  }
+
+  private void updateCurrentProjectDefaultThumb() {
+    imageProjectThumb.setImageResource(R.drawable.activity_gallery_project_no_preview);
   }
 
 }

@@ -121,14 +121,14 @@ public class CameraSettingsPresenter {
     qualityNames = new HashMap<Integer, String>();
     qualityNames.put(CameraSettings.CAMERA_SETTING_QUALITY_16_ID,
             CameraSettings.CAMERA_SETTING_QUALITY_16);
-    qualityNames.put(CameraSettings.CAMERA_SETTING_QUALITY_32_ID,
-            CameraSettings.CAMERA_SETTING_QUALITY_32);
+    qualityNames.put(CameraSettings.CAMERA_SETTING_QUALITY_25_ID,
+            CameraSettings.CAMERA_SETTING_QUALITY_25);
     qualityNames.put(CameraSettings.CAMERA_SETTING_QUALITY_50_ID,
             CameraSettings.CAMERA_SETTING_QUALITY_50);
 
     qualityValues = new HashMap<Integer, VideoQuality.Quality>();
     qualityValues.put(CameraSettings.CAMERA_SETTING_QUALITY_16_ID, VideoQuality.Quality.LOW);
-    qualityValues.put(CameraSettings.CAMERA_SETTING_QUALITY_32_ID, VideoQuality.Quality.GOOD);
+    qualityValues.put(CameraSettings.CAMERA_SETTING_QUALITY_25_ID, VideoQuality.Quality.GOOD);
     qualityValues.put(CameraSettings.CAMERA_SETTING_QUALITY_50_ID, VideoQuality.Quality.HIGH);
   }
 

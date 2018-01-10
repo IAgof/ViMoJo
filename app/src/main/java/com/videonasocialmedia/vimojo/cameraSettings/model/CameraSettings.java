@@ -18,10 +18,10 @@ package com.videonasocialmedia.vimojo.cameraSettings.model;
  */
 public class CameraSettings {
   public static final String CAMERA_SETTING_QUALITY_16 = "16 Mbps";
-  public static final String CAMERA_SETTING_QUALITY_32 = "32 Mbps";
+  public static final String CAMERA_SETTING_QUALITY_25 = "25 Mbps";
   public static final String CAMERA_SETTING_QUALITY_50 = "50 Mbps";
   public static final int CAMERA_SETTING_QUALITY_16_ID = 16;
-  public static final int CAMERA_SETTING_QUALITY_32_ID = 32;
+  public static final int CAMERA_SETTING_QUALITY_25_ID = 26; // 25 same ID than 25 fps
   public static final int CAMERA_SETTING_QUALITY_50_ID = 50;
   private ResolutionSetting resolutionSetting;
   private FrameRateSetting frameRateSetting;

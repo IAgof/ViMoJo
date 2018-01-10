@@ -231,10 +231,10 @@
     <string name="high_resolution_value">2160</string>
     <string name="title_item_quality">Quality</string>
     <string name="low_quality_name">16 Mbps</string>
-    <string name="good_quality_name">32 Mbps</string>
+    <string name="good_quality_name">25 Mbps</string>
     <string name="high_quality_name">50 Mbps</string>
     <string name="low_quality_value">16000000</string>
-    <string name="good_quality_value">32000000</string>
+    <string name="good_quality_value">25000000</string>
     <string name="high_quality_value">50000000</string>
     <string name="title_item_camera_pro_o_basic">Camera pro/basic</string>
     <string name="camera_pro">Camera Pro</string>
