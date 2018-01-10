@@ -7,6 +7,7 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -25,7 +26,7 @@ import javax.inject.Inject;
 /**
  * Created by vlf on 7/7/15.
  */
-public class DuplicatePreviewPresenter implements OnVideosRetrieved {
+public class DuplicatePreviewPresenter implements OnVideosRetrieved, ElementChangedListener {
 
     /**
      * LOG_TAG
@@ -53,11 +54,13 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
 
         this.currentProject = loadCurrentProject();
+        currentProject.addListener(this);
     }
 
     private Project loadCurrentProject() {
         return Project.getInstance(null, null, null, null);
     }
+
 
     public void loadProjectVideo(int videoIndex) {
         List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
@@ -80,10 +83,10 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
         duplicateView.showError("No videos");
     }
 
-    public void duplicateVideo(Video video, int positionInAdapter, int numDuplicates) {
+    public void duplicateVideo(int positionInAdapter, int numDuplicates) {
         for (int duplicates = 1; duplicates < numDuplicates; duplicates++) {
-            Video copyVideo = new Video(video);
-            addVideoToProjectUseCase.addVideoToProjectAtPosition(copyVideo, positionInAdapter,
+            //Video copyVideo = new Video(getVideoCopy());
+            addVideoToProjectUseCase.addVideoToProjectAtPosition(getVideoCopy(), positionInAdapter,
                 new OnAddMediaFinishedListener() {
                     @Override
                     public void onAddMediaItemToTrackError() {
@@ -100,6 +103,13 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved {
         userEventTracker.trackClipDuplicated(numDuplicates, currentProject);
     }
 
+    @Override
+    public void onObjectUpdated() {
+        duplicateView.updateProject();
+    }
+    public Video getVideoCopy() {
+        return new Video(videoToEdit);
+    }
 }
 
 

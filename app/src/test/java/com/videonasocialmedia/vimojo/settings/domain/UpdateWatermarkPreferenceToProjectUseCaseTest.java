@@ -6,6 +6,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -57,9 +58,9 @@ public class UpdateWatermarkPreferenceToProjectUseCaseTest {
   }
 
   private Project getAProject() {
-    return new Project("title", "/path", "private/path",
-        Profile.getInstance(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+    return new Project("title", "/path", "private/path", compositionProfile);
   }
 
 }

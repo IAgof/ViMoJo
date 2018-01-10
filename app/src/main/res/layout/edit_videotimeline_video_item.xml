@@ -78,10 +78,32 @@
                         android:padding="4dp"
                         android:src="@drawable/activity_edit_clip_delete"
                         android:visibility="gone"/>
-
                 </android.support.v7.widget.CardView>
 
+
             </RelativeLayout>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/image_video_warning_cardview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="@null"
+                android:backgroundTint="?attr/colorAccent"
+                android:layout_alignParentRight="true">
+                <ImageView
+                    android:id="@+id/image_video_warning"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/colorAccent"
+                    android:padding="4dp"
+                    android:src="@android:drawable/stat_sys_warning"
+                    android:visibility="gone"/>
+            </android.support.v7.widget.CardView>
 
             <RelativeLayout
                 android:id="@+id/edit_or_video_timer_cardview_relative"

@@ -139,7 +139,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
               break;
             case ID_BUTTON_FAB_BOTTOM:
               fabMenu.collapse();
-              navigateTo(VoiceOverActivity.class);
+              navigateTo(VoiceOverRecordActivity.class);
               break;
           }
       }
@@ -335,6 +335,11 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   @Override
   public void setWarningMessageTempFile(String messageTempFile) {
     warningTranscodingFilesMessage = messageTempFile;
+  }
+
+  @Override
+  public void updateProject() {
+    presenter.init();
   }
 
   @Nullable @Override

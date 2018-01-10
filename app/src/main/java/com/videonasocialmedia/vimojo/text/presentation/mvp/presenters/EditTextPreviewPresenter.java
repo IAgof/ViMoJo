@@ -3,9 +3,13 @@ package com.videonasocialmedia.vimojo.text.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
+import android.util.TypedValue;
 
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
@@ -25,7 +29,7 @@ import javax.inject.Inject;
  * Created by ruth on 1/09/16.
  */
 
-public class EditTextPreviewPresenter implements OnVideosRetrieved {
+public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChangedListener {
     private final String LOG_TAG = EditTextPreviewPresenter.class.getSimpleName();
 
     private TextToDrawable drawableGenerator;
@@ -40,6 +44,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
     private Context context;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
+    private final String THEME_DARK = "dark";
 
 
     @Inject
@@ -53,6 +58,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
         this.currentProject = loadCurrentProject();
+        currentProject.addListener(this);
     }
 
     private Project loadCurrentProject() {
@@ -94,6 +100,36 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved {
                 textPositionSelected.name(), currentProject);
 
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
+    }
+
+    @Override
+    public void onObjectUpdated() {
+        editTextView.updateProject();
+    }
+
+  public void updateColorButton() {
+      TypedValue currentTheme = getCurrentTheme();
+      if (currentTheme.string.equals(THEME_DARK)) {
+          editTextView.updateButtonToThemeDark();
+      } else {
+          editTextView.updateButtonToThemeLight();
+      }
+  }
+
+    public void updateColorText() {
+        TypedValue currentTheme = getCurrentTheme();
+        if (currentTheme.string.equals(THEME_DARK)) {
+            editTextView.updateTextToThemeDark();
+        } else {
+            editTextView.updateTextToThemeLight();
+        }
+    }
+
+    @NonNull
+    public TypedValue getCurrentTheme() {
+        TypedValue outValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
+        return outValue;
     }
 }
 

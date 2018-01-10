@@ -8,11 +8,9 @@
 package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 
 import android.content.Context;
-import android.util.Log;
 
 
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
-import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -24,8 +22,6 @@ import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
-import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
-import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -37,7 +33,7 @@ import javax.inject.Inject;
  * Created by vlf on 7/7/15.
  */
 public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoListener,
-    TranscoderHelperListener {
+        ElementChangedListener {
 
     /**
      * LOG_TAG
@@ -50,7 +46,6 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     private Video videoToEdit;
 
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
 
     private SplitView splitView;
     public UserEventTracker userEventTracker;
@@ -62,16 +57,15 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     public SplitPreviewPresenter(SplitView splitView, UserEventTracker userEventTracker,
                                  Context context, VideoRepository videoRepository,
                                  SplitVideoUseCase splitVideoUseCase,
-                                 GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                                 ModifyVideoDurationUseCase modifyVideoDurationUseCase) {
+                                 GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
         this.splitView = splitView;
         this.userEventTracker = userEventTracker;
         this.context = context;
         this.videoRepository = videoRepository;
         this.splitVideoUseCase = splitVideoUseCase;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
-        this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
         this.currentProject = loadCurrentProject();
+        currentProject.addListener(this);
     }
 
     private Project loadCurrentProject() {
@@ -104,8 +98,8 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     }
 
 
-    public void splitVideo(Video video, int positionInAdapter, int timeMs) {
-        splitVideoUseCase.splitVideo(video, positionInAdapter,timeMs, this);
+    public void splitVideo(int positionInAdapter, int timeMs) {
+        splitVideoUseCase.splitVideo(videoToEdit, positionInAdapter,timeMs, this);
         trackSplitVideo();
     }
 
@@ -114,34 +108,8 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     }
 
     @Override
-    public void trimVideo(Video video, int startTimeMs, int finishTimeMs) {
-        VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
-        modifyVideoDurationUseCase.trimVideo(video, startTimeMs, finishTimeMs, currentProject);
-    }
-
-    @Override
     public void showErrorSplittingVideo() {
         splitView.showError(R.string.addMediaItemToTrackError);
-    }
-
-    @Override
-    public void onSuccessTranscoding(Video video) {
-        // update videoRepository
-        Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
-        videoRepository.setSuccessTranscodingVideo(video);
-    }
-
-    @Override
-    public void onErrorTranscoding(Video video, String message) {
-        //splitView.showError(message);
-        Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
-        if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
-            video.increaseNumTriesToExportVideo();
-            trimVideo(video, video.getStartTime(), video.getStopTime());
-        } else {
-            videoRepository.setErrorTranscodingVideo(video,
-                    Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.SPLIT.name());
-        }
     }
 
     public void advanceBackwardStartSplitting(int advancePlayerPrecision,
@@ -157,7 +125,9 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
         int progress = currentSplitPosition + advancePlayerPrecision;
         splitView.updateSplitSeekbar(Math.min(maxSeekBarSplit, progress));
     }
+
+    @Override
+    public void onObjectUpdated() {
+        splitView.updateProject();
+    }
 }
-
-
-

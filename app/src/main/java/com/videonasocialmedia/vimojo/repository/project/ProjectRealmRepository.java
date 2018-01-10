@@ -1,5 +1,8 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
@@ -97,7 +100,7 @@ public class ProjectRealmRepository implements ProjectRepository {
     RealmResults<RealmProject> allRealmProjects = realm.where(RealmProject.class).findAll()
         .sort("lastModification", Sort.DESCENDING);
     RealmProject currentRealmProject = null;
-    if(allRealmProjects.size() > 0) {
+    if (allRealmProjects.size() > 0) {
       currentRealmProject = allRealmProjects.first();
     }
 
@@ -119,6 +122,30 @@ public class ProjectRealmRepository implements ProjectRepository {
       projectList.add(toProjectMapper.map(realm.copyFromRealm(realmProject)));
     }
     return projectList;
+  }
+
+  @Override
+  public void updateResolution(Project project, VideoResolution.Resolution videoResolution) {
+    project.getProfile().setResolution(videoResolution);
+    update(project);
+  }
+
+  @Override
+  public void updateFrameRate(Project project, VideoFrameRate.FrameRate videoFrameRate) {
+    project.getProfile().setFrameRate(videoFrameRate);
+    update(project);
+  }
+
+  @Override
+  public void updateQuality(Project project, VideoQuality.Quality videoQuality) {
+    project.getProfile().setQuality(videoQuality);
+    update(project);
+  }
+
+  @Override
+  public void setWatermarkActivated(Project project, boolean watermarkActivated) {
+    project.setWatermarkActivated(watermarkActivated);
+    update(project);
   }
 
 }

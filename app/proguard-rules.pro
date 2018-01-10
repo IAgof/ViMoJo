@@ -44,8 +44,6 @@
 -keep class com.googlecode.** { *; }
 -keep class com.mp4parser.** { *; }
 
--keep public class com.videonasocialmedia.vimojo.utils.VideoUtils
-
 # Mixpanel
 -dontwarn com.mixpanel.**
 -keep class com.mixpanel.android.abtesting.** { *; }
@@ -82,8 +80,14 @@
 
 #Okio
 -dontwarn okio.**
+-dontwarn retrofit2.Platform$Java8
 -dontwarn javax.xml.bind.DatatypeConverter
 -dontwarn org.apache.commons.codec.binary.Base64
+#okhttp
+-dontwarn okhttp3.**
+-dontwarn javax.annotation.**
+# A resource is loaded with a relative path so the package of this class must be preserved.
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 #Glide
 -keep class org.aspectj.**
@@ -98,7 +102,7 @@
 
 
 # Aspect 클래스 보존
--keep @org.aspectj.lang.annotation.Aspect class * { *; }
+####-keep @org.aspectj.lang.annotation.Aspect class * { *; }
 -keepclasseswithmembers class * {
   public static *** aspectOf();
 }
@@ -183,3 +187,11 @@
 -dontwarn java.lang.ClassValue
 -dontwarn com.google.j2objc.annotations.Weak
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+
+# Mp4parser
+-dontwarn com.googlecode.mp4parser.**
+
+# Samsung SDK
+-keep class com.samsung.** { *; }
+-keep class com.samsung.**$* { *; }
+-dontwarn com.samsung.**

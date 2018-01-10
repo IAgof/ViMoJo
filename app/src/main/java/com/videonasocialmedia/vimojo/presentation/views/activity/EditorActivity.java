@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -15,7 +16,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +26,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -34,6 +33,11 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
+import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.activity.SettingsActivity;
+import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
+import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialEditorActivity;
+import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialRecordActivity;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -51,10 +55,12 @@ import butterknife.ButterKnife;
 /**
  *
  */
+public abstract class EditorActivity extends VimojoActivity implements EditorActivityView {
 
-public abstract class EditorActivity extends VimojoActivity implements EditorActivityView{
-  @Inject UserEventTracker userEventTracker;
-  @Inject EditorPresenter editorPresenter;
+  @Inject
+  UserEventTracker userEventTracker;
+  @Inject
+  EditorPresenter editorPresenter;
 
   private AlertDialog alertDialog;
 
@@ -66,12 +72,42 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   LinearLayout navigator;
   @Bind(R.id.fab_edit_room)
   FloatingActionsMenu fabMenu;
-  @Nullable @Bind(R.id.switch_theme_dark)
+  @Nullable
+  @Bind(R.id.switch_theme_dark)
   SwitchCompat switchTheme;
-
+  @Nullable
+  @Bind(R.id.switch_watermark)
+  SwitchCompat switchWatermark;
+  private boolean darkThemePurchased = false;
+  private boolean watermarkPurchased = false;
   CircleImageView imageUserThumb;
   String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_THUMB;
   private int REQUEST_ICON_USER = 100;
+  private boolean isVimojoStoreAvailable = true;
+  private CompoundButton.OnCheckedChangeListener watermarkOnCheckedChangeListener =
+          new CompoundButton.OnCheckedChangeListener() {
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+      if (isWatermarkAvailable()) {
+        editorPresenter.switchPreference(isChecked, ConfigPreferences.WATERMARK);
+      } else {
+        switchWatermark.setChecked(true);
+        navigateTo(VimojoStoreActivity.class);
+      }
+    }
+  };
+  private CompoundButton.OnCheckedChangeListener themeOnCheckedChangeListener
+          = new CompoundButton.OnCheckedChangeListener() {
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isDarkThemeChecked) {
+      if (isDarkThemeAvailable()) {
+        editorPresenter.switchPreference(isDarkThemeChecked, ConfigPreferences.THEME_APP_DARK);
+      } else {
+        switchTheme.setChecked(false);
+        navigateTo(VimojoStoreActivity.class);
+      }
+    }
+  };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +120,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   private void setUpAndCheckUserThumb() {
     imageUserThumb = (CircleImageView) navigationView.getHeaderView(0)
-        .findViewById(R.id.image_drawer_user);
+            .findViewById(R.id.image_drawer_user);
     imageUserThumb.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -98,12 +134,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     File thumb = new File(path);
     if (thumb.getName().compareTo(Constants.USER_THUMB) != 0) {
       try {
-        Utils.copyFile(path,userThumbPath);
+        Utils.copyFile(path, userThumbPath);
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
-    if(thumb.exists()) {
+    if (thumb.exists()) {
       Glide.with(this)
               .load(userThumbPath)
               .diskCacheStrategy(DiskCacheStrategy.RESULT)
@@ -135,16 +171,24 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     if (navigationView != null) {
       setupDrawerContent(navigationView);
       setUpAndCheckUserThumb();
-      editorPresenter.getPreferenceUserName();
-      editorPresenter.getPreferenceEmail();
     }
     editorPresenter.init();
     setupSwitchThemeAppIntoDrawer();
     editorPresenter.updateTheme();
   }
 
+  @Override
+  protected void onPause() {
+    super.onPause();
+    editorPresenter.onPause();
+  }
+
   private boolean checkIfThemeDarkIsSelected() {
     return editorPresenter.getPreferenceThemeApp();
+  }
+
+  private boolean checkIfWatermarkIsSelected() {
+    return editorPresenter.getPreferenceWaterMark();
   }
 
   @Override
@@ -168,6 +212,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       case R.id.action_settings_edit_gallery:
         navigateTo(GalleryActivity.class);
         return true;
+      case R.id.action_settings_suggestions:
+        navigateToMail("mailto:info@videona.com");
+        return true;
       case android.R.id.home:
         drawerLayout.openDrawer(GravityCompat.START);
         return true;
@@ -183,60 +230,51 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   private void setupDrawerContent(NavigationView navigationView) {
     navigationView.setNavigationItemSelectedListener(
-        new NavigationView.OnNavigationItemSelectedListener() {
-          @Override
-          public boolean onNavigationItemSelected(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-              case R.id.menu_navview_gallery_projects:
-                drawerLayout.closeDrawers();
-                navigateTo(GalleryProjectListActivity.class);
-                return false;
-              case R.id.menu_navview_delete_clip:
-                createDialog(R.id.menu_navview_delete_clip);
-                return false;
-              case R.id.menu_navview_user_profile:
-                navigateTo(UserProfileActivity.class);
-                return false;
-              /*case R.id.menu_navview_mail:
-                createDialog(R.id.menu_navview_mail);
-                return false;
-              case R.id.menu_navview_username:
-                createDialog(R.id.menu_navview_username);
-                return false;
-              case R.id.menu_navview_settings:
-                navigateTo(SettingsActivity.class);
-                return false;
-              case R.id.menu_navview_suggestions:
-                navigateToMail("mailto:info@videona.com");
-                return false;*/
-              default:
-                return false;
-            }
-          }
-        });
+            new NavigationView.OnNavigationItemSelectedListener() {
+              @Override
+              public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                  case R.id.menu_navview_gallery_projects:
+                    drawerLayout.closeDrawers();
+                    navigateTo(GalleryProjectListActivity.class);
+                    return false;
+                  case R.id.menu_navview_delete_clip:
+                    createDialog(R.id.menu_navview_delete_clip);
+                    return false;
+                  case R.id.menu_navview_user_profile:
+                    navigateTo(UserProfileActivity.class);
+                    return false;
+                  case R.id.menu_navview_settings:
+                    navigateTo(SettingsActivity.class);
+                    return false;
+                  case R.id.menu_navview_tutorial_edition:
+                    navigateTo(TutorialEditorActivity.class);
+                    return false;
+                  case R.id.menu_navview_tutorial_record:
+                    navigateTo(TutorialRecordActivity.class);
+                    return false;
+                  case R.id.menu_navview_vimojo_store_section:
+                    navigateTo(VimojoStoreActivity.class);
+                    return false;
+                  default:
+                    return false;
+                }
+              }
+            });
   }
 
   private void createDialog(final int resourceItemMenuId) {
     AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
     if (resourceItemMenuId == R.id.menu_navview_delete_clip)
       builder.setMessage(getResources().getString(R.string.dialog_message_clean_project));
-    /*if (resourceItemMenuId == R.id.menu_navview_mail)
-      builder.setMessage(getResources().getString(R.string.dialog_change_email));
-    if (resourceItemMenuId == R.id.menu_navview_username)
-      builder.setMessage(getResources().getString(R.string.dialog_change_user_name));*/
 
     final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         switch (which) {
           case DialogInterface.BUTTON_POSITIVE:
-            if(resourceItemMenuId == R.id.menu_navview_delete_clip)
-                editorPresenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
-                    BuildConfig.FEATURE_WATERMARK);
-            /*if(resourceItemMenuId == R.id.menu_navview_mail)
-              navigateTo(SettingsActivity.class);
-            if(resourceItemMenuId == R.id.menu_navview_username)
-              navigateTo(SettingsActivity.class);*/
+            if (resourceItemMenuId == R.id.menu_navview_delete_clip)
+              editorPresenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID);
             break;
 
           case DialogInterface.BUTTON_NEGATIVE:
@@ -247,12 +285,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     };
 
     alertDialog = builder.setCancelable(true).
-        setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
-        .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
+            setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
+            .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
   }
 
   public void navigateTo(Class cls) {
-    Intent intent = new Intent(VimojoApplication.getAppContext(),cls);
+    Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
     startActivity(intent);
   }
 
@@ -262,33 +300,39 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     startActivity(i);
   }
 
-  public void setupSwitchThemeAppIntoDrawer() {
+  private void setupSwitchThemeAppIntoDrawer() {
     switchTheme = (SwitchCompat) navigationView.getMenu().findItem(R.id.switch_theme_dark)
         .getActionView();
     if (switchTheme != null) {
       boolean themeDarkIsSelected = checkIfThemeDarkIsSelected();
+      switchTheme.setOnCheckedChangeListener(null);
       switchTheme.setChecked(themeDarkIsSelected);
-      switchTheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isDarkThemeChecked) {
-          editorPresenter.switchTheme(isDarkThemeChecked);
-          drawerLayout.closeDrawers();
-        }
-      });
+      switchTheme.setOnCheckedChangeListener(themeOnCheckedChangeListener);
     }
   }
 
-  @Override
-  public void showPreferenceUserName(String data) {
-   // Menu menu = navigationView.getMenu();
-    //menu.findItem(R.id.menu_navview_username).setTitle(data);
-
+  private boolean isDarkThemeAvailable() {
+    return darkThemePurchased || !isVimojoStoreAvailable;
   }
 
-  @Override
-  public void showPreferenceEmail(String emailPreference) {
-    //Menu menu = navigationView.getMenu();
-    //menu.findItem(R.id.menu_navview_mail).setTitle(emailPreference);
+  private boolean isWatermarkAvailable() {
+    return watermarkPurchased || !isVimojoStoreAvailable;
+  }
+
+  private void setupSwitchWatermarkIntoDrawer() {
+    switchWatermark = (SwitchCompat) navigationView.getMenu().findItem(R.id.switch_watermark)
+            .getActionView();
+    if (switchWatermark != null) {
+      boolean watermarkIsSelected = checkIfWatermarkIsSelected();
+      switchWatermark.setOnCheckedChangeListener(null);
+      switchWatermark.setChecked(watermarkIsSelected);
+      switchWatermark.setOnCheckedChangeListener(watermarkOnCheckedChangeListener);
+    }
+  }
+
+  private void updateNavigationIcon(int identifier, int resourceId) {
+    navigationView.getMenu().findItem(identifier)
+             .setIcon(this.getDrawable(resourceId));
   }
 
   @Override
@@ -328,57 +372,101 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     finish();
   }
 
+  @Override
+  public void itemDarkThemePurchased() {
+    darkThemePurchased = true;
+    updateNavigationIcon(R.id.switch_theme_dark, R.drawable.ic_unlocked);
+  }
+
+  @Override
+  public void itemWatermarkPurchased() {
+    watermarkPurchased = true;
+    updateNavigationIcon(R.id.switch_watermark, R.drawable.ic_unlocked);
+  }
+
+  @Override
+  public void watermarkFeatureAvailable() {
+    setupSwitchWatermarkIntoDrawer();
+  }
+
+  @Override
+  public void hideWatermarkSwitch() {
+    Menu menu = navigationView.getMenu();
+    MenuItem target = menu.findItem(R.id.switch_watermark);
+    target.setVisible(false);
+  }
+
+  @Override
+  public void setIconsFeatures() {
+    updateNavigationIcon(R.id.switch_theme_dark, R.drawable.activity_editor_drawer_dark_theme);
+    updateNavigationIcon(R.id.switch_watermark, R.drawable.activity_editor_drawer_watermark);
+  }
+
+  @Override
+  public void setIconsPurchaseInApp() {
+    updateNavigationIcon(R.id.switch_theme_dark, R.drawable.ic_locked);
+    updateNavigationIcon(R.id.switch_watermark, R.drawable.ic_locked);
+  }
+
+  @Override
+  public void hideVimojoStoreViews() {
+    Menu menu = navigationView.getMenu();
+    MenuItem target = menu.findItem(R.id.menu_navview_vimojo_store_section);
+    target.setVisible(false);
+    isVimojoStoreAvailable = false;
+  }
+
   public void showDialogUserAddThumb() {
-      // dialog pick or take photo
+    // dialog pick or take photo
     final DialogInterface.OnClickListener dialogClickListener =
             new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        File file = new File(userThumbPath);
-        Uri uri = Uri.fromFile(file);
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                File file = new File(userThumbPath);
+                Uri uri = Uri.fromFile(file);
 
-        Intent userThumbSetterIntent = null;
-        switch (which) {
+                Intent userThumbSetterIntent;
+                switch (which) {
           /*case DialogInterface.BUTTON_POSITIVE:
             // Take photo button clicked
             userThumbSetterIntent = new Intent("android.media.action.IMAGE_CAPTURE");
             setIntentExtras(uri, userThumbSetterIntent);
             startActivityForResult(userThumbSetterIntent, REQUEST_ICON_USER);
             break;*/
-          case DialogInterface.BUTTON_NEUTRAL:
-            // Pick from gallery button clicked
-            userThumbSetterIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            userThumbSetterIntent.setType("image/*");
-            setIntentExtras(uri, userThumbSetterIntent);
-            startActivityForResult(userThumbSetterIntent, REQUEST_ICON_USER);
-            break;
-        }
-      }
+                  case DialogInterface.BUTTON_NEUTRAL:
+                    // Pick from gallery button clicked
+                    userThumbSetterIntent = new Intent(Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    userThumbSetterIntent.setType("image/*");
+                    setIntentExtras(uri, userThumbSetterIntent);
+                    startActivityForResult(userThumbSetterIntent, REQUEST_ICON_USER);
+                    break;
+                }
+              }
 
-      private void setIntentExtras(Uri uri, Intent takePicIntent) {
-        takePicIntent.putExtra("crop", "true");
-        takePicIntent.putExtra("outputX", 600);
-        takePicIntent.putExtra("outputY", 600);
-        takePicIntent.putExtra("aspectX", 1);
-        takePicIntent.putExtra("aspectY", 1);
-        takePicIntent.putExtra("scale", true);
-        takePicIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        takePicIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-      }
-    };
+              private void setIntentExtras(Uri uri, Intent takePicIntent) {
+                takePicIntent.putExtra("crop", "true");
+                takePicIntent.putExtra("outputX", 600);
+                takePicIntent.putExtra("outputY", 600);
+                takePicIntent.putExtra("aspectX", 1);
+                takePicIntent.putExtra("aspectY", 1);
+                takePicIntent.putExtra("scale", true);
+                takePicIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                takePicIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+              }
+            };
 
     android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this,
-        R.style.VideonaDialog);
+            R.style.VideonaDialog);
     builder.setMessage(R.string.dialog_editor_user_thumb_message)
-        .setNeutralButton(R.string.dialog_editor_user_thumb_pick_photo, dialogClickListener).show();
+            .setNeutralButton(R.string.dialog_editor_user_thumb_pick_photo, dialogClickListener).show();
     //.setPositiveButton(R.string.dialog_editor_user_thumb_take_photo, dialogClickListener)
   }
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (resultCode == RESULT_OK && requestCode == REQUEST_ICON_USER && data != null) {
-      if(data.getData() != null) {
+      if (data.getData() != null) {
         final String inPath = Utils.getPath(this, data.getData());
         if (inPath != null)
           updateUserThumb(inPath);
@@ -386,8 +474,17 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     }
   }
 
+  @Override
+  public void deactivateDarkTheme() {
+    switchTheme.setOnCheckedChangeListener(null);
+    switchTheme.setChecked(false);
+    switchTheme.setOnCheckedChangeListener(themeOnCheckedChangeListener);
+  }
+
+  @Override
+  public void activateWatermark() {
+    switchWatermark.setOnCheckedChangeListener(null);
+    switchWatermark.setChecked(true);
+    switchWatermark.setOnCheckedChangeListener(watermarkOnCheckedChangeListener);
+  }
 }
-
-
-
-

@@ -18,7 +18,6 @@ import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.test.shadows.MediaMetadataRetrieverShadow;
-import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.After;
@@ -51,7 +50,6 @@ public class SplitPreviewPresenterTest {
     @InjectMocks Video injectedVideo;
     @Mock private SplitVideoUseCase mockedSplitVideoUseCase;
     @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
-    @Mock ModifyVideoDurationUseCase mockedModifyVideoDurationUseCase;
 
     @Mock Context mockedContext;
     @Mock private VideoRepository mockedVideoRepository;
@@ -71,7 +69,7 @@ public class SplitPreviewPresenterTest {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(mockedSplitView,
             userEventTracker, mockedContext, mockedVideoRepository, mockedSplitVideoUseCase,
-            mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase);
+            mockedGetMediaListFromProjectUseCase);
 
         assertThat(presenter.userEventTracker, is(userEventTracker));
     }
@@ -122,12 +120,12 @@ public class SplitPreviewPresenterTest {
     private SplitPreviewPresenter getSplitPreviewPresenter() {
         return new SplitPreviewPresenter(mockedSplitView,
             mockedUserEventTracker, mockedContext, mockedVideoRepository, mockedSplitVideoUseCase,
-            mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase);
+            mockedGetMediaListFromProjectUseCase);
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", "private/path",
-                Profile.getInstance(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
-                        VideoFrameRate.FrameRate.FPS25));
+        Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+                VideoFrameRate.FrameRate.FPS25);
+        return Project.getInstance("title", "/path", "private/path", compositionProfile);
     }
 }

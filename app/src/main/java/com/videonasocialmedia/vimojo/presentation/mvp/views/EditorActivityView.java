@@ -6,10 +6,6 @@ package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
 public interface EditorActivityView {
 
-  void showPreferenceUserName(String data);
-
-  void showPreferenceEmail(String emailPreference);
-
   void updateViewResetProject();
 
   void showError(int causeTextResource);
@@ -21,4 +17,22 @@ public interface EditorActivityView {
   void restartShareActivity(String extraDataIntent);
 
   void restartActivity();
+
+  void itemDarkThemePurchased();
+
+  void itemWatermarkPurchased();
+
+  void watermarkFeatureAvailable();
+
+  void hideWatermarkSwitch();
+
+  void setIconsFeatures();
+
+  void setIconsPurchaseInApp();
+
+  void hideVimojoStoreViews();
+
+  void deactivateDarkTheme();
+
+  void activateWatermark();
 }

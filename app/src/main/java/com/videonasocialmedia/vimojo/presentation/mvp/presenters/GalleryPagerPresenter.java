@@ -12,7 +12,6 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
@@ -21,7 +20,6 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.UpdateVideoResolutionToProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
@@ -29,6 +27,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
@@ -61,7 +60,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     private final ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
     // TODO(jliarte): 3/05/17 init in constructor to inject it. Wrap android MMR with our own class
     MediaMetadataRetriever metadataRetriever;
-    private final UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase;
+    private final ProjectRepository projectRepository;
 
     /**
      * Constructor.
@@ -71,7 +70,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
             AddVideoToProjectUseCase addVideoToProjectUseCase,
             GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
             ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
-            UpdateVideoResolutionToProjectUseCase updateVideoResolutionToProjectUseCase,
+            ProjectRepository projectRepository,
             VideoRepository videoRepository, SharedPreferences preferences) {
         this.galleryPagerView = galleryPagerView;
         this.context = context;
@@ -79,7 +78,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.launchTranscoderAddAVTransitionUseCase = applyAVTransitionsUseCase;
         this.currentProject = loadCurrentProject();
-        this.updateVideoResolutionToProjectUseCase = updateVideoResolutionToProjectUseCase;
+        this.projectRepository = projectRepository;
         this.videoRepository = videoRepository;
         this.preferences = preferences;
         metadataRetriever = new MediaMetadataRetriever();
@@ -173,7 +172,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
             VideoResolution.Resolution resolutionForWidth = getResolutionForWidth(videoWidth);
 
             if (resolutionForWidth != null) {
-                updateVideoResolutionToProjectUseCase.updateResolution(resolutionForWidth);
+                projectRepository.updateResolution(currentProject, resolutionForWidth);
                 SharedPreferences.Editor preferencesEditor = preferences.edit();
                 preferencesEditor.putString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
                         getPreferenceResolutionForWidth(videoWidth));

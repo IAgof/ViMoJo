@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -32,7 +31,6 @@ import com.karumi.dexter.listener.multi.CompositeMultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsListener;
 import com.mixpanel.android.mpmetrics.InAppNotification;
-import com.videonasocialmedia.camera.utils.Camera2Settings;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -64,6 +62,9 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
+
 /**
  * InitAppActivity.
  * <p/>
@@ -77,6 +78,7 @@ import butterknife.ButterKnife;
  */
 
 public class InitAppActivity extends VimojoActivity implements InitAppView, OnInitAppEventListener {
+
     private final String LOG_TAG = this.getClass().getSimpleName();
     private long MINIMUN_WAIT_TIME = 900;
 
@@ -95,10 +97,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private String androidId = null;
     private String initState;
     private CompositeMultiplePermissionsListener compositePermissionsListener;
-
-    // Camera 1 deprecated, RecordActivity
-    private Camera camera;
-    private int numSupportedCameras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,25 +208,13 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         requestPermissionsAndPerformSetup();
     }
 
-    /**
-     * Releases the camera object
-     */
-    private void releaseCamera() {
-        if (camera != null) {
-            //camera.stopPreview();
-            camera.release();
-            camera = null;
-        }
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
     }
 
-    private void setup() throws CameraAccessException {
+    private void setup() {
         androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        setupStartApp();
         setupPathsApp(this);
         trackUserProfileGeneralTraits();
     }
@@ -244,6 +230,9 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
             listener.onCheckPathsAppSuccess();
         } catch (IOException e) {
             Log.e("CHECK PATH", "error", e);
+        } catch (CameraAccessException e) {
+          e.printStackTrace();
+          Log.e(LOG_TAG, " CameraAccessException " + e.getMessage());
         }
     }
 
@@ -273,6 +262,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
                 trackUserProfile();
                 trackCreatedSuperProperty();
                 initSettings();
+                initThemeAndWatermark();
                 break;
             default:
                 break;
@@ -341,17 +331,18 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         editor.putInt(ConfigPreferences.CAMERA_ID, ConfigPreferences.BACK_CAMERA).commit();
     }
 
+
+    private void initThemeAndWatermark() {
+        editor.putBoolean(ConfigPreferences.THEME_APP_DARK, DEFAULT_THEME_DARK_STATE).commit();
+        editor.putBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE).commit();
+    }
+
     /**
      * Checks the available cameras on the device (back/front), supported flash mode and the
      * supported resolutions
      */
-    private void setupCameraSettings() throws CameraAccessException {
-       checkCamera2VideoSize();
-        // Camera 1 deprecated, RecordActivity
-        // checkAvailableCameras();
-      //  checkFlashMode();
-      //  checkCameraVideoSize();
-       // checkCameraFrameRate();
+    private void setupCameraSettings() {
+       presenter.checkCamera2FrameRateAndResolutionSupported();
     }
 
     private void trackUserProfile() {
@@ -385,225 +376,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         }
     }
 
-    private void checkCamera2VideoSize() throws CameraAccessException {
-        Camera2Settings camera2Settings = new Camera2Settings(this);
-
-        if(camera2Settings.isBackCamera720pSupported())
-            editor.putBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, true).commit();
-        if(camera2Settings.isBackCamera1080pSupported())
-            editor.putBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, true).commit();
-        if(camera2Settings.isBackCamera2160pSupported())
-            editor.putBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, true).commit();
-
-        if(camera2Settings.isFrontCamera720pSupported())
-            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, true).commit();
-        if(camera2Settings.isFrontCamera1080pSupported())
-            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, true).commit();
-        if(camera2Settings.isFrontCamera2160pSupported())
-            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, true).commit();
-    }
-
-    /**
-     * Checks the available cameras on the device (back/front)
-     */
-    private void checkAvailableCameras() {
-        if (camera != null) {
-            releaseCamera();
-        }
-        camera = getCameraInstance(sharedPreferences.getInt(ConfigPreferences.CAMERA_ID,
-            ConfigPreferences.BACK_CAMERA));
-        editor.putBoolean(ConfigPreferences.BACK_CAMERA_SUPPORTED, true).commit();
-
-        numSupportedCameras = Camera.getNumberOfCameras();
-        if (numSupportedCameras > 1) {
-            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_SUPPORTED, true).commit();
-        }
-        releaseCamera();
-    }
-
-    /**
-     * Checks if the device supports the flash mode
-     */
-    private void checkFlashMode() {
-        if (camera != null) {
-            releaseCamera();
-        }
-        if (numSupportedCameras > 1) {
-            camera = getCameraInstance(ConfigPreferences.FRONT_CAMERA);
-            if (camera.getParameters().getSupportedFlashModes() != null) {
-                editor.putBoolean(ConfigPreferences.FRONT_CAMERA_FLASH_SUPPORTED, true).commit();
-            } else {
-                editor.putBoolean(ConfigPreferences.FRONT_CAMERA_FLASH_SUPPORTED, false).commit();
-            }
-            releaseCamera();
-        }
-        camera = getCameraInstance(ConfigPreferences.BACK_CAMERA);
-        if (camera.getParameters().getSupportedFlashModes() != null) {
-            editor.putBoolean(ConfigPreferences.BACK_CAMERA_FLASH_SUPPORTED, true).commit();
-        } else {
-            editor.putBoolean(ConfigPreferences.BACK_CAMERA_FLASH_SUPPORTED, false).commit();
-        }
-        releaseCamera();
-    }
-
-    /**
-     * Checks the supported resolutions by the device
-     */
-    private void checkCameraVideoSize() {
-        List<Camera.Size> supportedVideoSizes;
-        if (camera != null) {
-            releaseCamera();
-        }
-        if (numSupportedCameras > 1) {
-            camera = getCameraInstance(ConfigPreferences.FRONT_CAMERA);
-            supportedVideoSizes = camera.getParameters().getSupportedVideoSizes();
-            boolean frontCameraResolutionSupported = false;
-            if (supportedVideoSizes != null) {
-                for (Camera.Size size : supportedVideoSizes) {
-                    if (size.width == 1280 && size.height == 720) {
-                        editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, true)
-                                .commit();
-                        frontCameraResolutionSupported = true;
-                        Log.d(LOG_TAG, "FRONT_CAMERA_720P_SUPPORTED");
-                    }
-                    if (size.width == 1920 && size.height == 1080) {
-                        editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, true)
-                                .commit();
-                        frontCameraResolutionSupported = true;
-                        Log.d(LOG_TAG, "FRONT_CAMERA_1080P_SUPPORTED");
-                    }
-                    if (size.width == 3840 && size.height == 2160) {
-                        editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, true)
-                                .commit();
-                        frontCameraResolutionSupported = true;
-                        Log.d(LOG_TAG, "FRONT_CAMERA_2160P_SUPPORTED");
-                    }
-                }
-            } else {
-                supportedVideoSizes = camera.getParameters().getSupportedPreviewSizes();
-                if (supportedVideoSizes != null) {
-                    for (Camera.Size size : supportedVideoSizes) {
-                        if (size.width == 1280 && size.height == 720) {
-                            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, true)
-                                    .commit();
-                            frontCameraResolutionSupported = true;
-                        }
-                        if (size.width == 1920 && size.height == 1080) {
-                            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, true)
-                                    .commit();
-                            frontCameraResolutionSupported = true;
-                        }
-                        if (size.width == 3840 && size.height == 2160) {
-                            editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, true)
-                                    .commit();
-                            frontCameraResolutionSupported = true;
-                        }
-                    }
-                } else {
-                    editor.putBoolean(ConfigPreferences.FRONT_CAMERA_720P_SUPPORTED, false)
-                            .commit();
-                    editor.putBoolean(ConfigPreferences.FRONT_CAMERA_1080P_SUPPORTED, false)
-                            .commit();
-                    editor.putBoolean(ConfigPreferences.FRONT_CAMERA_2160P_SUPPORTED, false)
-                            .commit();
-                }
-            }
-            if (!frontCameraResolutionSupported) {
-                editor.putBoolean(ConfigPreferences.FRONT_CAMERA_SUPPORTED, false).commit();
-                Log.d(LOG_TAG, "FRONT_CAMERA_SUPPORTED");
-            }
-            releaseCamera();
-        }
-        camera = getCameraInstance(ConfigPreferences.BACK_CAMERA);
-        supportedVideoSizes = camera.getParameters().getSupportedVideoSizes();
-        if (supportedVideoSizes != null) {
-            for (Camera.Size size : camera.getParameters().getSupportedVideoSizes()) {
-                if (size.width == 1280 && size.height == 720) {
-                    editor.putBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, true).commit();
-                }
-                if (size.width == 1920 && size.height == 1080) {
-                    editor.putBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, true).commit();
-                }
-                if (size.width == 3840 && size.height == 2160) {
-                    editor.putBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, true).commit();
-                }
-            }
-        } else {
-            supportedVideoSizes = camera.getParameters().getSupportedPreviewSizes();
-            if (supportedVideoSizes != null) {
-                for (Camera.Size size : camera.getParameters().getSupportedPreviewSizes()) {
-                    if (size.width == 1280 && size.height == 720) {
-                        editor.putBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, true)
-                                .commit();
-                    }
-                    if (size.width == 1920 && size.height == 1080) {
-                        editor.putBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, true)
-                                .commit();
-                    }
-                    if (size.width == 3840 && size.height == 2160) {
-                        editor.putBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, true)
-                                .commit();
-                    }
-                }
-            } else {
-                editor.putBoolean(ConfigPreferences.BACK_CAMERA_720P_SUPPORTED, false).commit();
-                editor.putBoolean(ConfigPreferences.BACK_CAMERA_1080P_SUPPORTED, false).commit();
-                editor.putBoolean(ConfigPreferences.BACK_CAMERA_2160P_SUPPORTED, false).commit();
-                editor.putBoolean(ConfigPreferences.BACK_CAMERA_SUPPORTED, false).commit();
-            }
-        }
-        releaseCamera();
-    }
-
-    private void checkCameraFrameRate(){
-        List<Integer> supportedFrameRates;
-        if (camera != null) {
-            releaseCamera();
-        }
-        camera = getCameraInstance(ConfigPreferences.BACK_CAMERA);
-        supportedFrameRates = camera.getParameters().getSupportedPreviewFrameRates();
-        if (supportedFrameRates != null) {
-            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_SUPPORTED, true).commit();
-            for (int  frameRate : supportedFrameRates) {
-                if(frameRate == 24) {
-                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, true)
-                            .commit();
-                }
-                if(frameRate == 25) {
-                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, true)
-                            .commit();
-                }
-                if(frameRate == 30) {
-                    editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, true)
-                            .commit();
-                }
-            }
-        } else {
-            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_24FPS_SUPPORTED, false).commit();
-            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_25FPS_SUPPORTED, false).commit();
-            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_30FPS_SUPPORTED, false).commit();
-            editor.putBoolean(ConfigPreferences.CAMERA_FRAME_RATE_SUPPORTED, false).commit();
-        }
-        releaseCamera();
-    }
-
-    /**
-     * Gets an instance of the camera object
-     *
-     * @param cameraId
-     * @return
-     */
-    public Camera getCameraInstance(int cameraId) {
-        Camera c = null;
-        try {
-            c = Camera.open(cameraId);
-        } catch (Exception e) {
-            Log.e("DEBUG", "Camera did not open", e);
-        }
-        return c;
-    }
-
-
     private void trackAppStartup() {
         JSONObject initAppProperties = new JSONObject();
         try {
@@ -616,9 +388,9 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     }
 
     @Override
-    public void onCheckPathsAppSuccess() {
-        presenter.startLoadingProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
-            BuildConfig.FEATURE_WATERMARK);
+    public void onCheckPathsAppSuccess() throws CameraAccessException {
+        presenter.startLoadingProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID);
+        setupStartApp();
     }
 
     @Override
@@ -721,7 +493,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         @Override
         public void onPermissionsChecked(MultiplePermissionsReport report) {
             if (report.areAllPermissionsGranted()) {
-                if(isBetaAppOutOfDate() && !BuildConfig.DEBUG) {
+                if (isBetaAppOutOfDate() && !BuildConfig.DEBUG && BuildConfig.FEATURE_OUT_OF_DATE) {
                     showDialogOutOfDate();
                 } else {
                     activity.startSplashThread();
@@ -730,7 +502,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         }
 
         @Override
-        public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+        public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions,
+                                                       PermissionToken token) {
             activity.showPermissionRationale(token);
         }
     }

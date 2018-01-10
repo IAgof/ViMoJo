@@ -148,7 +148,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
   }
 
   @Test
-  public void addTextToVideoCallsVideoRepositoryUpdate() {
+  public void addTextToVideoCallsVideoRepositoryUpdate() throws IOException {
     Project currentProject = getAProject();
     Video video = new Video("media/path", 1f);
     String textPosition = TextEffect.TextPosition.BOTTOM.name();

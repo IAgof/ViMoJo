@@ -20,7 +20,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinis
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
@@ -217,9 +217,9 @@ public class MusicDetailPresenterTest {
     }
 
     public Project getAProject() {
-        return Project.getInstance("title", "/path", "private/path",
-            Profile.getInstance(VideoResolution.Resolution.HD720,
-                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
+        Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+        return Project.getInstance("title", "/path", "private/path", compositionProfile);
     }
 
     @NonNull

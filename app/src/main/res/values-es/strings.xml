@@ -29,6 +29,8 @@
 
     <string name="alert_dialog_info_detail">Información detallada</string>
 
+    <string name="activity_camera_settings_no_list">Ajuste de cámara vacío</string>
+
     <!-- Share Activity -->
     <string name="shareError">Uy, no hemos podido compartir el vídeo.</string>
     <string name="share_using">Compartir vídeo con</string>
@@ -40,15 +42,15 @@
     <string name="credentialFTPNull">Conexión a FTP no establecida. Por favor, configure los datos FTP en ajustes.</string>
 
     <!-- Editor Activity -->
-    <string name="new_project">Nuevo projecto</string>
-    <string name="clear_project">Clean project</string>
+    <string name="new_project">Nuevo proyecto</string>
+    <string name="clear_project">Borrar proyecto</string>
     <string name="other_options">Otras opciones</string>
     <string name="record">Grabar</string>
     <string name="gallery">Galería</string>
     <string name="dialog_editor_user_thumb_message">Añade foto de usuario</string>
     <string name="dialog_editor_user_thumb_take_photo">Cámara</string>
     <string name="dialog_editor_user_thumb_pick_photo">Galería</string>
-    <string name="section_navview_style">Tema oscuro</string>
+    <string name="drawer_dark_theme">Tema oscuro</string>
 
 
     <!-- Edit Activity -->
@@ -78,6 +80,7 @@
     <!--VideoEditText activity-->
     <string name="error_videoEdit">El número máximo de líneas a dibujar son dos</string>
     <string name="edit_text_hint_VideoEditText">Escribe aquí tu texto</string>
+    <string name="edit">Editar</string>
 
 
     <!-- Gallery activity -->
@@ -116,10 +119,23 @@
     <string name="dialog_project_edit_title_accept">Sí</string>
     <string name="dialog_project_edit_title_cancel">No</string>
 
-    <!--SoundVolumeActivity-->
-    <string name="exitSoundVolumeActivity" >¿Desea descartar los cambios y volver a grabar de nuevo?</string>
-    <string name="acceptExitSoundVolumeActivity">Sí</string>
-    <string name="cancelExitSoundVolumeActvity">No</string>
+    <!--VoiceOverRecordRecordActivity-->
+
+    <string name="dialog_voice_over_cancel_title_message">¿Desea descartar la locución y volver a grabarla de nuevo?</string>
+    <string name="dialog_voice_over_cancel_positive_button">Aceptar</string>
+    <string name="dialog_voice_over_cancel_negative_button">Declinar</string>
+    <string name="alert_dialog_title_voice_over">Locución</string>
+    <string name="alert_dialog_title_message_adding_voice_over">Problema añadiendo locución al proyecto</string>
+    <string name="alert_dialog_title_message_start_record_voice_over">Por favor, empiece primero la grabación</string>
+    <string name="error_record_voice_over">Problema grabando locución</string>
+    <string name="dialog_generating_voice_over">Generando locución</string>
+    <string name="error_transcoding_voice_over">Error transcodificando archivo de locución</string>
+
+    <!--VoiceOverVolumeActivity-->
+    <string name="exitVoiceOverVolumeActivity">¿Desea descartar los cambios y volver a grabar de nuevo?</string>
+    <string name="acceptExitVoiceOverVolumeActivity">Sí</string>
+    <string name="cancelExitVoiceOverVolumeActvity">No</string>
+
 
     <!-- Trim fragment -->
     <string name="confirmTrim">Hecho</string>
@@ -202,10 +218,22 @@
 
     <!-- Camera Settings -->
     <string name="title_camera_section">Cámara</string>
-    <string name="resolution">Resolución</string>
-    <string name="quality">Calidad</string>
+    <string name="title_item_resolution">Resolución</string>
+    <string name="resolution_supported_back_front_camera">(cámara trasera/delantera)</string>
+    <string name="dialog_title_resolution_not_supported_back_front_camera">Resolución</string>
+    <string name="dialog_title_message_not_supported_back_front_camera">Resolución no soportada en
+        cámara trasera y delantera Si seleccionas esta opción, no podrás grabar vídeos con la
+        cámara frontal.</string>
+    <string name="title_item_quality">Calidad</string>
+    <string name="title_item_camera_pro_o_basic">Cámara pro/básica</string>
+    <string name="title_item_frame_rate">Frame rate (aprox)</string>
+    <string name="camera_pro">Cámara pro</string>
+    <string name="camera_basic">Cámara básica</string>
     <string name="cancelSettingsCamera">Cancelar</string>
     <string name="preference_not_available">Ajuste no disponible con vídeos en el proyecto actual</string>
+    <string name="preference_camera_not_available">Ajuste no disponible. Todos los vídeos del
+        proyecto actual deben tener el mismo valor de </string>
+    <string name="title_camera_settings_activity">Ajuste de cámara</string>
 
     <!-- Transition Settings -->
     <string name="title_fade_transition">Transiciones</string>
@@ -229,7 +257,7 @@
     <string name="content_contact_section">Dinos que opinas de la aplicación</string>
 
     <!-- Tutorial Settings, not in use -->
-    <string name="title_tutorial_section">Tutorial</string>
+    <string name="title_tutorial_section">Tutoriales</string>
     <string name="content_tutorial_section">Mira nuestro tutorial</string>
 
     <!-- Accounts actions -->
@@ -241,7 +269,27 @@
     <!-- DRAWER -->
     <string name="drawerProjects">Mis proyectos</string>
     <string name="drawerSettings">Ajustes</string>
-    <string name="drawerSuggestions">Sugerencias</string>
+    <string name="menuSuggestions">Sugerencias</string>
+    <string name="title_tutorial_edition_section">Tutorial de edición</string>
+    <string name="title_tutorial_record_section">Tutorial de grabación</string>
+    <string name="title_theme_app_preference">Tema Oscuro </string>
+    <string name="title_theme_app_section">Tema </string>
+    <string name="drawerStoreTitle">Tienda</string>
+    <string name="drawer_go_to_store">Ir a tienda</string>
+
+    <!-- ShopListActivity -->
+    <string name="buy_now">Compra ahora por</string>
+    <string name="title_theme_app_store">Activar tema oscuro</string>
+    <string name="description_theme_app_store">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sagittis facilisis sapien, non luctus nulla bibendum eget. Nullam convallis ante id est porta bibendum. Cras maximus, dui ac vestibulum dictum.</string>
+    <string name="title_watermark_store">Desactivar Marca de agua</string>
+    <string name="purchased">¡COMPRADO!</string>
+    <string name="buy_later_section_store">Más tarde</string>
+    <string name="drawer_watermark">Marca de agua</string>
+    <string name="alert_dialog_title_store">Tienda</string>
+    <string name="alert_dialog_message_store">Cargando artículos en la tienda</string>
+    <string name="error_message_store_no_items">No hay artículos para comprar en la tienda</string>
+    <string name="error_message_store_purchasing_items">Comprando artículo, error </string>
+    <string name="error_message_store_not_available">Conexión con la tienda no disponible</string>
 
     <!-- About Activity -->
 
@@ -277,111 +325,7 @@
     <string name="versionContent">beta </string>
     <string name="madeIn">Hecho con amor Madrid - España</string>
     <string name="licenseTitle"><u>Licencias de Software libre</u></string>
-    <string name="licenseContent">
-        Copyright &#169; 2013 Jake Wharton\nLicensed under the Apache License, Version 2.0 (the
-        "License"); you may not use this file except in compliance with the License.
-        You may obtain a copy of the License at\n\thttp://www.apache.org/licenses/LICENSE-2.0\nUnless
-        required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.\nCopyright &#169; 2013 Lucas Rocha\nTwoWayView\'s code is
-        based on bits and pieces of Android\'s AbsListView, Listview, and
-        StaggeredGridView.\nCopyright &#169; 2012 The Android Open Source Project\nLicensed under the
-        Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
-        with the License. You may obtain a copy of the License
-        at\n\thttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or
-        agreed to in writing, software distributed under the License is distributed on an "AS IS"
-        BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.\nCopyright &#169; mpa4parser\nLicensed under the Apache
-        License, Version 2.0 (the "License"); you may not use this file except in compliance with
-        the License. You may obtain a copy of the License at\n\thttp://www.apache.org/licenses/LICENSE-2.0\nUnless
-        required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.\n
-        Copyright 2012 Mixpanel, Inc.
-
-Please see the project README file for additional information.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this work except in compliance with the License.
-You may obtain a copy of the License below, or at:
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-                                 Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/ \n
-        Event Bus                 Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/ \n
-
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License below, or at:
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-
-                             Apache License
-                       Version 2.0, January 2004
-                    http://www.apache.org/licenses/ \n
-        Dexmaker        Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/ \n
-        Google-services Apache License
-Version 2.0, January 2004
-http://www.apache.org/licenses/ \n
-        Kickflip        Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/ \n
-        Glide BSD, part MIT and Apache 2.0. \n
-        OkHttp      Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/ \n
-        GSon Copyright 2008 Google Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License. \n
-
-
-    </string>
     <string name="licenseMusicTitle"><u>Atribución de música</u></string>
-    <string name="licenseMusicContent">
-        • Kevin MacLeod, Impact Prelude, http://freemusicarchive.org/music/Kevin_MacLeod/Impact/Impact_Prelude_1765,
-        icono DJ, CC BY 3.0\n• Kevin MacLeod, Monkeys Spinning Monkeys,
-        http://freemusicarchive.org/music/Kevin_MacLeod/Best_of_2014_1461/Monkeys_Spinning_Monkeys,
-        icono clarinete, CC BY 3.0\n• Josh Woodward, Don\'t Close Your Eyes (Instrumental),
-        http://freemusicarchive.org/music/Josh_Woodward/The_Simple_Life_Part_2_1667/JoshWoodward-TSL-NoVox-204-DontCloseYourEyes_1462,
-        icono guitarra española, CC BY 4.0\n• Grapes, I Dunno, http://ccmixter.org/files/grapes/16626,
-        icono gorra, CC BY 3.0\n• Josh Woodward, Troublemaker, http://www.joshwoodward.com/song/troublemaker,
-        icono micrófono, CC BY 4.0\n• Scott Altham, Break Dance, http://ccmixter.org/files/scottaltham/47985,
-        icono congas, CC BY 3.0\n• Kevin MacLeod, Call To Adventure,
-        https://freemusicarchive.org/music/Kevin_MacLeod/2013/Call_to_Adventure_1089, icono violín,
-        CC BY 3.0\n• Josh Woodward, Airplane Mod Instrumental,
-        http://freemusicarchive.org/music/Josh_Woodward/The_Beautiful_Machine/JoshWoodward-AirplaneMode-NoVox,
-        icono guitarra eléctrica, CC BY 4.0\n• Josh Woodward, The Last Slice Of Pecan Pie (INSTRUMENTAL VERSION),
-        http://freemusicarchive.org/music/Josh_Woodward/The_Beautiful_Machine/JoshWoodward-TheLastSliceOfPecanPie-NoVox,
-        icono clave de sol, CC BY 4.0\n
-    </string>
-
     <string name="legacyAdviceContent">
         1. TITULARIDAD.\n\nVIDEONA SOCIAL MEDIA, S.L (en adelante, Videona) es Videona de la aplicación móvil (en adelante, Aplicación) y del portal web www.videona.es (en adelante, el Portal) (en adelante y conjuntamente denominados, la Plataforma). Su domicilio se encuentra en c/ María Blanchard, 2 – portal 7, bajo D, 28232, Las Rozas de Madrid, España y su CIF es B87047171.
 
@@ -678,11 +622,11 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="alert_dialog_title_music">Música</string>
     <string name="alert_dialog_title_message_adding_music">Problema añadiendo música al proyecto</string>
     <string name="alert_dialog_title_message_removing_music">Problema borrando música del proyecto</string>
-    <string name="alert_dialog_title_voice_over">Locución</string>
-    <string name="alert_dialog_title_message_adding_voice_over">Problema añadiendo locución al proyecto</string>
 
 
     <string name="onNoVideosRetrieved">Error, no hay vídeos en el proyecto</string>
+    <string name="menuGallery">Galería</string>
+    <string name="menuSettings">Ajustes</string>
     <string name="title_theme_app_preference">Tema Oscuro </string>
     <string name="title_theme_app_section">Tema </string>
     <string name="profession">Profesión</string>

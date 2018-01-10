@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.ListPreference;
@@ -17,14 +18,15 @@ import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.settings.domain.GetPreferencesTransitionFromProjectUseCase;
-import com.videonasocialmedia.vimojo.settings.domain.GetWatermarkPreferenceFromProjectUseCase;
-import com.videonasocialmedia.vimojo.settings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
-import com.videonasocialmedia.vimojo.settings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
-import com.videonasocialmedia.vimojo.settings.domain.UpdateVideoTransitionPreferenceToProjectUseCase;
-import com.videonasocialmedia.vimojo.settings.domain.UpdateWatermarkPreferenceToProjectUseCase;
-import com.videonasocialmedia.vimojo.settings.presentation.mvp.presenters.PreferencesPresenter;
-import com.videonasocialmedia.vimojo.settings.presentation.views.fragment.SettingsFragment;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetWatermarkPreferenceFromProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTransitionPreferenceToProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
+import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
+import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
+import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 
 
 import dagger.Module;
@@ -37,15 +39,12 @@ import dagger.Provides;
 @Module
 public class FragmentPresentersModule {
 
-  private ListPreference qualityPref;
+  private Activity activity;
   private SwitchPreference transitionAudioPref;
   private SwitchPreference transitionVideoPref;
   private SwitchPreference watermarkPref;
   private SwitchPreference themeAppPref;
-  private ListPreference frameRatePref;
   private Preference emailPref;
-  private ListPreference resolutionPref;
-  private PreferenceCategory cameraSettingsPref;
   private SettingsFragment settingsFragment;
   private Context context;
   private SharedPreferences sharedPreferences;
@@ -55,25 +54,21 @@ public class FragmentPresentersModule {
 
   public FragmentPresentersModule(SettingsFragment settingsFragment, Context context,
                                   SharedPreferences sharedPreferences,
-                                  PreferenceCategory cameraSettingsPref,
-                                  ListPreference resolutionPref,
-                                  ListPreference qualityPref,
                                   SwitchPreference transitionsVideoPref,
                                   SwitchPreference transitionsAudioPref,
                                   SwitchPreference watermarkPref,
                                   SwitchPreference themeAppPref,
-                                  Preference emailPref) {
+                                  Preference emailPref,
+                                  Activity activity) {
     this.settingsFragment = settingsFragment;
     this.context = context;
     this.sharedPreferences = sharedPreferences;
-    this.cameraSettingsPref = cameraSettingsPref;
-    this.resolutionPref = resolutionPref;
-    this.qualityPref = qualityPref;
     this.transitionVideoPref = transitionsVideoPref;
     this.transitionAudioPref = transitionsAudioPref;
     this.watermarkPref = watermarkPref;
     this.themeAppPref=themeAppPref;
     this.emailPref = emailPref;
+    this.activity = activity;
 
   }
 
@@ -81,22 +76,23 @@ public class FragmentPresentersModule {
   @Provides
   @PerFragment
   public PreferencesPresenter providePreferencePresenter(
-             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-             UpdateAudioTransitionPreferenceToProjectUseCase
+      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+      UpdateAudioTransitionPreferenceToProjectUseCase
               updateAudioTransitionPreferenceToProjectUseCase,
-             UpdateVideoTransitionPreferenceToProjectUseCase
+      UpdateVideoTransitionPreferenceToProjectUseCase
               updateVideoTransitionPreferenceToProjectUseCase,
-             UpdateIntermediateTemporalFilesTransitionsUseCase
+      UpdateIntermediateTemporalFilesTransitionsUseCase
               updateIntermediateTemporalFilesTransitionsUseCase,
-             GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
-             UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-             RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-             GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase) {
+      GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
+      UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
+      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+      GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+      BillingManager billingManager) {
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
-        cameraSettingsPref, resolutionPref, qualityPref, transitionVideoPref,
-        transitionAudioPref, watermarkPref, themeAppPref, emailPref, getMediaListFromProjectUseCase,
+        transitionVideoPref, transitionAudioPref, watermarkPref, themeAppPref, emailPref,
+        getMediaListFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase,
         updateAudioTransitionPreferenceToProjectUseCase,
         updateVideoTransitionPreferenceToProjectUseCase,
@@ -104,7 +100,8 @@ public class FragmentPresentersModule {
         getWatermarkPreferenceFromProjectUseCase,
         updateWatermarkPreferenceToProjectUseCase,
         relaunchTranscoderTempBackgroundUseCase,
-        getVideonaFormatFromCurrentProjectUseCase);
+        getVideonaFormatFromCurrentProjectUseCase,
+        billingManager);
   }
 
   @Provides
@@ -167,6 +164,11 @@ public class FragmentPresentersModule {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase, adaptVideosUseCase,
             launchAVTranscoderAddAVTransitionUseCase, relaunchTranscodingUseCase, videoRepository,
             videoToAdaptRepository);
+  }
+
+  @Provides
+  BillingManager providesBillingManager() {
+    return new BillingManager();
   }
 
 }

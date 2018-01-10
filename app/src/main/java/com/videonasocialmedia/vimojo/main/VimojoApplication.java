@@ -19,6 +19,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.FirebaseApp;
 import com.karumi.dexter.Dexter;
 import com.squareup.leakcanary.LeakCanary;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -111,6 +112,8 @@ public class VimojoApplication extends Application {
         analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
         appTracker = analytics.newTracker(R.xml.app_tracker);
         appTracker.enableAdvertisingIdCollection(true);
+
+      FirebaseApp.initializeApp(this);
     }
 
     private void setupLeakCanary() {
@@ -122,7 +125,7 @@ public class VimojoApplication extends Application {
     protected void setupDataBase() {
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
                 .name("vimojoDB")
-                .schemaVersion(8) // 20060724 - v0.7.0-RC4 20060724
+                .schemaVersion(10) //v0.7.7 13-12-2017 //  v0.7.3 15-11-2017
                 .migration(new VimojoMigration())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);

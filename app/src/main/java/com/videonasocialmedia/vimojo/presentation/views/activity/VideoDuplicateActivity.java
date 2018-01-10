@@ -12,9 +12,6 @@ package com.videonasocialmedia.vimojo.presentation.views.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -37,7 +34,6 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePrevie
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 
-import com.videonasocialmedia.vimojo.settings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
@@ -99,7 +95,7 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     }
 
     private void setupActivityButtons() {
-        tintVideoDuplicateButtons(R.color.button_color);
+        tintVideoDuplicateButtons(R.color.button_color_theme_light);
     }
 
     private void tintVideoDuplicateButtons(int tintList) {
@@ -185,7 +181,7 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
 
     @OnClick(R.id.button_duplicate_accept)
     public void onClickDuplicateAccept() {
-        presenter.duplicateVideo(video, videoIndexOnTrack, numDuplicateVideos);
+        presenter.duplicateVideo(videoIndexOnTrack, numDuplicateVideos);
         navigateTo(EditActivity.class, videoIndexOnTrack);
     }
 
@@ -224,7 +220,8 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
 
     @Override
     public void showPreview(List<Video> movieList) {
-        video = movieList.get(0);
+        // (alvaro.martinez) 4/10/17 work on a copy to not modify original one until user accepts text
+        video = new Video(movieList.get(0));
         // TODO(jliarte): will need fix when all videos from project will be loaded
         videonaPlayer.initPreviewLists(movieList);
         videonaPlayer.initPreview(currentPosition);
@@ -232,6 +229,11 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
 
     @Override
     public void showError(String message) {
+    }
+
+    @Override
+    public void updateProject() {
+        presenter.loadProjectVideo(videoIndexOnTrack);
     }
 
     private void showThumbVideo(ImageView imageThumbLeft) {

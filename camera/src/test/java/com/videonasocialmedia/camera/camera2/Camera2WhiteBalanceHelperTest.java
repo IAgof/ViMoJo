@@ -6,6 +6,9 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.util.Log;
 
+import com.videonasocialmedia.camera.camera2.wrappers.VideonaCameraCharacteristics;
+import com.videonasocialmedia.camera.camera2.wrappers.VideonaCaptureRequest;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,21 +18,23 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.robolectric.util.ReflectionHelpers;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
  * Created by jliarte on 21/06/17.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Log.class})
+@PrepareForTest({Log.class, VideonaCaptureRequest.Builder.class})
 public class Camera2WhiteBalanceHelperTest {
   @Mock private Camera2Wrapper mockedCameraWrapper;
-  @Mock private CaptureRequest.Builder mockedPreviewBuilder;
-  @Mock private CameraCharacteristics mockedCharacteristics;
+  @Mock private VideonaCaptureRequest.Builder mockedPreviewBuilder;
+  private VideonaCameraCharacteristics mockedCharacteristics;
 
   @Before
   public void injectTestDoubles() {
@@ -39,6 +44,9 @@ public class Camera2WhiteBalanceHelperTest {
   @Before
   public void setup() {
     PowerMockito.mockStatic(Log.class);
+    ReflectionHelpers.setStaticField(android.os.Build.class, "MODEL", "lala");
+    PowerMockito.mockStatic(VideonaCameraCharacteristics.class);
+    mockedCharacteristics = PowerMockito.mock(VideonaCameraCharacteristics.class);
   }
 
   @Test
@@ -49,7 +57,7 @@ public class Camera2WhiteBalanceHelperTest {
 
     wbHelper.setWhiteBalanceMode(Camera2WhiteBalanceHelper.WB_MODE_AUTO);
 
-    verify(mockedPreviewBuilder)
+    verify(mockedPreviewBuilder, times(2))
             .set(CaptureRequest.CONTROL_AWB_MODE, CameraMetadata.CONTROL_AWB_MODE_AUTO);
     verify(mockedCameraWrapper).updatePreview();
   }

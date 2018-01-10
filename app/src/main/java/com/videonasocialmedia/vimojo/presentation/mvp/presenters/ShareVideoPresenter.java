@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 
 import com.crashlytics.android.Crashlytics;
@@ -21,12 +23,15 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
+import com.videonasocialmedia.vimojo.upload.domain.OnUploadVideoListener;
+import com.videonasocialmedia.vimojo.upload.domain.UploadVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,11 +41,12 @@ import javax.inject.Inject;
  * Created by jca on 11/12/15.
  */
 public class ShareVideoPresenter {
-    private final Context context;
+
+    private Context context;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetFtpListUseCase getFtpListUseCase;
     private CreateDefaultProjectUseCase createDefaultProjectUseCase;
-    private ShareVideoView shareVideoView;
+    private WeakReference<ShareVideoView> shareVideoViewReference;
     protected Project currentProject;
     protected UserEventTracker userEventTracker;
     private SharedPreferences sharedPreferences;
@@ -51,22 +57,25 @@ public class ShareVideoPresenter {
 
     private AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase;
     private ExportProjectUseCase exportUseCase;
+    private UploadVideoUseCase uploadVideoUseCase;
 
     @Inject
-    public ShareVideoPresenter(ShareVideoView shareVideoView, UserEventTracker userEventTracker,
-                               SharedPreferences sharedPreferences, Context context,
+    public ShareVideoPresenter(Context context, ShareVideoView shareVideoView,
+                               UserEventTracker userEventTracker,
+                               SharedPreferences sharedPreferences,
                                CreateDefaultProjectUseCase createDefaultProjectUseCase,
                                AddLastVideoExportedToProjectUseCase
                                        addLastVideoExportedProjectUseCase,
-                               ExportProjectUseCase exportProjectUseCase) {
-        this.shareVideoView = shareVideoView;
+                               ExportProjectUseCase exportProjectUseCase,
+                               UploadVideoUseCase uploadVideoUseCase) {
+        this.context = context;
+        this.shareVideoViewReference = new WeakReference<>(shareVideoView);
         this.userEventTracker = userEventTracker;
         this.sharedPreferences = sharedPreferences;
-        this.context = context;
         this.createDefaultProjectUseCase = createDefaultProjectUseCase;
         this.addLastVideoExportedProjectUseCase = addLastVideoExportedProjectUseCase;
         this.exportUseCase = exportProjectUseCase;
-
+        this.uploadVideoUseCase = uploadVideoUseCase;
         currentProject = loadCurrentProject();
     }
 
@@ -83,8 +92,10 @@ public class ShareVideoPresenter {
         obtainNetworksToShare();
         obtainListFtp();
         obtainListOptionsToShare(ftpList, socialNetworkList);
-        shareVideoView.showOptionsShareList(optionToShareList);
-        shareVideoView.startVideoExport();
+        if (shareVideoViewReference != null) {
+            shareVideoViewReference.get().showOptionsShareList(optionToShareList);
+            shareVideoViewReference.get().startVideoExport();
+        }
     }
 
     private void obtainListFtp() {
@@ -125,8 +136,10 @@ public class ShareVideoPresenter {
     // TODO(jliarte): 15/12/16 safe delete this method - old way to show networks?
     public void obtainExtraAppsToShare() {
         List networks = obtainNetworksToShareUseCase.obtainSecondaryNetworks();
-        shareVideoView.hideShareNetworks();
-        shareVideoView.showMoreNetworks(networks);
+        if (shareVideoViewReference.get() != null) {
+            shareVideoViewReference.get().hideShareNetworks();
+            shareVideoViewReference.get().showMoreNetworks(networks);
+        }
     }
 
     public void updateNumTotalVideosShared() {
@@ -151,10 +164,16 @@ public class ShareVideoPresenter {
         userEventTracker.trackVideoSharedUserTraits();
     }
 
-    public void newDefaultProject(String rootPath, String privatePath,
-                                  boolean isWatermarkFeatured) {
+    public void newDefaultProject(String rootPath, String privatePath) {
         clearProjectDataFromSharedPreferences();
-        createDefaultProjectUseCase.createProject(rootPath, privatePath, isWatermarkFeatured);
+        createDefaultProjectUseCase.createProject(rootPath, privatePath, isWatermarkActivated());
+    }
+
+    private boolean isWatermarkActivated() {
+        if(BuildConfig.FEATURE_FORCE_WATERMARK) {
+            return true;
+        }
+        return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
     }
 
     // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?
@@ -183,21 +202,53 @@ public class ShareVideoPresenter {
                 // known strings
                 switch (error) {
                     case "No space left on device":
-                        shareVideoView.showVideoExportError(Constants.EXPORT_ERROR_NO_SPACE_LEFT);
+                        if (shareVideoViewReference.get() != null) {
+                            shareVideoViewReference.get()
+                                    .showVideoExportError(Constants.EXPORT_ERROR_NO_SPACE_LEFT);
+                        }
                         break;
                     default:
-                        shareVideoView.showVideoExportError(Constants.EXPORT_ERROR_UNKNOWN);
+                        if (shareVideoViewReference.get() != null) {
+                            shareVideoViewReference.get()
+                                    .showVideoExportError(Constants.EXPORT_ERROR_UNKNOWN);
+                        }
                 }
             }
             @Override
             public void onExportSuccess(Video video) {
-                shareVideoView.loadExportedVideoPreview(video.getMediaPath());
+                if (shareVideoViewReference.get() != null) {
+                    shareVideoViewReference.get().loadExportedVideoPreview(video.getMediaPath());
+                    if(BuildConfig.FEATURE_UPLOAD_VIDEOS) {
+                        uploadVideo(context.getString(R.string.api_base_url), video.getMediaPath());
+                    }
+                }
             }
 
             @Override
             public void onExportProgress(String progressMsg, int exportStage) {
-                shareVideoView.showExportProgress(progressMsg);
+                if (shareVideoViewReference.get() != null) {
+                    shareVideoViewReference.get().showExportProgress(progressMsg);
+                }
             }
         });
+    }
+
+    private void uploadVideo(String apiBaseUrl, String mediaPath) {
+        ConnectivityManager connManager =
+            (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (wifi.isConnected()) {
+            uploadVideoUseCase.uploadVideo(apiBaseUrl, mediaPath, new OnUploadVideoListener() {
+                @Override
+                public void onUploadVideoError(Causes causes) {
+
+                }
+
+                @Override
+                public void onUploadVideoSuccess() {
+
+                }
+            });
+        }
     }
 }

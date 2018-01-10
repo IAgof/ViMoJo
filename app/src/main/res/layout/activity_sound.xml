@@ -15,7 +15,6 @@
         android:id="@+id/videona_player"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/videonaPlayerExo_marginTop"
         app:aspect="sixteen_nine"/>
 
     <ScrollView
@@ -35,7 +34,9 @@
             <com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack
                 android:id="@+id/cardview_audio_blocks_clips_video"
                 android:layout_width="match_parent"
+                android:backgroundTint="@color/colorTransparent"
                 android:layout_height="wrap_content"
+                app:cardElevation="0dp"
                 style="?attr/cardViewStyle">
             </com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack>
 
@@ -44,7 +45,9 @@
                 android:id="@+id/cardview_audio_blocks_clips_audio_track_first"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorTransparent"
                 android:visibility="gone"
+                app:cardElevation="0dp"
                 style="?attr/cardViewStyle">
             </com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack>
 
@@ -52,6 +55,8 @@
                 android:id="@+id/cardview_audio_blocks_clips_audio_track_second"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorTransparent"
+                app:cardElevation="0dp"
                 android:visibility="gone"
                 style="?attr/cardViewStyle">
             </com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack>
