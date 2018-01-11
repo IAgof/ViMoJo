@@ -93,8 +93,7 @@ import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
-import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileActivity;
-import com.videonasocialmedia.vimojo.userProfile.presentation.views.UserProfileActivityView;
+import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.upload.domain.UploadVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -365,7 +364,7 @@ public class ActivityPresentersModule {
   UserProfilePresenter provideUserProfilePresenter(SharedPreferences sharedPreferences,
                                                    ObtainLocalVideosUseCase
                                                        obtainLocalVideosUseCase) {
-    return new  UserProfilePresenter((UserProfileActivityView) activity, activity,
+    return new  UserProfilePresenter((UserProfileView) activity, activity,
         sharedPreferences, obtainLocalVideosUseCase);
   }
 

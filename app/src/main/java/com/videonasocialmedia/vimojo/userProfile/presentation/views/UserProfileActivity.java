@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views;
+package com.videonasocialmedia.vimojo.userProfile.presentation.views;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -20,11 +21,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
-import com.videonasocialmedia.vimojo.userProfile.presentation.views.UserProfileActivityView;
+import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
@@ -37,7 +40,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class UserProfileActivity extends VimojoActivity implements UserProfileActivityView {
+public class UserProfileActivity extends VimojoActivity implements UserProfileView {
 
   @Inject
   UserProfilePresenter presenter;
@@ -58,9 +61,9 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
   @Bind(R.id.number_projects_edited)
   TextView numberProjectsEdited;
   private ProgressDialog progressDialog;
-
   String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_PROFILE_THUMB;
   private int REQUEST_ICON_USER_PROFILE = 200;
+  protected MixpanelAPI mixpanel;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
     getActivityPresentersComponent().inject(this);
     setupToolbar();
     createProgressDialog();
+    mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN);
   }
 
   private void createProgressDialog() {
@@ -95,7 +99,6 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
   private void setUpAndCheckUserThumb() {
     image_user = (CircleImageView) findViewById(R.id.image_user_profile);
     image_user.setOnClickListener(new View.OnClickListener() {
-
       @Override
       public void onClick(View view) {
         showDialogUserAddThumb();
@@ -246,15 +249,37 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
     });
   }
 
-  @OnClick(R.id.user_profile_username)
-  public void showDialogUpdateUsername() {
-    showDialogToUpdatePreference(username.getText().toString(), username);
+  @Override
+  public void setUserPropertyToMixpanel(String property, String value) {
+    mixpanel.getPeople().identify(mixpanel.getDistinctId());
+    mixpanel.getPeople().set(property,value);
+    if (property == "account_email") {
+      mixpanel.getPeople().setOnce("$email", value);
+    }
   }
 
-  private void showDialogToUpdatePreference(String text, final TextView textView) {
+  @Override
+  public void showError(int stringId) {
+    Snackbar.make(email, stringId ,Snackbar.LENGTH_LONG).show();
+  }
+
+  @OnClick(R.id.user_profile_username)
+  public void showDialogUpdateUsername() {
+    showDialogToUpdatePreference(username.getText().toString(), username,
+        getString(R.string.enterUsername));
+  }
+
+  @OnClick(R.id.user_profile_email)
+  public void showDialogUpdateEmail() {
+    showDialogToUpdatePreference(email.getText().toString(), email,
+        getString(R.string.enterEmail));
+  }
+
+  private void showDialogToUpdatePreference(String text, final TextView textView, String titleDialog){
     View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
     editTextDialog = (EditText) dialogView.findViewById(R.id.text_dialog);
     editTextDialog.setText(text);
+
     final DialogInterface.OnClickListener dialogClickListener =
         new DialogInterface.OnClickListener() {
           @Override
@@ -265,8 +290,15 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
                 String textPreference = editTextDialog.getText().toString();
                 if (textPreference.compareTo("") == 0)
                   return;
-                textView.setText(textPreference);
-                presenter.updateUserNamePreference(textPreference);
+                if(textView.equals(username)) {
+                  presenter.updateUserNamePreference(textPreference);
+                  break;
+                }
+                if(textView.equals(email)) {
+                  presenter.updateUserEmailPreference(textPreference);
+                  break;
+                }
+
               }
               case DialogInterface.BUTTON_NEGATIVE:
                 break;
@@ -276,7 +308,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileAc
 
     AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
     AlertDialog alertDialog = builder.setCancelable(false)
-        .setTitle("Cambiar nombre de usuario")
+        .setTitle(titleDialog)
         .setView(dialogView)
         .setPositiveButton(R.string.positiveButton, dialogClickListener)
         .setNegativeButton(R.string.negativeButton, dialogClickListener)

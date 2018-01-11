@@ -7,7 +7,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
-import com.videonasocialmedia.vimojo.userProfile.presentation.views.UserProfileActivityView;
+import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import java.util.List;
@@ -20,9 +20,11 @@ import javax.inject.Inject;
 
 public class UserProfilePresenter {
 
+  public static final String MIXPANEL_EMAIL_ID = "$account_email";
+  public static final String MIXPANEL_USERNAME_ID = "$username";
   private SharedPreferences sharedPreferences;
   private SharedPreferences.Editor preferencesEditor;
-  private UserProfileActivityView userProfileActivityView;
+  private UserProfileView userProfileView;
   private Context context;
   private ObtainLocalVideosUseCase obtainLocalVideosUseCase;
   private int videosRecorded = -1;
@@ -31,11 +33,11 @@ public class UserProfilePresenter {
   private boolean isVideosEditedRetrieved = false;
 
   @Inject
-  public UserProfilePresenter(UserProfileActivityView view, Context context,
+  public UserProfilePresenter(UserProfileView view, Context context,
                               SharedPreferences sharedPreferences, ObtainLocalVideosUseCase
                               obtainLocalVideosUseCase){
     this.context=context;
-    this.userProfileActivityView=view;
+    this.userProfileView =view;
     this.sharedPreferences = sharedPreferences;
     this.obtainLocalVideosUseCase = obtainLocalVideosUseCase;
   }
@@ -43,18 +45,18 @@ public class UserProfilePresenter {
   public void getUserNameFromPreferences() {
     String userNamePreference = sharedPreferences.getString(ConfigPreferences.USERNAME, null);
     if(userNamePreference!=null && !userNamePreference.isEmpty())
-      userProfileActivityView.showPreferenceUserName(userNamePreference);
+      userProfileView.showPreferenceUserName(userNamePreference);
     else {
-      userProfileActivityView.showPreferenceUserName(context.getResources().getString(R.string.username));
+      userProfileView.showPreferenceUserName(context.getResources().getString(R.string.username));
     }
   }
 
   public void getEmailFromPreferences() {
     String emailPreference=sharedPreferences.getString(ConfigPreferences.EMAIL,null);
     if(emailPreference!=null && !emailPreference.isEmpty()) {
-      userProfileActivityView.showPreferenceEmail(emailPreference);
+      userProfileView.showPreferenceEmail(emailPreference);
     }else {
-      userProfileActivityView.showPreferenceEmail(context.getResources().getString(R.string.emailPreference));
+      userProfileView.showPreferenceEmail(context.getResources().getString(R.string.emailPreference));
     }
   }
 
@@ -62,7 +64,26 @@ public class UserProfilePresenter {
     preferencesEditor = sharedPreferences.edit();
     preferencesEditor.putString(ConfigPreferences.USERNAME, userNamePreference);
     preferencesEditor.apply();
-    userProfileActivityView.showPreferenceUserName(userNamePreference);
+    userProfileView.showPreferenceUserName(userNamePreference);
+    String data = sharedPreferences.getString(ConfigPreferences.USERNAME, null);
+    if (data != null && !data.isEmpty()) {
+      userProfileView.setUserPropertyToMixpanel(MIXPANEL_USERNAME_ID, data);
+    }
+  }
+
+  public void updateUserEmailPreference(String userEmailPreference) {
+    if(!isValidEmail(userEmailPreference)) {
+      userProfileView.showError(R.string.invalid_email);
+      return;
+    }
+    preferencesEditor = sharedPreferences.edit();
+    preferencesEditor.putString(ConfigPreferences.EMAIL, userEmailPreference);
+    preferencesEditor.apply();
+    userProfileView.showPreferenceEmail(userEmailPreference);
+    String data = sharedPreferences.getString(ConfigPreferences.EMAIL, null);
+    if (data != null && !data.isEmpty()) {
+      userProfileView.setUserPropertyToMixpanel(MIXPANEL_EMAIL_ID, data);
+    }
   }
 
   public void getInfoVideosRecordedEdited() {
@@ -70,13 +91,13 @@ public class UserProfilePresenter {
       return;
     }
 
-    userProfileActivityView.showLoading();
+    userProfileView.showLoading();
 
     obtainLocalVideosUseCase.obtainRawVideos(new OnVideosRetrieved() {
       @Override
       public void onVideosRetrieved(List<Video> videoList) {
         videosRecorded = videoList.size();
-        userProfileActivityView.showVideosRecorded(Integer.toString(videosRecorded));
+        userProfileView.showVideosRecorded(Integer.toString(videosRecorded));
         isVideosRecordedRetrieved = true;
         checkHideLoading();
       }
@@ -93,7 +114,7 @@ public class UserProfilePresenter {
       @Override
       public void onVideosRetrieved(List<Video> videoList) {
         videosEdited = videoList.size();
-        userProfileActivityView.showVideosEdited(Integer.toString(videosEdited));
+        userProfileView.showVideosEdited(Integer.toString(videosEdited));
         isVideosEditedRetrieved = true;
         checkHideLoading();
       }
@@ -109,8 +130,13 @@ public class UserProfilePresenter {
 
   private void checkHideLoading() {
     if(isVideosRecordedRetrieved && isVideosEditedRetrieved){
-      userProfileActivityView.hideLoading();
+      userProfileView.hideLoading();
     }
+  }
+
+  protected boolean isValidEmail(String email) {
+    return android.util.Patterns.EMAIL_ADDRESS
+        .matcher(email).matches();
   }
 
 }

@@ -34,7 +34,7 @@ import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStor
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialEditorActivity;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialRecordActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
-import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileActivity;
+import com.videonasocialmedia.vimojo.userProfile.presentation.views.UserProfileActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 

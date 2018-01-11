@@ -1,7 +1,7 @@
-package com.videonasocialmedia.vimojo.userProfile.presentation.views;
+package com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views;
 
 
-public interface UserProfileActivityView {
+public interface UserProfileView {
 
   void showPreferenceUserName(String userNamePreference);
 
@@ -14,4 +14,8 @@ public interface UserProfileActivityView {
   void showVideosRecorded(String videosRecorded);
 
   void showVideosEdited(String videosEdited);
+
+  void setUserPropertyToMixpanel(String property, String value);
+
+  void showError(int stringId);
 }
