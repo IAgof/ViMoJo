@@ -1,11 +1,10 @@
 <vector
-    android:height="32dp"
     android:width="32dp"
+    android:height="32dp"
     android:viewportHeight="54.0"
     android:viewportWidth="54.0"
-    android:tint="@color/textColor"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <path android:fillColor="@color/button" android:pathData="M27,0C12.11,0 0,12.11 0,27s12.11,27 27,27s27,-12.11 27,-27S41.89,0 27,0zM27,52C13.22,52 2,40.78 2,27S13.22,2 27,2s25,11.22 25,25S40.78,52 27,52z"/>
-    <path android:fillColor="@color/button" android:pathData="M16.41,27l11.29,-11.29c0.39,-0.39 0.39,-1.02 0,-1.41s-1.02,-0.39 -1.41,0L14.8,25.79c-0.67,0.67 -0.67,1.75 0,2.42l11.5,11.5C26.49,39.9 26.74,40 27,40s0.51,-0.1 0.71,-0.29c0.39,-0.39 0.39,-1.02 0,-1.41L16.41,27z"/>
-    <path android:fillColor="@color/button" android:pathData="M37.71,14.29c-0.39,-0.39 -1.02,-0.39 -1.41,0L24.8,25.79c-0.67,0.67 -0.67,1.75 0,2.42l11.5,11.5C36.49,39.9 36.74,40 37,40s0.51,-0.1 0.71,-0.29c0.39,-0.39 0.39,-1.02 0,-1.41L26.41,27l11.29,-11.29C38.1,15.32 38.1,14.68 37.71,14.29z"/>
+    <path android:fillColor="@color/button_theme_light" android:pathData="M27,0C12.11,0 0,12.11 0,27s12.11,27 27,27s27,-12.11 27,-27S41.89,0 27,0zM27,52C13.22,52 2,40.78 2,27S13.22,2 27,2s25,11.22 25,25S40.78,52 27,52z"/>
+    <path android:fillColor="@color/button_theme_light" android:pathData="M16.41,27l11.29,-11.29c0.39,-0.39 0.39,-1.02 0,-1.41s-1.02,-0.39 -1.41,0L14.8,25.79c-0.67,0.67 -0.67,1.75 0,2.42l11.5,11.5C26.49,39.9 26.74,40 27,40s0.51,-0.1 0.71,-0.29c0.39,-0.39 0.39,-1.02 0,-1.41L16.41,27z"/>
+    <path android:fillColor="@color/button_theme_light" android:pathData="M37.71,14.29c-0.39,-0.39 -1.02,-0.39 -1.41,0L24.8,25.79c-0.67,0.67 -0.67,1.75 0,2.42l11.5,11.5C36.49,39.9 36.74,40 37,40s0.51,-0.1 0.71,-0.29c0.39,-0.39 0.39,-1.02 0,-1.41L26.41,27l11.29,-11.29C38.1,15.32 38.1,14.68 37.71,14.29z"/>
 </vector>

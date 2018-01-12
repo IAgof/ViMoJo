@@ -288,11 +288,12 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  TrimPreviewPresenter provideTrimPresenter(UserEventTracker userEventTracker,
+  TrimPreviewPresenter provideTrimPresenter(SharedPreferences sharedPreferences,
+                                            UserEventTracker userEventTracker,
                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                     ModifyVideoDurationUseCase modifyVideoDurationUseCase) {
-    return new TrimPreviewPresenter((VideoTrimActivity) activity, userEventTracker,
-        getMediaListFromProjectUseCase, modifyVideoDurationUseCase);
+    return new TrimPreviewPresenter((VideoTrimActivity) activity, sharedPreferences,
+        userEventTracker, getMediaListFromProjectUseCase, modifyVideoDurationUseCase);
   }
 
   @Provides @PerActivity
