@@ -1,6 +1,6 @@
-package com.videonasocialmedia.vimojo.upload.repository.apiclient;
+package com.videonasocialmedia.vimojo.vimojoapiclient;
 
-import com.videonasocialmedia.vimojo.upload.model.Token;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 
 import java.io.IOException;
 
@@ -12,19 +12,21 @@ import okhttp3.Response;
  * Created by alvaro on 28/11/17.
  */
 
+/**
+ * Class for chaining auth calls for restricted api calls
+ */
 public class AuthInterceptor implements Interceptor {
+  AuthToken authToken;
 
-  Token token;
-
-  public AuthInterceptor(Token token) {
-    this.token = token;
+  public AuthInterceptor(AuthToken authToken) {
+    this.authToken = authToken;
   }
 
   @Override
   public Response intercept(Chain chain) throws IOException {
     Request original = chain.request();
     Request.Builder requestBuilder = original.newBuilder()
-        .header("Authorization", token.getToken())
+        .header("Authorization", authToken.getToken())
         .method(original.method(), original.body());
     Request request = requestBuilder.build();
     return chain.proceed(request);

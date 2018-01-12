@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.upload.repository.apiclient;
 
-import com.videonasocialmedia.vimojo.upload.model.AuthTokenRequest;
-import com.videonasocialmedia.vimojo.upload.model.Token;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthTokenRequest;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -27,5 +27,5 @@ public interface VimojoApi {
 
     @POST("auth")
     @Headers("Content-Type: application/json")
-    Call<Token> getAuthToken(@Body AuthTokenRequest requestBody);
+    Call<AuthToken> getAuthToken(@Body AuthTokenRequest requestBody);
 }

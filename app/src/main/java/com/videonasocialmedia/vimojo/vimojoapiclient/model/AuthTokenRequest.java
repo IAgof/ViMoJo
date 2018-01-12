@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.upload.model;
+package com.videonasocialmedia.vimojo.vimojoapiclient.model;
 
 import com.google.gson.Gson;
 

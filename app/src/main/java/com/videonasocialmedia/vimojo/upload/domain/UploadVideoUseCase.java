@@ -6,7 +6,7 @@ import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.upload.repository.apiclient.VimojoApi;
 import com.videonasocialmedia.vimojo.upload.repository.localsource.CachedToken;
-import com.videonasocialmedia.vimojo.upload.repository.rest.ServiceGenerator;
+import com.videonasocialmedia.vimojo.vimojoapiclient.rest.ServiceGenerator;
 
 import java.io.File;
 

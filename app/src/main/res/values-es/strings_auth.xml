@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="title_activity_login">Registro / Iniciar Sesión</string>
+    <string name="title_activity_auth">Registro / Iniciar Sesión</string>
     <string name="sign_out_title_dialog">Cerrar sesión</string>
     <string name="sign_out_message_dialog">¿Estás seguro de cerrar sesión?</string>
     <string name="accept_sign_out">Sí</string>
     <string name="cancel_sign_out">No</string>
     <string name="sign_out">Cerrar sesión</string>
     <string name="sign_in_register">Registro / Iniciar Sesión</string>
-    <string name="register_progress">Registro en curso...</string>
+    <string name="register_progress">Registro en curso…</string>
     <string name="prompt_email_register">Email</string>
     <string name="action_email_register_short">Ocultar</string>
     <string name="prompt_password_register">Contraseña</string>
@@ -23,5 +23,12 @@
     <string name="second_string_link_for_create_account">Créate una</string>
     <string name="error_invalid_email">La dirección de email no es válida</string>
     <string name="error_invalid_password">La contraseña es demasiado corta</string>
-    <string name="error_No_Cheked_PrivacyTerm">Necesita aceptar las condiciones de servicio y la política de privacidad</string>
+    <string name="error_no_accepted_terms">Necesita aceptar las condiciones de servicio y la política de privacidad</string>
+    <string name="success_sign_in">Sesión iniciada</string>
+    <string name="credentials_unknown_error">Email o contraseña incorrecto</string>
+    <string name="default_auth_error_message">Oh, algo ha salido mal. Intentalo mas tarde</string>
+    <string name="network_error">Error de red. ¿Tienes conexión a internet?</string>
+    <string name="error_already_exits">Ya existe un usuario con esta dirección de email</string>
+    <string name="error_field_required">Campo necesario no enviado</string>
+    <string name="error_incorrect_password">La contraseña es incorrecta</string>
 </resources>

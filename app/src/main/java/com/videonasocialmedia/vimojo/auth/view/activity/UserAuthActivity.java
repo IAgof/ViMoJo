@@ -1,7 +1,10 @@
 package com.videonasocialmedia.vimojo.auth.view.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -19,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.videonasocialmedia.vimojo.R;
@@ -59,6 +63,16 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
   TextView footerTextView;
   @Bind(R.id.auth_button)
   Button authButton;
+  @Bind(R.id.layout_login_form)
+  View layoutLoginForm;
+  @Bind(R.id.layoutProgressBarLogin)
+  View layoutProgress;
+  @Bind(R.id.progress_bar_login)
+  View progressBarLogin;
+  @Bind(R.id.image_login_confirm)
+  ImageView imageLoginConfirm;
+  @Bind(R.id.progress_text_view)
+  TextView textViewLoginProgress;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -112,13 +126,85 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
 
   @Override
   public void showTermsNotAcceptedError() {
-    showMessage(R.string.error_No_Cheked_PrivacyTerm, authButton);
+    showMessage(R.string.error_no_accepted_terms, authButton);
   }
 
   @Override
   public void resetErrorFields() {
     textInputEmail.setError(null);
     passwordTextInput.setError(null);
+  }
+
+  @Override
+  public void showProgressAuthenticationDialog() {
+    showProgress(true);
+  }
+
+  @Override
+  public void hideProgressAuthenticationDialog() {
+    showProgress(false);
+  }
+
+  @Override
+  public void showSigninSuccess() {
+    progressBarLogin.setVisibility(View.INVISIBLE);
+    imageLoginConfirm.setVisibility(View.VISIBLE);
+    textViewLoginProgress.setTextColor(getResources().getColor(R.color.colorPrimary));
+    textViewLoginProgress.setText(R.string.success_sign_in);
+
+    Handler handler = new Handler();
+    handler.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        exitLoginActivity();
+      }
+    }, 3000);
+  }
+
+  private void exitLoginActivity() {
+    finish();
+  }
+
+  @Override
+  public void showRegisterSuccess() {
+    // TODO(jliarte): 11/01/18 make the same?
+//    R.string.success_register
+    showSigninSuccess();
+  }
+
+  @Override
+  public void showErrorLoginUnknownCredentials() {
+    showMessage(R.string.credentials_unknown_error, authButton);
+  }
+
+  @Override
+  public void showDefaultError() {
+    showMessage(R.string.default_auth_error_message, authButton);
+  }
+
+  @Override
+  public void showNetworkError() {
+    showMessage(R.string.network_error, authButton);
+  }
+
+  @Override
+  public void showErrorRegisterUserExists() {
+    showMessage(R.string.error_already_exits, authButton);
+  }
+
+  @Override
+  public void showErrorRegisterInvalidMail() {
+    showMessage(R.string.error_invalid_email, authButton);
+  }
+
+  @Override
+  public void showErrorRegisterMissingParams() {
+    showMessage(R.string.error_field_required, authButton);
+  }
+
+  @Override
+  public void showErrorRegisterInvalidPassword() {
+    showMessage(R.string.error_incorrect_password, authButton);
   }
 
   @Override
@@ -231,4 +317,23 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
     snackbar.show();
   }
 
+  private void showProgress(final boolean show) {
+    int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+    layoutLoginForm.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
+    layoutLoginForm.animate().setDuration(shortAnimTime).alpha(
+            show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        layoutLoginForm.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
+      }
+    });
+    layoutProgress.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+    layoutProgress.animate().setDuration(shortAnimTime).alpha(
+            show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        layoutProgress.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+      }
+    });
+  }
 }

@@ -1,9 +1,5 @@
 package com.videonasocialmedia.vimojo.auth.domain.usecase;
 
-/**
- * Created by jliarte on 8/01/18.
- */
-
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
@@ -18,21 +14,16 @@ import com.videonasocialmedia.vimojo.auth.view.activity.UserAuthActivity;
 import java.lang.ref.WeakReference;
 
 /**
- * Use case for user authentication.
- *
- * Handles user login and register.
+ * Created by jliarte on 11/01/18.
  */
-public class UserAuthenticator extends AbstractAccountAuthenticator {
+
+public class AccountAutenticator extends AbstractAccountAuthenticator {
   private static final String VIMOJO_ACCOUNT_TYPE = "com.videonasocialmedia.vimojo.auth";
   private WeakReference<Context> contextWeakReference;
 
-  public UserAuthenticator(Context context) {
+  public AccountAutenticator(Context context) {
     super(context);
     contextWeakReference = new WeakReference<>(context);
-  }
-
-  public boolean userIsLoggedIn() {
-    return false;
   }
 
   @Override
@@ -82,4 +73,6 @@ public class UserAuthenticator extends AbstractAccountAuthenticator {
   public Context getContext() {
     return contextWeakReference.get();
   }
+
+
 }

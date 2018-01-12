@@ -1,7 +1,7 @@
-package com.videonasocialmedia.vimojo.upload.repository.rest;
+package com.videonasocialmedia.vimojo.vimojoapiclient.rest;
 
-import com.videonasocialmedia.vimojo.upload.model.Token;
-import com.videonasocialmedia.vimojo.upload.repository.apiclient.AuthInterceptor;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
+import com.videonasocialmedia.vimojo.vimojoapiclient.AuthInterceptor;
 
 import java.util.concurrent.TimeUnit;
 
@@ -53,9 +53,9 @@ public class ServiceGenerator {
     return retrofit.create(serviceClass);
   }
 
-  public <T> T generateService(Class<T> serviceClass, final Token token) {
-    if (token != null) {
-      AuthInterceptor authInterceptor = new AuthInterceptor(token);
+  public <T> T generateService(Class<T> serviceClass, final AuthToken authToken) {
+    if (authToken != null) {
+      AuthInterceptor authInterceptor = new AuthInterceptor(authToken);
       httpClientBuilder.addInterceptor(authInterceptor);
     }
 

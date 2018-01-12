@@ -23,7 +23,7 @@
         </EditTextPreference>
          <Preference
              android:key="auth"
-             android:title="@string/title_activity_login"/>
+             android:title="@string/title_activity_auth"/>
 
      </PreferenceCategory>
 

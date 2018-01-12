@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.upload.repository.apiclient;
 
 import com.videonasocialmedia.vimojo.upload.repository.localsource.CachedToken;
-import com.videonasocialmedia.vimojo.upload.repository.rest.ServiceGenerator;
+import com.videonasocialmedia.vimojo.vimojoapiclient.rest.ServiceGenerator;
 
 import java.io.IOException;
 
@@ -18,7 +18,7 @@ public class AuthAuthenticator implements Authenticator {
   @Override
   public Request authenticate(Route route, Response response) throws IOException {
     VimojoApi vimojoApi = new ServiceGenerator().generateService(VimojoApi.class);
-    // Token newToken= authClient.refreshToken();
+    // AuthToken newToken= authClient.refreshToken();
     Request.Builder builder = response.request().newBuilder();
     if (!CachedToken.hasToken()) {
       // TODO(javi.cabanas): 15/6/16 refresh token

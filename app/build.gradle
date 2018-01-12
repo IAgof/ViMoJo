@@ -215,6 +215,7 @@ android {
             buildConfigField "String", "MIXPANEL_TOKEN", "\"6f46145c03bf5cf5104bb3536059d994\""
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "API_BASE_URL", "\"http://nemsummit.viday.co:3001/\""
             buildConfigField "String", "VIDAY_TOKEN", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ2aW1vam8iLCJzdWIiOiI1MDY2NTQ5NTgwNzkxODA4IiwibmFtZSI6InZpbW9qbyIsInJvbGUiOiJndWVzdCIsImlhdCI6MTUxMTc5MjUxNiwiZXhwIjoxNTQzMzUwMTE2fQ.yB6-VOksgY3TyXIkJVIaT5Iwq6PrYyf64q13s2KFgIc\""
         }
         debug {
@@ -228,6 +229,7 @@ android {
             ext.fabricApiKey = FABRIC_VIDEONA_ORG_APIKEY
             ext.fabricApiSecret = FABRIC_VIDEONA_ORG_APISECRET
             manifestPlaceholders = [appName: "Vimojo", fabricApiKey: FABRIC_VIDEONA_ORG_APIKEY]
+            buildConfigField "String", "API_BASE_URL", "\"http://nemsummit.viday.co:3001/\""
             buildConfigField "String", "VIDAY_TOKEN", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ2aW1vam8iLCJzdWIiOiI1NjQ5MzkxNjc1MjQ0NTQ0IiwibmFtZSI6ImRldmVsb3AiLCJyb2xlIjoiZ3Vlc3QiLCJpYXQiOjE1MTE3OTMzNzAsImV4cCI6MTU0MzM1MDk3MH0.vEypnGQRdgXQI9eQwHBwNOj0yIL5ArXNapoCqHmu3Zc\""
         }
     }

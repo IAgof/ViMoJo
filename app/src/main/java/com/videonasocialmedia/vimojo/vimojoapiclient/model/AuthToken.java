@@ -1,13 +1,13 @@
-package com.videonasocialmedia.vimojo.upload.model;
+package com.videonasocialmedia.vimojo.vimojoapiclient.model;
 
 /**
  * Created by alvaro on 28/11/17.
  */
 
-public class Token {
+public class AuthToken {
   private final String access_token;
 
-  public Token(String token) {
+  public AuthToken(String token) {
     this.access_token = token;
   }
 
