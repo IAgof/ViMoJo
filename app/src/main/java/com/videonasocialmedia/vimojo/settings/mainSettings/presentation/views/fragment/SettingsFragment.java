@@ -48,7 +48,8 @@ public class SettingsFragment extends PreferenceFragment implements
     @Inject PreferencesPresenter preferencesPresenter;
 
     protected PreferenceCategory ftp1Pref;
-    protected PreferenceCategory ftp2Pref;
+    // TODO:(alvaro.martinez) 12/01/18 Now we only use one FTP, not two. Implement feature, I want to add more FTPs
+    //protected PreferenceCategory ftp2Pref;
     protected PreferenceCategory transitionCategory;
     protected PreferenceCategory watermarkPrefCategory;
     protected Preference emailPref;
@@ -258,10 +259,11 @@ public class SettingsFragment extends PreferenceFragment implements
         if (ftp1Pref != null) {
             getPreferenceScreen().removePreference(ftp1Pref);
         }
-        ftp2Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP2_Section));
+        // TODO:(alvaro.martinez) 12/01/18 Now we only use one FTP, not two. Implement feature, I want to add more FTPs
+        /*ftp2Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP2_Section));
         if (ftp2Pref != null) {
             getPreferenceScreen().removePreference(ftp2Pref);
-        }
+        }*/
     }
 
     @Override
