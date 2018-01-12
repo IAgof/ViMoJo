@@ -63,13 +63,13 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 86 // 20180112
+            versionCode 87 // 20180112
             versionName "0.7.8-RC1" // 20180105
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "api_base_url", "https://"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
-            buildConfigField "boolean", "FEATURE_FTP", "false"
+            buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
             buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
             buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
@@ -103,7 +103,7 @@ android {
         }*/
         rtve {
             applicationId "com.videonasocialmedia.vimojo.rtve"
-            versionCode 64 // 20180112
+            versionCode 65 // 20180112
             versionName "0.7.8-RC1.fRtve" // 20180105
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo Rtve"
@@ -143,7 +143,7 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 37 // 20180112
+            versionCode 38 // 20180112
             versionName "0.7.8-RC1.fThomsonFoundation" // 20180105
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
@@ -184,7 +184,7 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 4 // 20180112
+            versionCode 5 // 20180112
             versionName "0.7.8-RC1.fMarketForNews" // 20180109
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
