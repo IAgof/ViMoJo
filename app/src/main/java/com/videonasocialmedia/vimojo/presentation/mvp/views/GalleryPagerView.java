@@ -23,4 +23,8 @@ public interface GalleryPagerView {
     void navigate();
 
     void showDialogVideosNotAddedFromGallery(ArrayList<Integer> listVideoId);
+
+  void setupViewsToThemeDark();
+
+  void setupViewsToThemeLight();
 }

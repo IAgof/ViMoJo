@@ -121,9 +121,10 @@
 
     <!--VoiceOverRecordRecordActivity-->
 
-    <string name="dialog_voice_over_cancel_title_message">¿Desea descartar la locución y volver a grabarla de nuevo?</string>
-    <string name="dialog_voice_over_cancel_positive_button">Aceptar</string>
-    <string name="dialog_voice_over_cancel_negative_button">Declinar</string>
+    <string name="dialog_voice_over_cancel_title_message">Va a cancelar la grabacion actual,
+        ¿desea grabar una nueva o salir de esta pantalla?</string>
+    <string name="dialog_voice_over_cancel_positive_button">Grabar</string>
+    <string name="dialog_voice_over_cancel_negative_button">Salir</string>
     <string name="alert_dialog_title_voice_over">Locución</string>
     <string name="alert_dialog_title_message_adding_voice_over">Problema añadiendo locución al proyecto</string>
     <string name="alert_dialog_title_message_start_record_voice_over">Por favor, empiece primero la grabación</string>

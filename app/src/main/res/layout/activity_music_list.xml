@@ -9,26 +9,10 @@
     android:fitsSystemWindows="true"
     tools:context=".sound.presentation.views.activity.MusicListActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/VideonaTheme.PopupOverlay"
-            app:theme="@style/arrowWhiteToolbar">
-
-        </android.support.v7.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:orientation="vertical">
 
         <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
             android:id="@+id/videona_player"
@@ -46,6 +30,23 @@
             android:scrollbars="horizontal"
             tools:listitem="@layout/sound_list_item_view_holder"
             />
+
     </LinearLayout>
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/VideonaTheme.PopupOverlay"
+            app:theme="@style/arrowWhiteToolbar">
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
 
 </android.support.design.widget.CoordinatorLayout>

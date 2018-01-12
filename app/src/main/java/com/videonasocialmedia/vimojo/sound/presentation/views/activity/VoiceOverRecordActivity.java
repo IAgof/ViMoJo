@@ -172,6 +172,7 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
                         presenter.cancelVoiceOverRecorded();
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
+                        navigateTo(SoundActivity.class);
                         break;
                 }
             }

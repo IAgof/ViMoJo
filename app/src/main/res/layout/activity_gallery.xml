@@ -1,92 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                  android:orientation="vertical"
                   android:animateLayoutChanges="true">
 
-        <RelativeLayout
+        <android.support.v7.widget.CardView
             android:id="@+id/relativeLayoutTop"
             android:layout_width="match_parent"
             android:layout_height="@dimen/defaultbarHeight"
-            android:background="?attr/colorPrimary">
+            android:layout_margin="16dp"
+            style="?attr/cardViewStyle">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical">
+
+                <ImageButton
+                    android:id="@+id/menu_gallery"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="8dp"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitXY"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/activity_gallery_ic_options"/>
+
+                <LinearLayout
+                    android:id="@+id/selection_mode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/menu_gallery"
+                    android:visibility="gone">
+
+                    <ImageButton
+                        android:id="@+id/button_trash"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="24dp"
+                        android:background="@android:color/transparent"
+                        android:scaleType="fitCenter"
+                        android:visibility="visible"
+                        android:padding="2dp"
+                        android:src="@drawable/activity_edit_clip_delete_normal"/>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/activity_edit_clip_normal"
+                        android:id="@+id/gallery_image_view_clips"
+                        android:layout_marginRight="4dp"
+                        android:layout_gravity="center"
+                        android:scaleType="fitCenter"
+                        android:padding="2dp"/>
+
+                    <TextView
+                        android:id="@+id/gallery_count_selected_videos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="24dp"
+                        android:text="0"
+                        android:textSize="16sp"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="?android:attr/textColorPrimary"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cancel_accept_gallery_cardview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_alignParentBottom="true"
+            style="?attr/cardViewStyle">
 
             <ImageButton
                 android:id="@+id/button_cancel_gallery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="4dp"
-                android:padding="2dp"
-                android:background="@android:color/transparent"
-                android:scaleType="fitXY"
-                android:src="@drawable/activity_edit_back_normal"/>
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:src="@drawable/activity_edit_common_icon_cancel"/>
 
-            <LinearLayout
-                android:id="@+id/selection_mode"
+            <ImageButton
+                android:id="@+id/button_ok_gallery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:visibility="gone">
+                android:layout_gravity="end"
+                android:layout_marginBottom="4dp"
+                android:layout_marginRight="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:src="@drawable/activity_edit_common_icon_accept"/>
 
-                <ImageButton
-                    android:id="@+id/button_trash"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="48dp"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:visibility="visible"
-                    android:padding="2dp"
-                    android:src="@drawable/activity_edit_clip_delete_normal"/>
+        </android.support.v7.widget.CardView>
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/activity_edit_clip_normal"
-                    android:id="@+id/gallery_image_view_clips"
-                    android:layout_marginRight="4dp"
-                    android:layout_gravity="center"
-                    android:scaleType="fitCenter"
-                    android:padding="2dp"/>
-
-                <TextView
-                    android:id="@+id/gallery_count_selected_videos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="48dp"
-                    android:text="0"
-                    android:textSize="16sp"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/white"/>
-
-                <ImageButton
-                    android:id="@+id/button_ok_gallery"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="24dp"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitXY"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/activity_gallery_common_icon_accept"/>
-
-            </LinearLayout>
-
-        </RelativeLayout>
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/cancel_accept_gallery_cardview"
+            android:layout_below="@+id/relativeLayoutTop"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            style="?attr/cardViewStyle">
 
         <android.support.v4.view.ViewPager
             android:id="@+id/vpPager"
@@ -107,5 +144,8 @@
 
         </android.support.v4.view.ViewPager>
 
-    </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+    </RelativeLayout>
+
 </android.support.design.widget.CoordinatorLayout>
