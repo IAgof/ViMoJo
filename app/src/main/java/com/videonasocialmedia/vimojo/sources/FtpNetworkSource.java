@@ -25,7 +25,8 @@ public class FtpNetworkSource {
 
     private void populateFtpList() {
         FtpList.add(new FtpNetwork(ConfigPreferences.FTP1, "FTP", R.drawable.activity_share_icon_ftp_green));
-        FtpList.add(new FtpNetwork(ConfigPreferences.FTP2, "Breaking news", R.drawable.activity_share_icon_ftp_red));
+        // TODO:(alvaro.martinez) 12/01/18 Now we only use one FTP, not two. Implement feature, I want to add more FTPs
+        //  FtpList.add(new FtpNetwork(ConfigPreferences.FTP2, "Breaking news", R.drawable.activity_share_icon_ftp_red));
     }
 
 }

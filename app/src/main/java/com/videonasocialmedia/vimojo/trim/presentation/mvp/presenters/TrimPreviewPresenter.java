@@ -7,15 +7,21 @@
 
 package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 
+import android.content.SharedPreferences;
+import android.widget.RadioButton;
+
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -46,15 +52,18 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     // and we don't want to create a memory leak
     //private WeakReference<TrimView> trimView;
     private TrimView trimView;
+    private SharedPreferences sharedPreferences;
     public UserEventTracker userEventTracker;
     public Project currentProject;
 
     @Inject
-    public TrimPreviewPresenter(TrimView trimView, UserEventTracker userEventTracker,
+    public TrimPreviewPresenter(TrimView trimView, SharedPreferences sharedPreferences,
+                                UserEventTracker userEventTracker,
                                 GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                 ModifyVideoDurationUseCase modifyVideoDurationUseCase) {
         //this.trimView = new WeakReference<>(trimView);
         this.trimView = trimView;
+        this.sharedPreferences = sharedPreferences;
         this.currentProject = loadCurrentProject();
         currentProject.addListener(this);
         this.userEventTracker = userEventTracker;
@@ -64,7 +73,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
 
     private Project loadCurrentProject() {
         // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null,null, null);
+        return Project.getInstance(null, null, null, null);
     }
 
     public void init(int videoToTrimIndex) {
@@ -93,7 +102,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     public void setTrim(int startTimeMs, int finishTimeMs) {
 
         modifyVideoDurationUseCase.trimVideo(videoToEdit, startTimeMs, finishTimeMs,
-                currentProject);
+            currentProject);
         trackVideoTrimmed();
     }
 
@@ -109,15 +118,15 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
 
     public void advanceForwardStartTrimming(int advancePrecision, int startTimeMs,
                                             int finishTimeMs) {
-        if(((finishTimeMs - startTimeMs) / MS_CORRECTION_FACTOR) <= MIN_TRIM_OFFSET){
+        if (((finishTimeMs - startTimeMs) / MS_CORRECTION_FACTOR) <= MIN_TRIM_OFFSET) {
             return;
         }
         float adjustSeekBarMinPosition = (float) (startTimeMs + advancePrecision)
             / MS_CORRECTION_FACTOR;
-        if(Math.abs(adjustSeekBarMinPosition - (float) finishTimeMs / MS_CORRECTION_FACTOR)
-                < MIN_TRIM_OFFSET){
+        if (Math.abs(adjustSeekBarMinPosition - (float) finishTimeMs / MS_CORRECTION_FACTOR)
+            < MIN_TRIM_OFFSET) {
             adjustSeekBarMinPosition = ((float) finishTimeMs / MS_CORRECTION_FACTOR)
-                    - MIN_TRIM_OFFSET;
+                - MIN_TRIM_OFFSET;
         }
         trimView.updateStartTrimmingRangeSeekBar(Math.min(adjustSeekBarMinPosition,
             ((float) finishTimeMs / MS_CORRECTION_FACTOR)));
@@ -125,31 +134,64 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
 
     public void advanceBackwardEndTrimming(int advancePrecision, int startTimeMs,
                                            int finishTimeMs) {
-        if(((finishTimeMs - startTimeMs) / MS_CORRECTION_FACTOR) <= MIN_TRIM_OFFSET){
+        if (((finishTimeMs - startTimeMs) / MS_CORRECTION_FACTOR) <= MIN_TRIM_OFFSET) {
             return;
         }
 
         float adjustSeekBarMaxPosition = (float) (finishTimeMs - advancePrecision)
             / MS_CORRECTION_FACTOR;
-        if(Math.abs(adjustSeekBarMaxPosition - (float) startTimeMs / MS_CORRECTION_FACTOR)
-                < MIN_TRIM_OFFSET){
+        if (Math.abs(adjustSeekBarMaxPosition - (float) startTimeMs / MS_CORRECTION_FACTOR)
+            < MIN_TRIM_OFFSET) {
             adjustSeekBarMaxPosition = (startTimeMs / MS_CORRECTION_FACTOR) + MIN_TRIM_OFFSET;
         }
         trimView.updateFinishTrimmingRangeSeekBar(Math.max(adjustSeekBarMaxPosition,
-                ((float) startTimeMs / MS_CORRECTION_FACTOR) - MIN_TRIM_OFFSET));
+            ((float) startTimeMs / MS_CORRECTION_FACTOR) - MIN_TRIM_OFFSET));
     }
 
     public void advanceForwardEndTrimming(int advancePrecision, int finishTimeMs) {
 
         float maxRangeSeekBarValue = (float) videoToEdit.getFileDuration() / MS_CORRECTION_FACTOR;
         float adjustSeekBarMaxPosition = Math.min(maxRangeSeekBarValue,
-                (float) (finishTimeMs + advancePrecision) / MS_CORRECTION_FACTOR);
+            (float) (finishTimeMs + advancePrecision) / MS_CORRECTION_FACTOR);
         trimView.updateFinishTrimmingRangeSeekBar(adjustSeekBarMaxPosition);
     }
 
     @Override
     public void onObjectUpdated() {
         trimView.updateProject();
+    }
+
+    public void setupActivityViews() {
+        updateViewsAccordingTheme();
+    }
+
+    public void updateRadioButtonsWithTheme(RadioButton radioButtonLow,
+                                            RadioButton radioButtonMedium,
+                                            RadioButton radioButtonHigh) {
+        updateRadioButtonAccordingTheme(radioButtonLow);
+        updateRadioButtonAccordingTheme(radioButtonMedium);
+        updateRadioButtonAccordingTheme(radioButtonHigh);
+    }
+
+    public void updateViewsAccordingTheme() {
+        if (isThemeDarkActivated()) {
+            trimView.updateViewToThemeDark();
+        } else {
+            trimView.updateViewToThemeLight();
+        }
+    }
+
+    public void updateRadioButtonAccordingTheme(RadioButton buttonNoSelected) {
+        if (isThemeDarkActivated()) {
+            trimView.updateRadioButtonToThemeDark(buttonNoSelected);
+        } else {
+            trimView.updateRadioButtonToThemeLight(buttonNoSelected);
+        }
+    }
+
+    private boolean isThemeDarkActivated() {
+        return sharedPreferences.getBoolean(ConfigPreferences.THEME_APP_DARK,
+            com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE);
     }
 }
 

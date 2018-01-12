@@ -3,5 +3,5 @@
     <item android:color="@color/button_pressed" android:state_pressed="true"/>
     <item android:color="@color/button_selected" android:state_selected="true"/>
     <item android:color="@color/button_disabled_theme_light" android:state_enabled="false"/>
-    <item android:color="@color/button"/>
+    <item android:color="@color/button_theme_light"/>
 </selector>

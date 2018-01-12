@@ -34,6 +34,7 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
 import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 
 /**
@@ -64,10 +65,10 @@ public class InitAppPresenter {
   }
 
   public boolean isWatermarkActivated() {
-    if(BuildConfig.FEATURE_FORCE_WATERMARK) {
+    if (BuildConfig.FEATURE_FORCE_WATERMARK) {
       return true;
     }
-    return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
+    return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
   }
 
   public void checkCamera2FrameRateAndResolutionSupported() {

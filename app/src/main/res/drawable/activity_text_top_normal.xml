@@ -4,18 +4,18 @@
     android:viewportWidth="300.0"
     android:width="36dp" xmlns:android="http://schemas.android.com/apk/res/android">
     <path
-        android:fillColor="@color/button"
+        android:fillColor="@color/button_theme_light"
         android:pathData="M284,280.8H16c-7.2,0 -13,-5.2 -13,-11.7V30.9c0,-6.4 5.8,-11.7 13,-11.7H284c7.2,0 13,5.2 13,11.7v238.2C297,275.5 291.2,280.8 284,280.8zM16,21.2c-6.1,0 -11,4.3 -11,9.7v238.2c0,5.3 4.9,9.7 11,9.7H284c6.1,0 11,-4.3 11,-9.7V30.9c0,-5.3 -4.9,-9.7 -11,-9.7H16z"/>
     <path
-        android:fillColor="@color/button"
+        android:fillColor="@color/button_theme_light"
         android:pathData="M284,281.5H15.9c-7.7,0 -14,-5.6 -14,-12.4V30.9c0,-6.8 6.3,-12.4 14,-12.4H284c7.7,0 14,5.6 14,12.4v238.2C298,276 291.8,281.5 284,281.5zM15.9,22c-5.5,0 -10,4 -10,8.9v238.2c0,4.9 4.5,8.9 10,8.9H284c5.5,0 10,-4 10,-8.9V30.9c0,-4.9 -4.5,-8.9 -10,-8.9H15.9z"/>
     <path
-        android:fillColor="@color/button"
+        android:fillColor="@color/button_theme_light"
         android:pathData="M284,282.5H16c-8.3,0 -15,-6 -15,-13.4V30.9c0,-7.4 6.7,-13.4 15,-13.4H284c8.3,0 15,6 15,13.4v238.2C299,276.5 292.3,282.5 284,282.5zM16,19.5c-7.2,0 -13,5.1 -13,11.4v238.2c0,6.3 5.8,11.4 13,11.4H284c7.2,0 13,-5.1 13,-11.4V30.9c0,-6.3 -5.8,-11.4 -13,-11.4H16zM284,279H16c-6.1,0 -11,-4.4 -11,-9.9V30.9C5,25.4 9.9,21 16,21H284c6.1,0 11,4.4 11,9.9v238.2C295,274.6 290.1,279 284,279zM16,23c-5,0 -9,3.5 -9,7.9v238.2c0,4.3 4,7.9 9,7.9H284c5,0 9,-3.5 9,-7.9V30.9c0,-4.3 -4,-7.9 -9,-7.9H16z"/>
     <path
-        android:fillColor="@color/button"
+        android:fillColor="@color/button_theme_light"
         android:pathData="M23.8,38.5h193v6h-193z"/>
     <path
-        android:fillColor="@color/button"
+        android:fillColor="@color/button_theme_light"
         android:pathData="M23.8,59.5h92.7v6h-92.7z"/>
 </vector>
