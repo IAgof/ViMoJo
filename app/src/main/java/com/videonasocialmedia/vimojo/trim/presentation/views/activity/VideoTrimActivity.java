@@ -12,9 +12,13 @@ package com.videonasocialmedia.vimojo.trim.presentation.views.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
@@ -46,7 +50,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECI
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoTrimActivity extends VimojoActivity implements TrimView,
-        RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayer.VideonaPlayerListener {
+        RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayer.VideonaPlayerListener, RadioGroup.OnCheckedChangeListener {
 
     @Inject TrimPreviewPresenter presenter;
 
@@ -56,30 +60,23 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     RangeSeekBar trimmingRangeSeekBar;
     @Bind(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-    @Bind(R.id.player_advance_low_backward_start_trim)
-    ImageButton playerAdvanceLowBackwardStartTrim;
-    @Bind(R.id.player_advance_low_forward_start_trim)
-    ImageButton playerAdvanceLowForwardStartTrim;
-    @Bind(R.id.player_advance_low_backward_end_trim)
-    ImageButton playerAdvanceLowBackwardEndTrim;
-    @Bind(R.id.player_advance_low_forward_end_trim)
-    ImageButton playerAdvanceLowForwardEndTrim;
-    @Bind(R.id.player_advance_medium_backward_start_trim)
-    ImageButton playerAdvanceMediumBackwardStartTrim;
-    @Bind(R.id.player_advance_medium_forward_start_trim)
-    ImageButton playerAdvanceMediumForwardStartTrim;
-    @Bind(R.id.player_advance_medium_backward_end_trim)
-    ImageButton playerAdvanceMediumBackwardEndTrim;
-    @Bind(R.id.player_advance_medium_forward_end_trim)
-    ImageButton playerAdvanceMediumForwardEndTrim;
-    @Bind(R.id.player_advance_high_backward_start_trim)
-    ImageButton playerAdvanceHighBackwardStartTrim;
-    @Bind(R.id.player_advance_high_forward_start_trim)
-    ImageButton playerAdvanceHighForwardStartTrim;
-    @Bind(R.id.player_advance_high_backward_end_trim)
-    ImageButton playerAdvanceHighBackwardEndTrim;
-    @Bind(R.id.player_advance_high_forward_end_trim)
-    ImageButton playerAdvanceHighForwardEndTrim;
+    @Bind(R.id.player_advance_backward_start_trim)
+    ImageButton playerAdvanceBackwardStartTrim;
+    @Bind(R.id.player_advance_forward_start_trim)
+    ImageButton playerAdvanceForwardStartTrim;
+    @Bind(R.id.player_advance_backward_end_trim)
+    ImageButton playerAdvanceBackwardEndTrim;
+    @Bind(R.id.player_advance_forward_end_trim)
+    ImageButton playerAdvanceForwardEndTrim;
+
+    @Bind(R.id.radio_group_trim_advance)
+    RadioGroup radioGroupAdvanceTrim;
+    @Bind(R.id.radio_button_trim_advance_low)
+    RadioButton buttonSelectAdvanceLow;
+    @Bind(R.id.radio_button_trim_advance_medium)
+    RadioButton buttonSelectAdvanceMedium;
+    @Bind(R.id.radio_button_trim_advance_high)
+    RadioButton buttonSelectAdvanceHigh;
 
     int videoIndexOnTrack;
 
@@ -94,7 +91,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     private String VIDEO_POSITION = "video_position";
     private String START_TIME_TAG = "start_time_tag";
     private String STOP_TIME_TAG = "stop_time_tag";
-    private boolean activityStateHasChanged = false;
+    private boolean stateWasRestored = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,33 +100,18 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         ButterKnife.bind(this);
 
         this.getActivityPresentersComponent().inject(this);
-        setupActivityButtons();
         trimmingRangeSeekBar.setOnRangeSeekBarChangeListener(this);
         trimmingRangeSeekBar.setNotifyWhileDragging(true);
         videonaPlayer.setListener(this);
+        radioGroupAdvanceTrim.setOnCheckedChangeListener(this);
 
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
         restoreState(savedInstanceState);
     }
 
-    private void setupActivityButtons() {
-        tintTrimButtons(R.color.button_color_theme_light);
-    }
-
-    private void tintTrimButtons(int button_color) {
-        tintButton(playerAdvanceLowBackwardStartTrim, button_color);
-        tintButton(playerAdvanceLowForwardStartTrim, button_color);
-        tintButton(playerAdvanceLowBackwardEndTrim, button_color);
-        tintButton(playerAdvanceLowForwardEndTrim, button_color);
-        tintButton(playerAdvanceMediumBackwardStartTrim, button_color);
-        tintButton(playerAdvanceMediumForwardStartTrim, button_color);
-        tintButton(playerAdvanceMediumBackwardEndTrim, button_color);
-        tintButton(playerAdvanceMediumForwardEndTrim, button_color);
-        tintButton(playerAdvanceHighBackwardStartTrim, button_color);
-        tintButton(playerAdvanceHighForwardStartTrim, button_color);
-        tintButton(playerAdvanceHighBackwardEndTrim, button_color);
-        tintButton(playerAdvanceHighForwardEndTrim, button_color);
+    private void setupActivityViews() {
+        presenter.setupActivityViews();
     }
 
     @Override
@@ -147,6 +129,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     @Override
     protected void onResume() {
         super.onResume();
+        setupActivityViews();
         videonaPlayer.onShown(this);
         presenter.init(videoIndexOnTrack);
     }
@@ -161,14 +144,14 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             currentPosition = savedInstanceState.getInt(VIDEO_POSITION, 0);
             startTimeMs = savedInstanceState.getInt(START_TIME_TAG);
             finishTimeMs = savedInstanceState.getInt(STOP_TIME_TAG);
-
-            activityStateHasChanged = true;
+            stateWasRestored = true;
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        stateWasRestored = true;
     }
 
     @Override
@@ -210,70 +193,62 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         super.onSaveInstanceState(outState);
     }
 
-    @OnClick(R.id.player_advance_low_backward_start_trim)
+    @OnClick(R.id.player_advance_backward_start_trim)
     public void onClickAdvanceLowBackwardStart(){
-        presenter.advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs);
+        if (buttonSelectAdvanceLow.isChecked()) {
+            presenter.advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs);
+        }
+        if (buttonSelectAdvanceMedium.isChecked()) {
+            presenter.advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs);
+        }
+        if (buttonSelectAdvanceHigh.isChecked()) {
+            presenter.advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs);
+        }
     }
 
-    @OnClick(R.id.player_advance_low_forward_start_trim)
+    @OnClick(R.id.player_advance_forward_start_trim)
     public void onClickAdvanceLowForwardStart(){
-        presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs,
+        if (buttonSelectAdvanceLow.isChecked()) {
+            presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs,
                 finishTimeMs);
+        }
+        if (buttonSelectAdvanceMedium.isChecked()) {
+            presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs,
+                finishTimeMs);
+        }
+        if (buttonSelectAdvanceHigh.isChecked()) {
+            presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs,
+                finishTimeMs);
+        }
     }
 
-    @OnClick(R.id.player_advance_low_backward_end_trim)
+    @OnClick(R.id.player_advance_backward_end_trim)
     public void onClickAdvanceLowBackwardEnd(){
-        presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs,
+        if (buttonSelectAdvanceLow.isChecked()) {
+            presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_LOW, startTimeMs,
                 finishTimeMs);
+        }
+        if (buttonSelectAdvanceMedium.isChecked()) {
+            presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs,
+                finishTimeMs);
+        }
+        if (buttonSelectAdvanceHigh.isChecked()) {
+            presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs,
+                finishTimeMs);
+        }
     }
 
-    @OnClick(R.id.player_advance_low_forward_end_trim)
+    @OnClick(R.id.player_advance_forward_end_trim)
     public void onClickAdvanceLowForwardEnd(){
-        presenter.advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_LOW, finishTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_medium_backward_start_trim)
-    public void onClickAdvanceMediumBackwardStart(){
-        presenter.advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_medium_forward_start_trim)
-    public void onClickAdvanceMediumForwardStart(){
-        presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs,
-                finishTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_medium_backward_end_trim)
-    public void onClickAdvanceMediumBackwardEnd(){
-        presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, startTimeMs,
-                finishTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_medium_forward_end_trim)
-    public void onClickAdvanceMediumForwardEnd(){
-        presenter.advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, finishTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_high_backward_start_trim)
-    public void onClickAdvanceHighBackwardStart(){
-        presenter.advanceBackwardStartTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_high_forward_start_trim)
-    public void onClickAdvanceHighForwardStart(){
-        presenter.advanceForwardStartTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs,
-                finishTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_high_backward_end_trim)
-    public void onClickAdvanceHighBackwardEnd(){
-        presenter.advanceBackwardEndTrimming(ADVANCE_PLAYER_PRECISION_HIGH, startTimeMs,
-                finishTimeMs);
-    }
-
-    @OnClick(R.id.player_advance_high_forward_end_trim)
-    public void onClickAdvanceHighForwardEnd(){
-        presenter.advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_HIGH, finishTimeMs);
+        if (buttonSelectAdvanceLow.isChecked()) {
+            presenter.advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_LOW, finishTimeMs);
+        }
+        if (buttonSelectAdvanceMedium.isChecked()) {
+            presenter.advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_MEDIUM, finishTimeMs);
+        }
+        if (buttonSelectAdvanceHigh.isChecked()) {
+            presenter.advanceForwardEndTrimming(ADVANCE_PLAYER_PRECISION_HIGH, finishTimeMs);
+        }
     }
 
     @OnClick(R.id.button_trim_accept)
@@ -289,10 +264,10 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void showTrimBar(int videoStartTime, int videoStopTime, int videoFileDuration) {
-        if (activityStateHasChanged) {
+        if (stateWasRestored) {
             updateTrimmingTextTags();
             updateTimeVideoPlaying();
-            activityStateHasChanged = false;
+            stateWasRestored = false;
         } else {
             startTimeMs = videoStartTime;
             finishTimeMs = videoStopTime;
@@ -456,5 +431,95 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     @Override
     public void newClipPlayed(int currentClipIndex) {
       videonaPlayer.playPreview();
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+        if (buttonSelectAdvanceLow.isChecked()) {
+            updateRadioButtons();
+            showPlayerAdvanceLow();
+        }
+        if(buttonSelectAdvanceMedium.isChecked()) {
+            updateRadioButtons();
+            showPlayerAdvanceMedium();
+        }
+        if(buttonSelectAdvanceHigh.isChecked()) {
+            updateRadioButtons();
+            showPlayerAdvanceHigh();
+        }
+        presenter.setupActivityViews();
+    }
+
+    private void updateRadioButtons() {
+        presenter.updateRadioButtonsWithTheme(buttonSelectAdvanceLow, buttonSelectAdvanceMedium,
+            buttonSelectAdvanceHigh);
+    }
+
+    @Override
+    public void updateViewToThemeDark() {
+        tintAdvanceButtons(R.color.button_trim_color_theme_dark);
+        tintDurationTag(R.color.textColorDark);
+    }
+
+    @Override
+    public void updateViewToThemeLight() {
+        tintAdvanceButtons(R.color.button_trim_color_theme_light);
+        tintDurationTag(R.color.textColorLight);
+    }
+
+    private void tintAdvanceButtons(int button_color) {
+        tintButton(playerAdvanceBackwardStartTrim, button_color);
+        tintButton(playerAdvanceForwardStartTrim, button_color);
+        tintButton(playerAdvanceBackwardEndTrim, button_color);
+        tintButton(playerAdvanceForwardEndTrim, button_color);
+    }
+
+    private void tintDurationTag(int color) {
+        durationTag.setTextColor(getResources().getColor(color));
+    }
+
+    private void showPlayerAdvanceLow() {
+        playerAdvanceBackwardStartTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_low);
+        playerAdvanceBackwardEndTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_low);
+        playerAdvanceForwardEndTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_low);
+        playerAdvanceForwardStartTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_low);
+    }
+
+    private void showPlayerAdvanceMedium() {
+        playerAdvanceBackwardStartTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_medium);
+        playerAdvanceBackwardEndTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_medium);
+        playerAdvanceForwardEndTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_medium);
+        playerAdvanceForwardStartTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_medium);
+    }
+
+    private void showPlayerAdvanceHigh() {
+        playerAdvanceBackwardStartTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_high);
+        playerAdvanceBackwardEndTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_high);
+        playerAdvanceForwardEndTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_high);
+        playerAdvanceForwardStartTrim.setImageResource
+            (R.drawable.activity_edit_player_advance_high);
+    }
+
+    @Override
+    public void updateRadioButtonToThemeDark(RadioButton radioButton) {
+        radioButton.setTextColor(ContextCompat.getColorStateList(this,
+            R.color.button_trim_color_theme_dark));
+    }
+
+    @Override
+    public void updateRadioButtonToThemeLight(RadioButton radioButton) {
+        radioButton.setTextColor(ContextCompat.getColorStateList(this,
+            R.color.button_trim_color_theme_light));
     }
 }

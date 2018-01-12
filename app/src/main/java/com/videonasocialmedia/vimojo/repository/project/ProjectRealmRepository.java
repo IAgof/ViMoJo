@@ -100,7 +100,7 @@ public class ProjectRealmRepository implements ProjectRepository {
     RealmResults<RealmProject> allRealmProjects = realm.where(RealmProject.class).findAll()
         .sort("lastModification", Sort.DESCENDING);
     RealmProject currentRealmProject = null;
-    if(allRealmProjects.size() > 0) {
+    if (allRealmProjects.size() > 0) {
       currentRealmProject = allRealmProjects.first();
     }
 
