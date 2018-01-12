@@ -22,7 +22,8 @@
     <color name="textColorDark">@color/colorWhite</color>
     <color name="textColorLight">@color/colorSecondary</color>
 
-    <color name="button">@color/colorSecondary</color>
+    <!--button-->
+    <color name="button_theme_light">@color/colorSecondary</color>
     <color name="button_theme_dark">@color/colorWhite</color>
     <color name="button_pressed">@color/colorPrimary</color>
     <color name="button_selected">@color/colorPrimary</color>
