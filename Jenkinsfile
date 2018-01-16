@@ -53,7 +53,7 @@ node {
 stage 'Stage Archive'
 node {
   //tell Jenkins to archive the apks
-  step([$class: 'ArtifactArchiver', artifacts: 'app/build/outputs/*/*/*.apk', fingerprint: true])
+  step([$class: 'ArtifactArchiver', artifacts: 'app/build/outputs/apk/*/*/*.apk', fingerprint: true])
 }
 
 stage 'Stage Upload To Fabric'
