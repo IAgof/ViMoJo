@@ -154,7 +154,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         checkUserAccountData();
         if (BuildConfig.FEATURE_FTP) {
             checkUserFTP1Data();
-            checkUserFTP2Data();
+            // TODO:(alvaro.martinez) 12/01/18 Now we only use one FTP, not two. Implement feature, I want to add more FTPs
+            //checkUserFTP2Data();
         } else {
             // Visibility FTP gone
             preferencesView.hideFtpsViews();
