@@ -1,27 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-     <PreferenceCategory
+<!-- Use this category for login, register
+    <PreferenceCategory
         android:title="@string/titleUserSection">
-        <EditTextPreference
-            android:key="name"
-            android:title="@string/name"
-            android:dialogTitle="@string/enterName">
-        </EditTextPreference>
-
-        <EditTextPreference
-            android:key="username"
-            android:title="@string/username"
-            android:dialogTitle="@string/enterUsername">
-        </EditTextPreference>
-
-        <EditTextPreference
-            android:key="email"
-            android:title="@string/emailPreference"
-            android:inputType="textEmailAddress"
-            android:dialogTitle="@string/enterEmail">
-        </EditTextPreference>
-    </PreferenceCategory>
+    </PreferenceCategory> -->
 
     <PreferenceCategory
         android:title="@string/title_fade_transition"
