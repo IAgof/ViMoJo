@@ -263,14 +263,9 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     Snackbar.make(email, stringId ,Snackbar.LENGTH_LONG).show();
   }
 
-  @OnClick(R.id.user_profile_username)
-  public void showDialogUpdateUsername() {
-    showDialogToUpdatePreference(username.getText().toString(), username,
-        getString(R.string.enterUsername));
-  }
-
   @OnClick(R.id.user_profile_email)
   public void showDialogUpdateEmail() {
+
     showDialogToUpdatePreference(email.getText().toString(), email,
         getString(R.string.enterEmail));
   }

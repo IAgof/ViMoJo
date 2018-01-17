@@ -52,6 +52,7 @@ public class UserProfilePresenter {
   }
 
   public void getEmailFromPreferences() {
+    // TODO:(alvaro.martinez) 17/01/18 Get email from user register
     String emailPreference=sharedPreferences.getString(ConfigPreferences.EMAIL,null);
     if(emailPreference!=null && !emailPreference.isEmpty()) {
       userProfileView.showPreferenceEmail(emailPreference);
