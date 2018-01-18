@@ -104,10 +104,12 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         trimmingRangeSeekBar.setNotifyWhileDragging(true);
         videonaPlayer.setListener(this);
         radioGroupAdvanceTrim.setOnCheckedChangeListener(this);
+        buttonSelectAdvanceMedium.setChecked(true);
 
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
         restoreState(savedInstanceState);
+        setupActivityViews();
     }
 
     private void setupActivityViews() {
@@ -129,7 +131,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     @Override
     protected void onResume() {
         super.onResume();
-        setupActivityViews();
         videonaPlayer.onShown(this);
         presenter.init(videoIndexOnTrack);
     }
@@ -436,18 +437,15 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     @Override
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         if (buttonSelectAdvanceLow.isChecked()) {
-            updateRadioButtons();
             showPlayerAdvanceLow();
         }
         if(buttonSelectAdvanceMedium.isChecked()) {
-            updateRadioButtons();
             showPlayerAdvanceMedium();
         }
         if(buttonSelectAdvanceHigh.isChecked()) {
-            updateRadioButtons();
             showPlayerAdvanceHigh();
         }
-        presenter.setupActivityViews();
+        updateRadioButtons();
     }
 
     private void updateRadioButtons() {
