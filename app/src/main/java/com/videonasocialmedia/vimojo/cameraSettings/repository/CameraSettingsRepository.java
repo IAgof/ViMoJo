@@ -30,4 +30,6 @@ public interface CameraSettingsRepository extends Repository<CameraSettings> {
   void createCameraSetting(CameraSettings defaultCameraSettings);
 
   void setInterfaceSelected(CameraSettings cameraSettings, String interfaceSelected);
+
+  void setCameraIdSelected(CameraSettings cameraSettings, int cameraIdSelected);
 }

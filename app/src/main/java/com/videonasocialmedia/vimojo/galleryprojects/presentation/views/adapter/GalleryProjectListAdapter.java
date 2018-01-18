@@ -60,6 +60,7 @@ public class GalleryProjectListAdapter extends
     holder.dateProject.setText(DateUtils.toFormatDateDayMonthYear(project.getLastModification()));
     holder.durationProject.append(" " +
         TimeUtils.toFormattedTimeWithMinutesAndSeconds(project.getDuration()));
+    holder.numClipsProject.append((" " + project.numberOfClips()));
     holder.titleProject.setText(project.getTitle());
 
     double projectSizeMb = project.getProjectSizeMbVideoToExport();
@@ -106,6 +107,8 @@ public class GalleryProjectListAdapter extends
     TextView dateProject;
     @BindView(R.id.project_duration)
     TextView durationProject;
+    @BindView(R.id.project_num_clips)
+    TextView numClipsProject;
     @BindView(R.id.project_image)
     ImageView imagenProject;
     @BindView(R.id.project_title)

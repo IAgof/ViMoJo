@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
+import android.os.Build;
 import android.util.Log;
 import android.util.Range;
 import android.util.Size;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720;
 import static com.videonasocialmedia.vimojo.utils.Constants.BACK_CAMERA_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_24_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID;
@@ -32,6 +34,7 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
 import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 
 /**
@@ -62,10 +65,10 @@ public class InitAppPresenter {
   }
 
   public boolean isWatermarkActivated() {
-    if(BuildConfig.FEATURE_FORCE_WATERMARK) {
+    if (BuildConfig.FEATURE_FORCE_WATERMARK) {
       return true;
     }
-    return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
+    return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
   }
 
   public void checkCamera2FrameRateAndResolutionSupported() {
@@ -120,6 +123,11 @@ public class InitAppPresenter {
           resolutionFront2160pSupported = true;
         }
       }
+    }
+
+    if(!resolutionBack1080pSupported){
+      defaultResolution = CAMERA_SETTING_RESOLUTION_720;
+      //resolutionBack1080pSupported = true;
     }
 
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, resolutionBack720pSupported);

@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.trim.presentation.mvp.views;
 
+import android.widget.RadioButton;
+
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import java.util.List;
@@ -34,4 +36,12 @@ public interface TrimView {
     void updateFinishTrimmingRangeSeekBar(float maxValue);
 
     void updateProject();
+
+    void updateViewToThemeDark();
+
+    void updateViewToThemeLight();
+
+    void updateRadioButtonToThemeDark(RadioButton buttonNoSelected);
+
+    void updateRadioButtonToThemeLight(RadioButton buttonNoSelected);
 }

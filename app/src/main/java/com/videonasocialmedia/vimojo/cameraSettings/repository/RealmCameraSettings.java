@@ -10,6 +10,7 @@ import io.realm.annotations.Required;
 
 public class RealmCameraSettings extends RealmObject {
 
+
   @PrimaryKey
   @Required
   public String cameraSettingsId = "RealmCameraSettings";
@@ -34,6 +35,8 @@ public class RealmCameraSettings extends RealmObject {
   public boolean frameRate25FpsSupported;
   public boolean frameRate30FpsSupported;
 
+  public int cameraIdSelected;
+
   public RealmCameraSettings() {
 
   }
@@ -43,7 +46,8 @@ public class RealmCameraSettings extends RealmObject {
                              boolean resolutionBack1080pSupported, boolean resolutionBack2160pSupported,
                              boolean resolutionFront720pSupported, boolean resolutionFront1080pSupported,
                              boolean resolutionFront2160pSupported, boolean frameRate24FpsSupported,
-                             boolean frameRate25FpsSupported, boolean frameRate30FpsSupported) {
+                             boolean frameRate25FpsSupported, boolean frameRate30FpsSupported,
+                             int cameraIdSelected) {
 
     this.cameraSettingsId = cameraSettingsId;
     this.interfaceSelected = interfaceSelected;
@@ -59,5 +63,6 @@ public class RealmCameraSettings extends RealmObject {
     this.frameRate24FpsSupported = frameRate24FpsSupported;
     this.frameRate25FpsSupported = frameRate25FpsSupported;
     this.frameRate30FpsSupported = frameRate30FpsSupported;
+    this.cameraIdSelected = cameraIdSelected;
   }
 }

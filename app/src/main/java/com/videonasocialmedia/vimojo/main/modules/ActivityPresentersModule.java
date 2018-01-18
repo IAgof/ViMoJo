@@ -4,7 +4,7 @@ import android.content.SharedPreferences;
 
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRealmRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
@@ -53,7 +53,7 @@ import com.videonasocialmedia.vimojo.repository.project.ProfileRepositoryFromCam
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsListUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsMapperSupportedListUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.presenters.CameraSettingsPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.source.VimojoLicensesProvider;
@@ -105,6 +105,7 @@ public class ActivityPresentersModule {
  // private GLCameraView cameraView = null;
   private boolean externalIntent;
   private String directorySaveVideos;
+  private long freeStorage;
 
   public ActivityPresentersModule(VimojoActivity vimojoActivity) {
     this.activity = vimojoActivity;
@@ -119,10 +120,11 @@ public class ActivityPresentersModule {
 
   public ActivityPresentersModule(RecordCamera2Activity activity,
                                   String directorySaveVideos,
-                                  AutoFitTextureView textureView) {
+                                  AutoFitTextureView textureView, long freeStorage) {
     this.activity = activity;
     this.textureView = textureView;
     this.directorySaveVideos = directorySaveVideos;
+    this.freeStorage = freeStorage;
   }
 
   @Provides @PerActivity
@@ -208,14 +210,14 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   CameraSettingsPresenter provideCameraSettingPresenter(UserEventTracker userEventTracker,
-                                                        GetCameraSettingsListUseCase
-                                                            getCameraSettingsListUseCase,
+                                                        GetCameraSettingsMapperSupportedListUseCase
+                                                            getCameraSettingsMapperSupportedListUseCase,
                                                         CameraSettingsRepository
                                                                 cameraSettingsRepository,
                                                         ProjectRepository
                                                           projectRepository) {
     return new CameraSettingsPresenter((CameraSettingsView) activity, userEventTracker,
-        getCameraSettingsListUseCase, cameraSettingsRepository, projectRepository);
+        getCameraSettingsMapperSupportedListUseCase, cameraSettingsRepository, projectRepository);
   }
 
   @Provides @PerActivity
@@ -280,11 +282,12 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  TrimPreviewPresenter provideTrimPresenter(UserEventTracker userEventTracker,
+  TrimPreviewPresenter provideTrimPresenter(SharedPreferences sharedPreferences,
+                                            UserEventTracker userEventTracker,
                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                     ModifyVideoDurationUseCase modifyVideoDurationUseCase) {
-    return new TrimPreviewPresenter((VideoTrimActivity) activity, userEventTracker,
-        getMediaListFromProjectUseCase, modifyVideoDurationUseCase);
+    return new TrimPreviewPresenter((VideoTrimActivity) activity, sharedPreferences,
+        userEventTracker, getMediaListFromProjectUseCase, modifyVideoDurationUseCase);
   }
 
   @Provides @PerActivity
@@ -395,9 +398,15 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  GetCameraSettingsListUseCase provideCameraSettingUseCase(CameraSettingsRepository
+  GetCameraSettingsMapperSupportedListUseCase provideCameraSettingsListUseCase(CameraSettingsRepository
                                                                    cameraSettingsRepository) {
-    return new GetCameraSettingsListUseCase(activity, cameraSettingsRepository);
+    return new GetCameraSettingsMapperSupportedListUseCase(activity, cameraSettingsRepository);
+  }
+
+  @Provides
+  GetCameraSettingsUseCase provideCameraSettingsUseCase(CameraSettingsRepository
+                                                        cameraSettingsRepository) {
+    return new GetCameraSettingsUseCase(cameraSettingsRepository);
   }
 
   @Provides GetMediaListFromProjectUseCase provideMediaListRetriever() {
@@ -500,11 +509,12 @@ public class ActivityPresentersModule {
 
   @Provides
   Camera2Wrapper provideCamera2wrapper(
-          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase) {
-    return new Camera2Wrapper(activity, RecordCamera2Presenter.DEFAULT_CAMERA_ID, textureView,
+          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+          GetCameraSettingsUseCase getCameraSettingsUseCase) {
+    return new Camera2Wrapper(activity, getCameraSettingsUseCase.getCameraIdSelected(), textureView,
             directorySaveVideos,
             getVideoFormatFromCurrentProjectUseCase
-                    .getVideoRecordedFormatFromCurrentProjectUseCase());
+                    .getVideoRecordedFormatFromCurrentProjectUseCase(), freeStorage);
   }
 
   @Provides VimojoLicensesProvider provideLicenseProvider() {
