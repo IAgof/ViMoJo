@@ -9,11 +9,11 @@ import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -44,6 +44,7 @@ public class UserProfilePresenterTest {
   @Mock SharedPreferences.Editor mockedEditor;
   @Mock ObtainLocalVideosUseCase mockedObtainLocalVideosUseCase;
   @Mock OnVideosRetrieved mockedOnVideosRetrieved;
+  @Mock UserEventTracker mockedUserEventTracker;
 
   @Before
   public void injectMocks() {
@@ -91,10 +92,12 @@ public class UserProfilePresenterTest {
     presenter = Mockito.spy(presenter);
     doReturn(true).when(presenter).isValidEmail(email);
     when(mockedSharedPreferences.edit()).thenReturn(mockedEditor);
+    when(mockedSharedPreferences.getString(ConfigPreferences.EMAIL, null)).thenReturn(email);
 
     presenter.updateUserEmailPreference(email);
 
     verify(mockedUserProfileView).showPreferenceEmail(email);
+    verify(mockedUserEventTracker).trackUpdateUserEmail(email);
   }
 
   @Test
@@ -102,39 +105,23 @@ public class UserProfilePresenterTest {
     UserProfilePresenter presenter = getUserProfilePresenter();
     String userName = "John Doe";
     when(mockedSharedPreferences.edit()).thenReturn(mockedEditor);
+    when(mockedSharedPreferences.getString(ConfigPreferences.USERNAME, null)).thenReturn(userName);
 
     presenter.updateUserNamePreference(userName);
 
     verify(mockedUserProfileView).showPreferenceUserName(userName);
+    verify(mockedUserEventTracker).trackUpdateUserName(userName);
   }
 
   @Test
-  public void getInfoVideosRecordedEditedCallsShowLoading() {
+  public void getInfoVideosRecordedEditedSharedCallsShowLoading() {
     UserProfilePresenter presenter = getUserProfilePresenter();
 
-    presenter.getInfoVideosRecordedEdited();
+    presenter.getInfoVideosRecordedEditedShared();
 
     verify(mockedUserProfileView).showLoading();
-  }
-
-  @Test
-  public void obtainLocalVideosUseCaseObtainRawVideosShowVideosRecorded() {
-    UserProfilePresenter presenter = getUserProfilePresenter();
-    final List<Video> videoList = new ArrayList<>();
-    Video video = new Video("mediaPath", 0.5f);
-    videoList.add(video);
-    doAnswer(new Answer() {
-      @Override
-      public Object answer(InvocationOnMock invocation) throws Throwable {
-        ((OnVideosRetrieved)invocation.getArguments()[0]).onVideosRetrieved(videoList);
-        return null;
-      }
-    }).when(mockedObtainLocalVideosUseCase).obtainRawVideos(any(OnVideosRetrieved.class));
-
-    presenter.getInfoVideosRecordedEdited();
-
     verify(mockedUserProfileView).showVideosRecorded(anyString());
-
+    verify(mockedUserProfileView).showVideosShared(anyString());
   }
 
   @Test
@@ -151,14 +138,15 @@ public class UserProfilePresenterTest {
       }
     }).when(mockedObtainLocalVideosUseCase).obtainEditedVideos(any(OnVideosRetrieved.class));
 
-    presenter.getInfoVideosRecordedEdited();
+    presenter.getInfoVideosRecordedEditedShared();
 
     verify(mockedUserProfileView).showVideosEdited(anyString());
+    verify(mockedUserProfileView).hideLoading();
   }
 
   @NonNull
   private UserProfilePresenter getUserProfilePresenter() {
-    return new UserProfilePresenter(mockedUserProfileView, mockedContext, mockedSharedPreferences,
-        mockedObtainLocalVideosUseCase);
+    return new UserProfilePresenter(mockedUserProfileView, mockedUserEventTracker,
+        mockedSharedPreferences, mockedObtainLocalVideosUseCase);
   }
 }

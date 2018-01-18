@@ -51,7 +51,7 @@
                     android:id="@+id/user_profile_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/username"
+                    android:hint="@string/hint_user_name"
                     android:gravity="center"
                     android:textSize="24sp"
                     android:textStyle="bold"
@@ -86,7 +86,7 @@
             android:textCursorDrawable="@null"
             android:gravity="center_vertical"
             android:textSize="16sp"
-            android:hint="@string/emailPreference"
+            android:hint="@string/hint_user_email"
             android:drawableLeft="@drawable/editor_activity_drawer_ic_mail"
             android:drawablePadding="8dp"
             />

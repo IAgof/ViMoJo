@@ -21,7 +21,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -60,10 +59,11 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
   TextView numberClipsRecorded;
   @Bind(R.id.number_projects_edited)
   TextView numberProjectsEdited;
+  @Bind(R.id.number_projects_shared)
+  TextView numberProjectsShared;
   private ProgressDialog progressDialog;
   String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_PROFILE_THUMB;
   private int REQUEST_ICON_USER_PROFILE = 200;
-  protected MixpanelAPI mixpanel;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +73,6 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     getActivityPresentersComponent().inject(this);
     setupToolbar();
     createProgressDialog();
-    mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANEL_TOKEN);
   }
 
   private void createProgressDialog() {
@@ -168,7 +167,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
   protected void onResume() {
     super.onResume();
     setUpAndCheckUserThumb();
-    presenter.getInfoVideosRecordedEdited();
+    presenter.getInfoVideosRecordedEditedShared();
     presenter.getUserNameFromPreferences();
     presenter.getEmailFromPreferences();
   }
@@ -250,12 +249,13 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
   }
 
   @Override
-  public void setUserPropertyToMixpanel(String property, String value) {
-    mixpanel.getPeople().identify(mixpanel.getDistinctId());
-    mixpanel.getPeople().set(property,value);
-    if (property == "account_email") {
-      mixpanel.getPeople().setOnce("$email", value);
-    }
+  public void showVideosShared(final String videosShared) {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        numberProjectsShared.setText(videosShared);
+      }
+    });
   }
 
   @Override
@@ -266,13 +266,25 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
   @OnClick(R.id.user_profile_username)
   public void showDialogUpdateUsername() {
     showDialogToUpdatePreference(username.getText().toString(), username,
-        getString(R.string.enterUsername));
+        getString(R.string.dialog_title_update_user_name), getString(R.string.hint_user_name));
   }
 
-  private void showDialogToUpdatePreference(String text, final TextView textView, String titleDialog){
+  @OnClick(R.id.user_profile_email)
+  public void showDialogUpdaterEmail() {
+    // TODO:(alvaro.martinez) 18/01/18 Delete this option after adding login/register. Not allow change email.
+    if(email.getText().toString().equals("")) {
+      showDialogToUpdatePreference(email.getText().toString(), email,
+          getString(R.string.dialog_title_update_user_email), getString(R.string.hint_user_email));
+    }
+  }
+
+  private void showDialogToUpdatePreference(String text, final TextView textView,
+                                            String titleDialog, String hintText){
     View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
     editTextDialog = (EditText) dialogView.findViewById(R.id.text_dialog);
     editTextDialog.setText(text);
+    editTextDialog.setHint(hintText);
+    editTextDialog.setSelectAllOnFocus(true);
 
     final DialogInterface.OnClickListener dialogClickListener =
         new DialogInterface.OnClickListener() {
@@ -282,7 +294,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
             switch (which) {
               case DialogInterface.BUTTON_POSITIVE: {
                 String textPreference = editTextDialog.getText().toString();
-                if (textPreference.compareTo("") == 0)
+                if (textPreference.equals(""))
                   return;
                 if(textView.equals(username)) {
                   presenter.updateUserNamePreference(textPreference);

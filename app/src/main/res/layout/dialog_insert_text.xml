@@ -11,9 +11,7 @@
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginBottom="20dp"
-        android:inputType="textCapSentences" >
-
-        <requestFocus />
+        android:inputType="textCapSentences">
     </EditText>
 
 </LinearLayout>

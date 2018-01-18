@@ -187,14 +187,7 @@
     <!-- User info -->
     <string name="settingsTitle">Ajustes</string>
     <string name="titleUserSection">Mi cuenta</string>
-    <string name="name">Nombre</string>
-    <string name="enterName">Introduce tu nombre</string>
-    <string name="removeName">Borrar nombre</string>
-    <string name="username">Nombre de usuario</string>
-    <string name="enterUsername">Introduce un nombre de usuario</string>
-    <string name="removeUsername">Borrar nombre de usuario</string>
-    <string name="emailPreference">Email</string>
-    <string name="save">Guardar</string>
+
 
     <!--FTP Settings -->
     <string name="title_FTP1_Section">FTP</string>
@@ -302,8 +295,13 @@
     <!-- UserProfileActivity -->
     <string name="title_number_projects_edited">Proyectos editados</string>
     <string name="title_number_clips_recorded">Vídeos grabados</string>
+    <string name="title_number_projects_shared">Proyectos compartidos</string>
     <string name="alert_dialog_title_user_profile">Usuario</string>
     <string name="dialog_getting_user_profile">Actualizando datos de usuario</string>
+    <string name="hint_user_name">Introduzca nombre de usuario</string>
+    <string name="dialog_title_update_user_name">Nombre de usuario</string>
+    <string name="hint_user_email">Introduzca correo electrónico</string>
+    <string name="dialog_title_update_user_email">Nombre de usuario</string>
 
     <!-- About Activity -->
 

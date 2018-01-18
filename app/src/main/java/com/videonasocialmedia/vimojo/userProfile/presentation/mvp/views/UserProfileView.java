@@ -15,7 +15,7 @@ public interface UserProfileView {
 
   void showVideosEdited(String videosEdited);
 
-  void setUserPropertyToMixpanel(String property, String value);
+  void showVideosShared(String videosShared);
 
   void showError(int stringId);
 }
