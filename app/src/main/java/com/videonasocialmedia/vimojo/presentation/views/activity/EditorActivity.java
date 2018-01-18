@@ -16,7 +16,10 @@ import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -54,6 +57,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   UserEventTracker userEventTracker;
   @Inject
   EditorPresenter editorPresenter;
+  @Nullable
+  @Bind(R.id.text_dialog)
+  EditText editTextDialog;
 
   private AlertDialog alertDialog;
 
@@ -117,6 +123,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     imageProjectThumb = (CircleImageView) navigationView.getHeaderView(0)
             .findViewById(R.id.image_drawer_thumb_project);
     projectName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.project_name);
+    projectName.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        showDialogUpdateCurrentProjectTitle();
+      }
+    });
     projectDate = (TextView) navigationView.getHeaderView(0).findViewById(R.id.project_date);
     editorPresenter.updateHeaderViewCurrentProject();
   }
@@ -428,6 +440,54 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   private void updateCurrentProjectDefaultThumb() {
     imageProjectThumb.setImageResource(R.drawable.activity_gallery_project_no_preview);
+  }
+
+  private void showDialogUpdateCurrentProjectTitle() {
+    View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
+    editTextDialog = (EditText) dialogView.findViewById(R.id.text_dialog);
+    editTextDialog.setText(projectName.getText());
+    editTextDialog.setSelectAllOnFocus(true);
+
+    final DialogInterface.OnClickListener dialogClickListener =
+        new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            hideKeyboard(editTextDialog);
+            switch (which) {
+              case DialogInterface.BUTTON_POSITIVE: {
+                String textPreference = editTextDialog.getText().toString();
+                if (textPreference.equals(projectName.getText()))
+                  return;
+                editorPresenter.updateTitleCurrentProject(textPreference);
+                projectName.setText(textPreference);
+                              }
+              case DialogInterface.BUTTON_NEGATIVE:
+                break;
+            }
+          }
+        };
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    AlertDialog alertDialog = builder.setCancelable(false)
+        .setTitle(getString(R.string.dialog_title_update_project_title))
+        .setView(dialogView)
+        .setPositiveButton(R.string.positiveButton, dialogClickListener)
+        .setNegativeButton(R.string.negativeButton, dialogClickListener)
+        .setCancelable(false).show();
+
+    editTextDialog.requestFocus();
+    showKeyboard();
+  }
+
+  private void showKeyboard() {
+    InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+  }
+
+  private void hideKeyboard(View v) {
+    InputMethodManager keyboard =
+        (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+    keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
   }
 
 }

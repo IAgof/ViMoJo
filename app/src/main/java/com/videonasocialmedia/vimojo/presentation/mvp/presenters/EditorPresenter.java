@@ -267,4 +267,8 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     String date = DateUtils.toFormatDateDayMonthYear(currentProject.getLastModification());
     editorActivityView.setHeaderViewCurrentProject(pathThumbProject, name, date);
   }
+
+  public void updateTitleCurrentProject(String textTitle) {
+    projectRepository.setTitle(currentProject, textTitle);
+  }
 }

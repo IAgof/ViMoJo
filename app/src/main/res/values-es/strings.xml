@@ -51,6 +51,7 @@
     <string name="dialog_editor_user_thumb_take_photo">Cámara</string>
     <string name="dialog_editor_user_thumb_pick_photo">Galería</string>
     <string name="drawer_dark_theme">Tema oscuro</string>
+    <string name="dialog_title_update_project_title">Cambiar título proyecto</string>
 
 
     <!-- Edit Activity -->
