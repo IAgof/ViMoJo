@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -61,6 +62,8 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
   TextView numberProjectsEdited;
   @Bind(R.id.number_projects_shared)
   TextView numberProjectsShared;
+  @Bind(R.id.backButton)
+  ImageButton backButton;
   private ProgressDialog progressDialog;
   String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_PROFILE_THUMB;
   private int REQUEST_ICON_USER_PROFILE = 200;
@@ -71,7 +74,6 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     setContentView(R.layout.activity_user_profile);
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
-    setupToolbar();
     createProgressDialog();
   }
 
@@ -85,14 +87,6 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     progressDialog.setProgressPercentFormat(null);
     progressDialog.setCanceledOnTouchOutside(false);
     progressDialog.setCancelable(false);
-  }
-
-  private void setupToolbar() {
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
-    getSupportActionBar().setDisplayShowTitleEnabled(false);
-    ActionBar ab = getSupportActionBar();
-    ab.setDisplayHomeAsUpEnabled(true);
   }
 
   private void setUpAndCheckUserThumb() {
@@ -261,6 +255,11 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
   @Override
   public void showError(int stringId) {
     Snackbar.make(email, stringId ,Snackbar.LENGTH_LONG).show();
+  }
+
+  @OnClick(R.id.backButton)
+  public void onBackButtonClicked(){
+    onBackPressed();
   }
 
   @OnClick(R.id.user_profile_username)
