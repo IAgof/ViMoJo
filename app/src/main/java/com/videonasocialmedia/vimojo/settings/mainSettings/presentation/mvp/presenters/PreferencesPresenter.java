@@ -60,7 +60,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     private Preference transitionAudioPref;
     private Preference watermarkPref;
     private Preference themeApp;
-    private Preference emailPref;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private boolean isPreferenceAvailable = false;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
@@ -78,14 +77,13 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     /**
      * Constructor
      *  @param preferencesView
-     * @param emailPref
      * @param context
      * @param sharedPreferences
      */
     public PreferencesPresenter(PreferencesView preferencesView,
             Context context, SharedPreferences sharedPreferences,
             Preference transitionVideoPref, Preference themeApp,
-            Preference transitionAudioPref, Preference watermarkPref, Preference emailPref,
+            Preference transitionAudioPref, Preference watermarkPref,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
             UpdateAudioTransitionPreferenceToProjectUseCase
@@ -105,7 +103,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         this.transitionVideoPref = transitionVideoPref;
         this.transitionAudioPref = transitionAudioPref;
         this.watermarkPref = watermarkPref;
-        this.emailPref = emailPref;
         this.themeApp = themeApp;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase =
@@ -135,23 +132,8 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     /**
      * Checks the available preferences on the device
      */
-    public void checkMailValid() {
-        emailPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (android.util.Patterns.EMAIL_ADDRESS
-                        .matcher((CharSequence) newValue).matches()) {
-                    return true;
-                } else {
-                    preferencesView.showError(R.string.invalid_email);
-                    return false;
-                }
-            }
-        });
-    }
 
     public void checkAvailablePreferences() {
-        checkUserAccountData();
         if (BuildConfig.FEATURE_FTP) {
             checkUserFTP1Data();
             // TODO:(alvaro.martinez) 12/01/18 Now we only use one FTP, not two. Implement feature, I want to add more FTPs
@@ -214,36 +196,6 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         String data = sharedPreferences.getString(key, null);
         if (data != null && !data.isEmpty()) {
             preferencesView.setSummary(key, data);
-        }
-    }
-
-    /**
-     * Checks user preferences data
-     */
-    private void checkUserAccountData() {
-        checkUserAccountPreference(ConfigPreferences.NAME);
-        checkUserAccountPreference(ConfigPreferences.USERNAME);
-        checkUserAccountPreference(ConfigPreferences.EMAIL);
-    }
-
-    private void checkUserAccountPreference(String key) {
-        String data = sharedPreferences.getString(key, null);
-        if (data != null && !data.isEmpty()) {
-            preferencesView.setSummary(key, data);
-            sendPropertyToMixpanel(key, data);
-        }
-    }
-
-
-    private void sendPropertyToMixpanel(String key, String data) {
-        if (key.equals(ConfigPreferences.NAME)) {
-            preferencesView.setUserPropertyToMixpanel("$first_name", data);
-        }
-        if (key.equals(ConfigPreferences.USERNAME)) {
-            preferencesView.setUserPropertyToMixpanel("$username", data);
-        }
-        if (key.equals(ConfigPreferences.EMAIL)) {
-            preferencesView.setUserPropertyToMixpanel("$account_email", data);
         }
     }
 

@@ -1,11 +1,11 @@
 <vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
     android:height="24dp"
     android:viewportHeight="41.76"
     android:viewportWidth="41.76"
-    android:width="24dp"
     android:tintMode="multiply"
-    android:tint="@color/button_color_theme_light"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:tint="@color/button_color_theme_light">
     <path
         android:fillColor="@color/colorWhite"
         android:pathData="M26.36,33.46H2.9C1.3,33.46 0,32.16 0,30.56V11.19C0,9.6 1.3,8.3 2.9,8.3h23.47c1.6,0 2.9,1.3 2.9,2.9v19.37C29.26,32.16 27.96,33.46 26.36,33.46zM2.9,9.3C1.85,9.3 1,10.15 1,11.19v19.37c0,1.04 0.85,1.9 1.9,1.9h23.47c1.04,0 1.9,-0.85 1.9,-1.9V11.19c0,-1.04 -0.85,-1.9 -1.9,-1.9H2.9z"/>

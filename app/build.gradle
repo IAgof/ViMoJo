@@ -63,8 +63,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 88 // 20180112
-            versionName "0.7.8" // 20180112
+            versionCode 89 // 20180119
+            versionName "0.8.0" // 20180119
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "api_base_url", "https://"
@@ -103,8 +103,8 @@ android {
         }*/
         rtve {
             applicationId "com.videonasocialmedia.vimojo.rtve"
-            versionCode 66 // 20180112
-            versionName "0.7.8.fRtve" // 20180112
+            versionCode 67 // 20180119
+            versionName "0.8.0.fRtve" // 20180119
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo Rtve"
             resValue "string", "api_base_url", "https://"
@@ -143,8 +143,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 39 // 20180112
-            versionName "0.7.8.fThomsonFoundation" // 20180112
+            versionCode 40 // 20180119
+            versionName "0.8.0.fThomsonFoundation" // 20180119
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "api_base_url", "https://"
@@ -184,8 +184,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 6 // 20180112
-            versionName "0.7.8.fMarketForNews" // 20180112
+            versionCode 7 // 20180119
+            versionName "0.8.0.fMarketForNews" // 20180119
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "api_base_url", "https://"

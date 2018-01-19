@@ -52,7 +52,6 @@ public class SettingsFragment extends PreferenceFragment implements
     //protected PreferenceCategory ftp2Pref;
     protected PreferenceCategory transitionCategory;
     protected PreferenceCategory watermarkPrefCategory;
-    protected Preference emailPref;
     protected SwitchPreference transitionsVideoPref;
     protected SwitchPreference transitionsAudioPref;
     protected SwitchPreference watermarkSwitchPref;
@@ -81,7 +80,7 @@ public class SettingsFragment extends PreferenceFragment implements
         return DaggerFragmentPresentersComponent.builder()
             .fragmentPresentersModule(new FragmentPresentersModule(this, context, sharedPreferences,
                 transitionsVideoPref, transitionsAudioPref, watermarkSwitchPref,
-                    themeappSwitchPref, emailPref, this.getActivity()))
+                    themeappSwitchPref, this.getActivity()))
             .systemComponent(((VimojoApplication)getActivity().getApplication()).getSystemComponent())
             .build();
     }
@@ -96,7 +95,6 @@ public class SettingsFragment extends PreferenceFragment implements
         editor = sharedPreferences.edit();
 
         setupWatermark();
-        setupMailValid();
         setupAboutUs();
         setupPrivacyPolicy();
         setupTermOfService();
@@ -104,10 +102,6 @@ public class SettingsFragment extends PreferenceFragment implements
         setupLegalNotice();
         setupTransitions();
         setupThemeApp();
-    }
-
-    private void setupMailValid() {
-        emailPref=findPreference(ConfigPreferences.EMAIL);
     }
 
     private void setupTransitions() {
@@ -162,7 +156,6 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onResume() {
         super.onResume();
         preferencesPresenter.checkAvailablePreferences();
-        preferencesPresenter.checkMailValid();
         preferencesPresenter.checkVimojoStore(getActivity());
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferencesPresenter);
@@ -242,15 +235,6 @@ public class SettingsFragment extends PreferenceFragment implements
     @Override
     public void showError(int message) {
         Snackbar.make(getView(), message ,Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void setUserPropertyToMixpanel(String property, String value) {
-        mixpanel.getPeople().identify(mixpanel.getDistinctId());
-        mixpanel.getPeople().set(property,value);
-        if (property == "account_email") {
-            mixpanel.getPeople().setOnce("$email", value);
-        }
     }
 
     @Override

@@ -20,6 +20,9 @@ public class UserEventTracker {
     private final String TAG = getClass().getSimpleName();
     private static UserEventTracker userEventTrackerInstance;
     public MixpanelAPI mixpanel;
+    public static final String MIXPANEL_EMAIL_ID = "$email";
+    public static final String MIXPANEL_ACCOUNT_EMAIL_ID = "$account_email";
+    public static final String MIXPANEL_USERNAME_ID = "$username";
 
     protected UserEventTracker(MixpanelAPI mixpanelAPI) {
         this.mixpanel = mixpanelAPI;
@@ -392,7 +395,19 @@ public class UserEventTracker {
         }
     }
 
-    public static class Event {
+    public void trackUpdateUserName(String userName) {
+        mixpanel.getPeople().identify(mixpanel.getDistinctId());
+        mixpanel.getPeople().set(MIXPANEL_USERNAME_ID, userName);
+    }
+
+    public void trackUpdateUserEmail(String email) {
+        mixpanel.getPeople().identify(mixpanel.getDistinctId());
+        mixpanel.getPeople().set(MIXPANEL_ACCOUNT_EMAIL_ID, email);
+        mixpanel.getPeople().setOnce(MIXPANEL_EMAIL_ID, email);
+
+    }
+
+  public static class Event {
         private String name;
         private JSONObject properties;
 

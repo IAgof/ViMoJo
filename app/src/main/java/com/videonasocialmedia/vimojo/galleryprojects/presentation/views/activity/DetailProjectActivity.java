@@ -85,6 +85,7 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
     View dialogView = getLayoutInflater().inflate(R.layout.dialog_editable_text, null);
     final EditText editText = (EditText) dialogView.findViewById(R.id.detail_project_title_dialog);
     editText.setText(titleProject);
+    editText.setSelectAllOnFocus(true);
 
     final DialogInterface.OnClickListener dialogClickListener
         = new DialogInterface.OnClickListener() {

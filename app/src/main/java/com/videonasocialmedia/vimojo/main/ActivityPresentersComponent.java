@@ -24,6 +24,7 @@ import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOver
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
+import com.videonasocialmedia.vimojo.userProfile.presentation.views.UserProfileActivity;
 
 import dagger.Component;
 
@@ -57,4 +58,5 @@ public interface ActivityPresentersComponent {
   void inject(DetailProjectActivity activity);
   void inject(VideoEditTextActivity activity);
   void inject(VimojoStoreActivity activity);
+  void inject(UserProfileActivity activity);
 }
