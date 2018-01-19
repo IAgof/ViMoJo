@@ -7,7 +7,7 @@ import com.google.gson.Gson;
  */
 
 /**
- * Model class for token request auth API calls
+ * Model class for token request auth API calls.
  */
 public class AuthTokenRequest {
   private final String email;

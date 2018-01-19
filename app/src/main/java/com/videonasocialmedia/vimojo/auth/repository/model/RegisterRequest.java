@@ -7,13 +7,19 @@ import com.google.gson.Gson;
  */
 
 /**
- * Model class for user registration API calls
+ * Model class for user registration API calls.
  */
 public class RegisterRequest {
   private final String email;
   private final String password;
   private final boolean checkBoxAcceptTermChecked;
 
+  /**
+   * Register Request constructor
+   * @param email email for user account. This will be the account identificator.
+   * @param password password for user account.
+   * @param checkBoxAcceptTermChecked user acceptance of privacy and policy terms.
+   */
   public RegisterRequest(String email, String password, boolean checkBoxAcceptTermChecked) {
     this.email = email;
     this.password = password;

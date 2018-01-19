@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import com.videonasocialmedia.avrecorder.view.GLCameraView;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
-import com.videonasocialmedia.vimojo.auth.domain.usecase.VimojoUserAuthenticator;
+import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
 import com.videonasocialmedia.vimojo.auth.view.presenter.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
@@ -362,7 +362,8 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   UserAuthPresenter provideUserAuthPresenter(VimojoUserAuthenticator vimojoUserAuthenticator) {
-    return new UserAuthPresenter((UserAuthPresenter.View) activity, vimojoUserAuthenticator);
+    return new UserAuthPresenter((UserAuthPresenter.View) activity, activity,
+            vimojoUserAuthenticator);
   }
 
   @Provides

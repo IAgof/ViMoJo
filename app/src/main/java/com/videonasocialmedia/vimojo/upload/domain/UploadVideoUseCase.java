@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.upload.repository.apiclient.VimojoApi;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VideoService;
 import com.videonasocialmedia.vimojo.upload.repository.localsource.CachedToken;
 import com.videonasocialmedia.vimojo.vimojoapiclient.rest.ServiceGenerator;
 
@@ -30,7 +30,7 @@ public class UploadVideoUseCase {
   public void uploadVideo(String apiBaseUrl, String mediaPath, final OnUploadVideoListener listener) {
 
     // create upload service client
-    VimojoApi service = new ServiceGenerator(apiBaseUrl).generateService(VimojoApi.class,
+    VideoService service = new ServiceGenerator(apiBaseUrl).generateService(VideoService.class,
         CachedToken.getToken());
 
     File file = new File(mediaPath);

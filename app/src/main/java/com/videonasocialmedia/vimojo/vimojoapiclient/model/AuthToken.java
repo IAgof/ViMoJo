@@ -5,13 +5,13 @@ package com.videonasocialmedia.vimojo.vimojoapiclient.model;
  */
 
 public class AuthToken {
-  private final String access_token;
+  private final String token;
 
   public AuthToken(String token) {
-    this.access_token = token;
+    this.token = token;
   }
 
   public String getToken() {
-    return access_token;
+    return token;
   }
 }

@@ -25,10 +25,12 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_no_accepted_terms">You must agree to the terms of service before continuing</string>
     <string name="success_sign_in">Login ok, WELCOME TO VIMOJO!!</string>
-    <string name="credentials_unknown_error">The email or password that you have entered is incorrect. Please try again.</string>
+    <string name="wrong_credentials_error">The email or password that you have entered is incorrect. Please try again.</string>
     <string name="default_auth_error_message">Ooops, something happened. Try it later</string>
     <string name="network_error">Network error. Are you connected to the internet?</string>
     <string name="error_already_exits">There already exists a user with this email</string>
     <string name="error_field_required">Missing required field</string>
     <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="success_register">User successfully created, WELCOME TO VIMOJO!!</string>
+    <string name="account_type">com.videonasocialmedia.vimojo.auth</string>
 </resources>

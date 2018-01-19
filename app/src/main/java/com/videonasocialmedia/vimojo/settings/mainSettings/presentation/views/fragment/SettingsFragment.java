@@ -79,11 +79,13 @@ public class SettingsFragment extends PreferenceFragment implements
 
     private FragmentPresentersComponent initComponent() {
         return DaggerFragmentPresentersComponent.builder()
-            .fragmentPresentersModule(new FragmentPresentersModule(this, context, sharedPreferences,
-                transitionsVideoPref, transitionsAudioPref, watermarkSwitchPref,
-                    themeappSwitchPref, emailPref, this.getActivity()))
-            .systemComponent(((VimojoApplication)getActivity().getApplication()).getSystemComponent())
-            .build();
+                .fragmentPresentersModule(
+                        new FragmentPresentersModule(this, context, sharedPreferences,
+                                transitionsVideoPref, transitionsAudioPref, watermarkSwitchPref,
+                                themeappSwitchPref, emailPref, this.getActivity()))
+                .systemComponent(((VimojoApplication)getActivity().getApplication())
+                        .getSystemComponent())
+                .build();
     }
 
     private void initPreferences() {
@@ -306,33 +308,28 @@ public class SettingsFragment extends PreferenceFragment implements
 
     @Override
     public void setupUserAuthentication(final boolean userLoggedIn) {
-        final Preference signInSetting = findPreference("auth");
-        if (userLoggedIn) {
-            signInSetting.setTitle(R.string.sign_out);
-        } else {
-            signInSetting.setTitle(R.string.sign_in_register);
-        }
-        signInSetting.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            public void run() {
+                final Preference authSetting = findPreference("auth");
                 if (userLoggedIn) {
-                    AlertDialog dialog = createLogoutDialog();
-                    dialog.show();
+                    authSetting.setTitle(R.string.sign_out);
                 } else {
-                    Intent intent = new Intent(context, UserAuthActivity.class);
-                    startActivity(intent);
+                    authSetting.setTitle(R.string.sign_in_register);
                 }
-                return true;
+                authSetting.setOnPreferenceClickListener(
+                        new AuthPreferenceClickListener(userLoggedIn));
             }
         });
     }
 
-    private AlertDialog createLogoutDialog() {
+    private AlertDialog createSignOutDialog() {
         DialogInterface.OnClickListener signOutListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
+                        // TODO(jliarte): 18/01/18 implement sign out
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         break;
@@ -476,4 +473,23 @@ public class SettingsFragment extends PreferenceFragment implements
         startActivity(intent);
     }
 
+    private class AuthPreferenceClickListener implements Preference.OnPreferenceClickListener {
+        private final boolean userLoggedIn;
+
+        public AuthPreferenceClickListener(boolean userLoggedIn) {
+            this.userLoggedIn = userLoggedIn;
+        }
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            if (userLoggedIn) {
+                AlertDialog dialog = createSignOutDialog();
+                dialog.show();
+            } else {
+                Intent intent = new Intent(context, UserAuthActivity.class);
+                startActivity(intent);
+            }
+            return true;
+        }
+    }
 }

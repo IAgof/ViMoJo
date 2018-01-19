@@ -14,13 +14,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.Preference;
+import android.text.TextUtils;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.domain.usecase.VimojoUserAuthenticator;
+import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
@@ -33,26 +37,28 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTra
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.OnRelaunchTemporalFileListener;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
-import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * This class is used to show the setting menu.
  */
-public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenceChangeListener,
-    OnRelaunchTemporalFileListener, PlayStoreBillingDelegate.BillingDelegateView {
-
+public class PreferencesPresenter extends VimojoPresenter
+        implements SharedPreferences.OnSharedPreferenceChangeListener,
+        OnRelaunchTemporalFileListener, PlayStoreBillingDelegate.BillingDelegateView {
     private static final String LOG_TAG = PreferencesPresenter.class.getSimpleName();
     private final BillingManager billingManager;
+    private final GetAuthToken getAuthToken;
     private PlayStoreBillingDelegate playStoreBillingDelegate;
     private Context context;
     private UserEventTracker userEventTracker;
@@ -79,28 +85,29 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
 
     /**
      * Constructor
-     *  @param preferencesView
-     * @param emailPref
+     * @param preferencesView
      * @param context
      * @param sharedPreferences
+     * @param emailPref
+     * @param getAuthToken
      */
     public PreferencesPresenter(PreferencesView preferencesView,
-            Context context, SharedPreferences sharedPreferences,
-            Preference transitionVideoPref, Preference themeApp,
-            Preference transitionAudioPref, Preference watermarkPref, Preference emailPref,
-            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-            UpdateAudioTransitionPreferenceToProjectUseCase
+                                Context context, SharedPreferences sharedPreferences,
+                                Preference transitionVideoPref, Preference themeApp,
+                                Preference transitionAudioPref, Preference watermarkPref, Preference emailPref,
+                                GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+                                GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+                                UpdateAudioTransitionPreferenceToProjectUseCase
                                         updateAudioTransitionPreferenceToProjectUseCase,
-            UpdateVideoTransitionPreferenceToProjectUseCase
+                                UpdateVideoTransitionPreferenceToProjectUseCase
                                         updateVideoTransitionPreferenceToProjectUseCase,
-            UpdateIntermediateTemporalFilesTransitionsUseCase
+                                UpdateIntermediateTemporalFilesTransitionsUseCase
                                         updateIntermediateTemporalFilesTransitionsUseCase,
-            GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
-            UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-            RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-            GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-            BillingManager billingManager) {
+                                GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
+                                UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
+                                RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+                                GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+                                BillingManager billingManager, GetAuthToken getAuthToken) {
         this.preferencesView = preferencesView;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
@@ -125,6 +132,7 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
         userEventTracker = UserEventTracker.getInstance(MixpanelAPI
                 .getInstance(context.getApplicationContext(), BuildConfig.MIXPANEL_TOKEN));
         this.billingManager = billingManager;
+        this.getAuthToken = getAuthToken;
         this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
     }
 
@@ -359,11 +367,26 @@ public class PreferencesPresenter implements SharedPreferences.OnSharedPreferenc
     }
 
     public void setupUserAuthPreference() {
-        VimojoUserAuthenticator vimojoUserAuthenticator = new VimojoUserAuthenticator();
-        boolean userIsLoggedIn = vimojoUserAuthenticator.userIsLoggedIn();
-        if (userIsLoggedIn)
-            preferencesView.setupUserAuthentication(true);
-        else
-            preferencesView.setupUserAuthentication(false);
+        ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                return getAuthToken.getAuthToken(getContext());
+            }
+        });
+        Futures.addCallback(authTokenFuture, new FutureCallback<String>() {
+            @Override
+            public void onSuccess(String authToken) {
+                preferencesView.setupUserAuthentication(!TextUtils.isEmpty(authToken));
+            }
+
+            @Override
+            public void onFailure(Throwable errorGettingToken) {
+                preferencesView.setupUserAuthentication(false);
+            }
+        });
+    }
+
+    public Context getContext() {
+        return context;
     }
 }

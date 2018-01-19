@@ -4,111 +4,65 @@ package com.videonasocialmedia.vimojo.auth.view.presenter;
  * Created by jliarte on 8/01/18.
  */
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.Context;
 import android.util.Patterns;
 
-import com.videonasocialmedia.vimojo.auth.domain.usecase.VimojoUserAuthenticator;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.videonasocialmedia.vimojo.auth.AccountConstants;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
+import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
+
+import java.lang.ref.WeakReference;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
 /**
  * Presenter for {@link com.videonasocialmedia.vimojo.auth.view.activity.UserAuthActivity}
  */
-public class UserAuthPresenter {
+public class UserAuthPresenter extends VimojoPresenter {
+  private final WeakReference<Context> contextReference;
   @Inject
   VimojoUserAuthenticator vimojoUserAuthenticator;
 
   private final View userAuthActivityView;
   private boolean register = true;
-  private VimojoUserAuthenticator.RegisterListener registerListener;
-  private VimojoUserAuthenticator.SignInListener signInListener;
-  private String email;
-  private String password;
-  private boolean checkBoxAcceptTermChecked;
 
-  public UserAuthPresenter(final View userAuthActivityView,
+  /**
+   * Creates a presenter instance.
+   *
+   * @param userAuthActivityView interface with auth view.
+   * @param context the app context.
+   * @param vimojoUserAuthenticator api client for auth services.
+   */
+  public UserAuthPresenter(final View userAuthActivityView, Context context,
                            VimojoUserAuthenticator vimojoUserAuthenticator) {
     this.userAuthActivityView = userAuthActivityView;
+    this.contextReference = new WeakReference<>(context);
     this.vimojoUserAuthenticator = vimojoUserAuthenticator;
-    createRegisterListener(userAuthActivityView);
-    createSignInListener(userAuthActivityView);
   }
 
-  private void createSignInListener(final View userAuthActivityView) {
-    signInListener = new VimojoUserAuthenticator.SignInListener() {
-      @Override
-      public void onSignInError(VimojoUserAuthenticator.SignInErrorCauses signInErrorCause) {
-        userAuthActivityView.hideProgressAuthenticationDialog();
-        switch (signInErrorCause) {
-          case CREDENTIALS_UNKNOWN:
-            userAuthActivityView.showErrorLoginUnknownCredentials();
-            break;
-          case NETWORK_ERROR:
-            userAuthActivityView.showNetworkError();
-            break;
-          case UNKNOWN_ERROR:
-          default:
-            userAuthActivityView.showDefaultError();
-            break;
-        }
-      }
-
-      @Override
-      public void onSignInSuccess(AuthToken authToken) {
-//        unlockLoginFeatures();
-        userAuthActivityView.showSigninSuccess();
-        // TODO(jliarte): 11/01/18 use user, pwd, etc fields?
-        createAccount(email, password, authToken.getToken());
-      }
-    };
-  }
-
-  private void createRegisterListener(final View userAuthActivityView) {
-    registerListener = new VimojoUserAuthenticator.RegisterListener() {
-      @Override
-      public void onRegisterError(VimojoUserAuthenticator.RegisterErrorCauses cause) {
-        userAuthActivityView.hideProgressAuthenticationDialog();
-        switch (cause) {
-          case NETWORK_ERROR:
-            userAuthActivityView.showNetworkError();
-            break;
-          case USER_ALREADY_EXISTS:
-            userAuthActivityView.showErrorRegisterUserExists();
-            //loginUser.login(email, password, this);
-            break;
-          case INVALID_EMAIL:
-            userAuthActivityView.showErrorRegisterInvalidMail();
-            break;
-          case MISSING_REQUEST_PARAMETERS:
-            userAuthActivityView.showErrorRegisterMissingParams();
-            break;
-          case INVALID_PASSWORD:
-            userAuthActivityView.showErrorRegisterInvalidPassword();
-            break;
-          case UNKNOWN_ERROR:
-          default:
-            userAuthActivityView.showDefaultError();
-            break;
-        }
-      }
-
-      @Override
-      public void onRegisterSuccess() {
-        userAuthActivityView.showRegisterSuccess();
-        // TODO(jliarte): 11/01/18 use fields?
-        vimojoUserAuthenticator.signIn(email, password, signInListener);
-      }
-    };
-  }
-
-  public void switchToLoginView() {
+  /**
+   * Sets activity mode and view components to Sign In mode.
+   */
+  public void switchToSignInMode() {
     this.register = false;
     userAuthActivityView.hideTermsCheckbox();
     userAuthActivityView.setAuthButtonSignInText();
     userAuthActivityView.setSignInFooterText();
   }
 
-  public void switchToRegisterView() {
+  /**
+   * Sets activity mode and view components to Register mode.
+   */
+  public void switchToRegisterMode() {
     this.register = true;
     userAuthActivityView.showTermsCheckbox();
     userAuthActivityView.setAuthButtonRegisterText();
@@ -152,31 +106,135 @@ public class UserAuthPresenter {
     return password.length() >= 6;
   }
 
-  public void performAuth(final String email, final String password, boolean checkBoxAcceptTermChecked) {
+  /**
+   * Perform auth calls to platform auth services.
+   *
+   * @param email email for the platform user account.
+   * @param password password for the platform user account.
+   * @param checkBoxAcceptTermChecked user acceptance of privacy and policy terms.
+   */
+  public void performAuth(final String email, final String password,
+                          final boolean checkBoxAcceptTermChecked) {
     userAuthActivityView.resetErrorFields();
     if (emailValidates(email) && passwordValidates(password)
             && checkBoxValidates(checkBoxAcceptTermChecked)) {
       userAuthActivityView.showProgressAuthenticationDialog();
-      this.email = email;
-      this.password = password;
-      this.checkBoxAcceptTermChecked = checkBoxAcceptTermChecked;
       if (register) {
-        vimojoUserAuthenticator.register(email, password, checkBoxAcceptTermChecked, registerListener);
+        callRegisterService(email, password, checkBoxAcceptTermChecked);
       } else {
-        vimojoUserAuthenticator.signIn(email, password, signInListener);
+        callSignInService(email, password);
       }
     }
   }
 
-  public void createAccount(String email, String password, String authToken) {
-//    Account account = new Account(email, "YOUR ACCOUNT TYPE");
-//    AccountManager am = AccountManager.get(this);
-//    am.addAccountExplicitly(account, password, null);
-//    am.setAuthToken(account, "full_access", authToken);
+  private void callRegisterService(final String email, final String password,
+                                   final boolean checkBoxAcceptTermChecked) {
+    ListenableFuture<User> userFuture = executeUseCaseCall(new Callable<User>() {
+      @Override
+      public User call() throws Exception {
+        return vimojoUserAuthenticator.register(email, password, checkBoxAcceptTermChecked);
+      }
+    });
+    Futures.addCallback(userFuture, new FutureCallback<User>() {
+      @Override
+      public void onSuccess(User result) {
+        userAuthActivityView.showRegisterSuccess();
+        callSignInService(email, password);
+      }
+
+      @Override
+      public void onFailure(Throwable registerException) {
+        userAuthActivityView.hideProgressAuthenticationDialog();
+        if (registerException instanceof VimojoApiException) {
+          parseRegisterErrors((VimojoApiException) registerException);
+        } else {
+          userAuthActivityView.showDefaultError();
+        }
+      }
+    });
+  }
+
+  private void callSignInService(final String email, final String password) {
+    ListenableFuture<AuthToken> tokenFuture = executeUseCaseCall(new Callable<AuthToken>() {
+      @Override
+      public AuthToken call() throws Exception {
+        return vimojoUserAuthenticator.signIn(email, password);
+      }
+    });
+    Futures.addCallback(tokenFuture, new FutureCallback<AuthToken>() {
+      @Override
+      public void onSuccess(AuthToken authToken) {
+        userAuthActivityView.showSigninSuccess();
+        registerAccount(email, password, authToken.getToken());
+      }
+
+      @Override
+      public void onFailure(Throwable signInException) {
+        // TODO(jliarte): 15/01/18 implement this method
+        userAuthActivityView.hideProgressAuthenticationDialog();
+        if (signInException instanceof VimojoApiException) {
+          parseSignInErrors((VimojoApiException) signInException);
+        } else {
+          userAuthActivityView.showDefaultError();
+        }
+      }
+    });
+  }
+
+  private void parseRegisterErrors(VimojoApiException registerException) {
+    String cause = registerException.getApiErrorCode();
+    switch (cause) {
+      case VimojoApiException.NETWORK_ERROR:
+        userAuthActivityView.showNetworkError();
+        break;
+      case VimojoUserAuthenticator.REGISTER_ERROR_USER_ALREADY_EXISTS:
+        userAuthActivityView.showErrorRegisterUserExists();
+        break;
+      case VimojoUserAuthenticator.REGISTER_ERROR_MISSING_REQUEST_PARAMETERS:
+        userAuthActivityView.showErrorRegisterMissingParams();
+        break;
+      case VimojoUserAuthenticator.REGISTER_ERROR_INTERNAL_SERVER_ERROR:
+      case VimojoApiException.UNKNOWN_ERROR:
+      default:
+        userAuthActivityView.showDefaultError();
+        break;
+    }
+  }
+
+  private void parseSignInErrors(VimojoApiException signInException) {
+    String cause = signInException.getApiErrorCode();
+    switch (cause) {
+      case VimojoUserAuthenticator.SIGNIN_ERROR_PASSWORD_MISSING:
+      case VimojoUserAuthenticator.SIGNIN_ERROR_USER_MISSING:
+      case VimojoUserAuthenticator.SIGNIN_ERROR_USER_NOT_FOUND:
+      case VimojoUserAuthenticator.SIGNIN_ERROR_WRONG_PASSWORD:
+        userAuthActivityView.showErrorSignInWrongCredentials();
+        break;
+      case VimojoApiException.NETWORK_ERROR:
+        userAuthActivityView.showNetworkError();
+        break;
+      case VimojoUserAuthenticator.SIGNIN_ERROR_INTERNAL_SERVER_ERROR:
+      case VimojoApiException.UNKNOWN_ERROR:
+      default:
+        userAuthActivityView.showDefaultError();
+        break;
+    }
+  }
+
+  private void registerAccount(String email, String password, String authToken) {
+    Account account = new Account(email, AccountConstants.VIMOJO_ACCOUNT_TYPE);
+    AccountManager am = AccountManager.get(getContext());
+    am.addAccountExplicitly(account, password, null);
+    am.setAuthToken(account, AccountConstants.VIMOJO_AUTH_TOKEN_TYPE, authToken);
+  }
+
+  private Context getContext() {
+    return contextReference.get();
   }
 
   /**
-   * View interface between {@link com.videonasocialmedia.vimojo.auth.view.activity.UserAuthActivity}
+   * View interface between
+   * {@link com.videonasocialmedia.vimojo.auth.view.activity.UserAuthActivity}
    * and {@link UserAuthPresenter}
    */
   public interface View {
@@ -210,7 +268,7 @@ public class UserAuthPresenter {
 
     void showRegisterSuccess();
 
-    void showErrorLoginUnknownCredentials();
+    void showErrorSignInWrongCredentials();
 
     void showDefaultError();
 

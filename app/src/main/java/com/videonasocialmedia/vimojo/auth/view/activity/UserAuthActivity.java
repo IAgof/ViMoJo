@@ -25,6 +25,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.view.presenter.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -33,16 +37,12 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceA
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 /**
  * Created by jliarte on 8/01/18.
  */
 
-/***
- * Activity for creating and signing in users into Vimojo web platform
+/**
+ * Activity for creating and signing in users into Vimojo web platform.
  */
 public class UserAuthActivity extends VimojoActivity implements UserAuthPresenter.View {
   @Inject
@@ -91,8 +91,9 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
       case android.R.id.home:
         onBackPressed();
         return true;
+      default:
+        return super.onOptionsItemSelected(item);
     }
-    return super.onOptionsItemSelected(item);
   }
 
   private void setupToolbar() {
@@ -142,23 +143,33 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
 
   @Override
   public void hideProgressAuthenticationDialog() {
-    showProgress(false);
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        showProgress(false);
+      }
+    });
   }
 
   @Override
   public void showSigninSuccess() {
-    progressBarLogin.setVisibility(View.INVISIBLE);
-    imageLoginConfirm.setVisibility(View.VISIBLE);
-    textViewLoginProgress.setTextColor(getResources().getColor(R.color.colorPrimary));
-    textViewLoginProgress.setText(R.string.success_sign_in);
-
-    Handler handler = new Handler();
-    handler.postDelayed(new Runnable() {
+    runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        exitLoginActivity();
+        progressBarLogin.setVisibility(View.INVISIBLE);
+        imageLoginConfirm.setVisibility(View.VISIBLE);
+        textViewLoginProgress.setTextColor(getResources().getColor(R.color.colorPrimary));
+        textViewLoginProgress.setText(R.string.success_sign_in);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            exitLoginActivity();
+          }
+        }, 3000);
       }
-    }, 3000);
+    });
   }
 
   private void exitLoginActivity() {
@@ -167,19 +178,35 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
 
   @Override
   public void showRegisterSuccess() {
-    // TODO(jliarte): 11/01/18 make the same?
-//    R.string.success_register
-    showSigninSuccess();
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        progressBarLogin.setVisibility(View.INVISIBLE);
+        imageLoginConfirm.setVisibility(View.VISIBLE);
+        textViewLoginProgress.setTextColor(getResources().getColor(R.color.colorPrimary));
+        textViewLoginProgress.setText(R.string.success_register);
+      }
+    });
   }
 
   @Override
-  public void showErrorLoginUnknownCredentials() {
-    showMessage(R.string.credentials_unknown_error, authButton);
+  public void showErrorSignInWrongCredentials() {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        showMessage(R.string.wrong_credentials_error, authButton);
+      }
+    });
   }
 
   @Override
   public void showDefaultError() {
-    showMessage(R.string.default_auth_error_message, authButton);
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        showMessage(R.string.default_auth_error_message, authButton);
+      }
+    });
   }
 
   @Override
@@ -259,20 +286,20 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
     return footerText;
   }
 
-  public Spannable createSpannableNoClickable(String stringResource, int colorResource) {
+  private Spannable createSpannableNoClickable(String stringResource, int colorResource) {
     Spannable spanText = new SpannableString(stringResource);
     spanText.setSpan(new ForegroundColorSpan(getResources()
             .getColor(colorResource)), 0, stringResource.length(), 0);
     return spanText;
   }
 
-  public Spannable createSigninSpannable(String stringResource,
+  private Spannable createSigninSpannable(String stringResource,
                                          int colorResource) {
     Spannable spannableClickable = createSpannableNoClickable(stringResource, colorResource);
     ClickableSpan clickableSpan = new ClickableSpan() {
       @Override
       public void onClick(View textView) {
-        userAuthPresenter.switchToLoginView();
+        userAuthPresenter.switchToSignInMode();
         hideTermsCheckbox();
       }
     };
@@ -280,19 +307,19 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
     return spannableClickable;
   }
 
-  public Spannable createRegisterSpannable(String stringResource, int colorResource) {
+  private Spannable createRegisterSpannable(String stringResource, int colorResource) {
     Spannable spannableClickable = createSpannableNoClickable(stringResource, colorResource);
     ClickableSpan clickableSpan = new ClickableSpan() {
       @Override
       public void onClick(View textView) {
-        userAuthPresenter.switchToRegisterView();
+        userAuthPresenter.switchToRegisterMode();
       }
     };
     spannableClickable.setSpan(clickableSpan, 0, spannableClickable.length(), 0);
     return spannableClickable;
   }
 
-  public Spannable createIntentSpannable(String stringResource, int colorResource,
+  private Spannable createIntentSpannable(String stringResource, int colorResource,
                                          final Class nextActivity) {
     Spannable spannableClickable = createSpannableNoClickable(stringResource, colorResource);
     ClickableSpan clickableSpan = new ClickableSpan() {
@@ -305,6 +332,9 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
     return spannableClickable;
   }
 
+  /**
+   * Performs auth calls.
+   */
   @OnClick(R.id.auth_button)
   public void perform_auth() {
     String email = emailField.getText().toString();
@@ -320,20 +350,20 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
   private void showProgress(final boolean show) {
     int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
     layoutLoginForm.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
-    layoutLoginForm.animate().setDuration(shortAnimTime).alpha(
-            show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-      @Override
-      public void onAnimationEnd(Animator animation) {
-        layoutLoginForm.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
-      }
-    });
+    layoutLoginForm.animate().setDuration(shortAnimTime).alpha(show ? 0 : 1)
+            .setListener(new AnimatorListenerAdapter() {
+              @Override
+              public void onAnimationEnd(Animator animation) {
+                layoutLoginForm.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
+              }
+            });
     layoutProgress.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
-    layoutProgress.animate().setDuration(shortAnimTime).alpha(
-            show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-      @Override
-      public void onAnimationEnd(Animator animation) {
-        layoutProgress.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
-      }
-    });
+    layoutProgress.animate().setDuration(shortAnimTime).alpha(show ? 1 : 0)
+            .setListener(new AnimatorListenerAdapter() {
+              @Override
+              public void onAnimationEnd(Animator animation) {
+                layoutProgress.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+              }
+            });
   }
 }
