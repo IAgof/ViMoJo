@@ -286,11 +286,6 @@
 
     <!-- End Settings Activity -->
 
-    <!-- UserAuthActivity -->
-    <string name="register_slogan">Mobile Journalism app for Breaking\n the video editing barrier on mobile</string>
-    <string name="register_action">Register</string>
-    <string name="login_action">Log in</string>
-
     <!-- DRAWER -->
     <string name="drawerProjects">My projects</string>
     <string name="drawerSettings">Settings</string>

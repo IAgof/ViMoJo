@@ -12,6 +12,8 @@
     <string name="action_email_register_short">Ocultar</string>
     <string name="prompt_password_register">Contraseña</string>
     <string name="action_register_short">Hecho</string>
+    <string name="prompt_user_name_register">Nombre de usuario</string>
+    <string name="action_user_name_short">Hecho</string>
     <string name="title_checkbox_termService">Acepto las condiciones de servicio y la política de privacidad</string>
     <string name="action_register">Hecho</string>
     <string name="terms_of_service">Condiciones de servicio</string>
@@ -24,6 +26,7 @@
     <string name="error_invalid_email">La dirección de email no es válida</string>
     <string name="error_invalid_password">La contraseña es demasiado corta</string>
     <string name="error_no_accepted_terms">Necesita aceptar las condiciones de servicio y la política de privacidad</string>
+    <string name="error_invalid_username">El nombre de usuario no es válido</string>
     <string name="success_sign_in">Sesión iniciada</string>
     <string name="wrong_credentials_error">Email o contraseña incorrecto</string>
     <string name="default_auth_error_message">Oh, algo ha salido mal. Intentalo mas tarde</string>
@@ -32,4 +35,7 @@
     <string name="error_field_required">Campo necesario no enviado</string>
     <string name="error_incorrect_password">La contraseña es incorrecta</string>
     <string name="success_register">Usuario creado con éxito, BIENVENIDO A VIMOJO!!</string>
+    <string name="register_slogan">Aplicación para periodistas móviles. Rompiendo la barrera de la edición de vídeo en móviles.</string>
+    <string name="register_action">Empieza</string>
+    <string name="login_action">Inicia sesión</string>
 </resources>

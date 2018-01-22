@@ -14,4 +14,5 @@
     <dimen name="header_height">192dp</dimen>
     <dimen name="camera_settings_selected">8sp</dimen>
     <dimen name="text_register_slogan">20sp</dimen>
+    <dimen name="activity_user_auth_height_fields">200dp</dimen>
 </resources>

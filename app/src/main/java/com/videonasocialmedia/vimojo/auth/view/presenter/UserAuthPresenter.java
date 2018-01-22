@@ -54,9 +54,11 @@ public class UserAuthPresenter extends VimojoPresenter {
    */
   public void switchToSignInMode() {
     this.register = false;
+    userAuthActivityView.hideUserNameField();
     userAuthActivityView.hideTermsCheckbox();
-    userAuthActivityView.setAuthButtonSignInText();
-    userAuthActivityView.setSignInFooterText();
+    userAuthActivityView.hideRegisterButton();
+    userAuthActivityView.showLayoutRegisterLoginFields();
+    userAuthActivityView.updateScreenBackground();
   }
 
   /**
@@ -64,9 +66,11 @@ public class UserAuthPresenter extends VimojoPresenter {
    */
   public void switchToRegisterMode() {
     this.register = true;
+    userAuthActivityView.showUserNameField();
     userAuthActivityView.showTermsCheckbox();
-    userAuthActivityView.setAuthButtonRegisterText();
-    userAuthActivityView.setRegisterFooterText();
+    userAuthActivityView.hideLoginButton();
+    userAuthActivityView.showLayoutRegisterLoginFields();
+    userAuthActivityView.updateScreenBackground();
   }
 
   private boolean emailValidates(String email) {
@@ -242,19 +246,13 @@ public class UserAuthPresenter extends VimojoPresenter {
 
     void showTermsCheckbox();
 
-    void setAuthButtonSignInText();
-
-    void setAuthButtonRegisterText();
-
-    void setSignInFooterText();
-
-    void setRegisterFooterText();
-
     void showInvalidMailError();
 
     void showPasswordFieldRequired();
 
     void showPasswordInvalidError();
+
+    void showUserNameInvalid();
 
     void showTermsNotAcceptedError();
 
@@ -281,5 +279,17 @@ public class UserAuthPresenter extends VimojoPresenter {
     void showErrorRegisterMissingParams();
 
     void showErrorRegisterInvalidPassword();
+
+    void showUserNameField();
+
+    void hideUserNameField();
+
+    void hideRegisterButton();
+
+    void hideLoginButton();
+
+    void showLayoutRegisterLoginFields();
+
+    void updateScreenBackground();
   }
 }

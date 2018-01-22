@@ -149,6 +149,24 @@
 
     <style name="VideonaTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"></style>
 
+    <!-- Register, Login Theme -->
+    <style name="VideonaThemeUserAuth" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--scroll transparent-->
+        <item name="android:scrollbarThumbHorizontal">@color/colorTransparent</item>
+        <item name="android:scrollbarThumbVertical">@color/colorTransparent</item>
 
+        <!--navigationView and Status Bar transparent with Drawer-->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@color/colorTransparent</item>
+
+        <item name="colorAccent">@color/colorWhite</item>
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+        <item name="android:textColor">@color/colorWhite</item>
+
+
+    </style>
 
 </resources>

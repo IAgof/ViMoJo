@@ -2,18 +2,9 @@ package com.videonasocialmedia.vimojo.auth.view.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputLayout;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,6 +12,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import butterknife.Bind;
@@ -30,8 +23,6 @@ import butterknife.OnClick;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.view.presenter.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity;
 
 import javax.inject.Inject;
 
@@ -46,23 +37,10 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
   @Inject
   UserAuthPresenter userAuthPresenter;
 
-  @Bind(R.id.text_input_email)
-  TextInputLayout textInputEmail;
   @Bind(R.id.email_field)
   EditText emailField;
-  @Bind(R.id.password_text_input)
-  TextInputLayout passwordTextInput;
   @Bind(R.id.password_field)
   EditText passwordField;
-  @Nullable
-  @Bind(R.id.check_box_Accept_Term)
-  CheckBox checkBoxAcceptTerm;
-  @Bind(R.id.footer_text_view)
-  TextView footerTextView;
-  @Bind(R.id.auth_button)
-  Button authButton;
-  @Bind(R.id.layout_login_form)
-  View layoutLoginForm;
   @Bind(R.id.layoutProgressBarLogin)
   View layoutProgress;
   @Bind(R.id.progress_bar_login)
@@ -72,14 +50,34 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
   @Bind(R.id.progress_text_view)
   TextView textViewLoginProgress;
 
+  @Bind(R.id.register_button)
+  Button registerButton;
+  @Bind(R.id.login_button)
+  Button loginButton;
+  @Bind(R.id.layout_register_login_fields)
+  LinearLayout registerLoginFieldsLinearLayout;
+  @Bind(R.id.layout_register_login)
+  LinearLayout registerLoginLinearLayout;
+  @Bind(R.id.user_name_field)
+  EditText userNameField;
+  @Bind(R.id.check_box_Accept_Term)
+  CheckBox checkBoxAcceptTerm;
+  @Bind(R.id.user_auth_main_relative_layout)
+  RelativeLayout mainRelativeLayout;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    setTheme(R.style.VideonaThemeUserAuth);
     setContentView(R.layout.activity_user_auth);
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
-    setRegisterFooterText();
     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    hideRegisterLoginFields();
+  }
+
+  private void hideRegisterLoginFields() {
+    registerLoginFieldsLinearLayout.setVisibility(View.GONE);
   }
 
   @Override
@@ -93,36 +91,37 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
     }
   }
 
-  @Override
-  public void setRegisterFooterText() {
-    footerTextView.setMovementMethod(LinkMovementMethod.getInstance());
-    footerTextView.setText(createFooterTextForRegister());
-  }
 
   @Override
   public void showInvalidMailError() {
-    textInputEmail.setError(getString(R.string.error_invalid_email));
+    showMessage(R.string.error_invalid_email, loginButton);
   }
 
   @Override
   public void showPasswordFieldRequired() {
-    passwordTextInput.setError(getString(R.string.error_invalid_password));
+    showMessage(R.string.error_invalid_password, loginButton);
   }
 
   @Override
   public void showPasswordInvalidError() {
-    passwordTextInput.setError(getString(R.string.error_invalid_password));
+    showMessage(R.string.error_invalid_password, loginButton);
+  }
+
+  @Override
+  public void showUserNameInvalid() {
+    showMessage(R.string.error_invalid_username, loginButton);
   }
 
   @Override
   public void showTermsNotAcceptedError() {
-    showMessage(R.string.error_no_accepted_terms, authButton);
+    showMessage(R.string.error_no_accepted_terms, registerButton);
   }
 
   @Override
   public void resetErrorFields() {
-    textInputEmail.setError(null);
-    passwordTextInput.setError(null);
+    emailField.setText("");
+    passwordField.setText("");
+    userNameField.setText("");
   }
 
   @Override
@@ -147,7 +146,6 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
       public void run() {
         progressBarLogin.setVisibility(View.INVISIBLE);
         imageLoginConfirm.setVisibility(View.VISIBLE);
-        textViewLoginProgress.setTextColor(getResources().getColor(R.color.colorPrimary));
         textViewLoginProgress.setText(R.string.success_sign_in);
 
         Handler handler = new Handler();
@@ -172,7 +170,6 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
       public void run() {
         progressBarLogin.setVisibility(View.INVISIBLE);
         imageLoginConfirm.setVisibility(View.VISIBLE);
-        textViewLoginProgress.setTextColor(getResources().getColor(R.color.colorPrimary));
         textViewLoginProgress.setText(R.string.success_register);
       }
     });
@@ -183,7 +180,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        showMessage(R.string.wrong_credentials_error, authButton);
+        showMessage(R.string.wrong_credentials_error, loginButton);
       }
     });
   }
@@ -193,40 +190,65 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        showMessage(R.string.default_auth_error_message, authButton);
+        showMessage(R.string.default_auth_error_message, registerButton);
       }
     });
   }
 
   @Override
   public void showNetworkError() {
-    showMessage(R.string.network_error, authButton);
+    showMessage(R.string.network_error, registerButton);
   }
 
   @Override
   public void showErrorRegisterUserExists() {
-    showMessage(R.string.error_already_exits, authButton);
+    showMessage(R.string.error_already_exits, registerButton);
   }
 
   @Override
   public void showErrorRegisterInvalidMail() {
-    showMessage(R.string.error_invalid_email, authButton);
+    showMessage(R.string.error_invalid_email, registerButton);
   }
 
   @Override
   public void showErrorRegisterMissingParams() {
-    showMessage(R.string.error_field_required, authButton);
+    showMessage(R.string.error_field_required, registerButton);
   }
 
   @Override
   public void showErrorRegisterInvalidPassword() {
-    showMessage(R.string.error_incorrect_password, authButton);
+    showMessage(R.string.error_incorrect_password, registerButton);
   }
 
   @Override
-  public void setSignInFooterText() {
-    footerTextView.setMovementMethod(LinkMovementMethod.getInstance());
-    footerTextView.setText(createFooterTextForSignin());
+  public void showUserNameField() {
+    // TODO:(alvaro.martinez) 22/01/18 Implement register with user name
+    //userNameField.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void hideUserNameField() {
+    userNameField.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void hideRegisterButton() {
+    registerButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void hideLoginButton() {
+    loginButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void showLayoutRegisterLoginFields() {
+    registerLoginFieldsLinearLayout.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void updateScreenBackground() {
+    mainRelativeLayout.setBackground(getDrawable(R.drawable.activity_user_auth_background_action));
   }
 
   @Override
@@ -239,98 +261,6 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
     checkBoxAcceptTerm.setVisibility(View.VISIBLE);
   }
 
-  @Override
-  public void setAuthButtonSignInText() {
-    authButton.setText(R.string.sign_in);
-  }
-
-  @Override
-  public void setAuthButtonRegisterText() {
-    authButton.setText(R.string.action_register);
-  }
-
-  private SpannableStringBuilder createFooterTextForRegister() {
-    SpannableStringBuilder footerText = new SpannableStringBuilder()
-            .append(createSpannableNoClickable(getString(R.string.have_account),
-                    R.color.colorSecondary)).append(" ")
-            .append(createSigninSpannable(getString(R.string.sign_in), R.color.colorPrimary))
-            .append(createSpannableNoClickable("\n\n", R.color.colorSecondary))
-            .append(createIntentSpannable(getString(R.string.terms_of_service),
-                    R.color.colorPrimary, TermsOfServiceActivity.class))
-            .append(createSpannableNoClickable(" " + getString(R.string.and) + " ",
-                    R.color.colorSecondary))
-            .append(createIntentSpannable(getString(R.string.privacy_policy),
-                    R.color.colorPrimary, PrivacyPolicyActivity.class));
-    return footerText;
-  }
-
-  private SpannableStringBuilder createFooterTextForSignin() {
-    SpannableStringBuilder footerText = new SpannableStringBuilder()
-            .append(createSpannableNoClickable(
-                    getString(R.string.first_string_link_for_create_account),
-                    R.color.colorSecondary)).append(" ")
-            .append(createRegisterSpannable(
-                    getString(R.string.second_string_link_for_create_account),
-                    R.color.colorPrimary));
-    return footerText;
-  }
-
-  private Spannable createSpannableNoClickable(String stringResource, int colorResource) {
-    Spannable spanText = new SpannableString(stringResource);
-    spanText.setSpan(new ForegroundColorSpan(getResources()
-            .getColor(colorResource)), 0, stringResource.length(), 0);
-    return spanText;
-  }
-
-  private Spannable createSigninSpannable(String stringResource,
-                                         int colorResource) {
-    Spannable spannableClickable = createSpannableNoClickable(stringResource, colorResource);
-    ClickableSpan clickableSpan = new ClickableSpan() {
-      @Override
-      public void onClick(View textView) {
-        userAuthPresenter.switchToSignInMode();
-        hideTermsCheckbox();
-      }
-    };
-    spannableClickable.setSpan(clickableSpan, 0, spannableClickable.length(), 0);
-    return spannableClickable;
-  }
-
-  private Spannable createRegisterSpannable(String stringResource, int colorResource) {
-    Spannable spannableClickable = createSpannableNoClickable(stringResource, colorResource);
-    ClickableSpan clickableSpan = new ClickableSpan() {
-      @Override
-      public void onClick(View textView) {
-        userAuthPresenter.switchToRegisterMode();
-      }
-    };
-    spannableClickable.setSpan(clickableSpan, 0, spannableClickable.length(), 0);
-    return spannableClickable;
-  }
-
-  private Spannable createIntentSpannable(String stringResource, int colorResource,
-                                         final Class nextActivity) {
-    Spannable spannableClickable = createSpannableNoClickable(stringResource, colorResource);
-    ClickableSpan clickableSpan = new ClickableSpan() {
-      @Override
-      public void onClick(View textView) {
-        startActivity(new Intent(UserAuthActivity.this, nextActivity));
-      }
-    };
-    spannableClickable.setSpan(clickableSpan, 0, spannableClickable.length(), 0);
-    return spannableClickable;
-  }
-
-  /**
-   * Performs auth calls.
-   */
-  @OnClick(R.id.auth_button)
-  public void perform_auth() {
-    String email = emailField.getText().toString();
-    String password = passwordField.getText().toString();
-    userAuthPresenter.performAuth(email, password, checkBoxAcceptTerm.isChecked());
-  }
-
   private void showMessage(int stringResource, Button button) {
     Snackbar snackbar = Snackbar.make(button, stringResource, Snackbar.LENGTH_LONG);
     snackbar.show();
@@ -338,12 +268,12 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
 
   private void showProgress(final boolean show) {
     int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-    layoutLoginForm.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
-    layoutLoginForm.animate().setDuration(shortAnimTime).alpha(show ? 0 : 1)
+    registerLoginLinearLayout.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
+    registerLoginLinearLayout.animate().setDuration(shortAnimTime).alpha(show ? 0 : 1)
             .setListener(new AnimatorListenerAdapter() {
               @Override
               public void onAnimationEnd(Animator animation) {
-                layoutLoginForm.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
+                registerLoginLinearLayout.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
               }
             });
     layoutProgress.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
@@ -354,5 +284,31 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
                 layoutProgress.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
               }
             });
+  }
+
+  @OnClick(R.id.register_button)
+  public void onClickRegister() {
+    if(!isShowedRegisterLoginFields()){
+      userAuthPresenter.switchToRegisterMode();
+    } else {
+      String email = emailField.getText().toString();
+      String password = passwordField.getText().toString();
+      userAuthPresenter.performAuth(email, password, checkBoxAcceptTerm.isChecked());
+    }
+  }
+
+  private boolean isShowedRegisterLoginFields() {
+    return registerLoginFieldsLinearLayout.getVisibility() == View.VISIBLE;
+  }
+
+  @OnClick(R.id.login_button)
+  public void onClickLogin() {
+    if(!isShowedRegisterLoginFields()){
+      userAuthPresenter.switchToSignInMode();
+    } else {
+      String email = emailField.getText().toString();
+      String password = passwordField.getText().toString();
+      userAuthPresenter.performAuth(email, password, checkBoxAcceptTerm.isChecked());
+    }
   }
 }
