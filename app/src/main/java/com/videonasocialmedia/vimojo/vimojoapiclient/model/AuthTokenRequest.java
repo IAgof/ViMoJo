@@ -1,17 +1,20 @@
 package com.videonasocialmedia.vimojo.vimojoapiclient.model;
 
-import com.google.gson.Gson;
-
 /**
  * Created by alvaro on 28/11/17.
  */
 
+import com.google.gson.Gson;
+
+/**
+ * Model class for token request auth API calls.
+ */
 public class AuthTokenRequest {
-  private final String username;
+  private final String email;
   private final String password;
 
-  public AuthTokenRequest(String userName, String password) {
-    this.username = userName;
+  public AuthTokenRequest(String email, String password) {
+    this.email = email;
     this.password = password;
   }
 
@@ -19,8 +22,8 @@ public class AuthTokenRequest {
     return new Gson().toJson(this);
   }
 
-  public String getUsername() {
-    return username;
+  public String getEmail() {
+    return email;
   }
 
   public String getPassword() {

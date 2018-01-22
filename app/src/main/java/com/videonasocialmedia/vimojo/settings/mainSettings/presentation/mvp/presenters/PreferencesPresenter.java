@@ -10,6 +10,8 @@
 
 package com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,6 +26,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.auth.AccountConstants;
+import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAccount;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
@@ -82,6 +86,7 @@ public class PreferencesPresenter extends VimojoPresenter
     private UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase;
     private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
     private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
+    private GetAccount getAccount;
 
     /**
      * Constructor
@@ -90,6 +95,7 @@ public class PreferencesPresenter extends VimojoPresenter
      * @param sharedPreferences
      * @param emailPref
      * @param getAuthToken
+     * @param getAccount
      */
     public PreferencesPresenter(PreferencesView preferencesView,
                                 Context context, SharedPreferences sharedPreferences,
@@ -107,7 +113,7 @@ public class PreferencesPresenter extends VimojoPresenter
                                 UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
                                 RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
                                 GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-                                BillingManager billingManager, GetAuthToken getAuthToken) {
+                                BillingManager billingManager, GetAuthToken getAuthToken, GetAccount getAccount) {
         this.preferencesView = preferencesView;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
@@ -134,6 +140,7 @@ public class PreferencesPresenter extends VimojoPresenter
         this.billingManager = billingManager;
         this.getAuthToken = getAuthToken;
         this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
+        this.getAccount = getAccount;
     }
 
     public void onPause() {
@@ -388,5 +395,31 @@ public class PreferencesPresenter extends VimojoPresenter
 
     public Context getContext() {
         return context;
+    }
+
+    public void signOutConfirmed() {
+        deleteAccount();
+        preferencesView.setupUserAuthentication(false);
+    }
+
+    private void deleteAccount() {
+        ListenableFuture<Account> accountFuture = executeUseCaseCall(new Callable<Account>() {
+            @Override
+            public Account call() throws Exception {
+                return getAccount.getCurrentAccount(getContext());
+            }
+        });
+        Futures.addCallback(accountFuture, new FutureCallback<Account>() {
+            @Override
+            public void onSuccess(Account account) {
+                AccountManager am = AccountManager.get(getContext());
+                am.removeAccount(account, null, null);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                // (jliarte): 22/01/18 no account present? do nothing
+            }
+        });
     }
 }

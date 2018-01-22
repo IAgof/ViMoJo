@@ -4,8 +4,8 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
  * Created by jliarte on 11/01/18.
  */
 
-import com.videonasocialmedia.vimojo.auth.repository.model.AuthTokenRequest;
-import com.videonasocialmedia.vimojo.auth.repository.model.RegisterRequest;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthTokenRequest;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.RegisterRequest;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
 
