@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.auth.repository.model;
+package com.videonasocialmedia.vimojo.vimojoapiclient.model;
 
 import com.google.gson.Gson;
 

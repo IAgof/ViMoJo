@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.Preference;
 import android.preference.SwitchPreference;
 
+import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAccount;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
@@ -87,7 +88,7 @@ public class FragmentPresentersModule {
           UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
-          BillingManager billingManager, GetAuthToken getAuthToken) {
+          BillingManager billingManager, GetAuthToken getAuthToken, GetAccount getAccount) {
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
         transitionVideoPref, transitionAudioPref, watermarkPref, themeAppPref, emailPref,
@@ -100,7 +101,7 @@ public class FragmentPresentersModule {
         updateWatermarkPreferenceToProjectUseCase,
         relaunchTranscoderTempBackgroundUseCase,
         getVideonaFormatFromCurrentProjectUseCase,
-        billingManager, getAuthToken);
+        billingManager, getAuthToken, getAccount);
   }
 
   @Provides

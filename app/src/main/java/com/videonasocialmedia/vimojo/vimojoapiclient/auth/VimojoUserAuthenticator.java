@@ -7,8 +7,8 @@ package com.videonasocialmedia.vimojo.vimojoapiclient.auth;
 import com.google.gson.Gson;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.auth.repository.model.AuthTokenRequest;
-import com.videonasocialmedia.vimojo.auth.repository.model.RegisterRequest;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthTokenRequest;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.RegisterRequest;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthService;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;

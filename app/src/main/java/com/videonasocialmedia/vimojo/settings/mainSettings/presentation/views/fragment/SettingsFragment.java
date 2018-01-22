@@ -329,7 +329,7 @@ public class SettingsFragment extends PreferenceFragment implements
             public void onClick(DialogInterface dialogInterface, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        // TODO(jliarte): 18/01/18 implement sign out
+                        preferencesPresenter.signOutConfirmed();
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         break;
