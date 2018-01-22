@@ -266,6 +266,11 @@
 
     <!-- End Settings Activity -->
 
+    <!-- UserAuthActivity -->
+    <string name="register_slogan">Aplicación para periodistas móviles. Rompiendo la barrera de la edición de vídeo en móviles.</string>
+    <string name="register_action">Empieza</string>
+    <string name="login_action">Inicia sesión</string>
+
     <!-- DRAWER -->
     <string name="drawerProjects">Mis proyectos</string>
     <string name="drawerSettings">Ajustes</string>

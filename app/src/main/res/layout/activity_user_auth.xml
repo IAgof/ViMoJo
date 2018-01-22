@@ -7,45 +7,69 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".auth.view.activity.UserAuthActivity">
 
     <RelativeLayout
+        android:id="@+id/main_relative_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:background="@drawable/activity_user_auth_background_welcome">
 
-        <android.support.design.widget.AppBarLayout
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            >
+            android:layout_marginTop="64dp">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:theme="@style/arrowWhiteToolbar">
+            <ImageView
+                android:id="@+id/header_logo_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/splash_screen"/>
 
-                <TextView
-                    android:id="@+id/toolbar_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:text="@string/sign_in_register"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="20dp"/>
+            <TextView
+                android:id="@+id/register_slogan_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/header_logo_image_view"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="24dp"
+                android:text="@string/register_slogan"
+                android:textAlignment="center"
+                android:textSize="@dimen/text_register_slogan"
+                />
 
-            </android.support.v7.widget.Toolbar>
+            <Button
+                android:id="@+id/register_button"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/register_slogan_text_view"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="4dp"
+                android:background="@drawable/activity_user_auth_round_background"
+                android:text="@string/register_action"
+                android:textColor="@color/colorWhite"
+                />
 
-        </android.support.design.widget.AppBarLayout>
-
+            <Button
+                android:id="@+id/login_button"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/register_button"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="4dp"
+                android:background="@drawable/activity_user_auth_round_background"
+                android:text="@string/login_action"
+                android:textColor="@color/colorWhite"
+                />
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingTop="50dp">
+            android:paddingTop="50dp"
+            android:visibility="gone">
 
             <!-- Login progress -->
             <ScrollView

@@ -8,8 +8,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -80,7 +78,6 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
     setContentView(R.layout.activity_user_auth);
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
-    setupToolbar();
     setRegisterFooterText();
     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
   }
@@ -94,14 +91,6 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
       default:
         return super.onOptionsItemSelected(item);
     }
-  }
-
-  private void setupToolbar() {
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
-    getSupportActionBar().setDisplayShowTitleEnabled(false);
-    ActionBar ab = getSupportActionBar();
-    ab.setDisplayHomeAsUpEnabled(true);
   }
 
   @Override
