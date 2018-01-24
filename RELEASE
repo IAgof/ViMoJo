@@ -1,5 +1,2 @@
-v0.8.0
-- Update editor options in drawer. Show info project, thumbnail, title project, date, added also
-dialog to update title project.
-- New screen user profile. Update thumbnail, user name, user mail. Show info videos recorded,
-edited, shared.
+v0.8.1
+- Added link to Vimojo kit from drawer, store category. Links added in every flavor with utm campaign values.
