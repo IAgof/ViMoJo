@@ -50,10 +50,10 @@ public class SettingsFragment extends PreferenceFragment implements
     @Inject PreferencesPresenter preferencesPresenter;
 
     protected PreferenceCategory ftp1Pref;
-    protected PreferenceCategory ftp2Pref;
+    // TODO:(alvaro.martinez) 12/01/18 Now we only use one FTP, not two. Implement feature, I want to add more FTPs
+    //protected PreferenceCategory ftp2Pref;
     protected PreferenceCategory transitionCategory;
     protected PreferenceCategory watermarkPrefCategory;
-    protected Preference emailPref;
     protected SwitchPreference transitionsVideoPref;
     protected SwitchPreference transitionsAudioPref;
     protected SwitchPreference watermarkSwitchPref;
@@ -79,13 +79,11 @@ public class SettingsFragment extends PreferenceFragment implements
 
     private FragmentPresentersComponent initComponent() {
         return DaggerFragmentPresentersComponent.builder()
-                .fragmentPresentersModule(
-                        new FragmentPresentersModule(this, context, sharedPreferences,
-                                transitionsVideoPref, transitionsAudioPref, watermarkSwitchPref,
-                                themeappSwitchPref, emailPref, this.getActivity()))
-                .systemComponent(((VimojoApplication)getActivity().getApplication())
-                        .getSystemComponent())
-                .build();
+            .fragmentPresentersModule(new FragmentPresentersModule(this, context, sharedPreferences,
+                transitionsVideoPref, transitionsAudioPref, watermarkSwitchPref,
+                    themeappSwitchPref, this.getActivity()))
+            .systemComponent(((VimojoApplication)getActivity().getApplication()).getSystemComponent())
+            .build();
     }
 
     private void initPreferences() {
@@ -98,7 +96,6 @@ public class SettingsFragment extends PreferenceFragment implements
         editor = sharedPreferences.edit();
 
         setupWatermark();
-        setupMailValid();
         setupAboutUs();
         setupPrivacyPolicy();
         setupTermOfService();
@@ -106,10 +103,6 @@ public class SettingsFragment extends PreferenceFragment implements
         setupLegalNotice();
         setupTransitions();
         setupThemeApp();
-    }
-
-    private void setupMailValid() {
-        emailPref=findPreference(ConfigPreferences.EMAIL);
     }
 
     private void setupTransitions() {
@@ -164,7 +157,6 @@ public class SettingsFragment extends PreferenceFragment implements
     public void onResume() {
         super.onResume();
         preferencesPresenter.checkAvailablePreferences();
-        preferencesPresenter.checkMailValid();
         preferencesPresenter.checkVimojoStore(getActivity());
         preferencesPresenter.setupUserAuthPreference();
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
@@ -248,24 +240,16 @@ public class SettingsFragment extends PreferenceFragment implements
     }
 
     @Override
-    public void setUserPropertyToMixpanel(String property, String value) {
-        mixpanel.getPeople().identify(mixpanel.getDistinctId());
-        mixpanel.getPeople().set(property,value);
-        if (property == "account_email") {
-            mixpanel.getPeople().setOnce("$email", value);
-        }
-    }
-
-    @Override
     public void hideFtpsViews() {
         ftp1Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP1_Section));
         if (ftp1Pref != null) {
             getPreferenceScreen().removePreference(ftp1Pref);
         }
-        ftp2Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP2_Section));
+        // TODO:(alvaro.martinez) 12/01/18 Now we only use one FTP, not two. Implement feature, I want to add more FTPs
+        /*ftp2Pref = (PreferenceCategory) findPreference(getString(R.string.title_FTP2_Section));
         if (ftp2Pref != null) {
             getPreferenceScreen().removePreference(ftp2Pref);
-        }
+        }*/
     }
 
     @Override

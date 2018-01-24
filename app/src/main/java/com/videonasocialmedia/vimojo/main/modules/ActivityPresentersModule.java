@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticato
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
@@ -94,6 +95,8 @@ import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditT
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
+import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
+import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.upload.domain.UploadVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -288,11 +291,12 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  TrimPreviewPresenter provideTrimPresenter(UserEventTracker userEventTracker,
+  TrimPreviewPresenter provideTrimPresenter(SharedPreferences sharedPreferences,
+                                            UserEventTracker userEventTracker,
                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                     ModifyVideoDurationUseCase modifyVideoDurationUseCase) {
-    return new TrimPreviewPresenter((VideoTrimActivity) activity, userEventTracker,
-        getMediaListFromProjectUseCase, modifyVideoDurationUseCase);
+    return new TrimPreviewPresenter((VideoTrimActivity) activity, sharedPreferences,
+        userEventTracker, getMediaListFromProjectUseCase, modifyVideoDurationUseCase);
   }
 
   @Provides @PerActivity
@@ -359,6 +363,14 @@ public class ActivityPresentersModule {
               ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase) {
     return new EditTextPreviewPresenter((VideoEditTextActivity) activity, activity,
         userEventTracker, getMediaListFromProjectUseCase, modifyVideoTextAndPositionUseCase);
+  }
+  @Provides @PerActivity
+  UserProfilePresenter provideUserProfilePresenter(SharedPreferences sharedPreferences,
+                                                   UserEventTracker userEventTracker,
+                                                   ObtainLocalVideosUseCase
+                                                       obtainLocalVideosUseCase) {
+    return new  UserProfilePresenter((UserProfileView) activity, userEventTracker,
+        sharedPreferences, obtainLocalVideosUseCase);
   }
 
   @Provides @PerActivity
@@ -555,6 +567,10 @@ public class ActivityPresentersModule {
   @Provides ProfileRepository provideProfileRepository(
           CameraSettingsRepository cameraSettingsRepository) {
     return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository);
+  }
+
+  @Provides ObtainLocalVideosUseCase provideObtainLocalVideosUseCase() {
+    return new ObtainLocalVideosUseCase();
   }
 
   @Provides VimojoUserAuthenticator provideVimojoAuthenticator() {

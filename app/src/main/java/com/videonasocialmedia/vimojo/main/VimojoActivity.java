@@ -48,6 +48,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE;
+
 /**
  * Videona base activity.
  *
@@ -84,9 +86,8 @@ public abstract class VimojoActivity extends AppCompatActivity {
     }
 
     public void updateThemeApp() {
-        // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
         boolean isActivateDarkTheme = sharedPreferences
-                .getBoolean(ConfigPreferences.THEME_APP_DARK, false);
+                .getBoolean(ConfigPreferences.THEME_APP_DARK, DEFAULT_THEME_DARK_STATE);
         if (isActivateDarkTheme) {
             setTheme(R.style.VideonaThemeDark);
         } else {

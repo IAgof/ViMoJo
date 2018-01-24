@@ -3,24 +3,6 @@
 
      <PreferenceCategory
         android:title="@string/titleUserSection">
-        <EditTextPreference
-            android:key="name"
-            android:title="@string/name"
-            android:dialogTitle="@string/enterName">
-        </EditTextPreference>
-
-        <EditTextPreference
-            android:key="username"
-            android:title="@string/username"
-            android:dialogTitle="@string/enterUsername">
-        </EditTextPreference>
-
-        <EditTextPreference
-            android:key="email"
-            android:title="@string/emailPreference"
-            android:inputType="textEmailAddress"
-            android:dialogTitle="@string/enterEmail">
-        </EditTextPreference>
          <Preference
              android:key="auth"
              android:title="@string/title_activity_auth"/>
@@ -100,6 +82,7 @@
 
     </PreferenceCategory>
 
+    <!-- // TODO:(alvaro.martinez) 12/01/18 Now we only use one FTP, not two. Implement feature, I want to add more FTPs
     <PreferenceCategory
         android:title="@string/title_FTP2_Section"
         android:key="@string/title_FTP2_Section">
@@ -136,7 +119,7 @@
             android:dialogTitle="@string/enterUneditedVideoDestination_FTP">
         </EditTextPreference>
 
-    </PreferenceCategory>
+    </PreferenceCategory> -->
 
     <PreferenceCategory
         android:key="moreInformation"

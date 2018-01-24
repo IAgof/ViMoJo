@@ -49,6 +49,7 @@
     <string name="dialog_editor_user_thumb_take_photo">Camera</string>
     <string name="dialog_editor_user_thumb_pick_photo">Gallery</string>
     <string name="drawer_dark_theme">Dark theme</string>
+    <string name="dialog_title_update_project_title">Update title project</string>
 
 
     <!-- Edit Activity -->
@@ -106,6 +107,7 @@
 
     <!-- Detail project activity -->
     <string name="projectTitleDurationMinSec">Duration:</string>
+    <string name="projectTitleNumClips">Clips:</string>
     <string name="projectTitleSizeMb">Size:</string>
     <string name="detail_project_hint_title">Enter your name here</string>
     <string name="detail_project_info_duration">Duration</string>
@@ -185,14 +187,7 @@
     <!-- User info -->
     <string name="settingsTitle">Settings</string>
     <string name="titleUserSection">My account</string>
-    <string name="name">Name</string>
-    <string name="enterName">Enter your name</string>
-    <string name="removeName">Remove name</string>
-    <string name="username">User name</string>
-    <string name="enterUsername">Enter a username</string>
-    <string name="removeUsername">Remove username</string>
-    <string name="emailPreference">User email</string>
-    <string name="save">Save</string>
+
 
     <!--FTP Settings -->
     <string name="title_FTP1_Section">FTP</string>
@@ -231,10 +226,10 @@
     <string name="high_resolution_value">2160</string>
     <string name="title_item_quality">Quality</string>
     <string name="low_quality_name">16 Mbps</string>
-    <string name="good_quality_name">32 Mbps</string>
+    <string name="good_quality_name">25 Mbps</string>
     <string name="high_quality_name">50 Mbps</string>
     <string name="low_quality_value">16000000</string>
-    <string name="good_quality_value">32000000</string>
+    <string name="good_quality_value">25000000</string>
     <string name="high_quality_value">50000000</string>
     <string name="title_item_camera_pro_o_basic">Camera pro/basic</string>
     <string name="camera_pro">Camera Pro</string>
@@ -287,7 +282,15 @@
     <!-- End Settings Activity -->
 
     <!-- DRAWER -->
-    <string name="drawerProjects">My projects</string>
+    <string name="drawerWatchProjects">Watch projects</string>
+    <string name="drawerEntryText">Entry text</string>
+    <string name="drawerAddPhotos">Add photos</string>
+    <string name="drawerSocialNetworks">Social networks</string>
+    <string name="drawerShareProject">Share project</string>3
+    <string name="drawerProjectInfo">Project info</string>
+    <string name="drawerMyProjects">My projects</string>
+    <string name="drawerNewProject">New project</string>
+    <string name="drawerUserProfile">User profile</string>
     <string name="drawerSettings">Settings</string>
     <string name="menuSuggestions">Suggestions</string>
     <string name="title_tutorial_edition_section">Edition tutorial</string>
@@ -299,6 +302,9 @@
     <string name="title_theme_app_section">Activate dark theme</string>
     <string name="drawerStoreTitle">Vimojo Store</string>
     <string name="drawer_go_to_store">Go to store</string>
+    <string name="drawerProjectName">Project name</string>
+    <string name="drawerProjectLocation">Project location</string>
+    <string name="drawerProjectDate">Project date</string>
 
     <!-- VimojoStoreActivity -->
     <string name="buy_now">Buy now</string>
@@ -312,6 +318,16 @@
     <string name="error_message_store_no_items">Store empty, no items to buy</string>
     <string name="error_message_store_purchasing_items">Buying item, error </string>
     <string name="error_message_store_not_available">Connection with store not available</string>
+
+    <!-- UserProfileActivity -->
+    <string name="title_number_projects_edited">Projects edited</string>
+    <string name="title_number_clips_recorded">Clips recorded</string>
+    <string name="title_number_projects_shared">Projects shared</string>
+    <string name="alert_dialog_title_user_profile">User profile</string>
+    <string name="dialog_getting_user_profile">Getting user profile info</string>
+    <string name="hint_user_name">Enter your user name</string>
+    <string name="dialog_title_update_user_name">User name</string>
+    <string name="hint_user_email">Enter your email address</string>
 
     <!-- About Activity -->
 
@@ -2462,6 +2478,8 @@ and Conditions.\n\n
     <string name="mute">Mute</string>
     <string name="solo">Solo</string>
 
+
+    <string name="profession">Profession</string>
 
 
 </resources>

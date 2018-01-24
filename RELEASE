@@ -1,5 +1,5 @@
-v0.7.7
-- Added support for manual exposure time.
-- Redesign of metering capabilities and user flow in record activity
-- Added show resolution depending on camera selected in camera settings screen. Check compatibility to allow switch camera.
-- Save camera selected. Open camera according user preference.
+v0.8.0
+- Update editor options in drawer. Show info project, thumbnail, title project, date, added also
+dialog to update title project.
+- New screen user profile. Update thumbnail, user name, user mail. Show info videos recorded,
+edited, shared.

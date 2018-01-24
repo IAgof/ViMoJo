@@ -18,7 +18,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import static com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings.CAMERA_SETTING_QUALITY_16_ID;
-import static com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings.CAMERA_SETTING_QUALITY_32_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings.CAMERA_SETTING_QUALITY_25_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings.CAMERA_SETTING_QUALITY_50_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_24_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID;
@@ -217,8 +217,8 @@ public class GetCameraSettingsMapperSupportedListUseCase {
             CAMERA_SETTING_QUALITY_16_ID, context.getString(R.string.low_quality_name),
             qualityNames.get(CAMERA_SETTING_QUALITY_16_ID).equals(qualitySelected)));
     qualityList.add(new CameraSettingValue(
-            CAMERA_SETTING_QUALITY_32_ID, context.getString(R.string.good_quality_name),
-            qualityNames.get(CAMERA_SETTING_QUALITY_32_ID).equals(qualitySelected)));
+        CAMERA_SETTING_QUALITY_25_ID, context.getString(R.string.good_quality_name),
+            qualityNames.get(CAMERA_SETTING_QUALITY_25_ID).equals(qualitySelected)));
     qualityList.add(new CameraSettingValue(
             CAMERA_SETTING_QUALITY_50_ID, context.getString(R.string.high_quality_name),
             qualityNames.get(CAMERA_SETTING_QUALITY_50_ID).equals(qualitySelected)));

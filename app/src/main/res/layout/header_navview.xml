@@ -2,8 +2,8 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="?attr/colorAccent"
-    android:layout_height="@dimen/header_height"
+    android:background="@color/colorAccent"
+    android:layout_height="120dp"
     android:gravity="bottom"
     android:padding="@dimen/header_left_padding"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
@@ -11,26 +11,59 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
-    <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
-        android:id="@+id/image_drawer_user"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="8dp"
-        android:layout_centerHorizontal="true"
-        android:scaleType="fitCenter"
-        android:src="@drawable/activity_editor_drawer_user"
-        />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="4dp"
-        android:textAlignment="center"
-        android:text="@string/app_name"
-        android:textColor="@color/colorWhite"
-        android:textSize="20sp"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView
+            android:id="@+id/image_drawer_thumb_project"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/activity_gallery_project_no_preview"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toRightOf="@+id/image_drawer_thumb_project"
+            android:layout_marginLeft="32dp">
+
+            <TextView
+                android:id="@+id/project_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="4dp"
+                android:text="@string/drawerProjectName"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <!-- project location visibility gone until implement feature -->
+            <TextView
+                android:id="@+id/project_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="4dp"
+                android:text="@string/drawerProjectLocation"
+                android:textColor="@color/colorWhite"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                android:visibility="gone"
+                />
+
+            <TextView
+                android:id="@+id/project_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="4dp"
+                android:text="@string/drawerProjectDate"
+                android:textColor="@color/colorWhite"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                />
+        </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>

@@ -100,7 +100,7 @@ public class ProjectRealmRepository implements ProjectRepository {
     RealmResults<RealmProject> allRealmProjects = realm.where(RealmProject.class).findAll()
         .sort("lastModification", Sort.DESCENDING);
     RealmProject currentRealmProject = null;
-    if(allRealmProjects.size() > 0) {
+    if (allRealmProjects.size() > 0) {
       currentRealmProject = allRealmProjects.first();
     }
 
@@ -145,6 +145,12 @@ public class ProjectRealmRepository implements ProjectRepository {
   @Override
   public void setWatermarkActivated(Project project, boolean watermarkActivated) {
     project.setWatermarkActivated(watermarkActivated);
+    update(project);
+  }
+
+  @Override
+  public void setTitle(Project project, String textTitle) {
+    project.setTitle(textTitle);
     update(project);
   }
 

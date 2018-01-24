@@ -75,7 +75,7 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
   private void setupVideoQualityMap() {
     videoQualityMap = new HashMap<>();
     videoQualityMap.put(CameraSettings.CAMERA_SETTING_QUALITY_16, VideoQuality.Quality.LOW);
-    videoQualityMap.put(CameraSettings.CAMERA_SETTING_QUALITY_32, VideoQuality.Quality.GOOD);
+    videoQualityMap.put(CameraSettings.CAMERA_SETTING_QUALITY_25, VideoQuality.Quality.GOOD);
     videoQualityMap.put(CameraSettings.CAMERA_SETTING_QUALITY_50, VideoQuality.Quality.HIGH);
   }
 
