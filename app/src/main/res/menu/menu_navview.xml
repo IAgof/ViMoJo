@@ -73,6 +73,10 @@
                     android:id="@+id/menu_navview_vimojo_store_section"
                     android:icon="@drawable/ic_activity_drawer_shopping"
                     android:title="@string/drawer_go_to_store"/>
+                <item
+                    android:id="@+id/menu_navview_vimojo_kit_web_section"
+                    android:icon="@drawable/activity_editor_drawer_tripod"
+                    android:title="@string/drawer_go_to_vimojo_kit_web"/>
             </menu>
         </item>
 

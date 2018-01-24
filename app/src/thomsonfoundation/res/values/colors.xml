@@ -45,4 +45,6 @@
     <color name="colorPrimaryDarkThemeDark">#1B2836</color>
     <color name="colorPrimaryLightThemeDark">#243447</color>
 
+    <color name="titleTextColor">@color/colorSecondary</color>
+
 </resources>

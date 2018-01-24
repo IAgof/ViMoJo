@@ -7,7 +7,6 @@
     <!-- AppTheme Light Videona -->
     <style name="VideonaThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="themeName">light</item>
-
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAllowEnterTransitionOverlap">true</item>
         <item name="android:windowAllowReturnTransitionOverlap">true</item>
@@ -42,6 +41,8 @@
         <item name="android:editTextStyle">@style/VideonaEditText</item>
         <item name="android:radioButtonStyle">@style/VideonaRadioButton</item>
         <item name="cardViewStyle">@style/CardViewStyleLight</item>
+
+        <item name="titleTextColor">@color/colorSecondary</item>
     </style>
 
     <style name="CardViewStyleLight" parent="CardView.Light"></style>
@@ -92,6 +93,8 @@
         <item name="android:editTextStyle">@style/VideonaEditText</item>
         <item name="android:buttonTint">@color/colorWhite</item>
         <item name="android:radioButtonStyle">@style/VideonaRadioButton</item>
+
+        <item name="titleTextColor">@color/colorWhite</item>
     </style>
 
     <style name="CardViewStyleDark" parent="CardView.Dark">

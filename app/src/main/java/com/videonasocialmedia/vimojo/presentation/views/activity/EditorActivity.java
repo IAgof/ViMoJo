@@ -241,11 +241,19 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                   case R.id.menu_navview_vimojo_store_section:
                     navigateTo(VimojoStoreActivity.class);
                     return false;
+                  case R.id.menu_navview_vimojo_kit_web_section:
+                    navigateToVimojoKitWeb();
+                    return false;
                   default:
                     return false;
                 }
               }
             });
+  }
+
+  private void navigateToVimojoKitWeb() {
+    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.vimojo_kit_web)));
+    startActivity(Intent.createChooser(intent, getString(R.string.choose_browser)));
   }
 
   private void createDialog(final int resourceItemMenuId) {

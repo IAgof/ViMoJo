@@ -302,6 +302,8 @@
     <string name="title_theme_app_section">Activate dark theme</string>
     <string name="drawerStoreTitle">Vimojo Store</string>
     <string name="drawer_go_to_store">Go to store</string>
+    <string name="drawer_go_to_vimojo_kit_web">Mojo-Kit</string>st
+    <string name="choose_browser">Choose browser</string>
     <string name="drawerProjectName">Project name</string>
     <string name="drawerProjectLocation">Project location</string>
     <string name="drawerProjectDate">Project date</string>
