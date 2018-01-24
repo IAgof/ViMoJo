@@ -309,7 +309,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".auth.view.activity.UserAuthActivity"
+            android:name=".auth.presentation.view.activity.UserAuthActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"/>
 
@@ -325,7 +325,7 @@
             />
 
         <service
-            android:name=".auth.view.service.AuthenticatorService"
+            android:name=".auth.presentation.view.service.AuthenticatorService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

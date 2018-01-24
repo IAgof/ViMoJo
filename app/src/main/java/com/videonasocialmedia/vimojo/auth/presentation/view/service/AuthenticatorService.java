@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.auth.view.service;
+package com.videonasocialmedia.vimojo.auth.presentation.view.service;
 
 import android.app.Service;
 import android.content.Intent;

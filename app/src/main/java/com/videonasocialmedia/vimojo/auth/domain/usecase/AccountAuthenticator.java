@@ -16,7 +16,7 @@ import android.text.TextUtils;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.auth.AccountConstants;
-import com.videonasocialmedia.vimojo.auth.view.activity.UserAuthActivity;
+import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
 

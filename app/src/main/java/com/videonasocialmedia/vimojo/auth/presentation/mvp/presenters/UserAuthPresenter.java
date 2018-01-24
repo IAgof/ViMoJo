@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.auth.view.presenter;
+package com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters;
 
 /**
  * Created by jliarte on 8/01/18.
@@ -13,6 +13,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.vimojo.auth.AccountConstants;
+import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
@@ -25,14 +26,14 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 
 /**
- * Presenter for {@link com.videonasocialmedia.vimojo.auth.view.activity.UserAuthActivity}
+ * Presenter for {@link com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity}
  */
 public class UserAuthPresenter extends VimojoPresenter {
   private final WeakReference<Context> contextReference;
   @Inject
   VimojoUserAuthenticator vimojoUserAuthenticator;
 
-  private final View userAuthActivityView;
+  private UserAuthView userAuthActivityView;
   private boolean register = true;
 
   /**
@@ -42,7 +43,7 @@ public class UserAuthPresenter extends VimojoPresenter {
    * @param context the app context.
    * @param vimojoUserAuthenticator api client for auth services.
    */
-  public UserAuthPresenter(final View userAuthActivityView, Context context,
+  public UserAuthPresenter(UserAuthView userAuthActivityView, Context context,
                            VimojoUserAuthenticator vimojoUserAuthenticator) {
     this.userAuthActivityView = userAuthActivityView;
     this.contextReference = new WeakReference<>(context);
@@ -236,60 +237,4 @@ public class UserAuthPresenter extends VimojoPresenter {
     return contextReference.get();
   }
 
-  /**
-   * View interface between
-   * {@link com.videonasocialmedia.vimojo.auth.view.activity.UserAuthActivity}
-   * and {@link UserAuthPresenter}
-   */
-  public interface View {
-    void hideTermsCheckbox();
-
-    void showTermsCheckbox();
-
-    void showInvalidMailError();
-
-    void showPasswordFieldRequired();
-
-    void showPasswordInvalidError();
-
-    void showUserNameInvalid();
-
-    void showTermsNotAcceptedError();
-
-    void resetErrorFields();
-
-    void showProgressAuthenticationDialog();
-
-    void hideProgressAuthenticationDialog();
-
-    void showSigninSuccess();
-
-    void showRegisterSuccess();
-
-    void showErrorSignInWrongCredentials();
-
-    void showDefaultError();
-
-    void showNetworkError();
-
-    void showErrorRegisterUserExists();
-
-    void showErrorRegisterInvalidMail();
-
-    void showErrorRegisterMissingParams();
-
-    void showErrorRegisterInvalidPassword();
-
-    void showUserNameField();
-
-    void hideUserNameField();
-
-    void hideRegisterButton();
-
-    void hideLoginButton();
-
-    void showLayoutRegisterLoginFields();
-
-    void updateScreenBackground();
-  }
 }

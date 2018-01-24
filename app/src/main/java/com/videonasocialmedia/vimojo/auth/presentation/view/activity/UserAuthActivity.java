@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.auth.view.activity;
+package com.videonasocialmedia.vimojo.auth.presentation.view.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -21,7 +22,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.view.presenter.UserAuthPresenter;
+import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
+import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 
 import javax.inject.Inject;
@@ -33,7 +35,7 @@ import javax.inject.Inject;
 /**
  * Activity for creating and signing in users into Vimojo web platform.
  */
-public class UserAuthActivity extends VimojoActivity implements UserAuthPresenter.View {
+public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   @Inject
   UserAuthPresenter userAuthPresenter;
 
@@ -74,6 +76,13 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
     getActivityPresentersComponent().inject(this);
     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     hideRegisterLoginFields();
+    setStatusBarTransparent();
+  }
+
+  private void setStatusBarTransparent() {
+    Window w = getWindow();
+    w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
   }
 
   private void hideRegisterLoginFields() {
@@ -222,8 +231,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthPresente
 
   @Override
   public void showUserNameField() {
-    // TODO:(alvaro.martinez) 22/01/18 Implement register with user name
-    //userNameField.setVisibility(View.VISIBLE);
+    userNameField.setVisibility(View.VISIBLE);
   }
 
   @Override

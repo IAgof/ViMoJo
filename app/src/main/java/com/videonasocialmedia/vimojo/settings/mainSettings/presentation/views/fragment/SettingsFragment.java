@@ -22,7 +22,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 
-import com.videonasocialmedia.vimojo.auth.view.activity.UserAuthActivity;
+import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.main.DaggerFragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.FragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
