@@ -58,7 +58,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Inject
   EditorPresenter editorPresenter;
   @Nullable
-  @Bind(R.id.text_dialog)
+  @BindView(R.id.text_dialog)
   EditText editTextDialog;
 
   private AlertDialog alertDialog;
