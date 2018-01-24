@@ -1,3 +1,9 @@
+v0.8.0
+- Update editor options in drawer. Show info project, thumbnail, title project, date, added also
+dialog to update title project.
+- New screen user profile. Update thumbnail, user name, user mail. Show info videos recorded,
+edited, shared.
+
 v0.7.8
 - Fixed bug in camera recording view
 - Added new flavor Market For News M4N.

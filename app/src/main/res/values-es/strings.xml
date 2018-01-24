@@ -278,6 +278,8 @@
     <string name="title_theme_app_section">Tema </string>
     <string name="drawerStoreTitle">Tienda</string>
     <string name="drawer_go_to_store">Ir a tienda</string>
+    <string name="drawer_go_to_vimojo_kit_web">Kit-Mojo</string>
+    <string name="choose_browser">Selecciona navegador</string>
 
     <!-- ShopListActivity -->
     <string name="buy_now">Compra ahora por</string>
