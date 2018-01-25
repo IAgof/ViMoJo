@@ -109,7 +109,6 @@
                             android:gravity="center"
                             android:background="@color/colorTransparent"
                             android:text="300 ms"
-                            android:checked="true"
                             android:textColor="@color/colorAccent"
                             android:textSize="12sp"/>
 

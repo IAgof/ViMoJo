@@ -26,4 +26,6 @@ public interface ProjectRepository extends Repository<Project> {
   void updateQuality(Project project, VideoQuality.Quality videoQuality);
 
   void setWatermarkActivated(Project project, boolean isChecked);
+
+  void setTitle(Project project, String textTitle);
 }

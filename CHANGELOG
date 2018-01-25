@@ -1,3 +1,16 @@
+v0.8.0
+- Update editor options in drawer. Show info project, thumbnail, title project, date, added also
+dialog to update title project.
+- New screen user profile. Update thumbnail, user name, user mail. Show info videos recorded,
+edited, shared.
+
+v0.7.8
+- Fixed bug in camera recording view
+- Added new flavor Market For News M4N.
+- New user interface in trimming screen. Select 300ms, 600ms or 1200ms and move forward, backward.
+- Added new field, number of clips in gallery projects cardviews.
+- Added FTP feature to Vimojo app.
+
 v0.7.7
 - Added support for manual exposure time.
 - Redesign of metering capabilities and user flow in record activity

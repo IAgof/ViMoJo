@@ -148,4 +148,10 @@ public class ProjectRealmRepository implements ProjectRepository {
     update(project);
   }
 
+  @Override
+  public void setTitle(Project project, String textTitle) {
+    project.setTitle(textTitle);
+    update(project);
+  }
+
 }

@@ -2,11 +2,40 @@
 <menu xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- visibility false until implement these group of features -->
+    <group android:checkableBehavior="single"
+        android:visible="false">
+        <item
+            android:id="@+id/menu_navview_watch_projects"
+            android:icon="@drawable/activity_drawer_watch_project"
+            android:title="@string/drawerWatchProjects"/>
+        <item
+            android:id="@+id/menu_navview_entry_text"
+            android:icon="@drawable/activity_drawer_entry_text"
+            android:title="@string/drawerEntryText"/>
+        <item
+            android:id="@+id/menu_navview_add_photos"
+            android:icon="@drawable/activity_drawer_add_photos"
+            android:title="@string/drawerAddPhotos"/>
+        <item
+            android:id="@+id/menu_navview_social_netwoks"
+            android:icon="@drawable/activity_drawer_social_networks"
+            android:title="@string/drawerSocialNetworks"/>
+        <item
+            android:id="@+id/menu_navview_share_project"
+            android:icon="@drawable/activity_drawer_share_project"
+            android:title="@string/drawerShareProject"/>
+        <item
+            android:id="@+id/menu_navview_project_info"
+            android:icon="@drawable/activity_drawer_project_info"
+            android:title="@string/drawerProjectInfo"/>
+    </group>
+
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/menu_navview_gallery_projects"
             android:icon="@drawable/activity_editor_drawer_projects"
-            android:title="@string/drawerProjects" />
+            android:title="@string/drawerMyProjects"/>
 
         <item
             android:id="@+id/menu_navview_delete_clip"
@@ -28,8 +57,12 @@
         </item>
 
         <item
+            android:id="@+id/menu_navview_user_profile"
+            android:icon="@drawable/activity_drawer_user_profile"
+            android:title="@string/drawerUserProfile"/>
+        <item
             android:id="@+id/menu_navview_settings"
-            android:icon="@drawable/menu_settings"
+            android:icon="@drawable/activity_drawer_settings"
             android:title="@string/drawerSettings"/>
 
         <item
@@ -40,8 +73,10 @@
                     android:id="@+id/menu_navview_vimojo_store_section"
                     android:icon="@drawable/ic_activity_drawer_shopping"
                     android:title="@string/drawer_go_to_store"/>
-
-
+                <item
+                    android:id="@+id/menu_navview_vimojo_kit_web_section"
+                    android:icon="@drawable/activity_editor_drawer_tripod"
+                    android:title="@string/drawer_go_to_vimojo_kit_web"/>
             </menu>
         </item>
 

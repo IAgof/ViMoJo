@@ -7,6 +7,7 @@ import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
@@ -91,6 +92,8 @@ import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditT
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
+import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
+import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.upload.domain.UploadVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -358,6 +361,14 @@ public class ActivityPresentersModule {
     return new EditTextPreviewPresenter((VideoEditTextActivity) activity, activity,
         userEventTracker, getMediaListFromProjectUseCase, modifyVideoTextAndPositionUseCase);
   }
+  @Provides @PerActivity
+  UserProfilePresenter provideUserProfilePresenter(SharedPreferences sharedPreferences,
+                                                   UserEventTracker userEventTracker,
+                                                   ObtainLocalVideosUseCase
+                                                       obtainLocalVideosUseCase) {
+    return new  UserProfilePresenter((UserProfileView) activity, userEventTracker,
+        sharedPreferences, obtainLocalVideosUseCase);
+  }
 
   @Provides
   ReorderMediaItemUseCase provideMusicReorderer(ProjectRepository projectRepository) {
@@ -547,5 +558,9 @@ public class ActivityPresentersModule {
   @Provides ProfileRepository provideProfileRepository(
           CameraSettingsRepository cameraSettingsRepository) {
     return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository);
+  }
+
+  @Provides ObtainLocalVideosUseCase provideObtainLocalVideosUseCase() {
+    return new ObtainLocalVideosUseCase();
   }
 }

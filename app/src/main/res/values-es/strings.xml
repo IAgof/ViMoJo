@@ -51,6 +51,7 @@
     <string name="dialog_editor_user_thumb_take_photo">Cámara</string>
     <string name="dialog_editor_user_thumb_pick_photo">Galería</string>
     <string name="drawer_dark_theme">Tema oscuro</string>
+    <string name="dialog_title_update_project_title">Cambiar título proyecto</string>
 
 
     <!-- Edit Activity -->
@@ -187,14 +188,7 @@
     <!-- User info -->
     <string name="settingsTitle">Ajustes</string>
     <string name="titleUserSection">Mi cuenta</string>
-    <string name="name">Nombre</string>
-    <string name="enterName">Introduce tu nombre</string>
-    <string name="removeName">Borrar nombre</string>
-    <string name="username">Nombre de usuario</string>
-    <string name="enterUsername">Introduce un nombre de usuario</string>
-    <string name="removeUsername">Borrar nombre de usuario</string>
-    <string name="emailPreference">Email</string>
-    <string name="save">Guardar</string>
+
 
     <!--FTP Settings -->
     <string name="title_FTP1_Section">FTP</string>
@@ -267,7 +261,15 @@
     <!-- End Settings Activity -->
 
     <!-- DRAWER -->
-    <string name="drawerProjects">Mis proyectos</string>
+    <string name="drawerWatchProjects">Watch projects</string>
+    <string name="drawerEntryText">Entrada de texto</string>
+    <string name="drawerAddPhotos">Añadir fotos</string>
+    <string name="drawerSocialNetworks">Redes sociales</string>
+    <string name="drawerShareProject">Compartir proyecto</string>3
+    <string name="drawerProjectInfo">Info proyecto</string>
+    <string name="drawerMyProjects">Mis proyectos</string>
+    <string name="drawerNewProject">Nuevo proyecto</string>
+    <string name="drawerUserProfile">Perfil de usuario</string>
     <string name="drawerSettings">Ajustes</string>
     <string name="menuSuggestions">Sugerencias</string>
     <string name="title_tutorial_edition_section">Tutorial de edición</string>
@@ -276,6 +278,8 @@
     <string name="title_theme_app_section">Tema </string>
     <string name="drawerStoreTitle">Tienda</string>
     <string name="drawer_go_to_store">Ir a tienda</string>
+    <string name="drawer_go_to_vimojo_kit_web">Kit-Mojo</string>
+    <string name="choose_browser">Selecciona navegador</string>
 
     <!-- ShopListActivity -->
     <string name="buy_now">Compra ahora por</string>
@@ -290,6 +294,17 @@
     <string name="error_message_store_no_items">No hay artículos para comprar en la tienda</string>
     <string name="error_message_store_purchasing_items">Comprando artículo, error </string>
     <string name="error_message_store_not_available">Conexión con la tienda no disponible</string>
+
+    <!-- UserProfileActivity -->
+    <string name="title_number_projects_edited">Proyectos editados</string>
+    <string name="title_number_clips_recorded">Vídeos grabados</string>
+    <string name="title_number_projects_shared">Proyectos compartidos</string>
+    <string name="alert_dialog_title_user_profile">Usuario</string>
+    <string name="dialog_getting_user_profile">Actualizando datos de usuario</string>
+    <string name="hint_user_name">Introduzca nombre de usuario</string>
+    <string name="dialog_title_update_user_name">Nombre de usuario</string>
+    <string name="hint_user_email">Introduzca correo electrónico</string>
+    <string name="dialog_title_update_user_email">Nombre de usuario</string>
 
     <!-- About Activity -->
 
@@ -627,5 +642,6 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="onNoVideosRetrieved">Error, no hay vídeos en el proyecto</string>
     <string name="menuGallery">Galería</string>
     <string name="menuSettings">Ajustes</string>
+    <string name="profession">Profesión</string>
 
 </resources>

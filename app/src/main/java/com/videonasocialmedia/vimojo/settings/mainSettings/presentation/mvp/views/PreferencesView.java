@@ -54,8 +54,6 @@ public interface PreferencesView {
 
     void showError(int message);
 
-    void setUserPropertyToMixpanel (String property, String value);
-
     void setTransitionsPref(String key, boolean value);
 
     void setWatermarkSwitchPref(boolean value);

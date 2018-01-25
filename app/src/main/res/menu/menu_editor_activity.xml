@@ -22,7 +22,7 @@
                 />
             <item
                 android:id="@+id/action_settings_suggestions"
-                android:icon="@drawable/editor_activity_drawer_ic_mail"
+                android:icon="@drawable/activity_user_profile_email"
                 android:title="@string/menuSuggestions"
                 app:showAsAction="never"/>
 
