@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ServiceGenerator {
 
+  public static final String BEARER_TOKEN = "Bearer";
   private OkHttpClient.Builder httpClientBuilder;
   private Retrofit.Builder retrofitBuilder;
 
@@ -69,9 +70,10 @@ public class ServiceGenerator {
    * @param <T> the class of described service
    * @return the service instance
    */
-  public <T> T generateService(Class<T> serviceClass, final AuthToken authToken) {
+  public <T> T generateService(Class<T> serviceClass, final String authToken) {
     if (authToken != null) {
-      AuthInterceptor authInterceptor = new AuthInterceptor(authToken);
+      String bearerToken = BEARER_TOKEN + " " + authToken;
+      AuthInterceptor authInterceptor = new AuthInterceptor(bearerToken);
       httpClientBuilder.addInterceptor(authInterceptor);
     }
 

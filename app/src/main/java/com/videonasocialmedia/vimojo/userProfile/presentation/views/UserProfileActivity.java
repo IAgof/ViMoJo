@@ -9,12 +9,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -24,7 +20,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
@@ -162,8 +160,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     super.onResume();
     setUpAndCheckUserThumb();
     presenter.getInfoVideosRecordedEditedShared();
-    presenter.getUserNameFromPreferences();
-    presenter.getEmailFromPreferences();
+    presenter.setupUserInfo();
   }
 
   @Override
@@ -264,19 +261,29 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
 
   @OnClick(R.id.user_profile_username)
   public void showDialogUpdateUsername() {
-    showDialogToUpdatePreference(username.getText().toString(), username,
-        getString(R.string.dialog_title_update_user_name), getString(R.string.hint_user_name));
+    if(isEmptyField(username)){
+      navigateToUserAuth();
+    }
   }
 
   @OnClick(R.id.user_profile_email)
   public void showDialogUpdaterEmail() {
     // TODO:(alvaro.martinez) 18/01/18 Delete this option after adding login/register. Not allow change email.
-    if(email.getText().toString().equals("")) {
-      showDialogToUpdatePreference(email.getText().toString(), email,
-          getString(R.string.dialog_title_update_user_email), getString(R.string.hint_user_email));
+    if(isEmptyField(email)) {
+      navigateToUserAuth();
     }
   }
 
+  private void navigateToUserAuth() {
+    Intent intent = new Intent(this, UserAuthActivity.class);
+    startActivity(intent);
+  }
+
+  private boolean isEmptyField(TextView textView) {
+    return textView.getText().toString().equals("");
+  }
+
+  /* Should user change email, user name from this screen?
   private void showDialogToUpdatePreference(String text, final TextView textView,
                                             String titleDialog, String hintText){
     View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
@@ -332,6 +339,6 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     InputMethodManager keyboard =
         (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
     keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
-  }
+  }*/
 }
 

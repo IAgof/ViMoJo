@@ -3,38 +3,57 @@ package com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserService;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
+import com.videonasocialmedia.vimojo.vimojoapiclient.rest.ServiceGenerator;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by ruth on 13/10/17.
  */
 
-public class UserProfilePresenter {
+public class UserProfilePresenter extends VimojoPresenter {
 
   private SharedPreferences sharedPreferences;
   private SharedPreferences.Editor preferencesEditor;
   private UserProfileView userProfileView;
   private ObtainLocalVideosUseCase obtainLocalVideosUseCase;
   private UserEventTracker userEventTracker;
+  private final GetAuthToken getAuthToken;
+  private final Context context;
 
   @Inject
-  public UserProfilePresenter(UserProfileView view, UserEventTracker userEventTracker,
+  public UserProfilePresenter(Context context, UserProfileView view,
+                              UserEventTracker userEventTracker,
                               SharedPreferences sharedPreferences, ObtainLocalVideosUseCase
-                              obtainLocalVideosUseCase){
+                              obtainLocalVideosUseCase, GetAuthToken getAuthToken){
+    this.context = context;
     this.userEventTracker = userEventTracker;
     this.userProfileView =view;
     this.sharedPreferences = sharedPreferences;
     this.obtainLocalVideosUseCase = obtainLocalVideosUseCase;
+    this.getAuthToken = getAuthToken;
   }
 
   public void getUserNameFromPreferences() {
@@ -106,4 +125,48 @@ public class UserProfilePresenter {
         .matcher(email).matches();
   }
 
+  private void getUserInfo(String authToken) {
+    // create user service client
+    UserService userService = new ServiceGenerator(BuildConfig.API_BASE_URL)
+        .generateService(UserService.class, authToken);
+
+    // Testing, a@l.v id
+    // TODO:(alvaro.martinez) 25/01/18 Save id in register/login
+    String id = "5705241014042624";
+
+    userService.getUser(id).enqueue(new Callback<User>() {
+      @Override
+      public void onResponse(Call<User> call, Response<User> response) {
+        User user = response.body();
+        if(user != null && response.code() != 401) {
+          userProfileView.showPreferenceUserName(user.getUsername());
+          userProfileView.showPreferenceEmail(user.getEmail());
+        }
+      }
+
+      @Override
+      public void onFailure(Call<User> call, Throwable t) {
+        userProfileView.showError(R.string.error);
+      }
+    });
+  }
+
+  public void setupUserInfo() {
+    ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
+      @Override
+      public String call() throws Exception {
+        return getAuthToken.getAuthToken(context);
+      }
+    });
+    Futures.addCallback(authTokenFuture, new FutureCallback<String>() {
+      @Override
+      public void onSuccess(String authToken) {
+        getUserInfo(authToken);
+      }
+
+      @Override
+      public void onFailure(Throwable errorGettingToken) {
+      }
+    });
+  }
 }

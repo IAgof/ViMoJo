@@ -18,11 +18,15 @@ public interface UserAuthView {
 
   void showInvalidMailError();
 
+  void showEmailFieldRequired();
+
   void showPasswordFieldRequired();
 
   void showPasswordInvalidError();
 
-  void showUserNameInvalid();
+  void showUserNameInvalidError();
+
+  void showUserNameFieldRequired();
 
   void showTermsNotAcceptedError();
 
@@ -61,5 +65,7 @@ public interface UserAuthView {
   void showLayoutRegisterLoginFields();
 
   void updateScreenBackground();
+
+  void showInitRegisterOrLogin();
 
 }

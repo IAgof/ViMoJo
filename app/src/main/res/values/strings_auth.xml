@@ -33,6 +33,9 @@
     <string name="network_error">Network error. Are you connected to the internet?</string>
     <string name="error_already_exits">There already exists a user with this email</string>
     <string name="error_field_required">Missing required field</string>
+    <string name="user_name_field_required">User name required field</string>
+    <string name="email_field_required">Email required field</string>
+    <string name="password_field_required">Password required field</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="success_register">User successfully created, WELCOME TO VIMOJO!!</string>
     <string name="account_type">com.videonasocialmedia.vimojo.auth</string>

@@ -42,17 +42,19 @@ public class VimojoUserAuthenticator {
   /**
    * Make a user register call to users plaftform service.
    *
+   * @param username user name for user account.
    * @param email email for user account. This will be the account identificator.
    * @param password password for user account.
    * @param checkBoxAcceptTermChecked user acceptance of privacy and policy terms.
    * @return the user response of the platform service
    * @throws VimojoApiException if an error has occurred in the call.
    */
-  public User register(String email, String password, boolean checkBoxAcceptTermChecked)
+  public User register(String username, String email, String password, boolean checkBoxAcceptTermChecked)
           throws VimojoApiException {
     AuthService authService = new ServiceGenerator(BuildConfig.API_BASE_URL)
             .generateService(AuthService.class);
-    RegisterRequest requestBody = new RegisterRequest(email, password, checkBoxAcceptTermChecked);
+    RegisterRequest requestBody = new RegisterRequest(username, email, password,
+        checkBoxAcceptTermChecked);
     try {
       Response<User> response = authService.register(requestBody).execute();
       if (response.isSuccessful()) {

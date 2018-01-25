@@ -16,9 +16,9 @@ import java.io.IOException;
  * Class for chaining auth calls for restricted api calls.
  */
 public class AuthInterceptor implements Interceptor {
-  AuthToken authToken;
+  String authToken;
 
-  public AuthInterceptor(AuthToken authToken) {
+  public AuthInterceptor(String authToken) {
     this.authToken = authToken;
   }
 
@@ -26,7 +26,7 @@ public class AuthInterceptor implements Interceptor {
   public Response intercept(Chain chain) throws IOException {
     Request original = chain.request();
     Request.Builder requestBuilder = original.newBuilder()
-            .header("Authorization", authToken.getToken())
+            .header("Authorization", authToken)
             .method(original.method(), original.body());
     Request request = requestBuilder.build();
     return chain.proceed(request);

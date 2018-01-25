@@ -33,6 +33,9 @@
     <string name="network_error">Error de red. ¿Tienes conexión a internet?</string>
     <string name="error_already_exits">Ya existe un usuario con esta dirección de email</string>
     <string name="error_field_required">Campo necesario no enviado</string>
+    <string name="user_name_field_required">Nombre de usuario no enviado</string>
+    <string name="email_field_required">Dirección de email no enviada</string>
+    <string name="password_field_required">Contraseña no enviada</string>
     <string name="error_incorrect_password">La contraseña es incorrecta</string>
     <string name="success_register">Usuario creado con éxito, BIENVENIDO A VIMOJO!!</string>
     <string name="register_slogan">Aplicación para periodistas móviles. Rompiendo la barrera de la edición de vídeo en móviles.</string>

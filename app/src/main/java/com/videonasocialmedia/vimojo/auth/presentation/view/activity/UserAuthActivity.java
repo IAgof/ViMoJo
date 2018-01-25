@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -90,14 +89,12 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        onBackPressed();
-        return true;
-      default:
-        return super.onOptionsItemSelected(item);
+  public void onBackPressed(){
+    if(isShowedRegisterLoginFields()) {
+      userAuthPresenter.switchToHomeMode();
+      return;
     }
+    super.onBackPressed();
   }
 
 
@@ -107,8 +104,13 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   }
 
   @Override
+  public void showEmailFieldRequired() {
+    showMessage(R.string.email_field_required, loginButton);
+  }
+
+  @Override
   public void showPasswordFieldRequired() {
-    showMessage(R.string.error_invalid_password, loginButton);
+    showMessage(R.string.password_field_required, loginButton);
   }
 
   @Override
@@ -117,8 +119,13 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   }
 
   @Override
-  public void showUserNameInvalid() {
+  public void showUserNameInvalidError() {
     showMessage(R.string.error_invalid_username, loginButton);
+  }
+
+  @Override
+  public void showUserNameFieldRequired() {
+    showMessage(R.string.user_name_field_required, registerButton);
   }
 
   @Override
@@ -260,6 +267,15 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   }
 
   @Override
+  public void showInitRegisterOrLogin() {
+    hideRegisterLoginFields();
+    registerButton.setVisibility(View.VISIBLE);
+    loginButton.setVisibility(View.VISIBLE);
+    mainRelativeLayout
+        .setBackground(getDrawable(R.drawable.activity_user_auth_background_welcome));
+  }
+
+  @Override
   public void hideTermsCheckbox() {
     checkBoxAcceptTerm.setVisibility(View.GONE);
   }
@@ -299,9 +315,11 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
     if(!isShowedRegisterLoginFields()){
       userAuthPresenter.switchToRegisterMode();
     } else {
+      String userName = userNameField.getText().toString();
       String email = emailField.getText().toString();
       String password = passwordField.getText().toString();
-      userAuthPresenter.performAuth(email, password, checkBoxAcceptTerm.isChecked());
+      userAuthPresenter.performRegisterAuth(userName, email, password,
+          checkBoxAcceptTerm.isChecked());
     }
   }
 
@@ -316,7 +334,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
     } else {
       String email = emailField.getText().toString();
       String password = passwordField.getText().toString();
-      userAuthPresenter.performAuth(email, password, checkBoxAcceptTerm.isChecked());
+      userAuthPresenter.performLoginAuth(email, password);
     }
   }
 }

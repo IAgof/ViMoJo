@@ -31,7 +31,7 @@ public class UploadVideoUseCase {
 
     // create upload service client
     VideoService service = new ServiceGenerator(apiBaseUrl).generateService(VideoService.class,
-        CachedToken.getToken());
+        CachedToken.getToken().getToken());
 
     File file = new File(mediaPath);
 

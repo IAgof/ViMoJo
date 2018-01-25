@@ -92,7 +92,6 @@ public class PreferencesPresenter extends VimojoPresenter
      *  @param preferencesView
      * @param context
      * @param sharedPreferences
-     * @param emailPref
      * @param getAuthToken
      * @param getAccount
      */

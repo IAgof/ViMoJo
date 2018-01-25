@@ -16,7 +16,7 @@
             android:imeActionId="@+id/closekeyBoard"
             android:imeActionLabel="@string/action_user_name_short"
             android:imeOptions="actionUnspecified"
-            android:inputType="textCapCharacters"
+            android:inputType="textCapSentences"
             android:maxLines="1"
             android:textCursorDrawable="@null"
             android:paddingLeft="12dp"

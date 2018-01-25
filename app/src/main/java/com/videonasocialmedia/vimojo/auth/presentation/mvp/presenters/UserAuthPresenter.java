@@ -8,10 +8,12 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.util.Patterns;
+import android.view.View;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.AccountConstants;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
@@ -74,7 +76,19 @@ public class UserAuthPresenter extends VimojoPresenter {
     userAuthActivityView.updateScreenBackground();
   }
 
+  private boolean userNameValidates(String userName){
+    if(isEmptyField(userName)) {
+      userAuthActivityView.showUserNameFieldRequired();
+      return false;
+    }
+    return true;
+  }
+
   private boolean emailValidates(String email) {
+    if (isEmptyField(email)) {
+      userAuthActivityView.showEmailFieldRequired();
+      return false;
+    }
     boolean emailValidates = Patterns.EMAIL_ADDRESS.matcher(email).matches();
     if (!emailValidates) {
       userAuthActivityView.showInvalidMailError();
@@ -112,38 +126,50 @@ public class UserAuthPresenter extends VimojoPresenter {
   }
 
   /**
-   * Perform auth calls to platform auth services.
+   * Perform auth calls to platform login service.
    *
+   * @param email email for the platform user account.
+   * @param password password for the platform user account.
+   */
+  public void performLoginAuth(final String email, final String password) {
+    if (emailValidates(email) && passwordValidates(password)) {
+      userAuthActivityView.showProgressAuthenticationDialog();
+      callSignInService(email, password);
+    }
+  }
+
+  /**
+   * Perform auth calls to platform register service.
+   *
+   * @param userName user name for the platform user account
    * @param email email for the platform user account.
    * @param password password for the platform user account.
    * @param checkBoxAcceptTermChecked user acceptance of privacy and policy terms.
    */
-  public void performAuth(final String email, final String password,
-                          final boolean checkBoxAcceptTermChecked) {
-    userAuthActivityView.resetErrorFields();
-    if (emailValidates(email) && passwordValidates(password)
-            && checkBoxValidates(checkBoxAcceptTermChecked)) {
+  public void performRegisterAuth(final String userName, final String email, final String password,
+                                  final boolean checkBoxAcceptTermChecked) {
+    if (userNameValidates(userName) && emailValidates(email) && passwordValidates(password)
+        && checkBoxValidates(checkBoxAcceptTermChecked)){
       userAuthActivityView.showProgressAuthenticationDialog();
-      if (register) {
-        callRegisterService(email, password, checkBoxAcceptTermChecked);
-      } else {
-        callSignInService(email, password);
-      }
+      callRegisterService(userName, email, password, checkBoxAcceptTermChecked);
     }
   }
 
-  private void callRegisterService(final String email, final String password,
+  private void callRegisterService(final String userName, final String email, final String password,
                                    final boolean checkBoxAcceptTermChecked) {
     ListenableFuture<User> userFuture = executeUseCaseCall(new Callable<User>() {
       @Override
       public User call() throws Exception {
-        return vimojoUserAuthenticator.register(email, password, checkBoxAcceptTermChecked);
+        return vimojoUserAuthenticator.register(userName, email, password,
+            checkBoxAcceptTermChecked);
       }
     });
     Futures.addCallback(userFuture, new FutureCallback<User>() {
       @Override
       public void onSuccess(User result) {
         userAuthActivityView.showRegisterSuccess();
+        // save id user.getId.
+
         callSignInService(email, password);
       }
 
@@ -237,4 +263,8 @@ public class UserAuthPresenter extends VimojoPresenter {
     return contextReference.get();
   }
 
+  public void switchToHomeMode() {
+    userAuthActivityView.showInitRegisterOrLogin();
+    userAuthActivityView.resetErrorFields();
+  }
 }
