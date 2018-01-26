@@ -27,11 +27,12 @@ public class UploadVideoUseCase {
   public static final String MULTIPART_NAME_DATA = "file";
   private static final String LOG_TAG = UploadVideoUseCase.class.getCanonicalName();
 
-  public void uploadVideo(String apiBaseUrl, String mediaPath, final OnUploadVideoListener listener) {
+  public void uploadVideo(String apiBaseUrl, String authToken, String mediaPath,
+                          final OnUploadVideoListener listener) {
 
     // create upload service client
-    VideoService service = new ServiceGenerator(apiBaseUrl).generateService(VideoService.class,
-        CachedToken.getToken().getToken());
+    VideoService service = new ServiceGenerator(apiBaseUrl)
+        .generateService(VideoService.class, authToken);
 
     File file = new File(mediaPath);
 

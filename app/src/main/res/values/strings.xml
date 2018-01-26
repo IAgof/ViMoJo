@@ -38,6 +38,7 @@
     <string name="loginError">Invalid credentials for FTP server.</string>
     <string name="fileError">Error sending file to FTP server.File not found</string>
     <string name="credentialFTPNull">FTP connection data not set. Please configure FTP in settings.</string>
+    <string name="upload_to_server">Send to platform</string>
 
     <!-- Editor Activity -->
     <string name="new_project">New project</string>
@@ -2482,6 +2483,7 @@ and Conditions.\n\n
 
 
     <string name="profession">Profession</string>
+
 
 
 </resources>

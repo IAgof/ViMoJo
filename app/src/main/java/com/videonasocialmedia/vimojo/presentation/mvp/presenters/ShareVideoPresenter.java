@@ -9,9 +9,13 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -22,6 +26,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
+import com.videonasocialmedia.vimojo.model.entities.social.VimojoNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.upload.domain.OnUploadVideoListener;
 import com.videonasocialmedia.vimojo.upload.domain.UploadVideoUseCase;
@@ -30,17 +35,19 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
 /**
  * Created by jca on 11/12/15.
  */
-public class ShareVideoPresenter {
+public class ShareVideoPresenter extends VimojoPresenter {
 
     private Context context;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
@@ -52,12 +59,14 @@ public class ShareVideoPresenter {
     private SharedPreferences sharedPreferences;
     private List<FtpNetwork> ftpList;
     private List<SocialNetwork> socialNetworkList;
+    private VimojoNetwork vimojoNetwork;
     private List optionToShareList;
     private SharedPreferences.Editor preferencesEditor;
 
     private AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase;
     private ExportProjectUseCase exportUseCase;
     private UploadVideoUseCase uploadVideoUseCase;
+    private final GetAuthToken getAuthToken;
 
     @Inject
     public ShareVideoPresenter(Context context, ShareVideoView shareVideoView,
@@ -67,7 +76,9 @@ public class ShareVideoPresenter {
                                AddLastVideoExportedToProjectUseCase
                                        addLastVideoExportedProjectUseCase,
                                ExportProjectUseCase exportProjectUseCase,
-                               UploadVideoUseCase uploadVideoUseCase) {
+                               ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
+                               GetFtpListUseCase getFtpListUseCase,
+                               UploadVideoUseCase uploadVideoUseCase, GetAuthToken getAuthToken) {
         this.context = context;
         this.shareVideoViewReference = new WeakReference<>(shareVideoView);
         this.userEventTracker = userEventTracker;
@@ -75,7 +86,10 @@ public class ShareVideoPresenter {
         this.createDefaultProjectUseCase = createDefaultProjectUseCase;
         this.addLastVideoExportedProjectUseCase = addLastVideoExportedProjectUseCase;
         this.exportUseCase = exportProjectUseCase;
+        this.obtainNetworksToShareUseCase = obtainNetworksToShareUseCase;
+        this.getFtpListUseCase = getFtpListUseCase;
         this.uploadVideoUseCase = uploadVideoUseCase;
+        this.getAuthToken = getAuthToken;
         currentProject = loadCurrentProject();
     }
 
@@ -83,19 +97,21 @@ public class ShareVideoPresenter {
         return Project.getInstance(null, null, null, null);
     }
 
-    public void init() {
-        obtainNetworksToShareUseCase = new ObtainNetworksToShareUseCase();
-        getFtpListUseCase = new GetFtpListUseCase();
-    }
-
     public void onResume() {
         obtainNetworksToShare();
         obtainListFtp();
-        obtainListOptionsToShare(ftpList, socialNetworkList);
+        setupVimojoNetwork();
+        obtainListOptionsToShare(vimojoNetwork, ftpList, socialNetworkList);
         if (shareVideoViewReference != null) {
             shareVideoViewReference.get().showOptionsShareList(optionToShareList);
             shareVideoViewReference.get().startVideoExport();
         }
+    }
+
+    private void setupVimojoNetwork() {
+        vimojoNetwork = new VimojoNetwork(ConfigPreferences.VIMOJO_NETWORK,
+            context.getString(R.string.upload_to_server),
+            R.drawable.activity_share_icon_vimojo_network);
     }
 
     private void obtainListFtp() {
@@ -106,11 +122,15 @@ public class ShareVideoPresenter {
        socialNetworkList = obtainNetworksToShareUseCase.obtainMainNetworks();
     }
 
-    private void obtainListOptionsToShare(List<FtpNetwork> ftpList,
+    private void obtainListOptionsToShare(VimojoNetwork vimojoNetwork, List<FtpNetwork> ftpList,
                                           List<SocialNetwork> socialNetworkList) {
         optionToShareList = new ArrayList();
-        if(BuildConfig.FEATURE_FTP)
+        if(BuildConfig.FEATURE_UPLOAD_VIDEOS) {
+            optionToShareList.add(vimojoNetwork);
+        }
+        if(BuildConfig.FEATURE_FTP) {
             optionToShareList.addAll(ftpList);
+        }
         optionToShareList.addAll(socialNetworkList);
     }
 
@@ -215,12 +235,9 @@ public class ShareVideoPresenter {
                 }
             }
             @Override
-            public void onExportSuccess(Video video) {
+            public void onExportSuccess(final Video video) {
                 if (shareVideoViewReference.get() != null) {
                     shareVideoViewReference.get().loadExportedVideoPreview(video.getMediaPath());
-                    if(BuildConfig.FEATURE_UPLOAD_VIDEOS) {
-                        uploadVideo(context.getString(R.string.api_base_url), video.getMediaPath());
-                    }
                 }
             }
 
@@ -233,12 +250,32 @@ public class ShareVideoPresenter {
         });
     }
 
-    private void uploadVideo(String apiBaseUrl, String mediaPath) {
+    public void uploadVideo(final String videoPath) {
+        ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                return getAuthToken.getAuthToken(context);
+            }
+        });
+        Futures.addCallback(authTokenFuture, new FutureCallback<String>() {
+            @Override
+            public void onSuccess(String authToken) {
+                uploadVideo(BuildConfig.API_BASE_URL, authToken, videoPath);
+            }
+
+            @Override
+            public void onFailure(Throwable errorGettingToken) {
+            }
+        });
+    }
+
+    private void uploadVideo(String apiBaseUrl, String authToken, String mediaPath) {
         ConnectivityManager connManager =
             (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         if (wifi.isConnected()) {
-            uploadVideoUseCase.uploadVideo(apiBaseUrl, mediaPath, new OnUploadVideoListener() {
+            uploadVideoUseCase.uploadVideo(apiBaseUrl, authToken, mediaPath,
+                new OnUploadVideoListener() {
                 @Override
                 public void onUploadVideoError(Causes causes) {
 

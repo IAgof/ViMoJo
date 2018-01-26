@@ -7,6 +7,8 @@ import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
+import com.videonasocialmedia.vimojo.domain.social.GetFtpListUseCase;
+import com.videonasocialmedia.vimojo.domain.social.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
@@ -309,10 +311,13 @@ public class ActivityPresentersModule {
                              AddLastVideoExportedToProjectUseCase
                                      addLastVideoExportedProjectUseCase,
                              ExportProjectUseCase exportProjectUseCase,
-                             UploadVideoUseCase uploadVideoUseCase) {
-    return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker, sharedPreferences,
-            createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
-            exportProjectUseCase, uploadVideoUseCase);
+                             ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
+                             GetFtpListUseCase getFtpListUseCase,
+                             UploadVideoUseCase uploadVideoUseCase, GetAuthToken getAuthToken) {
+    return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
+            sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
+            exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
+            uploadVideoUseCase, getAuthToken);
   }
 
   @Provides @PerActivity
@@ -578,5 +583,13 @@ public class ActivityPresentersModule {
 
   @Provides VimojoUserAuthenticator provideVimojoAuthenticator() {
     return new VimojoUserAuthenticator();
+  }
+
+  @Provides ObtainNetworksToShareUseCase provideObtainNetworksToShareUseCase() {
+    return new ObtainNetworksToShareUseCase();
+  }
+
+  @Provides GetFtpListUseCase provideGetFtpListUseCase() {
+    return new GetFtpListUseCase();
   }
 }

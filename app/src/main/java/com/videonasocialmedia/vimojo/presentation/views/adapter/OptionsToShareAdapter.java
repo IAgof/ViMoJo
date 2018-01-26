@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
+import com.videonasocialmedia.vimojo.model.entities.social.VimojoNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
 
@@ -52,6 +53,8 @@ public class OptionsToShareAdapter extends RecyclerView.Adapter<OptionsToShareAd
                 return new ViewHolderFTP(rowView);
             case OptionsToShareList.typeSocialNetwork:
                 return new ViewHolderSocialNetwork(rowView);
+            case OptionsToShareList.typeVimojoNetwork:
+                return new ViewHolderVimojo(rowView);
         }
         return null;
     }
@@ -77,6 +80,35 @@ public class OptionsToShareAdapter extends RecyclerView.Adapter<OptionsToShareAd
             super(itemView);
         }
         public void bindType(OptionsToShareList networkList) {}
+    }
+
+    public class ViewHolderVimojo extends ViewHolder {
+        @Bind(R.id.icon)
+        ImageView icon;
+        @Nullable
+        @Bind(R.id.name)
+        TextView name;
+        @Nullable
+        @Bind(R.id.checkbox)
+        CheckBox checkBox;
+
+        public ViewHolderVimojo(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    clickListener.onVimojoClicked((VimojoNetwork) optionsToShareLists.get(position));
+                }
+            });
+        }
+
+        public void bindType(OptionsToShareList item) {
+            if (name != null)
+                name.setText(((VimojoNetwork)item).getName());
+            icon.setImageResource(((VimojoNetwork)item).getIcon());
+        }
     }
 
     public class ViewHolderFTP extends ViewHolder {

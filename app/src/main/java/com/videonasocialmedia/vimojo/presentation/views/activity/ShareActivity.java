@@ -27,6 +27,7 @@ import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderServic
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
 import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
+import com.videonasocialmedia.vimojo.model.entities.social.VimojoNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
@@ -83,7 +84,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         ButterKnife.bind(this);
         getActivityPresentersComponent().inject(this);
 //        createExportReceiver();
-        presenter.init();
         videonaPlayer.setListener(this);
         initOptionsShareList();
         restoreState(savedInstanceState);
@@ -248,6 +248,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
     @Override
     public void showOptionsShareList(List<OptionsToShareList> optionsToShareLists) {
+
         SocialNetwork saveToGallery = new SocialNetwork("SaveToGallery",getString(R.string.save_to_gallery), "", "",
                 this.getResources().getDrawable(R.drawable.activity_share_save_to_gallery), "");
         optionsToShareLists.add(saveToGallery);
@@ -277,7 +278,12 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         updateNumTotalVideosShared();
     }
 
-    @Override
+  @Override
+  public void onVimojoClicked(VimojoNetwork vimojoNetwork) {
+    presenter.uploadVideo(videoPath);
+  }
+
+  @Override
     public void onFtpClicked(FtpNetwork ftp) {
         createDialogToInsertNameProject(ftp);
     }
