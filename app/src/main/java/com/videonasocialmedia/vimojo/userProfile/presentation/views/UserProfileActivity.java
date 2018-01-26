@@ -268,7 +268,6 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
 
   @OnClick(R.id.user_profile_email)
   public void showDialogUpdaterEmail() {
-    // TODO:(alvaro.martinez) 18/01/18 Delete this option after adding login/register. Not allow change email.
     if(isEmptyField(email)) {
       navigateToUserAuth();
     }
@@ -283,62 +282,5 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     return textView.getText().toString().equals("");
   }
 
-  /* Should user change email, user name from this screen?
-  private void showDialogToUpdatePreference(String text, final TextView textView,
-                                            String titleDialog, String hintText){
-    View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
-    editTextDialog = (EditText) dialogView.findViewById(R.id.text_dialog);
-    editTextDialog.setText(text);
-    editTextDialog.setHint(hintText);
-    editTextDialog.setSelectAllOnFocus(true);
-
-    final DialogInterface.OnClickListener dialogClickListener =
-        new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            hideKeyboard(editTextDialog);
-            switch (which) {
-              case DialogInterface.BUTTON_POSITIVE: {
-                String textPreference = editTextDialog.getText().toString();
-                if (textPreference.equals(""))
-                  return;
-                if(textView.equals(username)) {
-                  presenter.updateUserNamePreference(textPreference);
-                  break;
-                }
-                if(textView.equals(email)) {
-                  presenter.updateUserEmailPreference(textPreference);
-                  break;
-                }
-
-              }
-              case DialogInterface.BUTTON_NEGATIVE:
-                break;
-            }
-          }
-        };
-
-    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-    AlertDialog alertDialog = builder.setCancelable(false)
-        .setTitle(titleDialog)
-        .setView(dialogView)
-        .setPositiveButton(R.string.positiveButton, dialogClickListener)
-        .setNegativeButton(R.string.negativeButton, dialogClickListener)
-        .setCancelable(false).show();
-
-    editTextDialog.requestFocus();
-    showKeyboard();
-  }
-
-  private void showKeyboard() {
-    InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
-    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-  }
-
-  private void hideKeyboard(View v) {
-    InputMethodManager keyboard =
-        (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-    keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
-  }*/
 }
 

@@ -16,7 +16,7 @@ public class CachedToken {
   public static AuthToken getToken() {
     //String token = authPreference.getString("AUTH_TOKEN", null);
     // AuthToken has to be form in this way Bearer + token
-    return new AuthToken("Bearer " + BuildConfig.VIDAY_TOKEN);
+    return new AuthToken("Bearer " + BuildConfig.VIDAY_TOKEN, "");
   }
 
   public static boolean hasToken() {

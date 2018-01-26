@@ -7,8 +7,8 @@ package com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Patterns;
-import android.view.View;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -168,8 +168,6 @@ public class UserAuthPresenter extends VimojoPresenter {
       @Override
       public void onSuccess(User result) {
         userAuthActivityView.showRegisterSuccess();
-        // save id user.getId.
-
         callSignInService(email, password);
       }
 
@@ -196,7 +194,7 @@ public class UserAuthPresenter extends VimojoPresenter {
       @Override
       public void onSuccess(AuthToken authToken) {
         userAuthActivityView.showSigninSuccess();
-        registerAccount(email, password, authToken.getToken());
+        registerAccount(email, password, authToken.getToken(), authToken.getId());
       }
 
       @Override
@@ -252,10 +250,12 @@ public class UserAuthPresenter extends VimojoPresenter {
     }
   }
 
-  private void registerAccount(String email, String password, String authToken) {
+  private void registerAccount(String email, String password, String authToken, String id) {
     Account account = new Account(email, AccountConstants.VIMOJO_ACCOUNT_TYPE);
     AccountManager am = AccountManager.get(getContext());
-    am.addAccountExplicitly(account, password, null);
+    final Bundle extraData = new Bundle();
+    extraData.putString(AccountConstants.USER_ID, id);
+    am.addAccountExplicitly(account, password, extraData);
     am.setAuthToken(account, AccountConstants.VIMOJO_AUTH_TOKEN_TYPE, authToken);
   }
 
