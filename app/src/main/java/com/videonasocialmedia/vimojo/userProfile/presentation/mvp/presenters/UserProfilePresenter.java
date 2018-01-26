@@ -17,6 +17,7 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserService;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
 import com.videonasocialmedia.vimojo.vimojoapiclient.rest.ServiceGenerator;
 
@@ -125,14 +126,10 @@ public class UserProfilePresenter extends VimojoPresenter {
         .matcher(email).matches();
   }
 
-  private void getUserInfo(String authToken) {
+  private void getUserInfo(String token, String id) {
     // create user service client
     UserService userService = new ServiceGenerator(BuildConfig.API_BASE_URL)
-        .generateService(UserService.class, authToken);
-
-    // Testing, a@l.v id
-    // TODO:(alvaro.martinez) 25/01/18 Save id in register/login
-    String id = "5705241014042624";
+        .generateService(UserService.class, token);
 
     userService.getUser(id).enqueue(new Callback<User>() {
       @Override
@@ -152,16 +149,16 @@ public class UserProfilePresenter extends VimojoPresenter {
   }
 
   public void setupUserInfo() {
-    ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
+    ListenableFuture<AuthToken> authTokenFuture = executeUseCaseCall(new Callable<AuthToken>() {
       @Override
-      public String call() throws Exception {
+      public AuthToken call() throws Exception {
         return getAuthToken.getAuthToken(context);
       }
     });
-    Futures.addCallback(authTokenFuture, new FutureCallback<String>() {
+    Futures.addCallback(authTokenFuture, new FutureCallback<AuthToken>() {
       @Override
-      public void onSuccess(String authToken) {
-        getUserInfo(authToken);
+      public void onSuccess(AuthToken authToken) {
+        getUserInfo(authToken.getToken(), authToken.getId());
       }
 
       @Override

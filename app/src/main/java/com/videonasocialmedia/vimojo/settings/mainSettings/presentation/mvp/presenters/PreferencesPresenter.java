@@ -330,7 +330,7 @@ public class PreferencesPresenter extends VimojoPresenter
         ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
             @Override
             public String call() throws Exception {
-                return getAuthToken.getAuthToken(getContext());
+                return getAuthToken.getAuthToken(getContext()).getToken();
             }
         });
         Futures.addCallback(authTokenFuture, new FutureCallback<String>() {
