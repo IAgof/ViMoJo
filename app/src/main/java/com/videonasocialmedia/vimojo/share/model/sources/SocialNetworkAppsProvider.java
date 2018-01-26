@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.model.sources;
+package com.videonasocialmedia.vimojo.share.model.sources;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
+import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
 
 import java.util.ArrayList;
 import java.util.List;

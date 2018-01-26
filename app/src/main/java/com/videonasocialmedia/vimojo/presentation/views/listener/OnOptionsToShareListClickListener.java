@@ -1,8 +1,8 @@
 package com.videonasocialmedia.vimojo.presentation.views.listener;
 
-import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
-import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
-import com.videonasocialmedia.vimojo.model.entities.social.VimojoNetwork;
+import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
+import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
+import com.videonasocialmedia.vimojo.share.model.entities.VimojoNetwork;
 
 /**
  * Created by ruth on 18/10/16.

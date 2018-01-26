@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
+package com.videonasocialmedia.vimojo.share.presentation.mvp.presenters;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -20,16 +20,16 @@ import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProject
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.social.ObtainNetworksToShareUseCase;
-import com.videonasocialmedia.vimojo.domain.social.GetFtpListUseCase;
+import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
+import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
-import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
-import com.videonasocialmedia.vimojo.model.entities.social.VimojoNetwork;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
-import com.videonasocialmedia.vimojo.upload.domain.OnUploadVideoListener;
-import com.videonasocialmedia.vimojo.upload.domain.UploadVideoUseCase;
+import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
+import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
+import com.videonasocialmedia.vimojo.share.model.entities.VimojoNetwork;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
+import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
+import com.videonasocialmedia.vimojo.share.domain.UploadVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -254,7 +254,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
             @Override
             public String call() throws Exception {
-                return getAuthToken.getAuthToken(context);
+                return getAuthToken.getAuthToken(context).getToken();
             }
         });
         Futures.addCallback(authTokenFuture, new FutureCallback<String>() {
@@ -275,7 +275,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         if (wifi.isConnected()) {
             uploadVideoUseCase.uploadVideo(apiBaseUrl, authToken, mediaPath,
-                new OnUploadVideoListener() {
+                new UploadVideoUseCase.OnUploadVideoListener() {
                 @Override
                 public void onUploadVideoError(Causes causes) {
 

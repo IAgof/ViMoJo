@@ -1,6 +1,6 @@
-package com.videonasocialmedia.vimojo.domain.social;
+package com.videonasocialmedia.vimojo.share.domain;
 
-import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
+import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
 import com.videonasocialmedia.vimojo.sources.FtpNetworkSource;
 
 import java.util.List;

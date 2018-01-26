@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.model.entities.social;
+package com.videonasocialmedia.vimojo.share.model.entities;
 
 import android.graphics.drawable.Drawable;
 

@@ -1,6 +1,7 @@
-package com.videonasocialmedia.vimojo.presentation.mvp.views;
+package com.videonasocialmedia.vimojo.share.presentation.mvp.views;
 
-import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
+import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 
 import java.util.List;
 

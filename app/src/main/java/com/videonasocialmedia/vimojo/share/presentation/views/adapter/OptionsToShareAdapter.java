@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.adapter;
+package com.videonasocialmedia.vimojo.share.presentation.views.adapter;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -9,9 +9,9 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
-import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
-import com.videonasocialmedia.vimojo.model.entities.social.VimojoNetwork;
+import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
+import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
+import com.videonasocialmedia.vimojo.share.model.entities.VimojoNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
 

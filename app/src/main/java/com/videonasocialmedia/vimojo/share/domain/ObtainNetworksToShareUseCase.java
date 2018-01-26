@@ -1,7 +1,7 @@
-package com.videonasocialmedia.vimojo.domain.social;
+package com.videonasocialmedia.vimojo.share.domain;
 
-import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
-import com.videonasocialmedia.vimojo.model.sources.SocialNetworkAppsProvider;
+import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
+import com.videonasocialmedia.vimojo.share.model.sources.SocialNetworkAppsProvider;
 
 import java.util.ArrayList;
 import java.util.List;

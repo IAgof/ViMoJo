@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.activity;
+package com.videonasocialmedia.vimojo.share.presentation.views.activity;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -25,13 +25,16 @@ import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
-import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
-import com.videonasocialmedia.vimojo.model.entities.social.VimojoNetwork;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.ShareVideoPresenter;
+import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
+import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
+import com.videonasocialmedia.vimojo.share.model.entities.VimojoNetwork;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.GoToRecordOrGalleryActivity;
+import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.ShareVideoView;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.OptionsToShareAdapter;
+import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
+import com.videonasocialmedia.vimojo.share.presentation.views.adapter.OptionsToShareAdapter;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;

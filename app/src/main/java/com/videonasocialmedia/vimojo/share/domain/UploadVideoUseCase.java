@@ -1,11 +1,10 @@
-package com.videonasocialmedia.vimojo.upload.domain;
+package com.videonasocialmedia.vimojo.share.domain;
 
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VideoService;
-import com.videonasocialmedia.vimojo.upload.repository.localsource.CachedToken;
 import com.videonasocialmedia.vimojo.vimojoapiclient.rest.ServiceGenerator;
 
 import java.io.File;
@@ -16,6 +15,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.videonasocialmedia.vimojo.share.domain.UploadVideoUseCase.OnUploadVideoListener.Causes.*;
 
 /**
  * Created by alvaro on 28/11/17.
@@ -59,19 +60,31 @@ public class UploadVideoUseCase {
           listener.onUploadVideoSuccess();
         } else {
           // TODO:(alvaro.martinez) 28/11/17 Manage API errors code ...
-          listener.onUploadVideoError(OnUploadVideoListener.Causes.UNKNOWN_ERROR);
+          listener.onUploadVideoError(UNKNOWN_ERROR);
         }
       }
 
       @Override
       public void onFailure(Call<ResponseBody> call, Throwable t) {
-        listener.onUploadVideoError(OnUploadVideoListener.Causes.UNKNOWN_ERROR);
+        listener.onUploadVideoError(UNKNOWN_ERROR);
         Log.e(LOG_TAG, "Error while uploading videos " + t.getMessage());
         Crashlytics.log("Error while uploading videos." +
             " Cause " + t.getCause() + " Message " + t.getMessage());
         Crashlytics.logException(t);
       }
     });
+  }
+
+
+  public interface OnUploadVideoListener {
+
+    void onUploadVideoError(Causes causes);
+
+    void onUploadVideoSuccess();
+
+    enum Causes {
+      NETWORK_ERROR, CREDENTIALS_EXPIRED, UNKNOWN_ERROR, CREDENTIALS_UNKNOWN
+    }
   }
 }
 
