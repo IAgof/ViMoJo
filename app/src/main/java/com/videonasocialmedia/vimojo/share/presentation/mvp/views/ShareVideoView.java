@@ -30,4 +30,8 @@ public interface ShareVideoView {
   void showExportProgress(String progressMsg);
 
   void startVideoExport();
+
+  void navigateToUserAuth();
+
+  void showMessage(int uploadComplete);
 }
