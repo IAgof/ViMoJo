@@ -2,11 +2,14 @@ package com.videonasocialmedia.vimojo.share.presentation.mvp.presenters;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.FutureCallback;
@@ -37,6 +40,7 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -260,32 +264,45 @@ public class ShareVideoPresenter extends VimojoPresenter {
         Futures.addCallback(authTokenFuture, new FutureCallback<String>() {
             @Override
             public void onSuccess(String authToken) {
-                uploadVideo(BuildConfig.API_BASE_URL, authToken, videoPath);
+                if(isUserLogged(authToken)) {
+                    uploadVideo(BuildConfig.API_BASE_URL, authToken, videoPath);
+                } else {
+                    shareVideoViewReference.get().navigateToUserAuth();
+                }
             }
 
             @Override
             public void onFailure(Throwable errorGettingToken) {
+                shareVideoViewReference.get().navigateToUserAuth();
             }
         });
     }
 
+    private boolean isUserLogged(String authToken) {
+        return !TextUtils.isEmpty(authToken);
+    }
+
     private void uploadVideo(String apiBaseUrl, String authToken, String mediaPath) {
-        ConnectivityManager connManager =
-            (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (wifi.isConnected()) {
+        if(isThereFreeStorageOnPlatform(mediaPath)) {
             uploadVideoUseCase.uploadVideo(apiBaseUrl, authToken, mediaPath,
                 new UploadVideoUseCase.OnUploadVideoListener() {
-                @Override
-                public void onUploadVideoError(Causes causes) {
+                    @Override
+                    public void onUploadVideoError(Causes causes) {
+                        shareVideoViewReference.get().showMessage(R.string.upload_video_error);
+                    }
 
-                }
-
-                @Override
-                public void onUploadVideoSuccess() {
-
-                }
-            });
+                    @Override
+                    public void onUploadVideoSuccess() {
+                        shareVideoViewReference.get().showMessage(R.string.upload_video_completed);
+                    }
+                });
         }
+    }
+
+    private boolean isThereFreeStorageOnPlatform(String mediaPath) {
+        long videoToUploadLength = new File(mediaPath).length();
+        // TODO:(alvaro.martinez) 26/01/18 Get user free storage from platform
+        // return (freeStorage > videoToUploadLenght)
+        return true;
     }
 }

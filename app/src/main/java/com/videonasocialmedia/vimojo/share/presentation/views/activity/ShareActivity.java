@@ -1,9 +1,12 @@
 package com.videonasocialmedia.vimojo.share.presentation.views.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -23,6 +26,7 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
@@ -78,6 +82,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     private int currentPosition;
 
   private ProgressDialog exportProgressDialog;
+  private boolean acceptUploadVideoMobileNetwork;
+  private boolean isWifiConnected = false;
+  private boolean isMobileNetworConnected = false;
 //  private BroadcastReceiver exportReceiver;
 
     @Override
@@ -283,8 +290,55 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void onVimojoClicked(VimojoNetwork vimojoNetwork) {
-    presenter.uploadVideo(videoPath);
+    checkNetworksAvailable();
+    if(isWifiConnected || acceptUploadVideoMobileNetwork) {
+      presenter.uploadVideo(videoPath);
+    } else {
+      if(!isWifiConnected && !isMobileNetworConnected)
+        showMessage(R.string.connect_to_network);
+    }
   }
+
+  private void checkNetworksAvailable() {
+    ConnectivityManager connManager =
+        (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+    if (wifi.isConnected()) {
+      isWifiConnected = true;
+    } else {
+      NetworkInfo mobileNetwork = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+      if(mobileNetwork.isConnected() && !acceptUploadVideoMobileNetwork) {
+        isMobileNetworConnected = true;
+        dialogUploadVideoWithMobileNetwork();
+      }
+    }
+  }
+
+  private void dialogUploadVideoWithMobileNetwork() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    builder.setMessage(getResources().getString(R.string.upload_video_with_mobile_network));
+
+
+    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        switch (which) {
+          case DialogInterface.BUTTON_POSITIVE:
+            acceptUploadVideoMobileNetwork = true;
+            break;
+
+          case DialogInterface.BUTTON_NEGATIVE:
+            acceptUploadVideoMobileNetwork = false;
+            break;
+        }
+      }
+    };
+
+    AlertDialog alertDialog = builder.setCancelable(true).
+        setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
+        .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
+  }
+
 
   @Override
     public void onFtpClicked(FtpNetwork ftp) {
@@ -334,8 +388,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         startService(intent);
     }
 
-    public void showMessage(final int stringToast) {
-        Snackbar snackbar = Snackbar.make(coordinatorLayout, stringToast, Snackbar.LENGTH_LONG);
+    @Override
+    public void showMessage(final int string) {
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, string, Snackbar.LENGTH_LONG);
         snackbar.show();
     }
 
@@ -376,6 +431,12 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         presenter.startExport();
       }
     }
+
+  @Override
+  public void navigateToUserAuth() {
+    Intent intent = new Intent(this, UserAuthActivity.class);
+    startActivity(intent);
+  }
 
   @Override
     public void loadExportedVideoPreview(final String mediaPath) {
