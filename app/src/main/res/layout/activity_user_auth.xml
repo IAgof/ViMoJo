@@ -25,10 +25,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/splash_screen"/>
+                android:src="@drawable/splash_screen"
+                />
 
             <TextView
-                android:id="@+id/register_slogan_text_view"
+                android:id="@+id/register_login_slogan_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/header_logo_image_view"
@@ -37,6 +38,7 @@
                 android:text="@string/register_slogan"
                 android:textAlignment="center"
                 android:textSize="@dimen/text_register_slogan"
+                android:visibility="visible"
                 />
 
             <LinearLayout
@@ -44,8 +46,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginTop="8dp"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/register_slogan_text_view">
+                android:layout_below="@+id/register_login_slogan_text_view">
 
                 <include layout="@layout/activity_user_auth_register_login_fields"
                     android:visibility="gone"
@@ -85,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/register_slogan_text_view"
+                android:layout_below="@+id/register_login_slogan_text_view"
                 android:visibility="invisible">
 
                 <ProgressBar

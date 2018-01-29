@@ -14,7 +14,7 @@
     <string name="action_register_short">Done</string>
     <string name="prompt_user_name_register">User name</string>
     <string name="action_user_name_short">Done</string>
-    <string name="title_checkbox_termService">I agree to the Terms of Service and Privacy Policy</string>
+    <string name="title_checkbox_termService">I agree to the </string>
     <string name="action_register">Register</string>
     <string name="terms_of_service">Terms of Service</string>
     <string name="have_account">Already have an account?</string>
