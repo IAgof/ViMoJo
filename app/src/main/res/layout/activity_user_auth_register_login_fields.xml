@@ -2,11 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="@dimen/activity_user_auth_height_fields"
               android:layout_height="wrap_content"
-              android:layout_below="@+id/register_slogan_text_view"
+              android:layout_below="@+id/register_login_slogan_text_view"
               android:layout_centerInParent="true"
               android:layout_margin="8dp"
               android:background="@drawable/activity_user_auth_round_white_background"
-              android:orientation="vertical">
+              android:orientation="vertical"
+              android:layout_alignWithParentIfMissing="true">
 
         <EditText
             android:id="@+id/user_name_field"

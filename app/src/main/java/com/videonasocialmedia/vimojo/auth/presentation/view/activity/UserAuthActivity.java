@@ -2,9 +2,16 @@ package com.videonasocialmedia.vimojo.auth.presentation.view.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -24,6 +31,8 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity;
 
 import javax.inject.Inject;
 
@@ -65,6 +74,8 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   CheckBox checkBoxAcceptTerm;
   @Bind(R.id.user_auth_main_relative_layout)
   RelativeLayout mainRelativeLayout;
+  @Bind(R.id.register_login_slogan_text_view)
+  TextView sloganText;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -264,6 +275,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   @Override
   public void updateScreenBackground() {
     mainRelativeLayout.setBackground(getDrawable(R.drawable.activity_user_auth_background_action));
+    sloganText.setVisibility(View.GONE);
   }
 
   @Override
@@ -273,6 +285,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
     loginButton.setVisibility(View.VISIBLE);
     mainRelativeLayout
         .setBackground(getDrawable(R.drawable.activity_user_auth_background_welcome));
+    sloganText.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -282,7 +295,42 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
 
   @Override
   public void showTermsCheckbox() {
+    checkBoxAcceptTerm.setMovementMethod(LinkMovementMethod.getInstance());
+    checkBoxAcceptTerm.setText(createFooterTextForRegister());
     checkBoxAcceptTerm.setVisibility(View.VISIBLE);
+  }
+
+  private SpannableStringBuilder createFooterTextForRegister() {
+    SpannableStringBuilder footerText = new SpannableStringBuilder()
+        .append(createSpannableNoClickable(getString(R.string.title_checkbox_termService),
+            R.color.colorSecondary) + " ")
+        .append(createIntentSpannable(getString(R.string.terms_of_service),
+            R.color.textColorLight, TermsOfServiceActivity.class))
+        .append(createSpannableNoClickable(" " + getString(R.string.and) + " ",
+            R.color.colorSecondary))
+        .append(createIntentSpannable(getString(R.string.privacy_policy),
+            R.color.textColorLight, PrivacyPolicyActivity.class));
+    return footerText;
+  }
+
+  public Spannable createSpannableNoClickable(String stringResource, int colorResource) {
+    Spannable spanText = new SpannableString(stringResource);
+    spanText.setSpan(new ForegroundColorSpan(getResources()
+        .getColor(colorResource)), 0, stringResource.length(), 0);
+    return spanText;
+  }
+
+  public Spannable createIntentSpannable(String stringResource, int colorResource,
+                                         final Class nextActivity) {
+    Spannable spannableClickable = createSpannableNoClickable(stringResource, colorResource);
+    ClickableSpan clickableSpan = new ClickableSpan() {
+      @Override
+      public void onClick(View textView) {
+        startActivity(new Intent(UserAuthActivity.this, nextActivity));
+      }
+    };
+    spannableClickable.setSpan(clickableSpan, 0, spannableClickable.length(), 0);
+    return spannableClickable;
   }
 
   private void showMessage(int stringResource, Button button) {
