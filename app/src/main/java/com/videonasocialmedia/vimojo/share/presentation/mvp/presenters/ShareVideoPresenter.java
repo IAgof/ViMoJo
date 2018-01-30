@@ -265,6 +265,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
             @Override
             public void onSuccess(String authToken) {
                 if(isUserLogged(authToken)) {
+                    shareVideoViewReference.get().showMessage(R.string.uploading_video);
                     uploadVideo(BuildConfig.API_BASE_URL, authToken, videoPath);
                 } else {
                     shareVideoViewReference.get().navigateToUserAuth();
@@ -293,7 +294,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
 
                     @Override
                     public void onUploadVideoSuccess() {
-                        shareVideoViewReference.get().showMessage(R.string.upload_video_completed);
+                        shareVideoViewReference.get().sendSimpleNotification();
                     }
                 });
         }
