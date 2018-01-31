@@ -25,7 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -45,34 +45,34 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   @Inject
   UserAuthPresenter userAuthPresenter;
 
-  @Bind(R.id.email_field)
+  @BindView(R.id.email_field)
   EditText emailField;
-  @Bind(R.id.password_field)
+  @BindView(R.id.password_field)
   EditText passwordField;
-  @Bind(R.id.layoutProgressBarLogin)
+  @BindView(R.id.layoutProgressBarLogin)
   View layoutProgress;
-  @Bind(R.id.progress_bar_login)
+  @BindView(R.id.progress_bar_login)
   View progressBarLogin;
-  @Bind(R.id.image_login_confirm)
+  @BindView(R.id.image_login_confirm)
   ImageView imageLoginConfirm;
-  @Bind(R.id.progress_text_view)
+  @BindView(R.id.progress_text_view)
   TextView textViewLoginProgress;
 
-  @Bind(R.id.register_button)
+  @BindView(R.id.register_button)
   Button registerButton;
-  @Bind(R.id.login_button)
+  @BindView(R.id.login_button)
   Button loginButton;
-  @Bind(R.id.layout_register_login_fields)
+  @BindView(R.id.layout_register_login_fields)
   LinearLayout registerLoginFieldsLinearLayout;
-  @Bind(R.id.layout_register_login)
+  @BindView(R.id.layout_register_login)
   LinearLayout registerLoginLinearLayout;
-  @Bind(R.id.user_name_field)
+  @BindView(R.id.user_name_field)
   EditText userNameField;
-  @Bind(R.id.check_box_Accept_Term)
+  @BindView(R.id.check_box_Accept_Term)
   CheckBox checkBoxAcceptTerm;
-  @Bind(R.id.user_auth_main_relative_layout)
+  @BindView(R.id.user_auth_main_relative_layout)
   RelativeLayout mainRelativeLayout;
-  @Bind(R.id.register_login_slogan_text_view)
+  @BindView(R.id.register_login_slogan_text_view)
   TextView sloganText;
 
   @Override
