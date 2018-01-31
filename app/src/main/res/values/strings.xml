@@ -336,7 +336,6 @@
     <string name="hint_user_name">Enter your user name</string>
     <string name="dialog_title_update_user_name">User name</string>
     <string name="hint_user_email">Enter your email address</string>
-    <string name="dialog_title_update_user_email">Email address</string>
 
     <!-- About Activity -->
 
