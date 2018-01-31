@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideonaDialogListener;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -22,15 +22,15 @@ import butterknife.OnClick;
  */
 public class VideonaDialog extends DialogFragment {
 
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     TextView title;
-    @Bind(R.id.image)
+    @BindView(R.id.image)
     ImageView image;
-    @Bind(R.id.message)
+    @BindView(R.id.message)
     TextView message;
-    @Bind(R.id.positiveButton)
+    @BindView(R.id.positiveButton)
     Button positiveButton;
-    @Bind(R.id.negativeButton)
+    @BindView(R.id.negativeButton)
     Button negativeButton;
     private VideonaDialogListener listener;
     private int idDialog;

@@ -29,8 +29,9 @@ import com.videonasocialmedia.vimojo.utils.recyclerselectionsupport.MultiItemSel
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by jca on 14/5/15.
@@ -50,10 +51,11 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
     protected ItemSelectionSupport clickSupport;
     protected MultiItemSelectionSupport selectionSupport;
     protected int selectionMode;
-    @Bind(R.id.bookloading_view)
+    @BindView(R.id.bookloading_view)
     BookLoading loadingView;
-    @Bind(R.id.catalog_recycler)
+    @BindView(R.id.catalog_recycler)
     RecyclerView recyclerView;
+    private Unbinder unbinder;
 
     public static VideoGalleryFragment newInstance(int folder, int selectionMode) {
         VideoGalleryFragment videoGalleryFragment = new VideoGalleryFragment();
@@ -82,7 +84,7 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.edit_fragment_catalog, container, false);
-        ButterKnife.bind(this, v);
+        unbinder = ButterKnife.bind(this, v);
         if (videoGalleryPresenter == null)
             videoGalleryPresenter = new VideoGalleryPresenter(this);
         int galleryColumns = GALLERY_COLS_LANDSCAPE;
@@ -142,7 +144,7 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
         timeChangesHandler.removeCallbacksAndMessages(null);
     }
 

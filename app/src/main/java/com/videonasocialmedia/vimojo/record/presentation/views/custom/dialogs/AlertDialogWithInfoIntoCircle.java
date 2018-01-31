@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.videonasocialmedia.vimojo.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -26,11 +26,11 @@ public class AlertDialogWithInfoIntoCircle extends android.support.v7.app.AlertD
   private final AlertDialog alertDialog;
   private View alertDialogView;
 
-  @Bind(R.id.progressBar_level)
+  @BindView(R.id.progressBar_level)
   ProgressBar progressBarLevel;
-  @Bind(R.id.text_percent_level)
+  @BindView(R.id.text_percent_level)
   TextView percentLevel;
-  @Bind(R.id.text_message)
+  @BindView(R.id.text_message)
   TextView textMessage;
 
   public AlertDialogWithInfoIntoCircle(Activity activity, String titleText){

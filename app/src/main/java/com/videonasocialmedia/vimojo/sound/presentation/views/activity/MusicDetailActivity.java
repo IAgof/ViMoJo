@@ -38,9 +38,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Optional;
 
 
 public class MusicDetailActivity extends VimojoActivity implements MusicDetailView,
@@ -49,21 +50,19 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     private static final String MUSIC_DETAIL_PROJECT_POSITION = "music_detail_project_position";
     private String MUSIC_DETAIL_POSITION_VOLUME = "sound_volume_position";
 
-    @Bind(R.id.music_title)
+    @BindView(R.id.music_title)
     TextView musicTitle;
-    @Bind(R.id.music_author)
+    @BindView(R.id.music_author)
     TextView musicAuthor;
-    @Bind(R.id.music_duration)
+    @BindView(R.id.music_duration)
     TextView musicDuration;
-    @Nullable
-    @Bind(R.id.music_image)
+    @Nullable @BindView(R.id.music_image)
     ImageView musicImage;
-    @Nullable
-    @Bind(R.id.scene_root)
+    @Nullable @BindView(R.id.scene_root)
     FrameLayout sceneRoot;
-    @Bind(R.id.videona_player)
+    @BindView(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-    @Bind (R.id.seekBar_volume_sound)
+    @BindView (R.id.seekBar_volume_sound)
     SeekBar seekBarVolume;
 
     @Inject MusicDetailPresenter presenter;
@@ -243,8 +242,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         presenter.init(musicPath);
     }
 
-    @Nullable
-    @OnClick(R.id.select_music)
+    @Optional @OnClick(R.id.select_music)
     public void selectMusic() {
         float volume = (float) (seekBarVolume.getProgress() * 0.01);
         presenter.addMusic(music, volume);
@@ -252,8 +250,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         ButterKnife.bind(this);
     }
 
-    @Nullable
-    @OnClick(R.id.delete_music)
+    @Optional @OnClick(R.id.delete_music)
     public void deleteMusic() {
         presenter.removeMusic(music);
     }
@@ -265,8 +262,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         finish();
     }
 
-    @Nullable
-    @OnClick(R.id.cancel_music)
+    @Optional @OnClick(R.id.cancel_music)
     public void onCancelMusicClickListener() {
             goToMusicList();
     }

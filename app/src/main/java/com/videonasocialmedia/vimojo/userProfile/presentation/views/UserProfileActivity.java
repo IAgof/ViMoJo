@@ -31,7 +31,7 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -40,24 +40,24 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
   @Inject
   UserProfilePresenter presenter;
 
-  @Bind(R.id.image_user_profile)
+  @BindView(R.id.image_user_profile)
   CircleImageView image_user;
-  @Bind(R.id.user_profile_prefession)
+  @BindView(R.id.user_profile_prefession)
   TextView profession;
-  @Bind(R.id.user_profile_username)
+  @BindView(R.id.user_profile_username)
   TextView username;
-  @Bind(R.id.user_profile_email)
+  @BindView(R.id.user_profile_email)
   TextView email;
   @Nullable
-  @Bind(R.id.text_dialog)
+  @BindView(R.id.text_dialog)
   EditText editTextDialog;
-  @Bind(R.id.number_clips_recorded)
+  @BindView(R.id.number_clips_recorded)
   TextView numberClipsRecorded;
-  @Bind(R.id.number_projects_edited)
+  @BindView(R.id.number_projects_edited)
   TextView numberProjectsEdited;
-  @Bind(R.id.number_projects_shared)
+  @BindView(R.id.number_projects_shared)
   TextView numberProjectsShared;
-  @Bind(R.id.backButton)
+  @BindView(R.id.backButton)
   ImageButton backButton;
   private ProgressDialog progressDialog;
   private final String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_PROFILE_THUMB;

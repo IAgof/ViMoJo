@@ -15,7 +15,7 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundRecyclerV
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -69,13 +69,13 @@ public class SoundListAdapter extends  RecyclerView.Adapter<SoundListAdapter.Sou
         }
 
     class SoundListItemViewHolder extends RecyclerView.ViewHolder {
-        @Bind(R.id.music_title)
+        @BindView(R.id.music_title)
         TextView soundTitle;
-        @Bind(R.id.music_image)
+        @BindView(R.id.music_image)
         ImageView soundImage;
-        @Bind(R.id.music_author)
+        @BindView(R.id.music_author)
         TextView soundAuthor;
-        @Bind(R.id.music_duration)
+        @BindView(R.id.music_duration)
         TextView soundDuration;
 
         //private MusicRecyclerViewClickListener clickListener;

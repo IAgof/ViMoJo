@@ -24,7 +24,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -41,11 +41,11 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
     @Inject
     VoiceOverVolumePresenter presenter;
 
-    @Bind(R.id.videona_player)
+    @BindView(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-    @Bind(R.id.textView_seekBar_volume_sound)
+    @BindView(R.id.textView_seekBar_volume_sound)
     TextView textSeekBarVolume;
-    @Bind (R.id.seekBar_volume_sound)
+    @BindView (R.id.seekBar_volume_sound)
     SeekBar seekBarVolume;
 
     int videoIndexOnTrack;

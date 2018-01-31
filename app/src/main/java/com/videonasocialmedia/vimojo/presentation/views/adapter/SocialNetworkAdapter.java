@@ -15,7 +15,7 @@ import com.videonasocialmedia.vimojo.model.entities.social.SocialNetwork;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -67,13 +67,13 @@ public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdap
 
     class SocialNetworkViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.icon)
+        @BindView(R.id.icon)
         ImageView icon;
         @Nullable
-        @Bind(R.id.name)
+        @BindView(R.id.name)
         TextView name;
         @Nullable
-        @Bind(R.id.checkbox)
+        @BindView(R.id.checkbox)
         CheckBox checkBox;
 
         public SocialNetworkViewHolder(View itemView) {
