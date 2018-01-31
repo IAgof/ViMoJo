@@ -17,7 +17,7 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShar
 
 import java.util.ArrayList;
 import java.util.List;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -112,13 +112,13 @@ public class OptionsToShareAdapter extends RecyclerView.Adapter<OptionsToShareAd
     }
 
     public class ViewHolderFTP extends ViewHolder {
-        @Bind(R.id.icon)
+        @BindView(R.id.icon)
         ImageView icon;
         @Nullable
-        @Bind(R.id.name)
+        @BindView(R.id.name)
         TextView name;
         @Nullable
-        @Bind(R.id.checkbox)
+        @BindView(R.id.checkbox)
         CheckBox checkBox;
 
         public ViewHolderFTP(View itemView) {
@@ -141,13 +141,13 @@ public class OptionsToShareAdapter extends RecyclerView.Adapter<OptionsToShareAd
     }
 
     public class ViewHolderSocialNetwork extends ViewHolder {
-        @Bind(R.id.icon)
+        @BindView(R.id.icon)
         ImageView icon;
         @Nullable
-        @Bind(R.id.name)
+        @BindView(R.id.name)
         TextView name;
         @Nullable
-        @Bind(R.id.checkbox)
+        @BindView(R.id.checkbox)
         CheckBox checkBox;
 
         public ViewHolderSocialNetwork(View itemView) {

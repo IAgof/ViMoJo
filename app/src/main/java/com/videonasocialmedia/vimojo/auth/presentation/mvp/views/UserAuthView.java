@@ -36,7 +36,7 @@ public interface UserAuthView {
 
   void hideProgressAuthenticationDialog();
 
-  void showSigninSuccess();
+  void showSignInSuccess();
 
   void showRegisterSuccess();
 

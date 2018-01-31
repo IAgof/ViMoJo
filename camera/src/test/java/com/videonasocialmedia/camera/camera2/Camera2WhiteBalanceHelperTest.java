@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verify;
  * Created by jliarte on 21/06/17.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Log.class, VideonaCaptureRequest.Builder.class})
+@PrepareForTest({Log.class, VideonaCaptureRequest.Builder.class, VideonaCameraCharacteristics.class})
 public class Camera2WhiteBalanceHelperTest {
   @Mock private Camera2Wrapper mockedCameraWrapper;
   @Mock private VideonaCaptureRequest.Builder mockedPreviewBuilder;

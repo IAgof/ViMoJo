@@ -2,9 +2,18 @@ package com.videonasocialmedia.vimojo.auth.presentation.view.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -16,7 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -24,12 +33,10 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity;
 
 import javax.inject.Inject;
-
-/**
- * Created by jliarte on 8/01/18.
- */
 
 /**
  * Activity for creating and signing in users into Vimojo web platform.
@@ -38,33 +45,35 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   @Inject
   UserAuthPresenter userAuthPresenter;
 
-  @Bind(R.id.email_field)
+  @BindView(R.id.email_field)
   EditText emailField;
-  @Bind(R.id.password_field)
+  @BindView(R.id.password_field)
   EditText passwordField;
-  @Bind(R.id.layoutProgressBarLogin)
+  @BindView(R.id.layoutProgressBarLogin)
   View layoutProgress;
-  @Bind(R.id.progress_bar_login)
+  @BindView(R.id.progress_bar_login)
   View progressBarLogin;
-  @Bind(R.id.image_login_confirm)
+  @BindView(R.id.image_login_confirm)
   ImageView imageLoginConfirm;
-  @Bind(R.id.progress_text_view)
+  @BindView(R.id.progress_text_view)
   TextView textViewLoginProgress;
 
-  @Bind(R.id.register_button)
+  @BindView(R.id.register_button)
   Button registerButton;
-  @Bind(R.id.login_button)
+  @BindView(R.id.login_button)
   Button loginButton;
-  @Bind(R.id.layout_register_login_fields)
+  @BindView(R.id.layout_register_login_fields)
   LinearLayout registerLoginFieldsLinearLayout;
-  @Bind(R.id.layout_register_login)
+  @BindView(R.id.layout_register_login)
   LinearLayout registerLoginLinearLayout;
-  @Bind(R.id.user_name_field)
+  @BindView(R.id.user_name_field)
   EditText userNameField;
-  @Bind(R.id.check_box_Accept_Term)
+  @BindView(R.id.check_box_Accept_Term)
   CheckBox checkBoxAcceptTerm;
-  @Bind(R.id.user_auth_main_relative_layout)
+  @BindView(R.id.user_auth_main_relative_layout)
   RelativeLayout mainRelativeLayout;
+  @BindView(R.id.register_login_slogan_text_view)
+  TextView sloganText;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -156,7 +165,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   }
 
   @Override
-  public void showSigninSuccess() {
+  public void showSignInSuccess() {
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
@@ -264,6 +273,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   @Override
   public void updateScreenBackground() {
     mainRelativeLayout.setBackground(getDrawable(R.drawable.activity_user_auth_background_action));
+    sloganText.setVisibility(View.GONE);
   }
 
   @Override
@@ -273,6 +283,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
     loginButton.setVisibility(View.VISIBLE);
     mainRelativeLayout
         .setBackground(getDrawable(R.drawable.activity_user_auth_background_welcome));
+    sloganText.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -282,7 +293,60 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
 
   @Override
   public void showTermsCheckbox() {
+    checkBoxAcceptTerm.setMovementMethod(LinkMovementMethod.getInstance());
+    checkBoxAcceptTerm.setText(createFooterTextForRegister());
     checkBoxAcceptTerm.setVisibility(View.VISIBLE);
+  }
+
+  @OnClick(R.id.register_button)
+  public void onClickRegister() {
+    String userName = userNameField.getText().toString();
+    String email = emailField.getText().toString();
+    String password = passwordField.getText().toString();
+    boolean emailValidates = Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    userAuthPresenter.onClickRegister(isShowedRegisterLoginFields(), userName, email,
+        emailValidates, password, checkBoxAcceptTerm.isChecked());
+  }
+
+  @OnClick(R.id.login_button)
+  public void onClickLogin() {
+    String email = emailField.getText().toString();
+    String password = passwordField.getText().toString();
+    boolean emailValidates = Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    userAuthPresenter.onClickLogin(isShowedRegisterLoginFields(), email, emailValidates, password);
+  }
+
+  private SpannableStringBuilder createFooterTextForRegister() {
+    return new SpannableStringBuilder()
+        .append(createSpannableNoClickable(getString(R.string.title_checkbox_termService),
+        R.color.colorSecondary)).append(" ")
+        .append(createIntentSpannable(getString(R.string.terms_of_service),
+            TermsOfServiceActivity.class))
+        .append(createSpannableNoClickable(" " + getString(R.string.and) + " ",
+            R.color.colorSecondary))
+        .append(createIntentSpannable(getString(R.string.privacy_policy),
+            PrivacyPolicyActivity.class));
+  }
+
+  private Spannable createSpannableNoClickable(String stringResource, int colorResource) {
+    Spannable spanText = new SpannableString(stringResource);
+    spanText.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, colorResource)), 0,
+        stringResource.length(), 0);
+    return spanText;
+  }
+
+  private Spannable createIntentSpannable(String stringResource,
+                                          final Class nextActivity) {
+    Spannable spannableClickable = createSpannableNoClickable(stringResource,
+        R.color.textColorLight);
+    ClickableSpan clickableSpan = new ClickableSpan() {
+      @Override
+      public void onClick(View textView) {
+        startActivity(new Intent(UserAuthActivity.this, nextActivity));
+      }
+    };
+    spannableClickable.setSpan(clickableSpan, 0, spannableClickable.length(), 0);
+    return spannableClickable;
   }
 
   private void showMessage(int stringResource, Button button) {
@@ -310,31 +374,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
             });
   }
 
-  @OnClick(R.id.register_button)
-  public void onClickRegister() {
-    if(!isShowedRegisterLoginFields()){
-      userAuthPresenter.switchToRegisterMode();
-    } else {
-      String userName = userNameField.getText().toString();
-      String email = emailField.getText().toString();
-      String password = passwordField.getText().toString();
-      userAuthPresenter.performRegisterAuth(userName, email, password,
-          checkBoxAcceptTerm.isChecked());
-    }
-  }
-
   private boolean isShowedRegisterLoginFields() {
     return registerLoginFieldsLinearLayout.getVisibility() == View.VISIBLE;
-  }
-
-  @OnClick(R.id.login_button)
-  public void onClickLogin() {
-    if(!isShowedRegisterLoginFields()){
-      userAuthPresenter.switchToSignInMode();
-    } else {
-      String email = emailField.getText().toString();
-      String password = passwordField.getText().toString();
-      userAuthPresenter.performLoginAuth(email, password);
-    }
   }
 }

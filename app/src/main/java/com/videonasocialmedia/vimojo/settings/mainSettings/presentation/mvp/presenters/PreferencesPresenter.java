@@ -327,6 +327,10 @@ public class PreferencesPresenter extends VimojoPresenter
     }
 
     public void setupUserAuthPreference() {
+        if(!BuildConfig.FEATURE_REGISTER_LOGIN) {
+            preferencesView.hideRegisterLoginView();
+            return;
+        }
         ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
             @Override
             public String call() throws Exception {

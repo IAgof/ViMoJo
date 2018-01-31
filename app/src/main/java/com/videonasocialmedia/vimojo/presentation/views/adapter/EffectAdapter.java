@@ -25,7 +25,7 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.OnEffectSelecte
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -161,11 +161,11 @@ public class EffectAdapter
 
         OnEffectSelectedListener onClickListener;
 
-        @Bind(R.id.effectViewHolder)
+        @BindView(R.id.effectViewHolder)
         LinearLayout effect;
-        @Bind(R.id.effectImage)
+        @BindView(R.id.effectImage)
         ImageView effectImage;
-        @Bind(R.id.effectName)
+        @BindView(R.id.effectName)
         TextView effectName;
 
         /**

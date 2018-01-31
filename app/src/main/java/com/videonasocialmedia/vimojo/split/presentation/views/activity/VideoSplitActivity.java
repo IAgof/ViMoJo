@@ -36,7 +36,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -52,25 +52,25 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
 
     @Inject SplitPreviewPresenter presenter;
 
-    @Bind(R.id.videona_player)
+    @BindView(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-    @Bind(R.id.text_time_split)
+    @BindView(R.id.text_time_split)
     TextView timeTag;
-    @Bind(R.id.seekBar_split)
+    @BindView(R.id.seekBar_split)
     SeekBar splitSeekBar;
-    @Bind(R.id.coordinator_layout_video_split)
+    @BindView(R.id.coordinator_layout_video_split)
     CoordinatorLayout coordinatorLayout;
-    @Bind(R.id.player_advance_low_backward_start_split)
+    @BindView(R.id.player_advance_low_backward_start_split)
     ImageButton playerAdvanceLowBackwardStartSplit;
-    @Bind(R.id.player_advance_medium_backward_start_split)
+    @BindView(R.id.player_advance_medium_backward_start_split)
     ImageButton playerAdvanceMediumBackwardStartSplit;
-    @Bind(R.id.player_advance_high_backward_start_split)
+    @BindView(R.id.player_advance_high_backward_start_split)
     ImageButton playerAdvanceHighBackwardStartSplit;
-    @Bind(R.id.player_advance_low_forward_end_split)
+    @BindView(R.id.player_advance_low_forward_end_split)
     ImageButton playerAdanceLowForwardEndSplit;
-    @Bind(R.id.player_advance_medium_forward_end_split)
+    @BindView(R.id.player_advance_medium_forward_end_split)
     ImageButton playerAdanceMediumForwardEndSplit;
-    @Bind(R.id.player_advance_high_forward_end_split)
+    @BindView(R.id.player_advance_high_forward_end_split)
     ImageButton playerAdanceHighForwardEndSplit;
 
     int videoIndexOnTrack;

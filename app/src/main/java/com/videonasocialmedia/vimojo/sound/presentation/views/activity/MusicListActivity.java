@@ -35,7 +35,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -47,10 +47,10 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
 
     @Inject MusicListPresenter presenter;
 
-    @Bind(R.id.music_list)
+    @BindView(R.id.music_list)
     RecyclerView soundList;
 
-    @Bind(R.id.videona_player)
+    @BindView(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
     private SoundListAdapter soundAdapter;
     private BroadcastReceiver exportReceiver;

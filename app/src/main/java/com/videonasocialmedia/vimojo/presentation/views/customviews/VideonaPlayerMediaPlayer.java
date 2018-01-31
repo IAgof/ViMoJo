@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
@@ -44,11 +44,11 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
 
     private final Context context;
     protected Handler handler = new Handler();
-    @Bind(R.id.video_editor_preview)
+    @BindView(R.id.video_editor_preview)
     AspectRatioVideoView videoPreview;
-    @Bind(R.id.seekbar_editor_preview)
+    @BindView(R.id.seekbar_editor_preview)
     SeekBar seekBar;
-    @Bind(R.id.button_editor_play_pause)
+    @BindView(R.id.button_editor_play_pause)
     ImageButton playButton;
 
     private String TAG = VideonaPlayerMediaPlayer.class.getCanonicalName();

@@ -309,7 +309,7 @@
     <string name="hint_user_name">Introduzca nombre de usuario</string>
     <string name="dialog_title_update_user_name">Nombre de usuario</string>
     <string name="hint_user_email">Introduzca correo electrónico</string>
-    <string name="dialog_title_update_user_email">Nombre de usuario</string>
+    <string name="dialog_title_update_user_email">Correo electrónico</string>
 
     <!-- About Activity -->
 

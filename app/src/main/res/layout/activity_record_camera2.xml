@@ -16,7 +16,7 @@
         android:layout_gravity="center"
     />
 
-    <com.videonasocialmedia.avrecorder.view.CustomManualFocusView
+    <com.videonasocialmedia.camera.customview.CustomManualFocusView
         android:id="@+id/customManualFocusView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

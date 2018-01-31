@@ -28,7 +28,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -41,7 +41,7 @@ public class LicensesActivity extends VimojoActivity implements LicenseListView,
 
   @Inject LicenseListPresenter presenter;
 
-  @Bind(R.id.license_list)
+  @BindView(R.id.license_list)
   RecyclerView licenseList;
 
   private LicensesVimojoAdapter adapter;

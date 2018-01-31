@@ -54,6 +54,7 @@ public class SettingsFragment extends PreferenceFragment implements
     //protected PreferenceCategory ftp2Pref;
     protected PreferenceCategory transitionCategory;
     protected PreferenceCategory watermarkPrefCategory;
+    protected PreferenceCategory authPrefCategory;
     protected SwitchPreference transitionsVideoPref;
     protected SwitchPreference transitionsAudioPref;
     protected SwitchPreference watermarkSwitchPref;
@@ -305,6 +306,15 @@ public class SettingsFragment extends PreferenceFragment implements
                         new AuthPreferenceClickListener(userLoggedIn));
             }
         });
+    }
+
+    @Override
+    public void hideRegisterLoginView() {
+        authPrefCategory = (PreferenceCategory)
+            findPreference(getString(R.string.titleUserSection));
+        if (authPrefCategory != null) {
+            getPreferenceScreen().removePreference(authPrefCategory);
+        }
     }
 
     private AlertDialog createSignOutDialog() {

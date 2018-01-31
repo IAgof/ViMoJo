@@ -1,19 +1,14 @@
 package com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters;
 
-/**
- * Created by jliarte on 8/01/18.
- */
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Patterns;
+import android.support.annotation.NonNull;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.AccountConstants;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
@@ -35,7 +30,7 @@ public class UserAuthPresenter extends VimojoPresenter {
   @Inject
   VimojoUserAuthenticator vimojoUserAuthenticator;
 
-  private UserAuthView userAuthActivityView;
+  private final UserAuthView userAuthActivityView;
   private boolean register = true;
 
   /**
@@ -55,7 +50,7 @@ public class UserAuthPresenter extends VimojoPresenter {
   /**
    * Sets activity mode and view components to Sign In mode.
    */
-  public void switchToSignInMode() {
+  private void switchToSignInMode() {
     this.register = false;
     userAuthActivityView.hideUserNameField();
     userAuthActivityView.hideTermsCheckbox();
@@ -67,7 +62,7 @@ public class UserAuthPresenter extends VimojoPresenter {
   /**
    * Sets activity mode and view components to Register mode.
    */
-  public void switchToRegisterMode() {
+  private void switchToRegisterMode() {
     this.register = true;
     userAuthActivityView.showUserNameField();
     userAuthActivityView.showTermsCheckbox();
@@ -84,12 +79,11 @@ public class UserAuthPresenter extends VimojoPresenter {
     return true;
   }
 
-  private boolean emailValidates(String email) {
+  private boolean emailValidates(String email, boolean emailValidates) {
     if (isEmptyField(email)) {
       userAuthActivityView.showEmailFieldRequired();
       return false;
     }
-    boolean emailValidates = Patterns.EMAIL_ADDRESS.matcher(email).matches();
     if (!emailValidates) {
       userAuthActivityView.showInvalidMailError();
     }
@@ -131,8 +125,8 @@ public class UserAuthPresenter extends VimojoPresenter {
    * @param email email for the platform user account.
    * @param password password for the platform user account.
    */
-  public void performLoginAuth(final String email, final String password) {
-    if (emailValidates(email) && passwordValidates(password)) {
+  private void performLoginAuth(final String email, boolean emailValidates, final String password) {
+    if (emailValidates(email, emailValidates) && passwordValidates(password)) {
       userAuthActivityView.showProgressAuthenticationDialog();
       callSignInService(email, password);
     }
@@ -146,9 +140,10 @@ public class UserAuthPresenter extends VimojoPresenter {
    * @param password password for the platform user account.
    * @param checkBoxAcceptTermChecked user acceptance of privacy and policy terms.
    */
-  public void performRegisterAuth(final String userName, final String email, final String password,
-                                  final boolean checkBoxAcceptTermChecked) {
-    if (userNameValidates(userName) && emailValidates(email) && passwordValidates(password)
+  private void performRegisterAuth(final String userName, final String email,
+                                   boolean emailValidates, final String password,
+                                   final boolean checkBoxAcceptTermChecked) {
+    if (userNameValidates(userName) && emailValidates(email, emailValidates) && passwordValidates(password)
         && checkBoxValidates(checkBoxAcceptTermChecked)){
       userAuthActivityView.showProgressAuthenticationDialog();
       callRegisterService(userName, email, password, checkBoxAcceptTermChecked);
@@ -172,7 +167,7 @@ public class UserAuthPresenter extends VimojoPresenter {
       }
 
       @Override
-      public void onFailure(Throwable registerException) {
+      public void onFailure(@NonNull Throwable registerException) {
         userAuthActivityView.hideProgressAuthenticationDialog();
         if (registerException instanceof VimojoApiException) {
           parseRegisterErrors((VimojoApiException) registerException);
@@ -193,12 +188,12 @@ public class UserAuthPresenter extends VimojoPresenter {
     Futures.addCallback(tokenFuture, new FutureCallback<AuthToken>() {
       @Override
       public void onSuccess(AuthToken authToken) {
-        userAuthActivityView.showSigninSuccess();
+        userAuthActivityView.showSignInSuccess();
         registerAccount(email, password, authToken.getToken(), authToken.getId());
       }
 
       @Override
-      public void onFailure(Throwable signInException) {
+      public void onFailure(@NonNull Throwable signInException) {
         // TODO(jliarte): 15/01/18 implement this method
         userAuthActivityView.hideProgressAuthenticationDialog();
         if (signInException instanceof VimojoApiException) {
@@ -266,5 +261,23 @@ public class UserAuthPresenter extends VimojoPresenter {
   public void switchToHomeMode() {
     userAuthActivityView.showInitRegisterOrLogin();
     userAuthActivityView.resetErrorFields();
+  }
+
+  public void onClickRegister(boolean isVisible, String userName, String email,
+                              boolean emailValidates, String password, boolean checkedAcceptTerms) {
+    if(!isVisible) {
+      switchToRegisterMode();
+    } else {
+      performRegisterAuth(userName, email, emailValidates, password, checkedAcceptTerms);
+    }
+  }
+
+  public void onClickLogin(boolean isVisible, String email, boolean emailValidates,
+                           String password) {
+    if(!isVisible) {
+      switchToSignInMode();
+    } else {
+      performLoginAuth(email, emailValidates, password);
+    }
   }
 }

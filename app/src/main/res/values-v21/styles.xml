@@ -168,6 +168,7 @@
         <item name="colorAccent">@color/colorWhite</item>
         <item name="android:textColorPrimary">@color/colorWhite</item>
         <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textColorLink">@color/colorBlack</item>
 
 
     </style>

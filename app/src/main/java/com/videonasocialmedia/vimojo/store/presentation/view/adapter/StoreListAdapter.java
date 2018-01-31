@@ -14,7 +14,7 @@ import com.videonasocialmedia.vimojo.store.presentation.mvp.views.StoreListClick
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -70,13 +70,13 @@ public class StoreListAdapter extends
   }
 
   class StoreAdapterItemViewHolder extends RecyclerView.ViewHolder {
-    @Bind(R.id.store_item_title)
+    @BindView(R.id.store_item_title)
     TextView storeItemTitle;
-    @Bind(R.id.store_item_descripton)
+    @BindView(R.id.store_item_descripton)
     TextView storeItemDescription;
-    @Bind(R.id.purchase_button)
+    @BindView(R.id.purchase_button)
     Button purchaseButton;
-    @Bind(R.id.text_view_item_purchased)
+    @BindView(R.id.text_view_item_purchased)
     TextView textPurchased;
 
     private List<SkuStoreData> skuStoreList;

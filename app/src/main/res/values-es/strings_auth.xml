@@ -14,7 +14,7 @@
     <string name="action_register_short">Hecho</string>
     <string name="prompt_user_name_register">Nombre de usuario</string>
     <string name="action_user_name_short">Hecho</string>
-    <string name="title_checkbox_termService">Acepto las condiciones de servicio y la política de privacidad</string>
+    <string name="title_checkbox_termService">Acepto las </string>
     <string name="action_register">Hecho</string>
     <string name="terms_of_service">Condiciones de servicio</string>
     <string name="have_account">¿Ya tienes una cuenta?</string>

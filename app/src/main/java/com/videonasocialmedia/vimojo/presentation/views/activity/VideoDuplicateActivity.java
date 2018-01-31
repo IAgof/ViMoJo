@@ -40,7 +40,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -54,21 +54,21 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
 
     @Inject DuplicatePreviewPresenter presenter;
 
-    @Bind(R.id.image_thumb_duplicate_video_left)
+    @BindView(R.id.image_thumb_duplicate_video_left)
     ImageView imageThumbLeft;
-    @Bind(R.id.image_thumb_duplicate_video_right)
+    @BindView(R.id.image_thumb_duplicate_video_right)
     ImageView imageThumbRight;
-    @Bind(R.id.textView_duplicate_num_increment)
+    @BindView(R.id.textView_duplicate_num_increment)
     TextView textNumDuplicates;
-    @Bind(R.id.button_duplicate_decrement_video)
+    @BindView(R.id.button_duplicate_decrement_video)
     ImageButton decrementVideoButton;
-    @Bind(R.id.button_duplicate_increment_video)
+    @BindView(R.id.button_duplicate_increment_video)
     ImageButton incrementVideoButton;
-    @Bind(R.id.button_duplicate_cancel)
+    @BindView(R.id.button_duplicate_cancel)
     ImageButton duplicateCancelButton;
-    @Bind(R.id.button_duplicate_accept)
+    @BindView(R.id.button_duplicate_accept)
     ImageButton duplicateAcceptButton;
-    @Bind(R.id.videona_player)
+    @BindView(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
     int videoIndexOnTrack;
     private Video video;

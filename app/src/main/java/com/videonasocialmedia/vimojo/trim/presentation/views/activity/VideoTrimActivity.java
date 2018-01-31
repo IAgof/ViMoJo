@@ -40,7 +40,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -54,28 +54,28 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Inject TrimPreviewPresenter presenter;
 
-    @Bind(R.id.text_time_trim)
+    @BindView(R.id.text_time_trim)
     TextView durationTag;
-    @Bind(R.id.trim_rangeSeekBar)
+    @BindView(R.id.trim_rangeSeekBar)
     RangeSeekBar trimmingRangeSeekBar;
-    @Bind(R.id.videona_player)
+    @BindView(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-    @Bind(R.id.player_advance_backward_start_trim)
+    @BindView(R.id.player_advance_backward_start_trim)
     ImageButton playerAdvanceBackwardStartTrim;
-    @Bind(R.id.player_advance_forward_start_trim)
+    @BindView(R.id.player_advance_forward_start_trim)
     ImageButton playerAdvanceForwardStartTrim;
-    @Bind(R.id.player_advance_backward_end_trim)
+    @BindView(R.id.player_advance_backward_end_trim)
     ImageButton playerAdvanceBackwardEndTrim;
-    @Bind(R.id.player_advance_forward_end_trim)
+    @BindView(R.id.player_advance_forward_end_trim)
     ImageButton playerAdvanceForwardEndTrim;
 
-    @Bind(R.id.radio_group_trim_advance)
+    @BindView(R.id.radio_group_trim_advance)
     RadioGroup radioGroupAdvanceTrim;
-    @Bind(R.id.radio_button_trim_advance_low)
+    @BindView(R.id.radio_button_trim_advance_low)
     RadioButton buttonSelectAdvanceLow;
-    @Bind(R.id.radio_button_trim_advance_medium)
+    @BindView(R.id.radio_button_trim_advance_medium)
     RadioButton buttonSelectAdvanceMedium;
-    @Bind(R.id.radio_button_trim_advance_high)
+    @BindView(R.id.radio_button_trim_advance_high)
     RadioButton buttonSelectAdvanceHigh;
 
     int videoIndexOnTrack;

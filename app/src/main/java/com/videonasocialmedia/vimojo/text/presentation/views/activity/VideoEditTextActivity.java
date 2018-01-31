@@ -33,7 +33,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
@@ -53,26 +53,26 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     private final String STATE_BUTTON_BOTTOM ="state_button_bottom" ;
     private final String VIDEO_POSITION = "video_position";
     private final String CURRENT_TEXT = "current_text";
-     private final String THEME_DARK = "dark";
+    private final String THEME_DARK = "dark";
     boolean hasTypedMoreThanTwoLines = false;
 
     @Inject EditTextPreviewPresenter presenter;
 
     private boolean stateWasRestored = false;
 
-    @Bind(R.id.text_activityText)
+    @BindView(R.id.text_activityText)
     EditText clipText;
-    @Bind(R.id.videona_player)
+    @BindView(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-    @Bind(R.id.button_editText_center)
+    @BindView(R.id.button_editText_center)
     ImageButton button_editText_center;
-    @Bind(R.id.button_editText_top)
+    @BindView(R.id.button_editText_top)
     ImageButton button_editText_top;
-    @Bind(R.id.button_editText_bottom)
+    @BindView(R.id.button_editText_bottom)
     ImageButton button_ediText_bottom;
-    @Bind(R.id.imageVideoText)
+    @BindView(R.id.imageVideoText)
     ImageView image_view_text;
-    @Bind(R.id.button_ok_or_edit_text)
+    @BindView(R.id.button_ok_or_edit_text)
     Button buttonOkOrEditText;
 
     private Video video;

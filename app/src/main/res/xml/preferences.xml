@@ -2,7 +2,8 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
      <PreferenceCategory
-        android:title="@string/titleUserSection">
+        android:title="@string/titleUserSection"
+        android:key="@string/titleUserSection">
          <Preference
              android:key="auth"
              android:title="@string/title_activity_auth"/>

@@ -10,7 +10,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicensesVimojoClickListener;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.model.LicenseVimojo;
 import java.util.List;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -55,7 +55,7 @@ public class LicensesVimojoAdapter extends RecyclerView.Adapter <LicensesVimojoA
   }
 
   class LicensesListItemViewHolder extends RecyclerView.ViewHolder {
-    @Bind(R.id.license_title)
+    @BindView(R.id.license_title)
     TextView licenseId;
 
     private List<LicenseVimojo> licenseList;

@@ -20,7 +20,7 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.ItemTouchHelperViewHolder;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
@@ -33,15 +33,15 @@ import static com.videonasocialmedia.videonamediaframework.utils.TimeUtils.toFor
 public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
   private VideoTimeLineAdapter videoTimeLineAdapter;
   private final VideoTimeLineRecyclerViewClickListener videoTimeLineListener;
-  @Bind(R.id.timeline_video_thumb)
+  @BindView(R.id.timeline_video_thumb)
   public ImageView thumb;
-  @Bind(R.id.text_clip_order)
+  @BindView(R.id.text_clip_order)
   TextView thumbOrder;
-  @Bind(R.id.text_duration_clip)
+  @BindView(R.id.text_duration_clip)
   TextView textDurationClip;
-  @Bind(R.id.image_remove_video)
+  @BindView(R.id.image_remove_video)
   ImageView removeVideo;
-  @Bind(R.id.image_video_warning)
+  @BindView(R.id.image_video_warning)
   ImageView videoWarning;
   private int selectedColor;
   public static final int VIEWHOLDER_RADIUS = 70;

@@ -25,7 +25,7 @@ import com.videonasocialmedia.vimojo.utils.TimeUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
@@ -134,9 +134,9 @@ public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTime
   }
 
   class MediaViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
-    @Bind(R.id.text_duration_clip)
+    @BindView(R.id.text_duration_clip)
     TextView textDurationClip;
-    @Bind(R.id.timeline_audio_thumb)
+    @BindView(R.id.timeline_audio_thumb)
     ImageView audioThumb;
 
     public MediaViewHolder(View itemView) {
