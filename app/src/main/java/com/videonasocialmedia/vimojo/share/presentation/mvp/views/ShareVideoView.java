@@ -34,4 +34,6 @@ public interface ShareVideoView {
   void navigateToUserAuth();
 
   void showMessage(int uploadComplete);
+
+  void sendSimpleNotification();
 }

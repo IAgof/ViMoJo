@@ -41,6 +41,7 @@
     <string name="fileError">Error al enviar al servidor FTP. Archivo no encontrado</string>
     <string name="credentialFTPNull">Conexión a FTP no establecida. Por favor, configure los datos FTP en ajustes.</string>
     <string name="upload_to_server">Subir a plataforma</string>
+    <string name="uploading_video">Subiendo video</string>
     <string name="upload_video_completed">Video subido con éxito</string>
     <string name="upload_video_error">Error subiendo viendo</string>
     <string name="upload_video_with_mobile_network">¿Quieres subir vídeo usando los datos de tu tarifa móvil?</string>

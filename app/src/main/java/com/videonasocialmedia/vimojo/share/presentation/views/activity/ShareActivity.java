@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.share.presentation.views.activity;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,7 +15,9 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -62,7 +66,8 @@ import butterknife.Optional;
  */
 public class ShareActivity extends EditorActivity implements ShareVideoView,
         VideonaPlayer.VideonaPlayerListener, OnOptionsToShareListClickListener {
-    @Inject ShareVideoPresenter presenter;
+  public static final int NOTIFICATION_UPLOAD_COMPLETE_ID = 001;
+  @Inject ShareVideoPresenter presenter;
     @Inject SharedPreferences sharedPreferences;
 
     @Nullable @BindView(R.id.linear_layout_activity_share)
@@ -84,8 +89,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   private ProgressDialog exportProgressDialog;
   private boolean acceptUploadVideoMobileNetwork;
-  private boolean isWifiConnected;
-  private boolean isMobileNetworConnected;
+  private boolean isWifiConnected = false;
+  private boolean isMobileNetworConnected = false;
 //  private BroadcastReceiver exportReceiver;
 
     @Override
@@ -394,7 +399,24 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         snackbar.show();
     }
 
-    private void showDialogNewProject(final int resourceButtonId) {
+  @Override
+  public void sendSimpleNotification() {
+    // The id of the channel.
+    String CHANNEL_ID = "upload_to_platform";
+
+    NotificationCompat.Builder mBuilder =
+        (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+            .setSmallIcon(R.drawable.ic_notification_small)
+            .setContentTitle(getString(R.string.upload_to_server))
+            .setContentText(getString(R.string.upload_video_completed));
+
+    NotificationManager notificationManager =
+        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+    notificationManager.notify(NOTIFICATION_UPLOAD_COMPLETE_ID, mBuilder.build());
+  }
+
+  private void showDialogNewProject(final int resourceButtonId) {
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

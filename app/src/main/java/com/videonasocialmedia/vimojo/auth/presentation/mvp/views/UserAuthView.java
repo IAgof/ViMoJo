@@ -68,4 +68,7 @@ public interface UserAuthView {
 
   void showInitRegisterOrLogin();
 
+  void showFocusEmailField();
+
+  void showFocusUserNameField();
 }
