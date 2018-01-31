@@ -75,4 +75,6 @@ public interface PreferencesView {
     void activateWatermark();
 
     void setupUserAuthentication(boolean userLoggedIn);
+
+  void hideRegisterLoginView();
 }

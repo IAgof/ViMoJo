@@ -368,12 +368,11 @@ public class ActivityPresentersModule {
   }
   @Provides @PerActivity
   UserProfilePresenter provideUserProfilePresenter(SharedPreferences sharedPreferences,
-                                                   UserEventTracker userEventTracker,
                                                    ObtainLocalVideosUseCase
                                                        obtainLocalVideosUseCase,
                                                    GetAuthToken getAuthToken) {
-    return new  UserProfilePresenter(activity, (UserProfileView) activity, userEventTracker,
-        sharedPreferences, obtainLocalVideosUseCase, getAuthToken);
+    return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
+        obtainLocalVideosUseCase, getAuthToken);
   }
 
   @Provides @PerActivity

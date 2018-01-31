@@ -6,12 +6,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
+import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -35,10 +37,6 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyAc
 import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity;
 
 import javax.inject.Inject;
-
-/**
- * Created by jliarte on 8/01/18.
- */
 
 /**
  * Activity for creating and signing in users into Vimojo web platform.
@@ -167,7 +165,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   }
 
   @Override
-  public void showSigninSuccess() {
+  public void showSignInSuccess() {
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
@@ -300,29 +298,47 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
     checkBoxAcceptTerm.setVisibility(View.VISIBLE);
   }
 
+  @OnClick(R.id.register_button)
+  public void onClickRegister() {
+    String userName = userNameField.getText().toString();
+    String email = emailField.getText().toString();
+    String password = passwordField.getText().toString();
+    boolean emailValidates = Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    userAuthPresenter.onClickRegister(isShowedRegisterLoginFields(), userName, email,
+        emailValidates, password, checkBoxAcceptTerm.isChecked());
+  }
+
+  @OnClick(R.id.login_button)
+  public void onClickLogin() {
+    String email = emailField.getText().toString();
+    String password = passwordField.getText().toString();
+    boolean emailValidates = Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    userAuthPresenter.onClickLogin(isShowedRegisterLoginFields(), email, emailValidates, password);
+  }
+
   private SpannableStringBuilder createFooterTextForRegister() {
-    SpannableStringBuilder footerText = new SpannableStringBuilder()
+    return new SpannableStringBuilder()
         .append(createSpannableNoClickable(getString(R.string.title_checkbox_termService),
-            R.color.colorSecondary) + " ")
+        R.color.colorSecondary)).append(" ")
         .append(createIntentSpannable(getString(R.string.terms_of_service),
-            R.color.textColorLight, TermsOfServiceActivity.class))
+            TermsOfServiceActivity.class))
         .append(createSpannableNoClickable(" " + getString(R.string.and) + " ",
             R.color.colorSecondary))
         .append(createIntentSpannable(getString(R.string.privacy_policy),
-            R.color.textColorLight, PrivacyPolicyActivity.class));
-    return footerText;
+            PrivacyPolicyActivity.class));
   }
 
-  public Spannable createSpannableNoClickable(String stringResource, int colorResource) {
+  private Spannable createSpannableNoClickable(String stringResource, int colorResource) {
     Spannable spanText = new SpannableString(stringResource);
-    spanText.setSpan(new ForegroundColorSpan(getResources()
-        .getColor(colorResource)), 0, stringResource.length(), 0);
+    spanText.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, colorResource)), 0,
+        stringResource.length(), 0);
     return spanText;
   }
 
-  public Spannable createIntentSpannable(String stringResource, int colorResource,
-                                         final Class nextActivity) {
-    Spannable spannableClickable = createSpannableNoClickable(stringResource, colorResource);
+  private Spannable createIntentSpannable(String stringResource,
+                                          final Class nextActivity) {
+    Spannable spannableClickable = createSpannableNoClickable(stringResource,
+        R.color.textColorLight);
     ClickableSpan clickableSpan = new ClickableSpan() {
       @Override
       public void onClick(View textView) {
@@ -358,31 +374,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
             });
   }
 
-  @OnClick(R.id.register_button)
-  public void onClickRegister() {
-    if(!isShowedRegisterLoginFields()){
-      userAuthPresenter.switchToRegisterMode();
-    } else {
-      String userName = userNameField.getText().toString();
-      String email = emailField.getText().toString();
-      String password = passwordField.getText().toString();
-      userAuthPresenter.performRegisterAuth(userName, email, password,
-          checkBoxAcceptTerm.isChecked());
-    }
-  }
-
   private boolean isShowedRegisterLoginFields() {
     return registerLoginFieldsLinearLayout.getVisibility() == View.VISIBLE;
-  }
-
-  @OnClick(R.id.login_button)
-  public void onClickLogin() {
-    if(!isShowedRegisterLoginFields()){
-      userAuthPresenter.switchToSignInMode();
-    } else {
-      String email = emailField.getText().toString();
-      String password = passwordField.getText().toString();
-      userAuthPresenter.performLoginAuth(email, password);
-    }
   }
 }

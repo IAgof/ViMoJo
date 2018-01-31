@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -18,11 +17,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
@@ -63,8 +60,8 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
   @Bind(R.id.backButton)
   ImageButton backButton;
   private ProgressDialog progressDialog;
-  String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_PROFILE_THUMB;
-  private int REQUEST_ICON_USER_PROFILE = 200;
+  private final String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_PROFILE_THUMB;
+  private final int REQUEST_ICON_USER_PROFILE = 200;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +76,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     progressDialog = new ProgressDialog(UserProfileActivity.this, R.style.VideonaDialog);
     progressDialog.setTitle(R.string.alert_dialog_title_user_profile);
     progressDialog.setMessage(getString(R.string.dialog_getting_user_profile));
-    progressDialog.setProgressStyle(progressDialog.STYLE_HORIZONTAL);
+    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
     progressDialog.setIndeterminate(true);
     progressDialog.setProgressNumberFormat(null);
     progressDialog.setProgressPercentFormat(null);
@@ -116,7 +113,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     }
   }
 
-  public void showDialogUserAddThumb() {
+  private void showDialogUserAddThumb() {
     // dialog pick or take photo
     final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
       @Override
@@ -172,17 +169,6 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
           updateUserThumb(inPath);
       }
     }
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        onBackPressed();
-        return true;
-      default:
-    }
-    return super.onOptionsItemSelected(item);
   }
 
   @Override
@@ -254,28 +240,25 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     Snackbar.make(email, stringId ,Snackbar.LENGTH_LONG).show();
   }
 
+  @Override
+  public void navigateToUserAuth() {
+    Intent intent = new Intent(this, UserAuthActivity.class);
+    startActivity(intent);
+  }
+
   @OnClick(R.id.backButton)
   public void onBackButtonClicked(){
     onBackPressed();
   }
 
   @OnClick(R.id.user_profile_username)
-  public void showDialogUpdateUsername() {
-    if(isEmptyField(username)){
-      navigateToUserAuth();
-    }
+  public void onClickUsername() {
+    presenter.onClickUsername(isEmptyField(username));
   }
 
   @OnClick(R.id.user_profile_email)
-  public void showDialogUpdaterEmail() {
-    if(isEmptyField(email)) {
-      navigateToUserAuth();
-    }
-  }
-
-  private void navigateToUserAuth() {
-    Intent intent = new Intent(this, UserAuthActivity.class);
-    startActivity(intent);
+  public void onClickEmail() {
+    presenter.onClickEmail(isEmptyField(email));
   }
 
   private boolean isEmptyField(TextView textView) {
