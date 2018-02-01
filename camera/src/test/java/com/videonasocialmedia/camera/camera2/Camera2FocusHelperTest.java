@@ -34,11 +34,13 @@ import static org.mockito.Mockito.verify;
  */
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Log.class, VideonaCaptureRequest.Builder.class})
+@PrepareForTest({Log.class, VideonaCaptureRequest.Builder.class, VideonaCameraCharacteristics.class})
 public class Camera2FocusHelperTest {
   @Mock private Camera2Wrapper mockedCameraWrapper;
   @Mock private VideonaCaptureRequest.Builder mockedPreviewBuilder;
   @Mock private VideonaCameraCaptureSession mockedPreviewSession;
+  @Mock private VideonaCaptureRequest mockedCaptureRequest;
+  @Mock private Handler mockedHandler;
   private VideonaCameraCharacteristics mockedCharacteristics;
 
   @Before
@@ -137,6 +139,8 @@ public class Camera2FocusHelperTest {
         .when(mockedCameraWrapper).getCurrentCameraCharacteristics();
     doReturn(mockedPreviewBuilder).when(mockedCameraWrapper).getPreviewBuilder();
     doReturn(mockedPreviewSession).when(mockedCameraWrapper).getPreviewSession();
+    doReturn(mockedCaptureRequest).when(mockedPreviewBuilder).build();
+    doReturn(mockedHandler).when(mockedCameraWrapper).getBackgroundHandler();
   }
 
   private void setupCameraWrapperSelectiveModeNotSupported() throws CameraAccessException {

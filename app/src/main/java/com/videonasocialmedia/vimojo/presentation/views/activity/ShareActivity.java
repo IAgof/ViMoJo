@@ -44,9 +44,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Optional;
 
 /**
  * Created by root on 31/05/16.
@@ -56,17 +57,17 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     @Inject ShareVideoPresenter presenter;
     @Inject SharedPreferences sharedPreferences;
 
-    @Nullable @Bind(R.id.linear_layout_activity_share)
+    @Nullable @BindView(R.id.linear_layout_activity_share)
     RelativeLayout coordinatorLayout;
-    @Nullable @Bind(R.id.videona_player)
+    @Nullable @BindView(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-    @Nullable @Bind(R.id.options_to_share_list)
+    @Nullable @BindView(R.id.options_to_share_list)
     RecyclerView optionsToShareList;
-    @Nullable @Bind(R.id.text_dialog)
+    @Nullable @BindView(R.id.text_dialog)
     EditText editTextDialog;
-    @Nullable @Bind(R.id.bottomBar)
+    @Nullable @BindView(R.id.bottomBar)
     BottomBar bottomBar;
-    @Bind(R.id.fab_edit_room)
+    @BindView(R.id.fab_edit_room)
     FloatingActionsMenu fabMenu;
 
     private String videoPath;
@@ -230,8 +231,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         startActivity(intent);
     }
 
-    @Nullable
-    @OnClick(R.id.fab_share_room)
+    @Optional @OnClick(R.id.fab_share_room)
     public void showMoreNetworks() {
         updateNumTotalVideosShared();
         presenter.trackVideoShared("Other network");

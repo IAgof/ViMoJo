@@ -22,7 +22,7 @@ import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -34,23 +34,23 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
 
   @Inject DetailProjectPresenter presenter;
 
-  @Bind(R.id.detail_project_duration)
+  @BindView(R.id.detail_project_duration)
   TextView textViewDuration;
-  @Bind(R.id.detail_project_size)
+  @BindView(R.id.detail_project_size)
   TextView textViewSize;
-  @Bind(R.id.detail_project_quality)
+  @BindView(R.id.detail_project_quality)
   TextView textViewQuality;
-  @Bind(R.id.detail_project_format)
+  @BindView(R.id.detail_project_format)
   TextView textViewFormat;
-  @Bind(R.id.detail_project_bitrate)
+  @BindView(R.id.detail_project_bitrate)
   TextView textViewBitRate;
-  @Bind(R.id.detail_project_framerate)
+  @BindView(R.id.detail_project_framerate)
   TextView textViewFrameRate;
 
-  @Bind(R.id.detail_project_title)
+  @BindView(R.id.detail_project_title)
   TextView textViewTitle;
 
-  @Bind(R.id.detail_project_thumb)
+  @BindView(R.id.detail_project_thumb)
   ImageView imageViewThumb;
 
   private boolean isTitleSelected = false;

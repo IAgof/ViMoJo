@@ -40,9 +40,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Optional;
 
 import static butterknife.ButterKnife.findById;
 
@@ -60,25 +61,25 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @Inject SoundPresenter presenter;
 
-  @Nullable @Bind(R.id.videona_player)
+  @Nullable @BindView(R.id.videona_player)
   VideonaPlayerExo videonaPlayer;
-  @Nullable @Bind( R.id.bottomBar)
+  @Nullable @BindView( R.id.bottomBar)
   BottomBar bottomBar;
-  @Nullable @Bind(R.id.relative_layout_activity_sound)
+  @Nullable @BindView(R.id.relative_layout_activity_sound)
   RelativeLayout relativeLayoutActivitySound;
 
-  @Nullable @Bind(R.id.cardview_audio_blocks_clips_video)
+  @Nullable @BindView(R.id.cardview_audio_blocks_clips_video)
   CardViewAudioTrack trackClipsVideo;
-  @Nullable @Bind(R.id.cardview_audio_blocks_clips_audio_track_first)
+  @Nullable @BindView(R.id.cardview_audio_blocks_clips_audio_track_first)
   CardViewAudioTrack trackClipsAudioTrackFirst;
-  @Nullable @Bind(R.id.cardview_audio_blocks_clips_audio_track_second)
+  @Nullable @BindView(R.id.cardview_audio_blocks_clips_audio_track_second)
   CardViewAudioTrack trackClipsAudioTrackSecond;
-  @Nullable @Bind(R.id.scrollview_timeline_audio_blocks)
+  @Nullable @BindView(R.id.scrollview_timeline_audio_blocks)
   ScrollView scrollViewTimeLineAudioBlocks;
-  @Nullable @Bind(R.id.button_sound_warning_transcoding_file)
+  @Nullable @BindView(R.id.button_sound_warning_transcoding_file)
   ImageButton warningTranscodingFilesButton;
 
-  @Bind(R.id.fab_edit_room)
+  @BindView(R.id.fab_edit_room)
   FloatingActionsMenu fabMenu;
   private BroadcastReceiver exportReceiver;
   private int currentProjectPosition = 0;
@@ -402,7 +403,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
 
-  @Nullable @OnClick(R.id.button_sound_warning_transcoding_file)
+  @Optional @OnClick(R.id.button_sound_warning_transcoding_file)
   public void onClickWarningTranscodingFile(){
     AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
     dialog.setTitle(getString(R.string.dialog_title_warning_error_transcoding_file));

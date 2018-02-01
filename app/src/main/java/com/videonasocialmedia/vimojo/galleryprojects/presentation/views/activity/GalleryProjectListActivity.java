@@ -31,7 +31,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class GalleryProjectListActivity extends VimojoActivity implements GalleryProjectListView,
@@ -39,7 +39,7 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Inject GalleryProjectListPresenter presenter;
 
-  @Bind(R.id.recycler_gallery_project)
+  @BindView(R.id.recycler_gallery_project)
   RecyclerView projectList;
 
   private GalleryProjectListAdapter projectAdapter;
