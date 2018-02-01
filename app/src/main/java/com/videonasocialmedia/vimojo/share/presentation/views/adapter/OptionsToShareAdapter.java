@@ -83,13 +83,13 @@ public class OptionsToShareAdapter extends RecyclerView.Adapter<OptionsToShareAd
     }
 
     public class ViewHolderVimojo extends ViewHolder {
-        @Bind(R.id.icon)
+        @BindView(R.id.icon)
         ImageView icon;
         @Nullable
-        @Bind(R.id.name)
+        @BindView(R.id.name)
         TextView name;
         @Nullable
-        @Bind(R.id.checkbox)
+        @BindView(R.id.checkbox)
         CheckBox checkBox;
 
         public ViewHolderVimojo(View itemView) {

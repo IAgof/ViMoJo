@@ -8,6 +8,8 @@ import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
+import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
+import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
@@ -298,8 +300,7 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  ShareVideoPresenter
-  provideVideoSharePresenter(UserEventTracker userEventTracker,
+  ShareVideoPresenter provideVideoSharePresenter(UserEventTracker userEventTracker,
                              SharedPreferences sharedPreferences,
                              CreateDefaultProjectUseCase createDefaultProjectUseCase,
                              AddLastVideoExportedToProjectUseCase

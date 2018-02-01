@@ -389,19 +389,6 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
             });
   }
 
-  @OnClick(R.id.register_button)
-  public void onClickRegister() {
-    if(!isShowedRegisterLoginFields()){
-      userAuthPresenter.switchToRegisterMode();
-    } else {
-      hideKeyboard(registerLoginFieldsLinearLayout);
-      String userName = userNameField.getText().toString();
-      String email = emailField.getText().toString();
-      String password = passwordField.getText().toString();
-      userAuthPresenter.performRegisterAuth(userName, email, password,
-          checkBoxAcceptTerm.isChecked());
-    }
-  }
 
   private boolean isShowedRegisterLoginFields() {
     return registerLoginFieldsLinearLayout.getVisibility() == View.VISIBLE;
@@ -416,17 +403,5 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
     InputMethodManager keyboard =
         (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
     keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
-  }
-
-  @OnClick(R.id.login_button)
-  public void onClickLogin() {
-    if(!isShowedRegisterLoginFields()){
-      userAuthPresenter.switchToSignInMode();
-    } else {
-      hideKeyboard(registerLoginFieldsLinearLayout);
-      String email = emailField.getText().toString();
-      String password = passwordField.getText().toString();
-      userAuthPresenter.performLoginAuth(email, password);
-    }
   }
 }

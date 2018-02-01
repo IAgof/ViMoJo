@@ -2488,7 +2488,7 @@ and Conditions.\n\n
 
 
     <string name="profession">Profession</string>
-
+    <string name="content_authority">com.videonasocialmedia.vimojo.provider</string>
 
 
 </resources>

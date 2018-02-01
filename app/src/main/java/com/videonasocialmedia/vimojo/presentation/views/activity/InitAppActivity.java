@@ -1,12 +1,15 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
 import android.Manifest;
+import android.accounts.Account;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SyncRequest;
 import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraAccessException;
 import android.os.AsyncTask;
@@ -33,6 +36,7 @@ import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsLi
 import com.mixpanel.android.mpmetrics.InAppNotification;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.auth.util.UserAccountUtil;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
@@ -97,6 +101,18 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private String androidId = null;
     private String initState;
     private CompositeMultiplePermissionsListener compositePermissionsListener;
+
+    // Sync interval constants
+    public static final long SECONDS_PER_MINUTE = 60L;
+    public static final long SYNC_INTERVAL_IN_MINUTES = 1L;
+    public static final long SYNC_INTERVAL =
+            SYNC_INTERVAL_IN_MINUTES *
+                    SECONDS_PER_MINUTE;
+    private static final long SYNC_FLEX_TIME =  SYNC_INTERVAL/3;
+    // Global variables
+    // A content resolver for accessing the provider
+    ContentResolver contentResolver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,6 +222,46 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         editor = sharedPreferences.edit();
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         requestPermissionsAndPerformSetup();
+        runSyncAdapterPeriodic();
+        //runNowSyncAdapter();
+    }
+
+    private void runNowSyncAdapter() {
+
+        Account account = UserAccountUtil.getAccount(this);
+        String authority = this.getString(R.string.content_authority);
+
+        // Pass the settings flags by inserting them in a bundle
+        Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        /*
+         * Request the sync for the default account, authority, and
+         * manual sync settings
+         */
+        ContentResolver.requestSync(account, authority, settingsBundle);
+
+    }
+
+    private void runSyncAdapterPeriodic() {
+        Log.d(LOG_TAG, "runSyncAdapterPeriodic");
+        // Get the content resolver for your app
+        contentResolver = getContentResolver();
+
+        Account account = UserAccountUtil.getAccount(this);
+        String authority = this.getString(R.string.content_authority);
+
+        // we can enable inexact timers in our periodic sync
+        SyncRequest request = new SyncRequest.Builder().
+                syncPeriodic(SYNC_INTERVAL, SYNC_FLEX_TIME).
+                setSyncAdapter(account, authority).
+                setExtras(new Bundle()).build();
+
+        contentResolver.requestSync(request);
+        ContentResolver.setSyncAutomatically(account, authority, true);
+
     }
 
     @Override
