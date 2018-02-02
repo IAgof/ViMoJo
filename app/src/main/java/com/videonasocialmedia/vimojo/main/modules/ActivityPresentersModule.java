@@ -97,7 +97,6 @@ import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPrevie
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
-import com.videonasocialmedia.vimojo.share.domain.UploadVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import dagger.Module;
@@ -308,11 +307,12 @@ public class ActivityPresentersModule {
                              ExportProjectUseCase exportProjectUseCase,
                              ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
                              GetFtpListUseCase getFtpListUseCase,
-                             UploadVideoUseCase uploadVideoUseCase, GetAuthToken getAuthToken) {
+                             GetAuthToken getAuthToken, VimojoUserAuthenticator
+                                                         vimojoUserAuthenticator) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
             sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
             exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
-            uploadVideoUseCase, getAuthToken);
+            getAuthToken, vimojoUserAuthenticator);
   }
 
   @Provides @PerActivity
@@ -370,9 +370,10 @@ public class ActivityPresentersModule {
   UserProfilePresenter provideUserProfilePresenter(SharedPreferences sharedPreferences,
                                                    ObtainLocalVideosUseCase
                                                        obtainLocalVideosUseCase,
-                                                   GetAuthToken getAuthToken) {
+                                                   GetAuthToken getAuthToken,
+                                                   VimojoUserAuthenticator vimojoUserAuthenticator) {
     return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
-        obtainLocalVideosUseCase, getAuthToken);
+        obtainLocalVideosUseCase, getAuthToken, vimojoUserAuthenticator);
   }
 
   @Provides @PerActivity
@@ -560,10 +561,6 @@ public class ActivityPresentersModule {
 
   @Provides BillingManager provideBillingManager() {
     return new BillingManager();
-  }
-
-  @Provides UploadVideoUseCase provideUploadVideoUseCase() {
-    return new UploadVideoUseCase();
   }
 
   @Provides ProfileRepository provideProfileRepository(

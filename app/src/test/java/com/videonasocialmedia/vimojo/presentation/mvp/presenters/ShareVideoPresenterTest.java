@@ -22,7 +22,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
-import com.videonasocialmedia.vimojo.share.domain.UploadVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 

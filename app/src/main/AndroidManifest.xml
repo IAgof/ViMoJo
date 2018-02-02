@@ -106,7 +106,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".vimojoapiclient.sync.WifiReceiver">
+        <receiver android:name=".sync.WifiReceiver">
             <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
             <action android:name="android.net.wifi.STATE_CHANGE"/>
         </receiver>
@@ -352,7 +352,7 @@
         </service>
 
         <service
-            android:name=".vimojoapiclient.sync.SyncService"
+            android:name=".sync.SyncService"
             android:exported="true"
             android:process=":sync">
             <intent-filter>
@@ -363,7 +363,7 @@
         </service>
 
         <provider
-            android:name=".vimojoapiclient.sync.StubProvider"
+            android:name=".sync.StubProvider"
             android:authorities="com.videonasocialmedia.vimojo.provider"
             android:exported="false" />
 

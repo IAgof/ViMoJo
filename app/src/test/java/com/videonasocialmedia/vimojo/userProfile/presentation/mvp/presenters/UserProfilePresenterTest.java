@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
+import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +39,8 @@ public class UserProfilePresenterTest {
   @Mock ObtainLocalVideosUseCase mockedObtainLocalVideosUseCase;
   @Mock OnVideosRetrieved mockedOnVideosRetrieved;
   @Mock GetAuthToken mockedGetAuthToken;
+  @Mock VimojoUserAuthenticator mockedVimojoUserAuthenticator;
+
   private final boolean emptyField = true;
 
   @Before
@@ -100,6 +103,6 @@ public class UserProfilePresenterTest {
   @NonNull
   private UserProfilePresenter getUserProfilePresenter() {
     return new UserProfilePresenter(mockedContext, mockedUserProfileView, mockedSharedPreferences,
-        mockedObtainLocalVideosUseCase, mockedGetAuthToken);
+            mockedObtainLocalVideosUseCase, mockedGetAuthToken, mockedVimojoUserAuthenticator);
   }
 }

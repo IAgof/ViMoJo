@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.vimojoapiclient.sync;
+package com.videonasocialmedia.vimojo.sync;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;

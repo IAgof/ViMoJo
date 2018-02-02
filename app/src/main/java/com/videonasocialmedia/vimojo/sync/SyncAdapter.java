@@ -1,18 +1,13 @@
-package com.videonasocialmedia.vimojo.vimojoapiclient.sync;
+package com.videonasocialmedia.vimojo.sync;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.util.UserAccountUtil;
 
 /**
  * Created by alvaro on 31/1/18.

@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.vimojoapiclient.sync;
+package com.videonasocialmedia.vimojo.sync;
 
 /**
  * Created by alvaro on 31/1/18.

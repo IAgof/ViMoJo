@@ -2,13 +2,9 @@ package com.videonasocialmedia.vimojo.share.presentation.mvp.presenters;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
@@ -32,13 +28,14 @@ import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.VimojoNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
-import com.videonasocialmedia.vimojo.share.domain.UploadVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.VideoResponse;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -46,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
@@ -69,8 +67,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
 
     private AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase;
     private ExportProjectUseCase exportUseCase;
-    private UploadVideoUseCase uploadVideoUseCase;
     private final GetAuthToken getAuthToken;
+    private final VimojoUserAuthenticator vimojoUserAuthenticator;
 
     @Inject
     public ShareVideoPresenter(Context context, ShareVideoView shareVideoView,
@@ -82,7 +80,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
                                ExportProjectUseCase exportProjectUseCase,
                                ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
                                GetFtpListUseCase getFtpListUseCase,
-                               UploadVideoUseCase uploadVideoUseCase, GetAuthToken getAuthToken) {
+                               GetAuthToken getAuthToken, VimojoUserAuthenticator
+                                           vimojoUserAuthenticator) {
         this.context = context;
         this.shareVideoViewReference = new WeakReference<>(shareVideoView);
         this.userEventTracker = userEventTracker;
@@ -92,8 +91,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
         this.exportUseCase = exportProjectUseCase;
         this.obtainNetworksToShareUseCase = obtainNetworksToShareUseCase;
         this.getFtpListUseCase = getFtpListUseCase;
-        this.uploadVideoUseCase = uploadVideoUseCase;
         this.getAuthToken = getAuthToken;
+        this.vimojoUserAuthenticator = vimojoUserAuthenticator;
         currentProject = loadCurrentProject();
     }
 
@@ -254,7 +253,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         });
     }
 
-    public void uploadVideo(final String videoPath) {
+    public void sendVideoToUpload(final String videoPath) {
         ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
             @Override
             public String call() throws Exception {
@@ -266,7 +265,9 @@ public class ShareVideoPresenter extends VimojoPresenter {
             public void onSuccess(String authToken) {
                 if(isUserLogged(authToken)) {
                     shareVideoViewReference.get().showMessage(R.string.uploading_video);
-                    uploadVideo(BuildConfig.API_BASE_URL, authToken, videoPath);
+                    // TODO: 2/2/18 Define description Send flavor name for testing field
+                    String description = BuildConfig.FLAVOR;
+                    uploadVideo(authToken, videoPath, description);
                 } else {
                     shareVideoViewReference.get().navigateToUserAuth();
                 }
@@ -283,20 +284,26 @@ public class ShareVideoPresenter extends VimojoPresenter {
         return !TextUtils.isEmpty(authToken);
     }
 
-    private void uploadVideo(String apiBaseUrl, String authToken, String mediaPath) {
+    private void uploadVideo(String authToken, String mediaPath, String description) {
         if(isThereFreeStorageOnPlatform(mediaPath)) {
-            uploadVideoUseCase.uploadVideo(apiBaseUrl, authToken, mediaPath,
-                new UploadVideoUseCase.OnUploadVideoListener() {
-                    @Override
-                    public void onUploadVideoError(Causes causes) {
-                        shareVideoViewReference.get().showMessage(R.string.upload_video_error);
-                    }
+            ListenableFuture<VideoResponse>  videoFuture =
+                    executeUseCaseCall(new Callable<VideoResponse>() {
+                @Override
+                public VideoResponse call() throws Exception {
+                    return vimojoUserAuthenticator.uploadVideo(authToken, mediaPath, description);
+                }
+            });
+            Futures.addCallback(videoFuture, new FutureCallback<VideoResponse>() {
+                @Override
+                public void onSuccess(@Nullable VideoResponse result) {
+                    shareVideoViewReference.get().sendSimpleNotification();
+                }
 
-                    @Override
-                    public void onUploadVideoSuccess() {
-                        shareVideoViewReference.get().sendSimpleNotification();
-                    }
-                });
+                @Override
+                public void onFailure(Throwable t) {
+                    shareVideoViewReference.get().showMessage(R.string.upload_video_error);
+                }
+            });
         }
     }
 

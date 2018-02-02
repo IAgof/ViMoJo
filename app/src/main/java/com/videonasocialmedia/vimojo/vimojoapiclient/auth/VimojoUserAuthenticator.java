@@ -4,21 +4,33 @@ package com.videonasocialmedia.vimojo.vimojoapiclient.auth;
  * Created by jliarte on 8/01/18.
  */
 
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserService;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VideoService;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthTokenRequest;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.RegisterRequest;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthService;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.VideoResponse;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.VimojoApiError;
 import com.videonasocialmedia.vimojo.vimojoapiclient.rest.ServiceGenerator;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Response;
 
+import java.io.File;
 import java.io.IOException;
+
+import static com.videonasocialmedia.vimojo.vimojoapiclient.ApiConstants.MIME_TYPE_VIDEO;
+import static com.videonasocialmedia.vimojo.vimojoapiclient.ApiConstants.MULTIPART_NAME_DATA;
 
 /**
  * Api client for user authentication.
@@ -92,6 +104,73 @@ public class VimojoUserAuthenticator {
       }
     } catch (IOException ioException) {
       throw new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR);
+    }
+    return null;
+  }
+
+  /**
+   * Make a user auth call to get user info
+   *
+   * @param token valid token
+   * @param id unique identification of user
+   * @return the user response of the platform service
+   * @throws VimojoApiException if an error has occurred in the call.
+   */
+  public User getUser(String token, String id) throws VimojoApiException {
+
+    UserService userService = new ServiceGenerator(BuildConfig.API_BASE_URL)
+            .generateService(UserService.class, token);
+    try {
+      Response<User>  response = userService.getUser(id).execute();
+      if(response.isSuccessful()) {
+        return response.body();
+      } else {
+        parseError(response);
+      }
+    } catch (IOException ioException) {
+      throw new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR);
+    }
+    return null;
+  }
+
+  /**
+   * Make a upload video call to send video to platform
+   *
+   * @param authToken valid token
+   * @param mediaPath Absolute path, video to upload
+   * @param description Description of video
+   * @return the video upload response of the platform service
+   * @throws VimojoApiException if an error has occurred in the call.
+   */
+  public VideoResponse uploadVideo(String authToken, String mediaPath, String description)
+          throws VimojoApiException{
+    // create upload service client
+    VideoService videoService = new ServiceGenerator(BuildConfig.API_BASE_URL)
+            .generateService(VideoService.class, authToken);
+
+    File file = new File(mediaPath);
+
+    RequestBody requestFile = RequestBody
+            .create(okhttp3.MediaType.parse(MIME_TYPE_VIDEO), file);
+
+    // MultipartBody.Part is used to send also the actual file name
+    MultipartBody.Part body =
+            MultipartBody.Part.createFormData(MULTIPART_NAME_DATA, file.getName(), requestFile);
+
+    // add another part within the multipart request
+    RequestBody requestBody =
+            RequestBody.create(
+                    okhttp3.MultipartBody.FORM, description);
+
+    try {
+      Response<VideoResponse> response = videoService.uploadVideo(requestBody, body).execute();
+      if(response.isSuccessful()) {
+        return response.body();
+      } else {
+        parseError(response);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
     }
     return null;
   }

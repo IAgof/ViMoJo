@@ -1,7 +1,6 @@
 package com.videonasocialmedia.vimojo.share.presentation.views.activity;
 
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -296,7 +295,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   public void onVimojoClicked(VimojoNetwork vimojoNetwork) {
     checkNetworksAvailable();
     if(isWifiConnected || acceptUploadVideoMobileNetwork) {
-      presenter.uploadVideo(videoPath);
+      presenter.sendVideoToUpload(videoPath);
     } else {
       if(!isWifiConnected && !isMobileNetworConnected)
         showMessage(R.string.connect_to_network);
@@ -394,28 +393,42 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
     @Override
     public void showMessage(final int string) {
-        Snackbar snackbar = Snackbar.make(coordinatorLayout, string, Snackbar.LENGTH_LONG);
-        snackbar.show();
+      runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+              Snackbar snackbar = Snackbar.make(coordinatorLayout, string, Snackbar.LENGTH_LONG);
+              snackbar.show();
+          }
+      });
     }
 
   @Override
   public void sendSimpleNotification() {
-    // The id of the channel.
-    String CHANNEL_ID = "upload_to_platform";
-
-    NotificationCompat.Builder mBuilder =
-        (NotificationCompat.Builder) new NotificationCompat.Builder(this)
-            .setSmallIcon(R.drawable.ic_notification_small)
-            .setContentTitle(getString(R.string.upload_to_server))
-            .setContentText(getString(R.string.upload_video_completed));
-
-    NotificationManager notificationManager =
-        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-    notificationManager.notify(NOTIFICATION_UPLOAD_COMPLETE_ID, mBuilder.build());
+      runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+              simpleNotification();
+          }
+      });
   }
 
-  private void showDialogNewProject(final int resourceButtonId) {
+    private void simpleNotification() {
+        // The id of the channel.
+        String CHANNEL_ID = "upload_to_platform";
+
+        NotificationCompat.Builder mBuilder =
+            (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_notification_small)
+                .setContentTitle(getString(R.string.upload_to_server))
+                .setContentText(getString(R.string.upload_video_completed));
+
+        NotificationManager notificationManager =
+            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(NOTIFICATION_UPLOAD_COMPLETE_ID, mBuilder.build());
+    }
+
+    private void showDialogNewProject(final int resourceButtonId) {
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
