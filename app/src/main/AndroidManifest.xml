@@ -367,7 +367,6 @@
             android:authorities="com.videonasocialmedia.vimojo.provider"
             android:exported="false" />
 
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabricApiKey}" />

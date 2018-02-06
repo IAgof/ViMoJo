@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
+import com.videonasocialmedia.vimojo.sync.UploadToPlatform;
 import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
@@ -98,6 +99,8 @@ import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimA
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -307,12 +310,11 @@ public class ActivityPresentersModule {
                              ExportProjectUseCase exportProjectUseCase,
                              ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
                              GetFtpListUseCase getFtpListUseCase,
-                             GetAuthToken getAuthToken, VimojoUserAuthenticator
-                                                         vimojoUserAuthenticator) {
+                             GetAuthToken getAuthToken, UploadToPlatform uploadToPlatform) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
             sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
             exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
-            getAuthToken, vimojoUserAuthenticator);
+            getAuthToken, uploadToPlatform);
   }
 
   @Provides @PerActivity
@@ -582,5 +584,9 @@ public class ActivityPresentersModule {
 
   @Provides GetFtpListUseCase provideGetFtpListUseCase() {
     return new GetFtpListUseCase();
+  }
+
+  @Provides UploadToPlatform provideUploadToPlatform() {
+      return new UploadToPlatform(activity);
   }
 }

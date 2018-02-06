@@ -402,32 +402,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       });
     }
 
-  @Override
-  public void sendSimpleNotification() {
-      runOnUiThread(new Runnable() {
-          @Override
-          public void run() {
-              simpleNotification();
-          }
-      });
-  }
-
-    private void simpleNotification() {
-        // The id of the channel.
-        String CHANNEL_ID = "upload_to_platform";
-
-        NotificationCompat.Builder mBuilder =
-            (NotificationCompat.Builder) new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_notification_small)
-                .setContentTitle(getString(R.string.upload_to_server))
-                .setContentText(getString(R.string.upload_video_completed));
-
-        NotificationManager notificationManager =
-            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(NOTIFICATION_UPLOAD_COMPLETE_ID, mBuilder.build());
-    }
-
     private void showDialogNewProject(final int resourceButtonId) {
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override

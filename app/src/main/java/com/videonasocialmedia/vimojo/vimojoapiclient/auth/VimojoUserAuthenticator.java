@@ -4,9 +4,7 @@ package com.videonasocialmedia.vimojo.vimojoapiclient.auth;
  * Created by jliarte on 8/01/18.
  */
 
-import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -170,7 +168,7 @@ public class VimojoUserAuthenticator {
         parseError(response);
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      throw new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR);
     }
     return null;
   }

@@ -66,6 +66,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.videonasocialmedia.vimojo.sync.SyncAdapter.SYNC_INTERVAL;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
 
@@ -102,12 +103,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private String initState;
     private CompositeMultiplePermissionsListener compositePermissionsListener;
 
-    // Sync interval constants
-    public static final long SECONDS_PER_MINUTE = 60L;
-    public static final long SYNC_INTERVAL_IN_MINUTES = 1L;
-    public static final long SYNC_INTERVAL =
-            SYNC_INTERVAL_IN_MINUTES *
-                    SECONDS_PER_MINUTE;
     private static final long SYNC_FLEX_TIME =  SYNC_INTERVAL/3;
     // Global variables
     // A content resolver for accessing the provider
@@ -222,8 +217,9 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         editor = sharedPreferences.edit();
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         requestPermissionsAndPerformSetup();
-        runSyncAdapterPeriodic();
-        //runNowSyncAdapter();
+        // TODO: 6/2/18 Decide when app has to check pending video uploads. On launch app, every 10 minutes, etc ...
+        //runSyncAdapterPeriodic();
+        runNowSyncAdapter();
     }
 
     private void runNowSyncAdapter() {
@@ -241,7 +237,9 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
          * Request the sync for the default account, authority, and
          * manual sync settings
          */
-        ContentResolver.requestSync(account, authority, settingsBundle);
+        if (account != null) {
+            ContentResolver.requestSync(account, authority, settingsBundle);
+        }
 
     }
 
@@ -259,8 +257,11 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
                 setSyncAdapter(account, authority).
                 setExtras(new Bundle()).build();
 
-        contentResolver.requestSync(request);
-        ContentResolver.setSyncAutomatically(account, authority, true);
+        if (account != null) {
+            contentResolver.requestSync(request);
+            contentResolver.setSyncAutomatically(account, authority, true);
+        }
+
 
     }
 

@@ -8,6 +8,12 @@ buildscript {
         classpath 'io.fabric.tools:gradle:1.25.1'
     }
 }
+
+repositories {
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
 apply plugin: 'io.fabric'
@@ -377,6 +383,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
     implementation 'com.google.guava:guava:19.0'
+    implementation 'com.squareup.tape2:tape:2.0.0-SNAPSHOT'
+    implementation 'com.squareup.moshi:moshi:1.5.0'
 }
 
 // Ensure the no-op dependency is always used in JVM tests.

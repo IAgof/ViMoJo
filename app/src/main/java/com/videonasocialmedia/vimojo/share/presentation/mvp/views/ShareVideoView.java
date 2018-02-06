@@ -35,5 +35,4 @@ public interface ShareVideoView {
 
   void showMessage(int uploadComplete);
 
-  void sendSimpleNotification();
 }
