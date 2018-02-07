@@ -4,6 +4,11 @@ import android.content.SharedPreferences;
 
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
+import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
+import com.videonasocialmedia.vimojo.auth.presentation.view.utils.EmailPatternValidator;
+import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
+import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
+import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
@@ -360,11 +365,18 @@ public class ActivityPresentersModule {
   }
   @Provides @PerActivity
   UserProfilePresenter provideUserProfilePresenter(SharedPreferences sharedPreferences,
-                                                   UserEventTracker userEventTracker,
                                                    ObtainLocalVideosUseCase
-                                                       obtainLocalVideosUseCase) {
-    return new  UserProfilePresenter((UserProfileView) activity, userEventTracker,
-        sharedPreferences, obtainLocalVideosUseCase);
+                                                       obtainLocalVideosUseCase,
+                                                   GetAuthToken getAuthToken) {
+    return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
+        obtainLocalVideosUseCase, getAuthToken);
+  }
+
+  @Provides @PerActivity
+  UserAuthPresenter provideUserAuthPresenter(VimojoUserAuthenticator vimojoUserAuthenticator,
+                                             EmailPatternValidator emailPatternValidator) {
+    return new UserAuthPresenter((UserAuthView) activity, activity,
+            vimojoUserAuthenticator, emailPatternValidator);
   }
 
   @Provides
@@ -559,5 +571,9 @@ public class ActivityPresentersModule {
 
   @Provides ObtainLocalVideosUseCase provideObtainLocalVideosUseCase() {
     return new ObtainLocalVideosUseCase();
+  }
+
+  @Provides VimojoUserAuthenticator provideVimojoAuthenticator() {
+    return new VimojoUserAuthenticator();
   }
 }

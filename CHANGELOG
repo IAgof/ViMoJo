@@ -1,3 +1,10 @@
+v0.8.2
+- Update gradle to version 4 and start working with Android Studio 3. Migrate build.gradle, new key
+words implementation, androidTestImplementation, testImplementation.
+- Vimojo application, update how to init LeakCanary, Crahslytics, Realm, needed with these changes.
+- Remove avrecorder module not needed in app.
+- Update butterknife, change @Bind for @BindView in all activities.
+
 v0.8.1
 - Added link to Vimojo kit from drawer, store category. Links added in every flavor with utm campaign values.
 

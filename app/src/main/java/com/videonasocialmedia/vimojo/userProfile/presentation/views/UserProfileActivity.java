@@ -9,12 +9,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -22,8 +17,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
@@ -65,8 +60,8 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
   @BindView(R.id.backButton)
   ImageButton backButton;
   private ProgressDialog progressDialog;
-  String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_PROFILE_THUMB;
-  private int REQUEST_ICON_USER_PROFILE = 200;
+  private final String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_PROFILE_THUMB;
+  private final int REQUEST_ICON_USER_PROFILE = 200;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +76,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     progressDialog = new ProgressDialog(UserProfileActivity.this, R.style.VideonaDialog);
     progressDialog.setTitle(R.string.alert_dialog_title_user_profile);
     progressDialog.setMessage(getString(R.string.dialog_getting_user_profile));
-    progressDialog.setProgressStyle(progressDialog.STYLE_HORIZONTAL);
+    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
     progressDialog.setIndeterminate(true);
     progressDialog.setProgressNumberFormat(null);
     progressDialog.setProgressPercentFormat(null);
@@ -118,7 +113,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     }
   }
 
-  public void showDialogUserAddThumb() {
+  private void showDialogUserAddThumb() {
     // dialog pick or take photo
     final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
       @Override
@@ -162,8 +157,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     super.onResume();
     setUpAndCheckUserThumb();
     presenter.getInfoVideosRecordedEditedShared();
-    presenter.getUserNameFromPreferences();
-    presenter.getEmailFromPreferences();
+    presenter.setupUserInfo();
   }
 
   @Override
@@ -175,17 +169,6 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
           updateUserThumb(inPath);
       }
     }
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        onBackPressed();
-        return true;
-      default:
-    }
-    return super.onOptionsItemSelected(item);
   }
 
   @Override
@@ -257,81 +240,30 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     Snackbar.make(email, stringId ,Snackbar.LENGTH_LONG).show();
   }
 
+  @Override
+  public void navigateToUserAuth() {
+    Intent intent = new Intent(this, UserAuthActivity.class);
+    startActivity(intent);
+  }
+
   @OnClick(R.id.backButton)
   public void onBackButtonClicked(){
     onBackPressed();
   }
 
   @OnClick(R.id.user_profile_username)
-  public void showDialogUpdateUsername() {
-    showDialogToUpdatePreference(username.getText().toString(), username,
-        getString(R.string.dialog_title_update_user_name), getString(R.string.hint_user_name));
+  public void onClickUsername() {
+    presenter.onClickUsername(isEmptyField(username));
   }
 
   @OnClick(R.id.user_profile_email)
-  public void showDialogUpdaterEmail() {
-    // TODO:(alvaro.martinez) 18/01/18 Delete this option after adding login/register. Not allow change email.
-    if(email.getText().toString().equals("")) {
-      showDialogToUpdatePreference(email.getText().toString(), email,
-          getString(R.string.dialog_title_update_user_email), getString(R.string.hint_user_email));
-    }
+  public void onClickEmail() {
+    presenter.onClickEmail(isEmptyField(email));
   }
 
-  private void showDialogToUpdatePreference(String text, final TextView textView,
-                                            String titleDialog, String hintText){
-    View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
-    editTextDialog = (EditText) dialogView.findViewById(R.id.text_dialog);
-    editTextDialog.setText(text);
-    editTextDialog.setHint(hintText);
-    editTextDialog.setSelectAllOnFocus(true);
-
-    final DialogInterface.OnClickListener dialogClickListener =
-        new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            hideKeyboard(editTextDialog);
-            switch (which) {
-              case DialogInterface.BUTTON_POSITIVE: {
-                String textPreference = editTextDialog.getText().toString();
-                if (textPreference.equals(""))
-                  return;
-                if(textView.equals(username)) {
-                  presenter.updateUserNamePreference(textPreference);
-                  break;
-                }
-                if(textView.equals(email)) {
-                  presenter.updateUserEmailPreference(textPreference);
-                  break;
-                }
-
-              }
-              case DialogInterface.BUTTON_NEGATIVE:
-                break;
-            }
-          }
-        };
-
-    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-    AlertDialog alertDialog = builder.setCancelable(false)
-        .setTitle(titleDialog)
-        .setView(dialogView)
-        .setPositiveButton(R.string.positiveButton, dialogClickListener)
-        .setNegativeButton(R.string.negativeButton, dialogClickListener)
-        .setCancelable(false).show();
-
-    editTextDialog.requestFocus();
-    showKeyboard();
+  private boolean isEmptyField(TextView textView) {
+    return textView.getText().toString().equals("");
   }
 
-  private void showKeyboard() {
-    InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
-    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-  }
-
-  private void hideKeyboard(View v) {
-    InputMethodManager keyboard =
-        (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-    keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
-  }
 }
 

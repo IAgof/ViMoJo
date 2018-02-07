@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="@dimen/activity_user_auth_height_fields"
+              android:layout_height="wrap_content"
+              android:layout_below="@+id/register_login_slogan_text_view"
+              android:layout_centerInParent="true"
+              android:layout_margin="8dp"
+              android:background="@drawable/activity_user_auth_round_white_background"
+              android:orientation="vertical"
+              android:layout_alignWithParentIfMissing="true">
+
+        <EditText
+            android:id="@+id/user_name_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_user_name_register"
+            android:imeActionId="@+id/closekeyBoard"
+            android:imeActionLabel="@string/action_user_name_short"
+            android:imeOptions="actionUnspecified"
+            android:inputType="textCapSentences"
+            android:maxLines="1"
+            android:textCursorDrawable="@null"
+            android:paddingLeft="12dp"
+            android:textColor="@color/colorSecondary"
+            android:visibility="gone"/>
+
+        <EditText
+            android:id="@+id/email_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_email_register"
+            android:imeActionId="@+id/closekeyBoard"
+            android:imeActionLabel="@string/action_email_register_short"
+            android:imeOptions="actionUnspecified"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:textCursorDrawable="@null"
+            android:textIsSelectable="false"
+            android:paddingLeft="12dp"
+            android:textColor="@color/colorSecondary"/>
+
+        <EditText
+            android:id="@+id/password_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_password_register"
+            android:imeActionId="@+id/closekeyBoard"
+            android:imeActionLabel="@string/action_register_short"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:textCursorDrawable="@null"
+            android:paddingLeft="12dp"
+            android:textColor="@color/colorSecondary"/>
+
+    <CheckBox
+        android:id="@+id/check_box_Accept_Term"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:buttonTint="@color/colorSecondary"
+        android:text="@string/title_checkbox_termService"
+        android:textColor="@color/colorSecondary"
+        android:textSize="12sp"
+        android:paddingRight="4dp"
+        android:paddingBottom="4dp"/>
+
+</LinearLayout>

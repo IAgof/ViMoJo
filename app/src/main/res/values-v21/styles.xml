@@ -40,6 +40,7 @@
 
         <item name="android:editTextStyle">@style/VideonaEditText</item>
         <item name="android:radioButtonStyle">@style/VideonaRadioButton</item>
+        <item name="android:checkboxStyle">@style/VideonaCheckBox</item>
         <item name="cardViewStyle">@style/CardViewStyleLight</item>
 
         <item name="titleTextColor">@color/colorSecondary</item>
@@ -130,6 +131,13 @@
         <item name="android:buttonTint">?attr/colorAccent</item>
     </style>
 
+    <style name="VideonaCheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:backgroundTint">?attr/android:textColorSecondary</item>
+        <item name="android:textColor">?attr/android:textColorPrimary</item>
+        <item name="android:buttonTint">?attr/colorAccent</item>
+    </style>
+
+
     <style name="ViMoJoTutorial" parent="Theme.AppCompat.Light">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -144,6 +152,25 @@
 
     <style name="VideonaTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"></style>
 
+    <!-- Register, Login Theme -->
+    <style name="VideonaThemeUserAuth" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--scroll transparent-->
+        <item name="android:scrollbarThumbHorizontal">@color/colorTransparent</item>
+        <item name="android:scrollbarThumbVertical">@color/colorTransparent</item>
 
+        <!--navigationView and Status Bar transparent with Drawer-->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@color/colorTransparent</item>
+
+        <item name="colorAccent">@color/colorWhite</item>
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textColorLink">@color/colorBlack</item>
+
+
+    </style>
 
 </resources>

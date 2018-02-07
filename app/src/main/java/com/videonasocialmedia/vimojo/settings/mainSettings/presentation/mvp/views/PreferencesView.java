@@ -73,4 +73,8 @@ public interface PreferencesView {
     void deactivateDarkTheme();
 
     void activateWatermark();
+
+    void setupUserAuthentication(boolean userLoggedIn);
+
+  void hideRegisterLoginView();
 }
