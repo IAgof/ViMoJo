@@ -11,6 +11,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.vimojo.auth.AccountConstants;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
+import com.videonasocialmedia.vimojo.auth.presentation.view.utils.EmailPatternValidator;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
@@ -27,6 +28,7 @@ import javax.inject.Inject;
  */
 public class UserAuthPresenter extends VimojoPresenter {
   private final WeakReference<Context> contextReference;
+  private final EmailPatternValidator emailPatternValidator;
   @Inject
   VimojoUserAuthenticator vimojoUserAuthenticator;
 
@@ -41,10 +43,12 @@ public class UserAuthPresenter extends VimojoPresenter {
    * @param vimojoUserAuthenticator api client for auth services.
    */
   public UserAuthPresenter(UserAuthView userAuthActivityView, Context context,
-                           VimojoUserAuthenticator vimojoUserAuthenticator) {
+                           VimojoUserAuthenticator vimojoUserAuthenticator,
+                           EmailPatternValidator emailPatternValidator) {
     this.userAuthActivityView = userAuthActivityView;
     this.contextReference = new WeakReference<>(context);
     this.vimojoUserAuthenticator = vimojoUserAuthenticator;
+    this.emailPatternValidator = emailPatternValidator;
   }
 
   /**
@@ -71,23 +75,24 @@ public class UserAuthPresenter extends VimojoPresenter {
     userAuthActivityView.updateScreenBackground();
   }
 
-  private boolean userNameValidates(String userName){
-    if(isEmptyField(userName)) {
+  private boolean userNameValidates(String userName) {
+    if (isEmptyField(userName)) {
       userAuthActivityView.showUserNameFieldRequired();
       return false;
     }
     return true;
   }
 
-  private boolean emailValidates(String email, boolean emailValidates) {
+  private boolean emailValidates(String email) {
     if (isEmptyField(email)) {
       userAuthActivityView.showEmailFieldRequired();
       return false;
     }
-    if (!emailValidates) {
+    if (!emailPatternValidator.emailValidates(email)) {
       userAuthActivityView.showInvalidMailError();
+      return false;
     }
-    return emailValidates;
+    return true;
   }
 
   private boolean passwordValidates(String password) {
@@ -125,8 +130,8 @@ public class UserAuthPresenter extends VimojoPresenter {
    * @param email email for the platform user account.
    * @param password password for the platform user account.
    */
-  private void performLoginAuth(final String email, boolean emailValidates, final String password) {
-    if (emailValidates(email, emailValidates) && passwordValidates(password)) {
+  private void performLoginAuth(final String email, final String password) {
+    if (emailValidates(email) && passwordValidates(password)) {
       userAuthActivityView.showProgressAuthenticationDialog();
       callSignInService(email, password);
     }
@@ -140,11 +145,10 @@ public class UserAuthPresenter extends VimojoPresenter {
    * @param password password for the platform user account.
    * @param checkBoxAcceptTermChecked user acceptance of privacy and policy terms.
    */
-  private void performRegisterAuth(final String userName, final String email,
-                                   boolean emailValidates, final String password,
+  private void performRegisterAuth(final String userName, final String email, final String password,
                                    final boolean checkBoxAcceptTermChecked) {
-    if (userNameValidates(userName) && emailValidates(email, emailValidates) && passwordValidates(password)
-        && checkBoxValidates(checkBoxAcceptTermChecked)){
+    if (userNameValidates(userName) && emailValidates(email) && passwordValidates(password)
+        && checkBoxValidates(checkBoxAcceptTermChecked)) {
       userAuthActivityView.showProgressAuthenticationDialog();
       callRegisterService(userName, email, password, checkBoxAcceptTermChecked);
     }
@@ -264,20 +268,19 @@ public class UserAuthPresenter extends VimojoPresenter {
   }
 
   public void onClickRegister(boolean isVisible, String userName, String email,
-                              boolean emailValidates, String password, boolean checkedAcceptTerms) {
-    if(!isVisible) {
+                              String password, boolean checkedAcceptTerms) {
+    if (!isVisible) {
       switchToRegisterMode();
     } else {
-      performRegisterAuth(userName, email, emailValidates, password, checkedAcceptTerms);
+      performRegisterAuth(userName, email, password, checkedAcceptTerms);
     }
   }
 
-  public void onClickLogin(boolean isVisible, String email, boolean emailValidates,
-                           String password) {
-    if(!isVisible) {
+  public void onClickLogin(boolean isVisible, String email, String password) {
+    if (!isVisible) {
       switchToSignInMode();
     } else {
-      performLoginAuth(email, emailValidates, password);
+      performLoginAuth(email, password);
     }
   }
 }

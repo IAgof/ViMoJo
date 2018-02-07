@@ -13,7 +13,6 @@ import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
-import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -303,17 +302,15 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
     String userName = userNameField.getText().toString();
     String email = emailField.getText().toString();
     String password = passwordField.getText().toString();
-    boolean emailValidates = Patterns.EMAIL_ADDRESS.matcher(email).matches();
     userAuthPresenter.onClickRegister(isShowedRegisterLoginFields(), userName, email,
-        emailValidates, password, checkBoxAcceptTerm.isChecked());
+            password, checkBoxAcceptTerm.isChecked());
   }
 
   @OnClick(R.id.login_button)
   public void onClickLogin() {
     String email = emailField.getText().toString();
     String password = passwordField.getText().toString();
-    boolean emailValidates = Patterns.EMAIL_ADDRESS.matcher(email).matches();
-    userAuthPresenter.onClickLogin(isShowedRegisterLoginFields(), email, emailValidates, password);
+    userAuthPresenter.onClickLogin(isShowedRegisterLoginFields(), email, password);
   }
 
   private SpannableStringBuilder createFooterTextForRegister() {

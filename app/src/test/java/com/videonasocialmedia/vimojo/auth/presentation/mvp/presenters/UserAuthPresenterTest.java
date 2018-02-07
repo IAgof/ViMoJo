@@ -4,27 +4,25 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
+import com.videonasocialmedia.vimojo.auth.presentation.view.utils.EmailPatternValidator;
 import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
-
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserAuthPresenterTest {
-
-  @InjectMocks UserAuthPresenter injectedPresenter;
-
   @Mock UserAuthView mockedUserAuthActivityView;
   @Mock Context mockedContext;
   @Mock VimojoUserAuthenticator mockedVimojoUserAuthenticator;
+  @Mock EmailPatternValidator mockedEmailPatternValidator;
 
   @Before
   public void injectMocks() {
@@ -47,9 +45,8 @@ public class UserAuthPresenterTest {
     boolean areFieldsVisible = false;
     String email = "a@a.a";
     String password = "1234567";
-    boolean emailValidates = true;
 
-    presenter.onClickLogin(areFieldsVisible, email, emailValidates, password);
+    presenter.onClickLogin(areFieldsVisible, email, password);
 
     verify(mockedUserAuthActivityView).hideUserNameField();
     verify(mockedUserAuthActivityView).hideTermsCheckbox();
@@ -64,9 +61,8 @@ public class UserAuthPresenterTest {
     boolean areFieldsVisible = true;
     String email = "a@a.a";
     String password = "1234567";
-    boolean emailValidates = true;
 
-    presenter.onClickLogin(areFieldsVisible, email, emailValidates, password);
+    presenter.onClickLogin(areFieldsVisible, email, password);
 
     verify(mockedUserAuthActivityView).showProgressAuthenticationDialog();
   }
@@ -79,9 +75,8 @@ public class UserAuthPresenterTest {
     String email = "a@a.a";
     String password = "1234567";
     boolean acceptTerms = true;
-    boolean emailValidates = true;
 
-    presenter.onClickRegister(isVisible, username, email, emailValidates, password, acceptTerms);
+    presenter.onClickRegister(isVisible, username, email, password, acceptTerms);
 
     verify(mockedUserAuthActivityView).showUserNameField();
     verify(mockedUserAuthActivityView).showTermsCheckbox();
@@ -98,9 +93,9 @@ public class UserAuthPresenterTest {
     String email = "a@a.a";
     String password = "1234567";
     boolean acceptTerms = true;
-    boolean emailValidates = true;
+    doReturn(true).when(mockedEmailPatternValidator).emailValidates(email);
 
-    presenter.onClickRegister(isVisible, username, email, emailValidates, password, acceptTerms);
+    presenter.onClickRegister(isVisible, username, email, password, acceptTerms);
 
     verify(mockedUserAuthActivityView).showProgressAuthenticationDialog();
   }
@@ -108,6 +103,6 @@ public class UserAuthPresenterTest {
   @NonNull
   private UserAuthPresenter getUserAuthPresenter() {
     return new UserAuthPresenter(mockedUserAuthActivityView, mockedContext,
-        mockedVimojoUserAuthenticator);
+        mockedVimojoUserAuthenticator, mockedEmailPatternValidator);
   }
 }

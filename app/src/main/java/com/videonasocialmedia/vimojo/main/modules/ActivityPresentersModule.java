@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
+import com.videonasocialmedia.vimojo.auth.presentation.view.utils.EmailPatternValidator;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
 import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
@@ -97,7 +98,6 @@ import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.Use
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.upload.domain.UploadVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 
 import dagger.Module;
 import dagger.Provides;
@@ -373,9 +373,10 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  UserAuthPresenter provideUserAuthPresenter(VimojoUserAuthenticator vimojoUserAuthenticator) {
+  UserAuthPresenter provideUserAuthPresenter(VimojoUserAuthenticator vimojoUserAuthenticator,
+                                             EmailPatternValidator emailPatternValidator) {
     return new UserAuthPresenter((UserAuthView) activity, activity,
-            vimojoUserAuthenticator);
+            vimojoUserAuthenticator, emailPatternValidator);
   }
 
   @Provides
