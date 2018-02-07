@@ -61,6 +61,7 @@ public class UserAuthPresenterTest {
     boolean areFieldsVisible = true;
     String email = "a@a.a";
     String password = "1234567";
+    doReturn(true).when(mockedEmailPatternValidator).emailValidates(email);
 
     presenter.onClickLogin(areFieldsVisible, email, password);
 
