@@ -1,5 +1,8 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters;
 
+import android.view.View;
+import android.widget.RelativeLayout;
+
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateTitleProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -27,13 +30,6 @@ public class DetailProjectPresenter {
 
   public void init(){
 
-    if(currentProject.getVMComposition().hasVideos()) {
-      Video firstVideo = (Video) currentProject.getMediaTrack().getItems().get(0);
-      String path = firstVideo.getIconPath() != null
-          ? firstVideo.getIconPath() : firstVideo.getMediaPath();
-      detailProjectView.showDetailProjectThumb(path);
-    }
-
     detailProjectView.showTitleProject(currentProject.getTitle());
 
     double projectSizeMb = currentProject.getProjectSizeMbVideoToExport();
@@ -51,5 +47,30 @@ public class DetailProjectPresenter {
 
   public void setTitleProject(String textFromEditText) {
     updateTitleProjectUseCase.setTitle(currentProject, textFromEditText);
+  }
+
+
+  public void titleClicked() {
+    detailProjectView.showAcceptTitleButton();
+  }
+
+  public void titleAccepted() {
+    detailProjectView.hideAcceptTitleButton();
+  }
+
+  public void descriptionClicked() {
+    detailProjectView.showAcceptDescriptionButton();
+  }
+
+  public void descriptionAccepted() {
+    detailProjectView.hideAcceptDescriptionButton();
+  }
+
+  public void detailsExpand(RelativeLayout layoutDetailsInfo) {
+    if(layoutDetailsInfo.getVisibility() == View.VISIBLE) {
+      detailProjectView.shrinkDetailsInfo();
+    } else {
+      detailProjectView.expandDetailsInfo();
+    }
   }
 }

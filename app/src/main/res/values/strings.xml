@@ -106,6 +106,10 @@
     <string name="dialog_project_remove_cancel">No</string>
 
     <!-- Detail project activity -->
+    <string name="detail_project_title">Title</string>
+    <string name="detail_project_description">Description</string>
+    <string name="detail_project_product_type">Product type</string>
+    <string name="detail_project_details">Details</string>
     <string name="projectTitleDurationMinSec">Duration:</string>
     <string name="projectTitleNumClips">Clips:</string>
     <string name="projectTitleSizeMb">Size:</string>
@@ -120,6 +124,13 @@
     <string name="dialog_project_edit_title_message">Set project title</string>
     <string name="dialog_project_edit_title_accept">Yes</string>
     <string name="dialog_project_edit_title_cancel">No</string>
+
+    <string name="detail_project_product_type_direct_failure">Direct failure</string>
+    <string name="detail_project_product_type_raw_videos">Raw videos</string>
+    <string name="detail_project_product_type_spoolers">Spoolers</string>
+    <string name="detail_project_product_type_total">Total</string>
+    <string name="detail_project_product_type_graphic">Graphic</string>
+    <string name="detail_project_product_type_piece">Piece</string>
 
     <!--VoiceOverRecordRecordActivity-->
     <string name="dialog_voice_over_cancel_title_message">Do you want to discard voice over and start a new one?</string>
