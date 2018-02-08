@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.main;
 
+import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.main.internals.di.PerActivity;
@@ -58,5 +59,6 @@ public interface ActivityPresentersComponent {
   void inject(DetailProjectActivity activity);
   void inject(VideoEditTextActivity activity);
   void inject(VimojoStoreActivity activity);
+  void inject(UserAuthActivity activity);
   void inject(UserProfileActivity activity);
 }
