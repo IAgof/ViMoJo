@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/colorAccent"
     android:layout_height="120dp"
     android:gravity="bottom"
@@ -37,7 +37,9 @@
                 android:text="@string/drawerProjectName"
                 android:textColor="@color/colorWhite"
                 android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"/>
 
             <!-- project location visibility gone until implement feature -->
             <TextView

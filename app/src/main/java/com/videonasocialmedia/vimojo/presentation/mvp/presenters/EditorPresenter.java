@@ -263,12 +263,8 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     if(currentProject.getVMComposition().hasVideos()) {
       pathThumbProject = currentProject.getMediaTrack().getItems().get(0).getMediaPath();
     }
-    String name = currentProject.getTitle();
+    String name = currentProject.getProjectInfo().getTitle();
     String date = DateUtils.toFormatDateDayMonthYear(currentProject.getLastModification());
     editorActivityView.setHeaderViewCurrentProject(pathThumbProject, name, date);
-  }
-
-  public void updateTitleCurrentProject(String textTitle) {
-    projectRepository.setTitle(currentProject, textTitle);
   }
 }

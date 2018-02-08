@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/detail_project_coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -29,16 +30,22 @@
                     android:layout_gravity="center|left"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="60dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:gravity="center|left">
 
                     <EditText
                         android:id="@+id/detail_project_title_edit_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLines="1"
+                        android:layout_height="match_parent"
                         android:hint="@string/detail_project_title"
                         android:textStyle="bold"
-                        android:background="@android:color/transparent"/>
+                        android:inputType="text"
+                        android:imeOptions="actionDone"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:background="@android:color/transparent"
+                        />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -90,8 +97,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:hint="@string/detail_project_description"
-                            android:imeOptions="actionDone"
-                            android:background="@android:color/transparent"/>
+                            android:background="@android:color/transparent" />
                     </ScrollView>
                 </RelativeLayout>
 

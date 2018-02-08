@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views;
 
+import java.util.List;
+
 /**
  * Created by alvaro on 19/12/16.
  */
@@ -22,4 +24,11 @@ public interface DetailProjectView {
     void expandDetailsInfo();
 
     void shrinkDetailsInfo();
+
+    void showDescriptionProject(String description);
+
+    void showProductTypeMultipleDialog(String[] productTypesTitles,
+                                       boolean[] checkedProductTypes);
+
+  void showProductTypeSelected(List<String> productTypeList, String[] productTypesTitles);
 }

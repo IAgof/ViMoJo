@@ -61,7 +61,7 @@ public class GalleryProjectListAdapter extends
     holder.durationProject.append(" " +
         TimeUtils.toFormattedTimeWithMinutesAndSeconds(project.getDuration()));
     holder.numClipsProject.append((" " + project.numberOfClips()));
-    holder.titleProject.setText(project.getTitle());
+    holder.titleProject.setText(project.getProjectInfo().getTitle());
 
     double projectSizeMb = project.getProjectSizeMbVideoToExport();
     double formatProjectSizeMb = Math.round(projectSizeMb * 100.0) / 100.0;

@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -126,7 +127,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     projectName.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        showDialogUpdateCurrentProjectTitle();
+        navigateTo(DetailProjectActivity.class);
       }
     });
     projectDate = (TextView) navigationView.getHeaderView(0).findViewById(R.id.project_date);
@@ -448,54 +449,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   private void updateCurrentProjectDefaultThumb() {
     imageProjectThumb.setImageResource(R.drawable.activity_gallery_project_no_preview);
-  }
-
-  private void showDialogUpdateCurrentProjectTitle() {
-    View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
-    editTextDialog = (EditText) dialogView.findViewById(R.id.text_dialog);
-    editTextDialog.setText(projectName.getText());
-    editTextDialog.setSelectAllOnFocus(true);
-
-    final DialogInterface.OnClickListener dialogClickListener =
-        new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            hideKeyboard(editTextDialog);
-            switch (which) {
-              case DialogInterface.BUTTON_POSITIVE: {
-                String textPreference = editTextDialog.getText().toString();
-                if (textPreference.equals(projectName.getText()))
-                  return;
-                editorPresenter.updateTitleCurrentProject(textPreference);
-                projectName.setText(textPreference);
-                              }
-              case DialogInterface.BUTTON_NEGATIVE:
-                break;
-            }
-          }
-        };
-
-    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-    AlertDialog alertDialog = builder.setCancelable(false)
-        .setTitle(getString(R.string.dialog_title_update_project_title))
-        .setView(dialogView)
-        .setPositiveButton(R.string.positiveButton, dialogClickListener)
-        .setNegativeButton(R.string.negativeButton, dialogClickListener)
-        .setCancelable(false).show();
-
-    editTextDialog.requestFocus();
-    showKeyboard();
-  }
-
-  private void showKeyboard() {
-    InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
-    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-  }
-
-  private void hideKeyboard(View v) {
-    InputMethodManager keyboard =
-        (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-    keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
   }
 
 }
