@@ -13,5 +13,5 @@ public interface OnOptionsToShareListClickListener {
 
     void onSocialNetworkClicked (SocialNetwork socialNetwork);
 
-  void onVimojoClicked(VimojoNetwork vimojoNetwork);
+  void onVimojoPlatformClicked();
 }

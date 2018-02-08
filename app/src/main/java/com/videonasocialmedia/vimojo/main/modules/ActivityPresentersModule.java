@@ -11,7 +11,7 @@ import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.sync.UploadToPlatform;
+import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
@@ -310,11 +310,11 @@ public class ActivityPresentersModule {
                              ExportProjectUseCase exportProjectUseCase,
                              ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
                              GetFtpListUseCase getFtpListUseCase,
-                             GetAuthToken getAuthToken, UploadToPlatform uploadToPlatform) {
+                             GetAuthToken getAuthToken, UploadToPlatformQueue uploadToPlatformQueue) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
             sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
             exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
-            getAuthToken, uploadToPlatform);
+            getAuthToken, uploadToPlatformQueue);
   }
 
   @Provides @PerActivity
@@ -586,7 +586,8 @@ public class ActivityPresentersModule {
     return new GetFtpListUseCase();
   }
 
-  @Provides UploadToPlatform provideUploadToPlatform() {
-      return new UploadToPlatform(activity);
+  @Provides
+  UploadToPlatformQueue provideUploadToPlatform() {
+      return new UploadToPlatformQueue(activity);
   }
 }

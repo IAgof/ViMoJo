@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.share.presentation.views.activity;
 
-import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,7 +13,6 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -106,6 +104,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         setupBottomBar(bottomBar);
         hideFab();
         initBarProgressDialog();
+        checkNetworksAvailable();
+        presenter.checkUserLoggedWithPlatform();
     }
 
     // if user updates theme from drawer
@@ -292,14 +292,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     }
 
   @Override
-  public void onVimojoClicked(VimojoNetwork vimojoNetwork) {
-    checkNetworksAvailable();
-    if(isWifiConnected || acceptUploadVideoMobileNetwork) {
-      presenter.sendVideoToUpload(videoPath);
-    } else {
-      if(!isWifiConnected && !isMobileNetworConnected)
-        showMessage(R.string.connect_to_network);
-    }
+  public void onVimojoPlatformClicked() {
+    presenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
+        isMobileNetworConnected, videoPath);
   }
 
   private void checkNetworksAvailable() {
@@ -310,33 +305,30 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       isWifiConnected = true;
     } else {
       NetworkInfo mobileNetwork = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-      if(mobileNetwork.isConnected() && !acceptUploadVideoMobileNetwork) {
+      if(mobileNetwork.isConnected()) {
         isMobileNetworConnected = true;
-        dialogUploadVideoWithMobileNetwork();
       }
     }
   }
 
-  private void dialogUploadVideoWithMobileNetwork() {
+  @Override
+  public void showDialogUploadVideoWithMobileNetwork() {
     AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
     builder.setMessage(getResources().getString(R.string.upload_video_with_mobile_network));
-
-
     final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         switch (which) {
           case DialogInterface.BUTTON_POSITIVE:
             acceptUploadVideoMobileNetwork = true;
+            onVimojoPlatformClicked();
             break;
-
           case DialogInterface.BUTTON_NEGATIVE:
             acceptUploadVideoMobileNetwork = false;
             break;
         }
       }
     };
-
     AlertDialog alertDialog = builder.setCancelable(true).
         setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
         .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();

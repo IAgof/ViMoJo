@@ -24,7 +24,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
-import com.videonasocialmedia.vimojo.sync.UploadToPlatform;
+import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 
@@ -37,6 +37,9 @@ import org.mockito.MockitoAnnotations;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by alvaro on 24/08/16.
@@ -53,7 +56,7 @@ public class ShareVideoPresenterTest {
     @Mock private ObtainNetworksToShareUseCase mockedShareNetworksProvider;
     @Mock private GetFtpListUseCase mockedFtpListUseCase;
     @Mock private GetAuthToken mockedGetAuthToken;
-    @Mock private UploadToPlatform mockedUploadToPlatform;
+    @Mock private UploadToPlatformQueue mockedUploadToPlatformQueue;
 
     @Before
     public void injectMocks() {
@@ -81,7 +84,7 @@ public class ShareVideoPresenterTest {
                 mockedShareVideoView, userEventTracker, mockSharedPrefs,
                 mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
                 mockedExportProjectUseCase, mockedShareNetworksProvider, mockedFtpListUseCase,
-                mockedGetAuthToken, mockedUploadToPlatform);
+                mockedGetAuthToken, mockedUploadToPlatformQueue);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
 
@@ -94,10 +97,54 @@ public class ShareVideoPresenterTest {
 
         shareVideoPresenter.trackVideoShared(socialNetwokId);
 
-        Mockito.verify(mockedUserEventTracker).trackVideoShared(socialNetwokId,videonaProject,
+        verify(mockedUserEventTracker).trackVideoShared(socialNetwokId,videonaProject,
                 totalVideosShared);
     }
 
+    @Test
+    public void clickUploadToPlatformShowErrorIfThereAreNotWifiOrMobileNetworkConnected() {
+        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
+        boolean isWifiConnected = false;
+        boolean acceptUploadVideoMobileNetwork = false;
+        boolean isMobileNetworConnected = false;
+        String videoPath = "";
+
+        shareVideoPresenter.clickUploadToPlatform(isWifiConnected, isMobileNetworConnected,
+            isMobileNetworConnected, videoPath);
+
+        verify(mockedShareVideoView).showError(anyString());
+    }
+
+    @Test
+    public void clickUploadToPlatformShowDialogIfIsNeededAskPermissionForMobileUpload() {
+        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
+        boolean isWifiConnected = false;
+        boolean acceptUploadVideoMobileNetwork = false;
+        boolean isMobileNetworConnected = true;
+        String videoPath = "";
+
+        shareVideoPresenter.clickUploadToPlatform(isWifiConnected, isMobileNetworConnected,
+            isMobileNetworConnected, videoPath);
+
+        verify(mockedShareVideoView).showDialogUploadVideoWithMobileNetwork();
+    }
+
+    @Test
+    public void clickUploadToPlatformNavigateToUserAuthIfUserNotLogged() {
+        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
+        boolean isWifiConnected = false;
+        boolean acceptUploadVideoMobileNetwork = true;
+        boolean isMobileNetworConnected = true;
+        String videoPath = "";
+        when(shareVideoPresenter.isUserLogged("token")).thenReturn(false);
+
+        shareVideoPresenter.clickUploadToPlatform(isWifiConnected, isMobileNetworConnected,
+            isMobileNetworConnected, videoPath);
+
+        verify(mockedShareVideoView).navigateToUserAuth();
+    }
+
+    @Test
     public Project getAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
@@ -112,6 +159,6 @@ public class ShareVideoPresenterTest {
                 mockSharedPrefs, mockedCreateDefaultProjectUseCase,
                 mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
                 mockedShareNetworksProvider, mockedFtpListUseCase, mockedGetAuthToken,
-                mockedUploadToPlatform);
+            mockedUploadToPlatformQueue);
     }
 }

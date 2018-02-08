@@ -29,7 +29,7 @@ import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.VimojoNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
-import com.videonasocialmedia.vimojo.sync.UploadToPlatform;
+import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -75,8 +75,9 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase;
     private ExportProjectUseCase exportUseCase;
     private final GetAuthToken getAuthToken;
-    private UploadToPlatform uploadToPlatform;
-
+    private UploadToPlatformQueue uploadToPlatformQueue;
+    private String authToken;
+    private String description;
 
     @Inject
     public ShareVideoPresenter(Context context, ShareVideoView shareVideoView,
@@ -88,7 +89,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
                                ExportProjectUseCase exportProjectUseCase,
                                ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
                                GetFtpListUseCase getFtpListUseCase,
-                               GetAuthToken getAuthToken, UploadToPlatform uploadToPlatform) {
+                               GetAuthToken getAuthToken, UploadToPlatformQueue uploadToPlatformQueue) {
         this.context = context;
         this.shareVideoViewReference = new WeakReference<>(shareVideoView);
         this.userEventTracker = userEventTracker;
@@ -99,7 +100,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         this.obtainNetworksToShareUseCase = obtainNetworksToShareUseCase;
         this.getFtpListUseCase = getFtpListUseCase;
         this.getAuthToken = getAuthToken;
-        this.uploadToPlatform = uploadToPlatform;
+        this.uploadToPlatformQueue = uploadToPlatformQueue;
         currentProject = loadCurrentProject();
     }
 
@@ -261,7 +262,45 @@ public class ShareVideoPresenter extends VimojoPresenter {
         });
     }
 
-    public void sendVideoToUpload(final String videoPath) {
+    public void clickUploadToPlatform(boolean isWifiConnected,
+                                      boolean acceptUploadVideoMobileNetwork,
+                                      boolean isMobileNetworConnected,
+                                      String videoPath) {
+        if(!isWifiOrMobileNetworkConnected(isWifiConnected, isMobileNetworConnected)) {
+            // TODO: 8/2/18 Should I saved this upload until user would be connected to network
+            shareVideoViewReference.get().showError(context.getString(R.string.connect_to_network));
+            return;
+        }
+        if(isNeededAskPermissionForMobileUpload(isWifiConnected, isMobileNetworConnected,
+            acceptUploadVideoMobileNetwork)) {
+            shareVideoViewReference.get().showDialogUploadVideoWithMobileNetwork();
+            return;
+        }
+        if(!isUserLogged(authToken)) {
+            // TODO: 8/2/18 Should I ask confirmation from user that he is going to navigate to User Authentication screen.
+            shareVideoViewReference.get().navigateToUserAuth();
+            return;
+        }
+        if(!isThereFreeStorageOnPlatform(videoPath)) {
+            // TODO:(alvaro.martinez) 26/01/18 Get user free storage from platform
+            //shareVideoViewReference.get().showError("Don´t have enough storage to upload video");
+            return;
+        }
+        /*
+        if(!areThereProjectFieldsCompleted()){
+            // TODO:(alvaro.martinez) 26/01/18 Check project fields, title, description, product types. Next story to merged.
+            //shareVideoViewReference.get().showMessage("You need to complete project fields information.");
+            return;
+        }*/
+        // TODO: 2/2/18 Define description Send flavor name for testing field
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String description = BuildConfig.FLAVOR + "_" + timeStamp;
+        Log.d(LOG_TAG, "description " + description);
+        uploadVideo(authToken, videoPath, description);
+    }
+
+    public void checkUserLoggedWithPlatform() {
+        // TODO: 8/2/18 If user want to upload videos, should wait to this Future and Storage service
         ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
             @Override
             public String call() throws Exception {
@@ -270,53 +309,53 @@ public class ShareVideoPresenter extends VimojoPresenter {
         });
         Futures.addCallback(authTokenFuture, new FutureCallback<String>() {
             @Override
-            public void onSuccess(String authToken) {
-                if (isUserLogged(authToken)) {
-                    shareVideoViewReference.get().showMessage(R.string.uploading_video);
-                    // TODO: 2/2/18 Define description Send flavor name for testing field
-                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                    String description = BuildConfig.FLAVOR + "_" + timeStamp;
-                    Log.d(LOG_TAG, "description " + description);
-                    uploadVideo(authToken, videoPath, description);
-                } else {
-                    shareVideoViewReference.get().navigateToUserAuth();
-                }
+            public void onSuccess(String authorizationToken) {
+               authToken = authorizationToken;
             }
-
             @Override
             public void onFailure(Throwable errorGettingToken) {
-                shareVideoViewReference.get().navigateToUserAuth();
             }
         });
     }
 
-    private boolean isUserLogged(String authToken) {
+    private boolean isWifiOrMobileNetworkConnected(boolean isWifiConnected,
+                                                   boolean isMobileNetworConnected) {
+        if(isWifiConnected || isMobileNetworConnected) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isNeededAskPermissionForMobileUpload(boolean isWifiConnected,
+                                                         boolean isMobileNetworConnected,
+                                                         boolean acceptUploadVideoMobileNetwork) {
+        return !isWifiConnected && isMobileNetworConnected && !acceptUploadVideoMobileNetwork;
+    }
+
+    protected boolean isUserLogged(String authToken) {
         return !TextUtils.isEmpty(authToken);
     }
 
     private void uploadVideo(String authToken, String mediaPath, String description) {
-        if (isThereFreeStorageOnPlatform(mediaPath)) {
-            VideoUpload videoUpload = new VideoUpload(authToken, mediaPath, description);
-            try {
-                uploadToPlatform.addVideoToUpload(videoUpload);
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-                Crashlytics.log("Error adding video to upload");
-                Crashlytics.logException(ioException);
-            }
-            try {
-                uploadToPlatform.launchQueueVideoUploads();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-                Crashlytics.log("Error launching queue video to upload");
-                Crashlytics.logException(ioException);
-            }
+        VideoUpload videoUpload = new VideoUpload(authToken, mediaPath, description);
+        try {
+            uploadToPlatformQueue.addVideoToUpload(videoUpload);
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+            Crashlytics.log("Error adding video to upload");
+            Crashlytics.logException(ioException);
+        }
+        try {
+            uploadToPlatformQueue.launchQueueVideoUploads();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+            Crashlytics.log("Error launching queue video to upload");
+            Crashlytics.logException(ioException);
         }
     }
 
     private boolean isThereFreeStorageOnPlatform(String mediaPath) {
         long videoToUploadLength = new File(mediaPath).length();
-        // TODO:(alvaro.martinez) 26/01/18 Get user free storage from platform
         // return (freeStorage > videoToUploadLenght)
         return true;
     }

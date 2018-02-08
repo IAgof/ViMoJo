@@ -22,20 +22,28 @@ import okio.Okio;
  * Created by alvaro on 6/2/18.
  */
 
+/**
+ * Class to convert POJO classes into json adapter, needed to create ObjectQueues.
+ * Moshi library necessary with tape, both from square.
+ *
+ * @param <T>
+ */
 public class MoshiConverter<T> implements ObjectQueue.Converter<T> {
-    private final JsonAdapter<T> jsonAdapter;
+  private final JsonAdapter<T> jsonAdapter;
 
-    public MoshiConverter(Moshi moshi, Class<T> type) {
-        this.jsonAdapter = moshi.adapter(type);
-    }
+  public MoshiConverter(Moshi moshi, Class<T> type) {
+    this.jsonAdapter = moshi.adapter(type);
+  }
 
-    @Override public T from(byte[] bytes) throws IOException {
-        return jsonAdapter.fromJson(new Buffer().write(bytes));
-    }
+  @Override
+  public T from(byte[] bytes) throws IOException {
+    return jsonAdapter.fromJson(new Buffer().write(bytes));
+  }
 
-    @Override public void toStream(T val, OutputStream os) throws IOException {
-        try (BufferedSink sink = Okio.buffer(Okio.sink(os))) {
-            jsonAdapter.toJson(sink, val);
-        }
+  @Override
+  public void toStream(T val, OutputStream os) throws IOException {
+    try (BufferedSink sink = Okio.buffer(Okio.sink(os))) {
+      jsonAdapter.toJson(sink, val);
     }
+  }
 }

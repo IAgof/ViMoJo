@@ -99,7 +99,7 @@ public class OptionsToShareAdapter extends RecyclerView.Adapter<OptionsToShareAd
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
-                    clickListener.onVimojoClicked((VimojoNetwork) optionsToShareLists.get(position));
+                    clickListener.onVimojoPlatformClicked();
                 }
             });
         }

@@ -60,7 +60,7 @@ public class UserAuthPresenter extends VimojoPresenter {
     userAuthActivityView.hideTermsCheckbox();
     userAuthActivityView.hideRegisterButton();
     userAuthActivityView.showLayoutRegisterLoginFields();
-    userAuthActivityView.showFocusEmailField();
+    userAuthActivityView.requestFocusEmailField();
     userAuthActivityView.updateScreenBackground();
   }
 
@@ -73,7 +73,7 @@ public class UserAuthPresenter extends VimojoPresenter {
     userAuthActivityView.showTermsCheckbox();
     userAuthActivityView.hideLoginButton();
     userAuthActivityView.showLayoutRegisterLoginFields();
-    userAuthActivityView.showFocusUserNameField();
+    userAuthActivityView.requestFocusUserNameField();
     userAuthActivityView.updateScreenBackground();
   }
 

@@ -291,12 +291,12 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   }
 
   @Override
-  public void showFocusEmailField() {
+  public void requestFocusEmailField() {
     emailField.requestFocus();
   }
 
   @Override
-  public void showFocusUserNameField() {
+  public void requestFocusUserNameField() {
     userNameField.requestFocus();
   }
 
