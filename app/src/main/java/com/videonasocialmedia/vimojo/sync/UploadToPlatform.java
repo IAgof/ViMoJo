@@ -7,6 +7,10 @@
 
 package com.videonasocialmedia.vimojo.sync;
 
+/**
+ * Created by alvaro on 6/2/18.
+ */
+
 import android.app.NotificationManager;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
@@ -16,10 +20,10 @@ import com.squareup.moshi.Moshi;
 import com.squareup.tape2.ObjectQueue;
 import com.squareup.tape2.QueueFile;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
-import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.VideoResponse;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.VideoUpload;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
+import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,12 +32,9 @@ import java.util.Iterator;
 import static com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity.NOTIFICATION_UPLOAD_COMPLETE_ID;
 
 /**
- * Created by alvaro on 6/2/18.
+ * TODO: document this class, whats the objective and responsibility for this class?
  */
-
-@SuppressWarnings("DefaultFileTemplate")
 public class UploadToPlatform {
-
     private final String LOG_TAG = UploadToPlatform.class.getCanonicalName();
     private ObjectQueue<VideoUpload> queue;
     private final Context context;
@@ -65,9 +66,9 @@ public class UploadToPlatform {
             VideoUpload element = iterator.next();
             Log.d(LOG_TAG, "numTries " + element.getNumTries());
             Log.d(LOG_TAG, "process " + element.getMediaPath());
-            VideoResponse videoResponse = process(element);
-            if(videoResponse!= null ) {
-                Log.d(LOG_TAG, "videoResponse " + videoResponse.toString() );
+            Video video = process(element);
+            if (video != null) {
+                Log.d(LOG_TAG, "video " + video.toString() );
                 Log.d(LOG_TAG, "remove " + queue.size() );
                 sendSimpleNotification(R.drawable.notification_success_small,
                         context.getString(R.string.upload_video_completed));
@@ -75,7 +76,7 @@ public class UploadToPlatform {
             } else {
                 element.incrementNumTries();
                 Log.d(LOG_TAG, "incrementNumTries " + element.getNumTries() );
-                if(element.getNumTries() > VideoUpload.MAX_NUM_TRIES_UPLOAD) {
+                if (element.getNumTries() > VideoUpload.MAX_NUM_TRIES_UPLOAD) {
                     iterator.remove();
                     sendSimpleNotification(R.drawable.notification_error_small,
                             context.getString(R.string.upload_video_error));
@@ -97,10 +98,10 @@ public class UploadToPlatform {
         notificationManager.notify(NOTIFICATION_UPLOAD_COMPLETE_ID, mBuilder.build());
     }
 
-    private VideoResponse process(VideoUpload videoUpload) {
+    private Video process(VideoUpload videoUpload) {
         try {
-            VimojoUserAuthenticator vimojoUserAuthenticator = new VimojoUserAuthenticator();
-            return vimojoUserAuthenticator.uploadVideo(videoUpload.getAuthToken(),
+            VideoApiClient videoApiClient = new VideoApiClient();
+            return videoApiClient.uploadVideo(videoUpload.getAuthToken(),
                     videoUpload.getMediaPath(), videoUpload.getDescription());
         } catch (VimojoApiException e) {
             e.printStackTrace();

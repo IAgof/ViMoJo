@@ -5,10 +5,12 @@
  * All rights reserved
  */
 
-package com.videonasocialmedia.vimojo.vimojoapiclient.model;
+package com.videonasocialmedia.vimojo.sync.model;
 
+/**
+ * Model for enqueue video uploads to vimojo platform into Uploads queue
+ */
 public class VideoUpload {
-
     private String authToken;
     private String mediaPath;
     private String description;

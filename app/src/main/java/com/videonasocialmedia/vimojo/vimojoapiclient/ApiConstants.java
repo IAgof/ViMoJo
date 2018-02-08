@@ -14,7 +14,6 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
 /**
  * Constants values for Vimojo API.
  */
-
 public class ApiConstants {
     public static final String MIME_TYPE_VIDEO = "video/mp4";
     public static final String MULTIPART_NAME_DATA = "file";

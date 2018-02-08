@@ -16,11 +16,9 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetriev
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
-import com.videonasocialmedia.vimojo.vimojoapiclient.UserService;
-import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
-import com.videonasocialmedia.vimojo.vimojoapiclient.rest.ServiceGenerator;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -28,31 +26,28 @@ import java.util.concurrent.Callable;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-
+/**
+ * TODO: document this class, whats the objective and responsibility for this class?
+ */
 public class UserProfilePresenter extends VimojoPresenter {
-
   private final SharedPreferences sharedPreferences;
   private final UserProfileView userProfileView;
   private final ObtainLocalVideosUseCase obtainLocalVideosUseCase;
   private final GetAuthToken getAuthToken;
   private final Context context;
-  private final VimojoUserAuthenticator vimojoUserAuthenticator;
+  private final UserApiClient userApiClient;
 
   @Inject
   public UserProfilePresenter(Context context, UserProfileView view,
                               SharedPreferences sharedPreferences, ObtainLocalVideosUseCase
                               obtainLocalVideosUseCase, GetAuthToken getAuthToken,
-                              VimojoUserAuthenticator vimojoUserAuthenticator){
+                              UserApiClient userApiClient) {
     this.context = context;
     this.userProfileView =view;
     this.sharedPreferences = sharedPreferences;
     this.obtainLocalVideosUseCase = obtainLocalVideosUseCase;
     this.getAuthToken = getAuthToken;
-    this.vimojoUserAuthenticator = vimojoUserAuthenticator;
+    this.userApiClient = userApiClient;
   }
 
   public void getInfoVideosRecordedEditedShared() {
@@ -105,7 +100,7 @@ public class UserProfilePresenter extends VimojoPresenter {
     ListenableFuture<User> userFuture = executeUseCaseCall(new Callable<User>() {
       @Override
       public User call() throws Exception {
-        return vimojoUserAuthenticator.getUser(token, id);
+        return userApiClient.getUser(token, id);
       }
     });
     Futures.addCallback(userFuture, new FutureCallback<User>() {

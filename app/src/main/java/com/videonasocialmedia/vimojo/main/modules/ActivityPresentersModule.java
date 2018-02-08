@@ -11,7 +11,7 @@ import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.sync.UploadToPlatform;
-import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
+import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
@@ -99,8 +99,7 @@ import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimA
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-
-import javax.inject.Singleton;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import dagger.Module;
 import dagger.Provides;
@@ -369,19 +368,17 @@ public class ActivityPresentersModule {
         userEventTracker, getMediaListFromProjectUseCase, modifyVideoTextAndPositionUseCase);
   }
   @Provides @PerActivity
-  UserProfilePresenter provideUserProfilePresenter(SharedPreferences sharedPreferences,
-                                                   ObtainLocalVideosUseCase
-                                                       obtainLocalVideosUseCase,
-                                                   GetAuthToken getAuthToken,
-                                                   VimojoUserAuthenticator vimojoUserAuthenticator) {
+  UserProfilePresenter provideUserProfilePresenter(
+          SharedPreferences sharedPreferences, ObtainLocalVideosUseCase obtainLocalVideosUseCase,
+          GetAuthToken getAuthToken, AuthApiClient authApiClient, UserApiClient userApiClient) {
     return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
-        obtainLocalVideosUseCase, getAuthToken, vimojoUserAuthenticator);
+        obtainLocalVideosUseCase, getAuthToken, userApiClient);
   }
 
   @Provides @PerActivity
-  UserAuthPresenter provideUserAuthPresenter(VimojoUserAuthenticator vimojoUserAuthenticator) {
+  UserAuthPresenter provideUserAuthPresenter(AuthApiClient authApiClient) {
     return new UserAuthPresenter((UserAuthView) activity, activity,
-            vimojoUserAuthenticator);
+            authApiClient);
   }
 
   @Provides
@@ -574,8 +571,9 @@ public class ActivityPresentersModule {
     return new ObtainLocalVideosUseCase();
   }
 
-  @Provides VimojoUserAuthenticator provideVimojoAuthenticator() {
-    return new VimojoUserAuthenticator();
+  @Provides
+  AuthApiClient provideVimojoAuthenticator() {
+    return new AuthApiClient();
   }
 
   @Provides ObtainNetworksToShareUseCase provideObtainNetworksToShareUseCase() {

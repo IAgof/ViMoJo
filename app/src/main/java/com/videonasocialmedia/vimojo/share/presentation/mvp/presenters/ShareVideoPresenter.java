@@ -36,7 +36,7 @@ import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.VideoUpload;
+import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
 import java.io.File;
 import java.io.IOException;

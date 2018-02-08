@@ -12,8 +12,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.vimojo.auth.AccountConstants;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
-import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
 
@@ -28,7 +28,7 @@ import javax.inject.Inject;
 public class UserAuthPresenter extends VimojoPresenter {
   private final WeakReference<Context> contextReference;
   @Inject
-  VimojoUserAuthenticator vimojoUserAuthenticator;
+  AuthApiClient authApiClient;
 
   private final UserAuthView userAuthActivityView;
   private boolean register = true;
@@ -38,13 +38,13 @@ public class UserAuthPresenter extends VimojoPresenter {
    *
    * @param userAuthActivityView interface with auth view.
    * @param context the app context.
-   * @param vimojoUserAuthenticator api client for auth services.
+   * @param authApiClient api client for auth services.
    */
   public UserAuthPresenter(UserAuthView userAuthActivityView, Context context,
-                           VimojoUserAuthenticator vimojoUserAuthenticator) {
+                           AuthApiClient authApiClient) {
     this.userAuthActivityView = userAuthActivityView;
     this.contextReference = new WeakReference<>(context);
-    this.vimojoUserAuthenticator = vimojoUserAuthenticator;
+    this.authApiClient = authApiClient;
   }
 
   /**
@@ -157,7 +157,7 @@ public class UserAuthPresenter extends VimojoPresenter {
     ListenableFuture<User> userFuture = executeUseCaseCall(new Callable<User>() {
       @Override
       public User call() throws Exception {
-        return vimojoUserAuthenticator.register(userName, email, password,
+        return authApiClient.register(userName, email, password,
             checkBoxAcceptTermChecked);
       }
     });
@@ -184,7 +184,7 @@ public class UserAuthPresenter extends VimojoPresenter {
     ListenableFuture<AuthToken> tokenFuture = executeUseCaseCall(new Callable<AuthToken>() {
       @Override
       public AuthToken call() throws Exception {
-        return vimojoUserAuthenticator.signIn(email, password);
+        return authApiClient.signIn(email, password);
       }
     });
     Futures.addCallback(tokenFuture, new FutureCallback<AuthToken>() {
@@ -213,13 +213,13 @@ public class UserAuthPresenter extends VimojoPresenter {
       case VimojoApiException.NETWORK_ERROR:
         userAuthActivityView.showNetworkError();
         break;
-      case VimojoUserAuthenticator.REGISTER_ERROR_USER_ALREADY_EXISTS:
+      case AuthApiClient.REGISTER_ERROR_USER_ALREADY_EXISTS:
         userAuthActivityView.showErrorRegisterUserExists();
         break;
-      case VimojoUserAuthenticator.REGISTER_ERROR_MISSING_REQUEST_PARAMETERS:
+      case AuthApiClient.REGISTER_ERROR_MISSING_REQUEST_PARAMETERS:
         userAuthActivityView.showErrorRegisterMissingParams();
         break;
-      case VimojoUserAuthenticator.REGISTER_ERROR_INTERNAL_SERVER_ERROR:
+      case AuthApiClient.REGISTER_ERROR_INTERNAL_SERVER_ERROR:
       case VimojoApiException.UNKNOWN_ERROR:
       default:
         userAuthActivityView.showDefaultError();
@@ -230,16 +230,16 @@ public class UserAuthPresenter extends VimojoPresenter {
   private void parseSignInErrors(VimojoApiException signInException) {
     String cause = signInException.getApiErrorCode();
     switch (cause) {
-      case VimojoUserAuthenticator.SIGNIN_ERROR_PASSWORD_MISSING:
-      case VimojoUserAuthenticator.SIGNIN_ERROR_USER_MISSING:
-      case VimojoUserAuthenticator.SIGNIN_ERROR_USER_NOT_FOUND:
-      case VimojoUserAuthenticator.SIGNIN_ERROR_WRONG_PASSWORD:
+      case AuthApiClient.SIGNIN_ERROR_PASSWORD_MISSING:
+      case AuthApiClient.SIGNIN_ERROR_USER_MISSING:
+      case AuthApiClient.SIGNIN_ERROR_USER_NOT_FOUND:
+      case AuthApiClient.SIGNIN_ERROR_WRONG_PASSWORD:
         userAuthActivityView.showErrorSignInWrongCredentials();
         break;
       case VimojoApiException.NETWORK_ERROR:
         userAuthActivityView.showNetworkError();
         break;
-      case VimojoUserAuthenticator.SIGNIN_ERROR_INTERNAL_SERVER_ERROR:
+      case AuthApiClient.SIGNIN_ERROR_INTERNAL_SERVER_ERROR:
       case VimojoApiException.UNKNOWN_ERROR:
       default:
         userAuthActivityView.showDefaultError();

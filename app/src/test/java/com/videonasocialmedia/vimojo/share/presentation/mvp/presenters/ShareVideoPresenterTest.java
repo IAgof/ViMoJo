@@ -5,7 +5,7 @@
  * All rights reserved
  */
 
-package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
+package com.videonasocialmedia.vimojo.share.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
@@ -20,8 +21,10 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
+import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
-import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
+import com.videonasocialmedia.vimojo.sync.UploadToPlatform;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 
@@ -47,7 +50,10 @@ public class ShareVideoPresenterTest {
     @Mock private CreateDefaultProjectUseCase mockedCreateDefaultProjectUseCase;
     @Mock private AddLastVideoExportedToProjectUseCase mockedAddLastVideoExportedUseCase;
     @Mock private ExportProjectUseCase mockedExportProjectUseCase;
-    @Mock private UploadVideoUseCase mockedUploadVideoUseCase;
+    @Mock private ObtainNetworksToShareUseCase mockedShareNetworksProvider;
+    @Mock private GetFtpListUseCase mockedFtpListUseCase;
+    @Mock private GetAuthToken mockedGetAuthToken;
+    @Mock private UploadToPlatform mockedUploadToPlatform;
 
     @Before
     public void injectMocks() {
@@ -72,9 +78,10 @@ public class ShareVideoPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockContext,
-            mockedShareVideoView, userEventTracker, mockSharedPrefs,
-            mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
-            mockedExportProjectUseCase, mockedUploadVideoUseCase);
+                mockedShareVideoView, userEventTracker, mockSharedPrefs,
+                mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
+                mockedExportProjectUseCase, mockedShareNetworksProvider, mockedFtpListUseCase,
+                mockedGetAuthToken, mockedUploadToPlatform);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
 
@@ -94,15 +101,17 @@ public class ShareVideoPresenterTest {
     public Project getAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-        return Project.getInstance("title", "/path", "private/path", compositionProfile);
+        return Project.getInstance("title", "/path", "private/path",
+                compositionProfile);
     }
 
 
     @NonNull
     private ShareVideoPresenter getShareVideoPresenter() {
-        return new ShareVideoPresenter(mockContext,
-            mockedShareVideoView, mockedUserEventTracker, mockSharedPrefs,
-            mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
-            mockedExportProjectUseCase, mockedUploadVideoUseCase);
+        return new ShareVideoPresenter(mockContext, mockedShareVideoView, mockedUserEventTracker,
+                mockSharedPrefs, mockedCreateDefaultProjectUseCase,
+                mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
+                mockedShareNetworksProvider, mockedFtpListUseCase, mockedGetAuthToken,
+                mockedUploadToPlatform);
     }
 }

@@ -11,16 +11,17 @@ package com.videonasocialmedia.vimojo.vimojoapiclient.model;
  * Created by alvaro on 2/2/18.
  */
 
-
-public class VideoResponse {
+/**
+ * Model class for video API calls.
+ */
+public class Video {
     String owner;
     String video;
     String poster;
     String description;
     String _id;
 
-    public VideoResponse(String owner, String video, String poster, String description,
-                         String _id) {
+    public Video(String owner, String video, String poster, String description, String _id) {
         this.owner = owner;
         this.video = video;
         this.poster = poster;
