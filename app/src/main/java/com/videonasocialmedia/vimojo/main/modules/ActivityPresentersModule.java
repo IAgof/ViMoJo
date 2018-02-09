@@ -11,6 +11,7 @@ import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
+import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
 import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
@@ -303,18 +304,19 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   ShareVideoPresenter provideVideoSharePresenter(UserEventTracker userEventTracker,
-                             SharedPreferences sharedPreferences,
-                             CreateDefaultProjectUseCase createDefaultProjectUseCase,
-                             AddLastVideoExportedToProjectUseCase
+                                                 SharedPreferences sharedPreferences,
+                                                 CreateDefaultProjectUseCase createDefaultProjectUseCase,
+                                                 AddLastVideoExportedToProjectUseCase
                                      addLastVideoExportedProjectUseCase,
-                             ExportProjectUseCase exportProjectUseCase,
-                             ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
-                             GetFtpListUseCase getFtpListUseCase,
-                             GetAuthToken getAuthToken, UploadToPlatformQueue uploadToPlatformQueue) {
+                                                 ExportProjectUseCase exportProjectUseCase,
+                                                 ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
+                                                 GetFtpListUseCase getFtpListUseCase,
+                                                 GetAuthToken getAuthToken, UploadToPlatformQueue uploadToPlatformQueue,
+                                                 LoggedValidator loggedValidator) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
             sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
             exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
-            getAuthToken, uploadToPlatformQueue);
+            getAuthToken, uploadToPlatformQueue, loggedValidator);
   }
 
   @Provides @PerActivity

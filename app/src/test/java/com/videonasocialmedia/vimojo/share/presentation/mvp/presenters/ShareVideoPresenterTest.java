@@ -10,6 +10,7 @@ package com.videonasocialmedia.vimojo.share.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -24,6 +25,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
+import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
 import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -57,6 +59,7 @@ public class ShareVideoPresenterTest {
     @Mock private GetFtpListUseCase mockedFtpListUseCase;
     @Mock private GetAuthToken mockedGetAuthToken;
     @Mock private UploadToPlatformQueue mockedUploadToPlatformQueue;
+    @Mock private LoggedValidator mockedLoggedValidator;
 
     @Before
     public void injectMocks() {
@@ -84,7 +87,7 @@ public class ShareVideoPresenterTest {
                 mockedShareVideoView, userEventTracker, mockSharedPrefs,
                 mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
                 mockedExportProjectUseCase, mockedShareNetworksProvider, mockedFtpListUseCase,
-                mockedGetAuthToken, mockedUploadToPlatformQueue);
+                mockedGetAuthToken, mockedUploadToPlatformQueue, mockedLoggedValidator);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
 
@@ -106,13 +109,13 @@ public class ShareVideoPresenterTest {
         ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
         boolean isWifiConnected = false;
         boolean acceptUploadVideoMobileNetwork = false;
-        boolean isMobileNetworConnected = false;
+        boolean isMobileNetworkConnected = false;
         String videoPath = "";
 
-        shareVideoPresenter.clickUploadToPlatform(isWifiConnected, isMobileNetworConnected,
-            isMobileNetworConnected, videoPath);
+        shareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
+            isMobileNetworkConnected, videoPath);
 
-        verify(mockedShareVideoView).showError(anyString());
+        verify(mockedShareVideoView).showError(null);
     }
 
     @Test
@@ -120,11 +123,11 @@ public class ShareVideoPresenterTest {
         ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
         boolean isWifiConnected = false;
         boolean acceptUploadVideoMobileNetwork = false;
-        boolean isMobileNetworConnected = true;
+        boolean isMobileNetworkConnected = true;
         String videoPath = "";
 
-        shareVideoPresenter.clickUploadToPlatform(isWifiConnected, isMobileNetworConnected,
-            isMobileNetworConnected, videoPath);
+        shareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
+            isMobileNetworkConnected, videoPath);
 
         verify(mockedShareVideoView).showDialogUploadVideoWithMobileNetwork();
     }
@@ -134,24 +137,22 @@ public class ShareVideoPresenterTest {
         ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
         boolean isWifiConnected = false;
         boolean acceptUploadVideoMobileNetwork = true;
-        boolean isMobileNetworConnected = true;
+        boolean isMobileNetworkConnected = true;
         String videoPath = "";
-        when(shareVideoPresenter.isUserLogged("token")).thenReturn(false);
 
-        shareVideoPresenter.clickUploadToPlatform(isWifiConnected, isMobileNetworConnected,
-            isMobileNetworConnected, videoPath);
+        when(mockedLoggedValidator.loggedValidate("")).thenReturn(false);
+
+        shareVideoPresenter.clickUploadToPlatform(isWifiConnected, isMobileNetworkConnected,
+            isMobileNetworkConnected, videoPath);
 
         verify(mockedShareVideoView).navigateToUserAuth();
     }
 
-    @Test
     public Project getAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
-                VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-        return Project.getInstance("title", "/path", "private/path",
-                compositionProfile);
+            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+        return Project.getInstance("title", "/path", "private/path", compositionProfile);
     }
-
 
     @NonNull
     private ShareVideoPresenter getShareVideoPresenter() {
@@ -159,6 +160,6 @@ public class ShareVideoPresenterTest {
                 mockSharedPrefs, mockedCreateDefaultProjectUseCase,
                 mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
                 mockedShareNetworksProvider, mockedFtpListUseCase, mockedGetAuthToken,
-            mockedUploadToPlatformQueue);
+            mockedUploadToPlatformQueue, mockedLoggedValidator);
     }
 }

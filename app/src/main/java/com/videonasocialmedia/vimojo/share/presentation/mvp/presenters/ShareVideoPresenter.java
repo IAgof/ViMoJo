@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -29,6 +28,7 @@ import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.VimojoNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
+import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
 import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -76,6 +76,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private ExportProjectUseCase exportUseCase;
     private final GetAuthToken getAuthToken;
     private UploadToPlatformQueue uploadToPlatformQueue;
+    private final LoggedValidator loggedValidator;
     private String authToken;
     private String description;
 
@@ -89,7 +90,9 @@ public class ShareVideoPresenter extends VimojoPresenter {
                                ExportProjectUseCase exportProjectUseCase,
                                ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
                                GetFtpListUseCase getFtpListUseCase,
-                               GetAuthToken getAuthToken, UploadToPlatformQueue uploadToPlatformQueue) {
+                               GetAuthToken getAuthToken,
+                               UploadToPlatformQueue uploadToPlatformQueue,
+                               LoggedValidator loggedValidator) {
         this.context = context;
         this.shareVideoViewReference = new WeakReference<>(shareVideoView);
         this.userEventTracker = userEventTracker;
@@ -101,6 +104,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         this.getFtpListUseCase = getFtpListUseCase;
         this.getAuthToken = getAuthToken;
         this.uploadToPlatformQueue = uploadToPlatformQueue;
+        this.loggedValidator = loggedValidator;
         currentProject = loadCurrentProject();
     }
 
@@ -264,14 +268,14 @@ public class ShareVideoPresenter extends VimojoPresenter {
 
     public void clickUploadToPlatform(boolean isWifiConnected,
                                       boolean acceptUploadVideoMobileNetwork,
-                                      boolean isMobileNetworConnected,
+                                      boolean isMobileNetworkConnected,
                                       String videoPath) {
-        if(!isWifiOrMobileNetworkConnected(isWifiConnected, isMobileNetworConnected)) {
+        if(!isWifiOrMobileNetworkConnected(isWifiConnected, isMobileNetworkConnected)) {
             // TODO: 8/2/18 Should I saved this upload until user would be connected to network
             shareVideoViewReference.get().showError(context.getString(R.string.connect_to_network));
             return;
         }
-        if(isNeededAskPermissionForMobileUpload(isWifiConnected, isMobileNetworConnected,
+        if(isNeededAskPermissionForMobileUpload(isWifiConnected, isMobileNetworkConnected,
             acceptUploadVideoMobileNetwork)) {
             shareVideoViewReference.get().showDialogUploadVideoWithMobileNetwork();
             return;
@@ -333,7 +337,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     protected boolean isUserLogged(String authToken) {
-        return !TextUtils.isEmpty(authToken);
+        return loggedValidator.loggedValidate(authToken);
     }
 
     private void uploadVideo(String authToken, String mediaPath, String description) {

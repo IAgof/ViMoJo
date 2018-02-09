@@ -69,8 +69,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 92 // 20180201
-            versionName "0.9.0" // 20180201
+            versionCode 93 // 20180209
+            versionName "0.10.0" // 20180209
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "api_base_url", "https://"
@@ -80,10 +80,10 @@ android {
             buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
             buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "true"
-            buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "true"
+            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
+            buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
-            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "true"
+            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "false"
             ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
             ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
             manifestPlaceholders = [vimojoAppName: "Vimojo", fabricApiKey: "1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
@@ -150,8 +150,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 43 // 20180201
-            versionName "0.9.0.fThomsonFoundation" // 20180201
+            versionCode 44 // 20180209
+            versionName "0.10.0.fThomsonFoundation" // 20180209
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "api_base_url", "https://"
@@ -192,8 +192,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 10 // 20180201
-            versionName "0.9.0.fMarketForNews" // 20180201
+            versionCode 11 // 20180209
+            versionName "0.10.0.fMarketForNews" // 20180209
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "api_base_url", "https://"

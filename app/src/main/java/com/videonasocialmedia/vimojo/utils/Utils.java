@@ -50,7 +50,7 @@ import java.nio.channels.FileChannel;
 import java.util.Locale;
 
 /**
- * Utils.
+ * LoggedValidator.
  */
 public class Utils {
     /**
@@ -314,11 +314,11 @@ public class Utils {
         return appInfo.toString();
     }
 
-    // Utils to setTheme to app, always call before every Activity setContentView.
+    // LoggedValidator to setTheme to app, always call before every Activity setContentView.
     // Be carefull with delay
     /*
     // MUST BE SET BEFORE setContentView
-		Utils.onActivityCreateSetTheme(this);
+		LoggedValidator.onActivityCreateSetTheme(this);
      */
 
     //sTheme enum from SharedPreference with value saved
