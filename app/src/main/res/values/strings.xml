@@ -318,6 +318,7 @@
     <string name="drawerProjectName">Project name</string>
     <string name="drawerProjectLocation">Project location</string>
     <string name="drawerProjectDate">Project date</string>
+    <string name="drawerProjectCurrent">Current project</string>
 
     <!-- VimojoStoreActivity -->
     <string name="buy_now">Buy now</string>

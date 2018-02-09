@@ -147,7 +147,7 @@ public class GalleryProjectListAdapter extends
 
     @OnClick(R.id.project_button_edit)
     public void onClickGoToProjectDetail() {
-      clickListener.goToEditActivity(projectList.get(getAdapterPosition()));
+      clickListener.goToDetailActivity(projectList.get(getAdapterPosition()));
     }
 
     @OnClick(R.id.project_image)
@@ -160,9 +160,5 @@ public class GalleryProjectListAdapter extends
       clickListener.goToShareActivity(projectList.get(getAdapterPosition()));
     }
 
-    @OnClick(R.id.project_title)
-    public void onClickProjectTitle(){
-      clickListener.goToDetailActivity(projectList.get(getAdapterPosition()));
-    }
   }
 }

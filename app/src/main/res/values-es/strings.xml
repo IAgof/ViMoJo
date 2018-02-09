@@ -291,6 +291,10 @@
     <string name="drawer_go_to_store">Ir a tienda</string>
     <string name="drawer_go_to_vimojo_kit_web">Kit-Mojo</string>
     <string name="choose_browser">Selecciona navegador</string>
+    <string name="drawerProjectName">Nombre de proyecto</string>
+    <string name="drawerProjectLocation">Localización</string>
+    <string name="drawerProjectDate">Fecha</string>
+    <string name="drawerProjectCurrent">Proyecto actual</string>
 
     <!-- ShopListActivity -->
     <string name="buy_now">Compra ahora por</string>

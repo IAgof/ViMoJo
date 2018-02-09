@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -51,7 +52,8 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   EditText editTextDescription;
   @BindView(R.id.detail_project_product_type_values)
   TextView textViewProductType;
-
+  @BindView(R.id.detail_project_details_expand)
+  ImageButton detailsExpandShrink;
   @BindView(R.id.detail_project_duration)
   TextView textViewDuration;
   @BindView(R.id.detail_project_size)
@@ -129,11 +131,13 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   @Override
   public void expandDetailsInfo() {
     layoutDetailsInfo.setVisibility(View.VISIBLE);
+    detailsExpandShrink.setImageResource(R.drawable.activity_detail_project_ic_shrink_info_details);
   }
 
   @Override
   public void shrinkDetailsInfo() {
     layoutDetailsInfo.setVisibility(View.GONE);
+    detailsExpandShrink.setImageResource(R.drawable.activity_detail_project_ic_expand_info_details);
   }
 
   @Override

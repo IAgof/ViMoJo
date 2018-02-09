@@ -29,7 +29,19 @@
             android:layout_marginLeft="32dp">
 
             <TextView
-                android:id="@+id/project_name"
+                android:id="@+id/project_current"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="4dp"
+                android:text="@string/drawerProjectCurrent"
+                android:textColor="@color/colorWhite"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+            <TextView
+                android:id="@+id/project_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -67,5 +79,15 @@
                 android:textStyle="normal"
                 />
         </LinearLayout>
+        <ImageButton
+            android:id="@+id/project_edit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="?android:attr/textColorPrimary"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/activity_gallery_projects_edit_project"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            />
     </RelativeLayout>
 </RelativeLayout>
