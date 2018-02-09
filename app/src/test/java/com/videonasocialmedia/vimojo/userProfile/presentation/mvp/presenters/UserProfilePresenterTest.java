@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,21 +31,17 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserProfilePresenterTest {
-
   @Mock UserProfileView mockedUserProfileView;
   @Mock Context mockedContext;
   @Mock SharedPreferences mockedSharedPreferences;
-  @Mock SharedPreferences.Editor mockedEditor;
   @Mock ObtainLocalVideosUseCase mockedObtainLocalVideosUseCase;
-  @Mock OnVideosRetrieved mockedOnVideosRetrieved;
   @Mock GetAuthToken mockedGetAuthToken;
-  private final boolean emptyField = true;
+  @Mock UserApiClient mockedUserApiClient;
 
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
   }
-
 
   @Test
   public void getInfoVideosRecordedEditedSharedCallsShowLoading() {
@@ -81,7 +78,7 @@ public class UserProfilePresenterTest {
   public void clickUserEmailCallsUserAuthIfEmptyField(){
     UserProfilePresenter presenter = getUserProfilePresenter();
 
-    presenter.onClickEmail(emptyField);
+    presenter.onClickEmail(true);
 
     if(BuildConfig.FEATURE_REGISTER_LOGIN)
       verify(mockedUserProfileView).navigateToUserAuth();
@@ -91,7 +88,7 @@ public class UserProfilePresenterTest {
   public void clickUserNameCallsUserAuthIfEmptyField(){
     UserProfilePresenter presenter = getUserProfilePresenter();
 
-    presenter.onClickUsername(emptyField);
+    presenter.onClickUsername(true);
 
     if(BuildConfig.FEATURE_REGISTER_LOGIN)
       verify(mockedUserProfileView).navigateToUserAuth();
@@ -100,6 +97,6 @@ public class UserProfilePresenterTest {
   @NonNull
   private UserProfilePresenter getUserProfilePresenter() {
     return new UserProfilePresenter(mockedContext, mockedUserProfileView, mockedSharedPreferences,
-        mockedObtainLocalVideosUseCase, mockedGetAuthToken);
+            mockedObtainLocalVideosUseCase, mockedGetAuthToken, mockedUserApiClient);
   }
 }

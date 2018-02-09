@@ -14,8 +14,8 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -87,9 +87,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   }
 
   private void setStatusBarTransparent() {
-    Window w = getWindow();
-    w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
   }
 
   private void hideRegisterLoginFields() {
@@ -103,6 +101,12 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
       return;
     }
     super.onBackPressed();
+  }
+
+  @Override
+  public void onPause(){
+    super.onPause();
+    hideKeyboard(registerLoginFieldsLinearLayout);
   }
 
 
@@ -267,6 +271,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   @Override
   public void showLayoutRegisterLoginFields() {
     registerLoginFieldsLinearLayout.setVisibility(View.VISIBLE);
+    showKeyboard();
   }
 
   @Override
@@ -283,6 +288,16 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
     mainRelativeLayout
         .setBackground(getDrawable(R.drawable.activity_user_auth_background_welcome));
     sloganText.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void requestFocusEmailField() {
+    emailField.requestFocus();
+  }
+
+  @Override
+  public void requestFocusUserNameField() {
+    userNameField.requestFocus();
   }
 
   @Override
@@ -371,7 +386,19 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
             });
   }
 
+
   private boolean isShowedRegisterLoginFields() {
     return registerLoginFieldsLinearLayout.getVisibility() == View.VISIBLE;
+  }
+
+  private void showKeyboard() {
+    InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+  }
+
+  private void hideKeyboard(View v) {
+    InputMethodManager keyboard =
+        (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+    keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
   }
 }

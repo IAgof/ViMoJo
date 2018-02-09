@@ -173,12 +173,22 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
 
   @Override
   public void showPreferenceUserName(String userNamePreference) {
-    username.setText(userNamePreference);
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        username.setText(userNamePreference);
+      }
+    });
   }
 
   @Override
   public void showPreferenceEmail(String emailPreference) {
-    email.setText(emailPreference);
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        email.setText(emailPreference);
+      }
+    });
   }
 
   @Override

@@ -6,8 +6,10 @@ import com.google.gson.Gson;
  * Created by jliarte on 12/01/18.
  */
 
+/**
+ * Model class for user API calls.
+ */
 public class User {
-
   private final String username;
   private final String email;
   private final String _id;

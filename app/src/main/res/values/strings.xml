@@ -38,6 +38,12 @@
     <string name="loginError">Invalid credentials for FTP server.</string>
     <string name="fileError">Error sending file to FTP server.File not found</string>
     <string name="credentialFTPNull">FTP connection data not set. Please configure FTP in settings.</string>
+    <string name="upload_to_server">Send to platform</string>
+    <string name="uploading_video">Uploading video</string>
+    <string name="upload_video_completed">Video uploaded to platform</string>
+    <string name="upload_video_error">Error uploading video to platform</string>
+    <string name="upload_video_with_mobile_network">Do you want to upload video with mobile network?</string>
+    <string name="connect_to_network">Please connect your device to network, cellular or wifi</string>
 
     <!-- Editor Activity -->
     <string name="new_project">New project</string>
@@ -330,7 +336,6 @@
     <string name="hint_user_name">Enter your user name</string>
     <string name="dialog_title_update_user_name">User name</string>
     <string name="hint_user_email">Enter your email address</string>
-    <string name="dialog_title_update_user_email">Email address</string>
 
     <!-- About Activity -->
 
@@ -2483,6 +2488,7 @@ and Conditions.\n\n
 
 
     <string name="profession">Profession</string>
+    <string name="content_authority">com.videonasocialmedia.vimojo.provider</string>
 
 
 </resources>

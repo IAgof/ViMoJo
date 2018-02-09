@@ -8,7 +8,7 @@
     android:layout_height="wrap_content"
     android:baselineAligned="false"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".presentation.views.activity.ShareActivity">
+    tools:context=".share.presentation.views.activity.ShareActivity">
 
     <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
         android:id="@+id/videona_player"

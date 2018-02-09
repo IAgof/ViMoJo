@@ -16,38 +16,38 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetriev
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
-import com.videonasocialmedia.vimojo.vimojoapiclient.UserService;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
-import com.videonasocialmedia.vimojo.vimojoapiclient.rest.ServiceGenerator;
 
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-
+/**
+ * TODO: document this class, whats the objective and responsibility for this class?
+ */
 public class UserProfilePresenter extends VimojoPresenter {
-
   private final SharedPreferences sharedPreferences;
   private final UserProfileView userProfileView;
   private final ObtainLocalVideosUseCase obtainLocalVideosUseCase;
   private final GetAuthToken getAuthToken;
   private final Context context;
+  private final UserApiClient userApiClient;
 
   @Inject
   public UserProfilePresenter(Context context, UserProfileView view,
                               SharedPreferences sharedPreferences, ObtainLocalVideosUseCase
-                              obtainLocalVideosUseCase, GetAuthToken getAuthToken){
+                              obtainLocalVideosUseCase, GetAuthToken getAuthToken,
+                              UserApiClient userApiClient) {
     this.context = context;
     this.userProfileView =view;
     this.sharedPreferences = sharedPreferences;
     this.obtainLocalVideosUseCase = obtainLocalVideosUseCase;
     this.getAuthToken = getAuthToken;
+    this.userApiClient = userApiClient;
   }
 
   public void getInfoVideosRecordedEditedShared() {
@@ -88,7 +88,7 @@ public class UserProfilePresenter extends VimojoPresenter {
     Futures.addCallback(authTokenFuture, new FutureCallback<AuthToken>() {
       @Override
       public void onSuccess(AuthToken authToken) {
-        setUserInfo(authToken.getToken(), authToken.getId());
+        callUserServiceGetUser(authToken.getToken(), authToken.getId());
       }
       @Override
       public void onFailure(@NonNull Throwable errorGettingToken) {
@@ -96,20 +96,22 @@ public class UserProfilePresenter extends VimojoPresenter {
     });
   }
 
-  private void setUserInfo(String token, String id) {
-    UserService userService = new ServiceGenerator(BuildConfig.API_BASE_URL)
-        .generateService(UserService.class, token);
-    userService.getUser(id).enqueue(new Callback<User>() {
+  private void callUserServiceGetUser(String token, String id) {
+    ListenableFuture<User> userFuture = executeUseCaseCall(new Callable<User>() {
       @Override
-      public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-        User user = response.body();
-        if(user != null && response.code() != 401) {
-          userProfileView.showPreferenceUserName(user.getUsername());
-          userProfileView.showPreferenceEmail(user.getEmail());
-        }
+      public User call() throws Exception {
+        return userApiClient.getUser(token, id);
       }
+    });
+    Futures.addCallback(userFuture, new FutureCallback<User>() {
       @Override
-      public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+      public void onSuccess(@Nullable User result) {
+        userProfileView.showPreferenceUserName(result.getUsername());
+        userProfileView.showPreferenceEmail(result.getEmail());
+      }
+
+      @Override
+      public void onFailure(Throwable t) {
         userProfileView.showError(R.string.error);
       }
     });

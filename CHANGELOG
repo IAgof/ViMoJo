@@ -1,3 +1,8 @@
+v0.9.0
+- FEATURE_REGISTER_LOGIN = false. Feature toggle for login and merge code with develop.
+- New option in Settings, Register/Login or sign out.
+- New screen, register or login.
+
 v0.8.2
 - Update gradle to version 4 and start working with Android Studio 3. Migrate build.gradle, new key
 words implementation, androidTestImplementation, testImplementation.
