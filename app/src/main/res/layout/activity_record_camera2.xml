@@ -32,9 +32,8 @@
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/rotateDeviceHint"
-            android:alpha="0.2"
             android:scaleType="fitXY"
-            android:src="@drawable/activity_record_background_grid"
+            android:src="@drawable/activity_record_grid_security_margin_one_one"
             android:visibility="invisible"/>
 
         <android.support.v7.widget.CardView
