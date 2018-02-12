@@ -821,25 +821,20 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   public void setGridMode(String gridMode) {
-    if(gridMode.equals(GRID_MODE_LINES)) {
-      recordView.enableGrid();
-      recordView.showGridModeLines();
-      return;
+    switch (gridMode) {
+      case GRID_MODE_LINES:
+        recordView.showGridModeLines();
+        break;
+      case GRID_MODE_ONE_ONE:
+        recordView.showGridModeOneOne();
+        break;
+      case GRID_MODE_CROSSES:
+        recordView.showGridModeCrosses();
+        break;
+      case GRID_MODE_FIBONACCI:
+        recordView.showGridModeFibonacci();
+        break;
     }
-    if(gridMode.equals(GRID_MODE_ONE_ONE)) {
-      recordView.enableGrid();
-      recordView.showGridModeOneOne();
-      return;
-    }
-    if(gridMode.equals(GRID_MODE_CROSSES)) {
-      recordView.enableGrid();
-      recordView.showGridModeCrosses();
-      return;
-    }
-    if(gridMode.equals(GRID_MODE_FIBONACCI)) {
-      recordView.enableGrid();
-      recordView.showGridModeFibonacci();
-      return;
-    }
+    recordView.enableGrid();
   }
 }
