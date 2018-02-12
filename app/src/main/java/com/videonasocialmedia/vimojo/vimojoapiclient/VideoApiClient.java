@@ -5,6 +5,7 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
  */
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
@@ -12,7 +13,6 @@ import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -47,16 +47,18 @@ public class VideoApiClient extends VimojoApiClient {
     MultipartBody.Part body =
             MultipartBody.Part.createFormData(MULTIPART_NAME_DATA, file.getName(), requestFile);
     // add another part within the multipart request
-    RequestBody requestBodyTitle = RequestBody.create(MultipartBody.FORM,
-        videoUpload.getTitle());
-    RequestBody requestBodyDescription = RequestBody.create(MultipartBody.FORM,
-        videoUpload.getDescription());
-    String[] productTypeList = videoUpload.getProductTypeList().toArray(new String[0]);
-    RequestBody requestBodyProductType =createPartFromArray(productTypeList);
+    RequestBody requestBodyTitle = createPartFromString(videoUpload.getTitle());
+    RequestBody requestBodyDescription = createPartFromString(videoUpload.getDescription());
+    String productTypeList = TextUtils.join(", ", videoUpload.getProductTypeList());
+    RequestBody requestBodyProductTypes = createPartFromString(productTypeList);
+
+    HashMap<String, RequestBody> requestBodyHashMap = new HashMap<>();
+    requestBodyHashMap.put("title", requestBodyTitle);
+    requestBodyHashMap.put("description", requestBodyDescription);
+    requestBodyHashMap.put("productType", requestBodyProductTypes);
 
     try {
-      Response<Video> response = videoService.uploadVideo(requestBodyTitle, requestBodyDescription,
-          requestBodyProductType, body).execute();
+      Response<Video> response = videoService.uploadVideo(requestBodyHashMap, body).execute();
       if (response.isSuccessful()) {
         return response.body();
       } else {
@@ -69,14 +71,11 @@ public class VideoApiClient extends VimojoApiClient {
   }
 
   @NonNull
-  private RequestBody createPartFromArray(String[] productType)
-  {
-    RequestBody requestFile = null;
-    for(int i=0 ;i<productType.length;i++) {
-      requestFile = RequestBody.create(MultipartBody.FORM,productType[i]);
-    }
-    return requestFile;
+  private RequestBody createPartFromString(String descriptionString) {
+    if (descriptionString == null)
+      return RequestBody.create(MultipartBody.FORM, "");
+    return RequestBody.create(
+        MultipartBody.FORM, descriptionString);
 
   }
-
 }

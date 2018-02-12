@@ -122,6 +122,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
             shareVideoViewReference.get().showOptionsShareList(optionToShareList);
             shareVideoViewReference.get().startVideoExport();
         }
+        checkUserLoggedWithPlatform();
     }
 
     private void setupVimojoNetwork() {

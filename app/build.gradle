@@ -81,9 +81,9 @@ android {
             buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
             buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
-            buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "false"
+            buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "true"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
-            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "false"
+            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "true"
             ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
             ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
             manifestPlaceholders = [vimojoAppName: "Vimojo", fabricApiKey: "1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
