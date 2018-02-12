@@ -19,6 +19,7 @@ import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProject
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -77,7 +78,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private final GetAuthToken getAuthToken;
     private UploadToPlatformQueue uploadToPlatformQueue;
     private final LoggedValidator loggedValidator;
-    private String authToken;
+    private String authToken = "";
     private String description;
 
     @Inject
@@ -282,7 +283,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
         }
         if(!isUserLogged(authToken)) {
             // TODO: 8/2/18 Should I ask confirmation from user that he is going to navigate to User Authentication screen.
-            shareVideoViewReference.get().navigateToUserAuth();
+            shareVideoViewReference.get().showDialogNeedToRegisterLoginToUploadVideo();
+            //shareVideoViewReference.get().navigateToUserAuth();
             return;
         }
         if(!isThereFreeStorageOnPlatform(videoPath)) {
@@ -290,17 +292,26 @@ public class ShareVideoPresenter extends VimojoPresenter {
             //shareVideoViewReference.get().showError("Don´t have enough storage to upload video");
             return;
         }
-        /*
-        if(!areThereProjectFieldsCompleted()){
+
+        if(!areThereProjectFieldsCompleted(currentProject)){
             // TODO:(alvaro.martinez) 26/01/18 Check project fields, title, description, product types. Next story to merged.
-            //shareVideoViewReference.get().showMessage("You need to complete project fields information.");
+            shareVideoViewReference.get().showDialogNeedToCompleteDetailProjectFields();
+            //shareVideoViewReference.get().navigateToProjectDetails();
             return;
-        }*/
+        }
         // TODO: 2/2/18 Define description Send flavor name for testing field
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String description = BuildConfig.FLAVOR + "_" + timeStamp;
         Log.d(LOG_TAG, "description " + description);
-        uploadVideo(authToken, videoPath, description);
+        ProjectInfo projectInfo = currentProject.getProjectInfo();
+        uploadVideo(authToken, videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
+            projectInfo.getProductTypeList());
+    }
+
+    private boolean areThereProjectFieldsCompleted(Project currentProject) {
+        ProjectInfo projectInfo = currentProject.getProjectInfo();
+        return (!projectInfo.getTitle().isEmpty()) && (!projectInfo.getDescription().isEmpty()) &&
+            (projectInfo.getProductTypeList().size() > 0);
     }
 
     public void checkUserLoggedWithPlatform() {
@@ -340,8 +351,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
         return loggedValidator.loggedValidate(authToken);
     }
 
-    private void uploadVideo(String authToken, String mediaPath, String description) {
-        VideoUpload videoUpload = new VideoUpload(authToken, mediaPath, description);
+    private void uploadVideo(String authToken, String mediaPath, String title, String description,
+                             List<String> productTypeList) {
+        VideoUpload videoUpload = new VideoUpload(authToken, mediaPath, title, description,
+            productTypeList);
         try {
             uploadToPlatformQueue.addVideoToUpload(videoUpload);
         } catch (IOException ioException) {

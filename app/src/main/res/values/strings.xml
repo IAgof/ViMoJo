@@ -44,6 +44,8 @@
     <string name="upload_video_error">Error uploading video to platform</string>
     <string name="upload_video_with_mobile_network">Do you want to upload video with mobile network?</string>
     <string name="connect_to_network">Please connect your device to network, cellular or wifi</string>
+    <string name="upload_video_register_login">For uploading videos, you need to register or login first.</string>
+    <string name="upload_video_complete_project_info">For uploading videos, you need to complete project details.</string>
 
     <!-- Editor Activity -->
     <string name="new_project">New project</string>

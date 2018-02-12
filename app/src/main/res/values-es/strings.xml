@@ -46,6 +46,8 @@
     <string name="upload_video_error">Error subiendo viendo</string>
     <string name="upload_video_with_mobile_network">¿Quieres subir vídeo usando los datos de tu tarifa móvil?</string>
     <string name="connect_to_network">Por favor, conecte su móvil a la red móvil o wifi</string>
+    <string name="upload_video_register_login">Para subir vídeos, primero tiene que registrarse o inicar sesión</string>
+    <string name="upload_video_complete_project_info">Para subir vídeos necesita completar toda la información de proyecto</string>
 
     <!-- Editor Activity -->
     <string name="new_project">Nuevo proyecto</string>

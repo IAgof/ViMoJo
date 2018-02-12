@@ -22,6 +22,8 @@ public interface VideoService {
   Call<Video> uploadVideo(
           // TODO(jliarte): 8/02/18 check if we can model the request body into a vimojoapiclient.model
           @Part("description") RequestBody description,
+          @Part("title") RequestBody title,
+          @Part("product_type") RequestBody productType,
           @Part MultipartBody.Part file
   );
 }

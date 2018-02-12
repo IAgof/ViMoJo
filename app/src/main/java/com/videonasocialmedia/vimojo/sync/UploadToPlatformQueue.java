@@ -103,8 +103,7 @@ public class UploadToPlatformQueue {
   private Video process(VideoUpload videoUpload) {
     try {
       VideoApiClient videoApiClient = new VideoApiClient();
-      return videoApiClient.uploadVideo(videoUpload.getAuthToken(),
-          videoUpload.getMediaPath(), videoUpload.getDescription());
+      return videoApiClient.uploadVideo(videoUpload);
     } catch (VimojoApiException e) {
       e.printStackTrace();
     }
