@@ -365,7 +365,7 @@
 
         <provider
             android:name=".sync.StubProvider"
-            android:authorities="com.videonasocialmedia.vimojo.provider"
+            android:authorities="@string/content_authority"
             android:exported="false" />
 
         <meta-data

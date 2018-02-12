@@ -27,6 +27,11 @@ import static com.videonasocialmedia.vimojo.vimojoapiclient.ApiConstants.MULTIPA
  * <p>Handles video upload calls.</p>
  */
 public class VideoApiClient extends VimojoApiClient {
+
+  public static final String VIDEO_API_KEY_TITLE = "title";
+  public static final String VIDEO_API_KEY_DESCRIPTION = "description";
+  public static final String VIDEO_API_KEY_PRODUCT_TYPE = "productType";
+
   /**
    * Make a upload video call to send video to platform
    *
@@ -53,9 +58,9 @@ public class VideoApiClient extends VimojoApiClient {
     RequestBody requestBodyProductTypes = createPartFromString(productTypeList);
 
     HashMap<String, RequestBody> requestBodyHashMap = new HashMap<>();
-    requestBodyHashMap.put("title", requestBodyTitle);
-    requestBodyHashMap.put("description", requestBodyDescription);
-    requestBodyHashMap.put("productType", requestBodyProductTypes);
+    requestBodyHashMap.put(VIDEO_API_KEY_TITLE, requestBodyTitle);
+    requestBodyHashMap.put(VIDEO_API_KEY_DESCRIPTION, requestBodyDescription);
+    requestBodyHashMap.put(VIDEO_API_KEY_PRODUCT_TYPE, requestBodyProductTypes);
 
     try {
       Response<Video> response = videoService.uploadVideo(requestBodyHashMap, body).execute();
@@ -76,6 +81,5 @@ public class VideoApiClient extends VimojoApiClient {
       return RequestBody.create(MultipartBody.FORM, "");
     return RequestBody.create(
         MultipartBody.FORM, descriptionString);
-
   }
 }

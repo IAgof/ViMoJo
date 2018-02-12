@@ -300,10 +300,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
             //shareVideoViewReference.get().navigateToProjectDetails();
             return;
         }
-        // TODO: 2/2/18 Define description Send flavor name for testing field
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String description = BuildConfig.FLAVOR + "_" + timeStamp;
-        Log.d(LOG_TAG, "description " + description);
         ProjectInfo projectInfo = currentProject.getProjectInfo();
         uploadVideo(authToken, videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
             projectInfo.getProductTypeList());

@@ -38,7 +38,6 @@
     <string name="password_field_required">Password required field</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="success_register">User successfully created, WELCOME TO VIMOJO!!</string>
-    <string name="account_type">com.videonasocialmedia.vimojo.auth</string>
     <string name="register_slogan">Mobile Journalism app for Breaking\n the video editing barrier on mobile</string>
     <string name="register_action">Register</string>
     <string name="login_action">Log in</string>
