@@ -7,7 +7,13 @@ import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.auth.presentation.view.utils.EmailPatternValidator;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
-import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
+import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
+import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
+import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
+import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
+import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
+import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
+import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
@@ -43,11 +49,9 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GalleryPagerPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
@@ -95,8 +99,8 @@ import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPrevie
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
-import com.videonasocialmedia.vimojo.upload.domain.UploadVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import dagger.Module;
 import dagger.Provides;
@@ -298,17 +302,20 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  ShareVideoPresenter
-  provideVideoSharePresenter(UserEventTracker userEventTracker,
-                             SharedPreferences sharedPreferences,
-                             CreateDefaultProjectUseCase createDefaultProjectUseCase,
-                             AddLastVideoExportedToProjectUseCase
+  ShareVideoPresenter provideVideoSharePresenter(UserEventTracker userEventTracker,
+                                                 SharedPreferences sharedPreferences,
+                                                 CreateDefaultProjectUseCase createDefaultProjectUseCase,
+                                                 AddLastVideoExportedToProjectUseCase
                                      addLastVideoExportedProjectUseCase,
-                             ExportProjectUseCase exportProjectUseCase,
-                             UploadVideoUseCase uploadVideoUseCase) {
-    return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker, sharedPreferences,
-            createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
-            exportProjectUseCase, uploadVideoUseCase);
+                                                 ExportProjectUseCase exportProjectUseCase,
+                                                 ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
+                                                 GetFtpListUseCase getFtpListUseCase,
+                                                 GetAuthToken getAuthToken, UploadToPlatformQueue uploadToPlatformQueue,
+                                                 LoggedValidator loggedValidator) {
+    return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
+            sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
+            exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
+            getAuthToken, uploadToPlatformQueue, loggedValidator);
   }
 
   @Provides @PerActivity
@@ -363,19 +370,18 @@ public class ActivityPresentersModule {
         userEventTracker, getMediaListFromProjectUseCase, modifyVideoTextAndPositionUseCase);
   }
   @Provides @PerActivity
-  UserProfilePresenter provideUserProfilePresenter(SharedPreferences sharedPreferences,
-                                                   ObtainLocalVideosUseCase
-                                                       obtainLocalVideosUseCase,
-                                                   GetAuthToken getAuthToken) {
+  UserProfilePresenter provideUserProfilePresenter(
+          SharedPreferences sharedPreferences, ObtainLocalVideosUseCase obtainLocalVideosUseCase,
+          GetAuthToken getAuthToken, AuthApiClient authApiClient, UserApiClient userApiClient) {
     return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
-        obtainLocalVideosUseCase, getAuthToken);
+        obtainLocalVideosUseCase, getAuthToken, userApiClient);
   }
 
   @Provides @PerActivity
-  UserAuthPresenter provideUserAuthPresenter(VimojoUserAuthenticator vimojoUserAuthenticator,
+  UserAuthPresenter provideUserAuthPresenter(AuthApiClient authApiClient,
                                              EmailPatternValidator emailPatternValidator) {
     return new UserAuthPresenter((UserAuthView) activity, activity,
-            vimojoUserAuthenticator, emailPatternValidator);
+            authApiClient, emailPatternValidator);
   }
 
   @Provides
@@ -554,10 +560,6 @@ public class ActivityPresentersModule {
     return new BillingManager();
   }
 
-  @Provides UploadVideoUseCase provideUploadVideoUseCase() {
-    return new UploadVideoUseCase();
-  }
-
   @Provides ProfileRepository provideProfileRepository(
           CameraSettingsRepository cameraSettingsRepository) {
     return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository);
@@ -567,7 +569,21 @@ public class ActivityPresentersModule {
     return new ObtainLocalVideosUseCase();
   }
 
-  @Provides VimojoUserAuthenticator provideVimojoAuthenticator() {
-    return new VimojoUserAuthenticator();
+  @Provides
+  AuthApiClient provideVimojoAuthenticator() {
+    return new AuthApiClient();
+  }
+
+  @Provides ObtainNetworksToShareUseCase provideObtainNetworksToShareUseCase() {
+    return new ObtainNetworksToShareUseCase();
+  }
+
+  @Provides GetFtpListUseCase provideGetFtpListUseCase() {
+    return new GetFtpListUseCase();
+  }
+
+  @Provides
+  UploadToPlatformQueue provideUploadToPlatform() {
+      return new UploadToPlatformQueue(activity);
   }
 }

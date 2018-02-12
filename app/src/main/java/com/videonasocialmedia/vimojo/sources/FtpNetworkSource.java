@@ -3,7 +3,7 @@ package com.videonasocialmedia.vimojo.sources;
 import android.content.Context;
 
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.model.entities.social.FtpNetwork;
+import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import java.util.ArrayList;

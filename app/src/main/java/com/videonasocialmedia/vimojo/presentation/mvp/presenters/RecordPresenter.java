@@ -42,7 +42,7 @@
 //import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 //import com.videonasocialmedia.vimojo.utils.Constants;
 //import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-//import com.videonasocialmedia.vimojo.utils.Utils;
+//import com.videonasocialmedia.vimojo.utils.LoggedValidator;
 //
 //import org.json.JSONException;
 //import org.json.JSONObject;
@@ -179,11 +179,11 @@
 //            String fileName = "VID_" + timeStamp + ".mp4";
 //            String destinationFile = Constants.PATH_APP_MASTERS + File.separator + fileName;
 //            try {
-//                Utils.moveFile(tempFileName, destinationFile);
+//                LoggedValidator.moveFile(tempFileName, destinationFile);
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
-//            Utils.addFileToVideoGallery(destinationFile);
+//            LoggedValidator.addFileToVideoGallery(destinationFile);
 //        }
 //    }
 //
@@ -327,11 +327,11 @@
 //        String fileName = "VID_" + timeStamp + ".mp4";
 //        String destinationFile = Constants.PATH_APP_MASTERS + File.separator + fileName;
 //        try {
-//            Utils.moveFile(originalFile, destinationFile);
+//            LoggedValidator.moveFile(originalFile, destinationFile);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-//        Utils.addFileToVideoGallery(destinationFile);
+//        LoggedValidator.addFileToVideoGallery(destinationFile);
 //
 //        int numTotalVideosRecorded = sharedPreferences
 //                .getInt(ConfigPreferences.TOTAL_VIDEOS_RECORDED, 0);
@@ -341,7 +341,7 @@
 //        trackTotalVideosRecordedSuperProperty();
 //        double clipDuration = 0.0;
 //        try {
-//            clipDuration = Utils.getFileDuration(destinationFile);
+//            clipDuration = LoggedValidator.getFileDuration(destinationFile);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }

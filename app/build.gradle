@@ -8,6 +8,12 @@ buildscript {
         classpath 'io.fabric.tools:gradle:1.25.1'
     }
 }
+
+repositories {
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
 apply plugin: 'io.fabric'
@@ -63,8 +69,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 92 // 20180201
-            versionName "0.9.0" // 20180201
+            versionCode 93 // 20180209
+            versionName "0.10.0" // 20180209
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "api_base_url", "https://"
@@ -74,7 +80,7 @@ android {
             buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
             buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "true"
+            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
             buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
             buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "false"
@@ -144,8 +150,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 43 // 20180201
-            versionName "0.9.0.fThomsonFoundation" // 20180201
+            versionCode 44 // 20180209
+            versionName "0.10.0.fThomsonFoundation" // 20180209
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "api_base_url", "https://"
@@ -186,8 +192,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 10 // 20180201
-            versionName "0.9.0.fMarketForNews" // 20180201
+            versionCode 11 // 20180209
+            versionName "0.10.0.fMarketForNews" // 20180209
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "api_base_url", "https://"
@@ -377,6 +383,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
     implementation 'com.google.guava:guava:19.0'
+    implementation 'com.squareup.tape2:tape:2.0.0-SNAPSHOT'
+    implementation 'com.squareup.moshi:moshi:1.5.0'
 }
 
 // Ensure the no-op dependency is always used in JVM tests.

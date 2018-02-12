@@ -4,8 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
+import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 import com.videonasocialmedia.vimojo.auth.presentation.view.utils.EmailPatternValidator;
-import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 public class UserAuthPresenterTest {
   @Mock UserAuthView mockedUserAuthActivityView;
   @Mock Context mockedContext;
-  @Mock VimojoUserAuthenticator mockedVimojoUserAuthenticator;
+  @Mock AuthApiClient mockedAuthApiClient;
   @Mock EmailPatternValidator mockedEmailPatternValidator;
 
   @Before
@@ -104,6 +104,6 @@ public class UserAuthPresenterTest {
   @NonNull
   private UserAuthPresenter getUserAuthPresenter() {
     return new UserAuthPresenter(mockedUserAuthActivityView, mockedContext,
-        mockedVimojoUserAuthenticator, mockedEmailPatternValidator);
+        mockedAuthApiClient, mockedEmailPatternValidator);
   }
 }

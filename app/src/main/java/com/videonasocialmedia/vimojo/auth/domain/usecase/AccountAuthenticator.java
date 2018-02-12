@@ -18,7 +18,7 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.auth.AccountConstants;
 import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
-import com.videonasocialmedia.vimojo.vimojoapiclient.auth.VimojoUserAuthenticator;
+import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 
 import java.lang.ref.WeakReference;
 
@@ -67,9 +67,9 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
     AccountManager accountManager = AccountManager.get(getContext());
     String authToken = accountManager.peekAuthToken(account, authTokenType);
     if (TextUtils.isEmpty(authToken)) {
-      VimojoUserAuthenticator vimojoUserAuthenticator = new VimojoUserAuthenticator();
+      AuthApiClient authApiClient = new AuthApiClient();
       try {
-        authToken = vimojoUserAuthenticator.signIn(
+        authToken = authApiClient.signIn(
                 account.name, accountManager.getPassword(account)).getToken();
       } catch (VimojoApiException getAuthTokenException) {
         if (BuildConfig.DEBUG) {
