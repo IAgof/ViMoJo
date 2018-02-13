@@ -364,16 +364,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
             uploadToPlatformQueue.addVideoToUpload(videoUpload);
         } catch (IOException ioException) {
             ioException.printStackTrace();
+            Log.d(LOG_TAG, ioException.getMessage());
             Crashlytics.log("Error adding video to upload");
             Crashlytics.logException(ioException);
         }
-        ListenableFuture launchUploadVideoFuture = executeUseCaseCall(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                uploadToPlatformQueue.launchQueueVideoUploads();
-                return null;
-            }
-        });
     }
 
     private boolean isThereFreeStorageOnPlatform(String mediaPath) {

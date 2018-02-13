@@ -57,6 +57,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
       uploadToPlatformQueue.launchQueueVideoUploads();
     } catch (IOException ioException) {
       ioException.printStackTrace();
+      Log.d(LOG_TAG, ioException.getMessage());
       Crashlytics.log("Error launching queue video to upload");
       Crashlytics.logException(ioException);
     }

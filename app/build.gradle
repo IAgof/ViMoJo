@@ -220,9 +220,9 @@ android {
             buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
             buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
-            buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "false"
+            buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "true"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
-            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "false"
+            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "true"
             ext.fabricApiKey = "7bf627d1b2578e3f8e4136d9dba10530e0e7d578"
             ext.fabricApiSecret = "40b9ea4d7a095ba1c106dbdebd1cf69c9761460d54f2c8418b206c167f677ea4"
             manifestPlaceholders = [vimojoAppName: "Vimojo Market4News", fabricApiKey: "7bf627d1b2578e3f8e4136d9dba10530e0e7d578"]
@@ -261,7 +261,8 @@ android {
             minifyEnabled true
             manifestPlaceholders = [appNameSuffix:""]
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "API_BASE_URL", "\"http://54.210.119.45:3000/\""
+            //buildConfigField "String", "API_BASE_URL", "\"http://54.210.119.45:3000/\""
+            buildConfigField "String", "API_BASE_URL", "\"http://nemsummit.viday.co:3001/\""
             buildConfigField "String", "VIDAY_TOKEN", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ2aW1vam8iLCJzdWIiOiI1MDY2NTQ5NTgwNzkxODA4IiwibmFtZSI6InZpbW9qbyIsInJvbGUiOiJndWVzdCIsImlhdCI6MTUxMTc5MjUxNiwiZXhwIjoxNTQzMzUwMTE2fQ.yB6-VOksgY3TyXIkJVIaT5Iwq6PrYyf64q13s2KFgIc\""
         }
         debug {
@@ -274,7 +275,8 @@ android {
             ext.fabricApiKey = FABRIC_VIDEONA_ORG_APIKEY
             ext.fabricApiSecret = FABRIC_VIDEONA_ORG_APISECRET
             manifestPlaceholders = [appNameSuffix:".Debug", fabricApiKey: FABRIC_VIDEONA_ORG_APIKEY]
-            buildConfigField "String", "API_BASE_URL", "\"http://54.210.119.45:3000/\""
+            //buildConfigField "String", "API_BASE_URL", "\"http://54.210.119.45:3000/\""
+            buildConfigField "String", "API_BASE_URL", "\"http://nemsummit.viday.co:3001/\""
             buildConfigField "String", "VIDAY_TOKEN", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ2aW1vam8iLCJzdWIiOiI1NjQ5MzkxNjc1MjQ0NTQ0IiwibmFtZSI6ImRldmVsb3AiLCJyb2xlIjoiZ3Vlc3QiLCJpYXQiOjE1MTE3OTMzNzAsImV4cCI6MTU0MzM1MDk3MH0.vEypnGQRdgXQI9eQwHBwNOj0yIL5ArXNapoCqHmu3Zc\""
         }
     }
