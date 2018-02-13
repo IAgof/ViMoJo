@@ -1297,16 +1297,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       if (gridModeButton != null) {
         supportedGridModeButtons.add(gridModeButton);
         gridModeButton.setVisibility(View.VISIBLE);
-        gridModeButton.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            if(view.isSelected()) {
-              imageViewGrid.setVisibility(View.INVISIBLE);
-              view.setSelected(false);
-            } else {
-              selectGridButton(gridModeButton);
-              presenter.setGridMode(gridMode);
-            }
+        gridModeButton.setOnClickListener(view -> {
+          if(view.isSelected()) {
+            imageViewGrid.setVisibility(View.INVISIBLE);
+            view.setSelected(false);
+          } else {
+            selectGridButton(gridModeButton);
+            presenter.setGridMode(gridMode);
           }
         });
       } else {

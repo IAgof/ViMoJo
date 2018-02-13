@@ -13,7 +13,6 @@ import android.os.BatteryManager;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.widget.ImageButton;
 
 import com.videonasocialmedia.camera.camera2.Camera2ExposureTimeHelper;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
