@@ -46,6 +46,8 @@
     <string name="connect_to_network">Please connect your device to network, cellular or wifi</string>
     <string name="upload_video_register_login">For uploading videos, you need to register or login first.</string>
     <string name="upload_video_complete_project_info">For uploading videos, you need to complete project details.</string>
+    <string name="progress_dialog_title_checking_info_user">Checking info</string>
+    <string name="progress_dialog_message_checking_info_user">Getting info from user</string>
 
     <!-- Editor Activity -->
     <string name="new_project">New project</string>

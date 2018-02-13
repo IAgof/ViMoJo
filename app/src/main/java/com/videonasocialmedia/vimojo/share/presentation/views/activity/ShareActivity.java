@@ -32,7 +32,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
-import com.videonasocialmedia.vimojo.share.model.entities.VimojoNetwork;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GoToRecordOrGalleryActivity;
@@ -85,6 +84,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     private int currentPosition;
 
   private ProgressDialog exportProgressDialog;
+  private ProgressDialog checkingUserProgressDialog;
   private boolean acceptUploadVideoMobileNetwork;
   private boolean isWifiConnected = false;
   private boolean isMobileNetworConnected = false;
@@ -106,7 +106,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         hideFab();
         initBarProgressDialog();
         checkNetworksAvailable();
-        presenter.checkUserLoggedWithPlatform();
     }
 
     // if user updates theme from drawer
@@ -137,6 +136,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     videonaPlayer.onPause();
 //    unregisterReceiver(exportReceiver);
     exportProgressDialog.dismiss();
+    checkingUserProgressDialog.dismiss();
   }
 
   @Override
@@ -174,6 +174,16 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     exportProgressDialog.setProgressPercentFormat(null);
     exportProgressDialog.setCanceledOnTouchOutside(false);
     exportProgressDialog.setCancelable(false);
+
+    checkingUserProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
+    checkingUserProgressDialog.setTitle(R.string.progress_dialog_title_checking_info_user);
+    checkingUserProgressDialog.setMessage(getString(R.string.progress_dialog_message_checking_info_user));
+    checkingUserProgressDialog.setProgressStyle(exportProgressDialog.STYLE_HORIZONTAL);
+    checkingUserProgressDialog.setIndeterminate(true);
+    checkingUserProgressDialog.setProgressNumberFormat(null);
+    checkingUserProgressDialog.setProgressPercentFormat(null);
+    checkingUserProgressDialog.setCanceledOnTouchOutside(false);
+    checkingUserProgressDialog.setCancelable(false);
   }
 
   private void setupBottomBar(BottomBar bottomBar) {
@@ -372,6 +382,16 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         setNeutralButton("OK", dialogClickListener).show();
   }
 
+  @Override
+  public void showProgressDialogCheckingInfoUse() {
+    checkingUserProgressDialog.show();
+  }
+
+  @Override
+  public void hideProgressDialogCheckingInfoUse() {
+    checkingUserProgressDialog.dismiss();
+  }
+
 
   private void navigateToUserAuth() {
     super.navigateTo(UserAuthActivity.class);
@@ -431,11 +451,11 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     }
 
     @Override
-    public void showMessage(final int string) {
+    public void showMessage(final int stringId) {
       runOnUiThread(new Runnable() {
           @Override
           public void run() {
-              Snackbar snackbar = Snackbar.make(coordinatorLayout, string, Snackbar.LENGTH_LONG);
+              Snackbar snackbar = Snackbar.make(coordinatorLayout, stringId, Snackbar.LENGTH_LONG);
               snackbar.show();
           }
       });
