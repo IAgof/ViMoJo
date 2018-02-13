@@ -18,4 +18,6 @@ public interface UserProfileView {
   void showVideosShared(String videosShared);
 
   void showError(int stringId);
+
+  void navigateToUserAuth();
 }

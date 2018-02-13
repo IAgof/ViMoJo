@@ -18,7 +18,7 @@
     <screenName name="com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity">
         VideonaApplication-Android EditActivity
     </screenName>
-    <screenName name="com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity">
+    <screenName name="com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity">
         VideonaApplication-Android ShareActivity
     </screenName>
     <screenName name="com.videonasocialmedia.vimojo.presentation.views.activity.SoundListActivity">

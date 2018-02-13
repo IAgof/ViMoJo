@@ -57,7 +57,7 @@
 //import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 //import com.videonasocialmedia.vimojo.utils.Constants;
 //import com.videonasocialmedia.vimojo.utils.IntentConstants;
-//import com.videonasocialmedia.vimojo.utils.Utils;
+//import com.videonasocialmedia.vimojo.utils.LoggedValidator;
 //
 //import org.json.JSONException;
 //import org.json.JSONObject;
@@ -351,7 +351,7 @@
 //    }
 //
 //    private void hideSystemUi() {
-//        if (!Utils.isKitKat() || !mUseImmersiveMode) {
+//        if (!LoggedValidator.isKitKat() || !mUseImmersiveMode) {
 //            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 //                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
 //        } else if (mUseImmersiveMode) {
@@ -382,7 +382,7 @@
 //    @Override
 //    public void onWindowFocusChanged(boolean hasFocus) {
 //        super.onWindowFocusChanged(hasFocus);
-//        if (Utils.isKitKat() && hasFocus && mUseImmersiveMode) {
+//        if (LoggedValidator.isKitKat() && hasFocus && mUseImmersiveMode) {
 //            setKitKatWindowFlags();
 //        }
 //    }
@@ -596,8 +596,8 @@
 //    public void finishActivityForResult(String originalVideoPath) {
 //        try {
 //            if (resultVideoPath != null) {
-//                Utils.copyFile(originalVideoPath, resultVideoPath);
-//                Utils.removeVideo(originalVideoPath);
+//                LoggedValidator.copyFile(originalVideoPath, resultVideoPath);
+//                LoggedValidator.removeVideo(originalVideoPath);
 //            } else
 //                resultVideoPath = originalVideoPath;
 //            Uri videoUri = Uri.fromFile(new File(resultVideoPath));

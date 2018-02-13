@@ -8,6 +8,12 @@ buildscript {
         classpath 'io.fabric.tools:gradle:1.25.1'
     }
 }
+
+repositories {
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
 apply plugin: 'io.fabric'
@@ -63,8 +69,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 91 // 20180131
-            versionName "0.8.2" // 20180131
+            versionCode 93 // 20180209
+            versionName "0.10.0" // 20180209
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "api_base_url", "https://"
@@ -74,9 +80,10 @@ android {
             buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
             buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "true"
+            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
             buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
+            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "false"
             ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
             ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
             manifestPlaceholders = [vimojoAppName: "Vimojo", fabricApiKey: "1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
@@ -101,7 +108,7 @@ android {
             ext.fabricApiSecret = "f88950e831f1f8c6d7402b96e4e93c1c2f71f1e021dc68b183b8b3d2456b9b67"
             manifestPlaceholders = [vimojoAppName: "HispanoPost", fabricApiKey: "3fc92dd8023e505ebab31a962e1eb284f37696bb"]
         }*/
-        rtve {
+       /* rtve {
             applicationId "com.videonasocialmedia.vimojo.rtve"
             versionCode 69 // 20180131
             versionName "0.8.2.fRtve" // 20180131
@@ -120,7 +127,7 @@ android {
             ext.fabricApiKey = "9600ab9fda1b0c0991396ffc882a957bbcca8678"
             ext.fabricApiSecret = "b3bf19cf86f8075700885f47ec7cf2813b8d8b6832a78a008ed9b757e5a56d91"
             manifestPlaceholders = [vimojoAppName: "Vimojo Rtve", fabricApiKey: "9600ab9fda1b0c0991396ffc882a957bbcca8678"]
-        }
+        }*/
        /* vimojowatermark {
             applicationId "com.videonasocialmedia.vimojo.vimojowatermark"
             versionCode 33 // 20171130
@@ -143,8 +150,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 42 // 20180131
-            versionName "0.8.2.fThomsonFoundation" // 20180131
+            versionCode 44 // 20180209
+            versionName "0.10.0.fThomsonFoundation" // 20180209
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "api_base_url", "https://"
@@ -157,6 +164,7 @@ android {
             buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
             buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
+            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "false"
             ext.fabricApiKey = "c5e050918c143441f6b23e7936f7f83faa1330b4"
             ext.fabricApiSecret = "2c2a5661adbf7258c3dfb8711f48b40ed43d5291f9474ba8e4cda6d05b917b55"
             manifestPlaceholders = [vimojoAppName: "Vimojo Thomson Foundation", fabricApiKey: "c5e050918c143441f6b23e7936f7f83faa1330b4"]
@@ -184,8 +192,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 9 // 20180131
-            versionName "0.8.2.fMarketForNews" // 20180131
+            versionCode 11 // 20180209
+            versionName "0.10.0.fMarketForNews" // 20180209
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "api_base_url", "https://"
@@ -198,6 +206,7 @@ android {
             buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
             buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
+            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "false"
             ext.fabricApiKey = "7bf627d1b2578e3f8e4136d9dba10530e0e7d578"
             ext.fabricApiSecret = "40b9ea4d7a095ba1c106dbdebd1cf69c9761460d54f2c8418b206c167f677ea4"
             manifestPlaceholders = [vimojoAppName: "Vimojo Market4News", fabricApiKey: "7bf627d1b2578e3f8e4136d9dba10530e0e7d578"]
@@ -236,6 +245,7 @@ android {
             minifyEnabled true
             manifestPlaceholders = [appNameSuffix:""]
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "API_BASE_URL", "\"http://nemsummit.viday.co:3001/\""
             buildConfigField "String", "VIDAY_TOKEN", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ2aW1vam8iLCJzdWIiOiI1MDY2NTQ5NTgwNzkxODA4IiwibmFtZSI6InZpbW9qbyIsInJvbGUiOiJndWVzdCIsImlhdCI6MTUxMTc5MjUxNiwiZXhwIjoxNTQzMzUwMTE2fQ.yB6-VOksgY3TyXIkJVIaT5Iwq6PrYyf64q13s2KFgIc\""
         }
         debug {
@@ -248,6 +258,7 @@ android {
             ext.fabricApiKey = FABRIC_VIDEONA_ORG_APIKEY
             ext.fabricApiSecret = FABRIC_VIDEONA_ORG_APISECRET
             manifestPlaceholders = [appNameSuffix:".Debug", fabricApiKey: FABRIC_VIDEONA_ORG_APIKEY]
+            buildConfigField "String", "API_BASE_URL", "\"http://nemsummit.viday.co:3001/\""
             buildConfigField "String", "VIDAY_TOKEN", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ2aW1vam8iLCJzdWIiOiI1NjQ5MzkxNjc1MjQ0NTQ0IiwibmFtZSI6ImRldmVsb3AiLCJyb2xlIjoiZ3Vlc3QiLCJpYXQiOjE1MTE3OTMzNzAsImV4cCI6MTU0MzM1MDk3MH0.vEypnGQRdgXQI9eQwHBwNOj0yIL5ArXNapoCqHmu3Zc\""
         }
     }
@@ -368,9 +379,12 @@ dependencies {
     implementation 'com.android.billingclient:billing:1.0'
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
+    implementation 'com.squareup.retrofit2:adapter-guava:2.0.2'
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
     implementation 'com.google.guava:guava:19.0'
+    implementation 'com.squareup.tape2:tape:2.0.0-SNAPSHOT'
+    implementation 'com.squareup.moshi:moshi:1.5.0'
 }
 
 // Ensure the no-op dependency is always used in JVM tests.
