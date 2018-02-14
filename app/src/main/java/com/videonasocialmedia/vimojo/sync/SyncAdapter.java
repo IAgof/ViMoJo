@@ -53,14 +53,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   public void onPerformSync(Account account, Bundle bundle, String s,
                             ContentProviderClient contentProviderClient, SyncResult syncResult) {
     Log.d(LOG_TAG, "onPerformSync");
-    try {
-      uploadToPlatformQueue.launchQueueVideoUploads();
-    } catch (IOException ioException) {
-      ioException.printStackTrace();
-      Log.d(LOG_TAG, ioException.getMessage());
-      Crashlytics.log("Error launching queue video to upload");
-      Crashlytics.logException(ioException);
-    }
+    uploadToPlatformQueue.launchQueueVideoUploads();
   }
 
 }

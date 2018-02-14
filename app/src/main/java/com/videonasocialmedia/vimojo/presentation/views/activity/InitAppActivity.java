@@ -218,7 +218,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         requestPermissionsAndPerformSetup();
         // TODO: 6/2/18 Decide when app has to check pending video uploads. On launch app, every 10 minutes, etc ...
-        runNowSyncAdapter();
+        //runNowSyncAdapter();
+        runSyncAdapterPeriodic();
     }
 
     private void runNowSyncAdapter() {
@@ -239,6 +240,26 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
             ContentResolver.requestSync(account, authority, settingsBundle);
         }
     }
+
+    private void runSyncAdapterPeriodic() {
+        Log.d(LOG_TAG, "runSyncAdapterPeriodic");
+        // Get the content resolver for your app
+        contentResolver = getContentResolver();
+
+        Account account = UserAccountUtil.getAccount(this);
+        String authority = this.getString(R.string.content_authority);
+
+        // we can enable inexact timers in our periodic sync
+        SyncRequest request = new SyncRequest.Builder().
+            syncPeriodic(SYNC_INTERVAL, SYNC_FLEX_TIME).
+            setSyncAdapter(account, authority).
+            setExtras(new Bundle()).build();
+
+        contentResolver.requestSync(request);
+        ContentResolver.setSyncAutomatically(account, authority, true);
+    }
+
+
 
     @Override
     protected void onStop() {

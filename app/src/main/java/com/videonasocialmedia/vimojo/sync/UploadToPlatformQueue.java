@@ -16,6 +16,7 @@ import android.content.Context;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.squareup.moshi.Moshi;
 import com.squareup.tape2.ObjectQueue;
 import com.squareup.tape2.QueueFile;
@@ -43,17 +44,26 @@ public class UploadToPlatformQueue {
   private final Context context;
   private NotificationCompat.Builder notificationBuilder;
   private NotificationManager notificationManager;
+  private MoshiConverter converter;
 
   public UploadToPlatformQueue(Context context) {
     this.context = context;
   }
 
-  private void initQueue(Context context) throws IOException {
+  private void initQueue(Context context) {
     String uploadQUEUE = "QueueUploads_" + BuildConfig.FLAVOR;
     File file = new File(context.getFilesDir(), uploadQUEUE);
-    QueueFile queueFile = new QueueFile.Builder(file).build();
+    QueueFile queueFile = null;
+    try {
+      queueFile = new QueueFile.Builder(file).build();
+    } catch (IOException ioException) {
+      ioException.printStackTrace();
+      Log.d(LOG_TAG, ioException.getMessage());
+      Crashlytics.log("Error launching queue video to upload");
+      Crashlytics.logException(ioException);
+    }
     Moshi moshi = new Moshi.Builder().build();
-    MoshiConverter converter = new MoshiConverter(moshi, VideoUpload.class);
+    converter = new MoshiConverter(moshi, VideoUpload.class);
     // A persistent ObjectQueue.
     queue = ObjectQueue.create(queueFile, converter);
   }
@@ -66,7 +76,7 @@ public class UploadToPlatformQueue {
     }
   }
 
-  public void launchQueueVideoUploads() throws IOException {
+  public void launchQueueVideoUploads() {
     initQueue(context);
     Iterator<VideoUpload> iterator = queue.iterator();
     Log.d(LOG_TAG, "queue size " + queue.size());
@@ -85,7 +95,7 @@ public class UploadToPlatformQueue {
         Log.d(LOG_TAG, "video " + video.toString());
         Log.d(LOG_TAG, "remove " + queue.size());
         updateNotification(R.drawable.notification_success_small, element.getTitle(), idIndex,
-            queueSize, context.getString(R.string.upload_video_completed));
+            context.getString(R.string.upload_video_completed));
         idIndex++;
         iterator.remove();
       } else {
@@ -93,7 +103,7 @@ public class UploadToPlatformQueue {
         Log.d(LOG_TAG, "incrementNumTries " + element.getNumTries());
         if (element.getNumTries() > VideoUpload.MAX_NUM_TRIES_UPLOAD) {
           updateNotification(R.drawable.notification_error_small, element.getTitle(), idIndex,
-              queueSize, context.getString(R.string.upload_video_error));
+              context.getString(R.string.upload_video_error));
           idIndex++;
           iterator.remove();
         }
@@ -120,16 +130,15 @@ public class UploadToPlatformQueue {
     notificationManager.notify(NOTIFICATION_UPLOAD_COMPLETE_ID, notificationBuilder.build());
   }
 
-  private void updateNotification(int iconNotificationId, String title, int idOrder, int sizeQueue,
-                                  String result) {
+  private void updateNotification(int iconNotificationId, String title, int idOrder, String result) {
 
     // Start a lengthy operation in a background thread
     new Thread(
         new Runnable() {
           @Override
           public void run() {
-            if(idOrder > sizeQueue) {
-              String text = result + " " + idOrder + "/" + sizeQueue;
+            if(idOrder > queue.size()) {
+              String text = result + " " + idOrder + "/" + queue.size();
               notificationBuilder.setContentText(text);
             } else {
               notificationBuilder.setSmallIcon(iconNotificationId);
