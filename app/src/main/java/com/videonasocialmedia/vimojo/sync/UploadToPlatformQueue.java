@@ -11,9 +11,7 @@ package com.videonasocialmedia.vimojo.sync;
  * Created by alvaro on 6/2/18.
  */
 
-import android.app.NotificationManager;
 import android.content.Context;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -31,8 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-import static com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity.NOTIFICATION_UPLOAD_COMPLETE_ID;
-
 /**
  * Class to unify video uploads to platform.
  * Create/init ObjectQueue, add objects and launchQueue.
@@ -40,17 +36,18 @@ import static com.videonasocialmedia.vimojo.share.presentation.views.activity.Sh
  */
 public class UploadToPlatformQueue {
   private final String LOG_TAG = UploadToPlatformQueue.class.getCanonicalName();
-  private ObjectQueue<VideoUpload> queue;
   private final Context context;
-  private NotificationCompat.Builder notificationBuilder;
-  private NotificationManager notificationManager;
+  private final VideoApiClient videoApiClient;
   private MoshiConverter converter;
+  private SendNotification sendNotification;
 
   public UploadToPlatformQueue(Context context) {
     this.context = context;
+    sendNotification = new SendNotification(context);
+    videoApiClient = new VideoApiClient();
   }
 
-  private void initQueue(Context context) {
+  protected ObjectQueue<VideoUpload> getQueue() {
     String uploadQUEUE = "QueueUploads_" + BuildConfig.FLAVOR;
     File file = new File(context.getFilesDir(), uploadQUEUE);
     QueueFile queueFile = null;
@@ -65,102 +62,81 @@ public class UploadToPlatformQueue {
     Moshi moshi = new Moshi.Builder().build();
     converter = new MoshiConverter(moshi, VideoUpload.class);
     // A persistent ObjectQueue.
-    queue = ObjectQueue.create(queueFile, converter);
+    ObjectQueue<VideoUpload> queue = ObjectQueue.create(queueFile, converter);
+
+    return queue;
   }
 
   public void addVideoToUpload(VideoUpload videoUpload) throws IOException {
-    initQueue(context);
+    ObjectQueue<VideoUpload> queue = getQueue();
     queue.add(videoUpload);
-    if(queue.size() == 1) {
-      launchQueueVideoUploads();
+    if(isNotificationShowed(queue)) {
+      Log.d(LOG_TAG, "updateNotification");
+      sendNotification.updateNotificationVideoAdded(context.getString(R.string.uploading_video),
+          queue.size());
     }
   }
 
+  protected boolean isNotificationShowed(ObjectQueue<VideoUpload> queue) {
+    return queue.size() > 0 && sendNotification.isNotificationShowed();
+  }
+
   public void launchQueueVideoUploads() {
-    initQueue(context);
+    Log.d(LOG_TAG, "launchNotification");
+    sendNotification.sendInfiniteProgressNotification(R.drawable.notification_uploading_small,
+        context.getString(R.string.uploading_video));
+    ObjectQueue<VideoUpload> queue = getQueue();
     Iterator<VideoUpload> iterator = queue.iterator();
-    Log.d(LOG_TAG, "queue size " + queue.size());
-    int idIndex = 1;
-    int queueSize = queue.size();
-    if(queue.size() > 0) {
-      sendInfiniteProgressNotification(R.drawable.notification_uploading_small,
-          context.getString(R.string.uploading_video), idIndex, queueSize);
-    }
-    while (iterator.hasNext()) {
-      VideoUpload element = iterator.next();
-      Log.d(LOG_TAG, "numTries " + element.getNumTries());
-      Log.d(LOG_TAG, "process " + element.getMediaPath());
-      Video video = process(element);
-      if (video != null) {
-        Log.d(LOG_TAG, "video " + video.toString());
-        Log.d(LOG_TAG, "remove " + queue.size());
-        updateNotification(R.drawable.notification_success_small, element.getTitle(), idIndex,
+    VideoUpload element = iterator.next();
+    String title = element.getTitle();
+    Video video = process(element);
+    if (video != null) {
+      removeHeadElement(getQueue());
+      Log.d(LOG_TAG, "appendSuccessNotification");
+      sendNotification.appendResultNotification(context.getString(R.string.uploading_video),
+          queue.size(), context.getString(R.string.upload_video_completed), title);
+      if (getQueue().isEmpty()) {
+        Log.d(LOG_TAG, "finishNotification");
+        sendNotification.finishNotification(R.drawable.notification_success_small,
             context.getString(R.string.upload_video_completed));
-        idIndex++;
-        iterator.remove();
+      }
+    } else {
+      element.incrementNumTries();
+      if (element.getNumTries() > VideoUpload.MAX_NUM_TRIES_UPLOAD) {
+        removeHeadElement(getQueue());
+        Log.d(LOG_TAG, "appendErrorNotification");
+        sendNotification.appendResultNotification(context.getString(R.string.uploading_video),
+            queue.size(), context.getString(R.string.upload_video_error), title);
+        if (getQueue().isEmpty())
+          Log.d(LOG_TAG, "finishNotification");
+        sendNotification.finishNotification(R.drawable.notification_error_small,
+            context.getString(R.string.upload_video_error));
       } else {
-        element.incrementNumTries();
-        Log.d(LOG_TAG, "incrementNumTries " + element.getNumTries());
-        if (element.getNumTries() > VideoUpload.MAX_NUM_TRIES_UPLOAD) {
-          updateNotification(R.drawable.notification_error_small, element.getTitle(), idIndex,
-              context.getString(R.string.upload_video_error));
-          idIndex++;
-          iterator.remove();
-        }
+        launchQueueVideoUploads();
       }
     }
   }
 
-  private void sendInfiniteProgressNotification(int iconNotificationId, String uploadingVideo,
-                                                int idOrder, int sizeQueue) {
-
-    String text = uploadingVideo + " " + idOrder + "/" + sizeQueue;
-    notificationBuilder =
-        (NotificationCompat.Builder) new NotificationCompat.Builder(context)
-            .setSmallIcon(iconNotificationId)
-            .setContentTitle(context.getString(R.string.upload_to_server))
-            .setContentText(text);
-
-    // Sets an activity indicator for an operation of indeterminate length
-    notificationBuilder.setProgress(0, 0, true);
-
-    notificationManager =
-        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-    notificationManager.notify(NOTIFICATION_UPLOAD_COMPLETE_ID, notificationBuilder.build());
-  }
-
-  private void updateNotification(int iconNotificationId, String title, int idOrder, String result) {
-
-    // Start a lengthy operation in a background thread
-    new Thread(
-        new Runnable() {
-          @Override
-          public void run() {
-            if(idOrder > queue.size()) {
-              String text = result + " " + idOrder + "/" + queue.size();
-              notificationBuilder.setContentText(text);
-            } else {
-              notificationBuilder.setSmallIcon(iconNotificationId);
-              // When the loop is finished, updates the notification
-              String text = result + " " + title;
-              notificationBuilder.setContentText(text);
-              // Removes the progress bar
-              notificationBuilder.setProgress(0, 0, false);
-            }
-            notificationManager.notify(NOTIFICATION_UPLOAD_COMPLETE_ID, notificationBuilder.build());
-          }
-        }
-      // Starts the thread by calling the run() method in its Runnable
-    ).start();
-  }
-
-  private Video process(VideoUpload videoUpload) {
+  protected void removeHeadElement(ObjectQueue<VideoUpload> queue) {
     try {
-      VideoApiClient videoApiClient = new VideoApiClient();
+      queue.remove();
+    } catch (IOException ioException) {
+      ioException.printStackTrace();
+      Log.d(LOG_TAG, ioException.getMessage());
+      Crashlytics.log("Error removing queue video to upload");
+      Crashlytics.logException(ioException);
+    }
+  }
+
+
+  protected Video process(VideoUpload videoUpload) {
+    try {
       return videoApiClient.uploadVideo(videoUpload);
-    } catch (VimojoApiException e) {
-      e.printStackTrace();
+    } catch (VimojoApiException vimojoApiException) {
+      vimojoApiException.printStackTrace();
+      Log.d(LOG_TAG, vimojoApiException.getMessage());
+      Crashlytics.log("Error vimojoApiException uploading video");
+      Crashlytics.logException(vimojoApiException);
     }
     return null;
   }

@@ -161,7 +161,7 @@ public class ShareVideoPresenterTest {
         assertThat(project.getProjectInfo().getProductTypeList().size(), is(0));
         assertThat(project, is(shareVideoPresenter.currentProject));
          when(mockedLoggedValidator.loggedValidate("")).thenReturn(true);
-        assertThat(shareVideoPresenter.isUserLogged(""), is(true));
+        assertThat(shareVideoPresenter.isUserLogged(), is(true));
 
         shareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
             isMobileNetworkConnected, videoPath);

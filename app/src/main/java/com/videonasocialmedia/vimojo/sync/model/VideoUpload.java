@@ -20,13 +20,13 @@ public class VideoUpload {
   private String authToken;
   private String mediaPath;
   private String title;
-  private List<String> productTypeList;
+  private String productTypeList;
   private String description;
   private int numTries;
   public final static int MAX_NUM_TRIES_UPLOAD = 3;
 
   public VideoUpload(String authToken, String mediaPath, String title, String description,
-                     List<String> productTypeList) {
+                     String productTypeList) {
     this.authToken = authToken;
     this.mediaPath = mediaPath;
     this.title = title;
@@ -47,7 +47,7 @@ public class VideoUpload {
     return title;
   }
 
-  public List<String> getProductTypeList() {
+  public String getProductTypeList() {
     return productTypeList;
   }
 

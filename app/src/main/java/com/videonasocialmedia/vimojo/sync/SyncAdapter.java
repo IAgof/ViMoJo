@@ -9,9 +9,8 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-
-import java.io.IOException;
+import com.squareup.tape2.ObjectQueue;
+import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
 /**
  * Created by alvaro on 31/1/18.
@@ -53,7 +52,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   public void onPerformSync(Account account, Bundle bundle, String s,
                             ContentProviderClient contentProviderClient, SyncResult syncResult) {
     Log.d(LOG_TAG, "onPerformSync");
-    uploadToPlatformQueue.launchQueueVideoUploads();
+    ObjectQueue<VideoUpload> queue = uploadToPlatformQueue.getQueue();
+    while(uploadToPlatformQueue.getQueue().iterator().hasNext()) {
+      Log.d(LOG_TAG, "launchingQueue");
+      uploadToPlatformQueue.launchQueueVideoUploads();
+    }
+
   }
 
 }

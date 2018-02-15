@@ -222,25 +222,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         runSyncAdapterPeriodic();
     }
 
-    private void runNowSyncAdapter() {
-        Account account = UserAccountUtil.getAccount(this);
-        String authority = this.getString(R.string.content_authority);
-
-        // Pass the settings flags by inserting them in a bundle
-        Bundle settingsBundle = new Bundle();
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        /*
-         * Request the sync for the default account, authority, and
-         * manual sync settings
-         */
-        if (account != null) {
-            ContentResolver.requestSync(account, authority, settingsBundle);
-        }
-    }
-
     private void runSyncAdapterPeriodic() {
         Log.d(LOG_TAG, "runSyncAdapterPeriodic");
         // Get the content resolver for your app
@@ -255,8 +236,10 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
             setSyncAdapter(account, authority).
             setExtras(new Bundle()).build();
 
-        contentResolver.requestSync(request);
-        ContentResolver.setSyncAutomatically(account, authority, true);
+        if (account != null) {
+            contentResolver.requestSync(request);
+            ContentResolver.setSyncAutomatically(account, authority, true);
+        }
     }
 
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -358,16 +359,25 @@ public class ShareVideoPresenter extends VimojoPresenter {
 
     private void uploadVideo(String authToken, String mediaPath, String title, String description,
                              List<String> productTypeList) {
+        // Convert productTypeList to string. VideoApiClient not support RequestBody with List<String>
+        String productTypeListToString = TextUtils.join(", ", productTypeList);
         VideoUpload videoUpload = new VideoUpload(authToken, mediaPath, title, description,
-            productTypeList);
-        try {
-            uploadToPlatformQueue.addVideoToUpload(videoUpload);
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-            Log.d(LOG_TAG, ioException.getMessage());
-            Crashlytics.log("Error adding video to upload");
-            Crashlytics.logException(ioException);
-        }
+            productTypeListToString);
+        ListenableFuture addUploadVideoFuture = executeUseCaseCall(new Callable<Void>() {
+            @Override
+            public Void call() {
+                try {
+                    uploadToPlatformQueue.addVideoToUpload(videoUpload);
+                    shareVideoViewReference.get().launchVideoUploadService();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                    Log.d(LOG_TAG, ioException.getMessage());
+                    Crashlytics.log("Error adding video to upload");
+                    Crashlytics.logException(ioException);
+                }
+                return null;
+            }
+        });
     }
 
     private boolean isThereFreeStorageOnPlatform(String mediaPath) {

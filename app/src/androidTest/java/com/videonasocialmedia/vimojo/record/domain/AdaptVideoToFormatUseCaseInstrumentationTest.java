@@ -9,6 +9,7 @@ import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptMemoryRepos
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.integration.AssetManagerAndroidTest;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import org.hamcrest.CoreMatchers;
@@ -20,6 +21,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -73,7 +76,9 @@ public class AdaptVideoToFormatUseCaseInstrumentationTest extends AssetManagerAn
   }
 
   private Project getCurrentProject() {
-    return Project.getInstance("title", testPath, testPath, null);
+    List<String> productType = new ArrayList<>();
+    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+    return Project.getInstance(projectInfo, testPath, testPath, null);
   }
 
 }

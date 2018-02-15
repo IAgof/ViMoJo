@@ -43,4 +43,5 @@ public interface ShareVideoView {
 
   void hideProgressDialogCheckingInfoUse();
 
+  void launchVideoUploadService();
 }
