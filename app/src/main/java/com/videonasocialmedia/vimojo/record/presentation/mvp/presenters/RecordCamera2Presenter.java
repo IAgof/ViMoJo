@@ -52,6 +52,10 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 
 import static com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity.DEFAULT_AUDIO_GAIN;
+import static com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity.GRID_MODE_CROSSES;
+import static com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity.GRID_MODE_FIBONACCI;
+import static com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity.GRID_MODE_LINES;
+import static com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity.GRID_MODE_ONE_ONE;
 
 /**
  *  Created by alvaro on 16/01/17.
@@ -193,6 +197,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     if (!BuildConfig.FEATURE_RECORD_AUDIO_GAIN) {
       recordView.disableAudioGainControls();
     }
+
+    recordView.setupGridMode();
   }
 
   public void onResume() {
@@ -775,6 +781,8 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 
   public void setCameraDefaultSettings() {
     recordView.disableGrid();
+    recordView.hideGridModeSelectionSubmenu();
+    recordView.deselectAllGridButtons();
     // default zoom settings
     recordView.hideZoomSelectionSubmenu();
     recordView.setZoom(0f);
@@ -809,5 +817,23 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
       recordView.setAudioGain(DEFAULT_AUDIO_GAIN);
       setAudioGain(DEFAULT_AUDIO_GAIN);
     }
+  }
+
+  public void setGridMode(String gridMode) {
+    switch (gridMode) {
+      case GRID_MODE_LINES:
+        recordView.showGridModeLines();
+        break;
+      case GRID_MODE_ONE_ONE:
+        recordView.showGridModeOneOne();
+        break;
+      case GRID_MODE_CROSSES:
+        recordView.showGridModeCrosses();
+        break;
+      case GRID_MODE_FIBONACCI:
+        recordView.showGridModeFibonacci();
+        break;
+    }
+    recordView.enableGrid();
   }
 }

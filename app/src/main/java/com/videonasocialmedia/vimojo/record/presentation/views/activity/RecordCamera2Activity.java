@@ -82,6 +82,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public static final float SCALE_AND_PICOMETER_PROGRESS = 2f;
   private final String LOG_TAG = getClass().getSimpleName();
 
+  public static final String GRID_MODE_LINES = "lines";
+  public static final String GRID_MODE_ONE_ONE = "one_one";
+  public static final String GRID_MODE_CROSSES = "crosses";
+  public static final String GRID_MODE_FIBONACCI = "fibonacci";
+
   @Inject
   RecordCamera2Presenter presenter;
   @BindView(R.id.button_navigate_tutorial)
@@ -93,8 +98,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   ImageButton flashButton;
   @BindView(R.id.button_change_camera)
   ImageButton changeCameraButton;
-  @BindView(R.id.button_grid)
-  ImageButton gridButton;
   @BindView(R.id.button_to_show_controls_right)
   ImageButton showControlsButton;
   @BindView(R.id.button_to_hide_controls)
@@ -203,6 +206,19 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @BindView(R.id.metering_mode_spot)
   ImageButton meteringModeSpot;
 
+  @BindView(R.id.button_grid)
+  ImageButton gridButton;
+  @BindView(R.id.grid_mode_submenu_cardview)
+  CardView gridModeSubmenuCardview;
+  @BindView(R.id.grid_mode_lines)
+  ImageButton gridModeLines;
+  @BindView(R.id.grid_mode_one_one)
+  ImageButton gridModeOneOne;
+  @BindView(R.id.grid_mode_crosses)
+  ImageButton gridModeCrosses;
+  @BindView(R.id.grid_mode_fibonacci)
+  ImageButton gridModeFibonacci;
+
   @BindView(R.id.button_camera_default)
   ImageButton cameraDefaultSettingsButton;
   @BindView(R.id.customManualFocusView)
@@ -258,8 +274,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private HashMap<String, ImageButton> whiteBalanceModeButtons;
   private HashMap<String, ImageButton> focusSelectionModeButtons;
+  private HashMap<String, ImageButton> gridModeButtons;
+  private List<String> listGridModeValues;
   private ArrayList<ImageButton> supportedWhiteBalanceModeButtons = new ArrayList<>();
   private ArrayList<ImageButton> supportedFocusSelectionModeButtons = new ArrayList<>();
+  private ArrayList<ImageButton> supportedGridModeButtons = new ArrayList<>();
   private int slideSeekBarMode;
   private int currentSeekbarZoom;
   private int touchEventX = 0;
@@ -323,6 +342,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   private int minExposureCompensation;
   private int minExposureTime;
 
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -339,6 +359,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     createAlertDialogBatteryAndStorage();
     initWhiteBalanceModesMap();
     initFocusSelectionModesMap();
+    initGridModesMap();
     initPicometer();
   }
 
@@ -418,6 +439,10 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     tintButton(meteringModeSpot, button_color);
 
     tintButton(gridButton, button_color);
+    tintButton(gridModeLines, button_color);
+    tintButton(gridModeOneOne, button_color);
+    tintButton(gridModeCrosses, button_color);
+    tintButton(gridModeFibonacci, button_color);
 
     tintButton(cameraDefaultSettingsButton, button_color);
     tintButton(soundVolumeButton, button_color);
@@ -589,6 +614,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     afSelectionSubmenuCardView.setVisibility(View.INVISIBLE);
     whiteBalanceSubmenuCardView.setVisibility(View.INVISIBLE);
     meteringModeSubmenuCardView.setVisibility(View.INVISIBLE);
+    gridModeSubmenuCardview.setVisibility(View.INVISIBLE);
     settingsCameraCardView.setVisibility(View.INVISIBLE);
     slideSeekbarSubmenuView.setVisibility(View.INVISIBLE);
     editOrGalleryTextCardView.setVisibility(View.INVISIBLE);
@@ -614,6 +640,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     afSelectionSubmenuCardView.setVisibility(View.INVISIBLE);
     whiteBalanceSubmenuCardView.setVisibility(View.INVISIBLE);
     meteringModeSubmenuCardView.setVisibility(View.INVISIBLE);
+    gridModeSubmenuCardview.setVisibility(View.INVISIBLE);
   }
 
   @Override
@@ -643,6 +670,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       meteringModeSubmenuCardView.setVisibility(View.VISIBLE);
       return;
     }
+    if(gridButton.isSelected()) {
+      gridModeSubmenuCardview.setVisibility(View.VISIBLE);
+    }
   }
 
   @Override
@@ -669,6 +699,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       meteringModeSubmenuCardView.setVisibility(View.VISIBLE);
       return;
     }
+    if(gridButton.isSelected()) {
+      gridModeSubmenuCardview.setVisibility(View.VISIBLE);
+    }
   }
 
   @Override
@@ -681,6 +714,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     afSelectionSubmenuCardView.setVisibility(View.INVISIBLE);
     whiteBalanceSubmenuCardView.setVisibility(View.INVISIBLE);
     meteringModeSubmenuCardView.setVisibility(View.INVISIBLE);
+    gridModeSubmenuCardview.setVisibility(View.INVISIBLE);
   }
 
   @Override
@@ -818,6 +852,20 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     focusSelectionModeButtons.put(Camera2FocusHelper.AF_MODE_REGIONS, afSettingSelective);
 
     afSettingSelective.setSelected(true);
+  }
+
+  private void initGridModesMap() {
+    gridModeButtons = new HashMap();
+    gridModeButtons.put(GRID_MODE_LINES, gridModeLines);
+    gridModeButtons.put(GRID_MODE_ONE_ONE, gridModeOneOne);
+    gridModeButtons.put(GRID_MODE_CROSSES, gridModeCrosses);
+    gridModeButtons.put(GRID_MODE_FIBONACCI, gridModeFibonacci);
+
+    listGridModeValues = new ArrayList<>();
+    listGridModeValues.add(GRID_MODE_LINES);
+    listGridModeValues.add(GRID_MODE_ONE_ONE);
+    listGridModeValues.add(GRID_MODE_CROSSES);
+    listGridModeValues.add(GRID_MODE_FIBONACCI);
   }
 
   @Override
@@ -1230,6 +1278,53 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     customManualFocusView.onTouchEvent(event);
   }
 
+  @Override
+  public void hideGridModeSelectionSubmenu() {
+    gridButton.setSelected(false);
+    gridModeSubmenuCardview.setVisibility(View.INVISIBLE);
+  }
+
+  @Override
+  public void showGridModeSelectionSubmenu() {
+    gridButton.setSelected(true);
+    gridModeSubmenuCardview.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void setupGridMode() {
+    for (final String gridMode : listGridModeValues) {
+      final ImageButton gridModeButton = gridModeButtons.get(gridMode);
+      if (gridModeButton != null) {
+        supportedGridModeButtons.add(gridModeButton);
+        gridModeButton.setVisibility(View.VISIBLE);
+        gridModeButton.setOnClickListener(view -> {
+          if(view.isSelected()) {
+            imageViewGrid.setVisibility(View.INVISIBLE);
+            view.setSelected(false);
+          } else {
+            selectGridButton(gridModeButton);
+            presenter.setGridMode(gridMode);
+          }
+        });
+      } else {
+        Log.e(LOG_TAG, "Missing WB icon: " + gridMode);
+      }
+    }
+  }
+
+  private void selectGridButton(ImageButton gridModeButton) {
+    deselectAllGridButtons();
+    gridModeButton.setSelected(true);
+  }
+
+  @Override
+  public void deselectAllGridButtons() {
+
+    for (ImageButton gridModeButton : supportedGridModeButtons) {
+      gridModeButton.setSelected(false);
+    }
+  }
+
   /*.*.*.*.*.*.*.*.*.*.*.*.*. OnClicks *.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*/
 
   @OnClick(R.id.button_toggle_flash)
@@ -1253,25 +1348,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @OnClick(R.id.button_navigate_gallery)
   public void onClickNavigateGallery() {
     navigateTo(GalleryActivity.class);
-  }
-
-  @OnClick (R.id.button_grid)
-  public void onClickListenerGridButton() {
-    if (gridButton.isSelected()) {
-      disableGrid();
-    } else {
-      enableGrid();
-    }
-  }
-
-  private void enableGrid() {
-    gridButton.setSelected(true);
-    imageViewGrid.setVisibility(View.VISIBLE);
-  }
-
-  public void disableGrid() {
-    gridButton.setSelected(false);
-    imageViewGrid.setVisibility(View.INVISIBLE);
   }
 
   @OnClick(R.id.button_settings_camera)
@@ -1345,6 +1421,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       hideWhiteBalanceSubmenu();
       hideMeteringModeSelectionSubmenu();
       hideSoundVolumeSubmenu();
+      hideGridModeSelectionSubmenu();
       showZoomSelectionSubmenu();
     }
   }
@@ -1373,6 +1450,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       hideWhiteBalanceSubmenu();
       hideMeteringModeSelectionSubmenu();
       hideSoundVolumeSubmenu();
+      hideGridModeSelectionSubmenu();
       showAFSelectionSubmenu();
     }
   }
@@ -1387,6 +1465,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       hideAFSelectionSubmenu();
       hideMeteringModeSelectionSubmenu();
       hideSoundVolumeSubmenu();
+      hideGridModeSelectionSubmenu();
       showWhiteBalanceSubmenu();
     }
   }
@@ -1402,8 +1481,34 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       hideAFSelectionSubmenu();
       hideWhiteBalanceSubmenu();
       hideSoundVolumeSubmenu();
+      hideGridModeSelectionSubmenu();
       showMeteringModeSelectionSubmenu();
     }
+  }
+
+  @OnClick (R.id.button_grid)
+  public void onClickListenerGridButton() {
+    if (gridButton.isSelected()) {
+      hideGridModeSelectionSubmenu();
+    } else {
+      hideZoomSelectionSubmenu();
+      hideManualExposureSubmenu();
+      hideAFSelectionSubmenu();
+      hideWhiteBalanceSubmenu();
+      hideMeteringModeSelectionSubmenu();
+      hideSoundVolumeSubmenu();
+      showGridModeSelectionSubmenu();
+    }
+  }
+
+  public void disableGrid() {
+    gridButton.setSelected(false);
+    imageViewGrid.setVisibility(View.INVISIBLE);
+  }
+
+  @Override
+  public void enableGrid() {
+    imageViewGrid.setVisibility(View.VISIBLE);
   }
 
   @OnClick(R.id.button_sound_volume)
@@ -1416,6 +1521,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
       hideWhiteBalanceSubmenu();
       hideMeteringModeSelectionSubmenu();
       hideAFSelectionSubmenu();
+      hideGridModeSelectionSubmenu();
       showSoundVolumeSubmenu();
     }
   }
@@ -1433,6 +1539,26 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void hideDefaultButton() {
     cameraDefaultSettingsButton.setVisibility(View.GONE);
+  }
+
+  @Override
+  public void showGridModeLines() {
+    imageViewGrid.setImageResource(R.drawable.activity_record_grid_lines_background);
+  }
+
+  @Override
+  public void showGridModeOneOne() {
+    imageViewGrid.setImageResource(R.drawable.activity_record_grid_one_one_background);
+  }
+
+  @Override
+  public void showGridModeCrosses() {
+    imageViewGrid.setImageResource(R.drawable.activity_record_grid_crosses_bakcground);
+  }
+
+  @Override
+  public void showGridModeFibonacci() {
+    imageViewGrid.setImageResource(R.drawable.activity_record_grid_fibonacci_background);
   }
 
   @Override

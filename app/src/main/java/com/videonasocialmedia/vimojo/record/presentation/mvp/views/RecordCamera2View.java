@@ -139,6 +139,20 @@ public interface RecordCamera2View {
 
     void setFocusModeManual(MotionEvent event);
 
+    // Grid
+
+    void hideGridModeSelectionSubmenu();
+
+    void showGridModeSelectionSubmenu();
+
+    void deselectAllGridButtons();
+
+    void setupGridMode();
+
+    void disableGrid();
+
+    void enableGrid();
+
     // Setters camera
 
     void setFlash(boolean on);
@@ -150,8 +164,6 @@ public interface RecordCamera2View {
     void setZoom(float value);
 
     void hideZoomSelectionSubmenu();
-
-    void disableGrid();
 
     // Others
 
@@ -212,4 +224,12 @@ public interface RecordCamera2View {
     void showDefaultButton();
 
     void hideDefaultButton();
+
+    void showGridModeLines();
+
+    void showGridModeOneOne();
+
+    void showGridModeCrosses();
+
+    void showGridModeFibonacci();
 }
