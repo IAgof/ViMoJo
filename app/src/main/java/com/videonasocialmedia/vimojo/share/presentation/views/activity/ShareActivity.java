@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.share.presentation.views.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -435,7 +436,15 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   public void navigateToUserAuth() {
     Intent intent = new Intent(this, UserAuthActivity.class);
-    startActivity(intent);
+    startActivityForResult(intent, Activity.RESULT_OK, new SuccessResultHandler() {
+      @Override
+      public void onResult(Intent data) {
+        //here you have your results data. The resultCode has already been checked against Activity.RESULT_OK
+        onVimojoPlatformClicked();
+      }
+    });
+    //Intent intent = new Intent(this, UserAuthActivity.class);
+    //startActivity(intent);
   }
 
   @Override
