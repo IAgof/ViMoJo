@@ -421,14 +421,15 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     }
   }
 
-
-  private void navigateToUserAuth() {
-    super.navigateTo(UserAuthActivity.class);
-  }
-
-
   private void navigateToProjectDetails() {
-    super.navigateTo(DetailProjectActivity.class);
+    Intent intent = new Intent(this, DetailProjectActivity.class);
+    startActivityForResult(intent, Activity.RESULT_OK, new SuccessResultHandler() {
+      @Override
+      public void onResult(Intent data) {
+        //here you have your results data. The resultCode has already been checked against Activity.RESULT_OK
+        onVimojoPlatformClicked();
+      }
+    });
   }
 
   @Override
@@ -528,7 +529,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       }
     }
 
-  @Override
   public void navigateToUserAuth() {
     Intent intent = new Intent(this, UserAuthActivity.class);
     startActivityForResult(intent, Activity.RESULT_OK, new SuccessResultHandler() {
