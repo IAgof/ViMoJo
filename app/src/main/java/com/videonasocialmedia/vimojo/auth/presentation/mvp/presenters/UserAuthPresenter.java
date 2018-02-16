@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.AccountConstants;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
 import com.videonasocialmedia.vimojo.auth.presentation.view.utils.EmailPatternValidator;
@@ -33,6 +34,7 @@ public class UserAuthPresenter extends VimojoPresenter {
   AuthApiClient authApiClient;
 
   private final UserAuthView userAuthActivityView;
+  private final Context context;
   private boolean register = true;
 
   /**
@@ -46,6 +48,7 @@ public class UserAuthPresenter extends VimojoPresenter {
                            AuthApiClient authApiClient,
                            EmailPatternValidator emailPatternValidator) {
     this.userAuthActivityView = userAuthActivityView;
+    this.context = context;
     this.contextReference = new WeakReference<>(context);
     this.emailPatternValidator = emailPatternValidator;
     this.authApiClient = authApiClient;
@@ -252,7 +255,7 @@ public class UserAuthPresenter extends VimojoPresenter {
   }
 
   private void registerAccount(String email, String password, String authToken, String id) {
-    Account account = new Account(email, AccountConstants.VIMOJO_ACCOUNT_TYPE);
+    Account account = new Account(email, context.getString(R.string.account_type));
     AccountManager am = AccountManager.get(getContext());
     final Bundle extraData = new Bundle();
     extraData.putString(AccountConstants.USER_ID, id);

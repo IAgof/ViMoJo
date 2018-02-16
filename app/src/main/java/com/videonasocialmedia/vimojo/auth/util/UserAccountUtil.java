@@ -11,7 +11,7 @@ import android.content.pm.PackageManager;
 import android.support.v13.app.ActivityCompat;
 import android.util.Log;
 
-import com.videonasocialmedia.vimojo.auth.AccountConstants;
+import com.videonasocialmedia.vimojo.R;
 
 /**
  * Utility class for getting current Vimojo Android Account.
@@ -32,7 +32,7 @@ public class UserAccountUtil {
     }
 
     AccountManager accountManager = AccountManager.get(context);
-    Account[] accounts = accountManager.getAccountsByType(AccountConstants.VIMOJO_ACCOUNT_TYPE);
+    Account[] accounts = accountManager.getAccountsByType(context.getString(R.string.account_type));
     if (accounts.length > 0) {
       return accounts[0];
     } else {

@@ -7,11 +7,16 @@ package com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activit
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -33,6 +38,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class GalleryProjectListActivity extends VimojoActivity implements GalleryProjectListView,
     GalleryProjectClickListener {
@@ -41,6 +47,9 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @BindView(R.id.recycler_gallery_project)
   RecyclerView projectList;
+  @Nullable
+  @BindView(R.id.text_dialog)
+  EditText editTextDialog;
 
   private GalleryProjectListAdapter projectAdapter;
 
@@ -49,17 +58,8 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_gallery_project);
     ButterKnife.bind(this);
-    setupToolbar();
     getActivityPresentersComponent().inject(this);
     initProjectListRecycler();
-  }
-
-  private void setupToolbar() {
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
-    getSupportActionBar().setDisplayShowTitleEnabled(false);
-    ActionBar ab = getSupportActionBar();
-    ab.setDisplayHomeAsUpEnabled(true);
   }
 
   private void initProjectListRecycler() {
@@ -157,6 +157,11 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
   public void goToDetailActivity(Project project) {
     presenter.updateCurrentProject(project);
     navigateTo(DetailProjectActivity.class);
+  }
+
+  @OnClick(R.id.backButton)
+  public void onClickBackButton() {
+    super.onBackPressed();
   }
 
 }

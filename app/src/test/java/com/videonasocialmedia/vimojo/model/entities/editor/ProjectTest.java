@@ -16,6 +16,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -47,7 +50,7 @@ public class ProjectTest {
         Project projectInstance = Project.getInstance(null, null, null, null);
 
         assertThat(videonaProject, not(projectInstance));
-        assertThat(projectInstance.getTitle(), nullValue());
+        assertThat(projectInstance.getProjectInfo(), nullValue());
         assertThat(projectInstance.getProjectPath(), not(nullValue()));
         assertThat(projectInstance.getProfile(), nullValue());
     }
@@ -117,7 +120,7 @@ public class ProjectTest {
     }
 
     @Test
-    public void shouldUpdateTitleUuidProjectPathIfProjectIsDuplicate() throws IllegalItemOnTrack {
+    public void shouldUpdateUuidProjectPathIfProjectIsDuplicate() throws IllegalItemOnTrack {
         Project project = getAProject();
         Project duplicateProject = new Project(project);
 
@@ -125,17 +128,35 @@ public class ProjectTest {
             CoreMatchers.not(project.getProfile()));
         Assert.assertThat("copy project change VMComposition ", duplicateProject.getVMComposition(),
             CoreMatchers.not(project.getVMComposition()));
-        Assert.assertThat("copy project change title ", duplicateProject.getTitle(),
-            CoreMatchers.not(project.getTitle()));
         Assert.assertThat("copy project change uuid ", duplicateProject.getUuid(),
             CoreMatchers.not(project.getUuid()));
         Assert.assertThat("copy project change project path ", duplicateProject.getProjectPath(),
             CoreMatchers.not(project.getProjectPath()));
     }
 
+    @Test
+    public void shouldCopyTitleDescriptionProductTypeListIfProjectIsDuplicate()
+        throws IllegalItemOnTrack {
+        Project project = getAProject();
+        Project duplicateProject = new Project(project);
+
+        Assert.assertThat("copy project keep title",
+            duplicateProject.getProjectInfo().getTitle(), is(project.getProjectInfo().getTitle()));
+
+        Assert.assertThat("copy project keep description",
+            duplicateProject.getProjectInfo().getDescription(),
+            is(project.getProjectInfo().getDescription()));
+
+        Assert.assertThat("copy project keep product type list",
+            duplicateProject.getProjectInfo().getProductTypeList(),
+            is(project.getProjectInfo().getProductTypeList()));
+    }
+
     public Project getAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-        return Project.getInstance("title", "/path", "private/path", compositionProfile);
+        List<String> productType = new ArrayList<>();
+        ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+        return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
     }
 }

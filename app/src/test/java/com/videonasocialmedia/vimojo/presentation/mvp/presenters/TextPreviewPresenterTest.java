@@ -3,12 +3,16 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by alvaro on 6/09/16.
@@ -31,6 +35,8 @@ public class TextPreviewPresenterTest {
 
     public Project getAProject() {
         Profile compositionProfile = new Profile(null, null, null);
-        return Project.getInstance("title", "/path", "private/path", compositionProfile);
+        List<String> productType = new ArrayList<>();
+        ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+        return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
     }
 }

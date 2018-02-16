@@ -40,10 +40,17 @@
     <string name="credentialFTPNull">FTP connection data not set. Please configure FTP in settings.</string>
     <string name="upload_to_server">Send to platform</string>
     <string name="uploading_video">Uploading video</string>
-    <string name="upload_video_completed">Video uploaded to platform</string>
-    <string name="upload_video_error">Error uploading video to platform</string>
+    <string name="upload_video_completed">Uploaded to platform</string>
+    <string name="upload_video_error">Error</string>
+    <string name="upload_video_success">Success</string>
+    <string name="upload_video_finish_singular">video uploaded</string>
+    <string name="upload_video_finish_plural">videos uploaded</string>
     <string name="upload_video_with_mobile_network">Do you want to upload video with mobile network?</string>
     <string name="connect_to_network">Please connect your device to network, cellular or wifi</string>
+    <string name="upload_video_register_login">For uploading videos, you need to register or login first.</string>
+    <string name="upload_video_complete_project_info">For uploading videos, you need to complete project details.</string>
+    <string name="progress_dialog_title_checking_info_user">Checking info</string>
+    <string name="progress_dialog_message_checking_info_user">Getting info from user</string>
 
     <!-- Editor Activity -->
     <string name="new_project">New project</string>
@@ -112,6 +119,10 @@
     <string name="dialog_project_remove_cancel">No</string>
 
     <!-- Detail project activity -->
+    <string name="detail_project_title">Title</string>
+    <string name="detail_project_description">Description</string>
+    <string name="detail_project_product_type">Product type</string>
+    <string name="detail_project_details">Details</string>
     <string name="projectTitleDurationMinSec">Duration:</string>
     <string name="projectTitleNumClips">Clips:</string>
     <string name="projectTitleSizeMb">Size:</string>
@@ -126,6 +137,13 @@
     <string name="dialog_project_edit_title_message">Set project title</string>
     <string name="dialog_project_edit_title_accept">Yes</string>
     <string name="dialog_project_edit_title_cancel">No</string>
+
+    <string name="detail_project_product_type_direct_failure">Direct failure</string>
+    <string name="detail_project_product_type_raw_videos">Raw videos</string>
+    <string name="detail_project_product_type_spoolers">Spoolers</string>
+    <string name="detail_project_product_type_total">Total</string>
+    <string name="detail_project_product_type_graphic">Graphic</string>
+    <string name="detail_project_product_type_piece">Piece</string>
 
     <!--VoiceOverRecordRecordActivity-->
     <string name="dialog_voice_over_cancel_title_message">Do you want to discard voice over and start a new one?</string>
@@ -313,6 +331,7 @@
     <string name="drawerProjectName">Project name</string>
     <string name="drawerProjectLocation">Project location</string>
     <string name="drawerProjectDate">Project date</string>
+    <string name="drawerProjectCurrent">Current project</string>
 
     <!-- VimojoStoreActivity -->
     <string name="buy_now">Buy now</string>
@@ -2488,7 +2507,6 @@ and Conditions.\n\n
 
 
     <string name="profession">Profession</string>
-    <string name="content_authority">com.videonasocialmedia.vimojo.provider</string>
 
 
 </resources>

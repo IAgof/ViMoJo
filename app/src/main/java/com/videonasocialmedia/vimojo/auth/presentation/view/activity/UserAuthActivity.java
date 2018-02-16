@@ -315,6 +315,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
 
   @OnClick(R.id.register_button)
   public void onClickRegister() {
+    hideKeyboard(registerButton);
     String userName = userNameField.getText().toString();
     String email = emailField.getText().toString();
     String password = passwordField.getText().toString();
@@ -324,6 +325,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
 
   @OnClick(R.id.login_button)
   public void onClickLogin() {
+    hideKeyboard(loginButton);
     String email = emailField.getText().toString();
     String password = passwordField.getText().toString();
     userAuthPresenter.onClickLogin(isShowedRegisterLoginFields(), email, password);

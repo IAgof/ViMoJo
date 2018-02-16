@@ -12,10 +12,14 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -31,7 +35,9 @@ public class ProjectToRealmProjectMapperTest {
   public void testMapReturnsRealmProjectInstance() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-    Project project = new Project(null, null, null, compositionProfile);
+    List<String> productType = new ArrayList<>();
+    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+    Project project = new Project(projectInfo, null, null, compositionProfile);
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
     RealmProject realmProject = mapper.map(project);
@@ -43,13 +49,17 @@ public class ProjectToRealmProjectMapperTest {
   public void testMapSetsRealmProjectFieldsFromProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
+    ProjectInfo projectInfo = new ProjectInfo("Project title",
+        "Project description", new ArrayList<>());
 
-    Project project = new Project("Project title", "root/path","private/path", profile);
+    Project project = new Project(projectInfo, "root/path",
+        "private/path", profile);
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
     RealmProject realmProject = mapper.map(project);
 
-    assertThat(realmProject.title, is(project.getTitle()));
+    assertThat(realmProject.title, is(project.getProjectInfo().getTitle()));
+    assertThat(realmProject.description, is(project.getProjectInfo().getDescription()));
     assertThat(realmProject.quality, is(profile.getQuality().name()));
     assertThat(realmProject.resolution, is(profile.getResolution().name()));
     assertThat(realmProject.projectPath, is(project.getProjectPath()));
@@ -135,7 +145,10 @@ public class ProjectToRealmProjectMapperTest {
   @Test
   public void testMapReturnsNullRealmProjectIfNullProjectProfile() {
 
-    Project project = new Project("title", "root/path", "private/path", null);
+    ProjectInfo projectInfo = new ProjectInfo("Project title",
+        "Project description", new ArrayList<>());
+    Project project = new Project(projectInfo, "root/path",
+        "private/path", null);
     ProjectToRealmProjectMapper mapper = new ProjectToRealmProjectMapper();
 
     RealmProject realmProject = mapper.map(project);
@@ -147,7 +160,9 @@ public class ProjectToRealmProjectMapperTest {
   private Project getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
-    return new Project("Project title", "root/path", "private/path", profile);
+    ProjectInfo projectInfo = new ProjectInfo("Project title",
+        "Project description", new ArrayList<>());
+    return new Project(projectInfo, "root/path", "private/path", profile);
   }
 
 }
