@@ -7,9 +7,11 @@
 
 package com.videonasocialmedia.vimojo.sync;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.squareup.tape2.ObjectQueue;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
 import org.junit.After;
@@ -20,7 +22,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -34,14 +35,14 @@ import static org.powermock.api.mockito.PowerMockito.when;
 /**
  * Created by alvaro on 15/2/18.
  */
-@PowerMockIgnore("javax.net.ssl.*")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Log.class})
 public class UploadToPlatformQueueTest {
 
   @InjectMocks UploadToPlatformQueue injectedUploadToPlatformQueue;
 
-  @Mock SendNotification mockedSendNotification;
+  @Mock UploadNotification mockedUploadNotification;
+  @Mock Context mockedContext;
 
   @Before
   public void init() {
@@ -51,8 +52,8 @@ public class UploadToPlatformQueueTest {
 
   @After
   public void tearDown() throws IOException {
-    //ObjectQueue<VideoUpload> queue = injectedUploadToPlatformQueue.getQueue();
-    //queue.clear();
+    ObjectQueue<VideoUpload> queue = injectedUploadToPlatformQueue.getQueue();
+    queue.clear();
   }
 
   @Test
@@ -61,7 +62,7 @@ public class UploadToPlatformQueueTest {
     assertThat(queue.size(), is(0));
     VideoUpload videoUpload = new VideoUpload("authToken", "mediaPath",
         "title", "description", "productTypeList");
-    when(mockedSendNotification.isNotificationShowed()).thenReturn(true);
+    when(mockedUploadNotification.isNotificationShowed()).thenReturn(true);
     injectedUploadToPlatformQueue.addVideoToUpload(videoUpload);
     ObjectQueue<VideoUpload> updatedQueue = injectedUploadToPlatformQueue.getQueue();
     assertThat(updatedQueue.size(), is(1));
@@ -69,22 +70,41 @@ public class UploadToPlatformQueueTest {
 
     injectedUploadToPlatformQueue.addVideoToUpload(videoUpload);
 
-    verify(mockedSendNotification).updateNotificationVideoAdded(null, 1);
+    verify(mockedUploadNotification).updateNotificationVideoAdded(null, 1);
   }
 
   @Test
-  public void launchQueueFinishNotificationIfQueueIsEmpty() throws IOException {
+  public void startNotificationIfQueueIsEmpty() throws IOException {
+    ObjectQueue<VideoUpload> queue = injectedUploadToPlatformQueue.getQueue();
+    assertThat(queue.size(), is(0));
 
-    injectedUploadToPlatformQueue.launchQueueVideoUploads();
+    injectedUploadToPlatformQueue.startOrUploadNotification();
 
-    verify(mockedSendNotification).sendInfiniteProgressNotification(1,
-        "uploadingVideo");
+    verify(mockedUploadNotification)
+        .startInfiniteProgressNotification(R.drawable.notification_uploading_small,
+        mockedContext.getString(R.string.uploading_video));
+  }
 
+  @Test
+  public void uploadNotificationIfQueueIsNotEmpty() throws IOException {
+    ObjectQueue<VideoUpload> queue = injectedUploadToPlatformQueue.getQueue();
+    assertThat(queue.size(), is(0));
+    VideoUpload videoUpload = new VideoUpload("authToken", "mediaPath",
+        "title", "description", "productTypeList");
+    injectedUploadToPlatformQueue.addVideoToUpload(videoUpload);
+    ObjectQueue<VideoUpload> updatedQueue = injectedUploadToPlatformQueue.getQueue();
+    assertThat(updatedQueue.size(), is(1));
+    when(mockedUploadNotification.isNotificationShowed()).thenReturn(true);
+
+    injectedUploadToPlatformQueue.startOrUploadNotification();
+
+    verify(mockedUploadNotification).updateNotificationVideoAdded(null, 1);
   }
 
   @Test
   public void launchQueueCallsSendNotification() throws IOException {
-
+    // I am not able to mock videoApiClient.uploadVideo(videoUpload) and test this part. I can not
+    // mock retrofit response, i do not want to check response, only launchQueueVideoUploads
 
   }
 

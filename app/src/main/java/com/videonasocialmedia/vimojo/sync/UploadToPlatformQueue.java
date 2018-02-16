@@ -39,11 +39,12 @@ public class UploadToPlatformQueue {
   private final Context context;
   private final VideoApiClient videoApiClient;
   private MoshiConverter converter;
-  private SendNotification sendNotification;
+  private UploadNotification uploadNotification;
+  private boolean isUploadCanceledByNetworkError = false;
 
   public UploadToPlatformQueue(Context context) {
     this.context = context;
-    sendNotification = new SendNotification(context);
+    uploadNotification = new UploadNotification(context);
     videoApiClient = new VideoApiClient();
   }
 
@@ -70,21 +71,28 @@ public class UploadToPlatformQueue {
   public void addVideoToUpload(VideoUpload videoUpload) throws IOException {
     ObjectQueue<VideoUpload> queue = getQueue();
     queue.add(videoUpload);
-    if(isNotificationShowed(queue)) {
-      Log.d(LOG_TAG, "updateNotification");
-      sendNotification.updateNotificationVideoAdded(context.getString(R.string.uploading_video),
-          queue.size());
-    }
+    startOrUploadNotification();
   }
 
   protected boolean isNotificationShowed(ObjectQueue<VideoUpload> queue) {
-    return queue.size() > 0 && sendNotification.isNotificationShowed();
+    return queue.size() > 0 && uploadNotification.isNotificationShowed();
+  }
+
+  public void startOrUploadNotification() {
+    Log.d(LOG_TAG, "launchNotification");
+    if(!isNotificationShowed(getQueue())) {
+      Log.d(LOG_TAG, "startNotification");
+      uploadNotification.startInfiniteProgressNotification(R.drawable.notification_uploading_small,
+          context.getString(R.string.uploading_video));
+    } else {
+      Log.d(LOG_TAG, "updateNotification");
+      uploadNotification.updateNotificationVideoAdded(context.getString(R.string.uploading_video),
+          getQueue().size());
+    }
   }
 
   public void launchQueueVideoUploads() {
-    Log.d(LOG_TAG, "launchNotification");
-    sendNotification.sendInfiniteProgressNotification(R.drawable.notification_uploading_small,
-        context.getString(R.string.uploading_video));
+    Log.d(LOG_TAG, "startUploading");
     ObjectQueue<VideoUpload> queue = getQueue();
     Iterator<VideoUpload> iterator = queue.iterator();
     VideoUpload element = iterator.next();
@@ -92,28 +100,44 @@ public class UploadToPlatformQueue {
     Video video = process(element);
     if (video != null) {
       removeHeadElement(getQueue());
-      Log.d(LOG_TAG, "appendSuccessNotification");
-      sendNotification.appendResultNotification(context.getString(R.string.uploading_video),
-          queue.size(), context.getString(R.string.upload_video_completed), title);
       if (getQueue().isEmpty()) {
         Log.d(LOG_TAG, "finishNotification");
-        sendNotification.finishNotification(R.drawable.notification_success_small,
-            context.getString(R.string.upload_video_completed));
+        uploadNotification.finishNotification(context.getString(R.string.upload_video_success),
+            title, true);
+      } else {
+        Log.d(LOG_TAG, "appendSuccessNotification");
+        uploadNotification.appendResultNotification(context.getString(R.string.uploading_video),
+            queue.size(), context.getString(R.string.upload_video_success), title, true);
       }
     } else {
-      element.incrementNumTries();
+      incrementHeadNumTries(getQueue());
       if (element.getNumTries() > VideoUpload.MAX_NUM_TRIES_UPLOAD) {
         removeHeadElement(getQueue());
-        Log.d(LOG_TAG, "appendErrorNotification");
-        sendNotification.appendResultNotification(context.getString(R.string.uploading_video),
-            queue.size(), context.getString(R.string.upload_video_error), title);
-        if (getQueue().isEmpty())
+        if (getQueue().isEmpty()) {
           Log.d(LOG_TAG, "finishNotification");
-        sendNotification.finishNotification(R.drawable.notification_error_small,
-            context.getString(R.string.upload_video_error));
+          uploadNotification.finishNotification(context.getString(R.string.upload_video_error),
+              title, false);
+        } else {
+          Log.d(LOG_TAG, "appendErrorNotification");
+          uploadNotification.appendResultNotification(context.getString(R.string.uploading_video),
+              queue.size(), context.getString(R.string.upload_video_error), title, false);
+        }
       } else {
-        launchQueueVideoUploads();
+        if(!isUploadCanceledByNetworkError) {
+          launchQueueVideoUploads();
+        }
       }
+    }
+  }
+
+  private void incrementHeadNumTries(ObjectQueue<VideoUpload> queue) {
+    try {
+      queue.peek().incrementNumTries();
+    } catch (IOException ioException) {
+      //ioException.printStackTrace();
+      Log.d(LOG_TAG, ioException.getMessage());
+      Crashlytics.log("Error increment num tries head of queue video to upload");
+      Crashlytics.logException(ioException);
     }
   }
 
@@ -121,7 +145,7 @@ public class UploadToPlatformQueue {
     try {
       queue.remove();
     } catch (IOException ioException) {
-      ioException.printStackTrace();
+      //ioException.printStackTrace();
       Log.d(LOG_TAG, ioException.getMessage());
       Crashlytics.log("Error removing queue video to upload");
       Crashlytics.logException(ioException);
@@ -133,8 +157,13 @@ public class UploadToPlatformQueue {
     try {
       return videoApiClient.uploadVideo(videoUpload);
     } catch (VimojoApiException vimojoApiException) {
-      vimojoApiException.printStackTrace();
-      Log.d(LOG_TAG, vimojoApiException.getMessage());
+      //vimojoApiException.printStackTrace();
+      Log.d(LOG_TAG, vimojoApiException.getApiErrorCode());
+      if(vimojoApiException.getApiErrorCode().equals(VimojoApiException.NETWORK_ERROR)) {
+        Log.d(LOG_TAG, "finishNotification");
+        uploadNotification.cancelNotification();
+        isUploadCanceledByNetworkError = true;
+      }
       Crashlytics.log("Error vimojoApiException uploading video");
       Crashlytics.logException(vimojoApiException);
     }

@@ -65,7 +65,7 @@ import butterknife.Optional;
  */
 public class ShareActivity extends EditorActivity implements ShareVideoView,
         VideonaPlayer.VideonaPlayerListener, OnOptionsToShareListClickListener {
-  public static final int NOTIFICATION_UPLOAD_COMPLETE_ID = 001;
+
   @Inject ShareVideoPresenter presenter;
     @Inject SharedPreferences sharedPreferences;
 
@@ -307,6 +307,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void onVimojoPlatformClicked() {
+    checkNetworksAvailable();
     presenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
         isMobileNetworConnected, videoPath);
   }
