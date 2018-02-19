@@ -17,7 +17,6 @@ import android.util.Log;
 import android.util.TypedValue;
 
 
-import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
@@ -27,7 +26,6 @@ import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
@@ -42,8 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import static com.videonasocialmedia.videonamediaframework.model.Constants.*;
 
 public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener,
         ElementChangedListener {
@@ -126,7 +122,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
             public void onErrorReorderingMedia() {
                 //The reordering went wrong so we ask the project for the actual video list
                 Log.d(TAG, "timeline:  error reordering!!");
-                obtainVideos();
+                editActivityView.updateProject();
             }
         });
     }
@@ -171,41 +167,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         return checkedVideoList;
     }
 
-    public void obtainVideos() {
-        editActivityView.showProgressDialog();
-        getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
-            @Override
-            public void onVideosRetrieved(List<Video> videosRetrieved) {
-                int sizeOriginalVideoList = videosRetrieved.size();
-                List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
-                videoList = checkedVideoList;
-
-                List<Video> videoCopy = new ArrayList<>(checkedVideoList);
-
-                if (sizeOriginalVideoList > checkedVideoList.size()) {
-                    editActivityView.showDialogMediasNotFound();
-                }
-                editActivityView.enableEditActions();
-                editActivityView.enableBottomBar();
-                editActivityView.enableFabText(true);
-                editActivityView.hideProgressDialog();
-                editActivityView.bindVideoList(videoCopy);
-                videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
-                        videoList, videoTranscodingErrorNotifier);
-            }
-
-            @Override
-            public void onNoVideosRetrieved() {
-                editActivityView.disableEditActions();
-                editActivityView.disableBottomBar();
-                editActivityView.enableFabText(false);
-                editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
-                editActivityView.hideProgressDialog();
-                editActivityView.updateViewResetProject();
-            }
-        });
-    }
-
     public void removeVideoFromProject(int selectedVideoRemove) {
         Video videoToRemove = this.videoList.get(selectedVideoRemove);
         ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
@@ -213,64 +174,29 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         removeVideoFromProjectUseCase.removeMediaItemsFromProject(mediaToDeleteFromProject, this);
     }
 
-    public void init() {
-        obtainVideos();
-        retrieveMusic();
-        retrieveTransitions();
-        checkMuteOnTracks();
-    }
+    public void init(boolean successObtainVideos, List<Video> videoList) {
+        if(successObtainVideos) {
+            int sizeOriginalVideoList = videoList.size();
+            List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videoList);
+            this.videoList = checkedVideoList;
 
-    private void checkMuteOnTracks() {
-        if (currentProject.getVMComposition().hasMusic()) {
-            Track musicTrack = currentProject.getAudioTracks()
-                .get(INDEX_AUDIO_TRACK_MUSIC);
-            if (musicTrack.isMuted()) {
-                editActivityView.setMusicVolume(VOLUME_MUTE);
+            List<Video> videoCopy = new ArrayList<>(checkedVideoList);
+
+            if (sizeOriginalVideoList > checkedVideoList.size()) {
+                editActivityView.showDialogMediasNotFound();
             }
-        }
-
-        if (currentProject.getVMComposition().hasVoiceOver()) {
-            Track voiceOverTrack = currentProject.getAudioTracks()
-                .get(INDEX_AUDIO_TRACK_VOICE_OVER);
-            if (voiceOverTrack.isMuted()) {
-                editActivityView.setVoiceOverVolume(VOLUME_MUTE);
-            }
-        }
-
-        if (currentProject.getVMComposition().hasVideos()) {
-            Track mediaTrack = currentProject.getMediaTrack();
-            if (mediaTrack.isMuted()) {
-                editActivityView.setVideoMute();
-            }
-        }
-    }
-
-    private void retrieveTransitions() {
-        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
-            editActivityView.setVideoFadeTransitionAmongVideos();
-        }
-        if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
-            !currentProject.getVMComposition().hasMusic()){
-            editActivityView.setAudioFadeTransitionAmongVideos();
-        }
-    }
-
-    private void retrieveMusic() {
-        if (currentProject.getVMComposition().hasMusic()) {
-            getAudioFromProjectUseCase.getMusicFromProject(new GetMusicFromProjectCallback() {
-                @Override
-                public void onMusicRetrieved(Music music) {
-                    editActivityView.setMusic(music);
-                }
-            });
-        }
-        if (currentProject.getVMComposition().hasVoiceOver()) {
-            getAudioFromProjectUseCase.getVoiceOverFromProject(new GetMusicFromProjectCallback() {
-                @Override
-                public void onMusicRetrieved(Music voiceOver) {
-                    editActivityView.setVoiceOver(voiceOver);
-                }
-            });
+            editActivityView.enableEditActions();
+            editActivityView.enableBottomBar();
+            editActivityView.enableFabText(true);
+            editActivityView.updateVideoList(videoCopy);
+            videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
+                this.videoList, videoTranscodingErrorNotifier);
+        } else {
+            editActivityView.disableEditActions();
+            editActivityView.disableBottomBar();
+            editActivityView.enableFabText(false);
+            editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
+            editActivityView.updateViewResetProject();
         }
     }
 
@@ -286,4 +212,5 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
         return (String) outValue.string;
     }
+
 }

@@ -25,13 +25,9 @@ import javax.inject.Inject;
 /**
  * Created by ruth on 13/09/16.
  */
-public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback,
-    VideoTranscodingErrorNotifier, ElementChangedListener {
+public class SoundPresenter implements VideoTranscodingErrorNotifier, ElementChangedListener {
 
   private SoundView soundView;
-  private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-  private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
-  private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
   private ModifyTrackUseCase modifyTrackUseCase;
   private final Project currentProject;
   public VideoListErrorCheckerDelegate videoListErrorCheckerDelegate;
@@ -39,18 +35,11 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
 
    @Inject
     public SoundPresenter(SoundView soundView,
-        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-        GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-        GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
         ModifyTrackUseCase modifyTrackUseCase, VideoListErrorCheckerDelegate
                                  videoListErrorCheckerDelegate) {
         this.soundView = soundView;
-        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
-        this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
         this.currentProject = loadCurrentProject();
         currentProject.addListener(this);
-        this.getPreferencesTransitionFromProjectUseCase =
-                getPreferencesTransitionFromProjectUseCase;
         this.modifyTrackUseCase = modifyTrackUseCase;
         this.videoListErrorCheckerDelegate = videoListErrorCheckerDelegate;
     }
@@ -64,22 +53,22 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
       checkVoiceOverFeatureToggle(BuildConfig.FEATURE_VOICE_OVER);
       // TODO:(alvaro.martinez) 22/03/17 Player should be in charge of these checks from
       // VMComposition
-      checkAVTransitionsActivated();
       retrieveTracks();
+
     }
 
   private void retrieveTracks() {
     if(currentProject.getVMComposition().hasVideos()){
       Track videoTrack = currentProject.getVMComposition().getMediaTrack();
       setupTrack(videoTrack);
-      obtainVideos();
+      updateClipPlayed(Constants.INDEX_MEDIA_TRACK);
       soundView.showTrackVideo();
     }
     if(currentProject.getVMComposition().hasMusic()){
       Track musicTrack = currentProject.getVMComposition().getAudioTracks()
           .get(Constants.INDEX_AUDIO_TRACK_MUSIC);
       setupTrack(musicTrack);
-      obtainMusic();
+      updateClipPlayed(Constants.INDEX_AUDIO_TRACK_MUSIC);
       if(musicTrack.getPosition()==1){
         soundView.showTrackAudioFirst();
       } else {
@@ -90,7 +79,7 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
       Track voiceOverTrack = currentProject.getVMComposition().getAudioTracks()
           .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
       setupTrack(voiceOverTrack);
-      obtainVoiceOver();
+      updateClipPlayed(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
       if(voiceOverTrack.getPosition()==1){
         soundView.showTrackAudioFirst();
       } else {
@@ -99,56 +88,10 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
     }
   }
 
-  private void obtainVideos() {
-    getMediaListFromProjectUseCase.getMediaListFromProject(this);
-  }
-
-  private void obtainVoiceOver() {
-    getAudioFromProjectUseCase.getVoiceOverFromProject(this);
-  }
-
-  private void obtainMusic() {
-    getAudioFromProjectUseCase.getMusicFromProject(this);
-  }
-
   private void setupTrack(Track track) {
     soundView.bindTrack(track);
     updatePlayerMute(track.getId(), track.isMuted());
   }
-
-  private void checkAVTransitionsActivated() {
-    if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
-      soundView.setVideoFadeTransitionAmongVideos();
-    }
-    if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
-        !currentProject.getVMComposition().hasMusic()){
-      soundView.setAudioFadeTransitionAmongVideos();
-    }
-  }
-
-    @Override
-    public void onVideosRetrieved(List<Video> videoList) {
-        soundView.bindVideoList(videoList);
-        videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(videoList, this);
-    }
-
-  @Override
-    public void onNoVideosRetrieved() {
-        //TODO Show error
-        soundView.resetPreview();
-    }
-
-    @Override
-    public void onMusicRetrieved(Music music) {
-        // TODO:(alvaro.martinez) 7/03/17 Get from project use case list<Music> instead music
-        List<Music> musicList = new ArrayList<>();
-        musicList.add(music);
-        if (isMusicAVoiceOver(music)) {
-          soundView.bindVoiceOverList(musicList);
-        } else {
-          soundView.bindMusicList(musicList);
-        }
-    }
 
   protected void checkVoiceOverFeatureToggle(boolean featureVoiceOver) {
     if(featureVoiceOver){
@@ -158,31 +101,11 @@ public class SoundPresenter implements OnVideosRetrieved, GetMusicFromProjectCal
     }
   }
 
-  private boolean isMusicAVoiceOver(Music music) {
-    return music.getMusicTitle()
-        .compareTo(com.videonasocialmedia.vimojo.utils.Constants.MUSIC_AUDIO_VOICEOVER_TITLE) == 0;
-  }
-
   public void setTrackVolume(int id, int seekBarProgress){
     Track track = getTrackById(id);
     float volume = (float) (seekBarProgress * 0.01);
     modifyTrackUseCase.setTrackVolume(track, volume);
     updatePlayerVolume(id, volume);
-    updateVideoList();
-  }
-
-  private void updateVideoList() {
-    getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
-      @Override
-      public void onVideosRetrieved(List<Video> videoList) {
-        soundView.updateVideoList(videoList);
-      }
-
-      @Override
-      public void onNoVideosRetrieved() {
-
-      }
-    });
   }
 
   private void updatePlayerVolume(int id, float volume) {

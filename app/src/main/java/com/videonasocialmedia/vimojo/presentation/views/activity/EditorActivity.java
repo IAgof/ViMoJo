@@ -25,12 +25,17 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
@@ -42,16 +47,24 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter.VOLUME_MUTE;
+
 /**
  *
  */
-public abstract class EditorActivity extends VimojoActivity implements EditorActivityView {
+public abstract class EditorActivity extends VimojoActivity implements EditorActivityView,
+    VideonaPlayerView, VideonaPlayer.VideonaPlayerListener {
+
+
+  private static final String EDITOR_ACTIVITY_PROJECT_POSITION = "editor_activity_project_position";
 
   @Inject
   UserEventTracker userEventTracker;
@@ -77,6 +90,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Nullable
   @BindView(R.id.switch_watermark)
   SwitchCompat switchWatermark;
+  @Nullable @BindView(R.id.videona_player)
+  VideonaPlayerExo videonaPlayer;
   private boolean darkThemePurchased = false;
   private boolean watermarkPurchased = false;
   CircleImageView imageProjectThumb;
@@ -110,13 +125,42 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     }
   };
 
+  private android.app.AlertDialog progressDialog;
+  private int currentProjectPosition = 0;
+  private boolean isVideoMute;
+  private List<Video> videoList = new ArrayList<>();
+  private boolean isSuccessObtainVideos;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.editor_activity);
     ButterKnife.bind(this);
+    restoreState(savedInstanceState);
+    videonaPlayer.setListener(this);
     getActivityPresentersComponent().inject(this);
     setUpAndCheckHeaderViewCurrentProject();
+    createProgressDialog();
+  }
+
+  private void restoreState(Bundle savedInstanceState) {
+    if (savedInstanceState != null) {
+      currentProjectPosition = savedInstanceState.getInt(EDITOR_ACTIVITY_PROJECT_POSITION, 0);
+    }
+  }
+
+  private void createProgressDialog() {
+    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+    View dialogView = getLayoutInflater().inflate(R.layout.dialog_export_progress, null);
+    progressDialog = builder.setCancelable(false)
+        .setView(dialogView)
+        .create();
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    outState.putInt(EDITOR_ACTIVITY_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
+    super.onSaveInstanceState(outState);
   }
 
   private void setUpAndCheckHeaderViewCurrentProject() {
@@ -157,6 +201,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       setupDrawerContent(navigationView);
       setUpAndCheckHeaderViewCurrentProject();
     }
+    videonaPlayer.onShown(this);
     editorPresenter.init();
     setupSwitchThemeAppIntoDrawer();
     editorPresenter.updateTheme();
@@ -165,7 +210,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   protected void onPause() {
     super.onPause();
+    videonaPlayer.onPause();
     editorPresenter.onPause();
+  }
+
+  public void reStart() {
+    editorPresenter.init();
   }
 
   private boolean checkIfThemeDarkIsSelected() {
@@ -435,6 +485,108 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     switchWatermark.setOnCheckedChangeListener(watermarkOnCheckedChangeListener);
   }
 
+  @Override
+  public void showProgressDialog() {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        if (!isFinishing()) {
+          progressDialog.show();
+        }
+      }
+    });  }
+
+  @Override
+  public void hideProgressDialog() {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+          progressDialog.dismiss();
+        }
+      }
+    });
+  }
+
+  @Override
+  public void successObtainVideos() {
+    isSuccessObtainVideos = true;
+  }
+
+  @Override
+  public void errorObtainVideos() {
+    isSuccessObtainVideos = false;
+  }
+
+  @Override
+  public void bindVideoList(List<Video> movieList) {
+    videoList = movieList;
+    videonaPlayer.bindVideoList(movieList);
+  }
+
+  @Override
+  public void bindMusic(Music music) {
+    videonaPlayer.setMusic(music);
+  }
+
+  @Override
+  public void bindVoiceOver(Music voiceOver){
+    videonaPlayer.setVoiceOver(voiceOver);
+  }
+
+  @Override
+  public void setVideoMute() {
+    isVideoMute = true;
+    videonaPlayer.setVideoVolume(0f);
+  }
+
+  @Override
+  public void setVideoVolume(float volume) {
+    videonaPlayer.setVideoVolume(volume);
+  }
+
+  @Override
+  public void setVoiceOverVolume(float volume) {
+    videonaPlayer.setVoiceOverVolume(volume);
+  }
+
+  @Override
+  public void setMusicVolume(float volume) {
+    videonaPlayer.setMusicVolume(volume);
+  }
+
+  @Override
+  public void setVideoFadeTransitionAmongVideos() {
+    videonaPlayer.setVideoTransitionFade();
+  }
+
+  @Override
+  public void setAudioFadeTransitionAmongVideos() {
+    videonaPlayer.setAudioTransitionFade();
+  }
+
+  @Override
+  public void seekToClip(int clipPosition) {
+    videonaPlayer.seekToClip(clipPosition);
+  }
+
+  @Override
+  public void pausePreview() {
+    videonaPlayer.pausePreview();
+  }
+
+  @Override
+  public void updatePreviewTimeLists() {
+    videonaPlayer.updatePreviewTimeLists();
+  }
+
+  @Override
+  public void newClipPlayed(int currentClipIndex) {
+    if (isVideoMute) {
+      videonaPlayer.setVideoVolume(VOLUME_MUTE);
+    }
+  }
+
   private void updateCurrentProjectThumb(String path) {
     File thumb = new File(path);
     if (thumb.exists()) {
@@ -498,4 +650,15 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
   }
 
+  public VideonaPlayerExo getVideonaPlayer() {
+    return videonaPlayer;
+  }
+
+  public boolean isSuccessObtainVideos() {
+    return isSuccessObtainVideos;
+  }
+
+  public List<Video> getVideoList() {
+    return videoList;
+  }
 }

@@ -90,7 +90,7 @@ public class RemoveAudioUseCaseTest {
     injectedUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnRemoveMediaFinishedListener);
 
-    assertThat("UseCase has reset music track position to 0",
+    assertThat("UseCase has reStart music track position to 0",
         musicTrack.getPosition(), is(0));
   }
 

@@ -6,16 +6,24 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.TypedValue;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
@@ -24,20 +32,32 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
+
+import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC;
+import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
 
 /**
  * Created by ruth on 23/11/16.
  */
 
-public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegateView {
+public class EditorPresenter extends VimojoPresenter implements
+    PlayStoreBillingDelegate.BillingDelegateView {
+
   private final PlayStoreBillingDelegate playStoreBillingDelegate;
   private static final String LOG_TAG = EditorPresenter.class.getSimpleName();
+  public static final float VOLUME_MUTE = 0f;
 
   private EditorActivityView editorActivityView;
+  private VideonaPlayerView videonaPlayerView;
   private SharedPreferences sharedPreferences;
   protected UserEventTracker userEventTracker;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
@@ -45,6 +65,9 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   private SharedPreferences.Editor preferencesEditor;
   private Context context;
   private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+  private RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
+  private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
+  private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
   private ProjectRepository projectRepository;
   private final NewClipImporter newClipImporter;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
@@ -55,19 +78,27 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
 
   @Inject
   public EditorPresenter(
-          EditorActivityView editorActivityView, SharedPreferences sharedPreferences,
+          EditorActivityView editorActivityView, VideonaPlayerView videonaPlayerView,
+          SharedPreferences sharedPreferences,
           Context context, UserEventTracker userEventTracker,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
+          GetAudioFromProjectUseCase getAudioFromProjectUseCase,
+          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           ProjectRepository projectRepository,
           NewClipImporter newClipImporter, BillingManager billingManager) {
     this.editorActivityView = editorActivityView;
+    this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;
     this.context = context;
     this.userEventTracker = userEventTracker;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+    this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
+    this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
+    this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.projectRepository = projectRepository;
     this.currentProject = getCurrentProject();
@@ -79,6 +110,9 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   public void init() {
     newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
     obtainVideos();
+    retrieveMusic();
+    retrieveTransitions();
+    checkMuteOnTracks();
     checkFeaturesAvailable();
   }
 
@@ -140,17 +174,40 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   private void obtainVideos() {
-    getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
+    editorActivityView.showProgressDialog();
+    ListenableFuture<Void> obtainVideosJob = executeUseCaseCall(new Callable<Void>() {
       @Override
-      public void onVideosRetrieved(List<Video> videoList) {
-        checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videoList);
-      }
+      public Void call() throws Exception {
+        getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
+          @Override
+          public void onVideosRetrieved(List<Video> videosRetrieved) {
+            checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videosRetrieved);
+            List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
+            List<Video> videoCopy = new ArrayList<>(checkedVideoList);
+            videonaPlayerView.bindVideoList(videoCopy);
+            editorActivityView.successObtainVideos();
+            editorActivityView.hideProgressDialog();
+          }
 
-      @Override
-      public void onNoVideosRetrieved() {
-
+          @Override
+          public void onNoVideosRetrieved() {
+            editorActivityView.errorObtainVideos();
+            editorActivityView.hideProgressDialog();
+          }
+        });
+        return null;
       }
     });
+    try {
+      obtainVideosJob.get();
+    } catch (InterruptedException | ExecutionException ex) {
+      Log.e(LOG_TAG, "Caught exception while obtaining videos");
+      Crashlytics.log("Caught exception while obtaining videos");
+      Crashlytics.logException(ex);
+      ex.printStackTrace();
+    throw new RuntimeException(ex);
+    }
+
   }
 
   public void checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(List<Video> videoList) {
@@ -161,6 +218,91 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
         relaunchTranscoderTempFileJob(video);
         Log.d(LOG_TAG, "Need to relaunch video " + videoList.indexOf(video)
                 + " - " + video.getMediaPath());
+      }
+    }
+  }
+
+  private List<Video> checkMediaPathVideosExistOnDevice(List<Video> videoList) {
+    List<Video> checkedVideoList = new ArrayList<>();
+    for (int index = 0; index < videoList.size(); index++) {
+      Video video = videoList.get(index);
+      if (!new File(video.getMediaPath()).exists()) {
+        // TODO(jliarte): 26/04/17 notify the user we are deleting items from project!!! FIXME
+        ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
+        mediaToDeleteFromProject.add(video);
+        removeVideoFromProjectUseCase.removeMediaItemsFromProject(
+            mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
+              @Override
+              public void onRemoveMediaItemFromTrackSuccess() {
+
+              }
+
+              @Override
+              public void onRemoveMediaItemFromTrackError() {
+                // TODO: 19/2/18 Define on remove media error
+                editorActivityView.showError(R.string.addMediaItemToTrackError);
+              }
+            });
+        Log.e(LOG_TAG, video.getMediaPath() + " not found!! deleting from project");
+      } else {
+        checkedVideoList.add(video);
+      }
+    }
+    return checkedVideoList;
+  }
+
+  private void retrieveMusic() {
+    if (currentProject.getVMComposition().hasMusic()) {
+      getAudioFromProjectUseCase.getMusicFromProject(new GetMusicFromProjectCallback() {
+        @Override
+        public void onMusicRetrieved(Music music) {
+          Music copyMusic = new Music(music);
+          videonaPlayerView.bindMusic(copyMusic);
+        }
+      });
+    }
+    if (currentProject.getVMComposition().hasVoiceOver()) {
+      getAudioFromProjectUseCase.getVoiceOverFromProject(new GetMusicFromProjectCallback() {
+        @Override
+        public void onMusicRetrieved(Music voiceOver) {
+          Music copyVoiceOver = new Music(voiceOver);
+          videonaPlayerView.bindVoiceOver(copyVoiceOver);
+        }
+      });
+    }
+  }
+
+  private void retrieveTransitions() {
+    if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+      videonaPlayerView.setVideoFadeTransitionAmongVideos();
+    }
+    if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
+        !currentProject.getVMComposition().hasMusic()){
+      videonaPlayerView.setAudioFadeTransitionAmongVideos();
+    }
+  }
+
+  private void checkMuteOnTracks() {
+    if (currentProject.getVMComposition().hasMusic()) {
+      Track musicTrack = currentProject.getAudioTracks()
+          .get(INDEX_AUDIO_TRACK_MUSIC);
+      if (musicTrack.isMuted()) {
+        videonaPlayerView.setMusicVolume(VOLUME_MUTE);
+      }
+    }
+
+    if (currentProject.getVMComposition().hasVoiceOver()) {
+      Track voiceOverTrack = currentProject.getAudioTracks()
+          .get(INDEX_AUDIO_TRACK_VOICE_OVER);
+      if (voiceOverTrack.isMuted()) {
+        videonaPlayerView.setVoiceOverVolume(VOLUME_MUTE);
+      }
+    }
+
+    if (currentProject.getVMComposition().hasVideos()) {
+      Track mediaTrack = currentProject.getMediaTrack();
+      if (mediaTrack.isMuted()) {
+        videonaPlayerView.setVideoMute();
       }
     }
   }

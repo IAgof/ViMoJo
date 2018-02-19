@@ -9,9 +9,6 @@ import java.util.List;
  * Created by jca on 11/12/15.
  */
 public interface ShareVideoView {
-  void playPreview();
-
-  void pausePreview();
 
   void showError(String message);
 

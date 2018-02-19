@@ -54,8 +54,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @Inject SoundPresenter presenter;
 
-  @Nullable @BindView(R.id.videona_player)
-  VideonaPlayerExo videonaPlayer;
   @Nullable @BindView( R.id.bottomBar)
   BottomBar bottomBar;
   @Nullable @BindView(R.id.relative_layout_activity_sound)
@@ -84,11 +82,9 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       inflateLinearLayout(R.id.container_layout,R.layout.activity_sound);
-    inflateLinearLayout(R.id.container_navigator,R.layout.sound_activity_layout_button_navigator);
+      inflateLinearLayout(R.id.container_navigator,R.layout.sound_activity_layout_button_navigator);
       ButterKnife.bind(this);
       getActivityPresentersComponent().inject(this);
-      restoreState(savedInstanceState);
-      videonaPlayer.setListener(this);
       bottomBar.selectTabWithId(R.id.tab_sound);
       setupBottomBar(bottomBar);
       setupFab();
@@ -139,22 +135,9 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   }
 
-  private void restoreState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            currentProjectPosition = savedInstanceState.getInt(SOUND_ACTIVITY_PROJECT_POSITION, 0);
-        }
-    }
-
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
-      outState.putInt(SOUND_ACTIVITY_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
-      super.onSaveInstanceState(outState);
-  }
-
   @Override
   protected void onPause() {
       super.onPause();
-      videonaPlayer.onPause();
       if(voiceOverActivated){
         removeFabVoiceOver();
       }
@@ -167,40 +150,12 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   @Override
   protected void onResume() {
       super.onResume();
-      videonaPlayer.onShown(this);
       presenter.init();
   }
 
   @Override
   protected void onStart() {
     super.onStart();
-  }
-
-  @Override
-  public void bindVideoList(List<Video> movieList) {
-    videonaPlayer.bindVideoList(movieList);
-    videonaPlayer.seekTo(currentProjectPosition);
-    presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
-        .INDEX_MEDIA_TRACK);
-  }
-
-  @Override
-  public void updateVideoList(List<Video> videoList) {
-    videonaPlayer.initPreviewLists(videoList);
-  }
-
-  @Override
-  public void bindMusicList(List<Music> musicList) {
-    videonaPlayer.setMusic(musicList.get(0));
-    presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
-        .INDEX_AUDIO_TRACK_MUSIC);
-  }
-
-  @Override
-  public void bindVoiceOverList(List<Music> voiceOverList) {
-    videonaPlayer.setVoiceOver(voiceOverList.get(0));
-    presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
-        .INDEX_AUDIO_TRACK_VOICE_OVER);
   }
 
   @Override
@@ -218,33 +173,18 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
   @Override
-  public void setVideoFadeTransitionAmongVideos() {
-    videonaPlayer.setVideoTransitionFade();
-  }
-
-  @Override
-  public void setAudioFadeTransitionAmongVideos() {
-    videonaPlayer.setAudioTransitionFade();
-  }
-
-  @Override
-  public void resetPreview() {
-      videonaPlayer.resetPreview();
-  }
-
-  @Override
   public void setVideoVolume(float volume) {
-    videonaPlayer.setVideoVolume(volume);
+    super.setVideoVolume(volume);
   }
 
   @Override
   public void setVoiceOverVolume(float volume) {
-    videonaPlayer.setVoiceOverVolume(volume);
+    super.setVoiceOverVolume(volume);
   }
 
   @Override
   public void setMusicVolume(float volume) {
-    videonaPlayer.setMusicVolume(volume);
+    super.setMusicVolume(volume);
   }
 
   @Override
@@ -340,7 +280,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @Override
   public void onClickMediaClip(int position, int trackId) {
-    videonaPlayer.seekToClip(position);
+    super.seekToClip(position);
     presenter.updateClipPlayed(trackId);
     // TODO:(alvaro.martinez) 31/05/17 If Vimojo support more than one music or voice over, update and calculate correct position
     switch (trackId){

@@ -37,4 +37,12 @@ public interface EditorActivityView {
   void activateWatermark();
 
   void setHeaderViewCurrentProject(String pathThumbProject, String projectName, String projectDate);
+
+  void showProgressDialog();
+  
+  void hideProgressDialog();
+
+  void successObtainVideos();
+
+  void errorObtainVideos();
 }

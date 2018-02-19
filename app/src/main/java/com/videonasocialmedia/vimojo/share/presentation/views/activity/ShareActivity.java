@@ -24,14 +24,12 @@ import android.widget.Toast;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
-import com.videonasocialmedia.vimojo.share.model.entities.VimojoNetwork;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GoToRecordOrGalleryActivity;
@@ -39,7 +37,6 @@ import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVide
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.share.presentation.views.adapter.OptionsToShareAdapter;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -61,15 +58,13 @@ import butterknife.Optional;
  * Created by root on 31/05/16.
  */
 public class ShareActivity extends EditorActivity implements ShareVideoView,
-        VideonaPlayer.VideonaPlayerListener, OnOptionsToShareListClickListener {
+    OnOptionsToShareListClickListener {
   public static final int NOTIFICATION_UPLOAD_COMPLETE_ID = 001;
   @Inject ShareVideoPresenter presenter;
     @Inject SharedPreferences sharedPreferences;
 
     @Nullable @BindView(R.id.linear_layout_activity_share)
     RelativeLayout coordinatorLayout;
-    @Nullable @BindView(R.id.videona_player)
-    VideonaPlayerExo videonaPlayer;
     @Nullable @BindView(R.id.options_to_share_list)
     RecyclerView optionsToShareList;
     @Nullable @BindView(R.id.text_dialog)
@@ -88,13 +83,12 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   private boolean isWifiConnected = false;
   private boolean isMobileNetworConnected = false;
 
-    @Override
+  @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         inflateLinearLayout(R.id.container_layout, R.layout.activity_share);
         ButterKnife.bind(this);
         getActivityPresentersComponent().inject(this);
-        videonaPlayer.setListener(this);
         initOptionsShareList();
         restoreState(savedInstanceState);
         checkIntentExtras();
@@ -125,13 +119,18 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     presenter.onResume();
     if (videoPath != null) {
       loadExportedVideoPreview(videoPath);
+    } else {
+      loadVideoFromVMComposition();
     }
+  }
+
+  private void loadVideoFromVMComposition() {
+
   }
 
   @Override
   protected void onPause() {
     super.onPause();
-    videonaPlayer.onPause();
     exportProgressDialog.dismiss();
   }
 
@@ -181,21 +180,10 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     fabMenu.setVisibility(View.GONE);
   }
 
-    @Override
-    public void playPreview() {
-        videonaPlayer.playPreview();
-    }
-
-    @Override
-    public void pausePreview() {
-        videonaPlayer.pausePreview();
-    }
-
-    public void showPreview() {
+    public void initVideoPlayerFromFilePath() {
         List<Video> shareVideoList = Collections.singletonList(new Video(videoPath,
                 Video.DEFAULT_VOLUME));
-        videonaPlayer.initPreviewLists(shareVideoList);
-        videonaPlayer.initPreview(currentPosition);
+        super.bindVideoList(shareVideoList);
     }
 
     @Override
@@ -205,14 +193,12 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt("currentPosition", videonaPlayer.getCurrentPosition());
         outState.putString("videoPath", videoPath);
         super.onSaveInstanceState(outState);
     }
 
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-          currentPosition = savedInstanceState.getInt("currentPosition", 0);
           videoPath = savedInstanceState.getString("videoPath");
         }
     }
@@ -312,7 +298,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
   }
 
-
   @Override
     public void onFtpClicked(FtpNetwork ftp) {
         createDialogToInsertNameProject(ftp);
@@ -399,10 +384,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     }
 
     @Override
-    public void newClipPlayed(int currentClipIndex) {
-    }
-
-    @Override
     public void startVideoExport() {
       if (videoPath == null) {
         exportProgressDialog.show();
@@ -426,8 +407,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
           if (destPath != null) {
             videoPath = destPath;
             presenter.addVideoExportedToProject(videoPath);
-            videonaPlayer.onShown(activity);
-            showPreview();
+            initVideoPlayerFromFilePath();
           }
           exportProgressDialog.dismiss();
         }

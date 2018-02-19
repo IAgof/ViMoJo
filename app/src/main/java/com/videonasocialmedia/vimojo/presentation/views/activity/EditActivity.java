@@ -34,14 +34,12 @@ import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.VideoTimeLineAdapter;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.VideoTimeLineTouchHelperCallback;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
@@ -91,8 +89,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     ImageButton editTextButton;
     @Nullable @BindView(R.id.recyclerview_editor_timeline)
     RecyclerView videoListRecyclerView;
-    @Nullable @BindView(R.id.videona_player)
-    VideonaPlayerExo videonaPlayer;
     @Nullable @BindView(R.id.fab_edit_room)
     FloatingActionsMenu fabMenu;
     @Nullable @BindView(R.id.bottomBar)
@@ -106,7 +102,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     private int currentVideoIndex = 0;
     private int currentProjectTimePosition = 0;
     private VideoTimeLineAdapter timeLineAdapter;
-    private AlertDialog progressDialog;
     private int selectedVideoRemovePosition;
     private FloatingActionButton newFab;
     private boolean isEnableFabText =false;
@@ -124,8 +119,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         ButterKnife.bind(this);
         getActivityPresentersComponent().inject(this);
 
-        videonaPlayer.setListener(this);
-        createProgressDialog();
         if (savedInstanceState != null) {
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
             currentProjectTimePosition = savedInstanceState.getInt(CURRENT_TIME_POSITION, 0);
@@ -212,15 +205,13 @@ public class EditActivity extends EditorActivity implements EditActivityView,
                 this.currentVideoIndex = getIntent().getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
             }
         }
-        videonaPlayer.onShown(this);
-        editPresenter.init();
         bottomBar.selectTabWithId(R.id.tab_editactivity);
+      editPresenter.init(isSuccessObtainVideos(), getVideoList());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        videonaPlayer.onPause();
         hideProgressDialog();
     }
 
@@ -251,14 +242,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
               new VideoTimeLineTouchHelperCallback(timeLineAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(videoListRecyclerView);
-    }
-
-    private void createProgressDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_export_progress, null);
-        progressDialog = builder.setCancelable(false)
-                .setView(dialogView)
-                .create();
     }
 
     public void navigateTo(Class cls) {
@@ -336,13 +319,13 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     public void setSelectedClip(int position) {
         currentVideoIndex = position;
-        videonaPlayer.seekToClip(position);
+        super.seekToClip(position);
         timeLineAdapter.updateSelection(position);
     }
 
     @Override
     public void onClipLongClicked(int adapterPosition) {
-        videonaPlayer.pausePreview();
+        super.pausePreview();
     }
 
     @Override
@@ -383,8 +366,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void onClipReordered(int newPosition) {
-        videonaPlayer.updatePreviewTimeLists();
-        videonaPlayer.seekToClip(currentVideoIndex);
+        super.updatePreviewTimeLists();
+        super.seekToClip(currentVideoIndex);
     }
 
     @Override
@@ -398,32 +381,17 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
-        outState.putInt(CURRENT_TIME_POSITION, videonaPlayer.getCurrentPosition());
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void showProgressDialog() {
-      runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-          if (!isFinishing()) {
-            progressDialog.show();
-          }
-        }
-      });
+      super.showProgressDialog();
     }
 
     @Override
     public void hideProgressDialog() {
-      runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-          if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-          }
-        }
-      });
+      super.hideProgressDialog();
     }
 
     @Override
@@ -439,7 +407,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     }
 
     @Override
-    public void bindVideoList(final List<Video> retrievedVideoList) {
+    public void updateVideoList(final List<Video> retrievedVideoList) {
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
@@ -447,31 +415,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
           timeLineAdapter.updateVideoList(retrievedVideoList);
           timeLineAdapter.updateSelection(currentVideoIndex); // TODO: check this flow and previous updateSelection(0); in updateVideoList
           videoListRecyclerView.scrollToPosition(currentVideoIndex);
-//        timeLineAdapter.notifyDataSetChanged();
-          videonaPlayer.bindVideoList(retrievedVideoList);
-          videonaPlayer.seekTo(currentProjectTimePosition);
         }
       });
-    }
-
-    @Override
-    public void setMusic(Music music) {
-        videonaPlayer.setMusic(music);
-    }
-
-    @Override
-    public void setVoiceOver(Music voiceOver) {
-      videonaPlayer.setVoiceOver(voiceOver);
-    }
-
-    @Override
-    public void setVideoFadeTransitionAmongVideos(){
-        videonaPlayer.setVideoTransitionFade();
-    }
-
-    @Override
-    public void setAudioFadeTransitionAmongVideos(){
-        videonaPlayer.setAudioTransitionFade();
     }
 
     @Override
@@ -479,7 +424,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
-          editPresenter.init();
+          reStart();
         }
       });
     }
@@ -518,10 +463,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     bottomBar.getTabWithId(R.id.tab_share).setAlpha(alpha);
   }
 
-  @Override
-    public void resetPreview() {
-        videonaPlayer.resetPreview();
-    }
 
     @Override
     public void showDialogMediasNotFound() {
@@ -543,27 +484,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   }
 
   @Override
-  public void setVideoVolume(float volume) {
-    videonaPlayer.setVideoVolume(volume);
-  }
-
-  @Override
-  public void setVideoMute() {
-    isVideoMute = true;
-    videonaPlayer.setVideoVolume(0f);
-  }
-
-  @Override
-  public void setVoiceOverVolume(float volume) {
-    videonaPlayer.setVoiceOverVolume(volume);
-  }
-
-  @Override
-  public void setMusicVolume(float volume) {
-    videonaPlayer.setMusicVolume(volume);
-  }
-
-  @Override
   public void showWarningTempFile(ArrayList<Video> failedVideos) {
     timeLineAdapter.setFailedVideos(failedVideos);
     for (Video failedVideo : failedVideos) {
@@ -580,12 +500,10 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
   @Override
     public void newClipPlayed(int currentClipIndex) {
+        super.newClipPlayed(currentClipIndex);
         currentVideoIndex = currentClipIndex;
         timeLineAdapter.updateSelection(currentClipIndex);
         videoListRecyclerView.scrollToPosition(currentClipIndex);
-        if (isVideoMute) {
-          videonaPlayer.setVideoVolume(0.f);
-        }
     }
 
     @Override

@@ -19,6 +19,7 @@ import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProject
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -119,7 +120,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         obtainListOptionsToShare(vimojoNetwork, ftpList, socialNetworkList);
         if (shareVideoViewReference != null) {
             shareVideoViewReference.get().showOptionsShareList(optionToShareList);
-            shareVideoViewReference.get().startVideoExport();
+            //shareVideoViewReference.get().startVideoExport();
         }
     }
 

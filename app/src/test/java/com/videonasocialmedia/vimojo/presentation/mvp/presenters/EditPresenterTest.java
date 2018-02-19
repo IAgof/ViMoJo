@@ -32,7 +32,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -114,7 +113,7 @@ public class EditPresenterTest {
             mockedVideoRemover, mockedMediaItemReorderer, getAudioFromProjectUseCase,
             mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionsFromProject);
 
-    presenter.init();
+    presenter.init(super.isSuccessObtainVideos(), getVideoList());
 
     verify(mockedEditorView).setMusic(music);
   }

@@ -190,16 +190,10 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  SoundPresenter provideSoundPresenter(GetMediaListFromProjectUseCase
-                                           getMediaListFromProjectUseCase,
-                                       GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-                                       GetPreferencesTransitionFromProjectUseCase
-                                            getPreferencesTransitionFromProjectUseCase,
-                                       ModifyTrackUseCase modifyTrackUseCase,
+  SoundPresenter provideSoundPresenter(ModifyTrackUseCase modifyTrackUseCase,
                                        VideoListErrorCheckerDelegate
                                            videoListErrorCheckerDelegate) {
-    return new SoundPresenter((SoundActivity) activity, getMediaListFromProjectUseCase,
-        getAudioFromProjectUseCase, getPreferencesTransitionFromProjectUseCase, modifyTrackUseCase,
+    return new SoundPresenter((SoundActivity) activity, modifyTrackUseCase,
         videoListErrorCheckerDelegate);
   }
 
@@ -333,13 +327,17 @@ public class ActivityPresentersModule {
           SharedPreferences sharedPreferences,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
+          GetAudioFromProjectUseCase getAudioFromProjectUseCase,
+          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           ProjectRepository projectRepository,
           NewClipImporter newClipImporter, BillingManager billingManager) {
-    return new EditorPresenter((EditorActivity) activity, sharedPreferences, activity,
-            userEventTracker, createDefaultProjectUseCase, getMediaListFromProjectUseCase,
-            relaunchTranscoderTempBackgroundUseCase, projectRepository, newClipImporter,
-            billingManager);
+    return new EditorPresenter((EditorActivity) activity, (EditorActivity) activity,
+        sharedPreferences, activity, userEventTracker, createDefaultProjectUseCase,
+        getMediaListFromProjectUseCase, removeVideoFromProjectUseCase, getAudioFromProjectUseCase,
+        getPreferencesTransitionFromProjectUseCase, relaunchTranscoderTempBackgroundUseCase,
+        projectRepository, newClipImporter, billingManager);
   }
 
   @Provides @PerActivity
