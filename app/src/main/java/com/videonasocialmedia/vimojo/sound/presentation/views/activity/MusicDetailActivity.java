@@ -1,13 +1,9 @@
 package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.transition.Scene;
@@ -24,14 +20,11 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 
-import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
-import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
@@ -68,7 +61,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @Inject MusicDetailPresenter presenter;
     private Scene acceptCancelScene;
     private Scene deleteSecene;
-    private BroadcastReceiver exportReceiver;
     private String musicPath;
     private Music music;
     private int currentProjectPosition;
@@ -85,7 +77,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         initToolbar();
         restoreState(savedInstanceState);
         videonaPlayer.setListener(this);
-        createExportReceiver();
         seekBarVolume.setOnSeekBarChangeListener(this);
         seekBarVolume.setProgress(currentSoundVolumePosition);
     }
@@ -105,33 +96,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         ab.setDisplayHomeAsUpEnabled(true);
     }
 
-    private void createExportReceiver() {
-        exportReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Bundle bundle = intent.getExtras();
-                if (bundle != null) {
-                    String videoToSharePath = bundle.getString(ExportProjectService.FILEPATH);
-                    int resultCode = bundle.getInt(ExportProjectService.RESULT);
-                    if (resultCode == RESULT_OK) {
-                        goToShare(videoToSharePath);
-                    } else {
-                        Snackbar.make(sceneRoot, R.string.shareError,
-                                Snackbar.LENGTH_LONG).show();
-                    }
-                }
-            }
-        };
-
-    }
-
-    public void goToShare(String videoToSharePath) {
-        Intent intent = new Intent(this, ShareActivity.class);
-        intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoToSharePath);
-        startActivity(intent);
-    }
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(MUSIC_DETAIL_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
@@ -143,7 +107,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     protected void onPause() {
         super.onPause();
         videonaPlayer.onPause();
-        unregisterReceiver(exportReceiver);
     }
 
     @Override
@@ -156,7 +119,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         } catch (Exception e) {
             //TODO show snackbar with error message
         }
-        registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
         presenter.init(musicPath);
     }
 

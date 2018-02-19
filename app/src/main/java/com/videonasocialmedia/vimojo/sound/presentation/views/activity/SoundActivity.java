@@ -1,15 +1,10 @@
 package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -28,12 +23,10 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrackListener;
-import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.FabUtils;
 
 import java.util.List;
@@ -81,7 +74,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @BindView(R.id.fab_edit_room)
   FloatingActionsMenu fabMenu;
-  private BroadcastReceiver exportReceiver;
   private int currentProjectPosition = 0;
 
   private boolean voiceOverActivated;
@@ -95,7 +87,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
     inflateLinearLayout(R.id.container_navigator,R.layout.sound_activity_layout_button_navigator);
       ButterKnife.bind(this);
       getActivityPresentersComponent().inject(this);
-      createExportReceiver();
       restoreState(savedInstanceState);
       videonaPlayer.setListener(this);
       bottomBar.selectTabWithId(R.id.tab_sound);
@@ -154,33 +145,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
         }
     }
 
-    private void createExportReceiver() {
-        exportReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Bundle bundle = intent.getExtras();
-                if (bundle != null) {
-                    String videoToSharePath = bundle.getString(ExportProjectService.FILEPATH);
-                    int resultCode = bundle.getInt(ExportProjectService.RESULT);
-                    if (resultCode == RESULT_OK) {
-                        goToShare(videoToSharePath);
-                    } else {
-                      Snackbar.make(relativeLayoutActivitySound, R.string.shareError, Snackbar.LENGTH_LONG).show();
-                      bottomBar.selectTabWithId(R.id.tab_sound);
-                    }
-                }
-            }
-        };
-
-    }
-
-  public void goToShare(String videoToSharePath) {
-      Intent intent = new Intent(this, ShareActivity.class);
-      intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoToSharePath);
-      startActivity(intent);
-  }
-
   @Override
   protected void onSaveInstanceState(Bundle outState) {
       outState.putInt(SOUND_ACTIVITY_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
@@ -191,7 +155,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   protected void onPause() {
       super.onPause();
       videonaPlayer.onPause();
-      unregisterReceiver(exportReceiver);
       if(voiceOverActivated){
         removeFabVoiceOver();
       }
@@ -206,7 +169,6 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       super.onResume();
       videonaPlayer.onShown(this);
       presenter.init();
-      registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
   }
 
   @Override

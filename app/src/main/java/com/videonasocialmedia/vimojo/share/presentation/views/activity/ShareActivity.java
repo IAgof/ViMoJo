@@ -87,7 +87,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   private boolean acceptUploadVideoMobileNetwork;
   private boolean isWifiConnected = false;
   private boolean isMobileNetworConnected = false;
-//  private BroadcastReceiver exportReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +94,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         inflateLinearLayout(R.id.container_layout, R.layout.activity_share);
         ButterKnife.bind(this);
         getActivityPresentersComponent().inject(this);
-//        createExportReceiver();
         videonaPlayer.setListener(this);
         initOptionsShareList();
         restoreState(savedInstanceState);
@@ -134,7 +132,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   protected void onPause() {
     super.onPause();
     videonaPlayer.onPause();
-//    unregisterReceiver(exportReceiver);
     exportProgressDialog.dismiss();
   }
 
@@ -143,25 +140,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     super.onDestroy();
   }
 
-  // TODO(jliarte): 29/04/17 maybe we'll recover the receiver to allow user go to other app
-//    private void createExportReceiver() {
-//      exportReceiver = new BroadcastReceiver() {
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//          Bundle bundle = intent.getExtras();
-//          if (bundle != null) {
-//            String videoToSharePath = bundle.getString(ExportProjectService.FILEPATH);
-//            int resultCode = bundle.getInt(ExportProjectService.RESULT);
-//            if (resultCode == RESULT_OK) {
-//              loadExportedVideoPreview(videoToSharePath);
-//            } else {
-//              showVideoExportError();
-//            }
-//          }
-//        }
-//      };
-//    }
 
   private void initBarProgressDialog() {
     exportProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);

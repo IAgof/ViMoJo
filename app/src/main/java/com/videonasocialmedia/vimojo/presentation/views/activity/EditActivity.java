@@ -11,11 +11,8 @@ package com.videonasocialmedia.vimojo.presentation.views.activity;
  */
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -47,7 +44,6 @@ import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.VideoTi
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.VideoTimeLineTouchHelperCallback;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
-import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
@@ -117,26 +113,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     private String warningTranscodingFilesMessage;
 
-  private BroadcastReceiver receiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
-            if (bundle != null) {
-                String videoToSharePath = bundle.getString(ExportProjectService.FILEPATH);
-                int resultCode = bundle.getInt(ExportProjectService.RESULT);
-                if (resultCode == RESULT_OK) {
-                    // hideProgressDialog();
-                    goToShare(videoToSharePath);
-                } else {
-                    //showProgressDialog();
-                    // hideProgressDialog();
-                    showError(R.string.addMediaItemToTrackError);
-                  bottomBar.selectTabWithId(R.id.tab_editactivity);
-                }
-            }
-        }
-    };
   private boolean isVideoMute;
 
 
@@ -230,7 +206,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(receiver, new IntentFilter(ExportProjectService.NOTIFICATION));
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             if (bundle.containsKey(Constants.CURRENT_VIDEO_INDEX)) {
@@ -246,7 +221,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     protected void onPause() {
         super.onPause();
         videonaPlayer.onPause();
-        unregisterReceiver(receiver);
         hideProgressDialog();
     }
 

@@ -328,12 +328,6 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"/>
 
-
-        <service
-            android:name=".presentation.views.services.ExportProjectService"
-            android:exported="false"
-            />
-
         <service
             android:name=".ftp.presentation.services.FtpUploaderService"
             android:exported="false"
