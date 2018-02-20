@@ -112,7 +112,7 @@ public class EditorPresenter extends VimojoPresenter implements
     obtainVideos();
     retrieveMusic();
     retrieveTransitions();
-    checkMuteOnTracks();
+    retrieveVolumeOnTracks();
     checkFeaturesAvailable();
   }
 
@@ -282,12 +282,14 @@ public class EditorPresenter extends VimojoPresenter implements
     }
   }
 
-  private void checkMuteOnTracks() {
+  protected void retrieveVolumeOnTracks() {
     if (currentProject.getVMComposition().hasMusic()) {
       Track musicTrack = currentProject.getAudioTracks()
           .get(INDEX_AUDIO_TRACK_MUSIC);
       if (musicTrack.isMuted()) {
         videonaPlayerView.setMusicVolume(VOLUME_MUTE);
+      } else {
+        videonaPlayerView.setMusicVolume(musicTrack.getVolume());
       }
     }
 
@@ -296,6 +298,8 @@ public class EditorPresenter extends VimojoPresenter implements
           .get(INDEX_AUDIO_TRACK_VOICE_OVER);
       if (voiceOverTrack.isMuted()) {
         videonaPlayerView.setVoiceOverVolume(VOLUME_MUTE);
+      } else {
+        videonaPlayerView.setVoiceOverVolume(voiceOverTrack.getVolume());
       }
     }
 
@@ -303,6 +307,8 @@ public class EditorPresenter extends VimojoPresenter implements
       Track mediaTrack = currentProject.getMediaTrack();
       if (mediaTrack.isMuted()) {
         videonaPlayerView.setVideoMute();
+      } else {
+        videonaPlayerView.setVideoVolume(mediaTrack.getVolume());
       }
     }
   }

@@ -178,15 +178,9 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   EditPresenter provideEditPresenter(UserEventTracker userEventTracker,
                                      RemoveVideoFromProjectUseCase removeVideosFromProjectUseCase,
-                                     ReorderMediaItemUseCase reorderMediaItemUseCase,
-                                     GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                                     GetPreferencesTransitionFromProjectUseCase
-                                     getPreferencesTransitionFromProjectUseCase) {
+                                     ReorderMediaItemUseCase reorderMediaItemUseCase) {
     return new EditPresenter((EditActivity) activity, (EditActivity) activity, (EditActivity) activity,
-            userEventTracker, removeVideosFromProjectUseCase, reorderMediaItemUseCase,
-        getAudioFromProjectUseCase, getMediaListFromProjectUseCase,
-            getPreferencesTransitionFromProjectUseCase);
+            userEventTracker, removeVideosFromProjectUseCase, reorderMediaItemUseCase);
   }
 
   @Provides @PerActivity

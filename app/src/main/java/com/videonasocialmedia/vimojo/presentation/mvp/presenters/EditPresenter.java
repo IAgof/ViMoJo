@@ -55,9 +55,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
      */
     private RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
     private ReorderMediaItemUseCase reorderMediaItemUseCase;
-    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
-    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     /**
      * EditActivity View
      */
@@ -72,22 +69,13 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                          VideoTranscodingErrorNotifier videoTranscodingErrorNotifier,
                          UserEventTracker userEventTracker,
                          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
-                         ReorderMediaItemUseCase reorderMediaItemUseCase,
-                         GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-                         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                         GetPreferencesTransitionFromProjectUseCase
-                                 getPreferencesTransitionFromProjectUseCase) {
+                         ReorderMediaItemUseCase reorderMediaItemUseCase) {
         this.editActivityView = editActivityView;
         this.context =context;
         this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;
         this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
-        this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
-
-        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
-        this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
         this.userEventTracker = userEventTracker;
-
         this.currentProject = loadCurrentProject();
         currentProject.addListener(this);
     }
