@@ -211,6 +211,28 @@ android {
             ext.fabricApiSecret = "40b9ea4d7a095ba1c106dbdebd1cf69c9761460d54f2c8418b206c167f677ea4"
             manifestPlaceholders = [vimojoAppName: "Vimojo Market4News", fabricApiKey: "7bf627d1b2578e3f8e4136d9dba10530e0e7d578"]
         }
+
+        nbc {
+            applicationId "com.videonasocialmedia.vimojo.nbc"
+            versionCode 0 // 20180220
+            versionName "0.11.0.fComcastNbc" // 20180220
+            resValue "string", "app_out_of_date", "2018-06-30" // 20180109
+            resValue "string", "app_name", "Vimojo NBC"
+            resValue "string", "api_base_url", "https://"
+            buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
+            buildConfigField "boolean", "FEATURE_FTP", "true"
+            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
+            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
+            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
+            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
+            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
+            buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "true"
+            buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
+            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "true"
+            ext.fabricApiKey = "60975c88785d14ed56393acb658081f33b93678f"
+            ext.fabricApiSecret = "393c86bf03f37c4cf603df78c122f715fbd4aa4d3da89e0b3dc95333728e6308"
+            manifestPlaceholders = [vimojoAppName: "Vimojo NBC", fabricApiKey: "60975c88785d14ed56393acb658081f33b93678f"]
+        }
     }
     File fabricProperties = new File("${project.projectDir.absolutePath}/fabric.properties")
     applicationVariants.all { variant ->
