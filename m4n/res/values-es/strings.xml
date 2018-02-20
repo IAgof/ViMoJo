@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="activity_music_title_going_higher">Música rock épica con guitarras eléctricas, batería, bajo y cuerdas</string>
+    <string name="activity_music_title_ukulele">Música alegre y ligera de ukulele, con chasquido de dedos, cuerdas pizzicato y tambores</string>
+    <string name="activity_music_title_jazzy_frenchy">Música de jazz con guitarra acústica, contrabajo, acordeón y xilófono</string>
+    <string name="activity_music_title_acoustic_breeze">Música acústica con un ambiente suave y apacible de guitarra y violoncello</string>
+
+    <string name="vimojo_kit_web">http://vimojo.co/kitmojo/?utm_source=m4n_android&amp;utm_medium=app_link</string>
+</resources>
