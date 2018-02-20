@@ -205,7 +205,7 @@ public class EditorPresenter extends VimojoPresenter implements
       Crashlytics.log("Caught exception while obtaining videos");
       Crashlytics.logException(ex);
       ex.printStackTrace();
-    throw new RuntimeException(ex);
+      throw new RuntimeException(ex);
     }
 
   }
@@ -343,6 +343,7 @@ public class EditorPresenter extends VimojoPresenter implements
     if (isDarkThemeActivated && currentTheme.equals(THEME_LIGHT)
             || !isDarkThemeActivated && currentTheme.equals(THEME_DARK)) {
       if (isShareActivity()) {
+        // TODO: 20/2/18 Update restartShareActivity, getPathLastVideoExported bad approximation
         editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
       } else {
         editorActivityView.restartActivity();

@@ -202,9 +202,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       setUpAndCheckHeaderViewCurrentProject();
     }
     videonaPlayer.onShown(this);
-    editorPresenter.init();
     setupSwitchThemeAppIntoDrawer();
     editorPresenter.updateTheme();
+    editorPresenter.init();
   }
 
   @Override
