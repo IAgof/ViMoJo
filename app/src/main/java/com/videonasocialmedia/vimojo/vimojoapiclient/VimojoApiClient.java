@@ -4,18 +4,11 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
  * Created by jliarte on 8/02/18.
  */
 
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 import com.google.gson.Gson;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.VimojoApiError;
 import com.videonasocialmedia.vimojo.vimojoapiclient.rest.ServiceGenerator;
-
 import java.io.IOException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-
 import retrofit2.Response;
 
 /**
@@ -24,12 +17,8 @@ import retrofit2.Response;
 class VimojoApiClient {
   private static final int INVALID_AUTH_CODE = 401;
 
-  // TODO(jliarte): 12/01/18 tune this parameter
-  private static final int N_THREADS = 5;
-  private final ListeningExecutorService executorPool;
-
   public VimojoApiClient() {
-    executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(N_THREADS));
+
   }
 
   <T> T getService(Class<T> serviceClass) {
@@ -64,9 +53,5 @@ class VimojoApiClient {
         throw new VimojoApiException(httpCode, apiErrorCode);
       }
     }
-  }
-
-  protected final <T> ListenableFuture<T> executeUseCaseCall(Callable<T> callable) {
-    return executorPool.submit(callable);
   }
 }
