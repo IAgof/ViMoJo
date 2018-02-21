@@ -69,8 +69,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 95 // 20180215
-            versionName "0.11.1" // 20180215
+            versionCode 96 // 20180221
+            versionName "0.12.0" // 2018021
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "api_base_url", "https://"
@@ -83,9 +83,9 @@ android {
             buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
             buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "true"
-            buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "true"
+            buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
-            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "true"
+            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "false"
             ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
             ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
             manifestPlaceholders = [vimojoAppName: "Vimojo", fabricApiKey: "1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
@@ -158,8 +158,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 46 // 20180215
-            versionName "0.11.1.fThomsonFoundation" // 20180215
+            versionCode 47 // 20180221
+            versionName "0.12.0.fThomsonFoundation" // 20180221
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "api_base_url", "https://"
@@ -204,8 +204,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 13 // 20180215
-            versionName "0.11.1.fMarketForNews" // 20180215
+            versionCode 14 // 20180221
+            versionName "0.12.0.fMarketForNews" // 20180221
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "api_base_url", "https://"
@@ -259,7 +259,7 @@ android {
             minifyEnabled true
             manifestPlaceholders = [appNameSuffix:""]
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "API_BASE_URL", "\"http://54.210.119.45:3000/\""
+            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co\""
             buildConfigField "String", "VIDAY_TOKEN", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ2aW1vam8iLCJzdWIiOiI1MDY2NTQ5NTgwNzkxODA4IiwibmFtZSI6InZpbW9qbyIsInJvbGUiOiJndWVzdCIsImlhdCI6MTUxMTc5MjUxNiwiZXhwIjoxNTQzMzUwMTE2fQ.yB6-VOksgY3TyXIkJVIaT5Iwq6PrYyf64q13s2KFgIc\""
         }
         debug {
@@ -272,7 +272,7 @@ android {
             ext.fabricApiKey = FABRIC_VIDEONA_ORG_APIKEY
             ext.fabricApiSecret = FABRIC_VIDEONA_ORG_APISECRET
             manifestPlaceholders = [appNameSuffix:".Debug", fabricApiKey: FABRIC_VIDEONA_ORG_APIKEY]
-            buildConfigField "String", "API_BASE_URL", "\"http://54.210.119.45:3000/\""
+            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/\""
             buildConfigField "String", "VIDAY_TOKEN", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ2aW1vam8iLCJzdWIiOiI1NjQ5MzkxNjc1MjQ0NTQ0IiwibmFtZSI6ImRldmVsb3AiLCJyb2xlIjoiZ3Vlc3QiLCJpYXQiOjE1MTE3OTMzNzAsImV4cCI6MTU0MzM1MDk3MH0.vEypnGQRdgXQI9eQwHBwNOj0yIL5ArXNapoCqHmu3Zc\""
         }
     }
