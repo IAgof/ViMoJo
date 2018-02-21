@@ -211,8 +211,6 @@ android {
             resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-            resValue "string", "content_authority", applicationId + '.provider'
-            resValue "string", "account_type", applicationId + ".auth"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "false"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"

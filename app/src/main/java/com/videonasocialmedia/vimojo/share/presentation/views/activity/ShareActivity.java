@@ -177,7 +177,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
     checkingUserProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
     checkingUserProgressDialog.setTitle(R.string.progress_dialog_title_checking_info_user);
-    checkingUserProgressDialog.setMessage(getString(R.string.progress_dialog_message_checking_info_user));
+    checkingUserProgressDialog.setMessage(getString(R.string.progress_dialog_message_checking_user_auth));
     checkingUserProgressDialog.setProgressStyle(exportProgressDialog.STYLE_HORIZONTAL);
     checkingUserProgressDialog.setIndeterminate(true);
     checkingUserProgressDialog.setProgressNumberFormat(null);
@@ -383,12 +383,12 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   @Override
-  public void showProgressDialogCheckingInfoUse() {
+  public void showProgressDialogCheckingUserAuth() {
     checkingUserProgressDialog.show();
   }
 
   @Override
-  public void hideProgressDialogCheckingInfoUse() {
+  public void hideProgressDialogCheckingUserAuth() {
     checkingUserProgressDialog.dismiss();
   }
 

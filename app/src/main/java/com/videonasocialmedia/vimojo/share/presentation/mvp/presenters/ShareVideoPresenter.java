@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.FutureCallback;
@@ -324,7 +323,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     protected boolean isUserLogged() {
-        shareVideoViewReference.get().showProgressDialogCheckingInfoUse();
+        shareVideoViewReference.get().showProgressDialogCheckingUserAuth();
         ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
             @Override
             public String call() throws Exception {
@@ -352,7 +351,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
             Crashlytics.log("Error getting info from user executionException");
             Crashlytics.logException(executionException);
         }
-        shareVideoViewReference.get().hideProgressDialogCheckingInfoUse();
+        shareVideoViewReference.get().hideProgressDialogCheckingUserAuth();
         return loggedValidator.loggedValidate(authToken);
     }
 
