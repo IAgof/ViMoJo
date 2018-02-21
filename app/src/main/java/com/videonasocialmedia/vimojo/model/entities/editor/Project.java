@@ -104,8 +104,7 @@ public class Project implements ElementChangedListener {
   }
 
   public Project(Project project) throws IllegalItemOnTrack {
-    projectInfo = new ProjectInfo(project.getProjectInfo().getTitle(),
-        project.getProjectInfo().getDescription(), project.getProjectInfo().getProductTypeList());
+    projectInfo = new ProjectInfo(project.getProjectInfo());
     vmComposition = new VMComposition(project.getVMComposition());
     profile = new Profile(project.getProfile());
     duration = project.getDuration();
