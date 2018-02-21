@@ -20,7 +20,7 @@ public class UpdateCurrentProjectUseCase {
   }
 
   public void updateLastModificationAndProjectInstance(Project project) {
-    project.setLastModification(DateUtils.getDateRightNow());
+    project.updateDateOfModification(DateUtils.getDateRightNow());
     projectRepository.update(project);
     Project.INSTANCE = project;
   }

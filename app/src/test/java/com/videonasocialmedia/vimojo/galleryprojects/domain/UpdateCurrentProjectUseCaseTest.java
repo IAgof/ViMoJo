@@ -39,7 +39,7 @@ public class UpdateCurrentProjectUseCaseTest {
   @Test
   public void updateCurrentProjectUpdateLastModificationDate(){
     Project currentProject = Project.getInstance(null, null, null, null);
-    currentProject.setLastModification("FakeDate");
+    currentProject.updateDateOfModification("FakeDate");
     String oldLastModification = currentProject.getLastModification();
 
     injectedUseCase.updateLastModificationAndProjectInstance(currentProject);

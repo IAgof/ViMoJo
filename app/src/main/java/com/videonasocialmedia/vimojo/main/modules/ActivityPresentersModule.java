@@ -33,7 +33,6 @@ import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgro
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DuplicateProjectUseCase;
-import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateTitleProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.DetailProjectPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
@@ -177,10 +176,12 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   EditPresenter provideEditPresenter(UserEventTracker userEventTracker,
+                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                      RemoveVideoFromProjectUseCase removeVideosFromProjectUseCase,
                                      ReorderMediaItemUseCase reorderMediaItemUseCase) {
     return new EditPresenter((EditActivity) activity, (EditActivity) activity, (EditActivity) activity,
-            userEventTracker, removeVideosFromProjectUseCase, reorderMediaItemUseCase);
+            userEventTracker, getMediaListFromProjectUseCase, removeVideosFromProjectUseCase,
+            reorderMediaItemUseCase);
   }
 
   @Provides @PerActivity
@@ -339,13 +340,12 @@ public class ActivityPresentersModule {
       ProjectRepository projectRepository,
       SharedPreferences sharedPreferences,
       CreateDefaultProjectUseCase createDefaultProjectUseCase,
-      UpdateCurrentProjectUseCase updateCurrentProjectUseCase,
       DuplicateProjectUseCase duplicateProjectUseCase,
       DeleteProjectUseCase deleteProjectUseCase,
       CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCase) {
     return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, sharedPreferences,
-        projectRepository, createDefaultProjectUseCase, updateCurrentProjectUseCase,
-        duplicateProjectUseCase, deleteProjectUseCase, checkIfProjectHasBeenExportedUseCase);
+        projectRepository, createDefaultProjectUseCase, duplicateProjectUseCase,
+        deleteProjectUseCase, checkIfProjectHasBeenExportedUseCase);
   }
 
   @Provides @PerActivity
@@ -442,11 +442,6 @@ public class ActivityPresentersModule {
   @Provides
   UpdateTitleProjectUseCase provideUpdateTitleProject(ProjectRepository projectRepository) {
     return new UpdateTitleProjectUseCase(projectRepository);
-  }
-
-  @Provides
-  UpdateCurrentProjectUseCase provideUpdateCurrentProject(ProjectRepository projectRepository) {
-    return new UpdateCurrentProjectUseCase(projectRepository);
   }
 
   @Provides

@@ -6,8 +6,6 @@ package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
 public interface EditorActivityView {
 
-  void updateViewResetProject();
-
   void showError(int causeTextResource);
 
   void showMessage(int stringToast);
@@ -42,7 +40,5 @@ public interface EditorActivityView {
   
   void hideProgressDialog();
 
-  void successObtainVideos();
-
-  void errorObtainVideos();
+  void goToRecordOrGalleryScreen();
 }

@@ -10,6 +10,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -51,6 +52,7 @@ public class EditPresenterTest {
   @Mock private Context mockedContext;
   @Mock private MixpanelAPI mockedMixpanelApi;
   @Mock private UserEventTracker mockedUserEventTracker;
+  @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock private RemoveVideoFromProjectUseCase mockedVideoRemover;
   @Mock private ReorderMediaItemUseCase mockedMediaItemReorderer;
   @Mock ListenableFuture<Video> mockedTranscodingTask;
@@ -111,10 +113,17 @@ public class EditPresenterTest {
     assertThat(failedVideo2, is(video2));
   }
 
+  @Test
+  public void ifRemoveVideoFromProjectDeleteLastVideoInProjectCallsNavigateToRecordOrGallery() {
+
+
+  }
+
   @NonNull
   public EditPresenter getEditPresenter() {
     return new EditPresenter(mockedEditorView, mockedContext,
         mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
+        mockedGetMediaListFromProjectUseCase,
         mockedVideoRemover, mockedMediaItemReorderer);
   }
 

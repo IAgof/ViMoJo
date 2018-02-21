@@ -24,7 +24,7 @@ public class AddLastVideoExportedToProjectUseCase {
     Project currentProject = Project.getInstance(null,null,null,null);
     LastVideoExported lastVideoExported = new LastVideoExported(pathVideoExported, date);
     currentProject.setLastVideoExported(lastVideoExported);
-    currentProject.setLastModification(date);
+    currentProject.updateDateOfModification(date);
     projectRepository.updateWithDate(currentProject, date);
   }
 

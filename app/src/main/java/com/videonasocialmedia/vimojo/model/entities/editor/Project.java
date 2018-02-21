@@ -214,7 +214,7 @@ public class Project implements ElementChangedListener {
     return lastModification;
   }
 
-  public void setLastModification(String lastModification) {
+  public void updateDateOfModification(String lastModification) {
     this.lastModification = lastModification;
   }
 

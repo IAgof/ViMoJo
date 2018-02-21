@@ -14,12 +14,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectClickListener;
@@ -143,20 +141,17 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Override
   public void goToEditActivity(Project project) {
-    presenter.updateCurrentProject(project);
-    navigateTo(EditActivity.class);
+    presenter.goToEdit(project);
   }
 
   @Override
   public void goToShareActivity(Project project) {
-    presenter.checkNavigationToShare(project);
-
+    presenter.goToShare(project);
   }
 
   @Override
   public void goToDetailActivity(Project project) {
-    presenter.updateCurrentProject(project);
-    navigateTo(DetailProjectActivity.class);
+    presenter.goToDetailProject(project);
   }
 
 }

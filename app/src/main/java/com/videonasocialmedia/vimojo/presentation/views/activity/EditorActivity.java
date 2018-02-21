@@ -129,7 +129,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   private int currentProjectPosition = 0;
   private boolean isVideoMute;
   private List<Video> videoList = new ArrayList<>();
-  private boolean isSuccessObtainVideos;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -379,8 +378,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void updateViewResetProject() {
+  public void goToRecordOrGalleryScreen() {
     navigateTo(GoToRecordOrGalleryActivity.class);
+    finish();
   }
 
   @Override
@@ -506,16 +506,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
         }
       }
     });
-  }
-
-  @Override
-  public void successObtainVideos() {
-    isSuccessObtainVideos = true;
-  }
-
-  @Override
-  public void errorObtainVideos() {
-    isSuccessObtainVideos = false;
   }
 
   @Override
@@ -650,15 +640,4 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
   }
 
-  public VideonaPlayerExo getVideonaPlayer() {
-    return videonaPlayer;
-  }
-
-  public boolean isSuccessObtainVideos() {
-    return isSuccessObtainVideos;
-  }
-
-  public List<Video> getVideoList() {
-    return videoList;
-  }
 }

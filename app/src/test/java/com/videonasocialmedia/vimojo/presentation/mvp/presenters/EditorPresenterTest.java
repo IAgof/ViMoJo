@@ -51,12 +51,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
-import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -186,6 +183,28 @@ public class EditorPresenterTest {
     editorPresenter.init();
 
     verify(mockedVideonaPlayerView).bindVideoList(any());
+    verify(mockedNewClipImporter).relaunchUnfinishedAdaptTasks(project);
+    verify(mockedEditorActivityView).hideProgressDialog();
+  }
+
+  @Test
+  public void ifProjectHasNotVideosCallsBindVideoList() throws IllegalItemOnTrack {
+    getAProject().clear();
+    Project project = getAProject();
+    Assert.assertThat("Project has not video", project.getVMComposition().hasVideos(), Matchers.is(false));
+    doAnswer(new Answer() {
+      @Override
+      public Object answer(InvocationOnMock invocation) throws Throwable {
+        ((OnVideosRetrieved)invocation.getArguments()[0]).onNoVideosRetrieved();
+        return null;
+      }
+    }).when(mockedGetMediaListFromProjectUseCase).getMediaListFromProject(any(OnVideosRetrieved.class));
+    EditorPresenter editorPresenter = getEditorPresenter();
+
+    editorPresenter.init();
+
+    verify(mockedEditorActivityView).hideProgressDialog();
+    verify(mockedEditorActivityView).goToRecordOrGalleryScreen();
   }
 
   @Test

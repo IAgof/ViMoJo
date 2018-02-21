@@ -8,8 +8,11 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,27 +34,14 @@ import static org.powermock.api.mockito.PowerMockito.doReturn;
 @RunWith(MockitoJUnitRunner.class)
 public class GalleryProjectListPresenterTest {
 
-  @Mock
-  ProjectRepository mockedProjectRepository;
-  @InjectMocks
-  GalleryProjectListPresenter injectedPresenter;
-  @Mock
-  GalleryProjectListView mockedGalleryProjectListView;
-  @Mock
-  private SharedPreferences mockedSharePreferences;
-  @Mock
-  UpdateCurrentProjectUseCase mockedUpdateCurrentProjectUseCase;
+  @Mock ProjectRepository mockedProjectRepository;
+  @InjectMocks GalleryProjectListPresenter injectedPresenter;
+  @Mock GalleryProjectListView mockedGalleryProjectListView;
+  @Mock private SharedPreferences mockedSharePreferences;
 
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
-  }
-
-  @Test
-  public void updateCurrentProjectCallsUpdateLastModificationAndProjectInstance() {
-    Project project = getAProject();
-    injectedPresenter.updateCurrentProject(project);
-    verify(mockedUpdateCurrentProjectUseCase).updateLastModificationAndProjectInstance(project);
   }
 
   @Test
@@ -71,6 +61,36 @@ public class GalleryProjectListPresenterTest {
             .getListProjectsByLastModificationDescending();
     injectedPresenter.updateProjectList();
     verify(mockedGalleryProjectListView).createDefaultProject();
+  }
+
+  @Test
+  public void goToEditUpdateRepositoryAndNavigate() {
+    Project project = getAProject();
+
+    injectedPresenter.goToEdit(project);
+
+    verify(mockedProjectRepository).update(project);
+    verify(mockedGalleryProjectListView).navigateTo(EditActivity.class);
+  }
+
+  @Test
+  public void goToShareUpdateRepositoryAndNavigate() {
+    Project project = getAProject();
+
+    injectedPresenter.goToShare(project);
+
+    verify(mockedProjectRepository).update(project);
+    verify(mockedGalleryProjectListView).navigateTo(ShareActivity.class);
+  }
+
+  @Test
+  public void goToDetailsProjectUpdateRepositoryAndNavigate() {
+    Project project = getAProject();
+
+    injectedPresenter.goToDetailProject(project);
+
+    verify(mockedProjectRepository).update(project);
+    verify(mockedGalleryProjectListView).navigateTo(DetailProjectActivity.class);
   }
 
   private Project getAProject() {

@@ -53,7 +53,7 @@ public class CheckIfProjectHasBeenExportedUseCaseTest {
   public void ifDateOfLastModificationAndVideoExportedAreDifferentCallsVideoExported(){
 
     Project project = getAProjectWithVideoExportedAndSameDates();
-    project.setLastModification("fakeDate");
+    project.updateDateOfModification("fakeDate");
 
     injectedUseCase.compareDate(project, mockedOnProjectExportedListener);
 
@@ -67,7 +67,7 @@ public class CheckIfProjectHasBeenExportedUseCaseTest {
     Project project = Project.getInstance("title", "/path", "private/path", compositionProfile);
 
     String date = DateUtils.getDateRightNow();
-    project.setLastModification(date);
+    project.updateDateOfModification(date);
 
     LastVideoExported lastVideoExported = new LastVideoExported("somePath", date);
     project.setLastVideoExported(lastVideoExported);

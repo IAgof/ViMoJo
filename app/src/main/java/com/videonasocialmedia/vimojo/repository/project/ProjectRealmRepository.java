@@ -49,7 +49,7 @@ public class ProjectRealmRepository implements ProjectRepository {
 
   @Override
   public void update(final Project item) {
-    item.setLastModification(DateUtils.getDateRightNow());
+    item.updateDateOfModification(DateUtils.getDateRightNow());
     Realm realm = Realm.getDefaultInstance();
     realm.executeTransaction(new Realm.Transaction() {
       @Override

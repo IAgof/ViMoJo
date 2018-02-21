@@ -53,6 +53,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     /**
      * UseCases
      */
+    private final GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
     private ReorderMediaItemUseCase reorderMediaItemUseCase;
     /**
@@ -60,7 +61,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
      */
     private EditActivityView editActivityView;
     private final VideoTranscodingErrorNotifier videoTranscodingErrorNotifier;
-    protected List<Video> videoList;
+    protected List<Video> videoList = new ArrayList<>();
     protected UserEventTracker userEventTracker;
 
     @Inject
@@ -68,11 +69,13 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                          Context context,
                          VideoTranscodingErrorNotifier videoTranscodingErrorNotifier,
                          UserEventTracker userEventTracker,
+                         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
                          ReorderMediaItemUseCase reorderMediaItemUseCase) {
         this.editActivityView = editActivityView;
         this.context =context;
         this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
         this.userEventTracker = userEventTracker;
@@ -133,7 +136,11 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     @Override
     public void onRemoveMediaItemFromTrackSuccess() {
-        editActivityView.updateProject();
+        if(currentProject.getVMComposition().hasVideos()) {
+            editActivityView.updateProject();
+        } else {
+            editActivityView.goToRecordOrGallery();
+        }
     }
 
 
@@ -162,30 +169,36 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         removeVideoFromProjectUseCase.removeMediaItemsFromProject(mediaToDeleteFromProject, this);
     }
 
-    public void init(boolean successObtainVideos, List<Video> videoList) {
-        if(successObtainVideos) {
-            int sizeOriginalVideoList = videoList.size();
-            List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videoList);
-            this.videoList = checkedVideoList;
+    public void init() {
+        // TODO: 21/2/18 Study if is necessary repeat use case, running also in father, EditorActivity. Tried ListenableFuture and make synchronus call to wait until finish and after this method get result of get medialist, problems with UI thread.
+        getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
+            @Override
+            public void onVideosRetrieved(List<Video> videosRetrieved) {
+                int sizeOriginalVideoList = videosRetrieved.size();
+                List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
+                videoList = checkedVideoList;
 
-            List<Video> videoCopy = new ArrayList<>(checkedVideoList);
+                List<Video> videoCopy = new ArrayList<>(checkedVideoList);
 
-            if (sizeOriginalVideoList > checkedVideoList.size()) {
-                editActivityView.showDialogMediasNotFound();
+                if (sizeOriginalVideoList > checkedVideoList.size()) {
+                    editActivityView.showDialogMediasNotFound();
+                }
+                editActivityView.enableEditActions();
+                editActivityView.enableBottomBar();
+                editActivityView.enableFabText(true);
+                editActivityView.updateVideoList(videoCopy);
+                videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
+                    videoList, videoTranscodingErrorNotifier);
             }
-            editActivityView.enableEditActions();
-            editActivityView.enableBottomBar();
-            editActivityView.enableFabText(true);
-            editActivityView.updateVideoList(videoCopy);
-            videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
-                this.videoList, videoTranscodingErrorNotifier);
-        } else {
-            editActivityView.disableEditActions();
-            editActivityView.disableBottomBar();
-            editActivityView.enableFabText(false);
-            editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
-            editActivityView.updateViewResetProject();
-        }
+
+            @Override
+            public void onNoVideosRetrieved() {
+                editActivityView.disableEditActions();
+                editActivityView.disableBottomBar();
+                editActivityView.enableFabText(false);
+                editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
+            }
+        });
     }
 
     @Override

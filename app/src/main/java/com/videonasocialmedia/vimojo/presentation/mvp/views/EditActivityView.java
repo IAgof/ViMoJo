@@ -46,5 +46,5 @@ public interface EditActivityView {
 
   void enableFabText(boolean isEnable);
 
-  void updateViewResetProject();
+  void goToRecordOrGallery();
 }

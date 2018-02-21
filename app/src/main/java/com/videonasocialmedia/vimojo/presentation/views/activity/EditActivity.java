@@ -206,7 +206,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
             }
         }
         bottomBar.selectTabWithId(R.id.tab_editactivity);
-      editPresenter.init(isSuccessObtainVideos(), getVideoList());
+        editPresenter.init();
     }
 
     @Override
@@ -218,12 +218,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     @Override
     protected void onStop() {
         super.onStop();
-    }
-
-    @Override
-    public void updateViewResetProject() {
-        initVideoListRecycler();
-        super.updateViewResetProject();
     }
 
     private void initVideoListRecycler() {
@@ -425,6 +419,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         @Override
         public void run() {
           reStart();
+          initVideoListRecycler();
+          editPresenter.init();
         }
       });
     }
@@ -481,6 +477,11 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Override
   public void enableFabText(boolean enableFabText) {
     isEnableFabText = enableFabText;
+  }
+
+  @Override
+  public void goToRecordOrGallery() {
+    navigateTo(GoToRecordOrGalleryActivity.class);
   }
 
   @Override

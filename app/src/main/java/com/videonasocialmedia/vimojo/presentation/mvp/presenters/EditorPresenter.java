@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.TypedValue;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -32,13 +31,10 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
@@ -49,8 +45,7 @@ import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX
  * Created by ruth on 23/11/16.
  */
 
-public class EditorPresenter extends VimojoPresenter implements
-    PlayStoreBillingDelegate.BillingDelegateView {
+public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegateView {
 
   private final PlayStoreBillingDelegate playStoreBillingDelegate;
   private static final String LOG_TAG = EditorPresenter.class.getSimpleName();
@@ -108,7 +103,6 @@ public class EditorPresenter extends VimojoPresenter implements
   }
 
   public void init() {
-    newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
     obtainVideos();
     retrieveMusic();
     retrieveTransitions();
@@ -164,7 +158,7 @@ public class EditorPresenter extends VimojoPresenter implements
   public void createNewProject(String rootPath, String privatePath) {
     createDefaultProjectUseCase.createProject(rootPath, privatePath, getPreferenceWaterMark());
     clearProjectDataFromSharedPreferences();
-    editorActivityView.updateViewResetProject();
+    editorActivityView.goToRecordOrGalleryScreen();
   }
 
   private void clearProjectDataFromSharedPreferences() {
@@ -175,39 +169,23 @@ public class EditorPresenter extends VimojoPresenter implements
 
   private void obtainVideos() {
     editorActivityView.showProgressDialog();
-    ListenableFuture<Void> obtainVideosJob = executeUseCaseCall(new Callable<Void>() {
+    getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
       @Override
-      public Void call() throws Exception {
-        getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
-          @Override
-          public void onVideosRetrieved(List<Video> videosRetrieved) {
-            checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videosRetrieved);
-            List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
-            List<Video> videoCopy = new ArrayList<>(checkedVideoList);
-            videonaPlayerView.bindVideoList(videoCopy);
-            editorActivityView.successObtainVideos();
-            editorActivityView.hideProgressDialog();
-          }
+      public void onVideosRetrieved(List<Video> videosRetrieved) {
+        checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videosRetrieved);
+        List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
+        List<Video> videoCopy = new ArrayList<>(checkedVideoList);
+        videonaPlayerView.bindVideoList(videoCopy);
+        //Relaunch videos only if Project has videos. Fix problem removing all videos from Edit screen.
+        newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
+        editorActivityView.hideProgressDialog();
+      }
 
-          @Override
-          public void onNoVideosRetrieved() {
-            editorActivityView.errorObtainVideos();
-            editorActivityView.hideProgressDialog();
-          }
-        });
-        return null;
+      @Override
+      public void onNoVideosRetrieved() {
+        editorActivityView.hideProgressDialog();
       }
     });
-    try {
-      obtainVideosJob.get();
-    } catch (InterruptedException | ExecutionException ex) {
-      Log.e(LOG_TAG, "Caught exception while obtaining videos");
-      Crashlytics.log("Caught exception while obtaining videos");
-      Crashlytics.logException(ex);
-      ex.printStackTrace();
-      throw new RuntimeException(ex);
-    }
-
   }
 
   public void checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(List<Video> videoList) {

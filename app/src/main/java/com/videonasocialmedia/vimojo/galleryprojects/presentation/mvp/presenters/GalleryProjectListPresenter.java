@@ -8,7 +8,7 @@ import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DuplicateProjectUseCase;
-import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
@@ -24,11 +24,10 @@ import javax.inject.Inject;
 /**
  * Created by ruth on 13/09/16.
  */
-public class GalleryProjectListPresenter implements OnProjectExportedListener {
+public class GalleryProjectListPresenter {
 
   private ProjectRepository projectRepository;
   private GalleryProjectListView galleryProjectListView;
-  private UpdateCurrentProjectUseCase updateCurrentProjectUseCase;
   private SharedPreferences sharedPreferences;
   private DuplicateProjectUseCase duplicateProjectUseCase;
   private DeleteProjectUseCase deleteProjectUseCase;
@@ -40,7 +39,6 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
                                      SharedPreferences sharedPreferences,
                                      ProjectRepository projectRepository,
                                      CreateDefaultProjectUseCase createDefaultProjectUseCase,
-                                     UpdateCurrentProjectUseCase updateCurrentProjectUseCase,
                                      DuplicateProjectUseCase duplicateProjectUseCase,
                                      DeleteProjectUseCase deleteProjectUseCase,
                                      CheckIfProjectHasBeenExportedUseCase
@@ -49,7 +47,6 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
     this.sharedPreferences = sharedPreferences;
     this.projectRepository = projectRepository;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
-    this.updateCurrentProjectUseCase = updateCurrentProjectUseCase;
     this.duplicateProjectUseCase = duplicateProjectUseCase;
     this.deleteProjectUseCase = deleteProjectUseCase;
     checkIfProjectHasBeenExportedUseCaseUseCase = checkIfProjectHasBeenExportedUseCase;
@@ -84,7 +81,6 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
     createDefaultProjectUseCase.createProject(rootPath, privatePath, isWatermarkActivated());
   }
 
-
   private boolean isWatermarkActivated() {
     if(BuildConfig.FEATURE_FORCE_WATERMARK) {
       return true;
@@ -92,25 +88,19 @@ public class GalleryProjectListPresenter implements OnProjectExportedListener {
     return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
   }
 
-  public void updateCurrentProject(Project project) {
-    updateCurrentProjectUseCase.updateLastModificationAndProjectInstance(project);
-  }
-
-  public void checkNavigationToShare(Project project) {
-    // if video to export has been exported before and is exactly the same, use it.
-    checkIfProjectHasBeenExportedUseCaseUseCase.compareDate(project, this);
-  }
-
-  @Override
-  public void videoExportedNavigateToShareActivity(Project project) {
-    updateCurrentProjectUseCase.updateLastModificationAndProjectInstance(project);
-    galleryProjectListView.navigateTo(ShareActivity.class, project.getPathLastVideoExported());
-  }
-
-  @Override
-  public void exportProject(Project project) {
-    updateCurrentProjectUseCase.updateLastModificationAndProjectInstance(project);
-    //// TODO:(alvaro.martinez) 20/12/16 Launch export process. Provisional, go to editActivity.
+  public void goToEdit(Project project) {
+    projectRepository.update(project);
     galleryProjectListView.navigateTo(EditActivity.class);
+  }
+
+  public void goToShare(Project project) {
+    projectRepository.update(project);
+    galleryProjectListView.navigateTo(ShareActivity.class);
+  }
+
+
+  public void goToDetailProject(Project project) {
+    projectRepository.update(project);
+    galleryProjectListView.navigateTo(DetailProjectActivity.class);
   }
 }
