@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayoutRegister"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".auth.presentation.view.activity.UserAuthActivity">
+
+    <RelativeLayout
+        android:id="@+id/user_auth_main_relative_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/activity_user_auth_background_welcome">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="72dp">
+
+            <ImageView
+                android:id="@+id/header_logo_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/splash_screen"
+                />
+
+            <TextView
+                android:id="@+id/register_login_slogan_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/header_logo_image_view"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="24dp"
+                android:text="@string/register_slogan"
+                android:textAlignment="center"
+                android:textSize="@dimen/text_register_slogan"
+                android:visibility="visible"
+                />
+
+            <LinearLayout
+                android:id="@+id/layout_register_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginTop="8dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/register_login_slogan_text_view">
+
+                <include layout="@layout/activity_user_auth_register_login_fields"
+                    android:visibility="gone"
+                    android:id="@+id/layout_register_login_fields">
+                </include>
+
+                <Button
+                    android:id="@+id/register_button"
+                    android:layout_width="@dimen/activity_user_auth_height_fields"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/layout_register_login_fields"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/activity_user_auth_round_background"
+                    android:text="@string/register_action"
+                    android:textColor="@color/colorWhite"
+                    android:visibility="visible"
+                    />
+
+                <Button
+                    android:id="@+id/login_button"
+                    android:layout_width="@dimen/activity_user_auth_height_fields"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/register_button"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/activity_user_auth_round_background"
+                    android:text="@string/login_action"
+                    android:textColor="@color/colorWhite"
+                    android:visibility="visible"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutProgressBarLogin"
+                android:layout_width="@dimen/activity_user_auth_height_fields"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/register_login_slogan_text_view"
+                android:visibility="invisible">
+
+                <ProgressBar
+                    android:id="@+id/progress_bar_login"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="8dp"
+                    android:paddingTop="30dp"/>
+
+                <TextView
+                    android:id="@+id/progress_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/colorWhite"
+                    android:gravity="center"
+                    android:text="@string/register_progress"/>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/image_login_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:paddingTop="12dp"
+                android:src="@drawable/ic_done_white"
+                android:visibility="gone"
+                android:layout_below="@+id/layoutProgressBarLogin"/>
+        </RelativeLayout>
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

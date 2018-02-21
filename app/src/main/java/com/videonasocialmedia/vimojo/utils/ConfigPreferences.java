@@ -67,4 +67,5 @@ public class ConfigPreferences {
     public static final String LICENSES = "licenses";
     public static final String LEGAL_NOTICE = "legalNotice";
     public static final String THEME_APP_DARK = "themeAppDark";
+    public static final String VIMOJO_NETWORK = "vimojo_platform";
 }

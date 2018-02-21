@@ -1,12 +1,15 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
 import android.Manifest;
+import android.accounts.Account;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SyncRequest;
 import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraAccessException;
 import android.os.AsyncTask;
@@ -33,6 +36,7 @@ import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsLi
 import com.mixpanel.android.mpmetrics.InAppNotification;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.auth.util.UserAccountUtil;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
@@ -59,9 +63,10 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.videonasocialmedia.vimojo.sync.SyncAdapter.SYNC_INTERVAL;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
 
@@ -85,11 +90,11 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     @Inject InitAppPresenter presenter;
 
     protected Handler handler = new Handler();
-    @Bind(R.id.videona_version)
+    @BindView(R.id.videona_version)
     TextView versionName;
-    @Bind(R.id.init_root_view)
+    @BindView(R.id.init_root_view)
     ViewGroup initRootView;
-    @Bind(R.id.splash_screen)
+    @BindView(R.id.splash_screen)
     ImageView splashScreen;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -97,6 +102,12 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private String androidId = null;
     private String initState;
     private CompositeMultiplePermissionsListener compositePermissionsListener;
+
+    private static final long SYNC_FLEX_TIME =  SYNC_INTERVAL/3;
+    // Global variables
+    // A content resolver for accessing the provider
+    ContentResolver contentResolver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,6 +217,27 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         editor = sharedPreferences.edit();
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         requestPermissionsAndPerformSetup();
+        // TODO: 6/2/18 Decide when app has to check pending video uploads. On launch app, every 10 minutes, etc ...
+        runNowSyncAdapter();
+    }
+
+    private void runNowSyncAdapter() {
+        Account account = UserAccountUtil.getAccount(this);
+        String authority = this.getString(R.string.content_authority);
+
+        // Pass the settings flags by inserting them in a bundle
+        Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        /*
+         * Request the sync for the default account, authority, and
+         * manual sync settings
+         */
+        if (account != null) {
+            ContentResolver.requestSync(account, authority, settingsBundle);
+        }
     }
 
     @Override

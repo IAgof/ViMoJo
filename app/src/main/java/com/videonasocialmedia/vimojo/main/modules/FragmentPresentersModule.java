@@ -3,11 +3,11 @@ package com.videonasocialmedia.vimojo.main.modules;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceCategory;
 import android.preference.SwitchPreference;
 
+import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAccount;
+import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
@@ -73,19 +73,19 @@ public class FragmentPresentersModule {
   @Provides
   @PerFragment
   public PreferencesPresenter providePreferencePresenter(
-      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-      UpdateAudioTransitionPreferenceToProjectUseCase
-              updateAudioTransitionPreferenceToProjectUseCase,
-      UpdateVideoTransitionPreferenceToProjectUseCase
-              updateVideoTransitionPreferenceToProjectUseCase,
-      UpdateIntermediateTemporalFilesTransitionsUseCase
-              updateIntermediateTemporalFilesTransitionsUseCase,
-      GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
-      UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-      GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
-      BillingManager billingManager) {
+          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+          UpdateAudioTransitionPreferenceToProjectUseCase
+                  updateAudioTransitionPreferenceToProjectUseCase,
+          UpdateVideoTransitionPreferenceToProjectUseCase
+                  updateVideoTransitionPreferenceToProjectUseCase,
+          UpdateIntermediateTemporalFilesTransitionsUseCase
+                  updateIntermediateTemporalFilesTransitionsUseCase,
+          GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
+          UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
+          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+          GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+          BillingManager billingManager, GetAuthToken getAuthToken, GetAccount getAccount) {
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
         transitionVideoPref, transitionAudioPref, watermarkPref, themeAppPref,
@@ -98,7 +98,7 @@ public class FragmentPresentersModule {
         updateWatermarkPreferenceToProjectUseCase,
         relaunchTranscoderTempBackgroundUseCase,
         getVideonaFormatFromCurrentProjectUseCase,
-        billingManager);
+        billingManager, getAuthToken, getAccount);
   }
 
   @Provides

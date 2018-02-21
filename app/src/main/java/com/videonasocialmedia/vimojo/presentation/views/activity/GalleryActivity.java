@@ -32,7 +32,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -47,13 +48,13 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Inject GalleryPagerPresenter galleryPagerPresenter;
 
-    @Bind(R.id.button_ok_gallery)
+    @BindView(R.id.button_ok_gallery)
     ImageButton okButton;
-    @Bind(R.id.gallery_count_selected_videos)
+    @BindView(R.id.gallery_count_selected_videos)
     TextView videoCounter;
-    @Bind(R.id.gallery_image_view_clips)
+    @BindView(R.id.gallery_image_view_clips)
     ImageView galleryImageViewClips;
-    @Bind(R.id.selection_mode)
+    @BindView(R.id.selection_mode)
     LinearLayout selectionMode;
 
     private MyPagerAdapter adapterViewPager;

@@ -1,2 +1,3 @@
-v0.8.1
-- Added link to Vimojo kit from drawer, store category. Links added in every flavor with utm campaign values.
+v0.11.1
+- Added feature toggle store available to Vimojo to true.
+

@@ -49,6 +49,7 @@ import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.helper.
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
+import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
@@ -62,9 +63,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Optional;
 
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
@@ -83,25 +85,25 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   private final int ID_BUTTON_FAB_TOP=1;
   private final int ID_BUTTON_FAB_CENTER=2;
 
-    @Nullable @Bind(R.id.button_edit_duplicate)
+    @Nullable @BindView(R.id.button_edit_duplicate)
     ImageButton editDuplicateButton;
-    @Nullable @Bind(R.id.button_edit_trim)
+    @Nullable @BindView(R.id.button_edit_trim)
     ImageButton editTrimButton;
-    @Nullable @Bind(R.id.button_edit_split)
+    @Nullable @BindView(R.id.button_edit_split)
     ImageButton editSplitButton;
-    @Nullable @Bind(R.id.button_edit_add_text)
+    @Nullable @BindView(R.id.button_edit_add_text)
     ImageButton editTextButton;
-    @Nullable @Bind(R.id.recyclerview_editor_timeline)
+    @Nullable @BindView(R.id.recyclerview_editor_timeline)
     RecyclerView videoListRecyclerView;
-    @Nullable @Bind(R.id.videona_player)
+    @Nullable @BindView(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-    @Nullable @Bind(R.id.fab_edit_room)
+    @Nullable @BindView(R.id.fab_edit_room)
     FloatingActionsMenu fabMenu;
-    @Nullable @Bind(R.id.bottomBar)
+    @Nullable @BindView(R.id.bottomBar)
     BottomBar bottomBar;
-    @Nullable @Bind(R.id.relative_layout_activity_edit)
+    @Nullable @BindView(R.id.relative_layout_activity_edit)
     RelativeLayout relativeLayoutActivityEdit;
-    @Nullable @Bind(R.id.button_edit_warning_transcoding_file)
+    @Nullable @BindView(R.id.button_edit_warning_transcoding_file)
     ImageButton warningTranscodingFilesButton;
 
     private List<Video> videoList;
@@ -290,12 +292,12 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         startActivity(intent);
     }
 
-   @Nullable @OnClick(R.id.button_edit_fullscreen)
+   @Optional @OnClick(R.id.button_edit_fullscreen)
     public void onClickEditFullscreen() {
         // navigateTo(Activity.class)
     }
 
-    @Nullable @OnClick(R.id.button_edit_duplicate)
+    @Optional @OnClick(R.id.button_edit_duplicate)
     public void onClickEditDuplicate() {
         if (!editDuplicateButton.isEnabled())
             return;
@@ -309,21 +311,21 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         finish();
     }
 
-   @Nullable @OnClick(R.id.button_edit_trim)
+   @Optional @OnClick(R.id.button_edit_trim)
     public void onClickEditTrim() {
         if (!editTrimButton.isEnabled())
             return;
         navigateTo(VideoTrimActivity.class, currentVideoIndex);
     }
 
-    @Nullable @OnClick(R.id.button_edit_split)
+    @Optional @OnClick(R.id.button_edit_split)
     public void onClickEditSplit() {
         if (!editSplitButton.isEnabled())
             return;
         navigateTo(VideoSplitActivity.class, currentVideoIndex);
     }
 
-    @Nullable @OnClick (R.id.button_edit_add_text)
+    @Optional @OnClick (R.id.button_edit_add_text)
     public void onClickEditText() {
       if (!editTextButton.isEnabled()) {
         return;
@@ -331,7 +333,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
       navigateTo( VideoEditTextActivity.class, currentVideoIndex);
     }
 
-    @Nullable @OnClick(R.id.button_edit_warning_transcoding_file)
+    @Optional @OnClick(R.id.button_edit_warning_transcoding_file)
     public void onClickWarningTranscodingFile(){
       AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
       dialog.setTitle(getString(R.string.dialog_title_warning_error_transcoding_file));

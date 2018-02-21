@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -31,9 +31,9 @@ public class VimojoStoreActivity extends VimojoActivity implements VimojoStoreVi
   @Inject
   VimojoStorePresenter presenter;
 
-  @Bind(R.id.recycler_store)
+  @BindView(R.id.recycler_store)
   RecyclerView storeList;
-  @Bind(R.id.cancel_shopping)
+  @BindView(R.id.cancel_shopping)
   CardView cancelShopping;
 
   private StoreListAdapter adapter;

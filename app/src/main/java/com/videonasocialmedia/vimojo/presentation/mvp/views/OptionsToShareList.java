@@ -7,6 +7,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.views;
 public interface OptionsToShareList {
     int typeFtp=1;
     int typeSocialNetwork=2;
+    int typeVimojoNetwork = 3;
 
     int getListShareType();
 }

@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.main;
 
+import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.main.internals.di.PerActivity;
@@ -8,13 +9,12 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.RecordActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.view.activity.CameraSettingsActivity;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.activity.LicenseDetailActivity;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.activity.LicensesActivity;
+import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
@@ -46,7 +46,7 @@ public interface ActivityPresentersComponent {
   void inject(VoiceOverRecordActivity activity);
   void inject(VideoDuplicateActivity activity);
   void inject(GalleryActivity activity);
-  void inject(RecordActivity activity);
+  //void inject(RecordActivity activity);
   void inject(RecordCamera2Activity activity);
   void inject(VideoSplitActivity activity);
   void inject(VideoTrimActivity activity);
@@ -58,5 +58,6 @@ public interface ActivityPresentersComponent {
   void inject(DetailProjectActivity activity);
   void inject(VideoEditTextActivity activity);
   void inject(VimojoStoreActivity activity);
+  void inject(UserAuthActivity activity);
   void inject(UserProfileActivity activity);
 }

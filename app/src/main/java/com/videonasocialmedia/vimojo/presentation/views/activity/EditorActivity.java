@@ -45,7 +45,7 @@ import java.io.File;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -58,24 +58,24 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Inject
   EditorPresenter editorPresenter;
   @Nullable
-  @Bind(R.id.text_dialog)
+  @BindView(R.id.text_dialog)
   EditText editTextDialog;
 
   private AlertDialog alertDialog;
 
-  @Bind(R.id.edit_activity_drawer_layout)
+  @BindView(R.id.edit_activity_drawer_layout)
   DrawerLayout drawerLayout;
-  @Bind(R.id.navigator_view)
+  @BindView(R.id.navigator_view)
   NavigationView navigationView;
-  @Bind(R.id.container_navigator)
+  @BindView(R.id.container_navigator)
   LinearLayout navigator;
-  @Bind(R.id.fab_edit_room)
+  @BindView(R.id.fab_edit_room)
   FloatingActionsMenu fabMenu;
   @Nullable
-  @Bind(R.id.switch_theme_dark)
+  @BindView(R.id.switch_theme_dark)
   SwitchCompat switchTheme;
   @Nullable
-  @Bind(R.id.switch_watermark)
+  @BindView(R.id.switch_watermark)
   SwitchCompat switchWatermark;
   private boolean darkThemePurchased = false;
   private boolean watermarkPurchased = false;

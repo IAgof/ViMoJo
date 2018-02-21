@@ -30,7 +30,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -46,21 +46,21 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     @Inject
     VoiceOverRecordPresenter presenter;
 
-    @Bind(R.id.videona_player)
+    @BindView(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
-    @Bind(R.id.text_time_video_voice_over)
+    @BindView(R.id.text_time_video_voice_over)
     TextView timeTag;
-    @Bind(R.id.text_time_start_voice_over)
+    @BindView(R.id.text_time_start_voice_over)
     TextView timeStart;
-    @Bind(R.id.text_time_final_voice_over)
+    @BindView(R.id.text_time_final_voice_over)
     TextView timeFinal;
-    @Bind(R.id.progressBar_voice_over)
+    @BindView(R.id.progressBar_voice_over)
     ProgressBar progressBarVoiceOver;
-    @Bind(R.id.button_voice_over_accept)
+    @BindView(R.id.button_voice_over_accept)
     ImageButton buttonVoiceOverAccept;
-    @Bind(R.id.button_voice_over_cancel)
+    @BindView(R.id.button_voice_over_cancel)
     ImageButton buttonVoiceOverCancel;
-    @Bind (R.id.button_record_voice_over)
+    @BindView (R.id.button_record_voice_over)
     ImageButton buttonRecordVoiceOver;
 
     int videoIndexOnTrack;

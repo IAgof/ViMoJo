@@ -53,7 +53,7 @@ node {
 stage 'Stage Archive'
 node {
   //tell Jenkins to archive the apks
-  step([$class: 'ArtifactArchiver', artifacts: 'app/build/outputs/apk/*.apk', fingerprint: true])
+  step([$class: 'ArtifactArchiver', artifacts: 'app/build/outputs/apk/*/*/*.apk', fingerprint: true])
 }
 
 stage 'Stage Upload To Fabric'
@@ -61,7 +61,7 @@ node {
   if (env.BRANCH_NAME == 'develop') {
     sh "./gradlew crashlyticsUploadDistributionVimojoDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
     //sh "./gradlew crashlyticsUploadDistributionHispanopostDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
-    sh "./gradlew crashlyticsUploadDistributionRtveDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
+    //sh "./gradlew crashlyticsUploadDistributionRtveDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
     sh "./gradlew crashlyticsUploadDistributionThomsonFoundationDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
     //sh "./gradlew crashlyticsUploadDistributionVimojowatermarkDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
     //sh "./gradlew crashlyticsUploadDistributionNemSummitDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"

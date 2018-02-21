@@ -12,7 +12,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingValue;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingViewModel;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -21,11 +21,11 @@ import butterknife.ButterKnife;
 
 public class CameraSettingsViewHolder extends RecyclerView.ViewHolder {
   private final Context context;
-  @Bind(R.id.camera_setting_title_package)
+  @BindView(R.id.camera_setting_title_package)
   TextView settingCameraTitleSelectable;
-  @Bind(R.id.camera_setting_radio_group)
+  @BindView(R.id.camera_setting_radio_group)
   RadioGroup cameraSettingRadioGroup;
-  @Bind(R.id.camera_setting_text_not_available)
+  @BindView(R.id.camera_setting_text_not_available)
   TextView textNotAvailable;
 
   protected CameraSettingsViewHolder(View itemView, final CameraSettingsAdapter

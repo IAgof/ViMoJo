@@ -59,7 +59,7 @@ public class MusicSourceTest {
     musicSource.populateLocalMusic();
     assert musicSource.localMusic.size() > 0;
     Music musicToFind = musicSource.localMusic.get(0);
-    // TODO(jliarte): 23/10/16 Utils.getMusicFileByName returns NPE
+    // TODO(jliarte): 23/10/16 LoggedValidator.getMusicFileByName returns NPE
     Mockito.doNothing().when(musicSource).addPathToMusic(musicSource.localMusic);
 
     Music musicFound = musicSource.getMusicByTitle("somePath", musicToFind.getMusicTitle());
