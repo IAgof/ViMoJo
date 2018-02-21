@@ -41,6 +41,8 @@ public class VideoApiClient extends VimojoApiClient {
    */
   public Video uploadVideo(VideoUpload videoUpload)
           throws VimojoApiException {
+    // getAuthToken
+
     // create upload service client
     VideoService videoService = getService(VideoService.class, videoUpload.getAuthToken());
 
