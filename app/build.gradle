@@ -69,8 +69,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 94 // 20180214
-            versionName "0.11.0" // 20180214
+            versionCode 95 // 20180215
+            versionName "0.11.1" // 20180215
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "api_base_url", "https://"
@@ -80,7 +80,7 @@ android {
             buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
             buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
+            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "true"
             buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
             buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "false"
@@ -150,8 +150,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 45 // 20180214
-            versionName "0.11.0.fThomsonFoundation" // 20180214
+            versionCode 46 // 20180215
+            versionName "0.11.1.fThomsonFoundation" // 20180215
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "api_base_url", "https://"
@@ -192,8 +192,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 12 // 20180214
-            versionName "0.11.0.fMarketForNews" // 20180214
+            versionCode 13 // 20180215
+            versionName "0.11.1.fMarketForNews" // 20180215
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "api_base_url", "https://"
