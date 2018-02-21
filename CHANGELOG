@@ -1,3 +1,16 @@
+ v0.11.0
+ - Added grid gallery on record screen. Select grid lines, one to one aspect ratio, crosses or
+ fibonacci.
+
+ v0.10.0
+ - FEATURE_REGISTER_LOGIN = false, FEATURE_UPLOAD_VIDEOS false. Feature toggle for login and merge code with develop.
+ - Added new network to Share screen, Upload to plaform.
+ - Manage internet connection. If user has mobile network and not wifi, ask for permission in order to upload video.
+ - Manage login. If user is not logged, send to login/register screen after click upload to platform.
+ - Send simple notification if video is uploaded. Same notification for all videos uploaded.
+ - Manage uploading errors, If uploaded fails, try 3 more times. If device lost internet connection, relaunch pending queue of videos to upload.
+
+
 v0.9.0
 - FEATURE_REGISTER_LOGIN = false. Feature toggle for login and merge code with develop.
 - New option in Settings, Register/Login or sign out.
