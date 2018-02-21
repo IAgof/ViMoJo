@@ -297,7 +297,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
             return;
         }
         ProjectInfo projectInfo = currentProject.getProjectInfo();
-        uploadVideo(authToken, videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
+        uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
             projectInfo.getProductTypeList());
         shareVideoViewReference.get().showMessage(R.string.uploading_video);
     }
@@ -355,9 +355,9 @@ public class ShareVideoPresenter extends VimojoPresenter {
         return loggedValidator.loggedValidate(authToken);
     }
 
-    private void uploadVideo(String authToken, String mediaPath, String title, String description,
+    private void uploadVideo(String mediaPath, String title, String description,
                              List<String> productTypeList) {
-        VideoUpload videoUpload = new VideoUpload(authToken, mediaPath, title, description,
+        VideoUpload videoUpload = new VideoUpload(mediaPath, title, description,
             productTypeList);
         try {
             uploadToPlatformQueue.addVideoToUpload(videoUpload);
