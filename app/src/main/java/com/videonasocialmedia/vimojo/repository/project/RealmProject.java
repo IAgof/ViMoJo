@@ -15,6 +15,13 @@ public class RealmProject extends RealmObject {
   @PrimaryKey
   public String uuid;
   public String title;
+  public String description;
+  public boolean directFalseTypeSelected;
+  public boolean rawVideoTypeSelected;
+  public boolean spoolTypeSelected;
+  public boolean totalTypeSelected;
+  public boolean graphicTypeSelected;
+  public boolean pieceTypeSelected;
   public String lastModification;
   public String projectPath;
   public String quality;
@@ -36,12 +43,23 @@ public class RealmProject extends RealmObject {
     this.tracks = new RealmList<RealmTrack>();
   }
 
-  public RealmProject(String uuid, String title, String lastModification, String projectPath,
+  public RealmProject(String uuid, String title, String description,
+                      boolean directFalseTypeSelected, boolean rawVideoTypeSelected,
+                      boolean spoolTypeSelected, boolean totalTypeSelected,
+                      boolean graphicTypeSelected, boolean pieceTypeSelected,
+                      String lastModification, String projectPath,
                       String quality, String resolution, String frameRate, int duration,
                       boolean isAudioFadeTransitionActivated,
                       boolean isVideoFadeTransitionActivated, boolean isWatermarkActivated) {
     this.uuid = uuid;
     this.title = title;
+    this.description = description;
+    this.directFalseTypeSelected = directFalseTypeSelected;
+    this.rawVideoTypeSelected = rawVideoTypeSelected;
+    this.spoolTypeSelected = spoolTypeSelected;
+    this.totalTypeSelected = totalTypeSelected;
+    this.graphicTypeSelected = graphicTypeSelected;
+    this.pieceTypeSelected = pieceTypeSelected;
     this.lastModification = lastModification;
     this.projectPath = projectPath;
     this.quality = quality;

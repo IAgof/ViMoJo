@@ -1,4 +1,7 @@
- v0.11.0
+v0.11.1
+- Added feature toggle store available to Vimojo to true.
+
+v0.11.0
  - Added grid gallery on record screen. Select grid lines, one to one aspect ratio, crosses or
  fibonacci.
 

@@ -43,6 +43,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresente
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnInitAppEventListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
+import com.videonasocialmedia.vimojo.sync.SyncConstants;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.AppStart;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -223,7 +224,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     private void runNowSyncAdapter() {
         Account account = UserAccountUtil.getAccount(this);
-        String authority = this.getString(R.string.content_authority);
 
         // Pass the settings flags by inserting them in a bundle
         Bundle settingsBundle = new Bundle();
@@ -236,7 +236,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
          * manual sync settings
          */
         if (account != null) {
-            ContentResolver.requestSync(account, authority, settingsBundle);
+            ContentResolver.requestSync(account, SyncConstants.VIMOJO_CONTENT_AUTHORITY, settingsBundle);
         }
     }
 

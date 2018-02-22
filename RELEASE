@@ -1,3 +1,4 @@
-v0.11.1
-- Added feature toggle store available to Vimojo to true.
+v0.12.0
+- New screen details project. Set project title, description, product type list.
+- Update video upload service with new project fields, description and product type.
 

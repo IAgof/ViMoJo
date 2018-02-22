@@ -52,10 +52,7 @@ public class Project implements ElementChangedListener {
     // TODO(jliarte): 22/10/16 Would use project instance to store current project by now
     @Deprecated
     public static Project INSTANCE;
-    /**
-     * Project name. Also it will be the name of the exported video
-     */
-    private String title;
+
     /**
      * The folder where de temp files of the project are stored
      */
@@ -79,15 +76,17 @@ public class Project implements ElementChangedListener {
      */
     private int duration;
 
+  private ProjectInfo projectInfo;
+
     /**
      * Constructor of minimum number of parameters. This is the Default constructor.
      *
-     * @param title    - Project and final video name.
+     * @param projectInfo    - Project info.
      * @param rootPath - Path to root folder for the current project.
      * @param profile  - Define some characteristics and limitations of the current project.
      */
-    public Project(String title, String rootPath, String privatePath, Profile profile) {
-        this.title = title;
+    public Project(ProjectInfo projectInfo, String rootPath, String privatePath, Profile profile) {
+        this.projectInfo = projectInfo;
         this.vmComposition = new VMComposition(getResourceWatermarkFilePath(privatePath), profile);
         this.profile = profile;
         this.duration = 0;
@@ -105,7 +104,7 @@ public class Project implements ElementChangedListener {
   }
 
   public Project(Project project) throws IllegalItemOnTrack {
-    title = DateUtils.getDateRightNow();
+    projectInfo = new ProjectInfo(project.getProjectInfo());
     vmComposition = new VMComposition(project.getVMComposition());
     profile = new Profile(project.getProfile());
     duration = project.getDuration();
@@ -127,24 +126,16 @@ public class Project implements ElementChangedListener {
      * @return - Singleton instance of the current project.
      */
     @Deprecated
-    public static Project getInstance(String title, String rootPath, String privatePath,
+    public static Project getInstance(ProjectInfo projectInfo, String rootPath, String privatePath,
                                       Profile profile) {
         if (INSTANCE == null) {
-            INSTANCE = new Project(title, rootPath, privatePath, profile);
+            INSTANCE = new Project(projectInfo, rootPath, privatePath, profile);
         }
         return INSTANCE;
     }
 
 
   // getters & setters
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public void setProjectPath(String projectPath) {
         this.projectPath = projectPath;
     }
@@ -326,5 +317,13 @@ public class Project implements ElementChangedListener {
   @Override
   public void onObjectUpdated() {
     notifyChanges();
+  }
+
+  public ProjectInfo getProjectInfo() {
+    return projectInfo;
+  }
+
+  public void setProjectInfo(ProjectInfo projectInfo) {
+    this.projectInfo = projectInfo;
   }
 }

@@ -11,6 +11,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.music.RealmMusic;
 import com.videonasocialmedia.vimojo.repository.music.RealmMusicToMusicMapper;
@@ -19,6 +20,8 @@ import com.videonasocialmedia.vimojo.repository.track.RealmTrackToTrackMapper;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideoToVideoMapper;
 import com.videonasocialmedia.vimojo.utils.Constants;
+
+import java.util.ArrayList;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.*;
 
@@ -49,7 +52,6 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
     }
   }
 
-
   @NonNull
   private Profile mapProfile(RealmProject realmProject) {
     VideoResolution.Resolution resolution =
@@ -62,7 +64,10 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
 
   @NonNull
   private Project mapProject(RealmProject realmProject){
-    Project currentProject = new Project(realmProject.title, Constants.PATH_APP,
+    ProjectInfo projectInfo = new ProjectInfo(realmProject.title, realmProject.description,
+        new ArrayList<>());
+    setProjectInfoProductTypes(realmProject, projectInfo);
+    Project currentProject = new Project(projectInfo, Constants.PATH_APP,
         Constants.PATH_APP_ANDROID, mapProfile(realmProject));
     currentProject.setProjectPath(realmProject.projectPath);
     currentProject.setUuid(realmProject.uuid);
@@ -75,6 +80,28 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
     currentProject.setWatermarkActivated(realmProject.isWatermarkActivated);
 
     return currentProject;
+  }
+
+  private void setProjectInfoProductTypes(RealmProject realmProject, ProjectInfo projectInfo) {
+    if(realmProject.directFalseTypeSelected){
+      projectInfo.getProductTypeList().add(ProjectInfo.ProductType.DIRECT_FAILURE.name());
+    }
+    if(realmProject.rawVideoTypeSelected){
+      projectInfo.getProductTypeList().add(ProjectInfo.ProductType.RAW_VIDEOS.name());
+    }
+    if(realmProject.spoolTypeSelected) {
+      projectInfo.getProductTypeList().add(ProjectInfo.ProductType.SPOOLERS.name());
+    }
+    if(realmProject.totalTypeSelected) {
+      projectInfo.getProductTypeList().add(ProjectInfo.ProductType.TOTAL.name());
+    }
+    if(realmProject.graphicTypeSelected) {
+      projectInfo.getProductTypeList().add(ProjectInfo.ProductType.GRAPHIC.name());
+    }
+    if(realmProject.pieceTypeSelected) {
+      projectInfo.getProductTypeList().add(ProjectInfo.ProductType.PIECE.name());
+    }
+    projectInfo.checkSupportedProductType(projectInfo.getProductTypeList());
   }
 
   private void setProjectVideos(Project project, RealmProject realmProject) {
