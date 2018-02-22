@@ -1,6 +1,9 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters;
 
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
@@ -14,7 +17,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -30,11 +32,9 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class DetailProjectPresenterTest {
 
+  @Mock Context mockedContext;
   @Mock ProjectRepository mockedProjectRepo;
   @Mock DetailProjectView mockedDetailProjectView;
-
-  @InjectMocks
-  DetailProjectPresenter injectedPresenter;
 
   @Before
   public void initDoubles() {
@@ -43,9 +43,7 @@ public class DetailProjectPresenterTest {
 
   @After
   public void tearDown() throws Exception {
-    // FIXME: tests are not independent as Project keeps state between tests
-    Project singletonProject = Project.getInstance(null, null, null, null);
-    singletonProject.clear();
+    Project.INSTANCE.clear();
   }
 
   @Test
@@ -54,9 +52,23 @@ public class DetailProjectPresenterTest {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     project.setProfile(compositionProfile);
-    injectedPresenter.init();
+    List<String> productType = new ArrayList<>();
+    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+    project.setProjectInfo(projectInfo);
+    DetailProjectPresenter presenter = getDetailProjectPresenter();
+
+    presenter.init();
+
     verify(mockedDetailProjectView).showTitleProject("title");
+    verify(mockedDetailProjectView).showDescriptionProject("description");
+    verify(mockedDetailProjectView).showProductTypeSelected(productType,
+        presenter.getProductTypesTitles());
     verify(mockedDetailProjectView).showDetailProjectInfo(0,0,1280,50,25);
+  }
+
+  @NonNull
+  public DetailProjectPresenter getDetailProjectPresenter() {
+    return new DetailProjectPresenter(mockedContext, mockedDetailProjectView, mockedProjectRepo);
   }
 
   private Project getAProject() {

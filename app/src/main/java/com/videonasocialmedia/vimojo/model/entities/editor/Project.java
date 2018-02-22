@@ -76,7 +76,7 @@ public class Project implements ElementChangedListener {
      */
     private int duration;
 
-    private ProjectInfo projectInfo;
+  private ProjectInfo projectInfo;
 
     /**
      * Constructor of minimum number of parameters. This is the Default constructor.
@@ -321,5 +321,9 @@ public class Project implements ElementChangedListener {
 
   public ProjectInfo getProjectInfo() {
     return projectInfo;
+  }
+
+  public void setProjectInfo(ProjectInfo projectInfo) {
+    this.projectInfo = projectInfo;
   }
 }

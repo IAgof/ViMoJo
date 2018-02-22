@@ -324,6 +324,22 @@ public class ShareVideoPresenter extends VimojoPresenter {
 
     protected boolean isUserLogged() {
         shareVideoViewReference.get().showProgressDialogCheckingUserAuth();
+        try {
+            getAuthTokenFuture().get();
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+            Crashlytics.log("Error getting info from user interruptedException");
+            Crashlytics.logException(interruptedException);
+        } catch (ExecutionException executionException) {
+            executionException.printStackTrace();
+            Crashlytics.log("Error getting info from user executionException");
+            Crashlytics.logException(executionException);
+        }
+        shareVideoViewReference.get().hideProgressDialogCheckingUserAuth();
+        return loggedValidator.loggedValidate(authToken);
+    }
+
+    protected ListenableFuture<String> getAuthTokenFuture() {
         ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
             @Override
             public String call() throws Exception {
@@ -339,20 +355,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
             public void onFailure(Throwable errorGettingToken) {
             }
         });
-
-        try {
-            authTokenFuture.get();
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-            Crashlytics.log("Error getting info from user interruptedException");
-            Crashlytics.logException(interruptedException);
-        } catch (ExecutionException executionException) {
-            executionException.printStackTrace();
-            Crashlytics.log("Error getting info from user executionException");
-            Crashlytics.logException(executionException);
-        }
-        shareVideoViewReference.get().hideProgressDialogCheckingUserAuth();
-        return loggedValidator.loggedValidate(authToken);
+        return authTokenFuture;
     }
 
     private void uploadVideo(String mediaPath, String title, String description,

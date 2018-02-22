@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
@@ -41,7 +42,9 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
@@ -136,15 +139,16 @@ public class ShareVideoPresenterTest {
 
     @Test
     public void clickUploadToPlatformNavigateToUserAuthIfUserNotLogged() {
-        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
+        ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
         boolean isWifiConnected = false;
         boolean acceptUploadVideoMobileNetwork = true;
         boolean isMobileNetworkConnected = true;
         String videoPath = "";
+        ListenableFuture<String> mockedTask = mock(ListenableFuture.class);
+        when(spyShareVideoPresenter.getAuthTokenFuture()).thenReturn(mockedTask);
+        assertThat(spyShareVideoPresenter.isUserLogged(), is(false));
 
-        when(mockedLoggedValidator.loggedValidate("")).thenReturn(false);
-
-        shareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
+        spyShareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
             isMobileNetworkConnected, videoPath);
 
         verify(mockedShareVideoView).showDialogNeedToRegisterLoginToUploadVideo();
@@ -152,18 +156,20 @@ public class ShareVideoPresenterTest {
 
     @Test
     public void clickUpdateToPlatformNavigateToProjectDetailsIfAnyProjectInfoFieldsIsEmpty() {
-        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
+        ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
         boolean isWifiConnected = false;
         boolean acceptUploadVideoMobileNetwork = true;
         boolean isMobileNetworkConnected = true;
         String videoPath = "";
         Project project = getAProject();
         assertThat(project.getProjectInfo().getProductTypeList().size(), is(0));
-        assertThat(project, is(shareVideoPresenter.currentProject));
-         when(mockedLoggedValidator.loggedValidate("")).thenReturn(true);
-        assertThat(shareVideoPresenter.isUserLogged(""), is(true));
+        assertThat(project, is(spyShareVideoPresenter.currentProject));
+        ListenableFuture<String> mockedTask = mock(ListenableFuture.class);
+        when(spyShareVideoPresenter.getAuthTokenFuture()).thenReturn(mockedTask);
+        when(mockedLoggedValidator.loggedValidate("")).thenReturn(true);
+        assertThat(spyShareVideoPresenter.isUserLogged(), is(true));
 
-        shareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
+        spyShareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
             isMobileNetworkConnected, videoPath);
 
         verify(mockedShareVideoView).showDialogNeedToCompleteDetailProjectFields();
