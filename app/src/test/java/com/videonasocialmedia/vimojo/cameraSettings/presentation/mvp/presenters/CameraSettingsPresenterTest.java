@@ -12,6 +12,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -22,7 +23,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_24_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID;
@@ -169,6 +172,8 @@ public class CameraSettingsPresenterTest {
   public Project getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD1080,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-    return Project.getInstance("title", "/path", "private/path", compositionProfile);
+    List<String> productType = new ArrayList<>();
+    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+    return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
   }
 }

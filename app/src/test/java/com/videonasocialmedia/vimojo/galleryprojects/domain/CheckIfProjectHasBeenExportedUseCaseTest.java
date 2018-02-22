@@ -7,6 +7,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.OnProjectExportedListener;
 import com.videonasocialmedia.vimojo.model.entities.editor.LastVideoExported;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
@@ -15,6 +16,9 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -64,7 +68,10 @@ public class CheckIfProjectHasBeenExportedUseCaseTest {
   private Project getAProjectWithVideoExportedAndSameDates() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-    Project project = Project.getInstance("title", "/path", "private/path", compositionProfile);
+    List<String> productType = new ArrayList<>();
+    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+    Project project = Project.getInstance(projectInfo, "/path", "private/path",
+        compositionProfile);
 
     String date = DateUtils.getDateRightNow();
     project.updateDateOfModification(date);

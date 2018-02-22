@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/detail_project_coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -11,144 +11,290 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.support.design.widget.AppBarLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"/>
-
-        </android.support.design.widget.AppBarLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/toolbar">
-
-            <android.support.percent.PercentFrameLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/detail_project_percent_thumb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/button_margin"
-                >
-                <ImageView
-                    android:id="@+id/detail_project_thumb"
-                    android:layout_width="250dp"
-                    app:layout_widthPercent="100%"
-                    app:layout_aspectRatio="178%"
-                    android:src="@drawable/activity_gallery_project_no_preview"
-                    android:padding="24dp"
-                    />
-
-            </android.support.percent.PercentFrameLayout>
-
-            <TextView
-                android:id="@+id/detail_project_title"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_below="@id/detail_project_percent_thumb"
-                android:layout_margin="8dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="48dp"
-                android:paddingLeft="16dp"
-                android:textCursorDrawable="@null"
-                android:layout_centerHorizontal="true"
-                android:gravity="center_vertical"
-                android:textSize="18sp"
-                android:hint="@string/detail_project_hint_title"
-                android:drawableLeft="@drawable/activity_detail_project_edit_title"
-                android:drawablePadding="4dp"
-                />
+            android:layout_height="0dp"
+            android:layout_weight="0.7">
 
             <android.support.v7.widget.CardView
-                android:id="@+id/detail_project_info"
+                android:id="@+id/detail_project_title_cardview"
+                style="?attr/cardViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/detail_project_coordinatorLayout"
+                android:layout_margin="4dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center|left"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="60dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center|left">
+
+                    <EditText
+                        android:id="@+id/detail_project_title_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="@string/detail_project_title"
+                        android:textStyle="bold"
+                        android:inputType="text"
+                        android:imeOptions="actionDone"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:background="@android:color/transparent"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end">
+
+                    <Button
+                        android:id="@+id/detail_project_title_accept_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:text="Ok"
+                        android:textColor="@color/colorAccent"
+                        android:visibility="gone" />
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2.2">
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/detail_project_description_cardview"
+                style="?attr/cardViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/detail_project_title_cardview"
+                android:layout_margin="4dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center|left"
+                    android:layout_margin="16dp"
+                    android:gravity="left">
+
+                    <ScrollView
+                        android:id="@+id/detail_project_description_scroll_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="60dp">
+
+                        <EditText
+                            android:id="@+id/detail_project_description_edit_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="@string/detail_project_description"
+                            android:background="@android:color/transparent" />
+                    </ScrollView>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|right">
+
+                    <Button
+                        android:id="@+id/detail_project_description_accept_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:text="Ok"
+                        android:textColor="@color/colorAccent"
+                        android:visibility="gone" />
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.7">
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/detail_project_product_type_cardview"
+                style="?attr/cardViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/detail_project_description_cardview"
+                android:layout_margin="4dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="16dp"
+                    android:gravity="center|left">
+
+                    <HorizontalScrollView
+                        android:id="@+id/detail_project_product_type_scroll_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="true">
+
+                        <TextView
+                            android:id="@+id/detail_project_product_type_values"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|left"
+                            android:scrollHorizontally="true"
+                            android:text="@string/detail_project_product_type" />
+                    </HorizontalScrollView>
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3">
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/detail_project_info_cardview"
+                style="?attr/cardViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/button_margin"
-                android:layout_below="@id/detail_project_title"
-                style="?attr/cardViewStyle">
+                android:layout_below="@id/detail_project_product_type_cardview"
+                android:layout_margin="@dimen/button_margin">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_margin="16dp">
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/detail_project_duration"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/button_margin"
-                        android:text="@string/detail_project_info_duration"/>
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/detail_project_size"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/button_margin"
-                        android:text="@string/detail_project_info_size"/>
+                        <TextView
+                            android:id="@+id/detail_project_details"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start|center_vertical"
+                            android:layout_weight="4"
+                            android:text="@string/detail_project_details" />
 
-                    <TextView
-                        android:id="@+id/detail_project_quality"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/button_margin"
-                        android:text="@string/detail_project_info_quality"/>
+                        <ImageButton
+                            android:id="@+id/detail_project_details_expand"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end|center_vertical"
+                            android:layout_weight="1"
+                            android:background="@null"
+                            android:src="@drawable/activity_detail_project_ic_expand_info_details" />
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/detail_project_format"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/button_margin"
-                        android:text="@string/detail_project_info_format"/>
+                    <RelativeLayout
+                        android:id="@+id/detail_project_details_info_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone">
 
-                    <TextView
-                        android:id="@+id/detail_project_bitrate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/button_margin"
-                        android:text="@string/detail_project_info_bitrate"/>
+                        <ScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
-                    <TextView
-                        android:id="@+id/detail_project_framerate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/button_margin"
-                        android:text="@string/detail_project_info_framerate"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
 
+                                <TextView
+                                    android:id="@+id/detail_project_duration"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="@dimen/button_margin"
+                                    android:text="@string/detail_project_info_duration" />
+
+                                <TextView
+                                    android:id="@+id/detail_project_size"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="@dimen/button_margin"
+                                    android:text="@string/detail_project_info_size" />
+
+                                <TextView
+                                    android:id="@+id/detail_project_quality"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="@dimen/button_margin"
+                                    android:text="@string/detail_project_info_quality" />
+
+                                <TextView
+                                    android:id="@+id/detail_project_format"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="@dimen/button_margin"
+                                    android:text="@string/detail_project_info_format" />
+
+                                <TextView
+                                    android:id="@+id/detail_project_bitrate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="@dimen/button_margin"
+                                    android:text="@string/detail_project_info_bitrate" />
+
+                                <TextView
+                                    android:id="@+id/detail_project_framerate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="@dimen/button_margin"
+                                    android:text="@string/detail_project_info_framerate" />
+                            </LinearLayout>
+                        </ScrollView>
+                    </RelativeLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
+        </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/button_detail_project_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="12dp"
-                android:src="@drawable/activity_edit_common_icon_cancel"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.7">
 
-            <ImageButton
-                android:id="@+id/button_detail_project_accept"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="4dp"
-                android:layout_marginRight="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="12dp"
-                android:src="@drawable/activity_edit_common_icon_accept"/>
+            <android.support.v7.widget.CardView
+                android:id="@+id/detail_project_info"
+                style="?attr/cardViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/detail_project_info_cardview"
+                android:layout_margin="@dimen/button_margin">
 
-        </RelativeLayout>
+                <ImageButton
+                    android:id="@+id/button_detail_project_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center"
+                    android:layout_marginLeft="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="12dp"
+                    android:src="@drawable/activity_edit_common_icon_cancel" />
+
+                <ImageButton
+                    android:id="@+id/button_detail_project_accept"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center"
+                    android:layout_marginRight="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="12dp"
+                    android:src="@drawable/activity_edit_common_icon_accept" />
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
     </LinearLayout>
-
 </android.support.design.widget.CoordinatorLayout>

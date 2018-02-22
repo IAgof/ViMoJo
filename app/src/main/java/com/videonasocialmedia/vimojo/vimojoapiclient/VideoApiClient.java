@@ -4,10 +4,15 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
  * Created by jliarte on 8/02/18.
  */
 
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
+
+import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -22,21 +27,29 @@ import static com.videonasocialmedia.vimojo.vimojoapiclient.ApiConstants.MULTIPA
  * <p>Handles video upload calls.</p>
  */
 public class VideoApiClient extends VimojoApiClient {
+
+  public static final String VIDEO_API_KEY_TITLE = "title";
+  public static final String VIDEO_API_KEY_DESCRIPTION = "description";
+  public static final String VIDEO_API_KEY_PRODUCT_TYPE = "productType";
+
+  public VideoApiClient() {
+  }
+
   /**
    * Make a upload video call to send video to platform
    *
-   * @param authToken   valid token
-   * @param mediaPath   Absolute path, video to upload
-   * @param description Description of video
+   * @param authToken valid token to validate call to service
+   * @param videoUpload Model for enqueue video uploads to vimojo platform.
    * @return the video upload response of the platform service
    * @throws VimojoApiException if an error has occurred in the call.
    */
-  public Video uploadVideo(String authToken, String mediaPath, String description)
+  public Video uploadVideo(String authToken, VideoUpload videoUpload)
           throws VimojoApiException {
+
     // create upload service client
     VideoService videoService = getService(VideoService.class, authToken);
 
-    File file = new File(mediaPath);
+    File file = new File(videoUpload.getMediaPath());
     RequestBody requestFile = RequestBody
             .create(okhttp3.MediaType.parse(MIME_TYPE_VIDEO), file);
 
@@ -44,10 +57,18 @@ public class VideoApiClient extends VimojoApiClient {
     MultipartBody.Part body =
             MultipartBody.Part.createFormData(MULTIPART_NAME_DATA, file.getName(), requestFile);
     // add another part within the multipart request
-    RequestBody requestBody = RequestBody.create(MultipartBody.FORM, description);
+    RequestBody requestBodyTitle = createPartFromString(videoUpload.getTitle());
+    RequestBody requestBodyDescription = createPartFromString(videoUpload.getDescription());
+    String productTypeList = TextUtils.join(", ", videoUpload.getProductTypeList());
+    RequestBody requestBodyProductTypes = createPartFromString(productTypeList);
+
+    HashMap<String, RequestBody> requestBodyHashMap = new HashMap<>();
+    requestBodyHashMap.put(VIDEO_API_KEY_TITLE, requestBodyTitle);
+    requestBodyHashMap.put(VIDEO_API_KEY_DESCRIPTION, requestBodyDescription);
+    requestBodyHashMap.put(VIDEO_API_KEY_PRODUCT_TYPE, requestBodyProductTypes);
 
     try {
-      Response<Video> response = videoService.uploadVideo(requestBody, body).execute();
+      Response<Video> response = videoService.uploadVideo(requestBodyHashMap, body).execute();
       if (response.isSuccessful()) {
         return response.body();
       } else {
@@ -59,4 +80,11 @@ public class VideoApiClient extends VimojoApiClient {
     return null;
   }
 
+  @NonNull
+  private RequestBody createPartFromString(String descriptionString) {
+    if (descriptionString == null)
+      return RequestBody.create(MultipartBody.FORM, "");
+    return RequestBody.create(
+        MultipartBody.FORM, descriptionString);
+  }
 }

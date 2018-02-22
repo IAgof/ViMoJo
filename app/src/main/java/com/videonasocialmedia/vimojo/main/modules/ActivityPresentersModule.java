@@ -33,7 +33,6 @@ import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgro
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DuplicateProjectUseCase;
-import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateTitleProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.DetailProjectPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
@@ -349,9 +348,9 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  DetailProjectPresenter provideDetailProjectPresenter(
-      UpdateTitleProjectUseCase updateTitleProjectUseCase){
-    return new DetailProjectPresenter((DetailProjectActivity) activity, updateTitleProjectUseCase);
+  DetailProjectPresenter provideDetailProjectPresenter(ProjectRepository projectRepository){
+    return new DetailProjectPresenter(activity, (DetailProjectActivity) activity,
+        projectRepository);
   }
 
   @Provides @PerActivity
@@ -437,11 +436,6 @@ public class ActivityPresentersModule {
   @Provides AddLastVideoExportedToProjectUseCase provideLastVideoExporterAdded(
           ProjectRepository projectRepository) {
     return new AddLastVideoExportedToProjectUseCase(projectRepository);
-  }
-
-  @Provides
-  UpdateTitleProjectUseCase provideUpdateTitleProject(ProjectRepository projectRepository) {
-    return new UpdateTitleProjectUseCase(projectRepository);
   }
 
   @Provides

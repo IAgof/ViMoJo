@@ -20,6 +20,7 @@ import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
@@ -390,12 +391,16 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     if(currentProject.getVMComposition().hasVideos()) {
       pathThumbProject = currentProject.getMediaTrack().getItems().get(0).getMediaPath();
     }
-    String name = currentProject.getTitle();
+    String name = currentProject.getProjectInfo().getTitle();
     String date = DateUtils.toFormatDateDayMonthYear(currentProject.getLastModification());
     editorActivityView.setHeaderViewCurrentProject(pathThumbProject, name, date);
   }
 
-  public void updateTitleCurrentProject(String textTitle) {
-    projectRepository.setTitle(currentProject, textTitle);
+  public void updateTitleCurrentProject(String title) {
+    Project project = loadCurrentProject();
+    ProjectInfo projectInfo = project.getProjectInfo();
+    projectInfo.setTitle(title);
+    projectRepository.setProjectInfo(project, projectInfo.getTitle(), projectInfo.getDescription(),
+        projectInfo.getProductTypeList());
   }
 }

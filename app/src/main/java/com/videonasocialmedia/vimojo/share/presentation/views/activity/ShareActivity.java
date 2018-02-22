@@ -28,6 +28,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -79,6 +80,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     private int currentPosition;
 
   private ProgressDialog exportProgressDialog;
+  private ProgressDialog checkingUserProgressDialog;
   private boolean acceptUploadVideoMobileNetwork;
   private boolean isWifiConnected = false;
   private boolean isMobileNetworConnected = false;
@@ -97,7 +99,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         hideFab();
         initBarProgressDialog();
         checkNetworksAvailable();
-        presenter.checkUserLoggedWithPlatform();
     }
 
     // if user updates theme from drawer
@@ -132,6 +133,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   protected void onPause() {
     super.onPause();
     exportProgressDialog.dismiss();
+    checkingUserProgressDialog.dismiss();
   }
 
   @Override
@@ -150,6 +152,16 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     exportProgressDialog.setProgressPercentFormat(null);
     exportProgressDialog.setCanceledOnTouchOutside(false);
     exportProgressDialog.setCancelable(false);
+
+    checkingUserProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
+    checkingUserProgressDialog.setTitle(R.string.progress_dialog_title_checking_info_user);
+    checkingUserProgressDialog.setMessage(getString(R.string.progress_dialog_message_checking_user_auth));
+    checkingUserProgressDialog.setProgressStyle(exportProgressDialog.STYLE_HORIZONTAL);
+    checkingUserProgressDialog.setIndeterminate(true);
+    checkingUserProgressDialog.setProgressNumberFormat(null);
+    checkingUserProgressDialog.setProgressPercentFormat(null);
+    checkingUserProgressDialog.setCanceledOnTouchOutside(false);
+    checkingUserProgressDialog.setCancelable(false);
   }
 
   private void setupBottomBar(BottomBar bottomBar) {
@@ -299,6 +311,63 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   @Override
+  public void showDialogNeedToRegisterLoginToUploadVideo() {
+    // TODO: 9/2/18 Make Videona alertdialog info component
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    builder.setMessage(getResources().getString(R.string.upload_video_register_login));
+    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        switch (which) {
+          case DialogInterface.BUTTON_NEUTRAL:
+            navigateToUserAuth();
+            break;
+        }
+      }
+    };
+    AlertDialog alertDialog = builder.setCancelable(false).
+        setNeutralButton("OK", dialogClickListener).show();
+  }
+
+  @Override
+  public void showDialogNeedToCompleteDetailProjectFields() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    builder.setMessage(getResources().getString(R.string.upload_video_complete_project_info));
+    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        switch (which) {
+          case DialogInterface.BUTTON_NEUTRAL:
+            navigateToProjectDetails();
+            break;
+        }
+      }
+    };
+    AlertDialog alertDialog = builder.setCancelable(false).
+        setNeutralButton("OK", dialogClickListener).show();
+  }
+
+  @Override
+  public void showProgressDialogCheckingUserAuth() {
+    checkingUserProgressDialog.show();
+  }
+
+  @Override
+  public void hideProgressDialogCheckingUserAuth() {
+    checkingUserProgressDialog.dismiss();
+  }
+
+
+  private void navigateToUserAuth() {
+    super.navigateTo(UserAuthActivity.class);
+  }
+
+
+  private void navigateToProjectDetails() {
+    super.navigateTo(DetailProjectActivity.class);
+  }
+
+  @Override
     public void onFtpClicked(FtpNetwork ftp) {
         createDialogToInsertNameProject(ftp);
     }
@@ -347,11 +416,11 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     }
 
     @Override
-    public void showMessage(final int string) {
+    public void showMessage(final int stringId) {
       runOnUiThread(new Runnable() {
           @Override
           public void run() {
-              Snackbar snackbar = Snackbar.make(coordinatorLayout, string, Snackbar.LENGTH_LONG);
+              Snackbar snackbar = Snackbar.make(coordinatorLayout, stringId, Snackbar.LENGTH_LONG);
               snackbar.show();
           }
       });
@@ -390,12 +459,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         presenter.startExport();
       }
     }
-
-  @Override
-  public void navigateToUserAuth() {
-    Intent intent = new Intent(this, UserAuthActivity.class);
-    startActivity(intent);
-  }
 
   @Override
     public void loadExportedVideoPreview(final String mediaPath) {

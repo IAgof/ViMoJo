@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
@@ -102,5 +103,13 @@ public class GalleryProjectListPresenter {
   public void goToDetailProject(Project project) {
     projectRepository.update(project);
     galleryProjectListView.navigateTo(DetailProjectActivity.class);
+  }
+
+  public void updateTitleCurrentProject(Project project, String projectTitle) {
+    ProjectInfo projectInfo = project.getProjectInfo();
+    projectInfo.setTitle(projectTitle);
+    projectRepository.setProjectInfo(project, projectInfo.getTitle(), projectInfo.getDescription(),
+        projectInfo.getProductTypeList());
+    updateProjectList();
   }
 }

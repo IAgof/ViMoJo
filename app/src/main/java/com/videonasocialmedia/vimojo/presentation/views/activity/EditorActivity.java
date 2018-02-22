@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -97,6 +99,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   CircleImageView imageProjectThumb;
   TextView projectName;
   TextView projectDate;
+  ImageButton projectEdit;
   String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_THUMB;
   private int REQUEST_ICON_USER = 100;
   private boolean isVimojoStoreAvailable = true;
@@ -165,7 +168,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   private void setUpAndCheckHeaderViewCurrentProject() {
     imageProjectThumb = (CircleImageView) navigationView.getHeaderView(0)
             .findViewById(R.id.image_drawer_thumb_project);
-    projectName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.project_name);
+    projectName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.project_title);
     projectName.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -173,6 +176,13 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       }
     });
     projectDate = (TextView) navigationView.getHeaderView(0).findViewById(R.id.project_date);
+    projectEdit = (ImageButton) navigationView.getHeaderView(0).findViewById(R.id.project_edit_button);
+    projectEdit.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        navigateTo(DetailProjectActivity.class);
+      }
+    });
     editorPresenter.updateHeaderViewCurrentProject();
   }
 
