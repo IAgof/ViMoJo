@@ -60,7 +60,7 @@ public class UploadToPlatformQueueTest {
   public void addVideoUploadUpdateNotificationIfNotificationIsShowed() throws IOException {
     ObjectQueue<VideoUpload> queue = injectedUploadToPlatformQueue.getQueue();
     assertThat(queue.size(), is(0));
-    VideoUpload videoUpload = new VideoUpload("authToken", "mediaPath",
+    VideoUpload videoUpload = new VideoUpload( "mediaPath",
         "title", "description", "productTypeList");
     when(mockedUploadNotification.isNotificationShowed()).thenReturn(true);
     injectedUploadToPlatformQueue.addVideoToUpload(videoUpload);
@@ -89,7 +89,7 @@ public class UploadToPlatformQueueTest {
   public void uploadNotificationIfQueueIsNotEmpty() throws IOException {
     ObjectQueue<VideoUpload> queue = injectedUploadToPlatformQueue.getQueue();
     assertThat(queue.size(), is(0));
-    VideoUpload videoUpload = new VideoUpload("authToken", "mediaPath",
+    VideoUpload videoUpload = new VideoUpload("mediaPath",
         "title", "description", "productTypeList");
     injectedUploadToPlatformQueue.addVideoToUpload(videoUpload);
     ObjectQueue<VideoUpload> updatedQueue = injectedUploadToPlatformQueue.getQueue();
