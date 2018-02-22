@@ -8,9 +8,7 @@ import com.google.gson.Gson;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.VimojoApiError;
 import com.videonasocialmedia.vimojo.vimojoapiclient.rest.ServiceGenerator;
-
 import java.io.IOException;
-
 import retrofit2.Response;
 
 /**
@@ -18,6 +16,10 @@ import retrofit2.Response;
  */
 class VimojoApiClient {
   private static final int INVALID_AUTH_CODE = 401;
+
+  public VimojoApiClient() {
+
+  }
 
   <T> T getService(Class<T> serviceClass) {
     return new ServiceGenerator(BuildConfig.API_BASE_URL).generateService(serviceClass);

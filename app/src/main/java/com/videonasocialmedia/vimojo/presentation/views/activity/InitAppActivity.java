@@ -43,6 +43,8 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresente
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnInitAppEventListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
+import com.videonasocialmedia.vimojo.sync.SyncConstants;
+import com.videonasocialmedia.vimojo.sync.SyncConstants;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.AppStart;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -218,7 +220,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         requestPermissionsAndPerformSetup();
         // TODO: 6/2/18 Decide when app has to check pending video uploads. On launch app, every 10 minutes, etc ...
-        //runNowSyncAdapter();
         runSyncAdapterPeriodic();
     }
 
@@ -228,21 +229,18 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         contentResolver = getContentResolver();
 
         Account account = UserAccountUtil.getAccount(this);
-        String authority = this.getString(R.string.content_authority);
 
         // we can enable inexact timers in our periodic sync
         SyncRequest request = new SyncRequest.Builder().
             syncPeriodic(SYNC_INTERVAL, SYNC_FLEX_TIME).
-            setSyncAdapter(account, authority).
+            setSyncAdapter(account, SyncConstants.VIMOJO_CONTENT_AUTHORITY).
             setExtras(new Bundle()).build();
 
         if (account != null) {
             contentResolver.requestSync(request);
-            ContentResolver.setSyncAutomatically(account, authority, true);
+            ContentResolver.setSyncAutomatically(account, SyncConstants.VIMOJO_CONTENT_AUTHORITY, true);
         }
     }
-
-
 
     @Override
     protected void onStop() {

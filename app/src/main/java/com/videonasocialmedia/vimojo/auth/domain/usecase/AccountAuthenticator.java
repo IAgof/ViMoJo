@@ -18,10 +18,13 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.AccountConstants;
 import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
+import com.videonasocialmedia.vimojo.auth.util.UserAccountUtil;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 
 import java.lang.ref.WeakReference;
+
+import static com.videonasocialmedia.vimojo.auth.AccountConstants.VIMOJO_ACCOUNT_TYPE;
 
 /**
  * Class for Account Manager Auth Service. This class uses Android Account Manager to cache
@@ -49,7 +52,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
                            String authTokenType, String[] requiredFeatures,
                            Bundle options) throws NetworkErrorException {
     final Intent intent = new Intent(getContext(), UserAuthActivity.class);
-    intent.putExtra(context.getString(R.string.account_type), accountType);
+    intent.putExtra(AccountConstants.VIMOJO_ACCOUNT_TYPE, accountType);
     intent.putExtra(AccountConstants.VIMOJO_AUTH_TOKEN_TYPE, authTokenType);
     intent.putExtra("is_adding_new_account", true);
     intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
@@ -93,7 +96,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
     // an intent to display our AuthenticatorActivity which is the AccountsActivity in my case.
     final Intent intent = new Intent(getContext(), UserAuthActivity.class);
     intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
-    intent.putExtra(context.getString(R.string.account_type), account.type);
+    intent.putExtra(AccountConstants.VIMOJO_ACCOUNT_TYPE, account.type);
     intent.putExtra(AccountConstants.VIMOJO_AUTH_TOKEN_TYPE, authTokenType);
     Bundle retBundle = new Bundle();
     retBundle.putParcelable(AccountManager.KEY_INTENT, intent);

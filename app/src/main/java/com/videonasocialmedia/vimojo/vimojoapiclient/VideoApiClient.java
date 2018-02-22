@@ -31,17 +31,22 @@ public class VideoApiClient extends VimojoApiClient {
   public static final String VIDEO_API_KEY_DESCRIPTION = "description";
   public static final String VIDEO_API_KEY_PRODUCT_TYPE = "productType";
 
+  public VideoApiClient() {
+  }
+
   /**
    * Make a upload video call to send video to platform
    *
+   * @param authToken valid token to validate call to service
    * @param videoUpload Model for enqueue video uploads to vimojo platform.
    * @return the video upload response of the platform service
    * @throws VimojoApiException if an error has occurred in the call.
    */
-  public Video uploadVideo(VideoUpload videoUpload)
+  public Video uploadVideo(String authToken, VideoUpload videoUpload)
           throws VimojoApiException {
+
     // create upload service client
-    VideoService videoService = getService(VideoService.class, videoUpload.getAuthToken());
+    VideoService videoService = getService(VideoService.class, authToken);
 
     File file = new File(videoUpload.getMediaPath());
     RequestBody requestFile = RequestBody

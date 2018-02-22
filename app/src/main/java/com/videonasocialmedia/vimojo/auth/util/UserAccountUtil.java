@@ -11,13 +11,14 @@ import android.content.pm.PackageManager;
 import android.support.v13.app.ActivityCompat;
 import android.util.Log;
 
-import com.videonasocialmedia.vimojo.R;
+import static com.videonasocialmedia.vimojo.auth.AccountConstants.VIMOJO_ACCOUNT_TYPE;
 
 /**
  * Utility class for getting current Vimojo Android Account.
  */
 public class UserAccountUtil {
   private static final String TAG = UserAccountUtil.class.getSimpleName();
+
 
   /**
    * Returns current vimojo account stored in Android Account Manager.
@@ -32,11 +33,12 @@ public class UserAccountUtil {
     }
 
     AccountManager accountManager = AccountManager.get(context);
-    Account[] accounts = accountManager.getAccountsByType(context.getString(R.string.account_type));
+    Account[] accounts = accountManager.getAccountsByType(VIMOJO_ACCOUNT_TYPE);
     if (accounts.length > 0) {
       return accounts[0];
     } else {
       return null;
     }
   }
+
 }

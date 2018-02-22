@@ -1,9 +1,4 @@
- v0.10.0
- - FEATURE_REGISTER_LOGIN = false, FEATURE_UPLOAD_VIDEOS false. Feature toggle for login and merge code with develop.
- - Added new network to Share screen, Upload to plaform.
- - Manage internet connection. If user has mobile network and not wifi, ask for permission in order to upload video.
- - Manage login. If user is not logged, send to login/register screen after click upload to platform.
- - Send simple notification if video is uploaded. Same notification for all videos uploaded.
- - Manage uploading errors, If uploaded fails, try 3 more times. If device lost internet connection, relaunch pending queue of videos to upload.
-
+v0.12.0
+- New screen details project. Set project title, description, product type list.
+- Update video upload service with new project fields, description and product type.
 

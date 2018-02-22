@@ -39,9 +39,9 @@ public interface ShareVideoView {
 
   void showDialogNeedToCompleteDetailProjectFields();
 
-  void showProgressDialogCheckingInfoUse();
+  void showProgressDialogCheckingUserAuth();
 
-  void hideProgressDialogCheckingInfoUse();
+  void hideProgressDialogCheckingUserAuth();
 
   void launchVideoUploadService();
 }

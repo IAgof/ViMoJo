@@ -299,7 +299,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
             return;
         }
         ProjectInfo projectInfo = currentProject.getProjectInfo();
-        uploadVideo(authToken, videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
+        uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
             projectInfo.getProductTypeList());
         shareVideoViewReference.get().showMessage(R.string.uploading_video);
     }
@@ -325,7 +325,23 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     protected boolean isUserLogged() {
-        shareVideoViewReference.get().showProgressDialogCheckingInfoUse();
+        shareVideoViewReference.get().showProgressDialogCheckingUserAuth();
+        try {
+            getAuthTokenFuture().get();
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+            Crashlytics.log("Error getting info from user interruptedException");
+            Crashlytics.logException(interruptedException);
+        } catch (ExecutionException executionException) {
+            executionException.printStackTrace();
+            Crashlytics.log("Error getting info from user executionException");
+            Crashlytics.logException(executionException);
+        }
+        shareVideoViewReference.get().hideProgressDialogCheckingUserAuth();
+        return loggedValidator.loggedValidate(authToken);
+    }
+
+    protected ListenableFuture<String> getAuthTokenFuture() {
         ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
             @Override
             public String call() throws Exception {
@@ -341,27 +357,14 @@ public class ShareVideoPresenter extends VimojoPresenter {
             public void onFailure(Throwable errorGettingToken) {
             }
         });
-
-        try {
-            authTokenFuture.get();
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-            Crashlytics.log("Error getting info from user interruptedException");
-            Crashlytics.logException(interruptedException);
-        } catch (ExecutionException executionException) {
-            executionException.printStackTrace();
-            Crashlytics.log("Error getting info from user executionException");
-            Crashlytics.logException(executionException);
-        }
-        shareVideoViewReference.get().hideProgressDialogCheckingInfoUse();
-        return loggedValidator.loggedValidate(authToken);
+        return authTokenFuture;
     }
 
-    private void uploadVideo(String authToken, String mediaPath, String title, String description,
+    private void uploadVideo(String mediaPath, String title, String description,
                              List<String> productTypeList) {
         // Convert productTypeList to string. VideoApiClient not support RequestBody with List<String>
         String productTypeListToString = TextUtils.join(", ", productTypeList);
-        VideoUpload videoUpload = new VideoUpload(authToken, mediaPath, title, description,
+        VideoUpload videoUpload = new VideoUpload(mediaPath, title, description,
             productTypeListToString);
         ListenableFuture addUploadVideoFuture = executeUseCaseCall(new Callable<Void>() {
             @Override
