@@ -43,6 +43,7 @@
     <string name="upload_video_completed">Uploaded to platform</string>
     <string name="upload_video_error">Error</string>
     <string name="upload_video_success">Success</string>
+    <string name="upload_video_network_error">Error, connect to network</string>
     <string name="upload_video_finish_singular">video uploaded</string>
     <string name="upload_video_finish_plural">videos uploaded</string>
     <string name="upload_video_with_mobile_network">Do you want to upload video with mobile network?</string>

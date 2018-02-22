@@ -5,6 +5,7 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
  */
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.VimojoApiError;
 import com.videonasocialmedia.vimojo.vimojoapiclient.rest.ServiceGenerator;
@@ -33,12 +34,12 @@ class VimojoApiClient {
     String apiErrorCode = "unknown error";
     int httpCode = response.code();
     if (response.errorBody() != null) {
-      Gson gson = new Gson();
+      Gson gson = new GsonBuilder().create();
+      VimojoApiError vimojoApiError = new VimojoApiError();
       try {
-        String errorBody = response.errorBody().string();
-        VimojoApiError apiError = gson.fromJson(errorBody, VimojoApiError.class);
-        if (apiError.getError() != null && !apiError.getError().equals("")) {
-          apiErrorCode = apiError.getError();
+        vimojoApiError = gson.fromJson(response.errorBody().string(), VimojoApiError.class);
+        if (vimojoApiError.getError() != null && !vimojoApiError.getError().equals("")) {
+          apiErrorCode = vimojoApiError.getError();
         }
       } catch (IOException ioException) {
         if (BuildConfig.DEBUG) {

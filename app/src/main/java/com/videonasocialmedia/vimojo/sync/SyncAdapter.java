@@ -31,11 +31,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   public static final long SYNC_INTERVAL =
       SYNC_INTERVAL_IN_MINUTES *
           SECONDS_PER_MINUTE;
-  // Global variables
-  // Define a variable to contain a content resolver instance
-  private final ContentResolver contentResolver;
   private Context context;
-
   private UploadToPlatformQueue uploadToPlatformQueue;
   private boolean isWifiConnected;
   private boolean isMobileNetworConnected;
@@ -49,7 +45,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          * If your app uses a content resolver, get an instance of it
          * from the incoming Context
          */
-    this.contentResolver = context.getContentResolver();
     this.context = context;
     uploadToPlatformQueue = new UploadToPlatformQueue(context);
   }

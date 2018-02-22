@@ -149,7 +149,6 @@ public class UploadToPlatformQueue {
     try {
       queue.peek().incrementNumTries();
     } catch (IOException ioException) {
-      //ioException.printStackTrace();
       Log.d(LOG_TAG, ioException.getMessage());
       Crashlytics.log("Error increment num tries head of queue video to upload");
       Crashlytics.logException(ioException);
@@ -160,7 +159,6 @@ public class UploadToPlatformQueue {
     try {
       queue.remove();
     } catch (IOException ioException) {
-      //ioException.printStackTrace();
       Log.d(LOG_TAG, ioException.getMessage());
       Crashlytics.log("Error removing queue video to upload");
       Crashlytics.logException(ioException);
@@ -169,10 +167,14 @@ public class UploadToPlatformQueue {
 
   private Video process(VideoUpload videoUpload) {
     try {
-      VideoApiClient videoApiClient = new VideoApiClient();
       return videoApiClient.uploadVideo(obtainAuthToken(), videoUpload);
-    } catch (VimojoApiException e) {
-      e.printStackTrace();
+    } catch (VimojoApiException vimojoApiException) {
+      Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
+      Crashlytics.log("Error process upload vimojoApiException");
+      Crashlytics.logException(vimojoApiException);
+      if(vimojoApiException.getApiErrorCode().equals(VimojoApiException.NETWORK_ERROR)) {
+        uploadNotification.errorNetworkNotification();
+      }
     }
     return null;
   }

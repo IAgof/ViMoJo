@@ -316,14 +316,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     ConnectivityManager connManager =
         (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-    if (wifi.isConnected()) {
-      isWifiConnected = true;
-    } else {
-      NetworkInfo mobileNetwork = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-      if(mobileNetwork.isConnected()) {
-        isMobileNetworConnected = true;
-      }
-    }
+    NetworkInfo mobileNetwork = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+    isWifiConnected = wifi.isConnected();
+    isMobileNetworConnected = mobileNetwork.isConnected();
   }
 
   @Override
