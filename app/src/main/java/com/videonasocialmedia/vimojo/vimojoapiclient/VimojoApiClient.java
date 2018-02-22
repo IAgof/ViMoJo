@@ -6,6 +6,7 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.VimojoApiError;
 import com.videonasocialmedia.vimojo.vimojoapiclient.rest.ServiceGenerator;
@@ -35,16 +36,23 @@ class VimojoApiClient {
     int httpCode = response.code();
     if (response.errorBody() != null) {
       Gson gson = new GsonBuilder().create();
-      VimojoApiError vimojoApiError = new VimojoApiError();
       try {
-        vimojoApiError = gson.fromJson(response.errorBody().string(), VimojoApiError.class);
-        if (vimojoApiError.getError() != null && !vimojoApiError.getError().equals("")) {
+        VimojoApiError vimojoApiError = gson.fromJson(response.errorBody().string(),
+                VimojoApiError.class);
+        if (vimojoApiError != null && vimojoApiError.getError() != null
+                && !vimojoApiError.getError().equals("")) {
           apiErrorCode = vimojoApiError.getError();
         }
       } catch (IOException ioException) {
         if (BuildConfig.DEBUG) {
           // TODO(jliarte): 12/01/18 check for occurrences
           ioException.printStackTrace();
+        }
+      } catch (JsonSyntaxException syntaxException) {
+        if (BuildConfig.DEBUG) {
+          // TODO(jliarte): should be managed as throw new VimojoApiException(httpCode, apiErrorCode);
+          // but for now we let it go to capture 401 errors
+          syntaxException.printStackTrace();
         }
       }
       if (httpCode == INVALID_AUTH_CODE) {

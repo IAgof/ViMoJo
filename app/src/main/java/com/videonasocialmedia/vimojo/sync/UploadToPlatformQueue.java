@@ -95,7 +95,7 @@ public class UploadToPlatformQueue {
 
   public void startOrUploadNotification() {
     Log.d(LOG_TAG, "launchNotification");
-    if(!isNotificationShowed(getQueue())) {
+    if (!isNotificationShowed(getQueue())) {
       Log.d(LOG_TAG, "startNotification");
       uploadNotification.startInfiniteProgressNotification(R.drawable.notification_uploading_small,
           context.getString(R.string.uploading_video));
@@ -138,7 +138,7 @@ public class UploadToPlatformQueue {
               queue.size(), context.getString(R.string.upload_video_error), title, false);
         }
       } else {
-        if(!isUploadCanceledByNetworkError) {
+        if (!isUploadCanceledByNetworkError) {
           launchQueueVideoUploads();
         }
       }

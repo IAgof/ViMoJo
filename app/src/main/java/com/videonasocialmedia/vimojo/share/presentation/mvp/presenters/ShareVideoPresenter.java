@@ -270,29 +270,29 @@ public class ShareVideoPresenter extends VimojoPresenter {
                                       boolean acceptUploadVideoMobileNetwork,
                                       boolean isMobileNetworkConnected,
                                       String videoPath) {
-        if(!isWifiOrMobileNetworkConnected(isWifiConnected, isMobileNetworkConnected)) {
+        if (!isWifiOrMobileNetworkConnected(isWifiConnected, isMobileNetworkConnected)) {
             // TODO: 8/2/18 Should I saved this upload until user would be connected to network
             shareVideoViewReference.get().showError(context.getString(R.string.connect_to_network));
             return;
         }
-        if(isNeededAskPermissionForMobileUpload(isWifiConnected, isMobileNetworkConnected,
+        if (isNeededAskPermissionForMobileUpload(isWifiConnected, isMobileNetworkConnected,
             acceptUploadVideoMobileNetwork)) {
             shareVideoViewReference.get().showDialogUploadVideoWithMobileNetwork();
             return;
         }
-        if(!isUserLogged()) {
+        if (!isUserLogged()) {
             // TODO: 8/2/18 Should I ask confirmation from user that he is going to navigate to User Authentication screen.
             shareVideoViewReference.get().showDialogNeedToRegisterLoginToUploadVideo();
             //shareVideoViewReference.get().navigateToUserAuth();
             return;
         }
-        if(!isThereFreeStorageOnPlatform(videoPath)) {
+        if (!isThereFreeStorageOnPlatform(videoPath)) {
             // TODO:(alvaro.martinez) 26/01/18 Get user free storage from platform
             //shareVideoViewReference.get().showError("Don´t have enough storage to upload video");
             return;
         }
 
-        if(!areThereProjectFieldsCompleted(currentProject)){
+        if (!areThereProjectFieldsCompleted(currentProject)) {
             // TODO:(alvaro.martinez) 26/01/18 Check project fields, title, description, product types. Next story to merged.
             shareVideoViewReference.get().showDialogNeedToCompleteDetailProjectFields();
             //shareVideoViewReference.get().navigateToProjectDetails();
@@ -366,20 +366,17 @@ public class ShareVideoPresenter extends VimojoPresenter {
         String productTypeListToString = TextUtils.join(", ", productTypeList);
         VideoUpload videoUpload = new VideoUpload(mediaPath, title, description,
             productTypeListToString);
-        ListenableFuture addUploadVideoFuture = executeUseCaseCall(new Callable<Void>() {
-            @Override
-            public Void call() {
-                try {
-                    uploadToPlatformQueue.addVideoToUpload(videoUpload);
-                    shareVideoViewReference.get().launchVideoUploadService();
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                    Log.d(LOG_TAG, ioException.getMessage());
-                    Crashlytics.log("Error adding video to upload");
-                    Crashlytics.logException(ioException);
-                }
-                return null;
+        executeUseCaseCall((Callable<Void>) () -> {
+            try {
+                uploadToPlatformQueue.addVideoToUpload(videoUpload);
+                shareVideoViewReference.get().launchVideoUploadService();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+                Log.d(LOG_TAG, ioException.getMessage());
+                Crashlytics.log("Error adding video to upload");
+                Crashlytics.logException(ioException);
             }
+            return null;
         });
     }
 

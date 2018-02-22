@@ -238,7 +238,8 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
         if (account != null) {
             contentResolver.requestSync(request);
-            ContentResolver.setSyncAutomatically(account, SyncConstants.VIMOJO_CONTENT_AUTHORITY, true);
+            ContentResolver.setSyncAutomatically(account, SyncConstants.VIMOJO_CONTENT_AUTHORITY,
+                    true);
         }
     }
 

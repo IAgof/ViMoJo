@@ -475,12 +475,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
     @Override
     public void showMessage(final int stringId) {
-      runOnUiThread(new Runnable() {
-          @Override
-          public void run() {
-              Snackbar snackbar = Snackbar.make(coordinatorLayout, stringId, Snackbar.LENGTH_LONG);
-              snackbar.show();
-          }
+      runOnUiThread(() -> {
+          Snackbar snackbar = Snackbar.make(coordinatorLayout, stringId, Snackbar.LENGTH_LONG);
+          snackbar.show();
       });
     }
 
