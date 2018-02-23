@@ -364,7 +364,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         return authTokenFuture;
     }
 
-    private void uploadVideo(String mediaPath, String title, String description,
+    protected void uploadVideo(String mediaPath, String title, String description,
                              List<String> productTypeList, boolean connectedToNetwork) {
         // Convert productTypeList to string. VideoApiClient not support RequestBody with List<String>
         String productTypeListToString = TextUtils.join(", ", productTypeList);
@@ -379,9 +379,9 @@ public class ShareVideoPresenter extends VimojoPresenter {
                 Crashlytics.log("Error adding video to upload");
                 Crashlytics.logException(ioException);
             }
-            runSyncAdapterHelper.runNowSyncAdapter();
             return null;
         });
+        runSyncAdapterHelper.runNowSyncAdapter();
     }
 
     private boolean isThereFreeStorageOnPlatform(String mediaPath) {

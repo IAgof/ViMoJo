@@ -85,7 +85,8 @@ public class ShareVideoPresenterTest {
 
     @After
     public void tearDown() {
-        Project.getInstance(null, null, null, null).clear();
+        getAProject().clear();
+        //Project.getInstance(null, null, null, null).clear();
     }
 
     @Test
@@ -231,27 +232,16 @@ public class ShareVideoPresenterTest {
     }
 
     @Test
-    public void clickUpdateToPlatformRunSyncAdapterUploadingVideoIfUserIsLoggedAndProjectInfoCompleted() {
-        ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
-        boolean isWifiConnected = false;
-        boolean acceptUploadVideoMobileNetwork = true;
-        boolean isMobileNetworkConnected = true;
+    public void uploadVideoRunSyncAdapter() {
+        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
         String videoPath = "";
+        getAProject().clear();
         Project project = getAProject();
-        assertThat(project.getProjectInfo().getProductTypeList().size(), is(0));
-        assertThat(project, is(spyShareVideoPresenter.currentProject));
-        ListenableFuture<String> mockedTask = mock(ListenableFuture.class);
-        when(spyShareVideoPresenter.getAuthTokenFuture()).thenReturn(mockedTask);
-        when(mockedLoggedValidator.loggedValidate("")).thenReturn(true);
-        assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
-        List<String> productType = new ArrayList<>();
-        productType.add(ProjectInfo.ProductType.RAW_VIDEOS.name());
-        project.getProjectInfo().setProductTypeList(productType);
-        assertThat("Project info product type is not empty",
-            project.getProjectInfo().getProductTypeList().size(), is(1));
+        boolean connectedToNetwork = true;
+        ProjectInfo projectInfo = project.getProjectInfo();
 
-        spyShareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
-            isMobileNetworkConnected, videoPath);
+        shareVideoPresenter.uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
+            projectInfo.getProductTypeList(), connectedToNetwork);
 
         verify(mockedRunSyncAdapterHelper).runNowSyncAdapter();
     }
@@ -263,14 +253,6 @@ public class ShareVideoPresenterTest {
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
         return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
-    }
-
-    public Project getANewProject() {
-        Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
-            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-        List<String> productType = new ArrayList<>();
-        ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-        return new Project(projectInfo, "/path", "private/path", compositionProfile);
     }
 
     @NonNull
