@@ -123,20 +123,6 @@ public class ShareVideoPresenterTest {
     }
 
     @Test
-    public void clickUploadToPlatformShowErrorIfThereAreNotWifiOrMobileNetworkConnected() {
-        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
-        boolean isWifiConnected = false;
-        boolean acceptUploadVideoMobileNetwork = false;
-        boolean isMobileNetworkConnected = false;
-        String videoPath = "";
-
-        shareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
-            isMobileNetworkConnected, videoPath);
-
-        verify(mockedShareVideoView).showError(null);
-    }
-
-    @Test
     public void clickUploadToPlatformShowDialogIfIsNeededAskPermissionForMobileUpload() {
         ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
         boolean isWifiConnected = false;
