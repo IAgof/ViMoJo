@@ -69,8 +69,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 96 // 20180221
-            versionName "0.12.0" // 2018021
+            versionCode 97 // 20180223
+            versionName "0.13.0" // 2018023
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "api_base_url", "https://"
@@ -158,8 +158,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 47 // 20180221
-            versionName "0.12.0.fThomsonFoundation" // 20180221
+            versionCode 48 // 20180223
+            versionName "0.13.0.fThomsonFoundation" // 20180223
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "api_base_url", "https://"
@@ -204,8 +204,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 14 // 20180221
-            versionName "0.12.0.fMarketForNews" // 20180221
+            versionCode 15 // 20180223
+            versionName "0.13.0.fMarketForNews" // 20180223
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "api_base_url", "https://"
