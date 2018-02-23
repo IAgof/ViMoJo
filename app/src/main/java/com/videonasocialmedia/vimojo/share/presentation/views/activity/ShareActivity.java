@@ -62,7 +62,7 @@ import butterknife.Optional;
  */
 public class ShareActivity extends EditorActivity implements ShareVideoView,
         VideonaPlayer.VideonaPlayerListener, OnOptionsToShareListClickListener {
-  public static final int NOTIFICATION_UPLOAD_COMPLETE_ID = 001;
+
   @Inject ShareVideoPresenter presenter;
     @Inject SharedPreferences sharedPreferences;
 
@@ -304,6 +304,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void onVimojoPlatformClicked() {
+    checkNetworksAvailable();
     presenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
         isMobileNetworConnected, videoPath);
   }
@@ -312,14 +313,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     ConnectivityManager connManager =
         (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-    if (wifi.isConnected()) {
-      isWifiConnected = true;
-    } else {
-      NetworkInfo mobileNetwork = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-      if(mobileNetwork.isConnected()) {
-        isMobileNetworConnected = true;
-      }
-    }
+    NetworkInfo mobileNetwork = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+    isWifiConnected = wifi.isConnected();
+    isMobileNetworConnected = mobileNetwork.isConnected();
   }
 
   @Override
@@ -392,11 +388,26 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     checkingUserProgressDialog.dismiss();
   }
 
+  @Override
+  public void showDialogNotNetworkUploadVideoOnConnection() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    builder.setMessage(getResources().getString(R.string.upload_video_with_network_connected));
+    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        switch (which) {
+          case DialogInterface.BUTTON_NEUTRAL:
+            break;
+        }
+      }
+    };
+    AlertDialog alertDialog = builder.setCancelable(false).
+        setNeutralButton("OK", dialogClickListener).show();
+  }
 
   private void navigateToUserAuth() {
     super.navigateTo(UserAuthActivity.class);
   }
-
 
   private void navigateToProjectDetails() {
     super.navigateTo(DetailProjectActivity.class);
@@ -452,12 +463,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
     @Override
     public void showMessage(final int stringId) {
-      runOnUiThread(new Runnable() {
-          @Override
-          public void run() {
-              Snackbar snackbar = Snackbar.make(coordinatorLayout, stringId, Snackbar.LENGTH_LONG);
-              snackbar.show();
-          }
+      runOnUiThread(() -> {
+          Snackbar snackbar = Snackbar.make(coordinatorLayout, stringId, Snackbar.LENGTH_LONG);
+          snackbar.show();
       });
     }
 

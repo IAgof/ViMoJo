@@ -40,8 +40,14 @@
     <string name="credentialFTPNull">FTP connection data not set. Please configure FTP in settings.</string>
     <string name="upload_to_server">Send to platform</string>
     <string name="uploading_video">Uploading video</string>
-    <string name="upload_video_completed">Video uploaded to platform</string>
-    <string name="upload_video_error">Error uploading video to platform</string>
+    <string name="upload_video_completed">Uploaded to platform</string>
+    <string name="upload_video_error">Error</string>
+    <string name="upload_video_success">Success</string>
+    <string name="upload_video_network_error">Error, connect to network</string>
+    <string name="upload_video_with_network_connected">Device not connected to internet, video will be uploaded when device connects to network</string>
+    <string name="upload_video_unauthorization_upload_error">Authorization problem uploading videos</string>
+    <string name="upload_video_finish_singular">video uploaded</string>
+    <string name="upload_video_finish_plural">videos uploaded</string>
     <string name="upload_video_with_mobile_network">Do you want to upload video with mobile network?</string>
     <string name="connect_to_network">Please connect your device to network, cellular or wifi</string>
     <string name="upload_video_register_login">For uploading videos, you need to register or login first.</string>
@@ -2504,6 +2510,5 @@ and Conditions.\n\n
 
 
     <string name="profession">Profession</string>
-
 
 </resources>

@@ -5,7 +5,6 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
  */
 
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
@@ -59,8 +58,7 @@ public class VideoApiClient extends VimojoApiClient {
     // add another part within the multipart request
     RequestBody requestBodyTitle = createPartFromString(videoUpload.getTitle());
     RequestBody requestBodyDescription = createPartFromString(videoUpload.getDescription());
-    String productTypeList = TextUtils.join(", ", videoUpload.getProductTypeList());
-    RequestBody requestBodyProductTypes = createPartFromString(productTypeList);
+    RequestBody requestBodyProductTypes = createPartFromString(videoUpload.getProductTypeList());
 
     HashMap<String, RequestBody> requestBodyHashMap = new HashMap<>();
     requestBodyHashMap.put(VIDEO_API_KEY_TITLE, requestBodyTitle);

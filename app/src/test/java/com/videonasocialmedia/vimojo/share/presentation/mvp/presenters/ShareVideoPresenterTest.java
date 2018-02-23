@@ -10,10 +10,12 @@ package com.videonasocialmedia.vimojo.share.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
@@ -28,14 +30,19 @@ import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
 import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +57,9 @@ import static org.powermock.api.mockito.PowerMockito.when;
 /**
  * Created by alvaro on 24/08/16.
  */
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({TextUtils.class})
 public class ShareVideoPresenterTest {
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private ShareVideoView mockedShareVideoView;
@@ -64,16 +74,19 @@ public class ShareVideoPresenterTest {
     @Mock private GetAuthToken mockedGetAuthToken;
     @Mock private UploadToPlatformQueue mockedUploadToPlatformQueue;
     @Mock private LoggedValidator mockedLoggedValidator;
+    @Mock private RunSyncAdapterHelper mockedRunSyncAdapterHelper;
 
     @Before
     public void injectMocks() {
         MockitoAnnotations.initMocks(this);
         getAProject();
+        PowerMockito.mockStatic(TextUtils.class);
     }
 
     @After
     public void tearDown() {
-        Project.getInstance(null, null, null, null).clear();
+        getAProject().clear();
+        //Project.getInstance(null, null, null, null).clear();
     }
 
     @Test
@@ -92,7 +105,8 @@ public class ShareVideoPresenterTest {
                 mockedShareVideoView, userEventTracker, mockSharedPrefs,
                 mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
                 mockedExportProjectUseCase, mockedShareNetworksProvider, mockedFtpListUseCase,
-                mockedGetAuthToken, mockedUploadToPlatformQueue, mockedLoggedValidator);
+                mockedGetAuthToken, mockedUploadToPlatformQueue, mockedLoggedValidator,
+                mockedRunSyncAdapterHelper);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
 
@@ -107,20 +121,6 @@ public class ShareVideoPresenterTest {
 
         verify(mockedUserEventTracker).trackVideoShared(socialNetwokId,videonaProject,
                 totalVideosShared);
-    }
-
-    @Test
-    public void clickUploadToPlatformShowErrorIfThereAreNotWifiOrMobileNetworkConnected() {
-        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
-        boolean isWifiConnected = false;
-        boolean acceptUploadVideoMobileNetwork = false;
-        boolean isMobileNetworkConnected = false;
-        String videoPath = "";
-
-        shareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
-            isMobileNetworkConnected, videoPath);
-
-        verify(mockedShareVideoView).showError(null);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class ShareVideoPresenterTest {
         String videoPath = "";
         ListenableFuture<String> mockedTask = mock(ListenableFuture.class);
         when(spyShareVideoPresenter.getAuthTokenFuture()).thenReturn(mockedTask);
-        assertThat(spyShareVideoPresenter.isUserLogged(), is(false));
+        assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(false));
 
         spyShareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
             isMobileNetworkConnected, videoPath);
@@ -167,13 +167,85 @@ public class ShareVideoPresenterTest {
         ListenableFuture<String> mockedTask = mock(ListenableFuture.class);
         when(spyShareVideoPresenter.getAuthTokenFuture()).thenReturn(mockedTask);
         when(mockedLoggedValidator.loggedValidate("")).thenReturn(true);
-        assertThat(spyShareVideoPresenter.isUserLogged(), is(true));
+        assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
+        assertThat("Project info product type is empty",
+            project.getProjectInfo().getProductTypeList().size(), is(0));
 
         spyShareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
             isMobileNetworkConnected, videoPath);
 
         verify(mockedShareVideoView).showDialogNeedToCompleteDetailProjectFields();
     }
+
+    @Test
+    public void clickUpdateToPlatformShowMessageUploadingVideoIfUserIsLoggedProjectInfoCompletedAndNetworkIsConnected() {
+        ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
+        // Device is connected to network
+        boolean isWifiConnected = true;
+        boolean acceptUploadVideoMobileNetwork = true;
+        boolean isMobileNetworkConnected = true;
+        String videoPath = "";
+        Project project = getAProject();
+        assertThat(project.getProjectInfo().getProductTypeList().size(), is(0));
+        assertThat(project, is(spyShareVideoPresenter.currentProject));
+        ListenableFuture<String> mockedTask = mock(ListenableFuture.class);
+        when(spyShareVideoPresenter.getAuthTokenFuture()).thenReturn(mockedTask);
+        when(mockedLoggedValidator.loggedValidate("")).thenReturn(true);
+        assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
+        List<String> productType = new ArrayList<>();
+        productType.add(ProjectInfo.ProductType.RAW_VIDEOS.name());
+        project.getProjectInfo().setProductTypeList(productType);
+        assertThat("Project info product type is not empty",
+            project.getProjectInfo().getProductTypeList().size(), is(1));
+
+        spyShareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
+            isMobileNetworkConnected, videoPath);
+
+        verify(mockedShareVideoView).showMessage(R.string.uploading_video);
+    }
+
+    @Test
+    public void clickUpdateToPlatformShowDialogNotNetworkUploadingVideoIfUserIsLoggedProjectInfoCompletedAndNetworkIsConnected() {
+        ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
+        // Device is NOT connected to network
+        boolean isWifiConnected = false;
+        boolean acceptUploadVideoMobileNetwork = false;
+        boolean isMobileNetworkConnected = false;
+        String videoPath = "";
+        Project project = getAProject();
+        assertThat(project.getProjectInfo().getProductTypeList().size(), is(0));
+        assertThat(project, is(spyShareVideoPresenter.currentProject));
+        ListenableFuture<String> mockedTask = mock(ListenableFuture.class);
+        when(spyShareVideoPresenter.getAuthTokenFuture()).thenReturn(mockedTask);
+        when(mockedLoggedValidator.loggedValidate("")).thenReturn(true);
+        assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
+        List<String> productType = new ArrayList<>();
+        productType.add(ProjectInfo.ProductType.RAW_VIDEOS.name());
+        project.getProjectInfo().setProductTypeList(productType);
+        assertThat("Project info product type is not empty",
+            project.getProjectInfo().getProductTypeList().size(), is(1));
+
+        spyShareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
+            isMobileNetworkConnected, videoPath);
+
+        verify(mockedShareVideoView).showDialogNotNetworkUploadVideoOnConnection();
+    }
+
+    @Test
+    public void uploadVideoRunSyncAdapter() {
+        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
+        String videoPath = "";
+        getAProject().clear();
+        Project project = getAProject();
+        boolean connectedToNetwork = true;
+        ProjectInfo projectInfo = project.getProjectInfo();
+
+        shareVideoPresenter.uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
+            projectInfo.getProductTypeList(), connectedToNetwork);
+
+        verify(mockedRunSyncAdapterHelper).runNowSyncAdapter();
+    }
+
 
     public Project getAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
@@ -183,20 +255,12 @@ public class ShareVideoPresenterTest {
         return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
     }
 
-    public Project getANewProject() {
-        Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
-            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-        List<String> productType = new ArrayList<>();
-        ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-        return new Project(projectInfo, "/path", "private/path", compositionProfile);
-    }
-
     @NonNull
     private ShareVideoPresenter getShareVideoPresenter() {
         return new ShareVideoPresenter(mockContext, mockedShareVideoView, mockedUserEventTracker,
                 mockSharedPrefs, mockedCreateDefaultProjectUseCase,
                 mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
                 mockedShareNetworksProvider, mockedFtpListUseCase, mockedGetAuthToken,
-            mockedUploadToPlatformQueue, mockedLoggedValidator);
+            mockedUploadToPlatformQueue, mockedLoggedValidator, mockedRunSyncAdapterHelper);
     }
 }
