@@ -51,10 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
-import java.util.ArrayList;
-import java.util.List;
 
-import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -137,8 +134,10 @@ public class EditorPresenterTest {
     project.getMediaTrack().insertItem(video);
     Assert.assertThat("Project has video", project.getVMComposition().hasVideos(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
+    boolean hasBeenProjectExported = false;
+    String videoPath = null;
 
-    editorPresenter.init();
+    editorPresenter.init(hasBeenProjectExported, videoPath);
 
     verify(mockedGetMediaListFromProjectUseCase)
         .getMediaListFromProject(any(OnVideosRetrieved.class));
@@ -155,12 +154,13 @@ public class EditorPresenterTest {
     musicList.add(music);
     project.getVMComposition().getAudioTracks().get(com.videonasocialmedia.videonamediaframework
         .model.Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
-
     Project currentProject = Project.getInstance(null, null, null, null);
     Assert.assertThat("Current project has music", currentProject.hasMusic(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
+    boolean hasBeenProjectExported = false;
+    String videoPath = null;
 
-    editorPresenter.init();
+    editorPresenter.init(hasBeenProjectExported, videoPath);
 
     verify(mockedGetAudioFromProjectUseCase).getMusicFromProject(any(GetMusicFromProjectCallback.class));
   }
@@ -183,8 +183,10 @@ public class EditorPresenterTest {
       }
     }).when(mockedGetMediaListFromProjectUseCase).getMediaListFromProject(any(OnVideosRetrieved.class));
     EditorPresenter editorPresenter = getEditorPresenter();
+    boolean hasBeenProjectExported = false;
+    String videoPath = null;
 
-    editorPresenter.init();
+    editorPresenter.init(hasBeenProjectExported, videoPath);
 
     verify(mockedVideonaPlayerView).bindVideoList(any());
     verify(mockedNewClipImporter).relaunchUnfinishedAdaptTasks(project);
@@ -204,8 +206,10 @@ public class EditorPresenterTest {
       }
     }).when(mockedGetMediaListFromProjectUseCase).getMediaListFromProject(any(OnVideosRetrieved.class));
     EditorPresenter editorPresenter = getEditorPresenter();
+    boolean hasBeenProjectExported = false;
+    String videoPath = null;
 
-    editorPresenter.init();
+    editorPresenter.init(hasBeenProjectExported, videoPath);
 
     verify(mockedEditorActivityView).hideProgressDialog();
     verify(mockedEditorActivityView).goToRecordOrGalleryScreen();
@@ -225,8 +229,10 @@ public class EditorPresenterTest {
     Assert.assertThat("Project has video on mute", project.getVMComposition()
         .getMediaTrack().isMuted(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
+    boolean hasBeenProjectExported = false;
+    String videoPath = null;
 
-    editorPresenter.init();
+    editorPresenter.init(hasBeenProjectExported, videoPath);
 
     verify(mockedVideonaPlayerView).setVideoMute();
   }
@@ -248,8 +254,10 @@ public class EditorPresenterTest {
     Assert.assertThat("Project has video and it is not on mute", project.getVMComposition()
         .getMediaTrack().isMuted(), Matchers.is(false));
     EditorPresenter editorPresenter = getEditorPresenter();
+    boolean hasBeenProjectExported = false;
+    String videoPath = null;
 
-    editorPresenter.init();
+    editorPresenter.init(hasBeenProjectExported, videoPath);
 
     verify(mockedVideonaPlayerView).setVideoVolume(volumeVideo);
   }
@@ -275,8 +283,10 @@ public class EditorPresenterTest {
       }
     }).when(mockedGetAudioFromProjectUseCase).getMusicFromProject(any(GetMusicFromProjectCallback.class));
     EditorPresenter editorPresenter = getEditorPresenter();
+    boolean hasBeenProjectExported = false;
+    String videoPath = null;
 
-    editorPresenter.init();
+    editorPresenter.init(hasBeenProjectExported, videoPath);
 
     verify(mockedVideonaPlayerView).bindMusic(any());
   }
@@ -299,8 +309,10 @@ public class EditorPresenterTest {
     assertThat("Music track is muted", currentProject.getAudioTracks().get(0).isMuted(),
         is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
+    boolean hasBeenProjectExported = false;
+    String videoPath = null;
 
-    editorPresenter.init();
+    editorPresenter.init(hasBeenProjectExported, videoPath);
 
     verify(mockedVideonaPlayerView).setMusicVolume(0.f);
   }
@@ -324,8 +336,10 @@ public class EditorPresenterTest {
     assertThat("Music track is not muted", currentProject.getAudioTracks().get(0).isMuted(),
         is(false));
     EditorPresenter editorPresenter = getEditorPresenter();
+    boolean hasBeenProjectExported = false;
+    String videoPath = null;
 
-    editorPresenter.init();
+    editorPresenter.init(hasBeenProjectExported, videoPath);
 
     verify(mockedVideonaPlayerView).setMusicVolume(musicTrackVolume);
   }
@@ -352,8 +366,10 @@ public class EditorPresenterTest {
       }
     }).when(mockedGetAudioFromProjectUseCase).getVoiceOverFromProject(any(GetMusicFromProjectCallback.class));
     EditorPresenter editorPresenter = getEditorPresenter();
+    boolean hasBeenProjectExported = false;
+    String videoPath = null;
 
-    editorPresenter.init();
+    editorPresenter.init(hasBeenProjectExported, videoPath);
 
     verify(mockedVideonaPlayerView).bindVoiceOver(any());
   }
@@ -378,8 +394,10 @@ public class EditorPresenterTest {
     Assert.assertThat("VoiceOver is not muted", currentProject.getAudioTracks()
         .get(INDEX_AUDIO_TRACK_VOICE_OVER).isMuted(), Matchers.is(false));
     EditorPresenter editorPresenter = getEditorPresenter();
+    boolean hasBeenProjectExported = false;
+    String videoPath = null;
 
-    editorPresenter.init();
+    editorPresenter.init(hasBeenProjectExported, videoPath);
 
     verify(mockedVideonaPlayerView).setVoiceOverVolume(voiceOverTrackVolume);
   }
@@ -402,8 +420,10 @@ public class EditorPresenterTest {
     Assert.assertThat("VoiceOver is muted", currentProject.getAudioTracks()
         .get(INDEX_AUDIO_TRACK_VOICE_OVER).isMuted(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
+    boolean hasBeenProjectExported = false;
+    String videoPath = null;
 
-    editorPresenter.init();
+    editorPresenter.init(hasBeenProjectExported, videoPath);
 
     verify(mockedVideonaPlayerView).setVoiceOverVolume(0.0f);
   }

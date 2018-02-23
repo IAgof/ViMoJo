@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.share.presentation.views.activity;
 
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,8 +28,8 @@ import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -45,7 +46,6 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -74,16 +74,14 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     BottomBar bottomBar;
     @BindView(R.id.fab_edit_room)
     FloatingActionsMenu fabMenu;
-
-    private String videoPath;
     private OptionsToShareAdapter optionsShareAdapter;
-    private int currentPosition;
 
   private ProgressDialog exportProgressDialog;
   private ProgressDialog checkingUserProgressDialog;
   private boolean acceptUploadVideoMobileNetwork;
   private boolean isWifiConnected = false;
   private boolean isMobileNetworConnected = false;
+  private boolean isAppExportingProject = false;
 
   @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,21 +90,11 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         ButterKnife.bind(this);
         getActivityPresentersComponent().inject(this);
         initOptionsShareList();
-        restoreState(savedInstanceState);
-        checkIntentExtras();
         bottomBar.selectTabWithId(R.id.tab_share);
         setupBottomBar(bottomBar);
         hideFab();
         initBarProgressDialog();
         checkNetworksAvailable();
-    }
-
-    // if user updates theme from drawer
-    private void checkIntentExtras() {
-        Bundle bundle = getIntent().getExtras();
-        if(bundle != null) {
-            videoPath = bundle.getString("videoPath");
-        }
     }
 
   @Override
@@ -117,16 +105,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   protected void onResume() {
     super.onResume();
-    presenter.onResume();
-    if (videoPath != null) {
-      loadExportedVideoPreview(videoPath);
-    } else {
-      loadVideoFromVMComposition();
-    }
-  }
-
-  private void loadVideoFromVMComposition() {
-
+    presenter.init(hasBeenProjectExported, videoExportedPath, isAppExportingProject);
   }
 
   @Override
@@ -140,7 +119,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   protected void onDestroy(){
     super.onDestroy();
   }
-
 
   private void initBarProgressDialog() {
     exportProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
@@ -192,27 +170,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     fabMenu.setVisibility(View.GONE);
   }
 
-    public void initVideoPlayerFromFilePath() {
-        List<Video> shareVideoList = Collections.singletonList(new Video(videoPath,
-                Video.DEFAULT_VOLUME));
-        super.bindVideoList(shareVideoList);
-    }
-
     @Override
     public void showError(String message) {
       Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString("videoPath", videoPath);
-        super.onSaveInstanceState(outState);
-    }
-
-    private void restoreState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-          videoPath = savedInstanceState.getString("videoPath");
-        }
     }
 
     public void navigateTo(Class cls) {
@@ -222,17 +182,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
     @Optional @OnClick(R.id.fab_share_room)
     public void showMoreNetworks() {
-        updateNumTotalVideosShared();
-        presenter.trackVideoShared("Other network");
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("video/*");
-        Uri uri = Utils.obtainUriToShare(this, videoPath);
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
-        startActivity(Intent.createChooser(intent, getString(R.string.share_using)));
-    }
-
-    private void updateNumTotalVideosShared() {
-        presenter.updateNumTotalVideosShared();
+      super.pausePreview();
+      presenter.onMoreSocialNetworkClicked();
     }
 
     @Override
@@ -245,32 +196,16 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     }
 
     @Override
-    public void hideShareNetworks() {
-    }
-
-    @Override
-    public void showMoreNetworks(List<SocialNetwork> networks) {
-    }
-
-    @Override
-    public void hideExtraNetworks() {
-    }
-
-    @Override
     public void onSocialNetworkClicked(SocialNetwork socialNetwork) {
-        presenter.trackVideoShared(socialNetwork.getIdSocialNetwork());
-        if (socialNetwork.getName().equals(getString(R.string.save_to_gallery))) {
-            showMessage(R.string.video_saved);
-            return;
-        }
-        presenter.shareVideo(videoPath, socialNetwork, this);
-        updateNumTotalVideosShared();
+      super.pausePreview();
+      presenter.onSocialNetworkClicked(socialNetwork);
     }
 
   @Override
   public void onVimojoPlatformClicked() {
-    presenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
-        isMobileNetworConnected, videoPath);
+    super.pausePreview();
+    presenter.onVimojoPlatformClicked(isWifiConnected, acceptUploadVideoMobileNetwork,
+        isMobileNetworConnected);
   }
 
   private void checkNetworksAvailable() {
@@ -368,11 +303,13 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   @Override
-    public void onFtpClicked(FtpNetwork ftp) {
-        createDialogToInsertNameProject(ftp);
-    }
+  public void onFtpClicked(FtpNetwork ftp) {
+      super.pausePreview();
+      presenter.onFtpClicked(ftp);
+  }
 
-    private void createDialogToInsertNameProject(final FtpNetwork ftpSelected) {
+    @Override
+    public void createDialogToInsertNameProject(final FtpNetwork ftpSelected, String videoPath) {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
         editTextDialog = (EditText) dialogView.findViewById(R.id.text_dialog);
         editTextDialog.requestFocus();
@@ -383,8 +320,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         String videoFtpName= editTextDialog.getText().toString();
-                        renameFile(videoFtpName);
-                        shareVideoWithFTP(ftpSelected);
+                        renameFile(videoFtpName, videoPath);
+                        shareVideoWithFTP(ftpSelected, videoPath);
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         break;
@@ -400,7 +337,38 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
                 .setNegativeButton(R.string.negativeButtonDialogShareActivity, dialogClickListener).show();
     }
 
-    public void renameFile(String videoFtpName) {
+  @Override
+  public void showIntentOtherNetwork(String videoPath) {
+    Intent intent = new Intent(Intent.ACTION_SEND);
+    intent.setType("video/*");
+    Uri uri = Utils.obtainUriToShare(this, videoPath);
+    intent.putExtra(Intent.EXTRA_STREAM, uri);
+    startActivity(Intent.createChooser(intent, getString(R.string.share_using)));
+  }
+
+  @Override
+  public void initVideoPlayerFromFilePath(String videoPath) {
+    super.initVideoPlayerFromFilePath(videoPath);
+  }
+
+  @Override
+  public void shareVideo(String videoPath, SocialNetwork socialNetworkSelected) {
+    final ComponentName name = new ComponentName(socialNetworkSelected.getAndroidPackageName(),
+        socialNetworkSelected.getAndroidActivityName());
+    Uri uri = Utils.obtainUriToShare(this, videoPath);
+    Intent intent = new Intent(Intent.ACTION_SEND);
+    intent.setType("video/*");
+    intent.putExtra(android.content.Intent.EXTRA_SUBJECT,
+        VimojoApplication.getAppContext().getResources().getString(R.string.sharedWithVideona));
+    intent.putExtra(Intent.EXTRA_TEXT,
+        VimojoApplication.getAppContext().getResources().getString(R.string.videonaTags));
+    intent.putExtra(Intent.EXTRA_STREAM, uri);
+    intent.addCategory(Intent.CATEGORY_DEFAULT);
+    intent.setComponent(name);
+    startActivity(intent);
+  }
+
+  public void renameFile(String videoFtpName, String videoPath) {
         File file = new File(videoPath);
         String fileName = videoFtpName + ".mp4";
         File destinationFile = new File(Constants.PATH_APP, fileName);
@@ -408,7 +376,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         videoPath = destinationFile.getPath();
     }
 
-    public void shareVideoWithFTP(FtpNetwork ftp) {
+    public void shareVideoWithFTP(FtpNetwork ftp, String videoPath) {
         Intent intent = new Intent(this, FtpUploaderService.class);
         intent.putExtra("VIDEO_FOLDER_PATH", videoPath);
         intent.putExtra(IntentConstants.FTP_SELECTED, ftp.getIdFTP());
@@ -427,6 +395,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     }
 
     private void showDialogNewProject(final int resourceButtonId) {
+        super.resetVideoExported();
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -454,25 +423,24 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
     @Override
     public void startVideoExport() {
-      if (videoPath == null) {
-        exportProgressDialog.show();
-        presenter.startExport();
-      }
+      exportProgressDialog.show();
+      isAppExportingProject = true;
     }
 
   @Override
     public void loadExportedVideoPreview(final String mediaPath) {
       final String destPath = getDestPath(mediaPath);
-      final ShareActivity activity = this;
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
           if (destPath != null) {
-            videoPath = destPath;
-            presenter.addVideoExportedToProject(videoPath);
-            initVideoPlayerFromFilePath();
+            hasBeenProjectExported = true;
+            presenter.updateHasBeenProjectExported(true);
+            presenter.addVideoExportedToProject(mediaPath);
+            presenter.initVideoPlayerFromFilePath(mediaPath);
           }
           exportProgressDialog.dismiss();
+          isAppExportingProject = false;
         }
       });
     }
@@ -532,15 +500,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
                 .setTitle(R.string.dialog_title_export_error)
                 .setMessage(dialog_message_export_error)
                 .setNeutralButton(R.string.ok, dialogClickListener).show();
-      }
-    });
-  }
-
-  // TODO(jliarte): 29/04/17 unused methods, delete them?
-  private void onClickFabButton(final com.getbase.floatingactionbutton.FloatingActionButton fab) {
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
       }
     });
   }

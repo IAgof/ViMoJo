@@ -49,7 +49,6 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -67,6 +66,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
 
   private static final String EDITOR_ACTIVITY_PROJECT_POSITION = "editor_activity_project_position";
+  private static final String EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED =
+      "editor_activity_has_been_project_exported";
+  private static final String EDITOR_ACTIVITY_VIDEO_EXPORTED = "editor_activity_video_exported";
 
   @Inject
   UserEventTracker userEventTracker;
@@ -129,9 +131,10 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   };
 
   private android.app.AlertDialog progressDialog;
-  private int currentProjectPosition = 0;
   private boolean isVideoMute;
-  private List<Video> videoList = new ArrayList<>();
+  protected String videoExportedPath;
+  protected boolean hasBeenProjectExported = false;
+  private int currentPlayerPosition = 0;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +150,11 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   private void restoreState(Bundle savedInstanceState) {
     if (savedInstanceState != null) {
-      currentProjectPosition = savedInstanceState.getInt(EDITOR_ACTIVITY_PROJECT_POSITION, 0);
+      currentPlayerPosition = savedInstanceState.getInt(EDITOR_ACTIVITY_PROJECT_POSITION,
+          0);
+      hasBeenProjectExported = savedInstanceState.
+          getBoolean(EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED, false);
+      videoExportedPath = savedInstanceState.getString(EDITOR_ACTIVITY_VIDEO_EXPORTED);
     }
   }
 
@@ -161,7 +168,10 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   protected void onSaveInstanceState(Bundle outState) {
-    outState.putInt(EDITOR_ACTIVITY_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
+    currentPlayerPosition = videonaPlayer.getCurrentPosition();
+    outState.putInt(EDITOR_ACTIVITY_PROJECT_POSITION, currentPlayerPosition);
+    outState.putBoolean(EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED, hasBeenProjectExported);
+    outState.putString(EDITOR_ACTIVITY_VIDEO_EXPORTED, videoExportedPath);
     super.onSaveInstanceState(outState);
   }
 
@@ -213,7 +223,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     videonaPlayer.onShown(this);
     setupSwitchThemeAppIntoDrawer();
     editorPresenter.updateTheme();
-    editorPresenter.init();
+    initVideonaPlayer();
   }
 
   @Override
@@ -224,7 +234,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   public void reStart() {
-    editorPresenter.init();
+    initVideonaPlayer();
   }
 
   private boolean checkIfThemeDarkIsSelected() {
@@ -413,7 +423,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   public void restartShareActivity(String videoPath) {
     Intent intent = getIntent();
-    intent.putExtra("videoPath", videoPath);
+    intent.putExtra("videoExportedPath", videoPath);
     startActivity(intent);
     finish();
   }
@@ -520,7 +530,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   public void bindVideoList(List<Video> movieList) {
-    videoList = movieList;
     videonaPlayer.bindVideoList(movieList);
   }
 
@@ -578,6 +587,14 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   public void updatePreviewTimeLists() {
     videonaPlayer.updatePreviewTimeLists();
+  }
+
+  @Override
+  public void initPreviewFromVideo(List<Video> movieList) {
+    videonaPlayer.onPause();
+    videonaPlayer.onShown(this);
+    videonaPlayer.initPreviewLists(movieList);
+    videonaPlayer.initPreview(currentPlayerPosition);
   }
 
   @Override
@@ -650,4 +667,17 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
   }
 
+  public void initVideoPlayerFromFilePath(String videoPath) {
+    this.videoExportedPath = videoPath;
+    initVideonaPlayer();
+  }
+
+  public void initVideonaPlayer() {
+    editorPresenter.init(hasBeenProjectExported, videoExportedPath);
+  }
+
+  public void resetVideoExported() {
+    hasBeenProjectExported = false;
+    videoExportedPath = null;
+  }
 }

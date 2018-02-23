@@ -46,4 +46,6 @@ public interface VideonaPlayerView {
 
   void updatePreviewTimeLists();
 
+  void initPreviewFromVideo(List<Video> movieList);
+
 }

@@ -1,10 +1,7 @@
 package com.videonasocialmedia.vimojo.share.presentation.mvp.presenters;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.FutureCallback;
@@ -19,10 +16,10 @@ import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.VimojoNetwork;
@@ -34,7 +31,6 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-import com.videonasocialmedia.vimojo.utils.Utils;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
@@ -77,6 +73,14 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private UploadToPlatformQueue uploadToPlatformQueue;
     private final LoggedValidator loggedValidator;
     private String authToken = "";
+    private String videoPath = "";
+    private int optionsToShareListSelected;
+    private SocialNetwork socialNetworkSelected;
+    private boolean isWifiConnected;
+    private boolean acceptUploadVideoMobileNetwork;
+    private boolean isMobileNetworkConnected;
+    private FtpNetwork ftpNetworkSelected;
+    private boolean hasBeenProjectExported;
 
     @Inject
     public ShareVideoPresenter(Context context, ShareVideoView shareVideoView,
@@ -110,14 +114,19 @@ public class ShareVideoPresenter extends VimojoPresenter {
         return Project.getInstance(null, null, null, null);
     }
 
-    public void onResume() {
+    public void init(boolean hasBeenProjectExported, String videoExportedPath,
+                     boolean isAppExportingProject) {
         obtainNetworksToShare();
         obtainListFtp();
         setupVimojoNetwork();
         obtainListOptionsToShare(vimojoNetwork, ftpList, socialNetworkList);
         if (shareVideoViewReference != null) {
             shareVideoViewReference.get().showOptionsShareList(optionToShareList);
-            //shareVideoViewReference.get().startVideoExport();
+        }
+        this.hasBeenProjectExported = hasBeenProjectExported;
+        this.videoPath = videoExportedPath;
+        if(isAppExportingProject) {
+            shareVideoViewReference.get().startVideoExport();
         }
     }
 
@@ -147,51 +156,18 @@ public class ShareVideoPresenter extends VimojoPresenter {
         optionToShareList.addAll(socialNetworkList);
     }
 
-    public void shareVideo(String videoPath, SocialNetwork appToShareWith, Context ctx) {
-        final ComponentName name = new ComponentName(appToShareWith.getAndroidPackageName(),
-                appToShareWith.getAndroidActivityName());
-
-        Uri uri = Utils.obtainUriToShare(ctx, videoPath);
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("video/*");
-        intent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-                VimojoApplication.getAppContext().getResources().getString(R.string.sharedWithVideona));
-        intent.putExtra(Intent.EXTRA_TEXT,
-                VimojoApplication.getAppContext().getResources().getString(R.string.videonaTags));
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
-
-        intent.setComponent(name);
-
-        ctx.startActivity(intent);
-    }
-
-    // TODO(jliarte): 15/12/16 safe delete this method - old way to show networks?
-    public void obtainExtraAppsToShare() {
-        List networks = obtainNetworksToShareUseCase.obtainSecondaryNetworks();
-        if (shareVideoViewReference.get() != null) {
-            shareVideoViewReference.get().hideShareNetworks();
-            shareVideoViewReference.get().showMoreNetworks(networks);
-        }
-    }
-
-    public void updateNumTotalVideosShared() {
+    private void updateNumTotalVideosShared() {
         int totalVideosShared = sharedPreferences.getInt(ConfigPreferences.TOTAL_VIDEOS_SHARED, 0);
         preferencesEditor = sharedPreferences.edit();
         preferencesEditor.putInt(ConfigPreferences.TOTAL_VIDEOS_SHARED, ++totalVideosShared);
         preferencesEditor.commit();
     }
 
-    public int getNumTotalVideosShared() {
+    private int getNumTotalVideosShared() {
         return sharedPreferences.getInt(ConfigPreferences.TOTAL_VIDEOS_SHARED, 0);
     }
 
-    public String getResolution() {
-        VideoResolution videoResolution = currentProject.getProfile().getVideoResolution();
-        return videoResolution.getWidth() + "x" + videoResolution.getHeight();
-    }
-
-    public void trackVideoShared(String socialNetwork) {
+    protected void trackVideoShared(String socialNetwork) {
         userEventTracker.trackVideoSharedSuperProperties();
         userEventTracker.trackVideoShared(socialNetwork, currentProject, getNumTotalVideosShared());
         userEventTracker.trackVideoSharedUserTraits();
@@ -203,10 +179,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     private boolean isWatermarkActivated() {
-        if (BuildConfig.FEATURE_FORCE_WATERMARK) {
-            return true;
-        }
-        return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
+        return BuildConfig.FEATURE_FORCE_WATERMARK ||
+            sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
     }
 
     // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?
@@ -226,7 +200,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
                 DateUtils.getDateRightNow());
     }
 
-    public void startExport() {
+    private void startExport() {
+        shareVideoViewReference.get().startVideoExport();
         exportUseCase.export(Constants.PATH_WATERMARK, new OnExportFinishedListener() {
             @Override
             public void onExportError(String error) {
@@ -251,7 +226,9 @@ public class ShareVideoPresenter extends VimojoPresenter {
             @Override
             public void onExportSuccess(final Video video) {
                 if (shareVideoViewReference.get() != null) {
-                    shareVideoViewReference.get().loadExportedVideoPreview(video.getMediaPath());
+                    videoPath = video.getMediaPath();
+                    shareVideoViewReference.get().loadExportedVideoPreview(videoPath);
+                    processNetworkClicked(videoPath);
                 }
             }
 
@@ -264,12 +241,12 @@ public class ShareVideoPresenter extends VimojoPresenter {
         });
     }
 
-    public void clickUploadToPlatform(boolean isWifiConnected,
-                                      boolean acceptUploadVideoMobileNetwork,
-                                      boolean isMobileNetworkConnected,
-                                      String videoPath) {
+    private void clickUploadToPlatform(boolean isWifiConnected,
+                               boolean acceptUploadVideoMobileNetwork,
+                               boolean isMobileNetworkConnected,
+                               String videoPath) {
         if(!isWifiOrMobileNetworkConnected(isWifiConnected, isMobileNetworkConnected)) {
-            // TODO: 8/2/18 Should I saved this upload until user would be connected to network
+            // TODO: 8/2/18 Should I saved this upload until user would be connected to network?
             shareVideoViewReference.get().showError(context.getString(R.string.connect_to_network));
             return;
         }
@@ -281,7 +258,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
         if(!isUserLogged()) {
             // TODO: 8/2/18 Should I ask confirmation from user that he is going to navigate to User Authentication screen.
             shareVideoViewReference.get().showDialogNeedToRegisterLoginToUploadVideo();
-            //shareVideoViewReference.get().navigateToUserAuth();
             return;
         }
         if(!isThereFreeStorageOnPlatform(videoPath)) {
@@ -293,7 +269,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
         if(!areThereProjectFieldsCompleted(currentProject)){
             // TODO:(alvaro.martinez) 26/01/18 Check project fields, title, description, product types. Next story to merged.
             shareVideoViewReference.get().showDialogNeedToCompleteDetailProjectFields();
-            //shareVideoViewReference.get().navigateToProjectDetails();
             return;
         }
         ProjectInfo projectInfo = currentProject.getProjectInfo();
@@ -309,11 +284,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     private boolean isWifiOrMobileNetworkConnected(boolean isWifiConnected,
-                                                   boolean isMobileNetworConnected) {
-        if(isWifiConnected || isMobileNetworConnected) {
-            return true;
-        }
-        return false;
+                                                   boolean isMobileNetworkConnected) {
+        return isWifiConnected || isMobileNetworkConnected;
     }
 
     private boolean isNeededAskPermissionForMobileUpload(boolean isWifiConnected,
@@ -382,5 +354,75 @@ public class ShareVideoPresenter extends VimojoPresenter {
         long videoToUploadLength = new File(mediaPath).length();
         // return (freeStorage > videoToUploadLenght)
         return true;
+    }
+
+    public void onSocialNetworkClicked(SocialNetwork socialNetwork) {
+        optionsToShareListSelected = OptionsToShareList.typeSocialNetwork;
+        socialNetworkSelected = socialNetwork;
+        exportAndProcessNetwork();
+    }
+
+    public void onVimojoPlatformClicked(boolean isWifiConnected,
+                                        boolean acceptUploadVideoMobileNetwork,
+                                        boolean isMobileNetworkConnected) {
+        optionsToShareListSelected = OptionsToShareList.typeVimojoNetwork;
+        this.isWifiConnected = isWifiConnected;
+        this.acceptUploadVideoMobileNetwork = acceptUploadVideoMobileNetwork;
+        this.isMobileNetworkConnected = isMobileNetworkConnected;
+        exportAndProcessNetwork();
+    }
+
+    public void onFtpClicked(FtpNetwork ftp) {
+        optionsToShareListSelected = OptionsToShareList.typeFtp;
+        ftpNetworkSelected = ftp;
+        exportAndProcessNetwork();
+    }
+
+    public void onMoreSocialNetworkClicked() {
+        optionsToShareListSelected = OptionsToShareList.typeMoreSocialNetwork;
+        exportAndProcessNetwork();
+    }
+
+    private void exportAndProcessNetwork() {
+        if(!hasBeenProjectExported) {
+            startExport();
+        } else {
+            processNetworkClicked(videoPath);
+        }
+    }
+
+    private void processNetworkClicked(String videoPath) {
+        switch (optionsToShareListSelected) {
+            case OptionsToShareList.typeVimojoNetwork:
+                clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
+                    isMobileNetworkConnected, videoPath);
+                break;
+            case OptionsToShareList.typeFtp:
+                shareVideoViewReference.get().createDialogToInsertNameProject(ftpNetworkSelected,
+                    videoPath);
+                break;
+            case OptionsToShareList.typeSocialNetwork:
+                trackVideoShared(socialNetworkSelected.getIdSocialNetwork());
+                if (socialNetworkSelected.getName().equals(context.getString(R.string.save_to_gallery))) {
+                    shareVideoViewReference.get().showMessage(R.string.video_saved);
+                    return;
+                }
+                updateNumTotalVideosShared();
+                shareVideoViewReference.get().shareVideo(videoPath, socialNetworkSelected);
+                break;
+            case OptionsToShareList.typeMoreSocialNetwork:
+                trackVideoShared("Other network");
+                updateNumTotalVideosShared();
+                shareVideoViewReference.get().showIntentOtherNetwork(videoPath);
+                break;
+        }
+    }
+
+    public void initVideoPlayerFromFilePath(String videoPath) {
+        shareVideoViewReference.get().initVideoPlayerFromFilePath(videoPath);
+    }
+
+    public void updateHasBeenProjectExported(boolean hasBeenProjectExported) {
+        this.hasBeenProjectExported = hasBeenProjectExported;
     }
 }

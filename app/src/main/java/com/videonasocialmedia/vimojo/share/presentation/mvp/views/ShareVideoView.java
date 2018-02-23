@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.share.presentation.mvp.views;
 
+import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 
@@ -13,12 +14,6 @@ public interface ShareVideoView {
   void showError(String message);
 
   void showOptionsShareList(List<OptionsToShareList> optionsShareList);
-
-  void hideShareNetworks();
-
-  void showMoreNetworks(List<SocialNetwork> networks);
-
-  void hideExtraNetworks();
 
   void loadExportedVideoPreview(String mediaPath);
 
@@ -40,4 +35,11 @@ public interface ShareVideoView {
 
   void hideProgressDialogCheckingUserAuth();
 
+  void createDialogToInsertNameProject(final FtpNetwork ftpSelected, String videoPath);
+
+  void showIntentOtherNetwork(String videoPath);
+
+  void initVideoPlayerFromFilePath(String videoPath);
+
+  void shareVideo(String videoPath, SocialNetwork socialNetworkSelected);
 }

@@ -175,6 +175,18 @@ public class ShareVideoPresenterTest {
         verify(mockedShareVideoView).showDialogNeedToCompleteDetailProjectFields();
     }
 
+    @Test
+    public void initShowExportDialogIfIsAppExportingProject() {
+        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
+        boolean hasBeenProjectExported = false;
+        String videoExportedPath = "somePath";
+        boolean isAppExportingProject = true;
+
+        shareVideoPresenter.init(hasBeenProjectExported, videoExportedPath, isAppExportingProject);
+
+        verify(mockedShareVideoView).startVideoExport();
+    }
+
     public Project getAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
