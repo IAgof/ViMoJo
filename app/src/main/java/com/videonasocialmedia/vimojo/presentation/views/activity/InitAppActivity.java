@@ -1,7 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
 import android.Manifest;
-import android.accounts.Account;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -9,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SyncRequest;
 import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraAccessException;
 import android.os.AsyncTask;
@@ -36,7 +34,6 @@ import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsLi
 import com.mixpanel.android.mpmetrics.InAppNotification;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.util.UserAccountUtil;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
@@ -206,6 +203,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     @Override
     protected void onResume() {
         super.onResume();
+        presenter.init();
     }
 
     @Override
@@ -217,32 +215,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         editor = sharedPreferences.edit();
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         requestPermissionsAndPerformSetup();
-        // TODO: 6/2/18 Decide when app has to check pending video uploads. On launch app, every 10 minutes, etc ...
-        //runNowSyncAdapter();
-        runSyncAdapterPeriodic();
     }
-
-    private void runSyncAdapterPeriodic() {
-        Log.d(LOG_TAG, "runSyncAdapterPeriodic");
-        // Get the content resolver for your app
-        contentResolver = getContentResolver();
-
-        Account account = UserAccountUtil.getAccount(this);
-        String authority = this.getString(R.string.content_authority);
-
-        // we can enable inexact timers in our periodic sync
-        SyncRequest request = new SyncRequest.Builder().
-            syncPeriodic(SYNC_INTERVAL, SYNC_FLEX_TIME).
-            setSyncAdapter(account, authority).
-            setExtras(new Bundle()).build();
-
-        if (account != null) {
-            contentResolver.requestSync(request);
-            ContentResolver.setSyncAutomatically(account, authority, true);
-        }
-    }
-
-
 
     @Override
     protected void onStop() {

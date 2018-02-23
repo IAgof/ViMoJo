@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +25,7 @@ public class InitAppPresenterTest {
   @Mock SharedPreferences mockedSharedPreferences;
   @Mock Context mockedContext;
   @Mock CameraSettingsRepository mockedCameraSettingsRepository;
+  @Mock RunSyncAdapterHelper mockedRunSyncAdapterHelper;
 
 
   @Before
@@ -41,8 +43,17 @@ public class InitAppPresenterTest {
     verify(mockedUseCase).loadOrCreateProject(anyString(),anyString(), anyBoolean());
   }
 
+  @Test
+  public void initAppRunSyncAdapter() {
+    InitAppPresenter initAppPresenter = getInitAppPresenter();
+
+    initAppPresenter.init();
+
+    verify(mockedRunSyncAdapterHelper).runSyncAdapterPeriodically();
+  }
+
   private InitAppPresenter getInitAppPresenter() {
     return new InitAppPresenter(mockedContext, mockedSharedPreferences, mockedUseCase,
-        mockedCameraSettingsRepository);
+        mockedCameraSettingsRepository, mockedRunSyncAdapterHelper);
   }
 }

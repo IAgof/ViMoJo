@@ -255,7 +255,7 @@ public class UserAuthPresenter extends VimojoPresenter {
   }
 
   private void registerAccount(String email, String password, String authToken, String id) {
-    Account account = new Account(email, context.getString(R.string.account_type));
+    Account account = new Account(email, AccountConstants.VIMOJO_ACCOUNT_TYPE);
     AccountManager am = AccountManager.get(getContext());
     final Bundle extraData = new Bundle();
     extraData.putString(AccountConstants.USER_ID, id);

@@ -17,7 +17,6 @@ import java.util.List;
  * NumTries, to manage a politic of maximum number of tries to upload a video.
  */
 public class VideoUpload {
-  private String authToken;
   private String mediaPath;
   private String title;
   private String productTypeList;
@@ -25,18 +24,13 @@ public class VideoUpload {
   private int numTries;
   public final static int MAX_NUM_TRIES_UPLOAD = 3;
 
-  public VideoUpload(String authToken, String mediaPath, String title, String description,
+  public VideoUpload(String mediaPath, String title, String description,
                      String productTypeList) {
-    this.authToken = authToken;
     this.mediaPath = mediaPath;
     this.title = title;
     this.description = description;
     this.productTypeList = productTypeList;
     this.numTries = 0;
-  }
-
-  public String getAuthToken() {
-    return authToken;
   }
 
   public String getMediaPath() {

@@ -15,11 +15,17 @@ import android.content.Context;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.squareup.moshi.Moshi;
 import com.squareup.tape2.ObjectQueue;
 import com.squareup.tape2.QueueFile;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
@@ -28,6 +34,9 @@ import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 
 /**
  * Class to unify video uploads to platform.
@@ -37,6 +46,9 @@ import java.util.Iterator;
 public class UploadToPlatformQueue {
   private final String LOG_TAG = UploadToPlatformQueue.class.getCanonicalName();
   private final Context context;
+  // TODO(jliarte): 12/01/18 tune this parameter
+  private static final int N_THREADS = 5;
+  private final ListeningExecutorService executorPool;
   private final VideoApiClient videoApiClient;
   private MoshiConverter converter;
   private UploadNotification uploadNotification;
@@ -44,6 +56,7 @@ public class UploadToPlatformQueue {
 
   public UploadToPlatformQueue(Context context) {
     this.context = context;
+    executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(N_THREADS));
     uploadNotification = new UploadNotification(context);
     videoApiClient = new VideoApiClient();
   }
@@ -68,19 +81,21 @@ public class UploadToPlatformQueue {
     return queue;
   }
 
-  public void addVideoToUpload(VideoUpload videoUpload) throws IOException {
+  public void addVideoToUpload(VideoUpload videoUpload, boolean connectedToNetwork) throws IOException {
     ObjectQueue<VideoUpload> queue = getQueue();
     queue.add(videoUpload);
-    startOrUploadNotification();
+    if(connectedToNetwork) {
+      startOrUpdateNotification();
+    }
   }
 
   protected boolean isNotificationShowed(ObjectQueue<VideoUpload> queue) {
     return queue.size() > 0 && uploadNotification.isNotificationShowed();
   }
 
-  public void startOrUploadNotification() {
+  public void startOrUpdateNotification() {
     Log.d(LOG_TAG, "launchNotification");
-    if(!isNotificationShowed(getQueue())) {
+    if (!isNotificationShowed(getQueue())) {
       Log.d(LOG_TAG, "startNotification");
       uploadNotification.startInfiniteProgressNotification(R.drawable.notification_uploading_small,
           context.getString(R.string.uploading_video));
@@ -91,7 +106,7 @@ public class UploadToPlatformQueue {
     }
   }
 
-  public void launchQueueVideoUploads() {
+  public void launchNextQueueItem() {
     Log.d(LOG_TAG, "startUploading");
     ObjectQueue<VideoUpload> queue = getQueue();
     Iterator<VideoUpload> iterator = queue.iterator();
@@ -123,8 +138,8 @@ public class UploadToPlatformQueue {
               queue.size(), context.getString(R.string.upload_video_error), title, false);
         }
       } else {
-        if(!isUploadCanceledByNetworkError) {
-          launchQueueVideoUploads();
+        if (!isUploadCanceledByNetworkError) {
+          launchNextQueueItem();
         }
       }
     }
@@ -134,7 +149,6 @@ public class UploadToPlatformQueue {
     try {
       queue.peek().incrementNumTries();
     } catch (IOException ioException) {
-      //ioException.printStackTrace();
       Log.d(LOG_TAG, ioException.getMessage());
       Crashlytics.log("Error increment num tries head of queue video to upload");
       Crashlytics.logException(ioException);
@@ -145,29 +159,63 @@ public class UploadToPlatformQueue {
     try {
       queue.remove();
     } catch (IOException ioException) {
-      //ioException.printStackTrace();
       Log.d(LOG_TAG, ioException.getMessage());
       Crashlytics.log("Error removing queue video to upload");
       Crashlytics.logException(ioException);
     }
   }
 
-
-  protected Video process(VideoUpload videoUpload) {
+  private Video process(VideoUpload videoUpload) {
     try {
-      return videoApiClient.uploadVideo(videoUpload);
+      return videoApiClient.uploadVideo(obtainAuthToken(), videoUpload);
     } catch (VimojoApiException vimojoApiException) {
-      //vimojoApiException.printStackTrace();
-      Log.d(LOG_TAG, vimojoApiException.getApiErrorCode());
-      if(vimojoApiException.getApiErrorCode().equals(VimojoApiException.NETWORK_ERROR)) {
-        Log.d(LOG_TAG, "finishNotification");
-        uploadNotification.cancelNotification();
-        isUploadCanceledByNetworkError = true;
-      }
-      Crashlytics.log("Error vimojoApiException uploading video");
+      Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
+      Crashlytics.log("Error process upload vimojoApiException");
       Crashlytics.logException(vimojoApiException);
+      if(vimojoApiException.getApiErrorCode().equals(VimojoApiException.UNAUTHORIZED)) {
+        uploadNotification.errorUnauthorizationUploadingVideos();
+      }
+      if(vimojoApiException.getApiErrorCode().equals(VimojoApiException.NETWORK_ERROR)) {
+        uploadNotification.errorNetworkNotification();
+      }
     }
     return null;
   }
 
+  private String obtainAuthToken() {
+    GetAuthToken getAuthToken = new GetAuthToken();
+    final String[] authToken = {""};
+    ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
+      @Override
+      public String call() throws Exception {
+        return getAuthToken.getAuthToken(context).getToken();
+      }
+    });
+    Futures.addCallback(authTokenFuture, new FutureCallback<String>() {
+      @Override
+      public void onSuccess(String authorizationToken) {
+        authToken[0] = authorizationToken;
+      }
+
+      @Override
+      public void onFailure(Throwable errorGettingToken) {
+      }
+    });
+    try {
+      authTokenFuture.get();
+    } catch (InterruptedException interruptedException) {
+      interruptedException.printStackTrace();
+      Crashlytics.log("Error getting info from user interruptedException");
+      Crashlytics.logException(interruptedException);
+    } catch (ExecutionException executionException) {
+      executionException.printStackTrace();
+      Crashlytics.log("Error getting info from user executionException");
+      Crashlytics.logException(executionException);
+    }
+    return authToken[0];
+  }
+
+  protected final <T> ListenableFuture<T> executeUseCaseCall(Callable<T> callable) {
+    return executorPool.submit(callable);
+  }
 }

@@ -27,9 +27,7 @@ public class DetailProjectPresenter {
   private DetailProjectView detailProjectView;
   private Project currentProject;
   private ProjectRepository projectRepository;
-
   private List<String> productTypesListSelected = new ArrayList<>();
-
   private HashMap<ProjectInfo.ProductType, Boolean> productTypeCheckedIdsMap;
   private boolean[] checkedProductTypes;
   private String[] productTypesTitles;
@@ -40,7 +38,11 @@ public class DetailProjectPresenter {
     this.context = context;
     this.detailProjectView = detailProjectView;
     this.projectRepository = projectRepository;
-    currentProject = Project.getInstance(null, null, null, null);
+    currentProject = loadCurrentProject();
+  }
+
+  public Project loadCurrentProject() {
+    return Project.getInstance(null, null, null, null);
   }
 
   public void init() {
@@ -191,4 +193,7 @@ public class DetailProjectPresenter {
     detailProjectView.showProductTypeMultipleDialog(productTypesTitles, checkedProductTypes);
   }
 
+  public String[] getProductTypesTitles() {
+    return productTypesTitles;
+  }
 }

@@ -139,8 +139,46 @@ public class UploadNotification {
     return isNotificationShowed;
   }
 
+  public void errorNetworkNotification() {
+    new Thread(
+        new Runnable() {
+          @Override
+          public void run() {
+            notificationBuilder.setSmallIcon(errorNotificationId);
+            String title = context.getString(R.string.upload_video_network_error);
+            NotificationCompat.InboxStyle inboxStyle =
+                new NotificationCompat.InboxStyle();
+            for(String line: videoResults) {
+              inboxStyle.addLine(line);
+            }
+            String summaryText = String.valueOf(videoResults.size());
+            if(videoResults.size() > 1) {
+              summaryText = summaryText + " "
+                  + context.getString(R.string.upload_video_finish_plural);
+            } else {
+              summaryText = summaryText + " "
+                  + context.getString(R.string.upload_video_finish_singular);
+            }
+            inboxStyle.setSummaryText(summaryText);
+            notificationBuilder.setContentTitle(title);
+            notificationBuilder.setStyle(inboxStyle);
+            notificationBuilder.setProgress(0, 0, false);
+            notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
+          }
+        }
+    ).start();
+  }
+
   public void cancelNotification() {
     notificationManager.cancel(NOTIFICATION_UPLOAD_ID);
     isNotificationShowed = false;
+  }
+
+  public void errorUnauthorizationUploadingVideos() {
+    notificationBuilder.setSmallIcon(errorNotificationId);
+    String title = context.getString(R.string.upload_video_unauthorization_upload_error);
+    notificationBuilder.setContentTitle(title);
+    notificationBuilder.setProgress(0, 0, false);
+    notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
   }
 }

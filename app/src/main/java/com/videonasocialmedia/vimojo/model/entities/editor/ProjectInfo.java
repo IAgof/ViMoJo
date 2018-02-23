@@ -42,6 +42,13 @@ public class ProjectInfo {
     checkSupportedProductType(productTypeList);
   }
 
+  public ProjectInfo(ProjectInfo projectInfo) {
+    this.title = projectInfo.getTitle();
+    this.description = projectInfo.getDescription();
+    this.productTypeList = projectInfo.getProductTypeList();
+    checkSupportedProductType(productTypeList);
+  }
+
   public String getTitle() {
     return title;
   }

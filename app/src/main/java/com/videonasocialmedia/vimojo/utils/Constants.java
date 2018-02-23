@@ -138,4 +138,6 @@ public class Constants {
   public static final String CAMERA_SETTING_INTERFACE_BASIC = "Camera basic";
   public static final String DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED = CAMERA_SETTING_INTERFACE_PRO;
   public static final int DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED = BACK_CAMERA_ID;
+
+  public static final String BASE_PACKAGE_NAME = "com.videonasocialmedia.vimojo";
 }

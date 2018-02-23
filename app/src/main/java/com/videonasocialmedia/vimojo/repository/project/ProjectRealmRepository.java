@@ -152,13 +152,11 @@ public class ProjectRealmRepository implements ProjectRepository {
   @Override
   public void setProjectInfo(Project project, String projectTitle, String projectDescription,
                              List<String> productTypesListSelected) {
-
     ProjectInfo projectInfo = project.getProjectInfo();
     projectInfo.setTitle(projectTitle);
     projectInfo.setDescription(projectDescription);
     projectInfo.setProductTypeList(productTypesListSelected);
     update(project);
-
   }
 
 }

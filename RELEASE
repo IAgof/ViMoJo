@@ -1,4 +1,4 @@
-v0.11.0
-- Added grid gallery on record screen. Select grid lines, one to one aspect ratio, crosses or
-fibonacci.
-
+v0.13.0
+- Inform user, starting to upload video.
+- Show notification uploading video. Show progress videos uploads, enqueue uploads, show success/error uploads.
+- Manage network connection error, relaunch queue of video uploads.

@@ -76,7 +76,7 @@ public class Project implements ElementChangedListener {
      */
     private int duration;
 
-    private ProjectInfo projectInfo;
+  private ProjectInfo projectInfo;
 
     /**
      * Constructor of minimum number of parameters. This is the Default constructor.
@@ -104,8 +104,7 @@ public class Project implements ElementChangedListener {
   }
 
   public Project(Project project) throws IllegalItemOnTrack {
-    projectInfo = new ProjectInfo(project.getProjectInfo().getTitle(),
-        project.getProjectInfo().getDescription(), project.getProjectInfo().getProductTypeList());
+    projectInfo = new ProjectInfo(project.getProjectInfo());
     vmComposition = new VMComposition(project.getVMComposition());
     profile = new Profile(project.getProfile());
     duration = project.getDuration();
@@ -322,5 +321,9 @@ public class Project implements ElementChangedListener {
 
   public ProjectInfo getProjectInfo() {
     return projectInfo;
+  }
+
+  public void setProjectInfo(ProjectInfo projectInfo) {
+    this.projectInfo = projectInfo;
   }
 }
