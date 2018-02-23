@@ -61,7 +61,7 @@ public class GalleryProjectListAdapter extends
     holder.durationProject.append(" " +
         TimeUtils.toFormattedTimeWithMinutesAndSeconds(project.getDuration()));
     holder.numClipsProject.append((" " + project.numberOfClips()));
-    holder.titleProject.setText(project.getTitle());
+    holder.titleProject.setText(project.getProjectInfo().getTitle());
 
     double projectSizeMb = project.getProjectSizeMbVideoToExport();
     double formatProjectSizeMb = Math.round(projectSizeMb * 100.0) / 100.0;
@@ -147,7 +147,7 @@ public class GalleryProjectListAdapter extends
 
     @OnClick(R.id.project_button_edit)
     public void onClickGoToProjectDetail() {
-      clickListener.goToEditActivity(projectList.get(getAdapterPosition()));
+      clickListener.goToDetailActivity(projectList.get(getAdapterPosition()));
     }
 
     @OnClick(R.id.project_image)
@@ -160,9 +160,5 @@ public class GalleryProjectListAdapter extends
       clickListener.goToShareActivity(projectList.get(getAdapterPosition()));
     }
 
-    @OnClick(R.id.project_title)
-    public void onClickProjectTitle(){
-      clickListener.goToDetailActivity(projectList.get(getAdapterPosition()));
-    }
   }
 }

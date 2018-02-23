@@ -6,9 +6,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallbackAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.TimeLineVideoViewHolder;
@@ -24,6 +30,9 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -91,6 +100,7 @@ public class VideoTimeLineTouchHelperCallbackTest {
 
   @Test
   public void clearViewCallsAdapterFinishMovement() {
+    getAProject();
     EditActivity editActivity = Robolectric.buildActivity(EditActivity.class).create().get();
     VideoTimeLineAdapter videoTimeLineAdapter = spy(new VideoTimeLineAdapter(mockedListener));
     View viewRoot = editActivity.findViewById(android.R.id.content);
@@ -104,5 +114,14 @@ public class VideoTimeLineTouchHelperCallbackTest {
     callback.clearView(mockedRecyclerView, viewHolder);
 
     verify(videoTimeLineAdapter).finishMovement(viewHolder.getAdapterPosition());
+  }
+
+  private Project getAProject() {
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+    List<String> productType = new ArrayList<>();
+    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+    return Project.getInstance(projectInfo, "/path", "private/path",
+        compositionProfile);
   }
 }

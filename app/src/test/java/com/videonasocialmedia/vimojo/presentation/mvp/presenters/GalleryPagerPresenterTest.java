@@ -17,6 +17,7 @@ import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
@@ -34,6 +35,7 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -110,7 +112,9 @@ public class GalleryPagerPresenterTest {
     VideoResolution videoResolution720 = new VideoResolution(VideoResolution.Resolution.HD720);
     Profile profile = new Profile(VideoResolution.Resolution.HD1080, VideoQuality.Quality.GOOD,
             VideoFrameRate.FrameRate.FPS30);
-    Project project = new Project("newproject", "root/path","private/path", profile);
+    List<String> productType = new ArrayList<>();
+    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+    Project project = new Project(projectInfo, "root/path","private/path", profile);
     Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
     List<Video> videoList = Collections.singletonList(video1);
     assertThat(project.getVMComposition().getMediaTrack().getItems().size(), is(0));
@@ -140,7 +144,9 @@ public class GalleryPagerPresenterTest {
     galleryPagerPresenter.metadataRetriever = mockedMetadataRetriever;
     Profile profile = new Profile(VideoResolution.Resolution.HD1080, VideoQuality.Quality.GOOD,
             VideoFrameRate.FrameRate.FPS30);
-    Project project = new Project("newproject", "root/path", "private/path", profile);
+    List<String> productType = new ArrayList<>();
+    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+    Project project = new Project(projectInfo, "root/path", "private/path", profile);
     Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
     List<Video> videoList = Collections.singletonList(video1);
     assertThat(project.getVMComposition().getMediaTrack().getItems().size(), is(0));
@@ -210,6 +216,8 @@ public class GalleryPagerPresenterTest {
   public Project getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-    return Project.getInstance("title", "/path", "private/path", compositionProfile);
+    List<String> productType = new ArrayList<>();
+    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+    return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
   }
 }

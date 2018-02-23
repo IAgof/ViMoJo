@@ -31,7 +31,6 @@ public class WifiReceiver extends BroadcastReceiver {
 
   private void runSyncAdapter(Context context) {
     Account account = UserAccountUtil.getAccount(context);
-    String authority = context.getString(R.string.content_authority);
 
     // Pass the settings flags by inserting them in a bundle
     Bundle settingsBundle = new Bundle();
@@ -43,6 +42,6 @@ public class WifiReceiver extends BroadcastReceiver {
          * Request the sync for the default account, authority, and
          * manual sync settings
          */
-    ContentResolver.requestSync(account, authority, settingsBundle);
+    ContentResolver.requestSync(account, SyncConstants.VIMOJO_CONTENT_AUTHORITY, settingsBundle);
   }
 }

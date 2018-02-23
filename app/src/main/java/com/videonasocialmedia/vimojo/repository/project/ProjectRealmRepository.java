@@ -4,6 +4,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -149,8 +150,12 @@ public class ProjectRealmRepository implements ProjectRepository {
   }
 
   @Override
-  public void setTitle(Project project, String textTitle) {
-    project.setTitle(textTitle);
+  public void setProjectInfo(Project project, String projectTitle, String projectDescription,
+                             List<String> productTypesListSelected) {
+    ProjectInfo projectInfo = project.getProjectInfo();
+    projectInfo.setTitle(projectTitle);
+    projectInfo.setDescription(projectDescription);
+    projectInfo.setProductTypeList(productTypesListSelected);
     update(project);
   }
 

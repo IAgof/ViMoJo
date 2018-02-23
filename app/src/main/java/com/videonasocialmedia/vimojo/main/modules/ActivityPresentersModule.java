@@ -13,6 +13,7 @@ import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVide
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
 import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
@@ -34,7 +35,6 @@ import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBee
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateTitleProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.DetailProjectPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
@@ -311,20 +311,22 @@ public class ActivityPresentersModule {
                                                  ExportProjectUseCase exportProjectUseCase,
                                                  ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
                                                  GetFtpListUseCase getFtpListUseCase,
-                                                 GetAuthToken getAuthToken, UploadToPlatformQueue uploadToPlatformQueue,
-                                                 LoggedValidator loggedValidator) {
+                                                 GetAuthToken getAuthToken,
+                                                 UploadToPlatformQueue uploadToPlatformQueue,
+                                                 LoggedValidator loggedValidator,
+                                                 RunSyncAdapterHelper runSyncAdapterHelper) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
             sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
             exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
-            getAuthToken, uploadToPlatformQueue, loggedValidator);
+            getAuthToken, uploadToPlatformQueue, loggedValidator, runSyncAdapterHelper);
   }
 
   @Provides @PerActivity
   InitAppPresenter provideInitAppPresenter(SharedPreferences sharedPreferences,
           CreateDefaultProjectUseCase createDefaultProjectUseCase, CameraSettingsRepository
-          cameraSettingsRepository) {
+          cameraSettingsRepository, RunSyncAdapterHelper runSyncAdapterHelper) {
     return new InitAppPresenter(activity, sharedPreferences, createDefaultProjectUseCase,
-        cameraSettingsRepository);
+        cameraSettingsRepository, runSyncAdapterHelper);
   }
 
   @Provides @PerActivity
@@ -357,9 +359,9 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  DetailProjectPresenter provideDetailProjectPresenter(
-      UpdateTitleProjectUseCase updateTitleProjectUseCase){
-    return new DetailProjectPresenter((DetailProjectActivity) activity, updateTitleProjectUseCase);
+  DetailProjectPresenter provideDetailProjectPresenter(ProjectRepository projectRepository){
+    return new DetailProjectPresenter(activity, (DetailProjectActivity) activity,
+        projectRepository);
   }
 
   @Provides @PerActivity
@@ -445,11 +447,6 @@ public class ActivityPresentersModule {
   @Provides AddLastVideoExportedToProjectUseCase provideLastVideoExporterAdded(
           ProjectRepository projectRepository) {
     return new AddLastVideoExportedToProjectUseCase(projectRepository);
-  }
-
-  @Provides
-  UpdateTitleProjectUseCase provideUpdateTitleProject(ProjectRepository projectRepository) {
-    return new UpdateTitleProjectUseCase(projectRepository);
   }
 
   @Provides
@@ -591,5 +588,10 @@ public class ActivityPresentersModule {
   @Provides
   UploadToPlatformQueue provideUploadToPlatform() {
       return new UploadToPlatformQueue(activity);
+  }
+
+  @Provides
+  RunSyncAdapterHelper provideRunSyncAdapterHelper() {
+    return new RunSyncAdapterHelper(activity);
   }
 }
