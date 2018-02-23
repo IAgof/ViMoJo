@@ -412,7 +412,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     startActivityForResult(intent, Activity.RESULT_OK, new SuccessResultHandler() {
       @Override
       public void onResult(Intent data) {
-        //here you have your results data. The resultCode has already been checked against Activity.RESULT_OK
         onVimojoPlatformClicked();
       }
     });
@@ -517,12 +516,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     startActivityForResult(intent, Activity.RESULT_OK, new SuccessResultHandler() {
       @Override
       public void onResult(Intent data) {
-        //here you have your results data. The resultCode has already been checked against Activity.RESULT_OK
         onVimojoPlatformClicked();
       }
     });
-    //Intent intent = new Intent(this, UserAuthActivity.class);
-    //startActivity(intent);
   }
 
   @Override

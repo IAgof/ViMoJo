@@ -1,4 +1,3 @@
-v0.13.0
-- Inform user, starting to upload video.
-- Show notification uploading video. Show progress videos uploads, enqueue uploads, show success/error uploads.
-- Manage network connection error, relaunch queue of video uploads.
+v0.14.0
+- Easier upload to platform, upload video with one user click.
+
