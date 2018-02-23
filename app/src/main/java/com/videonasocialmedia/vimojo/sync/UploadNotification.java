@@ -173,4 +173,12 @@ public class UploadNotification {
     notificationManager.cancel(NOTIFICATION_UPLOAD_ID);
     isNotificationShowed = false;
   }
+
+  public void errorUnauthorizationUploadingVideos() {
+    notificationBuilder.setSmallIcon(errorNotificationId);
+    String title = context.getString(R.string.upload_video_unauthorization_upload_error);
+    notificationBuilder.setContentTitle(title);
+    notificationBuilder.setProgress(0, 0, false);
+    notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
+  }
 }

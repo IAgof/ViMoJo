@@ -3,16 +3,12 @@ package com.videonasocialmedia.vimojo.sync;
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.squareup.tape2.ObjectQueue;
-import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
 /**
  * Created by alvaro on 31/1/18.
@@ -54,10 +50,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                             ContentProviderClient contentProviderClient, SyncResult syncResult) {
     Log.d(LOG_TAG, "onPerformSync");
     if(!uploadToPlatformQueue.getQueue().isEmpty()) {
-      uploadToPlatformQueue.startOrUploadNotification();
+      uploadToPlatformQueue.startOrUpdateNotification();
       while (uploadToPlatformQueue.getQueue().iterator().hasNext() && isThereNetworkConnected()) {
         Log.d(LOG_TAG, "launchingQueue");
-        uploadToPlatformQueue.launchQueueVideoUploads();
+        uploadToPlatformQueue.launchNextQueueItem();
       }
     }
 

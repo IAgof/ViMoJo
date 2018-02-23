@@ -218,9 +218,9 @@ android {
             buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
             buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
-            buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "true"
+            buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
-            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "true"
+            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "false"
             ext.fabricApiKey = "7bf627d1b2578e3f8e4136d9dba10530e0e7d578"
             ext.fabricApiSecret = "40b9ea4d7a095ba1c106dbdebd1cf69c9761460d54f2c8418b206c167f677ea4"
             manifestPlaceholders = [vimojoAppName: "Vimojo Market4News", fabricApiKey: "7bf627d1b2578e3f8e4136d9dba10530e0e7d578"]

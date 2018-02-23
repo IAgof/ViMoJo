@@ -15,13 +15,11 @@ import android.content.Context;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.crashlytics.android.Crashlytics;
 import com.squareup.moshi.Moshi;
 import com.squareup.tape2.ObjectQueue;
 import com.squareup.tape2.QueueFile;
@@ -83,17 +81,19 @@ public class UploadToPlatformQueue {
     return queue;
   }
 
-  public void addVideoToUpload(VideoUpload videoUpload) throws IOException {
+  public void addVideoToUpload(VideoUpload videoUpload, boolean connectedToNetwork) throws IOException {
     ObjectQueue<VideoUpload> queue = getQueue();
     queue.add(videoUpload);
-    startOrUploadNotification();
+    if(connectedToNetwork) {
+      startOrUpdateNotification();
+    }
   }
 
   protected boolean isNotificationShowed(ObjectQueue<VideoUpload> queue) {
     return queue.size() > 0 && uploadNotification.isNotificationShowed();
   }
 
-  public void startOrUploadNotification() {
+  public void startOrUpdateNotification() {
     Log.d(LOG_TAG, "launchNotification");
     if (!isNotificationShowed(getQueue())) {
       Log.d(LOG_TAG, "startNotification");
@@ -106,7 +106,7 @@ public class UploadToPlatformQueue {
     }
   }
 
-  public void launchQueueVideoUploads() {
+  public void launchNextQueueItem() {
     Log.d(LOG_TAG, "startUploading");
     ObjectQueue<VideoUpload> queue = getQueue();
     Iterator<VideoUpload> iterator = queue.iterator();
@@ -139,7 +139,7 @@ public class UploadToPlatformQueue {
         }
       } else {
         if (!isUploadCanceledByNetworkError) {
-          launchQueueVideoUploads();
+          launchNextQueueItem();
         }
       }
     }
@@ -172,6 +172,9 @@ public class UploadToPlatformQueue {
       Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
       Crashlytics.log("Error process upload vimojoApiException");
       Crashlytics.logException(vimojoApiException);
+      if(vimojoApiException.getApiErrorCode().equals(VimojoApiException.UNAUTHORIZED)) {
+        uploadNotification.errorUnauthorizationUploadingVideos();
+      }
       if(vimojoApiException.getApiErrorCode().equals(VimojoApiException.NETWORK_ERROR)) {
         uploadNotification.errorNetworkNotification();
       }

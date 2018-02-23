@@ -1,8 +1,6 @@
 package com.videonasocialmedia.vimojo.share.presentation.views.activity;
 
-import android.accounts.Account;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,7 +27,6 @@ import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
-import com.videonasocialmedia.vimojo.auth.util.UserAccountUtil;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
@@ -392,34 +389,25 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   @Override
-  public void launchVideoUploadService() {
-    runNowSyncAdapter();
+  public void showDialogNotNetworkUploadVideoOnConnection() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    builder.setMessage(getResources().getString(R.string.upload_video_with_network_connected));
+    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        switch (which) {
+          case DialogInterface.BUTTON_NEUTRAL:
+            break;
+        }
+      }
+    };
+    AlertDialog alertDialog = builder.setCancelable(false).
+        setNeutralButton("OK", dialogClickListener).show();
   }
-
-  private void runNowSyncAdapter() {
-    Account account = UserAccountUtil.getAccount(this);
-    String authority = this.getString(R.string.content_authority);
-
-    // Pass the settings flags by inserting them in a bundle
-    Bundle settingsBundle = new Bundle();
-    settingsBundle.putBoolean(
-        ContentResolver.SYNC_EXTRAS_MANUAL, true);
-    settingsBundle.putBoolean(
-        ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        /*
-         * Request the sync for the default account, authority, and
-         * manual sync settings
-         */
-    if (account != null) {
-      ContentResolver.requestSync(account, authority, settingsBundle);
-    }
-  }
-
 
   private void navigateToUserAuth() {
     super.navigateTo(UserAuthActivity.class);
   }
-
 
   private void navigateToProjectDetails() {
     super.navigateTo(DetailProjectActivity.class);

@@ -32,6 +32,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishe
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
 import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -78,6 +79,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private final GetAuthToken getAuthToken;
     private UploadToPlatformQueue uploadToPlatformQueue;
     private final LoggedValidator loggedValidator;
+    private final RunSyncAdapterHelper runSyncAdapterHelper;
     private String authToken = "";
 
     @Inject
@@ -92,7 +94,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
                                GetFtpListUseCase getFtpListUseCase,
                                GetAuthToken getAuthToken,
                                UploadToPlatformQueue uploadToPlatformQueue,
-                               LoggedValidator loggedValidator) {
+                               LoggedValidator loggedValidator, RunSyncAdapterHelper
+                                       runSyncAdapterHelper) {
         this.context = context;
         this.shareVideoViewReference = new WeakReference<>(shareVideoView);
         this.userEventTracker = userEventTracker;
@@ -105,6 +108,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         this.getAuthToken = getAuthToken;
         this.uploadToPlatformQueue = uploadToPlatformQueue;
         this.loggedValidator = loggedValidator;
+        this.runSyncAdapterHelper = runSyncAdapterHelper;
         currentProject = loadCurrentProject();
     }
 
@@ -270,11 +274,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
                                       boolean acceptUploadVideoMobileNetwork,
                                       boolean isMobileNetworkConnected,
                                       String videoPath) {
-        if (!isWifiOrMobileNetworkConnected(isWifiConnected, isMobileNetworkConnected)) {
-            // TODO: 8/2/18 Should I saved this upload until user would be connected to network
-            shareVideoViewReference.get().showError(context.getString(R.string.connect_to_network));
-            return;
-        }
+
         if (isNeededAskPermissionForMobileUpload(isWifiConnected, isMobileNetworkConnected,
             acceptUploadVideoMobileNetwork)) {
             shareVideoViewReference.get().showDialogUploadVideoWithMobileNetwork();
@@ -283,7 +283,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
         if (!isUserLogged()) {
             // TODO: 8/2/18 Should I ask confirmation from user that he is going to navigate to User Authentication screen.
             shareVideoViewReference.get().showDialogNeedToRegisterLoginToUploadVideo();
-            //shareVideoViewReference.get().navigateToUserAuth();
             return;
         }
         if (!isThereFreeStorageOnPlatform(videoPath)) {
@@ -293,15 +292,20 @@ public class ShareVideoPresenter extends VimojoPresenter {
         }
 
         if (!areThereProjectFieldsCompleted(currentProject)) {
-            // TODO:(alvaro.martinez) 26/01/18 Check project fields, title, description, product types. Next story to merged.
             shareVideoViewReference.get().showDialogNeedToCompleteDetailProjectFields();
-            //shareVideoViewReference.get().navigateToProjectDetails();
             return;
         }
+
+        boolean connectedToNetwork = true;
         ProjectInfo projectInfo = currentProject.getProjectInfo();
+        if (!isWifiOrMobileNetworkConnected(isWifiConnected, isMobileNetworkConnected)) {
+            shareVideoViewReference.get().showDialogNotNetworkUploadVideoOnConnection();
+            connectedToNetwork = false;
+        } else {
+            shareVideoViewReference.get().showMessage(R.string.uploading_video);
+        }
         uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
-            projectInfo.getProductTypeList());
-        shareVideoViewReference.get().showMessage(R.string.uploading_video);
+            projectInfo.getProductTypeList(), connectedToNetwork);
     }
 
     private boolean areThereProjectFieldsCompleted(Project currentProject) {
@@ -361,21 +365,21 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     private void uploadVideo(String mediaPath, String title, String description,
-                             List<String> productTypeList) {
+                             List<String> productTypeList, boolean connectedToNetwork) {
         // Convert productTypeList to string. VideoApiClient not support RequestBody with List<String>
         String productTypeListToString = TextUtils.join(", ", productTypeList);
         VideoUpload videoUpload = new VideoUpload(mediaPath, title, description,
             productTypeListToString);
         executeUseCaseCall((Callable<Void>) () -> {
             try {
-                uploadToPlatformQueue.addVideoToUpload(videoUpload);
-                shareVideoViewReference.get().launchVideoUploadService();
+                uploadToPlatformQueue.addVideoToUpload(videoUpload, connectedToNetwork);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
                 Log.d(LOG_TAG, ioException.getMessage());
                 Crashlytics.log("Error adding video to upload");
                 Crashlytics.logException(ioException);
             }
+            runSyncAdapterHelper.runNowSyncAdapter();
             return null;
         });
     }

@@ -43,5 +43,5 @@ public interface ShareVideoView {
 
   void hideProgressDialogCheckingUserAuth();
 
-  void launchVideoUploadService();
+  void showDialogNotNetworkUploadVideoOnConnection();
 }

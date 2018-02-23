@@ -60,15 +60,16 @@ public class UploadToPlatformQueueTest {
   public void addVideoUploadUpdateNotificationIfNotificationIsShowed() throws IOException {
     ObjectQueue<VideoUpload> queue = injectedUploadToPlatformQueue.getQueue();
     assertThat(queue.size(), is(0));
+    boolean connectedToNetwork = true;
     VideoUpload videoUpload = new VideoUpload( "mediaPath",
         "title", "description", "productTypeList");
     when(mockedUploadNotification.isNotificationShowed()).thenReturn(true);
-    injectedUploadToPlatformQueue.addVideoToUpload(videoUpload);
+    injectedUploadToPlatformQueue.addVideoToUpload(videoUpload, connectedToNetwork);
     ObjectQueue<VideoUpload> updatedQueue = injectedUploadToPlatformQueue.getQueue();
     assertThat(updatedQueue.size(), is(1));
     assertThat(injectedUploadToPlatformQueue.isNotificationShowed(updatedQueue), is(true));
 
-    injectedUploadToPlatformQueue.addVideoToUpload(videoUpload);
+    injectedUploadToPlatformQueue.addVideoToUpload(videoUpload, connectedToNetwork);
 
     verify(mockedUploadNotification).updateNotificationVideoAdded(null, 1);
   }
@@ -78,7 +79,7 @@ public class UploadToPlatformQueueTest {
     ObjectQueue<VideoUpload> queue = injectedUploadToPlatformQueue.getQueue();
     assertThat(queue.size(), is(0));
 
-    injectedUploadToPlatformQueue.startOrUploadNotification();
+    injectedUploadToPlatformQueue.startOrUpdateNotification();
 
     verify(mockedUploadNotification)
         .startInfiniteProgressNotification(R.drawable.notification_uploading_small,
@@ -89,14 +90,15 @@ public class UploadToPlatformQueueTest {
   public void uploadNotificationIfQueueIsNotEmpty() throws IOException {
     ObjectQueue<VideoUpload> queue = injectedUploadToPlatformQueue.getQueue();
     assertThat(queue.size(), is(0));
+    boolean connectedToNetwork = true;
     VideoUpload videoUpload = new VideoUpload("mediaPath",
         "title", "description", "productTypeList");
-    injectedUploadToPlatformQueue.addVideoToUpload(videoUpload);
+    injectedUploadToPlatformQueue.addVideoToUpload(videoUpload, connectedToNetwork);
     ObjectQueue<VideoUpload> updatedQueue = injectedUploadToPlatformQueue.getQueue();
     assertThat(updatedQueue.size(), is(1));
     when(mockedUploadNotification.isNotificationShowed()).thenReturn(true);
 
-    injectedUploadToPlatformQueue.startOrUploadNotification();
+    injectedUploadToPlatformQueue.startOrUpdateNotification();
 
     verify(mockedUploadNotification).updateNotificationVideoAdded(null, 1);
   }
@@ -104,7 +106,7 @@ public class UploadToPlatformQueueTest {
   @Test
   public void launchQueueCallsSendNotification() throws IOException {
     // I am not able to mock videoApiClient.uploadVideo(videoUpload) and test this part. I can not
-    // mock retrofit response, i do not want to check response, only launchQueueVideoUploads
+    // mock retrofit response, i do not want to check response, only launchNextQueueItem
 
   }
 
