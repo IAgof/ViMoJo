@@ -233,6 +233,8 @@ android {
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo NBC"
             resValue "string", "api_base_url", "https://"
+            resValue "string", "content_authority", applicationId + '.provider'
+            resValue "string", "account_type", applicationId + ".auth"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
