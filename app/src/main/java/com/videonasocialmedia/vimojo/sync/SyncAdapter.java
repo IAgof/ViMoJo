@@ -49,11 +49,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   public void onPerformSync(Account account, Bundle bundle, String s,
                             ContentProviderClient contentProviderClient, SyncResult syncResult) {
     Log.d(LOG_TAG, "onPerformSync");
-    if(!uploadToPlatformQueue.getQueue().isEmpty()) {
+    if (!uploadToPlatformQueue.getQueue().isEmpty()) {
       uploadToPlatformQueue.startOrUpdateNotification();
       while (uploadToPlatformQueue.getQueue().iterator().hasNext() && isThereNetworkConnected()) {
         Log.d(LOG_TAG, "launchingQueue");
-        uploadToPlatformQueue.launchNextQueueItem();
+        uploadToPlatformQueue.processNextQueueItem();
       }
     }
 

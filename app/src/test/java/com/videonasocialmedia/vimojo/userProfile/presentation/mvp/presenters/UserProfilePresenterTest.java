@@ -80,7 +80,7 @@ public class UserProfilePresenterTest {
 
     presenter.onClickEmail(true);
 
-    if(BuildConfig.FEATURE_REGISTER_LOGIN)
+    if (BuildConfig.FEATURE_VIMOJO_PLATFORM)
       verify(mockedUserProfileView).navigateToUserAuth();
   }
 
@@ -90,7 +90,7 @@ public class UserProfilePresenterTest {
 
     presenter.onClickUsername(true);
 
-    if(BuildConfig.FEATURE_REGISTER_LOGIN)
+    if (BuildConfig.FEATURE_VIMOJO_PLATFORM)
       verify(mockedUserProfileView).navigateToUserAuth();
   }
 

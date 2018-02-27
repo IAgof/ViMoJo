@@ -9,27 +9,18 @@ package com.videonasocialmedia.vimojo.main;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.google.android.gms.analytics.Tracker;
 import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener;
-import com.karumi.dexter.listener.multi.EmptyMultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -43,11 +34,6 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
@@ -72,9 +58,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
     public SystemComponent getSystemComponent() {
         return ((VimojoApplication)getApplication()).getSystemComponent();
     }
-
-    private Map<Integer, HandlerHolder> resultHandlers = new HashMap<>();
-    private AtomicInteger counter = new AtomicInteger(Integer.MIN_VALUE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,14 +159,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
         }
     }
 
-//    private void checkContacts() {
-//        if (ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, PermissionConstants.PERMISSIONS_CONTACTS,
-//                    PermissionConstants.REQUEST_CONTACTS);
-//        }
-//    }
-
     protected boolean isLandscapeOriented() {
         return getOrientation() == Configuration.ORIENTATION_LANDSCAPE;
     }
@@ -197,75 +172,70 @@ public abstract class VimojoActivity extends AppCompatActivity {
     }
 
     public void showAlertDialog(String title, String message) {
-
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
         alertDialog.setTitle(title);
         alertDialog.setMessage(message);
-        alertDialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        alertDialog.setNeutralButton(getString(R.string.ok), (dialog, which) -> dialog.dismiss());
         alertDialog.show();
     }
 
-  class CustomPermissionListener extends EmptyMultiplePermissionsListener {
-        private final Context context;
-        private final String title;
-        private final String message;
-        private final String positiveButtonText;
-        private final Drawable icon;
-
-        private AlertDialog dialog;
-
-        private CustomPermissionListener(Context context, String title,
-                                         String message, String positiveButtonText, Drawable icon) {
-            this.context = context;
-            this.title = title;
-            this.message = message;
-            this.positiveButtonText = positiveButtonText;
-            this.icon = icon;
-        }
-
-        @Override
-        public void onPermissionsChecked(MultiplePermissionsReport report) {
-            super.onPermissionsChecked(report);
-            if (!report.areAllPermissionsGranted()) {
-                showDialog();
-            } else {
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
-            }
-        }
-
-        @Override
-        public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions,
-                                                       PermissionToken token) {
-            super.onPermissionRationaleShouldBeShown(permissions, token);
-            token.continuePermissionRequest();
-        }
-
-        private void showDialog() {
-            dialog = new AlertDialog.Builder(context, R.style.VideonaDialog)
-                    .setTitle(title)
-                    .setMessage(message)
-                    .setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            Intent myAppSettings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                    Uri.parse("package:" + context.getPackageName()));
-                            myAppSettings.addCategory(Intent.CATEGORY_DEFAULT);
-                            myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(myAppSettings);
-                        }
-                    })
-                    .setIcon(icon)
-                    .show();
-        }
-    }
+    // TODO(jliarte): 27/02/18 unused class
+//  class CustomPermissionListener extends EmptyMultiplePermissionsListener {
+//        private final Context context;
+//        private final String title;
+//        private final String message;
+//        private final String positiveButtonText;
+//        private final Drawable icon;
+//
+//        private AlertDialog dialog;
+//
+//        private CustomPermissionListener(Context context, String title,
+//                                         String message, String positiveButtonText, Drawable icon) {
+//            this.context = context;
+//            this.title = title;
+//            this.message = message;
+//            this.positiveButtonText = positiveButtonText;
+//            this.icon = icon;
+//        }
+//
+//        @Override
+//        public void onPermissionsChecked(MultiplePermissionsReport report) {
+//            super.onPermissionsChecked(report);
+//            if (!report.areAllPermissionsGranted()) {
+//                showDialog();
+//            } else {
+//                if (dialog != null) {
+//                    dialog.dismiss();
+//                }
+//            }
+//        }
+//
+//        @Override
+//        public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions,
+//                                                       PermissionToken token) {
+//            super.onPermissionRationaleShouldBeShown(permissions, token);
+//            token.continuePermissionRequest();
+//        }
+//
+//        private void showDialog() {
+//            dialog = new AlertDialog.Builder(context, R.style.VideonaDialog)
+//                    .setTitle(title)
+//                    .setMessage(message)
+//                    .setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.dismiss();
+//                            Intent myAppSettings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+//                                    Uri.parse("package:" + context.getPackageName()));
+//                            myAppSettings.addCategory(Intent.CATEGORY_DEFAULT);
+//                            myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            context.startActivity(myAppSettings);
+//                        }
+//                    })
+//                    .setIcon(icon)
+//                    .show();
+//        }
+//    }
 
     // TODO(jliarte): 27/10/16 move this delegate out of the class.
     //                Maybe its necessary to move all mixpanel uses to UserEventTracker class
@@ -283,60 +253,4 @@ public abstract class VimojoActivity extends AppCompatActivity {
         }
     }
 
-    private int getNewRequestCode() {
-        return new AtomicInteger().incrementAndGet();
-    }
-
-    protected void startActivityForResult(Intent intent, int successResultCode, SuccessResultHandler handler) {
-        int requestCode = getNewRequestCode();
-        resultHandlers.put(requestCode, new HandlerHolder(successResultCode, handler));
-        startActivityForResult(intent, requestCode);
-    }
-
-    protected void startActivityForResult(Intent intent, ResultHandler handler) {
-        int requestCode = getNewRequestCode();
-        resultHandlers.put(requestCode, new HandlerHolder(handler));
-        startActivityForResult(intent, requestCode);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        HandlerHolder handler = resultHandlers.get(requestCode);
-        if (handler != null) {
-            if (handler.successHandler != null) {
-                if (resultCode == handler.successResultCode) {
-                    handler.successHandler.onResult(data);
-                }
-                return;
-            }
-            if (handler.resultHandler != null) {
-                handler.resultHandler.onResult(resultCode, data);
-                return;
-            }
-        }
-    }
-
-    public interface SuccessResultHandler {
-        void onResult(Intent data);
-    }
-
-    public interface ResultHandler {
-        void onResult(int resultCode, Intent data);
-    }
-
-    protected class HandlerHolder {
-        private Integer successResultCode;
-        private SuccessResultHandler successHandler;
-        private ResultHandler resultHandler;
-
-        public HandlerHolder(Integer successResultCode, SuccessResultHandler successHandler) {
-            this.successResultCode = successResultCode;
-            this.successHandler = successHandler;
-        }
-
-        public HandlerHolder(ResultHandler resultHandler) {
-            this.resultHandler = resultHandler;
-        }
-    }
 }

@@ -106,7 +106,7 @@ public class UploadToPlatformQueueTest {
   @Test
   public void launchQueueCallsSendNotification() throws IOException {
     // I am not able to mock videoApiClient.uploadVideo(videoUpload) and test this part. I can not
-    // mock retrofit response, i do not want to check response, only launchNextQueueItem
+    // mock retrofit response, i do not want to check response, only processNextQueueItem
 
   }
 

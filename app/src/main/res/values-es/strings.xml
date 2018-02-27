@@ -42,6 +42,7 @@
     <string name="credentialFTPNull">Conexión a FTP no establecida. Por favor, configure los datos FTP en ajustes.</string>
     <string name="upload_to_server">Subir a plataforma</string>
     <string name="uploading_video">Subiendo video</string>
+    <string name="error_uploading_video">Error subiendo video</string>
     <string name="upload_video_completed">En plataforma</string>
     <string name="upload_video_error">Error</string>
     <string name="upload_video_success">Video subido</string>

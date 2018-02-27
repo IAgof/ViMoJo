@@ -1,3 +1,3 @@
 v0.14.0
-- Easier upload to platform, upload video with one user click.
-
+- Improved upload to platform flow, upload video with one user click.
+- Unified FEATURE_UPLOAD_VIDEOS and FEATURE_REGISTER_LOGIN into FEATURE_VIMOJO_PLATFORM
