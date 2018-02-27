@@ -27,15 +27,16 @@ import java.util.List;
 
 public class UploadNotification {
   public static final int NOTIFICATION_UPLOAD_ID = 001;
+  public static final String NOTIFICATION_CHANNEL_ID = "notification_channel_upload_videos";
   private final Context context;
   private NotificationCompat.Builder notificationBuilder;
   private NotificationManager notificationManager;
   private List<String> videoResults;
   private boolean isNotificationShowed = false;
-  String NOTIFICATION_CHANNEL_ID = "notification_channel_upload_videos";
   private int successNotificationId = R.drawable.notification_success_small;
   private int errorNotificationId = R.drawable.notification_error_small;
   private boolean errorUploadingVideo = false;
+  private boolean errorNetworkNotification = false;
 
   public UploadNotification(Context context) {
     this.context = context;
@@ -55,6 +56,7 @@ public class UploadNotification {
         (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
     isNotificationShowed = true;
+    errorNetworkNotification = false;
   }
 
   public void updateNotificationVideoAdded(String message, int sizeQueue) {
@@ -164,6 +166,7 @@ public class UploadNotification {
             notificationBuilder.setStyle(inboxStyle);
             notificationBuilder.setProgress(0, 0, false);
             notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
+            errorNetworkNotification = true;
           }
         }
     ).start();
@@ -180,5 +183,9 @@ public class UploadNotification {
     notificationBuilder.setContentTitle(title);
     notificationBuilder.setProgress(0, 0, false);
     notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
+  }
+
+  public boolean isShowedErrorNetworkNotification() {
+    return errorNetworkNotification;
   }
 }

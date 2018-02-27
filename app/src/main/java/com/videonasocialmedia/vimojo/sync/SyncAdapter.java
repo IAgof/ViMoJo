@@ -10,6 +10,12 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+import com.squareup.tape2.ObjectQueue;
+import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
+
+import java.io.IOException;
+
 /**
  * Created by alvaro on 31/1/18.
  */
@@ -49,9 +55,22 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   public void onPerformSync(Account account, Bundle bundle, String s,
                             ContentProviderClient contentProviderClient, SyncResult syncResult) {
     Log.d(LOG_TAG, "onPerformSync");
-    if(!uploadToPlatformQueue.getQueue().isEmpty()) {
+    ObjectQueue<VideoUpload> queue = uploadToPlatformQueue.getQueue();
+    if(!queue.isEmpty()) {
+      boolean isAcceptedUploadMobileNetwork = false;
+      try {
+        isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
+      } catch (IOException ioException) {
+        Log.d(LOG_TAG, ioException.getMessage());
+        Crashlytics.log("Error getting queue element, isAcceptedUploadMobileNetwork");
+        Crashlytics.logException(ioException);
+      }
+      if(!isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
+        return;
+      }
       uploadToPlatformQueue.startOrUpdateNotification();
-      while (uploadToPlatformQueue.getQueue().iterator().hasNext() && isThereNetworkConnected()) {
+      while (uploadToPlatformQueue.getQueue().iterator().hasNext() &&
+          isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
         Log.d(LOG_TAG, "launchingQueue");
         uploadToPlatformQueue.launchNextQueueItem();
       }
@@ -59,10 +78,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
   }
 
-  private boolean isThereNetworkConnected() {
+  private boolean isThereNetworkConnected(boolean isAcceptedUploadMobileNetwork) {
     checkNetworksAvailable();
-    // TODO: 16/2/18 Persist and manage mobile network upload video user permission
-    return isWifiConnected;
+    return isWifiConnected || (isMobileNetworConnected && isAcceptedUploadMobileNetwork);
   }
 
   private void checkNetworksAvailable() {

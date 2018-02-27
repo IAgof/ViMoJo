@@ -271,12 +271,12 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     public void clickUploadToPlatform(boolean isWifiConnected,
-                                      boolean acceptUploadVideoMobileNetwork,
+                                      boolean isAcceptedUploadWithMobileNetwork,
                                       boolean isMobileNetworkConnected,
                                       String videoPath) {
 
         if (isNeededAskPermissionForMobileUpload(isWifiConnected, isMobileNetworkConnected,
-            acceptUploadVideoMobileNetwork)) {
+            isAcceptedUploadWithMobileNetwork)) {
             shareVideoViewReference.get().showDialogUploadVideoWithMobileNetwork();
             return;
         }
@@ -296,16 +296,15 @@ public class ShareVideoPresenter extends VimojoPresenter {
             return;
         }
 
-        boolean connectedToNetwork = true;
         ProjectInfo projectInfo = currentProject.getProjectInfo();
-        if (!isWifiOrMobileNetworkConnected(isWifiConnected, isMobileNetworkConnected)) {
+        if (!isDeviceConnectedToUpload(isWifiConnected, isMobileNetworkConnected,
+            isAcceptedUploadWithMobileNetwork)) {
             shareVideoViewReference.get().showDialogNotNetworkUploadVideoOnConnection();
-            connectedToNetwork = false;
         } else {
             shareVideoViewReference.get().showMessage(R.string.uploading_video);
         }
         uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
-            projectInfo.getProductTypeList(), connectedToNetwork);
+            projectInfo.getProductTypeList(), isAcceptedUploadWithMobileNetwork);
     }
 
     private boolean areThereProjectFieldsCompleted(Project currentProject) {
@@ -314,9 +313,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
             (projectInfo.getProductTypeList().size() > 0);
     }
 
-    private boolean isWifiOrMobileNetworkConnected(boolean isWifiConnected,
-                                                   boolean isMobileNetworConnected) {
-        if(isWifiConnected || isMobileNetworConnected) {
+    private boolean isDeviceConnectedToUpload(boolean isWifiConnected,
+                                              boolean isMobileNetworkConnected,
+                                              boolean isAcceptedUploadMobileNetwork) {
+        if(isWifiConnected || (isMobileNetworkConnected &&  isAcceptedUploadMobileNetwork) ) {
             return true;
         }
         return false;
@@ -365,14 +365,14 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     protected void uploadVideo(String mediaPath, String title, String description,
-                             List<String> productTypeList, boolean connectedToNetwork) {
+                               List<String> productTypeList, boolean isAcceptedUploadMobileNetwork) {
         // Convert productTypeList to string. VideoApiClient not support RequestBody with List<String>
         String productTypeListToString = TextUtils.join(", ", productTypeList);
         VideoUpload videoUpload = new VideoUpload(mediaPath, title, description,
-            productTypeListToString);
+            productTypeListToString, isAcceptedUploadMobileNetwork);
         executeUseCaseCall((Callable<Void>) () -> {
             try {
-                uploadToPlatformQueue.addVideoToUpload(videoUpload, connectedToNetwork);
+                uploadToPlatformQueue.addVideoToUpload(videoUpload);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
                 Log.d(LOG_TAG, ioException.getMessage());

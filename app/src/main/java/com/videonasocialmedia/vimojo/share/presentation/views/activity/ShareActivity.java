@@ -85,7 +85,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   private ProgressDialog exportProgressDialog;
   private ProgressDialog checkingUserProgressDialog;
-  private boolean acceptUploadVideoMobileNetwork;
+  private boolean isAcceptedUploadWithMobileNetwork;
   private boolean isWifiConnected = false;
   private boolean isMobileNetworConnected = false;
 //  private BroadcastReceiver exportReceiver;
@@ -305,7 +305,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   public void onVimojoPlatformClicked() {
     checkNetworksAvailable();
-    presenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
+    presenter.clickUploadToPlatform(isWifiConnected, isAcceptedUploadWithMobileNetwork,
         isMobileNetworConnected, videoPath);
   }
 
@@ -327,11 +327,11 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       public void onClick(DialogInterface dialog, int which) {
         switch (which) {
           case DialogInterface.BUTTON_POSITIVE:
-            acceptUploadVideoMobileNetwork = true;
+            isAcceptedUploadWithMobileNetwork = true;
             onVimojoPlatformClicked();
             break;
           case DialogInterface.BUTTON_NEGATIVE:
-            acceptUploadVideoMobileNetwork = false;
+            isAcceptedUploadWithMobileNetwork = false;
             break;
         }
       }

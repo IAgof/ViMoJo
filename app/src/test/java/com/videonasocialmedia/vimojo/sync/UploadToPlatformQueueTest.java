@@ -8,6 +8,7 @@
 package com.videonasocialmedia.vimojo.sync;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.squareup.tape2.ObjectQueue;
@@ -20,12 +21,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.IOException;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
@@ -57,24 +60,6 @@ public class UploadToPlatformQueueTest {
   }
 
   @Test
-  public void addVideoUploadUpdateNotificationIfNotificationIsShowed() throws IOException {
-    ObjectQueue<VideoUpload> queue = injectedUploadToPlatformQueue.getQueue();
-    assertThat(queue.size(), is(0));
-    boolean connectedToNetwork = true;
-    VideoUpload videoUpload = new VideoUpload( "mediaPath",
-        "title", "description", "productTypeList");
-    when(mockedUploadNotification.isNotificationShowed()).thenReturn(true);
-    injectedUploadToPlatformQueue.addVideoToUpload(videoUpload, connectedToNetwork);
-    ObjectQueue<VideoUpload> updatedQueue = injectedUploadToPlatformQueue.getQueue();
-    assertThat(updatedQueue.size(), is(1));
-    assertThat(injectedUploadToPlatformQueue.isNotificationShowed(updatedQueue), is(true));
-
-    injectedUploadToPlatformQueue.addVideoToUpload(videoUpload, connectedToNetwork);
-
-    verify(mockedUploadNotification).updateNotificationVideoAdded(null, 1);
-  }
-
-  @Test
   public void startNotificationIfQueueIsEmpty() throws IOException {
     ObjectQueue<VideoUpload> queue = injectedUploadToPlatformQueue.getQueue();
     assertThat(queue.size(), is(0));
@@ -87,13 +72,39 @@ public class UploadToPlatformQueueTest {
   }
 
   @Test
+  public void startNotificationIfQueueIsNotEmptyAndNotificationHasBeenCanceledByNetworkError() throws IOException {
+    UploadToPlatformQueue uploadToPlatformQueue = Mockito.spy(getUploadToPlatformQueue());
+    boolean isAcceptedUploadMobileNetwork = true;
+    VideoUpload videoUpload = new VideoUpload("mediaPath",
+        "title", "description", "productTypeList",
+        isAcceptedUploadMobileNetwork);
+    uploadToPlatformQueue.addVideoToUpload(videoUpload);
+    ObjectQueue<VideoUpload> updatedQueue = injectedUploadToPlatformQueue.getQueue();
+    assertThat("Queue is not empty", updatedQueue.size(), is(1));
+    when(mockedUploadNotification.isNotificationShowed()).thenReturn(true);
+    when(mockedUploadNotification.isShowedErrorNetworkNotification()).thenReturn(true);
+
+    injectedUploadToPlatformQueue.startOrUpdateNotification();
+
+    verify(mockedUploadNotification)
+        .startInfiniteProgressNotification(R.drawable.notification_uploading_small,
+            mockedContext.getString(R.string.uploading_video));
+  }
+
+  @NonNull
+  public UploadToPlatformQueue getUploadToPlatformQueue() {
+    return new UploadToPlatformQueue(mockedContext);
+  }
+
+  @Test
   public void uploadNotificationIfQueueIsNotEmpty() throws IOException {
     ObjectQueue<VideoUpload> queue = injectedUploadToPlatformQueue.getQueue();
     assertThat(queue.size(), is(0));
-    boolean connectedToNetwork = true;
+    boolean isAcceptedUploadMobileNetwork = true;
     VideoUpload videoUpload = new VideoUpload("mediaPath",
-        "title", "description", "productTypeList");
-    injectedUploadToPlatformQueue.addVideoToUpload(videoUpload, connectedToNetwork);
+        "title", "description", "productTypeList",
+        isAcceptedUploadMobileNetwork);
+    injectedUploadToPlatformQueue.addVideoToUpload(videoUpload);
     ObjectQueue<VideoUpload> updatedQueue = injectedUploadToPlatformQueue.getQueue();
     assertThat(updatedQueue.size(), is(1));
     when(mockedUploadNotification.isNotificationShowed()).thenReturn(true);

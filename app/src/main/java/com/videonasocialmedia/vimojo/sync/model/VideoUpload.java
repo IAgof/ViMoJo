@@ -22,15 +22,17 @@ public class VideoUpload {
   private String productTypeList;
   private String description;
   private int numTries;
+  private boolean isAcceptedUploadMobileNetwork;
   public final static int MAX_NUM_TRIES_UPLOAD = 3;
 
   public VideoUpload(String mediaPath, String title, String description,
-                     String productTypeList) {
+                     String productTypeList, boolean isAcceptedUploadMobileNetwork) {
     this.mediaPath = mediaPath;
     this.title = title;
     this.description = description;
     this.productTypeList = productTypeList;
     this.numTries = 0;
+    this.isAcceptedUploadMobileNetwork = isAcceptedUploadMobileNetwork;
   }
 
   public String getMediaPath() {
@@ -55,5 +57,9 @@ public class VideoUpload {
 
   public void incrementNumTries() {
     numTries++;
+  }
+
+  public boolean isAcceptedUploadMobileNetwork() {
+    return isAcceptedUploadMobileNetwork;
   }
 }

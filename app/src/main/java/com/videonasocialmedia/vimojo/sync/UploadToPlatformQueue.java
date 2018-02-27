@@ -52,7 +52,6 @@ public class UploadToPlatformQueue {
   private final VideoApiClient videoApiClient;
   private MoshiConverter converter;
   private UploadNotification uploadNotification;
-  private boolean isUploadCanceledByNetworkError = false;
 
   public UploadToPlatformQueue(Context context) {
     this.context = context;
@@ -81,12 +80,9 @@ public class UploadToPlatformQueue {
     return queue;
   }
 
-  public void addVideoToUpload(VideoUpload videoUpload, boolean connectedToNetwork) throws IOException {
+  public void addVideoToUpload(VideoUpload videoUpload) throws IOException {
     ObjectQueue<VideoUpload> queue = getQueue();
     queue.add(videoUpload);
-    if(connectedToNetwork) {
-      startOrUpdateNotification();
-    }
   }
 
   protected boolean isNotificationShowed(ObjectQueue<VideoUpload> queue) {
@@ -95,7 +91,8 @@ public class UploadToPlatformQueue {
 
   public void startOrUpdateNotification() {
     Log.d(LOG_TAG, "launchNotification");
-    if (!isNotificationShowed(getQueue())) {
+    if (!isNotificationShowed(getQueue()) ||
+        uploadNotification.isShowedErrorNetworkNotification()) {
       Log.d(LOG_TAG, "startNotification");
       uploadNotification.startInfiniteProgressNotification(R.drawable.notification_uploading_small,
           context.getString(R.string.uploading_video));
@@ -107,7 +104,7 @@ public class UploadToPlatformQueue {
   }
 
   public void launchNextQueueItem() {
-    Log.d(LOG_TAG, "startUploading");
+    Log.d(LOG_TAG, "launchNextQueueItem");
     ObjectQueue<VideoUpload> queue = getQueue();
     Iterator<VideoUpload> iterator = queue.iterator();
     VideoUpload element = iterator.next();
@@ -138,7 +135,7 @@ public class UploadToPlatformQueue {
               queue.size(), context.getString(R.string.upload_video_error), title, false);
         }
       } else {
-        if (!isUploadCanceledByNetworkError) {
+        if (!uploadNotification.isShowedErrorNetworkNotification()) {
           launchNextQueueItem();
         }
       }
@@ -218,4 +215,5 @@ public class UploadToPlatformQueue {
   protected final <T> ListenableFuture<T> executeUseCaseCall(Callable<T> callable) {
     return executorPool.submit(callable);
   }
+
 }

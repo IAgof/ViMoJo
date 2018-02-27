@@ -237,11 +237,11 @@ public class ShareVideoPresenterTest {
         String videoPath = "";
         getAProject().clear();
         Project project = getAProject();
-        boolean connectedToNetwork = true;
+        boolean isAcceptedUploadMobileNetwork = true;
         ProjectInfo projectInfo = project.getProjectInfo();
 
         shareVideoPresenter.uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
-            projectInfo.getProductTypeList(), connectedToNetwork);
+            projectInfo.getProductTypeList(), isAcceptedUploadMobileNetwork);
 
         verify(mockedRunSyncAdapterHelper).runNowSyncAdapter();
     }
