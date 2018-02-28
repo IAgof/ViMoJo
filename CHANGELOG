@@ -1,3 +1,7 @@
+v0.14.0
+- Improved upload to platform flow, upload video with one user click.
+- Unified FEATURE_UPLOAD_VIDEOS and FEATURE_REGISTER_LOGIN into FEATURE_VIMOJO_PLATFORM
+
 v0.13.0
 - Inform user, starting to upload video.
 - Show notification uploading video. Show progress videos uploads, enqueue uploads, show success/error uploads.
