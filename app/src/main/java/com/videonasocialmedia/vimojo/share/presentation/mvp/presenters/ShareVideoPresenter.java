@@ -74,7 +74,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private final LoggedValidator loggedValidator;
     private String authToken = "";
     private String videoPath = "";
-    private int optionsToShareListSelected;
     private SocialNetwork socialNetworkSelected;
     private boolean isWifiConnected;
     private boolean acceptUploadVideoMobileNetwork;
@@ -200,7 +199,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
                 DateUtils.getDateRightNow());
     }
 
-    private void startExport() {
+    private void startExport(int typeNetworkSelected) {
         shareVideoViewReference.get().startVideoExport();
         exportUseCase.export(Constants.PATH_WATERMARK, new OnExportFinishedListener() {
             @Override
@@ -228,7 +227,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
                 if (shareVideoViewReference.get() != null) {
                     videoPath = video.getMediaPath();
                     shareVideoViewReference.get().loadExportedVideoPreview(videoPath);
-                    processNetworkClicked(videoPath);
+                    processNetworkClicked(typeNetworkSelected, videoPath);
                 }
             }
 
@@ -241,7 +240,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         });
     }
 
-    private void clickUploadToPlatform(boolean isWifiConnected,
+    protected void clickUploadToPlatform(boolean isWifiConnected,
                                boolean acceptUploadVideoMobileNetwork,
                                boolean isMobileNetworkConnected,
                                String videoPath) {
@@ -357,42 +356,38 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     public void onSocialNetworkClicked(SocialNetwork socialNetwork) {
-        optionsToShareListSelected = OptionsToShareList.typeSocialNetwork;
         socialNetworkSelected = socialNetwork;
-        exportAndProcessNetwork();
+        exportAndProcessNetwork(OptionsToShareList.typeSocialNetwork);
     }
 
     public void onVimojoPlatformClicked(boolean isWifiConnected,
                                         boolean acceptUploadVideoMobileNetwork,
                                         boolean isMobileNetworkConnected) {
-        optionsToShareListSelected = OptionsToShareList.typeVimojoNetwork;
         this.isWifiConnected = isWifiConnected;
         this.acceptUploadVideoMobileNetwork = acceptUploadVideoMobileNetwork;
         this.isMobileNetworkConnected = isMobileNetworkConnected;
-        exportAndProcessNetwork();
+        exportAndProcessNetwork(OptionsToShareList.typeVimojoNetwork);
     }
 
     public void onFtpClicked(FtpNetwork ftp) {
-        optionsToShareListSelected = OptionsToShareList.typeFtp;
         ftpNetworkSelected = ftp;
-        exportAndProcessNetwork();
+        exportAndProcessNetwork(OptionsToShareList.typeFtp);
     }
 
     public void onMoreSocialNetworkClicked() {
-        optionsToShareListSelected = OptionsToShareList.typeMoreSocialNetwork;
-        exportAndProcessNetwork();
+        exportAndProcessNetwork(OptionsToShareList.typeMoreSocialNetwork);
     }
 
-    private void exportAndProcessNetwork() {
+    private void exportAndProcessNetwork(int typeNetworkSelected) {
         if(!hasBeenProjectExported) {
-            startExport();
+            startExport(typeNetworkSelected);
         } else {
-            processNetworkClicked(videoPath);
+            processNetworkClicked(typeNetworkSelected, videoPath);
         }
     }
 
-    private void processNetworkClicked(String videoPath) {
-        switch (optionsToShareListSelected) {
+    private void processNetworkClicked(int typeNetworkSelected, String videoPath) {
+        switch (typeNetworkSelected) {
             case OptionsToShareList.typeVimojoNetwork:
                 clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
                     isMobileNetworkConnected, videoPath);

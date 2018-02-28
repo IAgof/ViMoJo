@@ -194,7 +194,7 @@ public class EditorPresenterTest {
   }
 
   @Test
-  public void ifProjectHasNotVideosCallsBindVideoList() throws IllegalItemOnTrack {
+  public void ifProjectHasNotVideosHideProgressDialog() throws IllegalItemOnTrack {
     getAProject().clear();
     Project project = getAProject();
     Assert.assertThat("Project has not video", project.getVMComposition().hasVideos(), Matchers.is(false));

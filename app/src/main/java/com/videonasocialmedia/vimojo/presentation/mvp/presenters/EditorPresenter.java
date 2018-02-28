@@ -199,6 +199,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
       @Override
       public void onNoVideosRetrieved() {
         editorActivityView.hideProgressDialog();
+        editorActivityView.goToRecordOrGalleryScreen();
       }
     });
   }
