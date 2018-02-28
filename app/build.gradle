@@ -239,9 +239,8 @@ android {
             buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
             buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
-            buildConfigField "boolean", "FEATURE_UPLOAD_VIDEOS", "true"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
-            buildConfigField "boolean", "FEATURE_REGISTER_LOGIN", "true"
+            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             ext.fabricApiKey = "60975c88785d14ed56393acb658081f33b93678f"
             ext.fabricApiSecret = "393c86bf03f37c4cf603df78c122f715fbd4aa4d3da89e0b3dc95333728e6308"
             manifestPlaceholders = [vimojoAppName: "Vimojo NBC", fabricApiKey: "60975c88785d14ed56393acb658081f33b93678f"]
