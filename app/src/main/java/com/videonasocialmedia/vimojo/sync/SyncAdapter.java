@@ -56,7 +56,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                             ContentProviderClient contentProviderClient, SyncResult syncResult) {
     Log.d(LOG_TAG, "onPerformSync");
     ObjectQueue<VideoUpload> queue = uploadToPlatformQueue.getQueue();
-    if(!queue.isEmpty()) {
+    if (!queue.isEmpty()) {
       boolean isAcceptedUploadMobileNetwork = false;
       try {
         isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
@@ -72,7 +72,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
       while (uploadToPlatformQueue.getQueue().iterator().hasNext() &&
           isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
         Log.d(LOG_TAG, "launchingQueue");
-        uploadToPlatformQueue.launchNextQueueItem();
+        uploadToPlatformQueue.processNextQueueItem();
       }
     }
 

@@ -226,6 +226,7 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   @OnClick(R.id.button_detail_project_accept)
   public void onClickAcceptDetailProject() {
     presenter.setDetailProject(editTextTitle.getText(), editTextDescription.getText());
+    setResult(RESULT_OK);
     finish();
   }
 

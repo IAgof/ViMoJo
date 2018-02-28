@@ -327,7 +327,7 @@ public class PreferencesPresenter extends VimojoPresenter
     }
 
     public void setupUserAuthPreference() {
-        if(!BuildConfig.FEATURE_REGISTER_LOGIN) {
+        if (!BuildConfig.FEATURE_VIMOJO_PLATFORM) {
             preferencesView.hideRegisterLoginView();
             return;
         }

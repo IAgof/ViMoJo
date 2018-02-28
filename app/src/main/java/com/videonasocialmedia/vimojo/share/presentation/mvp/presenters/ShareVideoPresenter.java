@@ -9,8 +9,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -57,7 +55,6 @@ import static android.content.Context.*;
  * Created by jca on 11/12/15.
  */
 public class ShareVideoPresenter extends VimojoPresenter {
-
     private String LOG_TAG = ShareVideoPresenter.class.getCanonicalName();
 
     private Context context;
@@ -80,22 +77,18 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private UploadToPlatformQueue uploadToPlatformQueue;
     private final LoggedValidator loggedValidator;
     private final RunSyncAdapterHelper runSyncAdapterHelper;
-    private String authToken = "";
 
     @Inject
-    public ShareVideoPresenter(Context context, ShareVideoView shareVideoView,
-                               UserEventTracker userEventTracker,
-                               SharedPreferences sharedPreferences,
-                               CreateDefaultProjectUseCase createDefaultProjectUseCase,
-                               AddLastVideoExportedToProjectUseCase
-                                       addLastVideoExportedProjectUseCase,
-                               ExportProjectUseCase exportProjectUseCase,
-                               ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
-                               GetFtpListUseCase getFtpListUseCase,
-                               GetAuthToken getAuthToken,
-                               UploadToPlatformQueue uploadToPlatformQueue,
-                               LoggedValidator loggedValidator, RunSyncAdapterHelper
-                                       runSyncAdapterHelper) {
+    public ShareVideoPresenter(
+            Context context, ShareVideoView shareVideoView, UserEventTracker userEventTracker,
+            SharedPreferences sharedPreferences,
+            CreateDefaultProjectUseCase createDefaultProjectUseCase,
+            AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
+            ExportProjectUseCase exportProjectUseCase,
+            ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
+            GetFtpListUseCase getFtpListUseCase, GetAuthToken getAuthToken,
+            UploadToPlatformQueue uploadToPlatformQueue, LoggedValidator loggedValidator,
+            RunSyncAdapterHelper runSyncAdapterHelper) {
         this.context = context;
         this.shareVideoViewReference = new WeakReference<>(shareVideoView);
         this.userEventTracker = userEventTracker;
@@ -112,6 +105,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         currentProject = loadCurrentProject();
     }
 
+    // TODO(jliarte): 27/02/18 why is the project get from instance?!?!?!
     private Project loadCurrentProject() {
         return Project.getInstance(null, null, null, null);
     }
@@ -144,7 +138,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private void obtainListOptionsToShare(VimojoNetwork vimojoNetwork, List<FtpNetwork> ftpList,
                                           List<SocialNetwork> socialNetworkList) {
         optionToShareList = new ArrayList();
-        if (BuildConfig.FEATURE_UPLOAD_VIDEOS) {
+        if (BuildConfig.FEATURE_VIMOJO_PLATFORM) {
             optionToShareList.add(vimojoNetwork);
         }
         if (BuildConfig.FEATURE_FTP) {
@@ -316,10 +310,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private boolean isDeviceConnectedToUpload(boolean isWifiConnected,
                                               boolean isMobileNetworkConnected,
                                               boolean isAcceptedUploadMobileNetwork) {
-        if(isWifiConnected || (isMobileNetworkConnected &&  isAcceptedUploadMobileNetwork) ) {
-            return true;
-        }
-        return false;
+        return isWifiConnected || (isMobileNetworkConnected &&  isAcceptedUploadMobileNetwork);
     }
 
     private boolean isNeededAskPermissionForMobileUpload(boolean isWifiConnected,
@@ -330,39 +321,26 @@ public class ShareVideoPresenter extends VimojoPresenter {
 
     protected boolean isUserLogged() {
         shareVideoViewReference.get().showProgressDialogCheckingUserAuth();
+        String authToken = "";
         try {
-            getAuthTokenFuture().get();
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-            Crashlytics.log("Error getting info from user interruptedException");
-            Crashlytics.logException(interruptedException);
-        } catch (ExecutionException executionException) {
-            executionException.printStackTrace();
-            Crashlytics.log("Error getting info from user executionException");
-            Crashlytics.logException(executionException);
+            authToken = executeUseCaseCall(() -> getAuthToken.getAuthToken(context).getToken())
+                    .get();
+        } catch (InterruptedException | ExecutionException errorGettingToken) {
+            if (BuildConfig.DEBUG) {
+                errorGettingToken.printStackTrace();
+            }
+            Crashlytics.log("Error getting info from user e");
+            Crashlytics.logException(errorGettingToken);
         }
         shareVideoViewReference.get().hideProgressDialogCheckingUserAuth();
         return loggedValidator.loggedValidate(authToken);
     }
 
-    protected ListenableFuture<String> getAuthTokenFuture() {
-        ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                return getAuthToken.getAuthToken(context).getToken();
-            }
-        });
-        Futures.addCallback(authTokenFuture, new FutureCallback<String>() {
-            @Override
-            public void onSuccess(String authorizationToken) {
-                authToken = authorizationToken;
-            }
-            @Override
-            public void onFailure(Throwable errorGettingToken) {
-            }
-        });
-        return authTokenFuture;
-    }
+//    protected ListenableFuture<String> getAuthTokenFuture() {
+//        ListenableFuture<String> authTokenFuture =
+//                executeUseCaseCall(() -> getAuthToken.getAuthToken(context).getToken());
+//        return authTokenFuture;
+//    }
 
     protected void uploadVideo(String mediaPath, String title, String description,
                                List<String> productTypeList, boolean isAcceptedUploadMobileNetwork) {

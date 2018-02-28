@@ -32,6 +32,7 @@ import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValida
 import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 
 
 import org.junit.After;
@@ -49,7 +50,8 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -144,8 +146,7 @@ public class ShareVideoPresenterTest {
         boolean acceptUploadVideoMobileNetwork = true;
         boolean isMobileNetworkConnected = true;
         String videoPath = "";
-        ListenableFuture<String> mockedTask = mock(ListenableFuture.class);
-        when(spyShareVideoPresenter.getAuthTokenFuture()).thenReturn(mockedTask);
+        doReturn(new AuthToken("", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
         assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(false));
 
         spyShareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
@@ -164,9 +165,8 @@ public class ShareVideoPresenterTest {
         Project project = getAProject();
         assertThat(project.getProjectInfo().getProductTypeList().size(), is(0));
         assertThat(project, is(spyShareVideoPresenter.currentProject));
-        ListenableFuture<String> mockedTask = mock(ListenableFuture.class);
-        when(spyShareVideoPresenter.getAuthTokenFuture()).thenReturn(mockedTask);
-        when(mockedLoggedValidator.loggedValidate("")).thenReturn(true);
+        doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
+        when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
         assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
         assertThat("Project info product type is empty",
             project.getProjectInfo().getProductTypeList().size(), is(0));
@@ -188,9 +188,8 @@ public class ShareVideoPresenterTest {
         Project project = getAProject();
         assertThat(project.getProjectInfo().getProductTypeList().size(), is(0));
         assertThat(project, is(spyShareVideoPresenter.currentProject));
-        ListenableFuture<String> mockedTask = mock(ListenableFuture.class);
-        when(spyShareVideoPresenter.getAuthTokenFuture()).thenReturn(mockedTask);
-        when(mockedLoggedValidator.loggedValidate("")).thenReturn(true);
+        doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
+        when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
         assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
         List<String> productType = new ArrayList<>();
         productType.add(ProjectInfo.ProductType.RAW_VIDEOS.name());
@@ -215,9 +214,8 @@ public class ShareVideoPresenterTest {
         Project project = getAProject();
         assertThat(project.getProjectInfo().getProductTypeList().size(), is(0));
         assertThat(project, is(spyShareVideoPresenter.currentProject));
-        ListenableFuture<String> mockedTask = mock(ListenableFuture.class);
-        when(spyShareVideoPresenter.getAuthTokenFuture()).thenReturn(mockedTask);
-        when(mockedLoggedValidator.loggedValidate("")).thenReturn(true);
+        doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
+        when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
         assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
         List<String> productType = new ArrayList<>();
         productType.add(ProjectInfo.ProductType.RAW_VIDEOS.name());
