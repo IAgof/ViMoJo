@@ -7,12 +7,12 @@
 
     <ImageView
         android:id="@+id/splash_screen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        tools:src="@drawable/splash_screen"/>
+        android:src="@drawable/splash_screen"/>
 
     <TextView
         android:id="@+id/videona_version"
