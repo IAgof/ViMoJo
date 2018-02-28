@@ -147,11 +147,13 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    switch (requestCode) {
-      case REQUEST_FILL_PROJECT_DETAILS:
-      case REQUEST_USER_AUTH: // (jliarte): 27/02/18 by now the action is the same
+    if(resultCode == RESULT_OK) {
+      switch (requestCode) {
+        case REQUEST_FILL_PROJECT_DETAILS:
+        case REQUEST_USER_AUTH: // (jliarte): 27/02/18 by now the action is the same
           onVimojoPlatformClicked();
           break;
+      }
     }
   }
 
