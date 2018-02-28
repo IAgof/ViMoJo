@@ -100,8 +100,7 @@ public class UploadToPlatformQueue {
       removeHeadElement(getQueue());
       if (getQueue().isEmpty()) {
         Log.d(LOG_TAG, "Empty queue, finishNotification");
-        uploadNotification.finishNotification(context.getString(R.string.upload_video_success),
-                element.getTitle(), true);
+        uploadNotification.finishNotification(true);
       }
 
     } catch (VimojoApiException vimojoApiException) {
@@ -131,8 +130,7 @@ public class UploadToPlatformQueue {
       removeHeadElement(getQueue());
       if (getQueue().isEmpty()) {
         Log.d(LOG_TAG, "finishNotification");
-        uploadNotification.finishNotification(context.getString(R.string.upload_video_error),
-            element.getTitle(), false);
+        uploadNotification.finishNotification(false);
       } else {
         Log.d(LOG_TAG, "appendErrorNotification");
         uploadNotification.appendResultNotification(context.getString(R.string.uploading_video),

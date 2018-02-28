@@ -93,12 +93,11 @@ public class UploadNotification {
     }).start();
   }
 
-  public void finishNotification(String result, String title, boolean success) {
+  public void finishNotification(boolean success) {
     new Thread(() -> {
       if (!success) {
         errorUploadingVideo = true;
       }
-      videoResults.add(result + " " + title);
       notificationBuilder.setSmallIcon(errorUploadingVideo ? errorNotificationId : successNotificationId);
       String title1 = context.getString(R.string.upload_video_completed) + ":";
       NotificationCompat.InboxStyle inboxStyle =
