@@ -12,6 +12,7 @@ import android.content.Context;
 import android.support.v4.app.NotificationCompat;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,81 +59,66 @@ public class UploadNotification {
   }
 
   public void updateNotificationVideoAdded(String message, int sizeQueue) {
-    new Thread(
-        new Runnable() {
-          @Override
-          public void run() {
-            String text = message + " 1/" + sizeQueue;
-            NotificationCompat.InboxStyle inboxStyle =
-                new NotificationCompat.InboxStyle();
-            inboxStyle.setSummaryText(text);
-            for(String line: videoResults) {
-              inboxStyle.addLine(line);
-            }
-            notificationBuilder.setStyle(inboxStyle);
-            notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
-          }
+    new Thread(() -> {
+      String text = message + " 1/" + sizeQueue;
+        NotificationCompat.InboxStyle inboxStyle =
+            new NotificationCompat.InboxStyle();
+        inboxStyle.setSummaryText(text);
+        for (String line: videoResults) {
+          inboxStyle.addLine(line);
         }
-    ).start();
+        notificationBuilder.setStyle(inboxStyle);
+        notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
+      }).start();
   }
 
   public void appendResultNotification(String message, int sizeQueue, String result,
                                        String title, boolean success) {
-    new Thread(
-        new Runnable() {
-          @Override
-          public void run() {
-            if(!success) {
-              errorUploadingVideo = true;
-            }
-            videoResults.add(result + " " + title);
-            String text = message + " 1/" + sizeQueue;
-            NotificationCompat.InboxStyle inboxStyle =
-                new NotificationCompat.InboxStyle();
-            inboxStyle.setSummaryText(text);
-            for(String line: videoResults) {
-              inboxStyle.addLine(line);
-            }
-            notificationBuilder.setStyle(inboxStyle);
-            notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
-          }
-        }
-    ).start();
+    new Thread(() -> {
+      if (!success) {
+        errorUploadingVideo = true;
+      }
+      videoResults.add(result + " " + title);
+      String text = message + " 1/" + sizeQueue;
+      NotificationCompat.InboxStyle inboxStyle =
+          new NotificationCompat.InboxStyle();
+      inboxStyle.setSummaryText(text);
+      for (String line: videoResults) {
+        inboxStyle.addLine(line);
+      }
+      notificationBuilder.setStyle(inboxStyle);
+      notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
+    }).start();
   }
 
   public void finishNotification(String result, String title, boolean success) {
-    new Thread(
-        new Runnable() {
-          @Override
-          public void run() {
-            if(!success) {
-              errorUploadingVideo = true;
-            }
-            videoResults.add(result + " " + title);
-            notificationBuilder.setSmallIcon(errorUploadingVideo ? errorNotificationId : successNotificationId);
-            String title = context.getString(R.string.upload_video_completed) + ":";
-            NotificationCompat.InboxStyle inboxStyle =
-                new NotificationCompat.InboxStyle();
-            for(String line: videoResults) {
-              inboxStyle.addLine(line);
-            }
-            String summaryText = String.valueOf(videoResults.size());
-            if(videoResults.size() > 1) {
-              summaryText = summaryText + " "
-                  + context.getString(R.string.upload_video_finish_plural);
-            } else {
-              summaryText = summaryText + " "
-                  + context.getString(R.string.upload_video_finish_singular);
-            }
-            inboxStyle.setSummaryText(summaryText);
-            notificationBuilder.setContentTitle(title);
-            notificationBuilder.setStyle(inboxStyle);
-            notificationBuilder.setProgress(0, 0, false);
-            notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
-            isNotificationShowed = false;
-          }
-        }
-    ).start();
+    new Thread(() -> {
+      if (!success) {
+        errorUploadingVideo = true;
+      }
+      videoResults.add(result + " " + title);
+      notificationBuilder.setSmallIcon(errorUploadingVideo ? errorNotificationId : successNotificationId);
+      String title1 = context.getString(R.string.upload_video_completed) + ":";
+      NotificationCompat.InboxStyle inboxStyle =
+          new NotificationCompat.InboxStyle();
+      for (String line: videoResults) {
+        inboxStyle.addLine(line);
+      }
+      String summaryText = String.valueOf(videoResults.size());
+      if (videoResults.size() > 1) {
+        summaryText = summaryText + " "
+            + context.getString(R.string.upload_video_finish_plural);
+      } else {
+        summaryText = summaryText + " "
+            + context.getString(R.string.upload_video_finish_singular);
+      }
+      inboxStyle.setSummaryText(summaryText);
+      notificationBuilder.setContentTitle(title1);
+      notificationBuilder.setStyle(inboxStyle);
+      notificationBuilder.setProgress(0, 0, false);
+      notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
+      isNotificationShowed = false;
+    }).start();
   }
 
   public boolean isNotificationShowed() {
@@ -140,33 +126,28 @@ public class UploadNotification {
   }
 
   public void errorNetworkNotification() {
-    new Thread(
-        new Runnable() {
-          @Override
-          public void run() {
-            notificationBuilder.setSmallIcon(errorNotificationId);
-            String title = context.getString(R.string.upload_video_network_error);
-            NotificationCompat.InboxStyle inboxStyle =
-                new NotificationCompat.InboxStyle();
-            for(String line: videoResults) {
-              inboxStyle.addLine(line);
-            }
-            String summaryText = String.valueOf(videoResults.size());
-            if(videoResults.size() > 1) {
-              summaryText = summaryText + " "
-                  + context.getString(R.string.upload_video_finish_plural);
-            } else {
-              summaryText = summaryText + " "
-                  + context.getString(R.string.upload_video_finish_singular);
-            }
-            inboxStyle.setSummaryText(summaryText);
-            notificationBuilder.setContentTitle(title);
-            notificationBuilder.setStyle(inboxStyle);
-            notificationBuilder.setProgress(0, 0, false);
-            notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
-          }
-        }
-    ).start();
+    new Thread(() -> {
+      notificationBuilder.setSmallIcon(errorNotificationId);
+      String title = context.getString(R.string.upload_video_network_error);
+      NotificationCompat.InboxStyle inboxStyle =
+          new NotificationCompat.InboxStyle();
+      for (String line: videoResults) {
+        inboxStyle.addLine(line);
+      }
+      String summaryText = String.valueOf(videoResults.size());
+      if(videoResults.size() > 1) {
+        summaryText = summaryText + " "
+            + context.getString(R.string.upload_video_finish_plural);
+      } else {
+        summaryText = summaryText + " "
+            + context.getString(R.string.upload_video_finish_singular);
+      }
+      inboxStyle.setSummaryText(summaryText);
+      notificationBuilder.setContentTitle(title);
+      notificationBuilder.setStyle(inboxStyle);
+      notificationBuilder.setProgress(0, 0, false);
+      notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
+    }).start();
   }
 
   public void cancelNotification() {
@@ -180,5 +161,17 @@ public class UploadNotification {
     notificationBuilder.setContentTitle(title);
     notificationBuilder.setProgress(0, 0, false);
     notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
+  }
+
+  public void errorFileNotFound(VideoUpload videoUpload) {
+    NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
+    style.setSummaryText(context.getString(R.string.error_uploading_video));
+//    String title = context.getString(R.string.upload_video_file_not_found);
+    style.addLine("Video file for " + videoUpload.getTitle() + " no longer exists!");
+    NotificationCompat.Builder errorNotificationBuilder = new NotificationCompat.Builder(
+            context, NOTIFICATION_CHANNEL_ID)
+            .setContentTitle(context.getString(R.string.error_uploading_video))
+            .setStyle(style).setSmallIcon(errorNotificationId);
+    notificationManager.notify(NOTIFICATION_UPLOAD_ID, errorNotificationBuilder.build());
   }
 }

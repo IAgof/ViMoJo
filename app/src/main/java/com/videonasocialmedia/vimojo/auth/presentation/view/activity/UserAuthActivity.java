@@ -188,6 +188,7 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   }
 
   private void exitLoginActivity() {
+    setResult(RESULT_OK);
     finish();
   }
 

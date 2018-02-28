@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -43,7 +44,7 @@ public class VideoApiClient extends VimojoApiClient {
    * @throws VimojoApiException if an error has occurred in the call.
    */
   public Video uploadVideo(String authToken, VideoUpload videoUpload)
-          throws VimojoApiException {
+          throws VimojoApiException, FileNotFoundException {
 
     // create upload service client
     VideoService videoService = getService(VideoService.class, authToken);
@@ -72,6 +73,8 @@ public class VideoApiClient extends VimojoApiClient {
       } else {
         parseError(response);
       }
+    } catch (FileNotFoundException fileError) {
+      throw fileError;
     } catch (IOException e) {
       throw new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR);
     }
