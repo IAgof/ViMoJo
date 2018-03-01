@@ -1,2 +1,3 @@
-v0.14.1
-- Added new flavor nbc.
+v0.14.2
+- Fix upload video mobile connection user selection. Now videos can be upload with 3g,4g.
+- Launch notification for every video upload. Update error messages, not network, not authorization and file not found.

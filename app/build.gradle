@@ -69,8 +69,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 99 // 20180228
-            versionName "0.14.1" // 2018028
+            versionCode 100 // 20180301
+            versionName "0.14.2" // 20180301
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "api_base_url", "https://"
@@ -157,8 +157,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 50 // 20180228
-            versionName "0.14.1.fThomsonFoundation" // 20180228
+            versionCode 51 // 20180301
+            versionName "0.14.2.fThomsonFoundation" // 20180301
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "api_base_url", "https://"
@@ -202,8 +202,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 17 // 20180228
-            versionName "0.14.1.fMarketForNews" // 20180228
+            versionCode 18 // 20180301
+            versionName "0.14.2.fMarketForNews" // 20180301
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "api_base_url", "https://"
@@ -225,8 +225,8 @@ android {
 
         nbc {
             applicationId "com.videonasocialmedia.vimojo.nbc"
-            versionCode 0 // 20180228
-            versionName "0.14.1.fComcastNbc" // 20180228
+            versionCode 1 // 20180301
+            versionName "0.14.2.fComcastNbc" // 20180301
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo NBC"
             resValue "string", "api_base_url", "https://"
