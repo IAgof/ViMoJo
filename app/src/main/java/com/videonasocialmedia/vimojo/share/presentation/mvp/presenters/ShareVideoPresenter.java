@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
@@ -43,6 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -346,7 +346,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
                                List<String> productTypeList, boolean isAcceptedUploadMobileNetwork) {
         // Convert productTypeList to string. VideoApiClient not support RequestBody with List<String>
         String productTypeListToString = TextUtils.join(", ", productTypeList);
-        VideoUpload videoUpload = new VideoUpload(mediaPath, title, description,
+        int id = (int) (new Date().getTime()/1000);
+        VideoUpload videoUpload = new VideoUpload(id, mediaPath, title, description,
             productTypeListToString, isAcceptedUploadMobileNetwork);
         executeUseCaseCall((Callable<Void>) () -> {
             try {

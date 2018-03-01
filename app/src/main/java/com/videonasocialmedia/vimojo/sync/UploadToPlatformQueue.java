@@ -39,12 +39,15 @@ public class UploadToPlatformQueue {
   private final String LOG_TAG = UploadToPlatformQueue.class.getCanonicalName();
   private final Context context;
   private final VideoApiClient videoApiClient;
+  private final GetAuthToken getAuthToken;
   private UploadNotification uploadNotification;
 
-  public UploadToPlatformQueue(Context context) {
+  public UploadToPlatformQueue(Context context, UploadNotification uploadNotification,
+                               VideoApiClient videoApiClient, GetAuthToken getAuthToken) {
     this.context = context;
-    uploadNotification = new UploadNotification(context);
-    videoApiClient = new VideoApiClient();
+    this.uploadNotification = uploadNotification;
+    this.videoApiClient = videoApiClient;
+    this.getAuthToken = getAuthToken;
   }
 
   protected ObjectQueue<VideoUpload> getQueue() {
@@ -70,77 +73,53 @@ public class UploadToPlatformQueue {
     queue.add(videoUpload);
   }
 
-  protected boolean isNotificationShowed(ObjectQueue<VideoUpload> queue) {
-    return queue.size() > 0 && uploadNotification.isNotificationShowed();
-  }
-
-  public void startOrUpdateNotification() {
-    Log.d(LOG_TAG, "launchNotification");
-    if (!isNotificationShowed(getQueue()) ||
-        uploadNotification.isShowedErrorNetworkNotification()) {
-      Log.d(LOG_TAG, "startNotification");
-      uploadNotification.startInfiniteProgressNotification(R.drawable.notification_uploading_small,
-          context.getString(R.string.uploading_video));
-    } else {
-      Log.d(LOG_TAG, "updateNotification");
-      uploadNotification.updateNotificationVideoAdded(context.getString(R.string.uploading_video), getQueue().size());
-    }
-  }
-
-  public void processNextQueueItem() {
+  public void processNextQueueItem(int notificationUploadId) {
     Log.d(LOG_TAG, "processNextQueueItem");
+    Log.d(LOG_TAG, "startNotification");
+    uploadNotification.startInfiniteProgressNotification(notificationUploadId,
+        R.drawable.notification_uploading_small, context.getString(R.string.uploading_video));
     VideoUpload element = getQueue().iterator().next();
     try {
       // TODO(jliarte): 27/02/18 check what to do with plaform response
-      String authToken = new GetAuthToken().getAuthToken(context).getToken();
+      String authToken = getAuthToken.getAuthToken(context).getToken();
       Video video = videoApiClient.uploadVideo(authToken, element);
-      uploadNotification.appendResultNotification(context.getString(R.string.uploading_video),
-              getQueue().size(), context.getString(R.string.upload_video_success),
-              element.getTitle(), true);
       removeHeadElement(getQueue());
-      if (getQueue().isEmpty()) {
-        Log.d(LOG_TAG, "Empty queue, finishNotification");
-        uploadNotification.finishNotification(true);
-      }
-
+      Log.d(LOG_TAG, "finishNotification success");
+      uploadNotification.finishNotification(notificationUploadId,
+          context.getString(R.string.upload_video_success), element.getTitle(), true);
     } catch (VimojoApiException vimojoApiException) {
       Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
       Crashlytics.log("Error process upload vimojoApiException");
       Crashlytics.logException(vimojoApiException);
-      if (vimojoApiException.getApiErrorCode().equals(VimojoApiException.UNAUTHORIZED)) {
-        uploadNotification.errorUnauthorizationUploadingVideos();
-      }
-      if (vimojoApiException.getApiErrorCode().equals(VimojoApiException.NETWORK_ERROR)) {
-        uploadNotification.errorNetworkNotification();
-        retryItemUpload(element);
+      switch (vimojoApiException.getApiErrorCode()) {
+        case VimojoApiException.UNAUTHORIZED:
+          uploadNotification.errorUnauthorizationUploadingVideos(notificationUploadId);
+          break;
+        case VimojoApiException.NETWORK_ERROR:
+          uploadNotification.errorNetworkNotification(notificationUploadId);
+          break;
+        default:
+          retryItemUpload(element);
       }
     } catch (FileNotFoundException fileNotFoundError) {
       if (BuildConfig.DEBUG) {
-        Log.d(LOG_TAG, "File " + element.getMediaPath() + " trying to upload does not exists!");
+        fileNotFoundError.printStackTrace();
       }
-      uploadNotification.errorFileNotFound(element);
+      Log.d(LOG_TAG, "File " + element.getMediaPath() + " trying to upload does not exists!");
+      uploadNotification.errorFileNotFound(notificationUploadId, element);
       // (jliarte): 27/02/18 Check this error management
       removeHeadElement(getQueue());
     }
   }
 
-  private void retryItemUpload(VideoUpload element) {
+  protected void retryItemUpload(VideoUpload element) {
     incrementHeadNumTries(getQueue());
     if (element.getNumTries() > VideoUpload.MAX_NUM_TRIES_UPLOAD) {
       removeHeadElement(getQueue());
-      if (getQueue().isEmpty()) {
-        Log.d(LOG_TAG, "finishNotification");
-        uploadNotification.finishNotification(false);
-      } else {
-        Log.d(LOG_TAG, "appendErrorNotification");
-        uploadNotification.appendResultNotification(context.getString(R.string.uploading_video),
-            getQueue().size(), context.getString(R.string.upload_video_error), element.getTitle(), false);
-      }
-    } else {
-      // (jliarte): 27/02/18 this is currently always false!!! detected by lint
-      if (!uploadNotification.isShowedErrorNetworkNotification()) {
-        processNextQueueItem();
-      }
+      Log.d(LOG_TAG, "finishNotification, error");
+      uploadNotification.finishNotification(element.getId(),
+          context.getString(R.string.upload_video_error), element.getTitle(), false);
+
     }
   }
 

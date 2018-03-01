@@ -16,6 +16,7 @@ import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
 import java.io.IOException;
 
+
 /**
  * Created by alvaro on 31/1/18.
  */
@@ -34,22 +35,24 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
       SYNC_INTERVAL_IN_MINUTES *
           SECONDS_PER_MINUTE;
   private Context context;
-  private UploadToPlatformQueue uploadToPlatformQueue;
   private boolean isWifiConnected;
-  private boolean isMobileNetworConnected;
+  private boolean isMobileNetworkConnected;
+  private UploadToPlatformQueue uploadToPlatformQueue;
 
   /**
    * Set up the sync adapter
    */
-  public SyncAdapter(Context context, boolean autoInitialize) {
+  public SyncAdapter(Context context, boolean autoInitialize,
+                     UploadToPlatformQueue uploadToPlatformQueue) {
     super(context, autoInitialize);
         /*
          * If your app uses a content resolver, get an instance of it
          * from the incoming Context
          */
     this.context = context;
-    uploadToPlatformQueue = new UploadToPlatformQueue(context);
+    this.uploadToPlatformQueue = uploadToPlatformQueue;
   }
+
 
   @Override
   public void onPerformSync(Account account, Bundle bundle, String s,
@@ -58,21 +61,22 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     ObjectQueue<VideoUpload> queue = uploadToPlatformQueue.getQueue();
     if (!queue.isEmpty()) {
       boolean isAcceptedUploadMobileNetwork = false;
+      int notificationId = 0;
       try {
         isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
+        if(!isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
+          return;
+        }
+        while (uploadToPlatformQueue.getQueue().iterator().hasNext() &&
+            isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
+          Log.d(LOG_TAG, "launchingQueue");
+          notificationId = queue.peek().getId();
+          uploadToPlatformQueue.processNextQueueItem(notificationId);
+        }
       } catch (IOException ioException) {
         Log.d(LOG_TAG, ioException.getMessage());
         Crashlytics.log("Error getting queue element, isAcceptedUploadMobileNetwork");
         Crashlytics.logException(ioException);
-      }
-      if(!isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
-        return;
-      }
-      uploadToPlatformQueue.startOrUpdateNotification();
-      while (uploadToPlatformQueue.getQueue().iterator().hasNext() &&
-          isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
-        Log.d(LOG_TAG, "launchingQueue");
-        uploadToPlatformQueue.processNextQueueItem();
       }
     }
 
@@ -80,7 +84,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
   private boolean isThereNetworkConnected(boolean isAcceptedUploadMobileNetwork) {
     checkNetworksAvailable();
-    return isWifiConnected || (isMobileNetworConnected && isAcceptedUploadMobileNetwork);
+    return isWifiConnected || (isMobileNetworkConnected && isAcceptedUploadMobileNetwork);
   }
 
   private void checkNetworksAvailable() {
@@ -89,7 +93,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
     NetworkInfo mobileNetwork = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
     isWifiConnected = wifi.isConnected();
-    isMobileNetworConnected = mobileNetwork.isConnected();
+    isMobileNetworkConnected = mobileNetwork.isConnected();
   }
 
 }

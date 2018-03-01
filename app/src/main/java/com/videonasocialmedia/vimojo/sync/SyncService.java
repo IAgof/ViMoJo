@@ -8,6 +8,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import com.videonasocialmedia.vimojo.main.SystemComponent;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
+
+import javax.inject.Inject;
+
 /**
  * Define a Service that returns an IBinder for the
  * sync adapter class, allowing the sync adapter framework to call
@@ -19,6 +24,8 @@ public class SyncService extends Service {
   // Object to use as a thread-safe lock
   private static final Object sSyncAdapterLock = new Object();
 
+  @Inject UploadToPlatformQueue uploadToPlatformQueue;
+
   /*
    * Instantiate the sync adapter object.
    */
@@ -29,11 +36,18 @@ public class SyncService extends Service {
          * Set the sync adapter as syncable
          * Disallow parallel syncs
          */
+    getSystemComponent().inject(this);
+
     synchronized (sSyncAdapterLock) {
       if (sSyncAdapter == null) {
-        sSyncAdapter = new SyncAdapter(getApplicationContext(), true);
+        sSyncAdapter = new SyncAdapter(getApplicationContext(), true,
+            uploadToPlatformQueue);
       }
     }
+  }
+
+  public SystemComponent getSystemComponent() {
+    return ((VimojoApplication)getApplication()).getSystemComponent();
   }
 
   /**
