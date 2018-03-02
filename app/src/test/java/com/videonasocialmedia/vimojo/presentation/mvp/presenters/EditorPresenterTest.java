@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -38,8 +38,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -67,13 +67,11 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest({Log.class})
 public class EditorPresenterTest {
 
-  @InjectMocks EditorPresenter injectedEditorPresenter;
-
   @Mock private MixpanelAPI mockedMixpanelAPI;
   @Mock EditorActivityView mockedEditorActivityView;
   @Mock VideonaPlayerView mockedVideonaPlayerView;
   @Mock SharedPreferences mockedSharedPreferences;
-  @Mock Context mockedContext;
+  @Mock Activity mockedContext;
   @Mock UserEventTracker mockedUserEventTracker;
   @Mock CreateDefaultProjectUseCase mockedCreateDefaultProjectUseCase;
   @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
@@ -84,10 +82,7 @@ public class EditorPresenterTest {
   @Mock ProjectRepository mockedProjectRepository;
   @Mock NewClipImporter mockedNewClipImporter;
   @Mock BillingManager mockedBillingManager;
-
   @Mock SharedPreferences.Editor mockedPreferencesEditor;
-
-  @Mock Project mockedProject;
 
   @Before
   public void injectMocks() {
@@ -128,16 +123,36 @@ public class EditorPresenterTest {
   }
 
   @Test
-  public void getMediaListCallsGetMediaListFromProjectUseCase() throws IllegalItemOnTrack {
+  public void initCallsInitPreviewFromProjectIfProjectHasNotBeenExported() {
+    EditorPresenter spyEditorPresenter = Mockito.spy(getEditorPresenter());
+    boolean hasBeenProjectExported = false;
+    String videoPath = "";
+
+    spyEditorPresenter.init(hasBeenProjectExported, videoPath);
+
+    verify(spyEditorPresenter).initPreviewFromProject();
+  }
+
+  @Test
+  public void initCallsInitPreviewFromVideoExportedIfProjectHasBeenExported() {
+    EditorPresenter spyEditorPresenter = Mockito.spy(getEditorPresenter());
+    boolean hasBeenProjectExported = true;
+    String videoPath = "";
+
+    spyEditorPresenter.init(hasBeenProjectExported, videoPath);
+
+    verify(spyEditorPresenter).initPreviewFromVideoExported(videoPath);
+  }
+
+  @Test
+  public void initPreviewFromProjectCallsGetMediaListFromProjectUseCase() throws IllegalItemOnTrack {
     Project project = getAProject();
     Video video = new Video("somePath", Video.DEFAULT_VOLUME);
     project.getMediaTrack().insertItem(video);
     Assert.assertThat("Project has video", project.getVMComposition().hasVideos(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
-    boolean hasBeenProjectExported = false;
-    String videoPath = null;
 
-    editorPresenter.init(hasBeenProjectExported, videoPath);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedGetMediaListFromProjectUseCase)
         .getMediaListFromProject(any(OnVideosRetrieved.class));
@@ -157,17 +172,14 @@ public class EditorPresenterTest {
     Project currentProject = Project.getInstance(null, null, null, null);
     Assert.assertThat("Current project has music", currentProject.hasMusic(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
-    boolean hasBeenProjectExported = false;
-    String videoPath = null;
 
-    editorPresenter.init(hasBeenProjectExported, videoPath);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedGetAudioFromProjectUseCase).getMusicFromProject(any(GetMusicFromProjectCallback.class));
   }
 
   @Test
   public void ifProjectHasVideosCallsBindVideoList() throws IllegalItemOnTrack {
-    getAProject().clear();
     Project project = getAProject();
     Video video = new Video("video/path", 1f);
     List<Video> videoList = new ArrayList<>();
@@ -183,10 +195,8 @@ public class EditorPresenterTest {
       }
     }).when(mockedGetMediaListFromProjectUseCase).getMediaListFromProject(any(OnVideosRetrieved.class));
     EditorPresenter editorPresenter = getEditorPresenter();
-    boolean hasBeenProjectExported = false;
-    String videoPath = null;
 
-    editorPresenter.init(hasBeenProjectExported, videoPath);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).bindVideoList(any());
     verify(mockedNewClipImporter).relaunchUnfinishedAdaptTasks(project);
@@ -194,7 +204,7 @@ public class EditorPresenterTest {
   }
 
   @Test
-  public void ifProjectHasNotVideosHideProgressDialog() throws IllegalItemOnTrack {
+  public void ifProjectHasNotVideosHideProgressDialogAndGoToRecordOrGalleryScreen() throws IllegalItemOnTrack {
     getAProject().clear();
     Project project = getAProject();
     Assert.assertThat("Project has not video", project.getVMComposition().hasVideos(), Matchers.is(false));
@@ -206,10 +216,8 @@ public class EditorPresenterTest {
       }
     }).when(mockedGetMediaListFromProjectUseCase).getMediaListFromProject(any(OnVideosRetrieved.class));
     EditorPresenter editorPresenter = getEditorPresenter();
-    boolean hasBeenProjectExported = false;
-    String videoPath = null;
 
-    editorPresenter.init(hasBeenProjectExported, videoPath);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedEditorActivityView).hideProgressDialog();
     verify(mockedEditorActivityView).goToRecordOrGalleryScreen();
@@ -229,10 +237,8 @@ public class EditorPresenterTest {
     Assert.assertThat("Project has video on mute", project.getVMComposition()
         .getMediaTrack().isMuted(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
-    boolean hasBeenProjectExported = false;
-    String videoPath = null;
 
-    editorPresenter.init(hasBeenProjectExported, videoPath);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).setVideoMute();
   }
@@ -254,10 +260,8 @@ public class EditorPresenterTest {
     Assert.assertThat("Project has video and it is not on mute", project.getVMComposition()
         .getMediaTrack().isMuted(), Matchers.is(false));
     EditorPresenter editorPresenter = getEditorPresenter();
-    boolean hasBeenProjectExported = false;
-    String videoPath = null;
 
-    editorPresenter.init(hasBeenProjectExported, videoPath);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).setVideoVolume(volumeVideo);
   }
@@ -283,10 +287,8 @@ public class EditorPresenterTest {
       }
     }).when(mockedGetAudioFromProjectUseCase).getMusicFromProject(any(GetMusicFromProjectCallback.class));
     EditorPresenter editorPresenter = getEditorPresenter();
-    boolean hasBeenProjectExported = false;
-    String videoPath = null;
 
-    editorPresenter.init(hasBeenProjectExported, videoPath);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).bindMusic(any());
   }
@@ -309,10 +311,8 @@ public class EditorPresenterTest {
     assertThat("Music track is muted", currentProject.getAudioTracks().get(0).isMuted(),
         is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
-    boolean hasBeenProjectExported = false;
-    String videoPath = null;
 
-    editorPresenter.init(hasBeenProjectExported, videoPath);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).setMusicVolume(0.f);
   }
@@ -336,10 +336,8 @@ public class EditorPresenterTest {
     assertThat("Music track is not muted", currentProject.getAudioTracks().get(0).isMuted(),
         is(false));
     EditorPresenter editorPresenter = getEditorPresenter();
-    boolean hasBeenProjectExported = false;
-    String videoPath = null;
 
-    editorPresenter.init(hasBeenProjectExported, videoPath);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).setMusicVolume(musicTrackVolume);
   }
@@ -366,10 +364,8 @@ public class EditorPresenterTest {
       }
     }).when(mockedGetAudioFromProjectUseCase).getVoiceOverFromProject(any(GetMusicFromProjectCallback.class));
     EditorPresenter editorPresenter = getEditorPresenter();
-    boolean hasBeenProjectExported = false;
-    String videoPath = null;
 
-    editorPresenter.init(hasBeenProjectExported, videoPath);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).bindVoiceOver(any());
   }
@@ -394,10 +390,8 @@ public class EditorPresenterTest {
     Assert.assertThat("VoiceOver is not muted", currentProject.getAudioTracks()
         .get(INDEX_AUDIO_TRACK_VOICE_OVER).isMuted(), Matchers.is(false));
     EditorPresenter editorPresenter = getEditorPresenter();
-    boolean hasBeenProjectExported = false;
-    String videoPath = null;
 
-    editorPresenter.init(hasBeenProjectExported, videoPath);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).setVoiceOverVolume(voiceOverTrackVolume);
   }
@@ -420,20 +414,18 @@ public class EditorPresenterTest {
     Assert.assertThat("VoiceOver is muted", currentProject.getAudioTracks()
         .get(INDEX_AUDIO_TRACK_VOICE_OVER).isMuted(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
-    boolean hasBeenProjectExported = false;
-    String videoPath = null;
 
-    editorPresenter.init(hasBeenProjectExported, videoPath);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).setVoiceOverVolume(0.0f);
   }
 
   private EditorPresenter getEditorPresenter() {
-    return new EditorPresenter(mockedEditorActivityView,
-        mockedVideonaPlayerView, mockedSharedPreferences, mockedContext, mockedUserEventTracker,
-        mockedCreateDefaultProjectUseCase, mockedGetMediaListFromProjectUseCase,
-        mockedRemoveVideoFromProjectUseCase, mockedGetAudioFromProjectUseCase,
-        mocekdGetPreferencesTransitionFromProjectUseCase,
+    return new EditorPresenter(mockedEditorActivityView, mockedVideonaPlayerView,
+        mockedSharedPreferences, mockedContext,
+        mockedUserEventTracker, mockedCreateDefaultProjectUseCase,
+        mockedGetMediaListFromProjectUseCase, mockedRemoveVideoFromProjectUseCase,
+        mockedGetAudioFromProjectUseCase, mocekdGetPreferencesTransitionFromProjectUseCase,
         mockedRelaunchTranscoderTempBackgroundUseCase, mockedProjectRepository,
         mockedNewClipImporter, mockedBillingManager);
   }

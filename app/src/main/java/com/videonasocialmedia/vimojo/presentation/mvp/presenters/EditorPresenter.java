@@ -74,9 +74,10 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
 
   @Inject
   public EditorPresenter(
-          EditorActivityView editorActivityView, VideonaPlayerView videonaPlayerView,
+          EditorActivityView editorActivityView,
+          VideonaPlayerView videonaPlayerView,
           SharedPreferences sharedPreferences,
-          Context context, UserEventTracker userEventTracker,
+          Activity context, UserEventTracker userEventTracker,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
@@ -138,7 +139,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
 
   private void checkVimojoStore() {
     if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
-      playStoreBillingDelegate.initBilling((Activity) editorActivityView);
+      playStoreBillingDelegate.initBilling((Activity) context);
       editorActivityView.setIconsPurchaseInApp();
     } else {
       editorActivityView.setIconsFeatures();

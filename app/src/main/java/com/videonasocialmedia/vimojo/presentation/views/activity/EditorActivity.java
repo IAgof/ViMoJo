@@ -34,7 +34,6 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
@@ -139,9 +138,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     super.onCreate(savedInstanceState);
     setContentView(R.layout.editor_activity);
     ButterKnife.bind(this);
+    getActivityPresentersComponent().inject(this);
     restoreState(savedInstanceState);
     videonaPlayer.setListener(this);
-    getActivityPresentersComponent().inject(this);
     setUpAndCheckHeaderViewCurrentProject();
     createProgressDialog();
   }
@@ -350,7 +349,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   public void navigateTo(Class cls) {
-    Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
+    Intent intent = new Intent(this, cls);
     startActivity(intent);
   }
 
@@ -399,11 +398,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   public void goToRecordOrGalleryScreen() {
     navigateTo(GoToRecordOrGalleryActivity.class);
     finish();
-  }
-
-  @Override
-  public void expandFabMenu() {
-    fabMenu.expand();
   }
 
   @Override
