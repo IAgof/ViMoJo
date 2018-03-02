@@ -76,7 +76,7 @@ public class UserProfilePresenter extends VimojoPresenter {
   }
 
   public void setupUserInfo() {
-    if(!BuildConfig.FEATURE_REGISTER_LOGIN) {
+    if (!BuildConfig.FEATURE_VIMOJO_PLATFORM) {
       return;
     }
     ListenableFuture<AuthToken> authTokenFuture = executeUseCaseCall(new Callable<AuthToken>() {
@@ -118,13 +118,13 @@ public class UserProfilePresenter extends VimojoPresenter {
   }
 
   public void onClickUsername(boolean emptyField) {
-    if(emptyField && BuildConfig.FEATURE_REGISTER_LOGIN){
+    if (emptyField && BuildConfig.FEATURE_VIMOJO_PLATFORM) {
       userProfileView.navigateToUserAuth();
     }
   }
 
   public void onClickEmail(boolean emptyField) {
-    if(emptyField && BuildConfig.FEATURE_REGISTER_LOGIN){
+    if (emptyField && BuildConfig.FEATURE_VIMOJO_PLATFORM) {
       userProfileView.navigateToUserAuth();
     }
   }

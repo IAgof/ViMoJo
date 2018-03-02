@@ -1,3 +1,16 @@
+v0.14.0
+- Improved upload to platform flow, upload video with one user click.
+- Unified FEATURE_UPLOAD_VIDEOS and FEATURE_REGISTER_LOGIN into FEATURE_VIMOJO_PLATFORM
+
+v0.13.0
+- Inform user, starting to upload video.
+- Show notification uploading video. Show progress videos uploads, enqueue uploads, show success/error uploads.
+- Manage network connection error, relaunch queue of video uploads.
+
+v0.12.0
+- New screen details project. Set project title, description, product type list.
+- Update video upload service with new project fields, description and product type.
+
 v0.11.1
 - Added feature toggle store available to Vimojo to true.
 

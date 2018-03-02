@@ -1,4 +1,2 @@
-v0.12.0
-- New screen details project. Set project title, description, product type list.
-- Update video upload service with new project fields, description and product type.
-
+v0.14.1
+- Added new flavor nbc.

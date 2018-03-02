@@ -1,7 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
 import android.Manifest;
-import android.accounts.Account;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -9,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SyncRequest;
 import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraAccessException;
 import android.os.AsyncTask;
@@ -36,14 +34,12 @@ import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsLi
 import com.mixpanel.android.mpmetrics.InAppNotification;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.util.UserAccountUtil;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnInitAppEventListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
-import com.videonasocialmedia.vimojo.sync.SyncConstants;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.AppStart;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -123,8 +119,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
         setContentView(R.layout.activity_init_app);
         ButterKnife.bind(this);
-        splashScreen.setImageBitmap(Utils.decodeSampledBitmapFromResource(getResources(),
-            R.drawable.splash_screen, 1280, 720));
         setVersionCode();
         createPermissionListeners();
         Dexter.continuePendingRequestsIfPossible(compositePermissionsListener);
@@ -207,6 +201,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     @Override
     protected void onResume() {
         super.onResume();
+        presenter.init();
     }
 
     @Override
@@ -218,26 +213,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         editor = sharedPreferences.edit();
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         requestPermissionsAndPerformSetup();
-        // TODO: 6/2/18 Decide when app has to check pending video uploads. On launch app, every 10 minutes, etc ...
-        runNowSyncAdapter();
-    }
-
-    private void runNowSyncAdapter() {
-        Account account = UserAccountUtil.getAccount(this);
-
-        // Pass the settings flags by inserting them in a bundle
-        Bundle settingsBundle = new Bundle();
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        /*
-         * Request the sync for the default account, authority, and
-         * manual sync settings
-         */
-        if (account != null) {
-            ContentResolver.requestSync(account, SyncConstants.VIMOJO_CONTENT_AUTHORITY, settingsBundle);
-        }
     }
 
     @Override

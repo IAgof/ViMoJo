@@ -13,6 +13,7 @@ import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVide
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
 import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
@@ -299,20 +300,22 @@ public class ActivityPresentersModule {
                                                  ExportProjectUseCase exportProjectUseCase,
                                                  ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
                                                  GetFtpListUseCase getFtpListUseCase,
-                                                 GetAuthToken getAuthToken, UploadToPlatformQueue uploadToPlatformQueue,
-                                                 LoggedValidator loggedValidator) {
+                                                 GetAuthToken getAuthToken,
+                                                 UploadToPlatformQueue uploadToPlatformQueue,
+                                                 LoggedValidator loggedValidator,
+                                                 RunSyncAdapterHelper runSyncAdapterHelper) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
             sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
             exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
-            getAuthToken, uploadToPlatformQueue, loggedValidator);
+            getAuthToken, uploadToPlatformQueue, loggedValidator, runSyncAdapterHelper);
   }
 
   @Provides @PerActivity
   InitAppPresenter provideInitAppPresenter(SharedPreferences sharedPreferences,
           CreateDefaultProjectUseCase createDefaultProjectUseCase, CameraSettingsRepository
-          cameraSettingsRepository) {
+          cameraSettingsRepository, RunSyncAdapterHelper runSyncAdapterHelper) {
     return new InitAppPresenter(activity, sharedPreferences, createDefaultProjectUseCase,
-        cameraSettingsRepository);
+        cameraSettingsRepository, runSyncAdapterHelper);
   }
 
   @Provides @PerActivity
@@ -572,5 +575,10 @@ public class ActivityPresentersModule {
   @Provides
   UploadToPlatformQueue provideUploadToPlatform() {
       return new UploadToPlatformQueue(activity);
+  }
+
+  @Provides
+  RunSyncAdapterHelper provideRunSyncAdapterHelper() {
+    return new RunSyncAdapterHelper(activity);
   }
 }

@@ -19,13 +19,13 @@ import java.util.List;
 public class VideoUpload {
   private String mediaPath;
   private String title;
-  private List<String> productTypeList;
+  private String productTypeList;
   private String description;
   private int numTries;
   public final static int MAX_NUM_TRIES_UPLOAD = 3;
 
   public VideoUpload(String mediaPath, String title, String description,
-                     List<String> productTypeList) {
+                     String productTypeList) {
     this.mediaPath = mediaPath;
     this.title = title;
     this.description = description;
@@ -41,7 +41,7 @@ public class VideoUpload {
     return title;
   }
 
-  public List<String> getProductTypeList() {
+  public String getProductTypeList() {
     return productTypeList;
   }
 

@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
-import android.os.Build;
 import android.util.Log;
 import android.util.Range;
 import android.util.Size;
@@ -14,6 +13,7 @@ import com.videonasocialmedia.camera.utils.Camera2Settings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
@@ -43,6 +43,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 public class InitAppPresenter {
   private final Context context;
   private final CameraSettingsRepository cameraSettingsRepository;
+  private RunSyncAdapterHelper runSyncAdapterHelper;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private SharedPreferences sharedPreferences;
   private CameraSettings cameraSettings;
@@ -52,12 +53,13 @@ public class InitAppPresenter {
   @Inject
   public InitAppPresenter(Context context, SharedPreferences sharedPreferences,
                           CreateDefaultProjectUseCase createDefaultProjectUseCase,
-                          CameraSettingsRepository cameraSettingsRepository) {
+                          CameraSettingsRepository cameraSettingsRepository,
+                          RunSyncAdapterHelper runSyncAdapterHelper) {
     this.context = context;
     this.sharedPreferences = sharedPreferences;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
-
+    this.runSyncAdapterHelper = runSyncAdapterHelper;
   }
 
   public void startLoadingProject(String rootPath, String privatePath) {
@@ -182,5 +184,9 @@ public class InitAppPresenter {
     if(cameraSettings != null) {
       cameraSettingsRepository.setFrameRateSettingSupported(cameraSettings, frameRateSetting);
     }
+  }
+
+  public void init() {
+    runSyncAdapterHelper.runSyncAdapterPeriodically();
   }
 }

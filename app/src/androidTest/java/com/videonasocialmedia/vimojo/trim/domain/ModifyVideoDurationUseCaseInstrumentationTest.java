@@ -16,6 +16,7 @@ import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptMemoryRepository;
 import com.videonasocialmedia.vimojo.integration.AssetManagerAndroidTest;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
@@ -27,6 +28,8 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -126,7 +129,9 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
   private Project getCurrentProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
-    return Project.getInstance("title", testPath, testPath, compositionProfile);
+    List<String> productType = new ArrayList<>();
+    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+    return Project.getInstance(projectInfo, testPath, testPath, compositionProfile);
   }
 
 

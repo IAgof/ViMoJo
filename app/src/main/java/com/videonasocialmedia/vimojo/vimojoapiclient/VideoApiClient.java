@@ -5,12 +5,12 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
  */
 
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -44,7 +44,7 @@ public class VideoApiClient extends VimojoApiClient {
    * @throws VimojoApiException if an error has occurred in the call.
    */
   public Video uploadVideo(String authToken, VideoUpload videoUpload)
-          throws VimojoApiException {
+          throws VimojoApiException, FileNotFoundException {
 
     // create upload service client
     VideoService videoService = getService(VideoService.class, authToken);
@@ -59,8 +59,7 @@ public class VideoApiClient extends VimojoApiClient {
     // add another part within the multipart request
     RequestBody requestBodyTitle = createPartFromString(videoUpload.getTitle());
     RequestBody requestBodyDescription = createPartFromString(videoUpload.getDescription());
-    String productTypeList = TextUtils.join(", ", videoUpload.getProductTypeList());
-    RequestBody requestBodyProductTypes = createPartFromString(productTypeList);
+    RequestBody requestBodyProductTypes = createPartFromString(videoUpload.getProductTypeList());
 
     HashMap<String, RequestBody> requestBodyHashMap = new HashMap<>();
     requestBodyHashMap.put(VIDEO_API_KEY_TITLE, requestBodyTitle);
@@ -74,6 +73,8 @@ public class VideoApiClient extends VimojoApiClient {
       } else {
         parseError(response);
       }
+    } catch (FileNotFoundException fileError) {
+      throw fileError;
     } catch (IOException e) {
       throw new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR);
     }
