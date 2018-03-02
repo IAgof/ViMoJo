@@ -102,8 +102,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   TextView projectName;
   TextView projectDate;
   ImageButton projectEdit;
-  String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_THUMB;
-  private int REQUEST_ICON_USER = 100;
   private boolean isVimojoStoreAvailable = true;
   private CompoundButton.OnCheckedChangeListener watermarkOnCheckedChangeListener =
           new CompoundButton.OnCheckedChangeListener() {

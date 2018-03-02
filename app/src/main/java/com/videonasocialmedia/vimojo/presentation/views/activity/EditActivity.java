@@ -365,14 +365,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     }
 
     @Override
-    public void goToShare(String videoToSharePath) {
-        Intent intent = new Intent(VimojoApplication.getAppContext(), ShareActivity.class);
-        intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoToSharePath);
-        startActivity(intent);
-        finish();
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
         super.onSaveInstanceState(outState);

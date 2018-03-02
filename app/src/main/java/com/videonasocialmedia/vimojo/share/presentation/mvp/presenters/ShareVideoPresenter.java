@@ -2,12 +2,10 @@ package com.videonasocialmedia.vimojo.share.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
@@ -74,7 +72,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private UploadToPlatformQueue uploadToPlatformQueue;
     private final LoggedValidator loggedValidator;
     private final RunSyncAdapterHelper runSyncAdapterHelper;
-    private String authToken = "";
     private String videoPath = "";
     private SocialNetwork socialNetworkSelected;
     private boolean isWifiConnected;
@@ -246,19 +243,12 @@ public class ShareVideoPresenter extends VimojoPresenter {
                                boolean acceptUploadVideoMobileNetwork,
                                boolean isMobileNetworkConnected,
                                String videoPath) {
-        if(!isWifiOrMobileNetworkConnected(isWifiConnected, isMobileNetworkConnected)) {
-            // TODO: 8/2/18 Should I saved this upload until user would be connected to network?
-            shareVideoViewReference.get().showError(context.getString(R.string.connect_to_network));
-            return;
-        }
-
         if (isNeededAskPermissionForMobileUpload(isWifiConnected, isMobileNetworkConnected,
             acceptUploadVideoMobileNetwork)) {
             shareVideoViewReference.get().showDialogUploadVideoWithMobileNetwork();
             return;
         }
         if (!isUserLogged()) {
-            // TODO: 8/2/18 Should I ask confirmation from user that he is going to navigate to User Authentication screen.
             shareVideoViewReference.get().showDialogNeedToRegisterLoginToUploadVideo();
             return;
         }

@@ -217,7 +217,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     super.pausePreview();
     checkNetworksAvailable();
     presenter.onVimojoPlatformClicked(isWifiConnected, acceptUploadVideoMobileNetwork,
-        isMobileNetworConnected);
+        isMobileNetworkConnected);
   }
 
   private void checkNetworksAvailable() {
@@ -486,10 +486,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
               .setMessage(dialog_message_export_error)
               .setNeutralButton(R.string.ok, dialogClickListener).show();
     });
-  }
-
-  private void showMessage(String stringMessage) {
-    exportProgressDialog.setMessage(stringMessage);
   }
 
 }

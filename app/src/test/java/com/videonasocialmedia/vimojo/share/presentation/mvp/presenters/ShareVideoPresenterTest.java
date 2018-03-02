@@ -13,7 +13,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.R;
@@ -99,8 +98,7 @@ public class ShareVideoPresenterTest {
 
     @After
     public void tearDown() {
-        getAProject().clear();
-        //Project.getInstance(null, null, null, null).clear();
+        Project.getInstance(null, null, null, null).clear();
     }
 
     @Test
@@ -169,12 +167,12 @@ public class ShareVideoPresenterTest {
 
     @Test
     public void clickUpdateToPlatformNavigateToProjectDetailsIfAnyProjectInfoFieldsIsEmpty() {
+        Project project = getAProject();
         ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
-        boolean isWifiConnected = false;
+        boolean isWifiConnected = true;
         boolean acceptUploadVideoMobileNetwork = true;
         boolean isMobileNetworkConnected = true;
         String videoPath = "";
-        Project project = getAProject();
         assertThat(project.getProjectInfo().getProductTypeList().size(), is(0));
         assertThat(project, is(spyShareVideoPresenter.currentProject));
         doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
@@ -191,13 +189,13 @@ public class ShareVideoPresenterTest {
 
     @Test
     public void clickUpdateToPlatformShowMessageUploadingVideoIfUserIsLoggedProjectInfoCompletedAndNetworkIsConnected() {
+        Project project = getAProject();
         ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
         // Device is connected to network
         boolean isWifiConnected = true;
         boolean acceptUploadVideoMobileNetwork = true;
         boolean isMobileNetworkConnected = true;
         String videoPath = "";
-        Project project = getAProject();
         assertThat(project.getProjectInfo().getProductTypeList().size(), is(0));
         assertThat(project, is(spyShareVideoPresenter.currentProject));
         doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
@@ -217,13 +215,13 @@ public class ShareVideoPresenterTest {
 
     @Test
     public void clickUpdateToPlatformShowDialogNotNetworkUploadingVideoIfUserIsLoggedProjectInfoCompletedAndNetworkIsConnected() {
+        Project project = getAProject();
         ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
         // Device is NOT connected to network
         boolean isWifiConnected = false;
         boolean acceptUploadVideoMobileNetwork = false;
         boolean isMobileNetworkConnected = false;
         String videoPath = "";
-        Project project = getAProject();
         assertThat(project.getProjectInfo().getProductTypeList().size(), is(0));
         assertThat(project, is(spyShareVideoPresenter.currentProject));
         doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
@@ -287,7 +285,7 @@ public class ShareVideoPresenterTest {
         ShareVideoPresenter spyShareVideoPresenter = Mockito.spy(getShareVideoPresenter());
         int anyNetwork = OptionsToShareList.typeFtp;
         boolean hasBeenProjectExported = true;
-        String videoExportedPath = "videoExportedPath";
+        String videoExportedPath = "";
         when(spyShareVideoPresenter.hasBeenProjectExported()).thenReturn(hasBeenProjectExported);
 
         spyShareVideoPresenter.exportOrProcessNetwork(anyNetwork);
@@ -297,6 +295,7 @@ public class ShareVideoPresenterTest {
 
     @Test
     public void exportOrProcessVimojoNetworkIfProjectHasBeenExportedUploadToPlatform() {
+        Project project = getAProject();
         ShareVideoPresenter spyShareVideoPresenter = Mockito.spy(getShareVideoPresenter());
         boolean hasBeenProjectExported = true;
         when(spyShareVideoPresenter.hasBeenProjectExported()).thenReturn(hasBeenProjectExported);
@@ -304,6 +303,14 @@ public class ShareVideoPresenterTest {
         boolean acceptUploadVideoMobileNetwork = false;
         boolean isMobileNetworkConnected = false;
         String videoExportedPath = "";
+        doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
+        when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
+        assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
+        List<String> productType = new ArrayList<>();
+        productType.add(ProjectInfo.ProductType.RAW_VIDEOS.name());
+        project.getProjectInfo().setProductTypeList(productType);
+        assertThat("Project info product type is not empty",
+            project.getProjectInfo().getProductTypeList().size(), is(1));
 
         spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeVimojoNetwork);
 

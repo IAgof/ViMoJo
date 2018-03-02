@@ -19,7 +19,6 @@ import android.util.TypedValue;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
@@ -29,7 +28,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -43,7 +41,6 @@ import javax.inject.Inject;
 
 public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener,
         ElementChangedListener {
-    public static final float VOLUME_MUTE = 0f;
     private final String TAG = getClass().getSimpleName();
     private final Project currentProject;
     private Context context;

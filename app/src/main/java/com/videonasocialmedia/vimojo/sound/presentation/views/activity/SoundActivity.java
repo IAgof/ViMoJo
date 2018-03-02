@@ -14,22 +14,17 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrackListener;
 import com.videonasocialmedia.vimojo.utils.FabUtils;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -38,8 +33,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
 
-import static butterknife.ButterKnife.findById;
-
 /**
  * Created by ruth on 4/10/16.
  */
@@ -47,7 +40,6 @@ import static butterknife.ButterKnife.findById;
 public class SoundActivity extends EditorActivity implements VideonaPlayer.VideonaPlayerListener,
     SoundView, CardViewAudioTrackListener{
 
-  private static final String SOUND_ACTIVITY_PROJECT_POSITION = "sound_activity_project_position";
   private static final String TAG = "SoundActivity";
   private final int ID_BUTTON_FAB_TOP=1;
   private final int ID_BUTTON_FAB_BOTTOM=3;

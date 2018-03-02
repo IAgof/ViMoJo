@@ -7,7 +7,6 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.List;
  * @author Juan Javier Cabanas Abascal
  */
 public interface EditActivityView {
-  void goToShare(String videoToSharePath);
 
   void showProgressDialog();
 
@@ -39,8 +37,6 @@ public interface EditActivityView {
   void disableBottomBar();
 
   void changeAlphaBottomBar(float alpha);
-
-  void expandFabMenu();
 
   void showDialogMediasNotFound();
 
