@@ -112,13 +112,13 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  private void initPreviewFromVideoExported(String videoPath) {
+  protected void initPreviewFromVideoExported(String videoPath) {
     List<Video> videoList = new ArrayList<>();
     videoList.add(new Video(videoPath, Video.DEFAULT_VOLUME));
     videonaPlayerView.initPreviewFromVideo(videoList);
   }
 
-  private void initPreviewFromProject() {
+  protected void initPreviewFromProject() {
     obtainVideos();
     retrieveMusic();
     retrieveTransitions();
