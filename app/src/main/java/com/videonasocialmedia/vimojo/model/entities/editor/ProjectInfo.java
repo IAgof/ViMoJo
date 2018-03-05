@@ -32,7 +32,18 @@ public class ProjectInfo {
 
 
   public enum ProductType {
-    DIRECT_FAILURE, RAW_VIDEOS, SPOOLERS, TOTAL, GRAPHIC, PIECE
+    // Near live
+    DIRECT_FAILURE,
+    // B-Roll
+    RAW_VIDEOS,
+    // Files
+    SPOOLERS,
+    // Interview
+    TOTAL,
+    // Graphics
+    GRAPHIC,
+    // Piece
+    PIECE
   }
 
   public ProjectInfo(String title, String description, List<String> productTypeList) {
@@ -71,7 +82,17 @@ public class ProjectInfo {
 
   public void setProductTypeList(List<String> productTypeList) {
     this.productTypeList = productTypeList;
+    clearSupportedProductType();
     checkSupportedProductType(productTypeList);
+  }
+
+  private void clearSupportedProductType() {
+    directFalseTypeSelected = false;
+    rawVideoTypeSelected = false;
+    spoolTypeSelected = false;
+    totalTypeSelected = false;
+    graphicTypeSelected = false;
+    pieceTypeSelected = false;
   }
 
   public void checkSupportedProductType(List<String> productTypeList) {

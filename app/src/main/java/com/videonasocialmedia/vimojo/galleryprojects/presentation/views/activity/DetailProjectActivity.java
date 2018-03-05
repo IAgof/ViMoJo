@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -19,8 +18,10 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.DetailProjectPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,6 +37,10 @@ import butterknife.OnTouch;
  */
 
 public class DetailProjectActivity extends VimojoActivity implements DetailProjectView {
+
+  public static final String DETAIL_PROJECT_TITLE = "DETAIL_PROJECT_TITLE";
+  public static final String DETAIL_PROJECT_DESCRIPTION = "DETAIL_PROJECT_DESCRIPTION";
+  public static final String DETAIL_PROJECT_PRODUCT_TYPES = "DETAIL_PROJECT_TITLE";
 
   @Inject
   DetailProjectPresenter presenter;
@@ -67,18 +72,50 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   @BindView(R.id.detail_project_framerate)
   TextView textViewFrameRate;
 
+  private String[] productTypesTitles;
+  private String[] productTypesSelected;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_detail_project);
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
+    initProductTyeTitles();
     presenter.init();
+  }
+
+  private String[] initProductTyeTitles() {
+    productTypesTitles = new String[] {
+        getString(R.string.detail_project_product_type_near_live),
+        getString(R.string.detail_project_product_type_b_roll),
+        getString(R.string.detail_project_product_type_files),
+        getString(R.string.detail_project_product_type_interview),
+        getString(R.string.detail_project_product_type_graphic),
+        getString(R.string.detail_project_product_type_piece)
+    };
+    return productTypesTitles;
   }
 
   @Override
   public void onResume() {
     super.onResume();
+  }
+
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    showTitleProject(savedInstanceState.getString(DETAIL_PROJECT_TITLE));
+    showDescriptionProject(savedInstanceState.getString(DETAIL_PROJECT_DESCRIPTION));
+    showProductTypeSelected(savedInstanceState.getStringArrayList(DETAIL_PROJECT_PRODUCT_TYPES));
+    super.onRestoreInstanceState(savedInstanceState);
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    outState.putString(DETAIL_PROJECT_TITLE, editTextTitle.getText().toString());
+    outState.putString(DETAIL_PROJECT_DESCRIPTION, editTextDescription.getText().toString());
+    outState.putStringArray(DETAIL_PROJECT_PRODUCT_TYPES, productTypesSelected);
+    super.onSaveInstanceState(outState);
   }
 
   @Override
@@ -89,7 +126,6 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   @Override
   public void showDetailProjectInfo(int duration, double projectSizeMbVideoToExport, int width,
                                     double videoBitRate, int frameRate) {
-
     textViewDuration.append(": " + TimeUtils.toFormattedTimeWithMinutesAndSeconds(duration));
     textViewSize.append(": " + projectSizeMbVideoToExport + " Mb");
     textViewQuality.append(": " + width);
@@ -146,19 +182,25 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   }
 
   @Override
-  public void showProductTypeMultipleDialog(String[] productTypesList,
-                                            boolean[] checkedProductTypes) {
+  public void showProductTypeMultipleDialog(boolean[] checkedProductTypes) {
+    List<String> productTypeSelectedList = new ArrayList<>();
+    for(String productType: productTypesSelected) {
+      productTypeSelectedList.add(productType);
+    }
     // Build an AlertDialog
     AlertDialog.Builder builder = new AlertDialog.Builder(DetailProjectActivity.this);
-    builder.setMultiChoiceItems(productTypesList, checkedProductTypes, new DialogInterface.OnMultiChoiceClickListener() {
+    builder.setMultiChoiceItems(productTypesTitles, checkedProductTypes, new DialogInterface.OnMultiChoiceClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which, boolean isChecked) {
         // Update the current focused item's checked status
         checkedProductTypes[which] = isChecked;
+        ProjectInfo.ProductType productType = getProductTypeFromPosition(which);
         if(isChecked) {
-          presenter.addProductTypeSelected(which);
+          presenter.addProductTypeSelected(productType);
+          productTypeSelectedList.add(productType.name());
         } else {
-          presenter.removeProductTypeSelected(which);
+          presenter.removeProductTypeSelected(productType);
+          productTypeSelectedList.remove(productType.name());
         }
       }
     });
@@ -171,7 +213,7 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
       @Override
       public void onClick(DialogInterface dialog, int which) {
         // Do something when click positive button
-        List<String> productTypeArrayList = Arrays.asList(productTypesList);
+        List<String> productTypeArrayList = Arrays.asList(productTypesTitles);
         for (int i = 0; i < checkedProductTypes.length; i++) {
           boolean checked = checkedProductTypes[i];
           if (checked) {
@@ -179,6 +221,7 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
                 ContextCompat.getColor(DetailProjectActivity.this, R.color.colorAccent));
           }
         }
+        productTypesSelected = productTypeSelectedList.toArray(new String[0]);
       }
     });
     textViewProductType.setText(getString(R.string.detail_project_product_type));
@@ -186,15 +229,15 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   }
 
   @Override
-  public void showProductTypeSelected(List<String> productTypeList, String[] productTypesTitles) {
+  public void showProductTypeSelected(List<String> productTypeListSelected) {
+    this.productTypesSelected = productTypeListSelected.toArray(new String[0]);
     List<String> productTypeArrayList = Arrays.asList(productTypesTitles);
-    for(String productType: productTypeList) {
+    for(String productType: productTypeListSelected) {
       appendProductTypeText(textViewProductType,
-          productTypeArrayList.get(productTypeList.indexOf(productType)),
+          productTypeArrayList.get(getPositionFromProductType(productType)),
           ContextCompat.getColor(DetailProjectActivity.this, R.color.colorAccent));
     }
   }
-
 
   @OnTouch(R.id.detail_project_title_edit_text)
   public boolean onClickTitleEditText() {
@@ -207,7 +250,8 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
     presenter.titleAccepted();
   }
 
-  @OnTouch(R.id.detail_project_description_edit_text)
+  @OnTouch({R.id.detail_project_description_scroll_view, R.id.detail_project_description_edit_text,
+      R.id.detail_project_description_cardview}  )
   public boolean onClickDescriptionEditText() {
     presenter.descriptionClicked();
     return false;
@@ -223,15 +267,20 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
     presenter.detailsExpand(layoutDetailsInfo);
   }
 
-  @OnClick(R.id.button_detail_project_accept)
-  public void onClickAcceptDetailProject() {
-    presenter.setDetailProject(editTextTitle.getText(), editTextDescription.getText());
+  @OnClick(R.id.button_detail_project_info_accept)
+  public void onClickAcceptInfoProject() {
+    List<String> projectInfoProductTypeList = new ArrayList<>();
+    for(String productTypeSelected: productTypesSelected) {
+      projectInfoProductTypeList.add(productTypeSelected);
+    }
+    presenter.setProjectInfo(editTextTitle.getText().toString(),
+        editTextDescription.getText().toString(), projectInfoProductTypeList);
     setResult(RESULT_OK);
     finish();
   }
 
-  @OnClick(R.id.button_detail_project_cancel)
-  public void onClickCancelDetailProject() {
+  @OnClick(R.id.button_detail_project_info_cancel)
+  public void onClickCancelInfoProject() {
     finish();
   }
 
@@ -258,6 +307,60 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
     InputMethodManager keyboard =
         (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
     keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
+  }
+
+  private int getPositionFromProductType(String productType) {
+    if (productType.equals(ProjectInfo.ProductType.DIRECT_FAILURE.name())) {
+      return 0;
+    } else {
+      if (productType.equals(ProjectInfo.ProductType.RAW_VIDEOS.name())) {
+        return 1;
+      } else {
+        if (productType.equals(ProjectInfo.ProductType.SPOOLERS.name())) {
+          return 2;
+        } else {
+          if (productType.equals(ProjectInfo.ProductType.TOTAL.name())) {
+            return 3;
+          } else {
+            if (productType.equals(ProjectInfo.ProductType.GRAPHIC.name())) {
+              return 4;
+            } else {
+              if (productType.equals(ProjectInfo.ProductType.PIECE.name())) {
+                return 5;
+              }
+            }
+          }
+        }
+      }
+    }
+    return -1;
+  }
+
+  public ProjectInfo.ProductType getProductTypeFromPosition(int position) {
+    if (position == 0) {
+      return ProjectInfo.ProductType.DIRECT_FAILURE;
+    } else {
+      if (position == 1) {
+        return ProjectInfo.ProductType.RAW_VIDEOS;
+      } else {
+        if (position == 2) {
+          return ProjectInfo.ProductType.SPOOLERS;
+        } else {
+          if (position == 3) {
+            return ProjectInfo.ProductType.TOTAL;
+          } else {
+            if (position == 4) {
+              return ProjectInfo.ProductType.GRAPHIC;
+            } else {
+              if (position == 5) {
+                return ProjectInfo.ProductType.PIECE;
+              }
+            }
+          }
+        }
+      }
+    }
+    return null;
   }
 
 }

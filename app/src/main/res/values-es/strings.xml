@@ -141,10 +141,10 @@
     <string name="dialog_project_edit_title_accept">Sí</string>
     <string name="dialog_project_edit_title_cancel">No</string>
 
-    <string name="detail_project_product_type_direct_failure">Falso directo</string>
-    <string name="detail_project_product_type_raw_videos">Vídeo en bruto</string>
-    <string name="detail_project_product_type_spoolers">Archivo spool</string>
-    <string name="detail_project_product_type_total">Total</string>
+    <string name="detail_project_product_type_near_live">Falso directo</string>
+    <string name="detail_project_product_type_b_roll">Vídeo en bruto</string>
+    <string name="detail_project_product_type_files">Colas</string>
+    <string name="detail_project_product_type_interview">Total</string>
     <string name="detail_project_product_type_graphic">Gráfico</string>
     <string name="detail_project_product_type_piece">Pieza</string>
 

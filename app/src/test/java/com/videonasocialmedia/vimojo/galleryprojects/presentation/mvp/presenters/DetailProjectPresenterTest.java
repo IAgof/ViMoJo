@@ -32,7 +32,6 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class DetailProjectPresenterTest {
 
-  @Mock Context mockedContext;
   @Mock ProjectRepository mockedProjectRepo;
   @Mock DetailProjectView mockedDetailProjectView;
 
@@ -47,7 +46,7 @@ public class DetailProjectPresenterTest {
   }
 
   @Test
-  public void initPresenterCallsProjectTitleAndInfo() {
+  public void initPresenterCallsProjectTitleDescriptionProductTypesAndDetailsInfo() {
     Project project = getAProject();
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
@@ -61,14 +60,27 @@ public class DetailProjectPresenterTest {
 
     verify(mockedDetailProjectView).showTitleProject("title");
     verify(mockedDetailProjectView).showDescriptionProject("description");
-    verify(mockedDetailProjectView).showProductTypeSelected(productType,
-        presenter.getProductTypesTitles());
+    verify(mockedDetailProjectView).showProductTypeSelected(productType);
     verify(mockedDetailProjectView).showDetailProjectInfo(0,0,1280,50,25);
+  }
+
+  @Test
+  public void setProjectInfoCallsProjectRepository() {
+    Project project = getAProject();
+    DetailProjectPresenter presenter = getDetailProjectPresenter();
+    String titleProject = "titleProject";
+    String descriptionProject = "descriptionProject";
+    List<String> productTypeList = new ArrayList<>();
+
+    presenter.setProjectInfo(titleProject, descriptionProject, productTypeList);
+
+    verify(mockedProjectRepo).setProjectInfo(project, titleProject, descriptionProject,
+        productTypeList);
   }
 
   @NonNull
   public DetailProjectPresenter getDetailProjectPresenter() {
-    return new DetailProjectPresenter(mockedContext, mockedDetailProjectView, mockedProjectRepo);
+    return new DetailProjectPresenter(mockedDetailProjectView, mockedProjectRepo);
   }
 
   private Project getAProject() {
