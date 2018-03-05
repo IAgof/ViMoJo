@@ -7,6 +7,7 @@ package com.videonasocialmedia.vimojo.sync;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.videonasocialmedia.vimojo.main.SystemComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -19,6 +20,7 @@ import javax.inject.Inject;
  * onPerformSync().
  */
 public class SyncService extends Service {
+  private static final String LOG_TAG = SyncService.class.getSimpleName();
   // Storage for an instance of the sync adapter
   private static SyncAdapter sSyncAdapter = null;
   // Object to use as a thread-safe lock
@@ -37,6 +39,7 @@ public class SyncService extends Service {
          * Disallow parallel syncs
          */
     getSystemComponent().inject(this);
+    Log.d(LOG_TAG, "onCreate SyncService...");
 
     synchronized (sSyncAdapterLock) {
       if (sSyncAdapter == null) {

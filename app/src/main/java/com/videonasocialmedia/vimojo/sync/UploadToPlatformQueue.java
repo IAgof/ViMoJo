@@ -48,9 +48,11 @@ public class UploadToPlatformQueue {
     this.uploadNotification = uploadNotification;
     this.videoApiClient = videoApiClient;
     this.getAuthToken = getAuthToken;
+    Log.d(LOG_TAG, "Created sync queue...");
   }
 
   protected ObjectQueue<VideoUpload> getQueue() {
+    Log.d(LOG_TAG, "getting queue...");
     String uploadQUEUE = "QueueUploads_" + BuildConfig.FLAVOR;
     File file = new File(context.getFilesDir(), uploadQUEUE);
     ObjectQueue<VideoUpload> videoUploadObjectQueue = null;
@@ -65,6 +67,7 @@ public class UploadToPlatformQueue {
       Crashlytics.log("Error creating queue video to upload");
       Crashlytics.logException(ioException);
     }
+    Log.d(LOG_TAG, "...returned queue");
     return videoUploadObjectQueue;
   }
 
@@ -73,15 +76,16 @@ public class UploadToPlatformQueue {
     queue.add(videoUpload);
   }
 
-  public void processNextQueueItem(int notificationUploadId) {
+  public void processNextQueueItem() {
     Log.d(LOG_TAG, "processNextQueueItem");
     Log.d(LOG_TAG, "startNotification");
-    uploadNotification.startInfiniteProgressNotification(notificationUploadId,
-        R.drawable.notification_uploading_small, context.getString(R.string.uploading_video));
     VideoUpload element = getQueue().iterator().next();
+    int notificationUploadId = element.getId();
+    uploadNotification.startInfiniteProgressNotification(notificationUploadId,
+            R.drawable.notification_uploading_small, context.getString(R.string.uploading_video));
     try {
-      // TODO(jliarte): 27/02/18 check what to do with plaform response
       String authToken = getAuthToken.getAuthToken(context).getToken();
+      // TODO(jliarte): 27/02/18 check what to do with plaform response
       Video video = videoApiClient.uploadVideo(authToken, element);
       removeHeadElement(getQueue());
       Log.d(LOG_TAG, "finishNotification success");

@@ -375,10 +375,11 @@ public class ActivityPresentersModule {
     return new EditTextPreviewPresenter((VideoEditTextActivity) activity, activity,
         userEventTracker, getMediaListFromProjectUseCase, modifyVideoTextAndPositionUseCase);
   }
+
   @Provides @PerActivity
   UserProfilePresenter provideUserProfilePresenter(
           SharedPreferences sharedPreferences, ObtainLocalVideosUseCase obtainLocalVideosUseCase,
-          GetAuthToken getAuthToken, AuthApiClient authApiClient, UserApiClient userApiClient) {
+          GetAuthToken getAuthToken, UserApiClient userApiClient) {
     return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
         obtainLocalVideosUseCase, getAuthToken, userApiClient);
   }

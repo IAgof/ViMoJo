@@ -352,6 +352,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         executeUseCaseCall((Callable<Void>) () -> {
             try {
                 uploadToPlatformQueue.addVideoToUpload(videoUpload);
+                runSyncAdapterHelper.runNowSyncAdapter();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
                 Log.d(LOG_TAG, ioException.getMessage());
@@ -360,7 +361,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
             }
             return null;
         });
-        runSyncAdapterHelper.runNowSyncAdapter();
     }
 
     private boolean isThereFreeStorageOnPlatform(String mediaPath) {

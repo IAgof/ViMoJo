@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.squareup.tape2.ObjectQueue;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
 import java.io.IOException;
@@ -51,6 +52,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          */
     this.context = context;
     this.uploadToPlatformQueue = uploadToPlatformQueue;
+    Log.d(LOG_TAG, "created SyncAdapter...");
   }
 
 
@@ -60,21 +62,24 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     Log.d(LOG_TAG, "onPerformSync");
     ObjectQueue<VideoUpload> queue = uploadToPlatformQueue.getQueue();
     if (!queue.isEmpty()) {
-      boolean isAcceptedUploadMobileNetwork = false;
-      int notificationId = 0;
       try {
-        isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
-        if(!isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
-          return;
-        }
-        while (uploadToPlatformQueue.getQueue().iterator().hasNext() &&
-            isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
+        while (uploadToPlatformQueue.getQueue().iterator().hasNext()) {
           Log.d(LOG_TAG, "launchingQueue");
-          notificationId = queue.peek().getId();
-          uploadToPlatformQueue.processNextQueueItem(notificationId);
+          boolean isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
+          if (isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
+            // TODO(jliarte): 5/03/18 will stuck on item that not meet network criteria, maybe
+            // reimplement this loop
+            uploadToPlatformQueue.processNextQueueItem();
+          }
         }
       } catch (IOException ioException) {
         Log.d(LOG_TAG, ioException.getMessage());
+        if (BuildConfig.DEBUG) {
+          // TODO(jliarte): 5/03/18 I'm sometimes getting an error here, even with a non empty queue
+          // file (maybe it gets corrupted somehow?) not able to reproduce properly. deeply
+          // investigate how to deal with it
+          ioException.printStackTrace();
+        }
         Crashlytics.log("Error getting queue element, isAcceptedUploadMobileNetwork");
         Crashlytics.logException(ioException);
       }
