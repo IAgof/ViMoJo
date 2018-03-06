@@ -142,9 +142,9 @@
     <string name="dialog_project_edit_title_accept">Yes</string>
     <string name="dialog_project_edit_title_cancel">No</string>
 
-    <string name="detail_project_product_type_near_live">Near live</string>
+    <string name="detail_project_product_type_live_on_tape">Live on tape</string>
     <string name="detail_project_product_type_b_roll">B-roll</string>
-    <string name="detail_project_product_type_files">Files</string>
+    <string name="detail_project_product_type_nat_vo">Nat/VO</string>
     <string name="detail_project_product_type_interview">Interview</string>
     <string name="detail_project_product_type_graphic">Graphics</string>
     <string name="detail_project_product_type_piece">Piece</string>

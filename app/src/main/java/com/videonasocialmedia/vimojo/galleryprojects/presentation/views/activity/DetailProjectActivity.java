@@ -87,9 +87,9 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
 
   private String[] initProductTyeTitles() {
     productTypesTitles = new String[] {
-        getString(R.string.detail_project_product_type_near_live),
+        getString(R.string.detail_project_product_type_live_on_tape),
         getString(R.string.detail_project_product_type_b_roll),
-        getString(R.string.detail_project_product_type_files),
+        getString(R.string.detail_project_product_type_nat_vo),
         getString(R.string.detail_project_product_type_interview),
         getString(R.string.detail_project_product_type_graphic),
         getString(R.string.detail_project_product_type_piece)

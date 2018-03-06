@@ -32,11 +32,11 @@ public class ProjectInfo {
 
 
   public enum ProductType {
-    // Near live
+    // Live on tape
     DIRECT_FAILURE,
     // B-Roll
     RAW_VIDEOS,
-    // Files
+    // NAT/VO
     SPOOLERS,
     // Interview
     TOTAL,
