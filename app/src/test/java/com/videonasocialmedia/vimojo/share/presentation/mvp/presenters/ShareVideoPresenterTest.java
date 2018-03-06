@@ -52,6 +52,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -241,7 +242,7 @@ public class ShareVideoPresenterTest {
         shareVideoPresenter.uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
             projectInfo.getProductTypeList(), isAcceptedUploadMobileNetwork);
 
-        verify(mockedRunSyncAdapterHelper).runNowSyncAdapter();
+        verify(mockedRunSyncAdapterHelper, timeout(2000)).runNowSyncAdapter();
     }
 
 

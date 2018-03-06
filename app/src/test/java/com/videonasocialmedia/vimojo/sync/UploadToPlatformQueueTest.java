@@ -7,6 +7,10 @@
 
 package com.videonasocialmedia.vimojo.sync;
 
+/**
+ * Created by alvaro on 15/2/18.
+ */
+
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -26,7 +30,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -46,15 +49,10 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-
-/**
- * Created by alvaro on 15/2/18.
- */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Log.class})
 public class UploadToPlatformQueueTest {
-
-  @InjectMocks UploadToPlatformQueue injectedUploadToPlatformQueue;
+  UploadToPlatformQueue injectedUploadToPlatformQueue;
 
   @Mock UploadNotification mockedUploadNotification;
   @Mock Context mockedContext;
@@ -68,6 +66,12 @@ public class UploadToPlatformQueueTest {
   public void init() {
     PowerMockito.mockStatic(Log.class);
     MockitoAnnotations.initMocks(this);
+    injectedUploadToPlatformQueue = createQueue();
+  }
+
+  private UploadToPlatformQueue createQueue() {
+    return new UploadToPlatformQueue(mockedContext, mockedUploadNotification,
+            mockedVideoApiClient, mockedGetAuthToken);
   }
 
   @After
@@ -84,11 +88,12 @@ public class UploadToPlatformQueueTest {
     video = getAVideo();
     uploadToPlatformQueue.addVideoToUpload(videoUpload);
     String token = "token";
-    doReturn(new AuthToken(token, "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
+    doReturn(new AuthToken(token, ""))
+            .when(mockedGetAuthToken).getAuthToken(any(Context.class));
     //Upload success
     when(mockedVideoApiClient.uploadVideo(token, videoUpload)).thenReturn(video);
 
-    uploadToPlatformQueue.processNextQueueItem(videoUpload.getId());
+    uploadToPlatformQueue.processNextQueueItem();
 
     verify(mockedUploadNotification).finishNotification(videoUpload.getId(), mockedContext.getString(R.string.upload_video_success),
         videoUpload.getTitle(),
@@ -126,12 +131,13 @@ public class UploadToPlatformQueueTest {
     uploadToPlatformQueue.addVideoToUpload(videoUpload);
     uploadToPlatformQueue.addVideoToUpload(videoUpload);
     String token = "token";
-    doReturn(new AuthToken(token, "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
+    doReturn(new AuthToken(token, ""))
+            .when(mockedGetAuthToken).getAuthToken(any(Context.class));
     //Upload success
     when(mockedVideoApiClient.uploadVideo(token, videoUpload)).thenReturn(video);
     assertThat("Queue size is 2", uploadToPlatformQueue.getQueue().size(), is(2));
 
-    uploadToPlatformQueue.processNextQueueItem(videoUpload.getId());
+    uploadToPlatformQueue.processNextQueueItem();
 
     assertThat("Queue size is 1", uploadToPlatformQueue.getQueue().size(), is(1));
   }
@@ -147,11 +153,12 @@ public class UploadToPlatformQueueTest {
     uploadToPlatformQueue.addVideoToUpload(videoUpload);
     assertThat("Queue size is 1", uploadToPlatformQueue.getQueue().size(), is(1));
     String token = "token";
-    doReturn(new AuthToken(token, "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
+    doReturn(new AuthToken(token, ""))
+            .when(mockedGetAuthToken).getAuthToken(any(Context.class));
     doThrow(new FileNotFoundException()).when(mockedVideoApiClient).uploadVideo(token, videoUpload);
     mockedVideoApiClient.uploadVideo(token, videoUpload);
 
-    uploadToPlatformQueue.processNextQueueItem(videoUpload.getId());
+    uploadToPlatformQueue.processNextQueueItem();
 
     assertThat("Queue size is empty", uploadToPlatformQueue.getQueue().size(), is(0));
   }
@@ -165,11 +172,12 @@ public class UploadToPlatformQueueTest {
     video = getAVideo();
     uploadToPlatformQueue.addVideoToUpload(videoUpload);
     String token = "token";
-    doReturn(new AuthToken(token, "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
+    doReturn(new AuthToken(token, ""))
+            .when(mockedGetAuthToken).getAuthToken(any(Context.class));
     doThrow(new FileNotFoundException()).when(mockedVideoApiClient).uploadVideo(token, videoUpload);
     mockedVideoApiClient.uploadVideo(token, videoUpload);
 
-    uploadToPlatformQueue.processNextQueueItem(videoUpload.getId());
+    uploadToPlatformQueue.processNextQueueItem();
 
     verify(mockedUploadNotification).errorFileNotFound(videoUpload.getId(), videoUpload);
   }
@@ -183,11 +191,13 @@ public class UploadToPlatformQueueTest {
     video = getAVideo();
     uploadToPlatformQueue.addVideoToUpload(videoUpload);
     String token = "token";
-    doReturn(new AuthToken(token, "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
-    doThrow(new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR)).when(mockedVideoApiClient).uploadVideo(token, videoUpload);
+    doReturn(new AuthToken(token, ""))
+            .when(mockedGetAuthToken).getAuthToken(any(Context.class));
+    doThrow(new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR))
+            .when(mockedVideoApiClient).uploadVideo(token, videoUpload);
     mockedVideoApiClient.uploadVideo(token, videoUpload);
 
-    uploadToPlatformQueue.processNextQueueItem(videoUpload.getId());
+    uploadToPlatformQueue.processNextQueueItem();
 
     verify(mockedUploadNotification).errorNetworkNotification(videoUpload.getId());
   }
@@ -202,10 +212,11 @@ public class UploadToPlatformQueueTest {
     uploadToPlatformQueue.addVideoToUpload(videoUpload);
     String token = "token";
     doReturn(new AuthToken(token, "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
-    doThrow(new VimojoApiException(401, VimojoApiException.UNAUTHORIZED)).when(mockedVideoApiClient).uploadVideo(token, videoUpload);
+    doThrow(new VimojoApiException(401, VimojoApiException.UNAUTHORIZED))
+            .when(mockedVideoApiClient).uploadVideo(token, videoUpload);
     mockedVideoApiClient.uploadVideo(token, videoUpload);
 
-    uploadToPlatformQueue.processNextQueueItem(videoUpload.getId());
+    uploadToPlatformQueue.processNextQueueItem();
 
     verify(mockedUploadNotification).errorUnauthorizationUploadingVideos(videoUpload.getId());
   }
@@ -220,10 +231,11 @@ public class UploadToPlatformQueueTest {
     uploadToPlatformQueue.addVideoToUpload(videoUpload);
     String token = "token";
     doReturn(new AuthToken(token, "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
-    doThrow(new VimojoApiException(-1, VimojoApiException.UNKNOWN_ERROR)).when(mockedVideoApiClient).uploadVideo(token, videoUpload);
+    doThrow(new VimojoApiException(-1, VimojoApiException.UNKNOWN_ERROR))
+            .when(mockedVideoApiClient).uploadVideo(token, videoUpload);
     mockedVideoApiClient.uploadVideo(token, videoUpload);
 
-    uploadToPlatformQueue.processNextQueueItem(videoUpload.getId());
+    uploadToPlatformQueue.processNextQueueItem();
 
     verify(uploadToPlatformQueue).retryItemUpload(videoUpload);
   }
