@@ -1,5 +1,9 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+/**
+ * Created by ruth on 23/11/16.
+ */
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -43,11 +47,14 @@ import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX
 import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
 
 /**
- * Created by ruth on 23/11/16.
+ * Parent class for three main edit views presenters: {@link EditPresenter},
+ * {@link com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter},
+ * and {@link com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter}
+ * with common functionalities for three views and drawer setup and management.
+ * This class it's also the one in charge handling
+ * {@link com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer}.
  */
-
 public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegateView {
-
   private final PlayStoreBillingDelegate playStoreBillingDelegate;
   private static final String LOG_TAG = EditorPresenter.class.getSimpleName();
   public static final float VOLUME_MUTE = 0f;
@@ -74,10 +81,8 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
 
   @Inject
   public EditorPresenter(
-          EditorActivityView editorActivityView,
-          VideonaPlayerView videonaPlayerView,
-          SharedPreferences sharedPreferences,
-          Activity context, UserEventTracker userEventTracker,
+          EditorActivityView editorActivityView, VideonaPlayerView videonaPlayerView,
+          SharedPreferences sharedPreferences, Activity context, UserEventTracker userEventTracker,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
@@ -105,7 +110,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   public void init(boolean hasBeenProjectExported, String videoPath) {
-    if(!hasBeenProjectExported) {
+    if (!hasBeenProjectExported) {
       initPreviewFromProject();
     } else {
       initPreviewFromVideoExported(videoPath);
@@ -168,7 +173,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   private void deactivateDarkThemePreference() {
-    sharedPreferences.edit().putBoolean(ConfigPreferences.THEME_APP_DARK, false).commit();
+    sharedPreferences.edit().putBoolean(ConfigPreferences.THEME_APP_DARK, false).apply();
   }
 
   public void createNewProject(String rootPath, String privatePath) {
@@ -181,6 +186,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     preferencesEditor = sharedPreferences.edit();
     preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION, 0);
     preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS, 0);
+    preferencesEditor.apply();
   }
 
   private void obtainVideos() {
@@ -200,7 +206,6 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
       @Override
       public void onNoVideosRetrieved() {
         editorActivityView.hideProgressDialog();
-        editorActivityView.goToRecordOrGalleryScreen();
       }
     });
   }
@@ -248,39 +253,32 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
 
   private void retrieveMusic() {
     if (currentProject.getVMComposition().hasMusic()) {
-      getAudioFromProjectUseCase.getMusicFromProject(new GetMusicFromProjectCallback() {
-        @Override
-        public void onMusicRetrieved(Music music) {
-          Music copyMusic = new Music(music);
-          videonaPlayerView.bindMusic(copyMusic);
-        }
+      getAudioFromProjectUseCase.getMusicFromProject(music -> {
+        Music copyMusic = new Music(music);
+        videonaPlayerView.bindMusic(copyMusic);
       });
     }
     if (currentProject.getVMComposition().hasVoiceOver()) {
-      getAudioFromProjectUseCase.getVoiceOverFromProject(new GetMusicFromProjectCallback() {
-        @Override
-        public void onMusicRetrieved(Music voiceOver) {
-          Music copyVoiceOver = new Music(voiceOver);
-          videonaPlayerView.bindVoiceOver(copyVoiceOver);
-        }
+      getAudioFromProjectUseCase.getVoiceOverFromProject(voiceOver -> {
+        Music copyVoiceOver = new Music(voiceOver);
+        videonaPlayerView.bindVoiceOver(copyVoiceOver);
       });
     }
   }
 
   private void retrieveTransitions() {
-    if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+    if (getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()) {
       videonaPlayerView.setVideoFadeTransitionAmongVideos();
     }
-    if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
-        !currentProject.getVMComposition().hasMusic()){
+    if (getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
+        !currentProject.getVMComposition().hasMusic()) {
       videonaPlayerView.setAudioFadeTransitionAmongVideos();
     }
   }
 
   protected void retrieveVolumeOnTracks() {
     if (currentProject.getVMComposition().hasMusic()) {
-      Track musicTrack = currentProject.getAudioTracks()
-          .get(INDEX_AUDIO_TRACK_MUSIC);
+      Track musicTrack = currentProject.getAudioTracks().get(INDEX_AUDIO_TRACK_MUSIC);
       if (musicTrack.isMuted()) {
         videonaPlayerView.setMusicVolume(VOLUME_MUTE);
       } else {
@@ -289,8 +287,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
 
     if (currentProject.getVMComposition().hasVoiceOver()) {
-      Track voiceOverTrack = currentProject.getAudioTracks()
-          .get(INDEX_AUDIO_TRACK_VOICE_OVER);
+      Track voiceOverTrack = currentProject.getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER);
       if (voiceOverTrack.isMuted()) {
         videonaPlayerView.setVoiceOverVolume(VOLUME_MUTE);
       } else {
@@ -347,11 +344,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   private boolean isShareActivity() {
-    if (context.getClass().getName().compareTo(ShareActivity.class.getName()) == 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return context.getClass().getName().equals(ShareActivity.class.getName());
   }
 
   private String getCurrentAppliedTheme() {
@@ -367,14 +360,14 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   public boolean getPreferenceWaterMark() {
-    if(BuildConfig.FEATURE_FORCE_WATERMARK) {
+    if (BuildConfig.FEATURE_FORCE_WATERMARK) {
       return true;
     }
     return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
   }
 
   private void activateWatermarkPreference() {
-    sharedPreferences.edit().putBoolean(ConfigPreferences.WATERMARK, true).commit();
+    sharedPreferences.edit().putBoolean(ConfigPreferences.WATERMARK, true).apply();
   }
 
   @Override
@@ -404,7 +397,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   public void updateHeaderViewCurrentProject() {
     // Thumb from first video in current project
     String pathThumbProject = null;
-    if(currentProject.getVMComposition().hasVideos()) {
+    if (currentProject.getVMComposition().hasVideos()) {
       pathThumbProject = currentProject.getMediaTrack().getItems().get(0).getMediaPath();
     }
     String name = currentProject.getProjectInfo().getTitle();

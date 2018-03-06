@@ -14,7 +14,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
@@ -30,7 +29,6 @@ import android.widget.RelativeLayout;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -64,13 +62,11 @@ import butterknife.Optional;
 
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
-
 public class EditActivity extends EditorActivity implements EditActivityView,
         VideoTranscodingErrorNotifier, VideonaPlayer.VideonaPlayerListener,
         VideoTimeLineRecyclerViewClickListener {
     private static String LOG_TAG = EditActivity.class.getCanonicalName();
-    private static final String CURRENT_TIME_POSITION = "current_time_position";
-    private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;
+  private final int NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL = 3;
     private final int NUM_COLUMNS_GRID_TIMELINE_VERTICAL = 4;
     private final String THEME_DARK = "dark";
 
@@ -100,15 +96,11 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     private List<Video> videoList;
     private int currentVideoIndex = 0;
-    private int currentProjectTimePosition = 0;
     private VideoTimeLineAdapter timeLineAdapter;
     private int selectedVideoRemovePosition;
     private FloatingActionButton newFab;
-    private boolean isEnableFabText =false;
 
-    private String warningTranscodingFilesMessage;
-
-  private boolean isVideoMute;
+  private String warningTranscodingFilesMessage;
 
 
   @Override
@@ -121,7 +113,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
         if (savedInstanceState != null) {
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
-            currentProjectTimePosition = savedInstanceState.getInt(CURRENT_TIME_POSITION, 0);
           }
         setupBottomBar(bottomBar);
         setupFabMenu();
@@ -146,24 +137,23 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
 
   private void setupBottomBar(BottomBar bottomBar) {
-    bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-      @Override
-      public void onTabSelected(@IdRes int tabId) {
-        switch (tabId){
-          case(R.id.tab_sound):
-            navigateTo(SoundActivity.class);
-            break;
-          case (R.id.tab_share):
-            navigateTo(ShareActivity.class);
-            break;
-        }
+    bottomBar.setOnTabSelectListener(tabId -> {
+      switch (tabId){
+        case(R.id.tab_sound):
+          navigateTo(SoundActivity.class);
+          break;
+        case (R.id.tab_share):
+          navigateTo(ShareActivity.class);
+          break;
       }
     });
   }
 
    private void setupFabMenu() {
-     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.common_navigate_record, R.color.colorWhite);
-     addAndConfigurateFabButton(ID_BUTTON_FAB_CENTER, R.drawable.common_navigate_gallery, R.color.colorWhite);
+     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP,
+             R.drawable.common_navigate_record, R.color.colorWhite);
+     addAndConfigurateFabButton(ID_BUTTON_FAB_CENTER,
+             R.drawable.common_navigate_gallery, R.color.colorWhite);
   }
 
   private void addAndConfigurateFabButton(int id, int icon, int color) {
@@ -173,19 +163,16 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   }
 
   private void onClickFabButton(final FloatingActionButton fab) {
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        switch (fab.getId()){
-          case ID_BUTTON_FAB_TOP:
-            fabMenu.collapse();
-              navigateTo(RecordCamera2Activity.class);
-              break;
-          case ID_BUTTON_FAB_CENTER:
-            fabMenu.collapse();
-            navigateTo(GalleryActivity.class);
+    fab.setOnClickListener(v -> {
+      switch (fab.getId()){
+        case ID_BUTTON_FAB_TOP:
+          fabMenu.collapse();
+            navigateTo(RecordCamera2Activity.class);
             break;
-        }
+        case ID_BUTTON_FAB_CENTER:
+          fabMenu.collapse();
+          navigateTo(GalleryActivity.class);
+          break;
       }
     });
   }
@@ -202,7 +189,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             if (bundle.containsKey(Constants.CURRENT_VIDEO_INDEX)) {
-                this.currentVideoIndex = getIntent().getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
+                this.currentVideoIndex = getIntent().getIntExtra(
+                        Constants.CURRENT_VIDEO_INDEX, 0);
             }
         }
         bottomBar.selectTabWithId(R.id.tab_editactivity);
@@ -226,8 +214,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         if (isLandscapeOriented()) {
             num_grid_columns = NUM_COLUMNS_GRID_TIMELINE_HORIZONTAL;
         }
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, num_grid_columns,
-                orientation, false);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(
+                this, num_grid_columns, orientation, false);
         videoListRecyclerView.setLayoutManager(layoutManager);
         timeLineAdapter = new VideoTimeLineAdapter(this);
         videoListRecyclerView.setAdapter(timeLineAdapter);
@@ -289,12 +277,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
       AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
       dialog.setTitle(getString(R.string.dialog_title_warning_error_transcoding_file));
       dialog.setMessage(getString(R.string.dialog_message_warning_error_transcoding_file));
-      dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-          dialog.dismiss();
-        }
-      });
+      dialog.setNeutralButton(getString(R.string.ok), (dialog1, which) -> dialog1.dismiss());
       dialog.show();
     }
 
@@ -325,20 +308,17 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     @Override
     public void onClipRemoveClicked(int position) {
         selectedVideoRemovePosition = position;
-        final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        //Yes button clicked
-                        setSelectedClipIndex(Math.max(selectedVideoRemovePosition-1, 0));
-                        editPresenter.removeVideoFromProject(selectedVideoRemovePosition);
-                        break;
+        final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    //Yes button clicked
+                    setSelectedClipIndex(Math.max(selectedVideoRemovePosition - 1, 0));
+                    editPresenter.removeVideoFromProject(selectedVideoRemovePosition);
+                    break;
 
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        //No button clicked
-                        break;
-                }
+                case DialogInterface.BUTTON_NEGATIVE:
+                    //No button clicked
+                    break;
             }
         };
 
@@ -382,38 +362,34 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void showError(final int stringToast) {
-        Snackbar snackbar = Snackbar.make(relativeLayoutActivityEdit, stringToast, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(relativeLayoutActivityEdit, stringToast,
+                Snackbar.LENGTH_LONG);
         snackbar.show();
     }
 
     @Override
     public void showMessage(final int stringToast) {
-        Snackbar snackbar = Snackbar.make(relativeLayoutActivityEdit, stringToast, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(relativeLayoutActivityEdit, stringToast,
+                Snackbar.LENGTH_LONG);
         snackbar.show();
     }
 
     @Override
     public void updateVideoList(final List<Video> retrievedVideoList) {
-      runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-          videoList = retrievedVideoList;
-          timeLineAdapter.updateVideoList(retrievedVideoList);
-          timeLineAdapter.updateSelection(currentVideoIndex); // TODO: check this flow and previous updateSelection(0); in updateVideoList
-          videoListRecyclerView.scrollToPosition(currentVideoIndex);
-        }
+      runOnUiThread(() -> {
+        videoList = retrievedVideoList;
+        timeLineAdapter.updateVideoList(retrievedVideoList);
+        timeLineAdapter.updateSelection(currentVideoIndex); // TODO: check this flow and previous updateSelection(0); in updateVideoList
+        videoListRecyclerView.scrollToPosition(currentVideoIndex);
       });
     }
 
     @Override
     public void updateProject() {
-      runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-          reStart();
-          initVideoListRecycler();
-          editPresenter.init();
-        }
+      runOnUiThread(() -> {
+        reStart();
+        initVideoListRecycler();
+        editPresenter.init();
       });
     }
 
@@ -457,18 +433,12 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.VideonaDialog);
         dialog.setTitle(R.string.titleVideosNotFound);
         dialog.setMessage(getString(R.string.messageVideosNotFound));
-        dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        dialog.setNeutralButton(getString(R.string.ok), (dialog1, which) -> dialog1.dismiss());
         dialog.show();
     }
 
   @Override
   public void enableFabText(boolean enableFabText) {
-    isEnableFabText = enableFabText;
   }
 
   @Override

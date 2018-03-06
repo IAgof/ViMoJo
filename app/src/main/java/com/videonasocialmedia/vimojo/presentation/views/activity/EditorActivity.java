@@ -62,8 +62,6 @@ import static com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPr
  */
 public abstract class EditorActivity extends VimojoActivity implements EditorActivityView,
     VideonaPlayerView, VideonaPlayer.VideonaPlayerListener {
-
-
   private static final String EDITOR_ACTIVITY_PROJECT_POSITION = "editor_activity_project_position";
   private static final String EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED =
       "editor_activity_has_been_project_exported";
@@ -173,23 +171,13 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   private void setUpAndCheckHeaderViewCurrentProject() {
-    imageProjectThumb = (CircleImageView) navigationView.getHeaderView(0)
+    imageProjectThumb = navigationView.getHeaderView(0)
             .findViewById(R.id.image_drawer_thumb_project);
-    projectName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.project_title);
-    projectName.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        showDialogUpdateCurrentProjectTitle();
-      }
-    });
-    projectDate = (TextView) navigationView.getHeaderView(0).findViewById(R.id.project_date);
-    projectEdit = (ImageButton) navigationView.getHeaderView(0).findViewById(R.id.project_edit_button);
-    projectEdit.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        navigateTo(DetailProjectActivity.class);
-      }
-    });
+    projectName = navigationView.getHeaderView(0).findViewById(R.id.project_title);
+    projectName.setOnClickListener(v -> showDialogUpdateCurrentProjectTitle());
+    projectDate = navigationView.getHeaderView(0).findViewById(R.id.project_date);
+    projectEdit = navigationView.getHeaderView(0).findViewById(R.id.project_edit_button);
+    projectEdit.setOnClickListener(v -> navigateTo(DetailProjectActivity.class));
     editorPresenter.updateHeaderViewCurrentProject();
   }
 
@@ -200,7 +188,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   private void setToolbar() {
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
     ActionBar ab = getSupportActionBar();
     if (ab != null) {
@@ -275,44 +263,41 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   protected void inflateLinearLayout(int linearLayoutContainer, int layoutToAdd) {
-    LinearLayout contentLayoutEditActivity = (LinearLayout) findViewById(linearLayoutContainer);
+    LinearLayout contentLayoutEditActivity = findViewById(linearLayoutContainer);
     getLayoutInflater().inflate(layoutToAdd, contentLayoutEditActivity);
   }
 
   private void setupDrawerContent(NavigationView navigationView) {
     navigationView.setNavigationItemSelectedListener(
-            new NavigationView.OnNavigationItemSelectedListener() {
-              @Override
-              public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                  case R.id.menu_navview_gallery_projects:
-                    drawerLayout.closeDrawers();
-                    navigateTo(GalleryProjectListActivity.class);
-                    return false;
-                  case R.id.menu_navview_delete_clip:
-                    createDialog(R.id.menu_navview_delete_clip);
-                    return false;
-                  case R.id.menu_navview_user_profile:
-                    navigateTo(UserProfileActivity.class);
-                    return false;
-                  case R.id.menu_navview_settings:
-                    navigateTo(SettingsActivity.class);
-                    return false;
-                  case R.id.menu_navview_tutorial_edition:
-                    navigateTo(TutorialEditorActivity.class);
-                    return false;
-                  case R.id.menu_navview_tutorial_record:
-                    navigateTo(TutorialRecordActivity.class);
-                    return false;
-                  case R.id.menu_navview_vimojo_store_section:
-                    navigateTo(VimojoStoreActivity.class);
-                    return false;
-                  case R.id.menu_navview_vimojo_kit_web_section:
-                    navigateToVimojoKitWeb();
-                    return false;
-                  default:
-                    return false;
-                }
+            menuItem -> {
+              switch (menuItem.getItemId()) {
+                case R.id.menu_navview_gallery_projects:
+                  drawerLayout.closeDrawers();
+                  navigateTo(GalleryProjectListActivity.class);
+                  return false;
+                case R.id.menu_navview_delete_clip:
+                  createDialog(R.id.menu_navview_delete_clip);
+                  return false;
+                case R.id.menu_navview_user_profile:
+                  navigateTo(UserProfileActivity.class);
+                  return false;
+                case R.id.menu_navview_settings:
+                  navigateTo(SettingsActivity.class);
+                  return false;
+                case R.id.menu_navview_tutorial_edition:
+                  navigateTo(TutorialEditorActivity.class);
+                  return false;
+                case R.id.menu_navview_tutorial_record:
+                  navigateTo(TutorialRecordActivity.class);
+                  return false;
+                case R.id.menu_navview_vimojo_store_section:
+                  navigateTo(VimojoStoreActivity.class);
+                  return false;
+                case R.id.menu_navview_vimojo_kit_web_section:
+                  navigateToVimojoKitWeb();
+                  return false;
+                default:
+                  return false;
               }
             });
   }
@@ -327,19 +312,16 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     if (resourceItemMenuId == R.id.menu_navview_delete_clip)
       builder.setMessage(getResources().getString(R.string.dialog_message_clean_project));
 
-    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        switch (which) {
-          case DialogInterface.BUTTON_POSITIVE:
-            if (resourceItemMenuId == R.id.menu_navview_delete_clip)
-              editorPresenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID);
-            break;
+    final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+      switch (which) {
+        case DialogInterface.BUTTON_POSITIVE:
+          if (resourceItemMenuId == R.id.menu_navview_delete_clip)
+            editorPresenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID);
+          break;
 
-          case DialogInterface.BUTTON_NEGATIVE:
-            drawerLayout.closeDrawers();
-            break;
-        }
+        case DialogInterface.BUTTON_NEGATIVE:
+          drawerLayout.closeDrawers();
+          break;
       }
     };
 
@@ -390,8 +372,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   private void updateNavigationIcon(int identifier, int resourceId) {
-    navigationView.getMenu().findItem(identifier)
-             .setIcon(this.getDrawable(resourceId));
+    navigationView.getMenu().findItem(identifier).setIcon(this.getDrawable(resourceId));
   }
 
   @Override
@@ -474,7 +455,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   public void setHeaderViewCurrentProject(String pathThumbProject, String currentProjectName,
                                           String currentProjectDate) {
-    if(pathThumbProject != null) {
+    if (pathThumbProject != null) {
       updateCurrentProjectThumb(pathThumbProject);
     } else {
       updateCurrentProjectDefaultThumb();
@@ -499,23 +480,17 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   public void showProgressDialog() {
-    runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        if (!isFinishing()) {
-          progressDialog.show();
-        }
+    runOnUiThread(() -> {
+      if (!isFinishing()) {
+        progressDialog.show();
       }
     });  }
 
   @Override
   public void hideProgressDialog() {
-    runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-          progressDialog.dismiss();
-        }
+    runOnUiThread(() -> {
+      if (progressDialog != null && progressDialog.isShowing()) {
+        progressDialog.dismiss();
       }
     });
   }
@@ -613,28 +588,25 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   private void showDialogUpdateCurrentProjectTitle() {
     View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
-    editTextDialog = (EditText) dialogView.findViewById(R.id.text_dialog);
+    editTextDialog = dialogView.findViewById(R.id.text_dialog);
     editTextDialog.setText(projectName.getText());
     editTextDialog.setSelectAllOnFocus(true);
 
     final DialogInterface.OnClickListener dialogClickListener =
-        new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            hideKeyboard(editTextDialog);
-            switch (which) {
-              case DialogInterface.BUTTON_POSITIVE: {
-                String textPreference = editTextDialog.getText().toString();
-                if (textPreference.equals(projectName.getText()))
-                  return;
-                editorPresenter.updateTitleCurrentProject(textPreference);
-                projectName.setText(textPreference);
-                              }
-              case DialogInterface.BUTTON_NEGATIVE:
-                break;
-            }
-          }
-        };
+            (dialog, which) -> {
+              hideKeyboard(editTextDialog);
+              switch (which) {
+                case DialogInterface.BUTTON_POSITIVE: {
+                  String textPreference = editTextDialog.getText().toString();
+                  if (textPreference.equals(projectName.getText()))
+                    return;
+                  editorPresenter.updateTitleCurrentProject(textPreference);
+                  projectName.setText(textPreference);
+                                }
+                case DialogInterface.BUTTON_NEGATIVE:
+                  break;
+              }
+            };
 
     AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
     AlertDialog alertDialog = builder.setCancelable(false)

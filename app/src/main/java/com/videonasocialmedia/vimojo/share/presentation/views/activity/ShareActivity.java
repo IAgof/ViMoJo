@@ -1,5 +1,9 @@
 package com.videonasocialmedia.vimojo.share.presentation.views.activity;
 
+/**
+ * Created by root on 31/05/16.
+ */
+
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -55,7 +59,7 @@ import butterknife.OnClick;
 import butterknife.Optional;
 
 /**
- * Created by root on 31/05/16.
+ * Activity for sharing video final render to different networks and save locally.
  */
 public class ShareActivity extends EditorActivity implements ShareVideoView,
         VideonaPlayer.VideonaPlayerListener, OnOptionsToShareListClickListener {
@@ -491,5 +495,4 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
               .setNeutralButton(R.string.ok, dialogClickListener).show();
     });
   }
-
 }

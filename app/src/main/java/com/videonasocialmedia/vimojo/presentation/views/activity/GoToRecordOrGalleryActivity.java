@@ -19,7 +19,6 @@ import butterknife.Optional;
  */
 
 public class GoToRecordOrGalleryActivity extends EditorActivity {
-
   @BindView(R.id.fab_edit_room)
   FloatingActionsMenu fabMenu;
 

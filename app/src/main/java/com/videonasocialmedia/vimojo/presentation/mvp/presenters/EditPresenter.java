@@ -16,7 +16,6 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.TypedValue;
 
-
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -133,13 +132,12 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     @Override
     public void onRemoveMediaItemFromTrackSuccess() {
-        if(currentProject.getVMComposition().hasVideos()) {
+        if (currentProject.getVMComposition().hasVideos()) {
             editActivityView.updateProject();
         } else {
             editActivityView.goToRecordOrGallery();
         }
     }
-
 
     private List<Video> checkMediaPathVideosExistOnDevice(List<Video> videoList) {
         List<Video> checkedVideoList = new ArrayList<>();
@@ -160,9 +158,8 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     }
 
     public void removeVideoFromProject(int selectedVideoRemove) {
-        Video videoToRemove = this.videoList.get(selectedVideoRemove);
         ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
-        mediaToDeleteFromProject.add(videoToRemove);
+        mediaToDeleteFromProject.add(videoList.get(selectedVideoRemove));
         removeVideoFromProjectUseCase.removeMediaItemsFromProject(mediaToDeleteFromProject, this);
     }
 

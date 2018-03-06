@@ -1,5 +1,9 @@
 package com.videonasocialmedia.vimojo.share.presentation.mvp.presenters;
 
+/**
+ * Created by jca on 11/12/15.
+ */
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
@@ -47,7 +51,7 @@ import javax.inject.Inject;
 import static android.content.Context.*;
 
 /**
- * Created by jca on 11/12/15.
+ * Presenter class for {@link com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity}
  */
 public class ShareVideoPresenter extends VimojoPresenter {
     private String LOG_TAG = ShareVideoPresenter.class.getCanonicalName();
@@ -123,7 +127,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         }
         this.hasBeenProjectExported = hasBeenProjectExported;
         this.videoPath = videoExportedPath;
-        if(isAppExportingProject) {
+        if (isAppExportingProject) {
             shareVideoViewReference.get().startVideoExport();
         }
     }
@@ -158,7 +162,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         int totalVideosShared = sharedPreferences.getInt(ConfigPreferences.TOTAL_VIDEOS_SHARED, 0);
         preferencesEditor = sharedPreferences.edit();
         preferencesEditor.putInt(ConfigPreferences.TOTAL_VIDEOS_SHARED, ++totalVideosShared);
-        preferencesEditor.commit();
+        preferencesEditor.apply();
     }
 
     private int getNumTotalVideosShared() {
@@ -191,6 +195,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         preferencesEditor = sharedPreferences.edit();
         preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION, 0);
         preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS, 0);
+        preferencesEditor.apply();
     }
 
     public void addVideoExportedToProject(String videoPath) {
@@ -359,7 +364,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     protected void exportOrProcessNetwork(int typeNetworkSelected) {
-        if(!hasBeenProjectExported()) {
+        if (!hasBeenProjectExported()) {
             startExport(typeNetworkSelected);
         } else {
             processNetworkClicked(typeNetworkSelected, videoPath);
