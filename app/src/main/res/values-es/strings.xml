@@ -371,7 +371,7 @@
     <string name="versionTitle"><u>Versión</u></string>
     <string name="videona">Videona</string>
     <string name="versionContent">beta </string>
-    <string name="madeIn">Hecho con amor Madrid - España</string>
+    <string name="madeIn">Hecho con amor en Madrid - España</string>
     <string name="licenseTitle"><u>Licencias de Software libre</u></string>
     <string name="licenseMusicTitle"><u>Atribución de música</u></string>
     <string name="legacyAdviceContent">
@@ -634,7 +634,7 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="text_hint_dialog_shareActivity">Nombre del proyecto</string>
     <string name="positiveButtonDialogShareActivity">Compartir</string>
     <string name="negativeButtonDialogShareActivity">Cancelar</string>
-    <string name="dialog_message_clean_project">¿Quiere empezar un nuevo proyecto?</string>
+    <string name="dialog_message_clean_project">¿Quiere empezar un nuevo proyecto? Su proyecto actual, se guardará en su galería</string>
     <string name="dialog_accept_clean_project">Sí</string>
     <string name="dialog_cancel_clean_project">No</string>
 
