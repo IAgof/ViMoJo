@@ -28,10 +28,7 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
     ProjectInfo projectInfo = project.getProjectInfo();
 
     RealmProject realmProject = new RealmProject(project.getUuid(), projectInfo.getTitle(),
-        projectInfo.getDescription(), projectInfo.isDirectFalseTypeSelected(),
-        projectInfo.isRawVideoTypeSelected(), projectInfo.isSpoolTypeSelected(),
-        projectInfo.isTotalTypeSelected(), projectInfo.isGraphicTypeSelected(),
-        projectInfo.isPieceTypeSelected(), project.getLastModification(), project.getProjectPath(),
+        projectInfo.getDescription(), project.getLastModification(), project.getProjectPath(),
         project.getProfile().getQuality().name(), project.getProfile().getResolution().name(),
         project.getProfile().getFrameRate().name(), project.getDuration(),
         project.getVMComposition().isAudioFadeTransitionActivated(),
@@ -67,6 +64,12 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
     if(project.hasVoiceOver()) {
       realmProject.tracks.add(toRealmTrackMapper.map(project.getAudioTracks()
           .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER)));
+    }
+
+    if(projectInfo.getProductTypeList().size() > 0) {
+      for(String productType: projectInfo.getProductTypeList()) {
+        realmProject.productTypeList.add(productType);
+      }
     }
 
     return realmProject;

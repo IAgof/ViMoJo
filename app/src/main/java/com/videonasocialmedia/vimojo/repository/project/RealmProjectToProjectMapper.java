@@ -22,6 +22,7 @@ import com.videonasocialmedia.vimojo.repository.video.RealmVideoToVideoMapper;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.*;
 
@@ -65,7 +66,7 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
   @NonNull
   private Project mapProject(RealmProject realmProject){
     ProjectInfo projectInfo = new ProjectInfo(realmProject.title, realmProject.description,
-        new ArrayList<>());
+        realmProject.productTypeList);
     setProjectInfoProductTypes(realmProject, projectInfo);
     Project currentProject = new Project(projectInfo, Constants.PATH_APP,
         Constants.PATH_APP_ANDROID, mapProfile(realmProject));
@@ -83,25 +84,11 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
   }
 
   private void setProjectInfoProductTypes(RealmProject realmProject, ProjectInfo projectInfo) {
-    if(realmProject.directFalseTypeSelected){
-      projectInfo.getProductTypeList().add(ProjectInfo.ProductType.DIRECT_FAILURE.name());
+   List<String> productTypeList = new ArrayList<>();
+    for (String productType : realmProject.productTypeList) {
+      productTypeList.add(productType);
     }
-    if(realmProject.rawVideoTypeSelected){
-      projectInfo.getProductTypeList().add(ProjectInfo.ProductType.RAW_VIDEOS.name());
-    }
-    if(realmProject.spoolTypeSelected) {
-      projectInfo.getProductTypeList().add(ProjectInfo.ProductType.SPOOLERS.name());
-    }
-    if(realmProject.totalTypeSelected) {
-      projectInfo.getProductTypeList().add(ProjectInfo.ProductType.TOTAL.name());
-    }
-    if(realmProject.graphicTypeSelected) {
-      projectInfo.getProductTypeList().add(ProjectInfo.ProductType.GRAPHIC.name());
-    }
-    if(realmProject.pieceTypeSelected) {
-      projectInfo.getProductTypeList().add(ProjectInfo.ProductType.PIECE.name());
-    }
-    projectInfo.checkSupportedProductType(projectInfo.getProductTypeList());
+    projectInfo.setProductTypeList(productTypeList);
   }
 
   private void setProjectVideos(Project project, RealmProject realmProject) {

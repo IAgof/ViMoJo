@@ -360,7 +360,7 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   DetailProjectPresenter provideDetailProjectPresenter(ProjectRepository projectRepository){
-    return new DetailProjectPresenter((DetailProjectActivity) activity, projectRepository);
+    return new DetailProjectPresenter(activity, (DetailProjectActivity) activity, projectRepository);
   }
 
   @Provides @PerActivity

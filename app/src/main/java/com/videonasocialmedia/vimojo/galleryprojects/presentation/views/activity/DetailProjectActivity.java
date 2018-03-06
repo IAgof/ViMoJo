@@ -18,11 +18,9 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.DetailProjectPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
-import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -72,8 +70,7 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   @BindView(R.id.detail_project_framerate)
   TextView textViewFrameRate;
 
-  private String[] productTypesTitles;
-  private String[] productTypesSelected;
+  private List<String> productTypeListSelected = new ArrayList<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -81,20 +78,7 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
     setContentView(R.layout.activity_detail_project);
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
-    initProductTyeTitles();
     presenter.init();
-  }
-
-  private String[] initProductTyeTitles() {
-    productTypesTitles = new String[] {
-        getString(R.string.detail_project_product_type_live_on_tape),
-        getString(R.string.detail_project_product_type_b_roll),
-        getString(R.string.detail_project_product_type_nat_vo),
-        getString(R.string.detail_project_product_type_interview),
-        getString(R.string.detail_project_product_type_graphic),
-        getString(R.string.detail_project_product_type_piece)
-    };
-    return productTypesTitles;
   }
 
   @Override
@@ -114,7 +98,7 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   protected void onSaveInstanceState(Bundle outState) {
     outState.putString(DETAIL_PROJECT_TITLE, editTextTitle.getText().toString());
     outState.putString(DETAIL_PROJECT_DESCRIPTION, editTextDescription.getText().toString());
-    outState.putStringArray(DETAIL_PROJECT_PRODUCT_TYPES, productTypesSelected);
+    outState.putStringArrayList(DETAIL_PROJECT_PRODUCT_TYPES, new ArrayList<>(productTypeListSelected));
     super.onSaveInstanceState(outState);
   }
 
@@ -182,25 +166,18 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   }
 
   @Override
-  public void showProductTypeMultipleDialog(boolean[] checkedProductTypes) {
-    List<String> productTypeSelectedList = new ArrayList<>();
-    for(String productType: productTypesSelected) {
-      productTypeSelectedList.add(productType);
-    }
+  public void showProductTypeMultipleDialog(boolean[] checkedProductTypes, List<String> productTypesTitles) {
     // Build an AlertDialog
     AlertDialog.Builder builder = new AlertDialog.Builder(DetailProjectActivity.this);
-    builder.setMultiChoiceItems(productTypesTitles, checkedProductTypes, new DialogInterface.OnMultiChoiceClickListener() {
+    builder.setMultiChoiceItems(productTypesTitles.toArray(new String[0]), checkedProductTypes, new DialogInterface.OnMultiChoiceClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which, boolean isChecked) {
         // Update the current focused item's checked status
         checkedProductTypes[which] = isChecked;
-        ProjectInfo.ProductType productType = getProductTypeFromPosition(which);
         if(isChecked) {
-          presenter.addProductTypeSelected(productType);
-          productTypeSelectedList.add(productType.name());
+          presenter.addProductTypeSelected(which);
         } else {
-          presenter.removeProductTypeSelected(productType);
-          productTypeSelectedList.remove(productType.name());
+          presenter.removeProductTypeSelected(which);
         }
       }
     });
@@ -213,15 +190,13 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
       @Override
       public void onClick(DialogInterface dialog, int which) {
         // Do something when click positive button
-        List<String> productTypeArrayList = Arrays.asList(productTypesTitles);
         for (int i = 0; i < checkedProductTypes.length; i++) {
           boolean checked = checkedProductTypes[i];
           if (checked) {
-            appendProductTypeText(textViewProductType, productTypeArrayList.get(i),
+            appendProductTypeText(textViewProductType, productTypesTitles.get(i),
                 ContextCompat.getColor(DetailProjectActivity.this, R.color.colorAccent));
           }
         }
-        productTypesSelected = productTypeSelectedList.toArray(new String[0]);
       }
     });
     textViewProductType.setText(getString(R.string.detail_project_product_type));
@@ -229,14 +204,23 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   }
 
   @Override
-  public void showProductTypeSelected(List<String> productTypeListSelected) {
-    this.productTypesSelected = productTypeListSelected.toArray(new String[0]);
-    List<String> productTypeArrayList = Arrays.asList(productTypesTitles);
-    for(String productType: productTypeListSelected) {
-      appendProductTypeText(textViewProductType,
-          productTypeArrayList.get(getPositionFromProductType(productType)),
+  public void showProductTypeSelected(List<String> productTypeList) {
+    this.productTypeListSelected = productTypeList;
+    List<String> productTypeListStrinValues = presenter.convertToStringProductTypeListValues(productTypeList);
+    for(String productTypeName: productTypeListStrinValues) {
+      appendProductTypeText(textViewProductType, productTypeName,
           ContextCompat.getColor(DetailProjectActivity.this, R.color.colorAccent));
     }
+  }
+
+  @Override
+  public void addProductTypeList(String productTypeName) {
+    productTypeListSelected.add(productTypeName);
+  }
+
+  @Override
+  public void removeProductTypeList(String productTypeName) {
+    productTypeListSelected.remove(productTypeName);
   }
 
   @OnTouch(R.id.detail_project_title_edit_text)
@@ -269,12 +253,8 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
 
   @OnClick(R.id.button_detail_project_info_accept)
   public void onClickAcceptInfoProject() {
-    List<String> projectInfoProductTypeList = new ArrayList<>();
-    for(String productTypeSelected: productTypesSelected) {
-      projectInfoProductTypeList.add(productTypeSelected);
-    }
     presenter.setProjectInfo(editTextTitle.getText().toString(),
-        editTextDescription.getText().toString(), projectInfoProductTypeList);
+        editTextDescription.getText().toString(), productTypeListSelected);
     setResult(RESULT_OK);
     finish();
   }
@@ -308,59 +288,4 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
         (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
     keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
   }
-
-  private int getPositionFromProductType(String productType) {
-    if (productType.equals(ProjectInfo.ProductType.DIRECT_FAILURE.name())) {
-      return 0;
-    } else {
-      if (productType.equals(ProjectInfo.ProductType.RAW_VIDEOS.name())) {
-        return 1;
-      } else {
-        if (productType.equals(ProjectInfo.ProductType.SPOOLERS.name())) {
-          return 2;
-        } else {
-          if (productType.equals(ProjectInfo.ProductType.TOTAL.name())) {
-            return 3;
-          } else {
-            if (productType.equals(ProjectInfo.ProductType.GRAPHIC.name())) {
-              return 4;
-            } else {
-              if (productType.equals(ProjectInfo.ProductType.PIECE.name())) {
-                return 5;
-              }
-            }
-          }
-        }
-      }
-    }
-    return -1;
-  }
-
-  public ProjectInfo.ProductType getProductTypeFromPosition(int position) {
-    if (position == 0) {
-      return ProjectInfo.ProductType.DIRECT_FAILURE;
-    } else {
-      if (position == 1) {
-        return ProjectInfo.ProductType.RAW_VIDEOS;
-      } else {
-        if (position == 2) {
-          return ProjectInfo.ProductType.SPOOLERS;
-        } else {
-          if (position == 3) {
-            return ProjectInfo.ProductType.TOTAL;
-          } else {
-            if (position == 4) {
-              return ProjectInfo.ProductType.GRAPHIC;
-            } else {
-              if (position == 5) {
-                return ProjectInfo.ProductType.PIECE;
-              }
-            }
-          }
-        }
-      }
-    }
-    return null;
-  }
-
 }
