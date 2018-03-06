@@ -251,17 +251,19 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void showDialogNeedToRegisterLoginToUploadVideo() {
-    // TODO: 9/2/18 Make Videona alertdialog info component
-    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-    builder.setMessage(getResources().getString(R.string.upload_video_register_login));
-    final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
-      switch (which) {
-        case DialogInterface.BUTTON_NEUTRAL:
-          navigateToUserAuth();
-          break;
-      }
-    };
-    builder.setCancelable(false).setNeutralButton("OK", dialogClickListener).show();
+    runOnUiThread(() -> {
+      // TODO: 9/2/18 Make Videona alertdialog info component
+      AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+      builder.setMessage(getResources().getString(R.string.upload_video_register_login));
+      final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+        switch (which) {
+          case DialogInterface.BUTTON_NEUTRAL:
+            navigateToUserAuth();
+            break;
+        }
+      };
+      builder.setCancelable(false).setNeutralButton("OK", dialogClickListener).show();
+    });
   }
 
   @Override
@@ -280,7 +282,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void showProgressDialogCheckingUserAuth() {
-    checkingUserProgressDialog.show();
+    runOnUiThread(() -> {
+      checkingUserProgressDialog.show();
+    });
   }
 
   @Override
