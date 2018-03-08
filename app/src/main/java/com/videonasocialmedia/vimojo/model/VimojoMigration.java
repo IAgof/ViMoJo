@@ -553,6 +553,32 @@ public class VimojoMigration implements RealmMigration {
       oldVersion++;
     }
 
+    // Migrate from version 10 to 11, 20180308. Added product types as RealmList<String>, remove boolean product types supported
+    if(oldVersion == 11) {
+      RealmObjectSchema realmProject = schema.get("RealmProject");
+      if (realmProject.hasField("directFalseTypeSelected")) {
+        realmProject.removeField("directFalseTypeSelected");
+      }
+      if (realmProject.hasField("rawVideoTypeSelected")) {
+        realmProject.removeField("rawVideoTypeSelected");
+      }
+      if (realmProject.hasField("spoolTypeSelected")) {
+        realmProject.removeField("spoolTypeSelected");
+      }
+      if (realmProject.hasField("totalTypeSelected")) {
+        realmProject.removeField("totalTypeSelected");
+      }
+      if (realmProject.hasField("graphicTypeSelected")) {
+        realmProject.removeField("graphicTypeSelected");
+      }
+      if (realmProject.hasField("pieceTypeSelected")) {
+        realmProject.removeField("pieceTypeSelected");
+      }
+      realmProject.addRealmListField("productTypeList", String.class);
+
+      oldVersion++;
+    }
+
     }
 
   private void updateRealmProjectPrimaryKeyToUuid(RealmObjectSchema realmProject) {

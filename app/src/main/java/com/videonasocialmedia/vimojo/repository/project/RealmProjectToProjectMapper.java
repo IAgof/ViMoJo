@@ -67,7 +67,6 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
   private Project mapProject(RealmProject realmProject){
     ProjectInfo projectInfo = new ProjectInfo(realmProject.title, realmProject.description,
         realmProject.productTypeList);
-    setProjectInfoProductTypes(realmProject, projectInfo);
     Project currentProject = new Project(projectInfo, Constants.PATH_APP,
         Constants.PATH_APP_ANDROID, mapProfile(realmProject));
     currentProject.setProjectPath(realmProject.projectPath);
@@ -81,14 +80,6 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
     currentProject.setWatermarkActivated(realmProject.isWatermarkActivated);
 
     return currentProject;
-  }
-
-  private void setProjectInfoProductTypes(RealmProject realmProject, ProjectInfo projectInfo) {
-   List<String> productTypeList = new ArrayList<>();
-    for (String productType : realmProject.productTypeList) {
-      productTypeList.add(productType);
-    }
-    projectInfo.setProductTypeList(productTypeList);
   }
 
   private void setProjectVideos(Project project, RealmProject realmProject) {
