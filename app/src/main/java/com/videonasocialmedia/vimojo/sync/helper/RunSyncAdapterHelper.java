@@ -61,6 +61,7 @@ public class RunSyncAdapterHelper {
         setExtras(new Bundle()).build();
 
     if (account != null) {
+      Log.d(LOG_TAG, "Setting auto sync...");
       contentResolver.requestSync(request);
       ContentResolver.setSyncAutomatically(account, SyncConstants.VIMOJO_CONTENT_AUTHORITY,
           true);
@@ -68,6 +69,7 @@ public class RunSyncAdapterHelper {
   }
 
   public void runNowSyncAdapter() {
+    Log.d(LOG_TAG, "Run NOW SyncAdapter...");
     Account account = UserAccountUtil.getAccount(context);
     String authority = SyncConstants.VIMOJO_CONTENT_AUTHORITY;
 
@@ -82,6 +84,7 @@ public class RunSyncAdapterHelper {
          * manual sync settings
          */
     if (account != null) {
+      Log.d(LOG_TAG, "Requesting sync!");
       ContentResolver.requestSync(account, authority, settingsBundle);
     }
   }

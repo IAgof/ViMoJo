@@ -1,0 +1,31 @@
+package com.videonasocialmedia.vimojo.sync;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
+
+/**
+ * Created by alvaro on 1/2/18.
+ */
+
+/**
+ * BroadcastReceiver to detect Wifi/Mobile network connection
+ * If connect is detected, launch SyncAdapter to check queue of videos pending to uploads.
+ */
+public class WifiMobileNetworkReceiver extends BroadcastReceiver {
+  @Override
+  public void onReceive(Context context, Intent intent) {
+    ConnectivityManager connManager =
+        (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+    NetworkInfo mobileNetwork = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+    if(wifi.isConnected() || mobileNetwork.isConnected()) {
+      RunSyncAdapterHelper runSyncAdapterHelper = new RunSyncAdapterHelper(context);
+      runSyncAdapterHelper.runNowSyncAdapter();
+    }
+  }
+}
