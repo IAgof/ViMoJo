@@ -1,3 +1,4 @@
-v0.14.3
-- Fix upload video mobile connection user selection. Now videos can be upload with 3g,4g.
-- Launch notification for every video upload. Update error messages, not network, not authorization and file not found.
+v0.14.4
+- Update names product type list.
+- By default, expand details project view, make all description card, clickable to edit field.
+- Improve stability saving project info.

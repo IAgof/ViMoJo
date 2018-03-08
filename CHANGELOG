@@ -1,6 +1,10 @@
+v0.14.3
+- Fix upload video mobile connection user selection. Now videos can be upload with 3g,4g.
+- Launch notification for every video upload. Update error messages, not network, not authorization and file not found.
+
 v0.14.2
-- Improved music gallery, onclick selection to all card view.
-- Update string, dialog_message_clean_project.
+- Improve music selection, allowing to click in any part of the music detail to select it
+- Strings updates with clearer ones
 
 v0.14.1
 - Added new flavor nbc.
