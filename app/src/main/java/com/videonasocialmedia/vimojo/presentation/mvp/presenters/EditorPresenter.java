@@ -39,6 +39,7 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -118,8 +119,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   protected void initPreviewFromVideoExported(String videoPath) {
-    List<Video> videoList = new ArrayList<>();
-    videoList.add(new Video(videoPath, Video.DEFAULT_VOLUME));
+    List<Video> videoList = Collections.singletonList(new Video(videoPath, Video.DEFAULT_VOLUME));
     videonaPlayerView.initPreviewFromVideo(videoList);
   }
 
@@ -161,8 +161,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   public Project getCurrentProject() {
-    // TODO(jliarte): this should make use of a repository or use case to load the Project
-    return Project.getInstance(null, null, null, null);
+    return projectRepository.getCurrentProject();
   }
 
   public boolean getPreferenceThemeApp() {
@@ -189,8 +188,8 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     preferencesEditor.apply();
   }
 
-  private void obtainVideos() {
-    editorActivityView.showProgressDialog();
+  public void obtainVideos() {
+    //editorActivityView.showProgressDialog();
     getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
       @Override
       public void onVideosRetrieved(List<Video> videosRetrieved) {
@@ -200,7 +199,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
         videonaPlayerView.bindVideoList(videoCopy);
         //Relaunch videos only if Project has videos. Fix problem removing all videos from Edit screen.
         newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
-        editorActivityView.hideProgressDialog();
+       // editorActivityView.hideProgressDialog();
       }
 
       @Override
@@ -324,7 +323,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
     if (preference.equals(ConfigPreferences.WATERMARK)) {
       // TODO:(alvaro.martinez) 2/11/17 track watermark applied
-      Project project = loadCurrentProject();
+      Project project = getCurrentProject();
       projectRepository.setWatermarkActivated(project, isChecked);
     }
   }
@@ -390,10 +389,6 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  private Project loadCurrentProject() {
-    return Project.getInstance(null, null, null, null);
-  }
-
   public void updateHeaderViewCurrentProject() {
     // Thumb from first video in current project
     String pathThumbProject = null;
@@ -406,7 +401,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   public void updateTitleCurrentProject(String title) {
-    Project project = loadCurrentProject();
+    Project project = getCurrentProject();
     ProjectInfo projectInfo = project.getProjectInfo();
     projectInfo.setTitle(title);
     projectRepository.setProjectInfo(project, projectInfo.getTitle(), projectInfo.getDescription(),

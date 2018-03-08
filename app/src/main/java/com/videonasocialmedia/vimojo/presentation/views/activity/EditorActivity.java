@@ -138,7 +138,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
     restoreState(savedInstanceState);
-    videonaPlayer.setListener(this);
     setUpAndCheckHeaderViewCurrentProject();
     createProgressDialog();
   }
@@ -205,6 +204,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       setupDrawerContent(navigationView);
       setUpAndCheckHeaderViewCurrentProject();
     }
+    videonaPlayer.setListener(this);
     videonaPlayer.onShown(this);
     setupSwitchThemeAppIntoDrawer();
     editorPresenter.updateTheme();
@@ -216,10 +216,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     super.onPause();
     videonaPlayer.onPause();
     editorPresenter.onPause();
-  }
-
-  public void reStart() {
-    initVideonaPlayer();
   }
 
   private boolean checkIfThemeDarkIsSelected() {
@@ -643,5 +639,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   public void resetVideoExported() {
     hasBeenProjectExported = false;
     videoExportedPath = null;
+  }
+
+  public void obtainVideos() {
+    editorPresenter.obtainVideos();
   }
 }

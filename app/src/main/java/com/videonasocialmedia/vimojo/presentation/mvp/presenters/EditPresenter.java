@@ -28,6 +28,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -42,6 +43,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         ElementChangedListener {
     private final String TAG = getClass().getSimpleName();
     private final Project currentProject;
+    private final ProjectRepository projectRepository;
     private Context context;
     // TODO(jliarte): 2/05/17 inject delegate?
     final VideoListErrorCheckerDelegate videoListErrorCheckerDelegate
@@ -65,6 +67,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                          Context context,
                          VideoTranscodingErrorNotifier videoTranscodingErrorNotifier,
                          UserEventTracker userEventTracker,
+                         ProjectRepository projectRepository,
                          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
                          ReorderMediaItemUseCase reorderMediaItemUseCase) {
@@ -75,13 +78,13 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
         this.userEventTracker = userEventTracker;
+        this.projectRepository = projectRepository;
         this.currentProject = loadCurrentProject();
         currentProject.addListener(this);
     }
 
     public Project loadCurrentProject() {
-        // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null, null);
+        return projectRepository.getCurrentProject();
     }
 
     public String getResolution() {
@@ -94,22 +97,22 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         return sharedPreferences.getString(ConfigPreferences.RESOLUTION, "1280x720");
     }
 
-    public void moveItem(int fromPosition, int toPositon) {
-        Video mediaToMove = (Video) currentProject.getMediaTrack().getItems().get(fromPosition);
-        reorderMediaItemUseCase.moveMediaItem(mediaToMove, toPositon,
+    public void moveItem(int fromPosition, int toPosition) {
+        reorderMediaItemUseCase.moveMediaItem(fromPosition, toPosition,
                 new OnReorderMediaListener() {
             @Override
-            public void onMediaReordered(Media media, int newPosition) {
+            public void onSuccessMediaReordered() {
                 // If everything was right the UI is already updated since the user did the
                 // reordering over the "model view"
-                userEventTracker.trackClipsReordered(currentProject);
+                userEventTracker.trackClipsReordered(projectRepository.getCurrentProject());
+                editActivityView.updatePlayerAndTimelineVideoListChanged();
             }
 
             @Override
             public void onErrorReorderingMedia() {
                 //The reordering went wrong so we ask the project for the actual video list
                 Log.d(TAG, "timeline:  error reordering!!");
-                editActivityView.updateProject();
+                editActivityView.updatePlayerAndTimelineVideoListChanged();
             }
         });
     }
@@ -132,8 +135,8 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     @Override
     public void onRemoveMediaItemFromTrackSuccess() {
-        if (currentProject.getVMComposition().hasVideos()) {
-            editActivityView.updateProject();
+        if (projectRepository.getCurrentProject().getVMComposition().hasVideos()) {
+            editActivityView.updatePlayerAndTimelineVideoListChanged();
         } else {
             editActivityView.goToRecordOrGallery();
         }
@@ -164,6 +167,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     }
 
     public void init() {
+        editActivityView.showProgressDialog();
         // TODO: 21/2/18 Study if is necessary repeat use case, running also in father, EditorActivity. Tried ListenableFuture and make synchronus call to wait until finish and after this method get result of get medialist, problems with UI thread.
         getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
             @Override
@@ -183,6 +187,8 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 editActivityView.updateVideoList(videoCopy);
                 videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
                     videoList, videoTranscodingErrorNotifier);
+                editActivityView.updateTimeLineClipSelected();
+                editActivityView.hideProgressDialog();
             }
 
             @Override
@@ -191,6 +197,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 editActivityView.disableBottomBar();
                 editActivityView.enableFabText(false);
                 editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
+                editActivityView.hideProgressDialog();
             }
         });
     }
@@ -199,7 +206,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     public void onObjectUpdated() {
         // TODO(jliarte): 26/07/17 save playback state and restore it when done updating project
         // in view
-        editActivityView.updateProject();
+        editActivityView.updatePlayerAndTimelineVideoListChanged();
     }
 
     public String getCurrentTheme() {

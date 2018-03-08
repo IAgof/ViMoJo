@@ -26,8 +26,6 @@ public interface EditActivityView {
 
   void updateVideoList(List<Video> movieList);
 
-  void updateProject();
-
   void enableEditActions();
 
   void disableEditActions();
@@ -43,4 +41,8 @@ public interface EditActivityView {
   void enableFabText(boolean isEnable);
 
   void goToRecordOrGallery();
+
+  void updatePlayerAndTimelineVideoListChanged();
+
+  void updateTimeLineClipSelected();
 }

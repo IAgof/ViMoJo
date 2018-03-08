@@ -26,6 +26,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
@@ -73,6 +74,7 @@ public class ShareVideoPresenterTest {
     @Mock private SharedPreferences mockedSharedPreferences;
     @Mock private SharedPreferences.Editor mockedPreferencesEditor;
     @Mock private Context mockContext;
+    @Mock ProjectRepository mockedProjectRepository;
     @Mock private CreateDefaultProjectUseCase mockedCreateDefaultProjectUseCase;
     @Mock private AddLastVideoExportedToProjectUseCase mockedAddLastVideoExportedUseCase;
     @Mock private ExportProjectUseCase mockedExportProjectUseCase;
@@ -114,7 +116,7 @@ public class ShareVideoPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockContext,
-                mockedShareVideoView, userEventTracker, mockedSharedPreferences,
+                mockedShareVideoView, userEventTracker, mockedSharedPreferences, mockedProjectRepository,
                 mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
                 mockedExportProjectUseCase, mockedShareNetworksProvider, mockedFtpListUseCase,
                 mockedGetAuthToken, mockedUploadToPlatformQueue, mockedLoggedValidator,
@@ -371,7 +373,7 @@ public class ShareVideoPresenterTest {
     @NonNull
     private ShareVideoPresenter getShareVideoPresenter() {
         return new ShareVideoPresenter(mockContext, mockedShareVideoView, mockedUserEventTracker,
-            mockedSharedPreferences, mockedCreateDefaultProjectUseCase,
+            mockedSharedPreferences, mockedProjectRepository, mockedCreateDefaultProjectUseCase,
                 mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
                 mockedShareNetworksProvider, mockedFtpListUseCase, mockedGetAuthToken,
             mockedUploadToPlatformQueue, mockedLoggedValidator, mockedRunSyncAdapterHelper);

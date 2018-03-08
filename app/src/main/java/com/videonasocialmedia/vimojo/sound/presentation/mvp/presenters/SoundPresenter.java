@@ -8,6 +8,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 
@@ -27,19 +28,14 @@ public class SoundPresenter implements VideoTranscodingErrorNotifier, ElementCha
   public static final float VOLUME_MUTE = 0f;
 
    @Inject
-    public SoundPresenter(SoundView soundView,
+    public SoundPresenter(SoundView soundView, ProjectRepository projectRepository,
         ModifyTrackUseCase modifyTrackUseCase, VideoListErrorCheckerDelegate
                                  videoListErrorCheckerDelegate) {
         this.soundView = soundView;
-        this.currentProject = loadCurrentProject();
+        this.currentProject = projectRepository.getCurrentProject();
         currentProject.addListener(this);
         this.modifyTrackUseCase = modifyTrackUseCase;
         this.videoListErrorCheckerDelegate = videoListErrorCheckerDelegate;
-    }
-
-    public Project loadCurrentProject() {
-        // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null, null);
     }
 
     public void init() {
@@ -47,7 +43,6 @@ public class SoundPresenter implements VideoTranscodingErrorNotifier, ElementCha
       // TODO:(alvaro.martinez) 22/03/17 Player should be in charge of these checks from
       // VMComposition
       retrieveTracks();
-
     }
 
   private void retrieveTracks() {

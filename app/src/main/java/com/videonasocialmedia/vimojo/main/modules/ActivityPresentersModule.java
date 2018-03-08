@@ -176,19 +176,21 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   EditPresenter provideEditPresenter(UserEventTracker userEventTracker,
+                                     ProjectRepository projectRepository,
                                      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                      RemoveVideoFromProjectUseCase removeVideosFromProjectUseCase,
                                      ReorderMediaItemUseCase reorderMediaItemUseCase) {
     return new EditPresenter((EditActivity) activity, (EditActivity) activity, (EditActivity) activity,
-            userEventTracker, getMediaListFromProjectUseCase, removeVideosFromProjectUseCase,
-            reorderMediaItemUseCase);
+            userEventTracker, projectRepository, getMediaListFromProjectUseCase,
+            removeVideosFromProjectUseCase, reorderMediaItemUseCase);
   }
 
   @Provides @PerActivity
-  SoundPresenter provideSoundPresenter(ModifyTrackUseCase modifyTrackUseCase,
+  SoundPresenter provideSoundPresenter(ProjectRepository projectRepository,
+                                       ModifyTrackUseCase modifyTrackUseCase,
                                        VideoListErrorCheckerDelegate
                                            videoListErrorCheckerDelegate) {
-    return new SoundPresenter((SoundActivity) activity, modifyTrackUseCase,
+    return new SoundPresenter((SoundActivity) activity, projectRepository, modifyTrackUseCase,
         videoListErrorCheckerDelegate);
   }
 
@@ -294,9 +296,10 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   ShareVideoPresenter provideVideoSharePresenter(UserEventTracker userEventTracker,
                                                  SharedPreferences sharedPreferences,
+                                                 ProjectRepository projectRepository,
                                                  CreateDefaultProjectUseCase createDefaultProjectUseCase,
                                                  AddLastVideoExportedToProjectUseCase
-                                     addLastVideoExportedProjectUseCase,
+                                                     addLastVideoExportedProjectUseCase,
                                                  ExportProjectUseCase exportProjectUseCase,
                                                  ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
                                                  GetFtpListUseCase getFtpListUseCase,
@@ -305,9 +308,10 @@ public class ActivityPresentersModule {
                                                  LoggedValidator loggedValidator,
                                                  RunSyncAdapterHelper runSyncAdapterHelper) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
-            sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
-            exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
-            getAuthToken, uploadToPlatformQueue, loggedValidator, runSyncAdapterHelper);
+            sharedPreferences, projectRepository, createDefaultProjectUseCase,
+            addLastVideoExportedProjectUseCase, exportProjectUseCase, obtainNetworksToShareUseCase,
+            getFtpListUseCase, getAuthToken, uploadToPlatformQueue, loggedValidator,
+            runSyncAdapterHelper);
   }
 
   @Provides @PerActivity

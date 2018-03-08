@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
@@ -31,13 +32,18 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -113,9 +119,51 @@ public class EditPresenterTest {
   }
 
   @Test
-  public void ifRemoveVideoFromProjectDeleteLastVideoInProjectCallsNavigateToRecordOrGallery() {
+  public void ifRemoveVideoFromProjectDeleteLastVideoInProjectCallsNavigateToRecordOrGallery() throws IllegalItemOnTrack {
+    EditPresenter editPresenter = getEditPresenter();
 
+    editPresenter.onRemoveMediaItemFromTrackSuccess();
 
+    assertThat(getAProject().getVMComposition().hasVideos(), is(false));
+    verify(mockedEditorView).goToRecordOrGallery();
+  }
+
+  @Test
+  public void ifRemoveVideoFromProjectSuccessAndThereAreVideosInProjectUpdateTimeLine() throws IllegalItemOnTrack {
+    Project project = getAProject();
+    Video video1 = new Video("video/path", 1f);
+    MediaTrack mediaTrack = project.getMediaTrack();
+    mediaTrack.insertItem(video1);
+    EditPresenter editPresenter = getEditPresenter();
+
+    editPresenter.onRemoveMediaItemFromTrackSuccess();
+
+    assertThat(getAProject().getVMComposition().hasVideos(), is(true));
+    verify(mockedEditorView).updateTimeLine();
+  }
+
+  @Test
+  public void moveItemCallsObtainVideoOnSuccess() throws IllegalItemOnTrack {
+    Project project = getAProject();
+    Media media1 = new Video("video/path", 1f);
+    Media media2 = new Video("video/path", 1f);
+    MediaTrack mediaTrack = project.getMediaTrack();
+    mediaTrack.insertItemAt(0, media1);
+    mediaTrack.insertItemAt(1,media2);
+    int fromPosition = 1;
+    int toPosition = 0;
+    doAnswer(new Answer() {
+      @Override
+      public Object answer(InvocationOnMock invocation) throws Throwable {
+        ((OnReorderMediaListener)invocation.getArguments()[2]).onSuccessMediaReordered();
+        return null;
+      }
+    }).when(mockedMediaItemReorderer).moveMediaItem(anyInt(),anyInt(), any(OnReorderMediaListener.class));
+    EditPresenter editPresenter = getEditPresenter();
+
+    editPresenter.moveItem(fromPosition, toPosition);
+
+    verify(mockedEditorView).updatePlayerAndTimelineVideoListChanged();
   }
 
   @NonNull

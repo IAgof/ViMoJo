@@ -20,6 +20,7 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -54,6 +55,7 @@ import static android.content.Context.*;
  * Presenter class for {@link com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity}
  */
 public class ShareVideoPresenter extends VimojoPresenter {
+
     private String LOG_TAG = ShareVideoPresenter.class.getCanonicalName();
 
     private Context context;
@@ -69,7 +71,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private VimojoNetwork vimojoNetwork;
     private List optionToShareList;
     private SharedPreferences.Editor preferencesEditor;
-
     private AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase;
     private ExportProjectUseCase exportUseCase;
     private final GetAuthToken getAuthToken;
@@ -87,7 +88,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     @Inject
     public ShareVideoPresenter(
             Context context, ShareVideoView shareVideoView, UserEventTracker userEventTracker,
-            SharedPreferences sharedPreferences,
+            SharedPreferences sharedPreferences, ProjectRepository projectRepository,
             CreateDefaultProjectUseCase createDefaultProjectUseCase,
             AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
             ExportProjectUseCase exportProjectUseCase,
@@ -108,12 +109,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         this.uploadToPlatformQueue = uploadToPlatformQueue;
         this.loggedValidator = loggedValidator;
         this.runSyncAdapterHelper = runSyncAdapterHelper;
-        currentProject = loadCurrentProject();
-    }
-
-    // TODO(jliarte): 27/02/18 why is the project get from instance?!?!?!
-    private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null, null);
+        this.currentProject = projectRepository.getCurrentProject();
     }
 
     public void init(boolean hasBeenProjectExported, String videoExportedPath,
@@ -400,10 +396,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
                 shareVideoViewReference.get().showIntentOtherNetwork(videoPath);
                 break;
         }
-    }
-
-    public void initVideoPlayerFromFilePath(String videoPath) {
-        shareVideoViewReference.get().initVideoPlayerFromFilePath(videoPath);
     }
 
     public void updateHasBeenProjectExported(boolean hasBeenProjectExported) {

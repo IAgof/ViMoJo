@@ -355,11 +355,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   @Override
-  public void initVideoPlayerFromFilePath(String videoPath) {
-    super.initVideoPlayerFromFilePath(videoPath);
-  }
-
-  @Override
   public void shareVideo(String videoPath, SocialNetwork socialNetworkSelected) {
     final ComponentName name = new ComponentName(socialNetworkSelected.getAndroidPackageName(),
         socialNetworkSelected.getAndroidActivityName());
@@ -400,7 +395,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     }
 
     private void showDialogNewProject(final int resourceButtonId) {
-        super.resetVideoExported();
+        resetVideoExported();
         final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
@@ -441,7 +436,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
             hasBeenProjectExported = true;
             presenter.updateHasBeenProjectExported(true);
             presenter.addVideoExportedToProject(mediaPath);
-            presenter.initVideoPlayerFromFilePath(mediaPath);
+            initVideoPlayerFromFilePath(mediaPath);
           }
           exportProgressDialog.dismiss();
           isAppExportingProject = false;

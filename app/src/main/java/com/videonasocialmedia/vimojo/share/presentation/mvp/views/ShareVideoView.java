@@ -39,8 +39,6 @@ public interface ShareVideoView {
 
   void showIntentOtherNetwork(String videoPath);
 
-  void initVideoPlayerFromFilePath(String videoPath);
-
   void shareVideo(String videoPath, SocialNetwork socialNetworkSelected);
 
   void showDialogNotNetworkUploadVideoOnConnection();

@@ -63,7 +63,7 @@ public class TimeLineBugEditPresenterTest {
 
     editPresenter.moveItem(0, 1);
 
-    verify(reorderMediaItemUseCase).moveMediaItem(eq(video0), eq(1),
+    verify(reorderMediaItemUseCase).moveMediaItem(eq(0), eq(1),
             Mockito.any(OnReorderMediaListener.class));
   }
 }

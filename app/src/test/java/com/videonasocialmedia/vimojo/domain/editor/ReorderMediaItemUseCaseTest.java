@@ -49,12 +49,14 @@ public class ReorderMediaItemUseCaseTest {
   }
 
   @Test
-  public void testMoveMediaItemCallsUpdateProject() {
-    currentProject.setMediaTrack(mockedMediaTrack);
-    Video video = new Video("media/path", 1f);
-    OnReorderMediaListener listener = getOnReorderMediaListener();
+  public void testMoveMediaItemCallsUpdateProject() throws IllegalItemOnTrack {
+    Video video0 = new Video("video/0", Video.DEFAULT_VOLUME);
+    Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
+    currentProject.getVMComposition().getMediaTrack().insertItemAt(0, video0);
+    currentProject.getVMComposition().getMediaTrack().insertItemAt(1, video1);
+    OnReorderMediaListener onReorderMediaListener = getOnReorderMediaListener();
 
-    injectedUseCase.moveMediaItem(video, 1, listener);
+    injectedUseCase.moveMediaItem(1, 0, onReorderMediaListener);
 
     verify(mockedProjectRepository).update(currentProject);
   }
@@ -69,7 +71,7 @@ public class ReorderMediaItemUseCaseTest {
     currentProject.getVMComposition().getMediaTrack().insertItemAt(1, video1);
     OnReorderMediaListener onReorderMediaListener = getOnReorderMediaListener();
 
-    injectedUseCase.moveMediaItem(video1, 0, onReorderMediaListener);
+    injectedUseCase.moveMediaItem(1, 0, onReorderMediaListener);
 
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video0), is(1));
     assertThat(video0.getPosition(), is(1));
@@ -80,20 +82,16 @@ public class ReorderMediaItemUseCaseTest {
   @Test
   public void testReorder4Items() throws IllegalItemOnTrack {
     Video video0 = new Video("video/0", Video.DEFAULT_VOLUME);
-    video0.setPosition(0);
     Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
-    video1.setPosition(1);
     Video video2 = new Video("video/2", Video.DEFAULT_VOLUME);
-    video1.setPosition(2);
     Video video3 = new Video("video/3", Video.DEFAULT_VOLUME);
-    video1.setPosition(1);
     currentProject.getVMComposition().getMediaTrack().insertItemAt(0, video0);
     currentProject.getVMComposition().getMediaTrack().insertItemAt(1, video1);
     currentProject.getVMComposition().getMediaTrack().insertItemAt(2, video2);
     currentProject.getVMComposition().getMediaTrack().insertItemAt(3, video3);
     OnReorderMediaListener onReorderMediaListener = getOnReorderMediaListener();
 
-    injectedUseCase.moveMediaItem(video3, 1, onReorderMediaListener);
+    injectedUseCase.moveMediaItem(3, 1, onReorderMediaListener);
 
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video0), is(0));
     assertThat(video0.getPosition(), is(0));
@@ -104,7 +102,7 @@ public class ReorderMediaItemUseCaseTest {
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video2), is(3));
     assertThat(video2.getPosition(), is(3));
 
-    injectedUseCase.moveMediaItem(video3, 0, onReorderMediaListener);
+    injectedUseCase.moveMediaItem(1, 0, onReorderMediaListener);
 
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video3), is(0));
     assertThat(video3.getPosition(), is(0));
@@ -119,20 +117,16 @@ public class ReorderMediaItemUseCaseTest {
   @Test
   public void testReorder4ItemsTwice() throws IllegalItemOnTrack {
     Video video0 = new Video("video/0", Video.DEFAULT_VOLUME);
-    video0.setPosition(0);
     Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
-    video1.setPosition(1);
     Video video2 = new Video("video/2", Video.DEFAULT_VOLUME);
-    video1.setPosition(2);
     Video video3 = new Video("video/3", Video.DEFAULT_VOLUME);
-    video1.setPosition(1);
     currentProject.getVMComposition().getMediaTrack().insertItemAt(0, video0);
     currentProject.getVMComposition().getMediaTrack().insertItemAt(1, video1);
     currentProject.getVMComposition().getMediaTrack().insertItemAt(2, video2);
     currentProject.getVMComposition().getMediaTrack().insertItemAt(3, video3);
     OnReorderMediaListener onReorderMediaListener = getOnReorderMediaListener();
 
-    injectedUseCase.moveMediaItem(video2, 1, onReorderMediaListener);
+    injectedUseCase.moveMediaItem(2, 1, onReorderMediaListener);
 
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video0), is(0));
     assertThat(video0.getPosition(), is(0));
@@ -143,7 +137,7 @@ public class ReorderMediaItemUseCaseTest {
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video3), is(3));
     assertThat(video3.getPosition(), is(3));
 
-    injectedUseCase.moveMediaItem(video1, 1, onReorderMediaListener);
+    injectedUseCase.moveMediaItem(2, 1, onReorderMediaListener);
 
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video0), is(0));
     assertThat(video0.getPosition(), is(0));
@@ -159,7 +153,7 @@ public class ReorderMediaItemUseCaseTest {
   private OnReorderMediaListener getOnReorderMediaListener() {
     return new OnReorderMediaListener() {
       @Override
-      public void onMediaReordered(Media media, int newPosition) {
+      public void onSuccessMediaReordered() {
 
       }
 

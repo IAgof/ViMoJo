@@ -28,17 +28,17 @@ public class ReorderMediaItemUseCase {
         this.projectRepository = projectRepository;
     }
 
-    public void moveMediaItem(Media media, int toPositon, OnReorderMediaListener listener){
+    public void moveMediaItem(int fromPosition, int toPositon, OnReorderMediaListener listener){
       Project project = getCurrentProject();
       Track videoTrack = project.getMediaTrack();
         try {
+          Media media = videoTrack.getItems().get(fromPosition);
           Log.d(TAG, "timeline: reorder media with position " + media.getPosition() + " to: " + toPositon);
-
           videoTrack.moveItemTo(toPositon, media);
           new ReorderProjectVideoListUseCase().reorderVideoList();
           projectRepository.update(project);
           logTrack(videoTrack);
-          listener.onMediaReordered(media, toPositon);
+          listener.onSuccessMediaReordered();
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             illegalItemOnTrack.printStackTrace();
             listener.onErrorReorderingMedia();

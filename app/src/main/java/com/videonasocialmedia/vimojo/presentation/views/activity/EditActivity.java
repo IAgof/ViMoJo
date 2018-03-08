@@ -11,6 +11,7 @@ package com.videonasocialmedia.vimojo.presentation.views.activity;
  */
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -101,7 +102,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     private FloatingActionButton newFab;
 
   private String warningTranscodingFilesMessage;
-
+  private ProgressDialog initProgressDialog;
 
   @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,14 +111,26 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         inflateLinearLayout(R.id.container_navigator,R.layout.edit_activity_layout_button_navigator);
         ButterKnife.bind(this);
         getActivityPresentersComponent().inject(this);
-
         if (savedInstanceState != null) {
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
           }
         setupBottomBar(bottomBar);
         setupFabMenu();
         setupActivityButtons();
+        initBarProgressDialog();
       }
+
+  private void initBarProgressDialog() {
+    initProgressDialog = new ProgressDialog(EditActivity.this, R.style.VideonaDialog);
+    initProgressDialog.setTitle(R.string.dialog_title_export_project);
+    initProgressDialog.setMessage(getString(R.string.dialog_message_export_project));
+    initProgressDialog.setProgressStyle(initProgressDialog.STYLE_HORIZONTAL);
+    initProgressDialog.setIndeterminate(true);
+    initProgressDialog.setProgressNumberFormat(null);
+    initProgressDialog.setProgressPercentFormat(null);
+    initProgressDialog.setCanceledOnTouchOutside(false);
+    initProgressDialog.setCancelable(false);
+  }
 
   private void setupActivityButtons() {
     String currentTheme= editPresenter.getCurrentTheme();
@@ -231,11 +244,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         startActivity(intent);
     }
 
-   @Optional @OnClick(R.id.button_edit_fullscreen)
-    public void onClickEditFullscreen() {
-        // navigateTo(Activity.class)
-    }
-
     @Optional @OnClick(R.id.button_edit_duplicate)
     public void onClickEditDuplicate() {
         if (!editDuplicateButton.isEnabled())
@@ -295,6 +303,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     }
 
     public void setSelectedClip(int position) {
+      Log.d(LOG_TAG, "setSelectedClip");
         currentVideoIndex = position;
         super.seekToClip(position);
         timeLineAdapter.updateSelection(position);
@@ -303,6 +312,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     @Override
     public void onClipLongClicked(int adapterPosition) {
         super.pausePreview();
+        currentVideoIndex = adapterPosition;
     }
 
     @Override
@@ -328,6 +338,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     }
 
     private void setSelectedClipIndex(int selectedIndex) {
+      Log.d(LOG_TAG, "setSelectedClipIndex");
         this.currentVideoIndex = selectedIndex;
         timeLineAdapter.updateSelection(selectedIndex);
     }
@@ -352,12 +363,12 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void showProgressDialog() {
-      super.showProgressDialog();
+
     }
 
     @Override
     public void hideProgressDialog() {
-      super.hideProgressDialog();
+
     }
 
     @Override
@@ -377,19 +388,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     @Override
     public void updateVideoList(final List<Video> retrievedVideoList) {
       runOnUiThread(() -> {
+        Log.d(LOG_TAG, "updateVideoList");
         videoList = retrievedVideoList;
         timeLineAdapter.updateVideoList(retrievedVideoList);
-        timeLineAdapter.updateSelection(currentVideoIndex); // TODO: check this flow and previous updateSelection(0); in updateVideoList
-        videoListRecyclerView.scrollToPosition(currentVideoIndex);
-      });
-    }
-
-    @Override
-    public void updateProject() {
-      runOnUiThread(() -> {
-        reStart();
-        initVideoListRecycler();
-        editPresenter.init();
       });
     }
 
@@ -447,6 +448,22 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   }
 
   @Override
+  public void updatePlayerAndTimelineVideoListChanged() {
+    runOnUiThread(() -> {
+      editPresenter.init();
+      obtainVideos();
+    });
+  }
+
+  @Override
+  public void updateTimeLineClipSelected() {
+    runOnUiThread(() -> {
+        timeLineAdapter.updateSelection(currentVideoIndex);
+        videoListRecyclerView.scrollToPosition(currentVideoIndex);
+    });
+  }
+
+  @Override
   public void showWarningTempFile(ArrayList<Video> failedVideos) {
     timeLineAdapter.setFailedVideos(failedVideos);
     for (Video failedVideo : failedVideos) {
@@ -463,6 +480,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
   @Override
     public void newClipPlayed(int currentClipIndex) {
+        Log.d(LOG_TAG, "newClipPlayed");
         super.newClipPlayed(currentClipIndex);
         currentVideoIndex = currentClipIndex;
         timeLineAdapter.updateSelection(currentClipIndex);

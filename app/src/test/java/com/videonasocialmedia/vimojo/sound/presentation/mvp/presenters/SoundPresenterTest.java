@@ -15,6 +15,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -38,6 +39,7 @@ import static org.mockito.Mockito.verify;
  */
 public class SoundPresenterTest {
   @Mock SoundView mockedSoundView;
+  @Mock ProjectRepository mockedProjectRepository;
   @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
   @Mock VideoListErrorCheckerDelegate mockedVideoListErrorCheckerDelegate;
 
@@ -154,7 +156,7 @@ public class SoundPresenterTest {
 
   @NonNull
   private SoundPresenter getSoundPresenter() {
-    return new SoundPresenter(mockedSoundView, mockedModifyTrackUseCase,
+    return new SoundPresenter(mockedSoundView, mockedProjectRepository, mockedModifyTrackUseCase,
         mockedVideoListErrorCheckerDelegate);
   }
 

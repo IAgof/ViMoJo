@@ -90,17 +90,20 @@ public class GalleryProjectListPresenter {
   }
 
   public void goToEdit(Project project) {
+    project.clear();
     projectRepository.update(project);
     galleryProjectListView.navigateTo(EditActivity.class);
   }
 
   public void goToShare(Project project) {
+    project.clear();
     projectRepository.update(project);
     galleryProjectListView.navigateTo(ShareActivity.class);
   }
 
 
   public void goToDetailProject(Project project) {
+    project.clear();
     projectRepository.update(project);
     galleryProjectListView.navigateTo(DetailProjectActivity.class);
   }
