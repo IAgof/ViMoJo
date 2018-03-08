@@ -359,8 +359,10 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  DetailProjectPresenter provideDetailProjectPresenter(ProjectRepository projectRepository){
-    return new DetailProjectPresenter(activity, (DetailProjectActivity) activity, projectRepository);
+  DetailProjectPresenter provideDetailProjectPresenter(UserEventTracker userEventTracker,
+                                                        ProjectRepository projectRepository){
+    return new DetailProjectPresenter(activity, (DetailProjectActivity) activity,
+        userEventTracker, projectRepository);
   }
 
   @Provides @PerActivity

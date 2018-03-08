@@ -25,6 +25,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
@@ -191,9 +192,9 @@ public class ShareVideoPresenterTest {
         doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
         when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
         assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
-        List<String> productType = new ArrayList<>();
-        productType.add(ProjectInfo.ProductType.RAW_VIDEOS.name());
-        project.getProjectInfo().setProductTypeList(productType);
+        List<String> productTypeList = new ArrayList<>();
+        productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
+        project.getProjectInfo().setProductTypeList(productTypeList);
         assertThat("Project info product type is not empty",
             project.getProjectInfo().getProductTypeList().size(), is(1));
 
@@ -217,9 +218,9 @@ public class ShareVideoPresenterTest {
         doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
         when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
         assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
-        List<String> productType = new ArrayList<>();
-        productType.add(ProjectInfo.ProductType.RAW_VIDEOS.name());
-        project.getProjectInfo().setProductTypeList(productType);
+        List<String> productTypeList = new ArrayList<>();
+        productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
+        project.getProjectInfo().setProductTypeList(productTypeList);
         assertThat("Project info product type is not empty",
             project.getProjectInfo().getProductTypeList().size(), is(1));
 

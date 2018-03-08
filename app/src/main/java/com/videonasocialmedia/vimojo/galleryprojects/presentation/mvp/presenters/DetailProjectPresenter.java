@@ -11,6 +11,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.Deta
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +28,7 @@ public class DetailProjectPresenter {
 
   private final Context context;
   private DetailProjectView detailProjectView;
+  private UserEventTracker userEventTracker;
   private Project currentProject;
   private ProjectRepository projectRepository;
   private HashMap<Integer, Boolean> productTypeCheckedIdsMap;
@@ -42,9 +44,11 @@ public class DetailProjectPresenter {
 
   @Inject
   public DetailProjectPresenter(Context context, DetailProjectView detailProjectView,
+                                UserEventTracker userEventTracker,
                                 ProjectRepository projectRepository) {
     this.context = context;
     this.detailProjectView = detailProjectView;
+    this.userEventTracker = userEventTracker;
     this.projectRepository = projectRepository;
     this.currentProject = loadCurrentProject();
   }
@@ -132,7 +136,7 @@ public class DetailProjectPresenter {
 
   public void setProjectInfo(String projectTitle, String projectDescription,
                              List<String> projectInfoProductTypeSelected) {
-
+    userEventTracker.trackProjectInfo(currentProject);
     projectRepository.setProjectInfo(currentProject, projectTitle, projectDescription,
         getProjectInfoProductTypeSelectedInOrder(projectInfoProductTypeSelected));
   }

@@ -12,6 +12,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.Deta
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.After;
 import org.junit.Before;
@@ -34,6 +35,8 @@ public class DetailProjectPresenterTest {
 
   @Mock ProjectRepository mockedProjectRepo;
   @Mock DetailProjectView mockedDetailProjectView;
+  @Mock UserEventTracker mockedUserEventTracker;
+  @Mock Context mockedContext;
 
   @Before
   public void initDoubles() {
@@ -76,11 +79,13 @@ public class DetailProjectPresenterTest {
 
     verify(mockedProjectRepo).setProjectInfo(project, titleProject, descriptionProject,
         productTypeList);
+    verify(mockedUserEventTracker).trackProjectInfo(project);
   }
 
   @NonNull
   public DetailProjectPresenter getDetailProjectPresenter() {
-    return new DetailProjectPresenter(mockedDetailProjectView, mockedProjectRepo);
+    return new DetailProjectPresenter(mockedContext, mockedDetailProjectView, mockedUserEventTracker,
+        mockedProjectRepo);
   }
 
   private Project getAProject() {
