@@ -34,6 +34,7 @@ import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  */
@@ -43,12 +44,10 @@ public class SoundPresenterTest {
   @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
   @Mock VideoListErrorCheckerDelegate mockedVideoListErrorCheckerDelegate;
 
-  @InjectMocks
-  SoundPresenter injectedSoundPresenter;
-
   @Before
   public void init() {
     MockitoAnnotations.initMocks(this);
+    when(mockedProjectRepository.getCurrentProject()).thenReturn(getAProject());
   }
 
   @After
@@ -58,7 +57,6 @@ public class SoundPresenterTest {
 
   @Test
   public void ifProjectHasVideosCallsBindTrack() throws IllegalItemOnTrack {
-    getAProject().clear();
     Project project = getAProject();
     Video video = new Video("video/path", 1f);
     List<Video> videoList = new ArrayList<>();
@@ -120,7 +118,10 @@ public class SoundPresenterTest {
   public void ifProjectHasNotEnableVoiceOverCallsHideVoiceOverCardView() {
     // TODO:(alvaro.martinez) 27/03/17 How to mock Build.Config values
     boolean FEATURE_TOGGLE_VOICE_OVER = false;
-    injectedSoundPresenter.checkVoiceOverFeatureToggle(FEATURE_TOGGLE_VOICE_OVER);
+    SoundPresenter soundPresenter = getSoundPresenter();
+
+    soundPresenter.checkVoiceOverFeatureToggle(FEATURE_TOGGLE_VOICE_OVER);
+
     verify(mockedSoundView).hideVoiceOverCardView();
   }
 
@@ -128,7 +129,10 @@ public class SoundPresenterTest {
   public void ifProjectHasEnableVoiceOverCallsAddVoiceOverToFabButton() {
     // TODO:(alvaro.martinez) 27/03/17 How to mock Build.Config values
     boolean FEATURE_TOGGLE_VOICE_OVER = true;
-    injectedSoundPresenter.checkVoiceOverFeatureToggle(FEATURE_TOGGLE_VOICE_OVER);
+    SoundPresenter soundPresenter = getSoundPresenter();
+
+    soundPresenter.checkVoiceOverFeatureToggle(FEATURE_TOGGLE_VOICE_OVER);
+
     verify(mockedSoundView).addVoiceOverOptionToFab();
   }
 
@@ -146,8 +150,9 @@ public class SoundPresenterTest {
         .get(INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(new Music("somePath", 1f, 50));
     voiceOverTrack.setPosition(2);
+    SoundPresenter soundPresenter = getSoundPresenter();
 
-    injectedSoundPresenter.init();
+    soundPresenter.init();
 
     verify(mockedSoundView).showTrackVideo();
     verify(mockedSoundView).showTrackAudioFirst();

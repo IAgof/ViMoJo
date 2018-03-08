@@ -21,6 +21,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -55,6 +56,7 @@ public class EditPresenterTest {
 
   @Mock private EditActivityView mockedEditorView;
   @Mock private Context mockedContext;
+  @Mock ProjectRepository mockedProjectRepository;
   @Mock private MixpanelAPI mockedMixpanelApi;
   @Mock private UserEventTracker mockedUserEventTracker;
   @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
@@ -63,11 +65,10 @@ public class EditPresenterTest {
   @Mock ListenableFuture<Video> mockedTranscodingTask;
   @Mock private VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
 
-  @InjectMocks private EditPresenter injectedEditPresenter;
-
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
+    when(mockedProjectRepository.getCurrentProject()).thenReturn(getAProject());
   }
 
   @After
@@ -77,7 +78,8 @@ public class EditPresenterTest {
 
   @Test
   public void constructorSetsUserTracker() {
-    assertThat(injectedEditPresenter.userEventTracker, is(mockedUserEventTracker));
+    EditPresenter editPresenter = getEditPresenter();
+    assertThat(editPresenter.userEventTracker, is(mockedUserEventTracker));
   }
 
   // TODO(jliarte): 27/04/17 FIXME fix this test
@@ -139,7 +141,7 @@ public class EditPresenterTest {
     editPresenter.onRemoveMediaItemFromTrackSuccess();
 
     assertThat(getAProject().getVMComposition().hasVideos(), is(true));
-    verify(mockedEditorView).updateTimeLine();
+    verify(mockedEditorView).updatePlayerAndTimelineVideoListChanged();
   }
 
   @Test
@@ -169,7 +171,7 @@ public class EditPresenterTest {
   @NonNull
   public EditPresenter getEditPresenter() {
     return new EditPresenter(mockedEditorView, mockedContext,
-        mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
+        mockedVideoTranscodingErrorNotifier, mockedUserEventTracker, mockedProjectRepository,
         mockedGetMediaListFromProjectUseCase,
         mockedVideoRemover, mockedMediaItemReorderer);
   }

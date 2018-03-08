@@ -88,6 +88,7 @@ public class EditorPresenterTest {
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
     PowerMockito.mockStatic(Log.class);
+    when(mockedProjectRepository.getCurrentProject()).thenReturn(getAProject());
   }
 
   @After
@@ -205,7 +206,6 @@ public class EditorPresenterTest {
 
   @Test
   public void ifProjectHasNotVideosHideProgressDialogAndGoToRecordOrGalleryScreen() throws IllegalItemOnTrack {
-    getAProject().clear();
     Project project = getAProject();
     Assert.assertThat("Project has not video", project.getVMComposition().hasVideos(), Matchers.is(false));
     doAnswer(new Answer() {
@@ -220,12 +220,10 @@ public class EditorPresenterTest {
     editorPresenter.initPreviewFromProject();
 
     verify(mockedEditorActivityView).hideProgressDialog();
-    verify(mockedEditorActivityView).goToRecordOrGalleryScreen();
   }
 
   @Test
   public void ifProjectHasVideosAndVideoIsMuteCallsSetVideoMute() throws IllegalItemOnTrack {
-    getAProject().clear();
     Project project = getAProject();
     Video video = new Video("video/path", 1f);
     List<Video> videoList = new ArrayList<>();
@@ -245,7 +243,6 @@ public class EditorPresenterTest {
 
   @Test
   public void ifProjectHasVideosAndVideoIsNotMutedCallsSetVideoVolume() throws IllegalItemOnTrack {
-    getAProject().clear();
     Project project = getAProject();
     Video video = new Video("video/path", 1f);
     List<Video> videoList = new ArrayList<>();

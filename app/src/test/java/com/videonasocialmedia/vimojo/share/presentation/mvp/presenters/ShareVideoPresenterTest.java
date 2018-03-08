@@ -96,6 +96,7 @@ public class ShareVideoPresenterTest {
             thenReturn(mockedStorageDir);
         when(Environment.getExternalStorageDirectory()).thenReturn(mockedStorageDir);
         PowerMockito.mockStatic(TextUtils.class);
+        when(mockedProjectRepository.getCurrentProject()).thenReturn(getAProject());
     }
 
     @After
