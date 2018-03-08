@@ -27,7 +27,6 @@ import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 public class UploadNotification {
   public static final String NOTIFICATION_CHANNEL_ID = "notification_channel_upload_videos";
   public static final String NOTIFICATION_GROUP_ID = "video_uploads";
-  public static final int NOTIFICATION_BUNDLE_SUMMARY_ID = 0;
   private static final String LOG_TAG = UploadNotification.class.getSimpleName();
   private final Context context;
   private NotificationManager notificationManager;
@@ -40,22 +39,12 @@ public class UploadNotification {
 
   private NotificationCompat.Builder getBuilder() {
     return new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+            .setGroupSummary(true)
             .setGroup(NOTIFICATION_GROUP_ID);
-  }
-
-  public void showBundleSummary() {
-    Log.d(LOG_TAG, "Showing summary notification");
-    NotificationCompat.Builder notificationBuilder = getBuilder().setGroupSummary(true);
-    notificationBuilder.setSmallIcon(R.drawable.notification_uploading_small);
-    notificationBuilder.setContentTitle("Platform uploads");
-    notificationManager =
-            (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-    notificationManager.notify(NOTIFICATION_BUNDLE_SUMMARY_ID, notificationBuilder.build());
   }
 
   public void startInfiniteProgressNotification(int notificationUploadId, int iconNotificationId,
                                                 String uploadingVideo) {
-    showBundleSummary();
     Log.d(LOG_TAG, "Starting notification id " + notificationUploadId);
     NotificationCompat.Builder notificationBuilder = getBuilder();
     notificationBuilder.setSmallIcon(iconNotificationId);
@@ -81,6 +70,7 @@ public class UploadNotification {
 
   public void errorNetworkNotification(int notificationUploadId) {
     NotificationCompat.Builder notificationBuilder = getBuilder();
+    notificationBuilder.setSmallIcon(errorNotificationId);
     String title = context.getString(R.string.error_uploading_video);
     String message = context.getString(R.string.upload_video_network_error);
     notificationBuilder.setContentTitle(title);

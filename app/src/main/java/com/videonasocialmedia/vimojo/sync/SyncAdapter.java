@@ -63,14 +63,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     ObjectQueue<VideoUpload> queue = uploadToPlatformQueue.getQueue();
     if (!queue.isEmpty()) {
       try {
-        while (uploadToPlatformQueue.getQueue().iterator().hasNext()) {
+        // Process nextQueueItem if has next element and network criteria is true. Needed both, prevent open failed: EMFILE (Too many open files) if only check has next element.
+        boolean isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
+        while (uploadToPlatformQueue.getQueue().iterator().hasNext() &&
+            isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
           Log.d(LOG_TAG, "launchingQueue");
-          boolean isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
-          if (isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
-            // TODO(jliarte): 5/03/18 will stuck on item that not meet network criteria, maybe
-            // reimplement this loop
-            uploadToPlatformQueue.processNextQueueItem();
-          }
+          uploadToPlatformQueue.processNextQueueItem();
         }
       } catch (IOException ioException) {
         Log.d(LOG_TAG, ioException.getMessage());
