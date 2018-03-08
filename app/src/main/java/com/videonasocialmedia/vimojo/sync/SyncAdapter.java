@@ -10,6 +10,14 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+import com.squareup.tape2.ObjectQueue;
+import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
+
+import java.io.IOException;
+
+
 /**
  * Created by alvaro on 31/1/18.
  */
@@ -28,41 +36,58 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
       SYNC_INTERVAL_IN_MINUTES *
           SECONDS_PER_MINUTE;
   private Context context;
-  private UploadToPlatformQueue uploadToPlatformQueue;
   private boolean isWifiConnected;
-  private boolean isMobileNetworConnected;
+  private boolean isMobileNetworkConnected;
+  private UploadToPlatformQueue uploadToPlatformQueue;
 
   /**
    * Set up the sync adapter
    */
-  public SyncAdapter(Context context, boolean autoInitialize) {
+  public SyncAdapter(Context context, boolean autoInitialize,
+                     UploadToPlatformQueue uploadToPlatformQueue) {
     super(context, autoInitialize);
         /*
          * If your app uses a content resolver, get an instance of it
          * from the incoming Context
          */
     this.context = context;
-    uploadToPlatformQueue = new UploadToPlatformQueue(context);
+    this.uploadToPlatformQueue = uploadToPlatformQueue;
+    Log.d(LOG_TAG, "created SyncAdapter...");
   }
+
 
   @Override
   public void onPerformSync(Account account, Bundle bundle, String s,
                             ContentProviderClient contentProviderClient, SyncResult syncResult) {
     Log.d(LOG_TAG, "onPerformSync");
-    if (!uploadToPlatformQueue.getQueue().isEmpty()) {
-      uploadToPlatformQueue.startOrUpdateNotification();
-      while (uploadToPlatformQueue.getQueue().iterator().hasNext() && isThereNetworkConnected()) {
-        Log.d(LOG_TAG, "launchingQueue");
-        uploadToPlatformQueue.processNextQueueItem();
+    ObjectQueue<VideoUpload> queue = uploadToPlatformQueue.getQueue();
+    if (!queue.isEmpty()) {
+      try {
+        // Process nextQueueItem if has next element and network criteria is true. Needed both, prevent open failed: EMFILE (Too many open files) if only check has next element.
+        boolean isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
+        while (uploadToPlatformQueue.getQueue().iterator().hasNext() &&
+            isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
+          Log.d(LOG_TAG, "launchingQueue");
+          uploadToPlatformQueue.processNextQueueItem();
+        }
+      } catch (IOException ioException) {
+        Log.d(LOG_TAG, ioException.getMessage());
+        if (BuildConfig.DEBUG) {
+          // TODO(jliarte): 5/03/18 I'm sometimes getting an error here, even with a non empty queue
+          // file (maybe it gets corrupted somehow?) not able to reproduce properly. deeply
+          // investigate how to deal with it
+          ioException.printStackTrace();
+        }
+        Crashlytics.log("Error getting queue element, isAcceptedUploadMobileNetwork");
+        Crashlytics.logException(ioException);
       }
     }
 
   }
 
-  private boolean isThereNetworkConnected() {
+  private boolean isThereNetworkConnected(boolean isAcceptedUploadMobileNetwork) {
     checkNetworksAvailable();
-    // TODO: 16/2/18 Persist and manage mobile network upload video user permission
-    return isWifiConnected;
+    return isWifiConnected || (isMobileNetworkConnected && isAcceptedUploadMobileNetwork);
   }
 
   private void checkNetworksAvailable() {
@@ -71,7 +96,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
     NetworkInfo mobileNetwork = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
     isWifiConnected = wifi.isConnected();
-    isMobileNetworConnected = mobileNetwork.isConnected();
+    isMobileNetworkConnected = mobileNetwork.isConnected();
   }
 
 }

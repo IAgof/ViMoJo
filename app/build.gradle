@@ -69,8 +69,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 100 // 20180306
-            versionName "0.14.2" // 20180306
+            versionCode 101 // 20180306
+            versionName "0.14.3" // 20180306
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "api_base_url", "https://"
@@ -157,8 +157,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 51 // 20180306
-            versionName "0.14.2.fThomsonFoundation" // 20180306
+            versionCode 52 // 20180306
+            versionName "0.14.3.fThomsonFoundation" // 20180306
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "api_base_url", "https://"
@@ -202,8 +202,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 18 // 20180306
-            versionName "0.14.2.fMarketForNews" // 20180306
+            versionCode 19 // 20180306
+            versionName "0.14.3.fMarketForNews" // 20180306
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "api_base_url", "https://"
@@ -225,8 +225,8 @@ android {
 
         nbc {
             applicationId "com.videonasocialmedia.vimojo.nbc"
-            versionCode 1 // 20180306
-            versionName "0.14.2.fComcastNbc" // 20180306
+            versionCode 2 // 20180306
+            versionName "0.14.3.fComcastNbc" // 20180306
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo NBC"
             resValue "string", "api_base_url", "https://"

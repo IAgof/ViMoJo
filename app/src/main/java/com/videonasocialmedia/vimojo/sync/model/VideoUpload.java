@@ -7,30 +7,35 @@
 
 package com.videonasocialmedia.vimojo.sync.model;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
-import java.util.List;
-
 /**
  * Model for enqueue video uploads to vimojo platform.
  * AuthToken, mediaPath, description info needed for video api service
  * NumTries, to manage a politic of maximum number of tries to upload a video.
  */
 public class VideoUpload {
+
+  private final int id;
   private String mediaPath;
   private String title;
   private String productTypeList;
   private String description;
   private int numTries;
+  private boolean isAcceptedUploadMobileNetwork;
   public final static int MAX_NUM_TRIES_UPLOAD = 3;
 
-  public VideoUpload(String mediaPath, String title, String description,
-                     String productTypeList) {
+  public VideoUpload(int id, String mediaPath, String title, String description,
+                     String productTypeList, boolean isAcceptedUploadMobileNetwork) {
+    this.id = id;
     this.mediaPath = mediaPath;
     this.title = title;
     this.description = description;
     this.productTypeList = productTypeList;
     this.numTries = 0;
+    this.isAcceptedUploadMobileNetwork = isAcceptedUploadMobileNetwork;
+  }
+
+  public int getId() {
+    return id;
   }
 
   public String getMediaPath() {
@@ -55,5 +60,9 @@ public class VideoUpload {
 
   public void incrementNumTries() {
     numTries++;
+  }
+
+  public boolean isAcceptedUploadMobileNetwork() {
+    return isAcceptedUploadMobileNetwork;
   }
 }

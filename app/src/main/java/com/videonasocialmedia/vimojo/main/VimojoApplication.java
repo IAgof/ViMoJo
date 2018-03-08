@@ -29,6 +29,7 @@ import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
+import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformQueueModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
 
 import io.fabric.sdk.android.Fabric;
@@ -79,6 +80,7 @@ public class VimojoApplication extends Application {
                 .applicationModule(getApplicationModule())
                 .dataRepositoriesModule(getDataRepositoriesModule())
                 .trackerModule(getTrackerModule())
+                .uploadToPlatformQueueModule(getUploadToPlatformModule())
 //                .activityPresentersModule(getActivityPresentersModule())
                 .build();
     }
@@ -93,6 +95,10 @@ public class VimojoApplication extends Application {
 
     private TrackerModule getTrackerModule() {
         return new TrackerModule(this);
+    }
+
+    private UploadToPlatformQueueModule getUploadToPlatformModule() {
+        return new UploadToPlatformQueueModule(this);
     }
 
     private ActivityPresentersModule getActivityPresentersModule() {
