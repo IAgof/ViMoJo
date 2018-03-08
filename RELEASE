@@ -1,2 +1,3 @@
-v0.14.1
-- Added new flavor nbc.
+v0.14.2
+- Improved music gallery, onclick selection to all card view.
+- Update string, dialog_message_clean_project.
