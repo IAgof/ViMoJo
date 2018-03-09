@@ -9,6 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -169,9 +170,9 @@ public class ProjectRealmRepositoryTest {
     String title = "title";
     String description = "description";
     List<String> productTypeList = new ArrayList<>();
-    productTypeList.add(ProjectInfo.ProductType.DIRECT_FAILURE.name());
-    productTypeList.add(ProjectInfo.ProductType.RAW_VIDEOS.name());
-    productTypeList.add(ProjectInfo.ProductType.SPOOLERS.name());
+    productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
+    productTypeList.add(ProductTypeProvider.Types.B_ROLL.name());
+    productTypeList.add(ProductTypeProvider.Types.NAT_VO.name());
 
     repo.setProjectInfo(project, title, description, productTypeList);
 

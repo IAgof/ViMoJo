@@ -9,6 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -354,6 +355,29 @@ public class UserEventTrackerTest {
                 is(videonaProject.numberOfClips()));
         assertThat(eventProperties.getInt(AnalyticsConstants.VIDEO_LENGTH),
                 is(videonaProject.getDuration()));
+    }
+
+    @Test
+    public void trackProjectInfoCallsTrackWithEventNameAndProperties() throws JSONException {
+        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
+            .getInstance(mockedMixpanelAPI));
+        Project project = getAProject();
+        String title = "title";
+        String description = "description";
+        List<String> productTypes = new ArrayList<>();
+        productTypes.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
+        ProjectInfo projectInfo = new ProjectInfo(title, description, productTypes);
+        project.setProjectInfo(projectInfo);
+
+        userEventTracker.trackProjectInfo(project);
+        Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
+        UserEventTracker.Event trackedEvent = eventCaptor.getValue();
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.PROJECT_ACTION_TITLE),
+            is(title));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.PROJECT_ACTION_DESCRIPTION),
+            is(description));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.PROJECT_ACTION_PRODUCT_TYPE),
+            is(productTypes.get(0)));
     }
 
     public Project getAProject() {

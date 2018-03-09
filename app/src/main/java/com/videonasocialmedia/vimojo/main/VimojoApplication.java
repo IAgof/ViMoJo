@@ -145,7 +145,7 @@ public class VimojoApplication extends Application {
         // create your Realm configuration
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
                 .name("vimojoDB")
-                .schemaVersion(11) //v0.8.2 8-2-2018 - v0.7.7 13-12-2017
+                .schemaVersion(12) //v0.14.4 8-3-2018 - v0.8.2 8-2-2018
                 .migration(new VimojoMigration())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);

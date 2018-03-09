@@ -144,11 +144,11 @@
     <string name="dialog_project_edit_title_accept">Yes</string>
     <string name="dialog_project_edit_title_cancel">No</string>
 
-    <string name="detail_project_product_type_direct_failure">Direct failure</string>
-    <string name="detail_project_product_type_raw_videos">Raw videos</string>
-    <string name="detail_project_product_type_spoolers">Spoolers</string>
-    <string name="detail_project_product_type_total">Total</string>
-    <string name="detail_project_product_type_graphic">Graphic</string>
+    <string name="detail_project_product_type_live_on_tape">Live on tape</string>
+    <string name="detail_project_product_type_b_roll">B-roll</string>
+    <string name="detail_project_product_type_nat_vo">Nat/VO</string>
+    <string name="detail_project_product_type_interview">Interview</string>
+    <string name="detail_project_product_type_graphic">Graphics</string>
     <string name="detail_project_product_type_piece">Piece</string>
 
     <!--VoiceOverRecordRecordActivity-->

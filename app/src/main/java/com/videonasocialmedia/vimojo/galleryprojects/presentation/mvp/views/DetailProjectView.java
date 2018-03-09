@@ -27,8 +27,11 @@ public interface DetailProjectView {
 
     void showDescriptionProject(String description);
 
-    void showProductTypeMultipleDialog(String[] productTypesTitles,
-                                       boolean[] checkedProductTypes);
+    void showProductTypeMultipleDialog(boolean[] checkedProductTypes, List<String> productTypesTitles);
 
-  void showProductTypeSelected(List<String> productTypeList, String[] productTypesTitles);
+    void showProductTypeSelected(List<String> productTypeList);
+
+    void addSelectedProductType(String productTypeName);
+
+    void removeSelectedProductType(String productTypeName);
 }
