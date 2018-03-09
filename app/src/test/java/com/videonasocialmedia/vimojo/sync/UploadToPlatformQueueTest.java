@@ -218,7 +218,7 @@ public class UploadToPlatformQueueTest {
 
     uploadToPlatformQueue.processNextQueueItem();
 
-    verify(mockedUploadNotification).errorUnauthorizationUploadingVideos(videoUpload.getId());
+    verify(mockedUploadNotification).errorUnauthorizedUploadingVideos(videoUpload.getId());
   }
 
   @Test

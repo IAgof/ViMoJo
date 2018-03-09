@@ -97,7 +97,7 @@ public class UploadToPlatformQueue {
       Crashlytics.logException(vimojoApiException);
       switch (vimojoApiException.getApiErrorCode()) {
         case VimojoApiException.UNAUTHORIZED:
-          uploadNotification.errorUnauthorizationUploadingVideos(notificationUploadId);
+          uploadNotification.errorUnauthorizedUploadingVideos(notificationUploadId);
           break;
         case VimojoApiException.NETWORK_ERROR:
           uploadNotification.errorNetworkNotification(notificationUploadId);
