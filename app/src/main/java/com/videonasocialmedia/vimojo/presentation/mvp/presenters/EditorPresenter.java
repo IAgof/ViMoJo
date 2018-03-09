@@ -128,7 +128,6 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     retrieveMusic();
     retrieveTransitions();
     retrieveVolumeOnTracks();
-    checkFeaturesAvailable();
   }
 
   public void onPause() {
@@ -137,7 +136,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  private void checkFeaturesAvailable() {
+  public void checkFeaturesAvailable() {
     checkWatermark();
     checkVimojoStore();
   }
@@ -189,7 +188,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   public void obtainVideos() {
-    editorActivityView.showProgressDialog();
+   // editorActivityView.showProgressDialog();
     getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
       @Override
       public void onVideosRetrieved(List<Video> videosRetrieved) {
@@ -199,7 +198,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
         videonaPlayerView.bindVideoList(videoCopy);
         //Relaunch videos only if Project has videos. Fix problem removing all videos from Edit screen.
         newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
-        editorActivityView.hideProgressDialog();
+       // editorActivityView.hideProgressDialog();
       }
 
       @Override

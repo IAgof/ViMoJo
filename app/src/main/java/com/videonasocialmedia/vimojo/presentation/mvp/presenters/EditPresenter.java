@@ -187,7 +187,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 editActivityView.updateVideoList(videoCopy);
                 videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
                     videoList, videoTranscodingErrorNotifier);
-                editActivityView.updateTimeLineClipSelected();
                 editActivityView.hideProgressDialog();
             }
 

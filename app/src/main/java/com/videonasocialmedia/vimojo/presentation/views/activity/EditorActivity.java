@@ -138,7 +138,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
     restoreState(savedInstanceState);
-    setUpAndCheckHeaderViewCurrentProject();
     createProgressDialog();
   }
 
@@ -198,17 +197,23 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
+  protected void onStart() {
+    super.onStart();
+    videonaPlayer.setListener(this);
+    videonaPlayer.onShown(this);
+    initVideonaPlayer();
+  }
+
+  @Override
   protected void onResume() {
     super.onResume();
     if (navigationView != null) {
       setupDrawerContent(navigationView);
       setUpAndCheckHeaderViewCurrentProject();
     }
-    videonaPlayer.setListener(this);
-    videonaPlayer.onShown(this);
     setupSwitchThemeAppIntoDrawer();
     editorPresenter.updateTheme();
-    initVideonaPlayer();
+    editorPresenter.checkFeaturesAvailable();
   }
 
   @Override

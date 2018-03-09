@@ -43,6 +43,4 @@ public interface EditActivityView {
   void goToRecordOrGallery();
 
   void updatePlayerAndTimelineVideoListChanged();
-
-  void updateTimeLineClipSelected();
 }

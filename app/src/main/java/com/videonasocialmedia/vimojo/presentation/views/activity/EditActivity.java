@@ -193,7 +193,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     @Override
     protected void onStart() {
         super.onStart();
-        initVideoListRecycler();
+        editPresenter.init();
     }
 
     @Override
@@ -207,7 +207,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
             }
         }
         bottomBar.selectTabWithId(R.id.tab_editactivity);
-        editPresenter.init();
     }
 
     @Override
@@ -389,8 +388,11 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     public void updateVideoList(final List<Video> retrievedVideoList) {
       runOnUiThread(() -> {
         Log.d(LOG_TAG, "updateVideoList");
+        initVideoListRecycler();
         videoList = retrievedVideoList;
         timeLineAdapter.updateVideoList(retrievedVideoList);
+        timeLineAdapter.updateSelection(currentVideoIndex);
+        videoListRecyclerView.scrollToPosition(currentVideoIndex);
       });
     }
 
@@ -452,14 +454,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     runOnUiThread(() -> {
       editPresenter.init();
       obtainVideos();
-    });
-  }
-
-  @Override
-  public void updateTimeLineClipSelected() {
-    runOnUiThread(() -> {
-        timeLineAdapter.updateSelection(currentVideoIndex);
-        videoListRecyclerView.scrollToPosition(currentVideoIndex);
     });
   }
 

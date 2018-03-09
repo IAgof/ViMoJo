@@ -63,9 +63,7 @@ public class VideoTimeLineTouchHelperCallback extends ItemTouchHelper.Callback {
     if (viewHolder instanceof ItemTouchHelperViewHolder) {
       ItemTouchHelperViewHolder itemViewHolder =
               (ItemTouchHelperViewHolder) viewHolder;
-      if (!recyclerView.isComputingLayout()) {
-        itemViewHolder.onItemClear();
-      }
+      itemViewHolder.onItemClear();
       timeLineAdapter.finishMovement(viewHolder.getAdapterPosition());
     }
   }
