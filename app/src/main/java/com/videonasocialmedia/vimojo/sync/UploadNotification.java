@@ -53,8 +53,7 @@ public class UploadNotification {
   }
 
   private NotificationManager getNotificationManager() {
-    return (NotificationManager) context.
-            getSystemService(Context.NOTIFICATION_SERVICE);
+    return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
   }
 
   private void showBundleSummary() {
