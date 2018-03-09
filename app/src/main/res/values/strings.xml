@@ -39,6 +39,7 @@
     <string name="fileError">Error sending file to FTP server.File not found</string>
     <string name="credentialFTPNull">FTP connection data not set. Please configure FTP in settings.</string>
     <string name="upload_to_server">Send to platform</string>
+    <string name="upload_bundle_summary_title">Platform uploads</string>
     <string name="uploading_video">Uploading video</string>
     <string name="error_uploading_video">Error uploading video</string>
     <string name="upload_video_completed">Uploaded to platform</string>

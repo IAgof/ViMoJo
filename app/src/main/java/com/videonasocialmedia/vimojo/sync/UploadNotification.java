@@ -13,6 +13,7 @@ import android.content.Context;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
@@ -42,7 +43,7 @@ public class UploadNotification {
     NotificationCompat.Builder builder = new NotificationCompat
             .Builder(context, NOTIFICATION_CHANNEL_ID).setGroup(NOTIFICATION_GROUP_ID);
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-      String name = "Vimojo";
+      String name = BuildConfig.FLAVOR;
       int importance = NotificationManager.IMPORTANCE_DEFAULT;
       NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
               name, importance);
@@ -56,21 +57,21 @@ public class UploadNotification {
     return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
   }
 
-  private void showBundleSummary() {
+  private void showBundleSummary(int smallIconNotificationId) {
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
       Log.d(LOG_TAG, "Showing summary notification");
       NotificationManager notificationManager = getNotificationManager();
       NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager)
               .setGroupSummary(true); // (jliarte): 9/03/18 setGroupSummary just for the parent notification in bundled notifications!
-      notificationBuilder.setSmallIcon(R.drawable.notification_uploading_small);
-      notificationBuilder.setContentTitle("Platform uploads");
+      notificationBuilder.setSmallIcon(smallIconNotificationId);
+      notificationBuilder.setContentTitle(context.getString(R.string.upload_bundle_summary_title));
       notificationManager.notify(NOTIFICATION_BUNDLE_SUMMARY_ID, notificationBuilder.build());
     }
   }
 
   public void startInfiniteProgressNotification(int notificationUploadId, int iconNotificationId,
                                                 String uploadingVideo) {
-    showBundleSummary();
+    showBundleSummary(R.drawable.notification_uploading_small);
     Log.d(LOG_TAG, "Starting notification id " + notificationUploadId);
     NotificationManager notificationManager = getNotificationManager();
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
@@ -83,9 +84,12 @@ public class UploadNotification {
   public void finishNotification(int notificationUploadId, String result, String videoTitle,
                                  boolean success) {
     Log.d(LOG_TAG, "Finishing notification id " + notificationUploadId);
+
+    int smallIconNotificationId = success ? successNotificationId : errorNotificationId;
+    showBundleSummary(smallIconNotificationId);
     NotificationManager notificationManager = getNotificationManager();
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
-    notificationBuilder.setSmallIcon(success ? successNotificationId : errorNotificationId);
+    notificationBuilder.setSmallIcon(smallIconNotificationId);
     notificationBuilder.setContentTitle(context.getString(R.string.upload_video_completed));
     String message = result + " " + videoTitle;
     notificationBuilder.setContentText(message);
@@ -95,6 +99,7 @@ public class UploadNotification {
   }
 
   public void errorNetworkNotification(int notificationUploadId) {
+    showBundleSummary(R.drawable.notification_error_small);
     NotificationManager notificationManager = getNotificationManager();
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
     notificationBuilder.setSmallIcon(R.drawable.notification_error_small);
@@ -112,6 +117,7 @@ public class UploadNotification {
   }
 
   public void errorUnauthorizedUploadingVideos(int notificationUploadId) {
+    showBundleSummary(R.drawable.notification_error_small);
     NotificationManager notificationManager = getNotificationManager();
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
     notificationBuilder.setSmallIcon(errorNotificationId);
@@ -124,6 +130,7 @@ public class UploadNotification {
   }
 
   public void errorFileNotFound(int notificationUploadId, VideoUpload videoUpload) {
+    showBundleSummary(R.drawable.notification_error_small);
     NotificationManager notificationManager = getNotificationManager();
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
     notificationBuilder.setSmallIcon(errorNotificationId);
