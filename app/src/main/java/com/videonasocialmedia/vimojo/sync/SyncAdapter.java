@@ -16,6 +16,7 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -63,12 +64,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     ObjectQueue<VideoUpload> queue = uploadToPlatformQueue.getQueue();
     if (!queue.isEmpty()) {
       try {
-        // Process nextQueueItem if has next element and network criteria is true. Needed both, prevent open failed: EMFILE (Too many open files) if only check has next element.
-        boolean isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
-        while (uploadToPlatformQueue.getQueue().iterator().hasNext() &&
-            isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
+        while (uploadToPlatformQueue.getQueue().iterator().hasNext()) {
           Log.d(LOG_TAG, "launchingQueue");
-          uploadToPlatformQueue.processNextQueueItem();
+          boolean isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
+          if (isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
+            // TODO(jliarte): 5/03/18 will stuck on item that not meet network criteria, maybe
+            // reimplement this loop
+            uploadToPlatformQueue.processNextQueueItem();
+          }
+          sleep(); // TODO(jliarte): 9/03/18 when looping while, waiting for network, high CPU usage
         }
       } catch (IOException ioException) {
         Log.d(LOG_TAG, ioException.getMessage());
@@ -83,6 +87,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
       }
     }
 
+  }
+
+  private void sleep() {
+    try {
+      TimeUnit.SECONDS.sleep(10);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
   }
 
   private boolean isThereNetworkConnected(boolean isAcceptedUploadMobileNetwork) {
