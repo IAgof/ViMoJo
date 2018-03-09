@@ -31,7 +31,7 @@ public interface DetailProjectView {
 
     void showProductTypeSelected(List<String> productTypeList);
 
-    void addProductTypeList(String productTypeName);
+    void addSelectedProductType(String productTypeName);
 
-    void removeProductTypeList(String productTypeName);
+    void removeSelectedProductType(String productTypeName);
 }

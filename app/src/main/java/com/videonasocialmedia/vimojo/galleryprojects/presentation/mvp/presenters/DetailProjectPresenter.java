@@ -163,13 +163,13 @@ public class DetailProjectPresenter {
   public void addProductTypeSelected(int position) {
     ProductType productType = getProductTypeFromPosition(position);
     productTypeCheckedIdsMap.put(productType.getPosition(), true);
-    detailProjectView.addProductTypeList(productType.getName());
+    detailProjectView.addSelectedProductType(productType.getName());
   }
 
   public void removeProductTypeSelected(int position) {
     ProductType productType = getProductTypeFromPosition(position);
     productTypeCheckedIdsMap.put(productType.getPosition(), false);
-    detailProjectView.removeProductTypeList(productType.getName());
+    detailProjectView.removeSelectedProductType(productType.getName());
   }
 
   public void onClickProductTypes() {

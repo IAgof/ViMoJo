@@ -214,12 +214,12 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   }
 
   @Override
-  public void addProductTypeList(String productTypeName) {
+  public void addSelectedProductType(String productTypeName) {
     productTypeListSelected.add(productTypeName);
   }
 
   @Override
-  public void removeProductTypeList(String productTypeName) {
+  public void removeSelectedProductType(String productTypeName) {
     productTypeListSelected.remove(productTypeName);
   }
 
