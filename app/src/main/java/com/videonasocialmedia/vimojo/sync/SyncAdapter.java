@@ -16,6 +16,7 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -71,6 +72,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             // reimplement this loop
             uploadToPlatformQueue.processNextQueueItem();
           }
+          sleep(); // TODO(jliarte): 9/03/18 when looping while, waiting for network, high CPU usage
         }
       } catch (IOException ioException) {
         Log.d(LOG_TAG, ioException.getMessage());
@@ -85,6 +87,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
       }
     }
 
+  }
+
+  private void sleep() {
+    try {
+      TimeUnit.SECONDS.sleep(10);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
   }
 
   private boolean isThereNetworkConnected(boolean isAcceptedUploadMobileNetwork) {
