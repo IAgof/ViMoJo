@@ -196,7 +196,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
     @Optional @OnClick(R.id.fab_share_room)
     public void showMoreNetworks() {
-      super.pausePreview();
       presenter.onMoreSocialNetworkClicked();
     }
 
@@ -212,13 +211,11 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
     @Override
     public void onSocialNetworkClicked(SocialNetwork socialNetwork) {
-      super.pausePreview();
       presenter.onSocialNetworkClicked(socialNetwork);
     }
 
   @Override
   public void onVimojoPlatformClicked() {
-    super.pausePreview();
     checkNetworksAvailable();
     presenter.onVimojoPlatformClicked(isWifiConnected, acceptUploadVideoMobileNetwork,
         isMobileNetworkConnected);
@@ -309,6 +306,11 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     builder.setCancelable(false).setNeutralButton("OK", dialogClickListener).show();
   }
 
+  @Override
+  public void pauseVideoPlayerPreview() {
+    pausePreview();
+  }
+
   private void navigateToProjectDetails() {
     Intent intent = new Intent(this, DetailProjectActivity.class);
     startActivityForResult(intent, REQUEST_FILL_PROJECT_DETAILS);
@@ -316,7 +318,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void onFtpClicked(FtpNetwork ftp) {
-      super.pausePreview();
       presenter.onFtpClicked(ftp);
   }
 

@@ -188,7 +188,6 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   public void obtainVideos() {
-   // editorActivityView.showProgressDialog();
     getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
       @Override
       public void onVideosRetrieved(List<Video> videosRetrieved) {
@@ -198,12 +197,10 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
         videonaPlayerView.bindVideoList(videoCopy);
         //Relaunch videos only if Project has videos. Fix problem removing all videos from Edit screen.
         newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
-       // editorActivityView.hideProgressDialog();
       }
 
       @Override
       public void onNoVideosRetrieved() {
-        editorActivityView.hideProgressDialog();
       }
     });
   }

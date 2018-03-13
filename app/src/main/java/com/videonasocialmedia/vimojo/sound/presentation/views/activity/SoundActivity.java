@@ -166,17 +166,17 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @Override
   public void setVideoVolume(float volume) {
-    super.setVideoVolume(volume);
+    setVideoVolume(volume);
   }
 
   @Override
   public void setVoiceOverVolume(float volume) {
-    super.setVoiceOverVolume(volume);
+    setVoiceOverVolume(volume);
   }
 
   @Override
   public void setMusicVolume(float volume) {
-    super.setMusicVolume(volume);
+    setMusicVolume(volume);
   }
 
   @Override
@@ -272,7 +272,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @Override
   public void onClickMediaClip(int position, int trackId) {
-    super.seekToClip(position);
+    seekToClip(position);
     presenter.updateClipPlayed(trackId);
     // TODO:(alvaro.martinez) 31/05/17 If Vimojo support more than one music or voice over, update and calculate correct position
     switch (trackId){

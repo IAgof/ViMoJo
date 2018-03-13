@@ -337,6 +337,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     public void onSocialNetworkClicked(SocialNetwork socialNetwork) {
+        shareVideoViewReference.get().pauseVideoPlayerPreview();
         socialNetworkSelected = socialNetwork;
         exportOrProcessNetwork(OptionsToShareList.typeSocialNetwork);
     }
@@ -347,15 +348,18 @@ public class ShareVideoPresenter extends VimojoPresenter {
         this.isWifiConnected = isWifiConnected;
         this.acceptUploadVideoMobileNetwork = acceptUploadVideoMobileNetwork;
         this.isMobileNetworkConnected = isMobileNetworkConnected;
+        shareVideoViewReference.get().pauseVideoPlayerPreview();
         exportOrProcessNetwork(OptionsToShareList.typeVimojoNetwork);
     }
 
     public void onFtpClicked(FtpNetwork ftp) {
+        shareVideoViewReference.get().pauseVideoPlayerPreview();
         ftpNetworkSelected = ftp;
         exportOrProcessNetwork(OptionsToShareList.typeFtp);
     }
 
     public void onMoreSocialNetworkClicked() {
+        shareVideoViewReference.get().pauseVideoPlayerPreview();
         exportOrProcessNetwork(OptionsToShareList.typeMoreSocialNetwork);
     }
 
@@ -405,4 +409,5 @@ public class ShareVideoPresenter extends VimojoPresenter {
     public SocialNetwork getSocialNetworkSelected() {
         return socialNetworkSelected;
     }
+
 }

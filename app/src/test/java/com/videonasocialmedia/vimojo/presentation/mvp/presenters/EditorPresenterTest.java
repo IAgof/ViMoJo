@@ -201,25 +201,6 @@ public class EditorPresenterTest {
 
     verify(mockedVideonaPlayerView).bindVideoList(any());
     verify(mockedNewClipImporter).relaunchUnfinishedAdaptTasks(project);
-    verify(mockedEditorActivityView).hideProgressDialog();
-  }
-
-  @Test
-  public void ifProjectHasNotVideosHideProgressDialogAndGoToRecordOrGalleryScreen() throws IllegalItemOnTrack {
-    Project project = getAProject();
-    Assert.assertThat("Project has not video", project.getVMComposition().hasVideos(), Matchers.is(false));
-    doAnswer(new Answer() {
-      @Override
-      public Object answer(InvocationOnMock invocation) throws Throwable {
-        ((OnVideosRetrieved)invocation.getArguments()[0]).onNoVideosRetrieved();
-        return null;
-      }
-    }).when(mockedGetMediaListFromProjectUseCase).getMediaListFromProject(any(OnVideosRetrieved.class));
-    EditorPresenter editorPresenter = getEditorPresenter();
-
-    editorPresenter.initPreviewFromProject();
-
-    verify(mockedEditorActivityView).hideProgressDialog();
   }
 
   @Test

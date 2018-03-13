@@ -231,8 +231,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         videoListRecyclerView.setLayoutManager(layoutManager);
         timeLineAdapter = new VideoTimeLineAdapter(this);
         videoListRecyclerView.setAdapter(timeLineAdapter);
-
-      VideoTimeLineTouchHelperCallback callback =
+        VideoTimeLineTouchHelperCallback callback =
               new VideoTimeLineTouchHelperCallback(timeLineAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(videoListRecyclerView);
@@ -304,13 +303,13 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     public void setSelectedClip(int position) {
       Log.d(LOG_TAG, "setSelectedClip");
         currentVideoIndex = position;
-        super.seekToClip(position);
+        seekToClip(position);
         timeLineAdapter.updateSelection(position);
     }
 
     @Override
     public void onClipLongClicked(int adapterPosition) {
-        super.pausePreview();
+        pausePreview();
         currentVideoIndex = adapterPosition;
     }
 
@@ -350,8 +349,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void onClipReordered(int newPosition) {
-        super.updatePreviewTimeLists();
-        super.seekToClip(currentVideoIndex);
+        updatePreviewTimeLists();
+        seekToClip(currentVideoIndex);
     }
 
     @Override
@@ -475,7 +474,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Override
     public void newClipPlayed(int currentClipIndex) {
         Log.d(LOG_TAG, "newClipPlayed");
-        super.newClipPlayed(currentClipIndex);
+        newClipPlayed(currentClipIndex);
         currentVideoIndex = currentClipIndex;
         timeLineAdapter.updateSelection(currentClipIndex);
         videoListRecyclerView.scrollToPosition(currentClipIndex);

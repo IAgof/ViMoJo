@@ -42,4 +42,6 @@ public interface ShareVideoView {
   void shareVideo(String videoPath, SocialNetwork socialNetworkSelected);
 
   void showDialogNotNetworkUploadVideoOnConnection();
+
+  void pauseVideoPlayerPreview();
 }
