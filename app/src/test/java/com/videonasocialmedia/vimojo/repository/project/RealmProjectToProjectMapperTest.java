@@ -15,6 +15,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.repository.music.RealmMusic;
 import com.videonasocialmedia.vimojo.repository.track.RealmTrack;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
@@ -33,6 +34,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.RealmList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -176,20 +179,21 @@ public class RealmProjectToProjectMapperTest {
     RealmProject realmProject = getARealmProject();
     realmProject.title = "title";
     realmProject.description = "description";
-    realmProject.directFalseTypeSelected = true;
-    realmProject.rawVideoTypeSelected = true;
-    realmProject.spoolTypeSelected = true;
+    realmProject.productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
+    realmProject.productTypeList.add(ProductTypeProvider.Types.B_ROLL.name());
+    realmProject.productTypeList.add(ProductTypeProvider.Types.NAT_VO.name());
     RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
-    List<String> productTypleList = new ArrayList<>();
-    productTypleList.add(ProjectInfo.ProductType.DIRECT_FAILURE.name());
-    productTypleList.add(ProjectInfo.ProductType.RAW_VIDEOS.name());
-    productTypleList.add(ProjectInfo.ProductType.SPOOLERS.name());
+
 
     Project project = mapper.map(realmProject);
 
     assertThat(project.getProjectInfo().getTitle(), is("title"));
     assertThat(project.getProjectInfo().getDescription(), is("description"));
-    assertThat(project.getProjectInfo().getProductTypeList(), is(productTypleList));
+    List<String> productTypeList = new ArrayList<>();
+    productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
+    productTypeList.add(ProductTypeProvider.Types.B_ROLL.name());
+    productTypeList.add(ProductTypeProvider.Types.NAT_VO.name());
+    assertThat(project.getProjectInfo().getProductTypeList(), is(productTypeList));
   }
 
   @Test

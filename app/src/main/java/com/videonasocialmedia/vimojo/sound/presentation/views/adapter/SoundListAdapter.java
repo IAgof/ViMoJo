@@ -89,7 +89,7 @@ public class SoundListAdapter extends  RecyclerView.Adapter<SoundListAdapter.Sou
 
          }
 
-        @OnClick({R.id.music_title, R.id.music_image, R.id.music_author, R.id.music_duration})
+        @OnClick({R.id.music_item_layout})
         public void onClick() {
             Music music = musicList.get(getAdapterPosition());
             clickListener.onClick(music);

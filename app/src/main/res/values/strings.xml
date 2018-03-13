@@ -39,6 +39,7 @@
     <string name="fileError">Error sending file to FTP server.File not found</string>
     <string name="credentialFTPNull">FTP connection data not set. Please configure FTP in settings.</string>
     <string name="upload_to_server">Send to platform</string>
+    <string name="upload_bundle_summary_title">Platform uploads</string>
     <string name="uploading_video">Uploading video</string>
     <string name="error_uploading_video">Error uploading video</string>
     <string name="upload_video_completed">Uploaded to platform</string>
@@ -47,6 +48,7 @@
     <string name="upload_video_network_error">Error, connect to network</string>
     <string name="upload_video_with_network_connected">Device not connected to internet, video will be uploaded when device connects to network</string>
     <string name="upload_video_unauthorization_upload_error">Authorization problem uploading videos</string>
+    <string name="upload_video_file_not_found">file not longer exists on device</string>
     <string name="upload_video_finish_singular">video uploaded</string>
     <string name="upload_video_finish_plural">videos uploaded</string>
     <string name="upload_video_with_mobile_network">Do you want to upload video with mobile network?</string>
@@ -142,11 +144,11 @@
     <string name="dialog_project_edit_title_accept">Yes</string>
     <string name="dialog_project_edit_title_cancel">No</string>
 
-    <string name="detail_project_product_type_direct_failure">Direct failure</string>
-    <string name="detail_project_product_type_raw_videos">Raw videos</string>
-    <string name="detail_project_product_type_spoolers">Spoolers</string>
-    <string name="detail_project_product_type_total">Total</string>
-    <string name="detail_project_product_type_graphic">Graphic</string>
+    <string name="detail_project_product_type_live_on_tape">Live on tape</string>
+    <string name="detail_project_product_type_b_roll">B-roll</string>
+    <string name="detail_project_product_type_nat_vo">Nat/VO</string>
+    <string name="detail_project_product_type_interview">Interview</string>
+    <string name="detail_project_product_type_graphic">Graphics</string>
     <string name="detail_project_product_type_piece">Piece</string>
 
     <!--VoiceOverRecordRecordActivity-->
@@ -2466,7 +2468,7 @@ and Conditions.\n\n
     <string name="text_hint_dialog_shareActivity">Project name</string>
     <string name="positiveButtonDialogShareActivity">Share</string>
     <string name="negativeButtonDialogShareActivity">Cancel</string>
-    <string name="dialog_message_clean_project">Do you want to start a new project?</string>
+    <string name="dialog_message_clean_project">Do you want to start a new project? Your current project will be saved in your gallery</string>
     <string name="dialog_accept_clean_project">Yes</string>
     <string name="dialog_cancel_clean_project">No</string>
 

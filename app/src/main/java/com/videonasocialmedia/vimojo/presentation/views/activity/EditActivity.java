@@ -474,7 +474,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Override
     public void newClipPlayed(int currentClipIndex) {
         Log.d(LOG_TAG, "newClipPlayed");
-        newClipPlayed(currentClipIndex);
+        //super needed, avoid recursion
+        super.newClipPlayed(currentClipIndex);
         currentVideoIndex = currentClipIndex;
         timeLineAdapter.updateSelection(currentClipIndex);
         videoListRecyclerView.scrollToPosition(currentClipIndex);

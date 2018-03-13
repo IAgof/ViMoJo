@@ -101,7 +101,9 @@ import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.Use
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 
+import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
 
@@ -299,7 +301,7 @@ public class ActivityPresentersModule {
                                                  ProjectRepository projectRepository,
                                                  CreateDefaultProjectUseCase createDefaultProjectUseCase,
                                                  AddLastVideoExportedToProjectUseCase
-                                                     addLastVideoExportedProjectUseCase,
+                                                 addLastVideoExportedProjectUseCase,
                                                  ExportProjectUseCase exportProjectUseCase,
                                                  ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
                                                  GetFtpListUseCase getFtpListUseCase,
@@ -355,9 +357,10 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  DetailProjectPresenter provideDetailProjectPresenter(ProjectRepository projectRepository){
+  DetailProjectPresenter provideDetailProjectPresenter(UserEventTracker userEventTracker,
+                                                        ProjectRepository projectRepository){
     return new DetailProjectPresenter(activity, (DetailProjectActivity) activity,
-        projectRepository);
+        userEventTracker, projectRepository);
   }
 
   @Provides @PerActivity
@@ -368,10 +371,11 @@ public class ActivityPresentersModule {
     return new EditTextPreviewPresenter((VideoEditTextActivity) activity, activity,
         userEventTracker, getMediaListFromProjectUseCase, modifyVideoTextAndPositionUseCase);
   }
+
   @Provides @PerActivity
   UserProfilePresenter provideUserProfilePresenter(
           SharedPreferences sharedPreferences, ObtainLocalVideosUseCase obtainLocalVideosUseCase,
-          GetAuthToken getAuthToken, AuthApiClient authApiClient, UserApiClient userApiClient) {
+          GetAuthToken getAuthToken, UserApiClient userApiClient) {
     return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
         obtainLocalVideosUseCase, getAuthToken, userApiClient);
   }
@@ -574,11 +578,6 @@ public class ActivityPresentersModule {
 
   @Provides GetFtpListUseCase provideGetFtpListUseCase() {
     return new GetFtpListUseCase();
-  }
-
-  @Provides
-  UploadToPlatformQueue provideUploadToPlatform() {
-      return new UploadToPlatformQueue(activity);
   }
 
   @Provides

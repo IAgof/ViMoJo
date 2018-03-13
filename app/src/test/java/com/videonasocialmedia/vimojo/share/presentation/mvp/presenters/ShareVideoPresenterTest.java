@@ -27,6 +27,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
@@ -58,6 +59,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -204,9 +206,9 @@ public class ShareVideoPresenterTest {
         doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
         when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
         assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
-        List<String> productType = new ArrayList<>();
-        productType.add(ProjectInfo.ProductType.RAW_VIDEOS.name());
-        project.getProjectInfo().setProductTypeList(productType);
+        List<String> productTypeList = new ArrayList<>();
+        productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
+        project.getProjectInfo().setProductTypeList(productTypeList);
         assertThat("Project info product type is not empty",
             project.getProjectInfo().getProductTypeList().size(), is(1));
 
@@ -230,9 +232,9 @@ public class ShareVideoPresenterTest {
         doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
         when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
         assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
-        List<String> productType = new ArrayList<>();
-        productType.add(ProjectInfo.ProductType.RAW_VIDEOS.name());
-        project.getProjectInfo().setProductTypeList(productType);
+        List<String> productTypeList = new ArrayList<>();
+        productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
+        project.getProjectInfo().setProductTypeList(productTypeList);
         assertThat("Project info product type is not empty",
             project.getProjectInfo().getProductTypeList().size(), is(1));
 
@@ -248,13 +250,13 @@ public class ShareVideoPresenterTest {
         String videoPath = "";
         getAProject().clear();
         Project project = getAProject();
-        boolean connectedToNetwork = true;
+        boolean isAcceptedUploadMobileNetwork = true;
         ProjectInfo projectInfo = project.getProjectInfo();
 
         shareVideoPresenter.uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
-            projectInfo.getProductTypeList(), connectedToNetwork);
+            projectInfo.getProductTypeList(), isAcceptedUploadMobileNetwork);
 
-        verify(mockedRunSyncAdapterHelper).runNowSyncAdapter();
+        verify(mockedRunSyncAdapterHelper, timeout(2000)).runNowSyncAdapter();
     }
 
 
@@ -310,7 +312,7 @@ public class ShareVideoPresenterTest {
         when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
         assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
         List<String> productType = new ArrayList<>();
-        productType.add(ProjectInfo.ProductType.RAW_VIDEOS.name());
+        productType.add(ProductTypeProvider.Types.NAT_VO.name());
         project.getProjectInfo().setProductTypeList(productType);
         assertThat("Project info product type is not empty",
             project.getProjectInfo().getProductTypeList().size(), is(1));

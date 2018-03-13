@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -21,7 +20,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -36,6 +35,10 @@ import butterknife.OnTouch;
  */
 
 public class DetailProjectActivity extends VimojoActivity implements DetailProjectView {
+
+  public static final String DETAIL_PROJECT_TITLE = "DETAIL_PROJECT_TITLE";
+  public static final String DETAIL_PROJECT_DESCRIPTION = "DETAIL_PROJECT_DESCRIPTION";
+  public static final String DETAIL_PROJECT_PRODUCT_TYPES = "DETAIL_PROJECT_TITLE";
 
   @Inject
   DetailProjectPresenter presenter;
@@ -67,6 +70,8 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   @BindView(R.id.detail_project_framerate)
   TextView textViewFrameRate;
 
+  private List<String> productTypeListSelected = new ArrayList<>();
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -82,6 +87,22 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   }
 
   @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    showTitleProject(savedInstanceState.getString(DETAIL_PROJECT_TITLE));
+    showDescriptionProject(savedInstanceState.getString(DETAIL_PROJECT_DESCRIPTION));
+    showProductTypeSelected(savedInstanceState.getStringArrayList(DETAIL_PROJECT_PRODUCT_TYPES));
+    super.onRestoreInstanceState(savedInstanceState);
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    outState.putString(DETAIL_PROJECT_TITLE, editTextTitle.getText().toString());
+    outState.putString(DETAIL_PROJECT_DESCRIPTION, editTextDescription.getText().toString());
+    outState.putStringArrayList(DETAIL_PROJECT_PRODUCT_TYPES, new ArrayList<>(productTypeListSelected));
+    super.onSaveInstanceState(outState);
+  }
+
+  @Override
   public void showTitleProject(String title) {
     editTextTitle.setText(title);
   }
@@ -89,7 +110,6 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   @Override
   public void showDetailProjectInfo(int duration, double projectSizeMbVideoToExport, int width,
                                     double videoBitRate, int frameRate) {
-
     textViewDuration.append(": " + TimeUtils.toFormattedTimeWithMinutesAndSeconds(duration));
     textViewSize.append(": " + projectSizeMbVideoToExport + " Mb");
     textViewQuality.append(": " + width);
@@ -146,11 +166,10 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   }
 
   @Override
-  public void showProductTypeMultipleDialog(String[] productTypesList,
-                                            boolean[] checkedProductTypes) {
+  public void showProductTypeMultipleDialog(boolean[] checkedProductTypes, List<String> productTypesTitles) {
     // Build an AlertDialog
     AlertDialog.Builder builder = new AlertDialog.Builder(DetailProjectActivity.this);
-    builder.setMultiChoiceItems(productTypesList, checkedProductTypes, new DialogInterface.OnMultiChoiceClickListener() {
+    builder.setMultiChoiceItems(productTypesTitles.toArray(new String[0]), checkedProductTypes, new DialogInterface.OnMultiChoiceClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which, boolean isChecked) {
         // Update the current focused item's checked status
@@ -171,11 +190,10 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
       @Override
       public void onClick(DialogInterface dialog, int which) {
         // Do something when click positive button
-        List<String> productTypeArrayList = Arrays.asList(productTypesList);
         for (int i = 0; i < checkedProductTypes.length; i++) {
           boolean checked = checkedProductTypes[i];
           if (checked) {
-            appendProductTypeText(textViewProductType, productTypeArrayList.get(i),
+            appendProductTypeText(textViewProductType, productTypesTitles.get(i),
                 ContextCompat.getColor(DetailProjectActivity.this, R.color.colorAccent));
           }
         }
@@ -186,15 +204,24 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   }
 
   @Override
-  public void showProductTypeSelected(List<String> productTypeList, String[] productTypesTitles) {
-    List<String> productTypeArrayList = Arrays.asList(productTypesTitles);
-    for(String productType: productTypeList) {
-      appendProductTypeText(textViewProductType,
-          productTypeArrayList.get(productTypeList.indexOf(productType)),
+  public void showProductTypeSelected(List<String> productTypeList) {
+    this.productTypeListSelected = productTypeList;
+    List<String> productTypeListStrinValues = presenter.convertToStringProductTypeListValues(productTypeList);
+    for(String productTypeName: productTypeListStrinValues) {
+      appendProductTypeText(textViewProductType, productTypeName,
           ContextCompat.getColor(DetailProjectActivity.this, R.color.colorAccent));
     }
   }
 
+  @Override
+  public void addSelectedProductType(String productTypeName) {
+    productTypeListSelected.add(productTypeName);
+  }
+
+  @Override
+  public void removeSelectedProductType(String productTypeName) {
+    productTypeListSelected.remove(productTypeName);
+  }
 
   @OnTouch(R.id.detail_project_title_edit_text)
   public boolean onClickTitleEditText() {
@@ -207,7 +234,8 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
     presenter.titleAccepted();
   }
 
-  @OnTouch(R.id.detail_project_description_edit_text)
+  @OnTouch({R.id.detail_project_description_scroll_view, R.id.detail_project_description_edit_text,
+      R.id.detail_project_description_cardview}  )
   public boolean onClickDescriptionEditText() {
     presenter.descriptionClicked();
     return false;
@@ -223,15 +251,16 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
     presenter.detailsExpand(layoutDetailsInfo);
   }
 
-  @OnClick(R.id.button_detail_project_accept)
-  public void onClickAcceptDetailProject() {
-    presenter.setDetailProject(editTextTitle.getText(), editTextDescription.getText());
+  @OnClick(R.id.button_detail_project_info_accept)
+  public void onClickAcceptInfoProject() {
+    presenter.setProjectInfo(editTextTitle.getText().toString(),
+        editTextDescription.getText().toString(), productTypeListSelected);
     setResult(RESULT_OK);
     finish();
   }
 
-  @OnClick(R.id.button_detail_project_cancel)
-  public void onClickCancelDetailProject() {
+  @OnClick(R.id.button_detail_project_info_cancel)
+  public void onClickCancelInfoProject() {
     finish();
   }
 
@@ -259,5 +288,4 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
         (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
     keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
   }
-
 }

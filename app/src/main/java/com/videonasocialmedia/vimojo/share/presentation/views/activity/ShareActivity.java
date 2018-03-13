@@ -1,9 +1,5 @@
 package com.videonasocialmedia.vimojo.share.presentation.views.activity;
 
-/**
- * Created by root on 31/05/16.
- */
-
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -82,7 +78,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   private ProgressDialog exportProgressDialog;
   private ProgressDialog checkingUserProgressDialog;
-  private boolean acceptUploadVideoMobileNetwork;
+  private boolean isAcceptedUploadWithMobileNetwork;
   private boolean isWifiConnected = false;
   private boolean isMobileNetworkConnected = false;
   private boolean isAppExportingProject = false;
@@ -217,8 +213,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   public void onVimojoPlatformClicked() {
     checkNetworksAvailable();
-    presenter.onVimojoPlatformClicked(isWifiConnected, acceptUploadVideoMobileNetwork,
-        isMobileNetworkConnected);
+    presenter.onVimojoPlatformClicked(isWifiConnected, isAcceptedUploadWithMobileNetwork,
+            isMobileNetworkConnected);
   }
 
   private void checkNetworksAvailable() {
@@ -237,11 +233,11 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
       switch (which) {
         case DialogInterface.BUTTON_POSITIVE:
-          acceptUploadVideoMobileNetwork = true;
+          isAcceptedUploadWithMobileNetwork = true;
           onVimojoPlatformClicked();
           break;
         case DialogInterface.BUTTON_NEGATIVE:
-          acceptUploadVideoMobileNetwork = false;
+          isAcceptedUploadWithMobileNetwork = false;
           break;
       }
     };

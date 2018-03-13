@@ -17,6 +17,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.ItemTouchHelperViewHolder;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 
 import org.junit.Before;
@@ -38,6 +39,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 25/04/17.
@@ -50,6 +52,7 @@ public class TimeLineVideoViewHolderTest {
   @Mock private VideoTimeLineRecyclerViewClickListener mockedListener;
   @InjectMocks private VideoTimeLineAdapter injectedAdapter;
   private VideoTimeLineAdapter adapterSpy;
+  @Mock private ProjectRepository mockedProjectRepository;
 
   @Before
   public void setUpEditActivity() {
@@ -68,8 +71,12 @@ public class TimeLineVideoViewHolderTest {
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path",
+    Project project = new Project(projectInfo, "/path", "private/path",
         compositionProfile);
+    when(mockedProjectRepository.getCurrentProject()).thenReturn(project);
+    //return Project.getInstance(projectInfo, "/path", "private/path",
+      //  compositionProfile);
+    return project;
   }
 
   @Test

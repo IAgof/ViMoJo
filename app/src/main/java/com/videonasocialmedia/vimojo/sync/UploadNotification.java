@@ -7,15 +7,15 @@
 
 package com.videonasocialmedia.vimojo.sync;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by alvaro on 15/2/18.
@@ -27,151 +27,120 @@ import java.util.List;
  */
 
 public class UploadNotification {
-  public static final int NOTIFICATION_UPLOAD_ID = 001;
+  private static final String NOTIFICATION_CHANNEL_ID = "notification_channel_upload_videos";
+  private static final String NOTIFICATION_GROUP_ID = "video_uploads";
+  private static final int NOTIFICATION_BUNDLE_SUMMARY_ID = 0;
+  private static final String LOG_TAG = UploadNotification.class.getSimpleName();
   private final Context context;
-  private NotificationCompat.Builder notificationBuilder;
-  private NotificationManager notificationManager;
-  private List<String> videoResults;
-  private boolean isNotificationShowed = false;
-  String NOTIFICATION_CHANNEL_ID = "notification_channel_upload_videos";
-  private int successNotificationId = R.drawable.notification_success_small;
-  private int errorNotificationId = R.drawable.notification_error_small;
-  private boolean errorUploadingVideo = false;
+  private final int successNotificationId = R.drawable.notification_success_small;
+  private final int errorNotificationId = R.drawable.notification_error_small;
 
   public UploadNotification(Context context) {
     this.context = context;
-    videoResults = new ArrayList<>();
   }
 
-  public void startInfiniteProgressNotification(int iconNotificationId, String uploadingVideo) {
-    NotificationCompat.InboxStyle inboxStyle =
-        new NotificationCompat.InboxStyle();
-    inboxStyle.addLine(uploadingVideo + " 1/1");
-    notificationBuilder =  new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(iconNotificationId)
-            .setContentTitle(uploadingVideo)
-            .setStyle(inboxStyle);
+  private NotificationCompat.Builder getBuilder(NotificationManager notificationManager) {
+    NotificationCompat.Builder builder = new NotificationCompat
+            .Builder(context, NOTIFICATION_CHANNEL_ID).setGroup(NOTIFICATION_GROUP_ID);
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+      String name = BuildConfig.FLAVOR;
+      int importance = NotificationManager.IMPORTANCE_DEFAULT;
+      NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+              name, importance);
+      notificationManager.createNotificationChannel(channel);
+      return builder.setChannelId(NOTIFICATION_CHANNEL_ID);
+    }
+    return builder;
+  }
+
+  private NotificationManager getNotificationManager() {
+    return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+  }
+
+  private void showBundleSummary(int smallIconNotificationId) {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+      Log.d(LOG_TAG, "Showing summary notification");
+      NotificationManager notificationManager = getNotificationManager();
+      NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager)
+              .setGroupSummary(true); // (jliarte): 9/03/18 setGroupSummary just for the parent notification in bundled notifications!
+      notificationBuilder.setSmallIcon(smallIconNotificationId);
+      notificationBuilder.setContentTitle(context.getString(R.string.upload_bundle_summary_title));
+      notificationManager.notify(NOTIFICATION_BUNDLE_SUMMARY_ID, notificationBuilder.build());
+    }
+  }
+
+  public void startInfiniteProgressNotification(int notificationUploadId, int iconNotificationId,
+                                                String uploadingVideo) {
+    showBundleSummary(R.drawable.notification_uploading_small);
+    Log.d(LOG_TAG, "Starting notification id " + notificationUploadId);
+    NotificationManager notificationManager = getNotificationManager();
+    NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
+    notificationBuilder.setSmallIcon(iconNotificationId);
+    notificationBuilder.setContentTitle(uploadingVideo);
     notificationBuilder.setProgress(0, 0, true);
-    notificationManager =
-        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-    notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
-    isNotificationShowed = true;
+    notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
-  public void updateNotificationVideoAdded(String message, int sizeQueue) {
-    new Thread(() -> {
-      String text = message + " 1/" + sizeQueue;
-        NotificationCompat.InboxStyle inboxStyle =
-            new NotificationCompat.InboxStyle();
-        inboxStyle.setSummaryText(text);
-        for (String line: videoResults) {
-          inboxStyle.addLine(line);
-        }
-        notificationBuilder.setStyle(inboxStyle);
-        notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
-      }).start();
-  }
+  public void finishNotification(int notificationUploadId, String result, String videoTitle,
+                                 boolean success) {
+    Log.d(LOG_TAG, "Finishing notification id " + notificationUploadId);
 
-  public void appendResultNotification(String message, int sizeQueue, String result,
-                                       String title, boolean success) {
-    new Thread(() -> {
-      if (!success) {
-        errorUploadingVideo = true;
-      }
-      videoResults.add(result + " " + title);
-      String text = message + " 1/" + sizeQueue;
-      NotificationCompat.InboxStyle inboxStyle =
-          new NotificationCompat.InboxStyle();
-      inboxStyle.setSummaryText(text);
-      for (String line: videoResults) {
-        inboxStyle.addLine(line);
-      }
-      notificationBuilder.setStyle(inboxStyle);
-      notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
-    }).start();
-  }
-
-  public void finishNotification(String result, String title, boolean success) {
-    new Thread(() -> {
-      if (!success) {
-        errorUploadingVideo = true;
-      }
-      videoResults.add(result + " " + title);
-      notificationBuilder.setSmallIcon(errorUploadingVideo ? errorNotificationId : successNotificationId);
-      String title1 = context.getString(R.string.upload_video_completed) + ":";
-      NotificationCompat.InboxStyle inboxStyle =
-          new NotificationCompat.InboxStyle();
-      for (String line: videoResults) {
-        inboxStyle.addLine(line);
-      }
-      String summaryText = String.valueOf(videoResults.size());
-      if (videoResults.size() > 1) {
-        summaryText = summaryText + " "
-            + context.getString(R.string.upload_video_finish_plural);
-      } else {
-        summaryText = summaryText + " "
-            + context.getString(R.string.upload_video_finish_singular);
-      }
-      inboxStyle.setSummaryText(summaryText);
-      notificationBuilder.setContentTitle(title1);
-      notificationBuilder.setStyle(inboxStyle);
-      notificationBuilder.setProgress(0, 0, false);
-      notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
-      isNotificationShowed = false;
-    }).start();
-  }
-
-  public boolean isNotificationShowed() {
-    return isNotificationShowed;
-  }
-
-  public void errorNetworkNotification() {
-    new Thread(() -> {
-      notificationBuilder.setSmallIcon(errorNotificationId);
-      String title = context.getString(R.string.upload_video_network_error);
-      NotificationCompat.InboxStyle inboxStyle =
-          new NotificationCompat.InboxStyle();
-      for (String line: videoResults) {
-        inboxStyle.addLine(line);
-      }
-      String summaryText = String.valueOf(videoResults.size());
-      if(videoResults.size() > 1) {
-        summaryText = summaryText + " "
-            + context.getString(R.string.upload_video_finish_plural);
-      } else {
-        summaryText = summaryText + " "
-            + context.getString(R.string.upload_video_finish_singular);
-      }
-      inboxStyle.setSummaryText(summaryText);
-      notificationBuilder.setContentTitle(title);
-      notificationBuilder.setStyle(inboxStyle);
-      notificationBuilder.setProgress(0, 0, false);
-      notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
-    }).start();
-  }
-
-  public void cancelNotification() {
-    notificationManager.cancel(NOTIFICATION_UPLOAD_ID);
-    isNotificationShowed = false;
-  }
-
-  public void errorUnauthorizationUploadingVideos() {
-    notificationBuilder.setSmallIcon(errorNotificationId);
-    String title = context.getString(R.string.upload_video_unauthorization_upload_error);
-    notificationBuilder.setContentTitle(title);
+    int smallIconNotificationId = success ? successNotificationId : errorNotificationId;
+    showBundleSummary(smallIconNotificationId);
+    NotificationManager notificationManager = getNotificationManager();
+    NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
+    notificationBuilder.setSmallIcon(smallIconNotificationId);
+    notificationBuilder.setContentTitle(context.getString(R.string.upload_video_completed));
+    String message = result + " " + videoTitle;
+    notificationBuilder.setContentText(message);
+    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
     notificationBuilder.setProgress(0, 0, false);
-    notificationManager.notify(NOTIFICATION_UPLOAD_ID, notificationBuilder.build());
+    notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
-  public void errorFileNotFound(VideoUpload videoUpload) {
-    NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
-    style.setSummaryText(context.getString(R.string.error_uploading_video));
-//    String title = context.getString(R.string.upload_video_file_not_found);
-    style.addLine("Video file for " + videoUpload.getTitle() + " no longer exists!");
-    NotificationCompat.Builder errorNotificationBuilder = new NotificationCompat.Builder(
-            context, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle(context.getString(R.string.error_uploading_video))
-            .setStyle(style).setSmallIcon(errorNotificationId);
-    notificationManager.notify(NOTIFICATION_UPLOAD_ID, errorNotificationBuilder.build());
+  public void errorNetworkNotification(int notificationUploadId) {
+    showBundleSummary(R.drawable.notification_error_small);
+    NotificationManager notificationManager = getNotificationManager();
+    NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
+    notificationBuilder.setSmallIcon(R.drawable.notification_error_small);
+    notificationBuilder.setContentTitle(context.getString(R.string.error_uploading_video));
+    notificationBuilder.setContentText(context.getString(R.string.upload_video_network_error));
+    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle()
+            .bigText(context.getString(R.string.upload_video_network_error)));
+    notificationBuilder.setProgress(0, 0, false);
+    notificationManager.notify(notificationUploadId, notificationBuilder.build());
+  }
+
+  public void cancelNotification(int notificationUploadId) {
+    NotificationManager notificationManager = getNotificationManager();
+    notificationManager.cancel(notificationUploadId);
+  }
+
+  public void errorUnauthorizedUploadingVideos(int notificationUploadId) {
+    showBundleSummary(R.drawable.notification_error_small);
+    NotificationManager notificationManager = getNotificationManager();
+    NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
+    notificationBuilder.setSmallIcon(errorNotificationId);
+    notificationBuilder.setContentTitle(context.getString(R.string.error_uploading_video));
+    notificationBuilder.setContentText(context.getString(R.string.upload_video_unauthorization_upload_error));
+    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle()
+            .bigText(context.getString(R.string.upload_video_unauthorization_upload_error)));
+    notificationBuilder.setProgress(0, 0, false);
+    notificationManager.notify(notificationUploadId, notificationBuilder.build());
+  }
+
+  public void errorFileNotFound(int notificationUploadId, VideoUpload videoUpload) {
+    showBundleSummary(R.drawable.notification_error_small);
+    NotificationManager notificationManager = getNotificationManager();
+    NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
+    notificationBuilder.setSmallIcon(errorNotificationId);
+    notificationBuilder.setContentTitle(context.getString(R.string.error_uploading_video));
+    notificationBuilder.setContentText(videoUpload.getTitle() + " " +
+        context.getString(R.string.upload_video_file_not_found));
+    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle()
+            .bigText(videoUpload.getTitle() + " "
+                    + context.getString(R.string.upload_video_file_not_found)));
+    notificationBuilder.setProgress(0, 0, false);
+    notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 }

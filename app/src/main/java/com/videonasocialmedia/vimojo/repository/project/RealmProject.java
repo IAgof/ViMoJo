@@ -16,12 +16,6 @@ public class RealmProject extends RealmObject {
   public String uuid;
   public String title;
   public String description;
-  public boolean directFalseTypeSelected;
-  public boolean rawVideoTypeSelected;
-  public boolean spoolTypeSelected;
-  public boolean totalTypeSelected;
-  public boolean graphicTypeSelected;
-  public boolean pieceTypeSelected;
   public String lastModification;
   public String projectPath;
   public String quality;
@@ -36,17 +30,16 @@ public class RealmProject extends RealmObject {
   public RealmList<RealmVideo> videos;
   public RealmList<RealmMusic> musics;
   public RealmList<RealmTrack> tracks;
+  public RealmList<String> productTypeList;
 
   public RealmProject() {
     this.videos = new RealmList<RealmVideo>();
     this.musics = new RealmList<RealmMusic>();
     this.tracks = new RealmList<RealmTrack>();
+    this.productTypeList = new RealmList<String>();
   }
 
   public RealmProject(String uuid, String title, String description,
-                      boolean directFalseTypeSelected, boolean rawVideoTypeSelected,
-                      boolean spoolTypeSelected, boolean totalTypeSelected,
-                      boolean graphicTypeSelected, boolean pieceTypeSelected,
                       String lastModification, String projectPath,
                       String quality, String resolution, String frameRate, int duration,
                       boolean isAudioFadeTransitionActivated,
@@ -54,12 +47,6 @@ public class RealmProject extends RealmObject {
     this.uuid = uuid;
     this.title = title;
     this.description = description;
-    this.directFalseTypeSelected = directFalseTypeSelected;
-    this.rawVideoTypeSelected = rawVideoTypeSelected;
-    this.spoolTypeSelected = spoolTypeSelected;
-    this.totalTypeSelected = totalTypeSelected;
-    this.graphicTypeSelected = graphicTypeSelected;
-    this.pieceTypeSelected = pieceTypeSelected;
     this.lastModification = lastModification;
     this.projectPath = projectPath;
     this.quality = quality;
@@ -69,6 +56,7 @@ public class RealmProject extends RealmObject {
     this.videos = new RealmList<RealmVideo>();
     this.musics = new RealmList<RealmMusic>();
     this.tracks = new RealmList<RealmTrack>();
+    this.productTypeList = new RealmList<String>();
     this.isAudioFadeTransitionActivated = isAudioFadeTransitionActivated;
     this.isVideoFadeTransitionActivated = isVideoFadeTransitionActivated;
     this.isWatermarkActivated = isWatermarkActivated;

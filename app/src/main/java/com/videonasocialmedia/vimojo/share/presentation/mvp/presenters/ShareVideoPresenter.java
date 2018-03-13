@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -241,11 +242,11 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     protected void clickUploadToPlatform(boolean isWifiConnected,
-                               boolean acceptUploadVideoMobileNetwork,
+                               boolean isAcceptedUploadWithMobileNetwork,
                                boolean isMobileNetworkConnected,
                                String videoPath) {
         if (isNeededAskPermissionForMobileUpload(isWifiConnected, isMobileNetworkConnected,
-            acceptUploadVideoMobileNetwork)) {
+            isAcceptedUploadWithMobileNetwork)) {
             shareVideoViewReference.get().showDialogUploadVideoWithMobileNetwork();
             return;
         }
@@ -264,16 +265,15 @@ public class ShareVideoPresenter extends VimojoPresenter {
             return;
         }
 
-        boolean connectedToNetwork = true;
         ProjectInfo projectInfo = currentProject.getProjectInfo();
-        if (!isWifiOrMobileNetworkConnected(isWifiConnected, isMobileNetworkConnected)) {
+        if (!isDeviceConnectedToUpload(isWifiConnected, isMobileNetworkConnected,
+            isAcceptedUploadWithMobileNetwork)) {
             shareVideoViewReference.get().showDialogNotNetworkUploadVideoOnConnection();
-            connectedToNetwork = false;
         } else {
             shareVideoViewReference.get().showMessage(R.string.uploading_video);
         }
         uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
-            projectInfo.getProductTypeList(), connectedToNetwork);
+            projectInfo.getProductTypeList(), isAcceptedUploadWithMobileNetwork);
     }
 
     private boolean areThereProjectFieldsCompleted(Project currentProject) {
@@ -282,9 +282,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
             (projectInfo.getProductTypeList().size() > 0);
     }
 
-    private boolean isWifiOrMobileNetworkConnected(boolean isWifiConnected,
-                                                   boolean isMobileNetworkConnected) {
-        return isWifiConnected || isMobileNetworkConnected;
+    private boolean isDeviceConnectedToUpload(boolean isWifiConnected,
+                                              boolean isMobileNetworkConnected,
+                                              boolean isAcceptedUploadMobileNetwork) {
+        return isWifiConnected || (isMobileNetworkConnected &&  isAcceptedUploadMobileNetwork);
     }
 
     private boolean isNeededAskPermissionForMobileUpload(boolean isWifiConnected,
@@ -311,14 +312,16 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     protected void uploadVideo(String mediaPath, String title, String description,
-                             List<String> productTypeList, boolean connectedToNetwork) {
+                               List<String> productTypeList, boolean isAcceptedUploadMobileNetwork) {
         // Convert productTypeList to string. VideoApiClient not support RequestBody with List<String>
         String productTypeListToString = TextUtils.join(", ", productTypeList);
-        VideoUpload videoUpload = new VideoUpload(mediaPath, title, description,
-            productTypeListToString);
+        int id = (int) (new Date().getTime()/1000);
+        VideoUpload videoUpload = new VideoUpload(id, mediaPath, title, description,
+            productTypeListToString, isAcceptedUploadMobileNetwork);
         executeUseCaseCall((Callable<Void>) () -> {
             try {
-                uploadToPlatformQueue.addVideoToUpload(videoUpload, connectedToNetwork);
+                uploadToPlatformQueue.addVideoToUpload(videoUpload);
+                runSyncAdapterHelper.runNowSyncAdapter();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
                 Log.d(LOG_TAG, ioException.getMessage());
@@ -327,7 +330,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
             }
             return null;
         });
-        runSyncAdapterHelper.runNowSyncAdapter();
     }
 
     private boolean isThereFreeStorageOnPlatform(String mediaPath) {

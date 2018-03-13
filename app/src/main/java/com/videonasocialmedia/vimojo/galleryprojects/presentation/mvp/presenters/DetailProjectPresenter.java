@@ -1,17 +1,20 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters;
 
 import android.content.Context;
-import android.text.Editable;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProductType;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,20 +28,29 @@ public class DetailProjectPresenter {
 
   private final Context context;
   private DetailProjectView detailProjectView;
+  private UserEventTracker userEventTracker;
   private Project currentProject;
   private ProjectRepository projectRepository;
-  private List<String> productTypesListSelected = new ArrayList<>();
-  private HashMap<ProjectInfo.ProductType, Boolean> productTypeCheckedIdsMap;
+  private HashMap<Integer, Boolean> productTypeCheckedIdsMap;
   private boolean[] checkedProductTypes;
-  private String[] productTypesTitles;
+  private List<String> productTypesTitles = new ArrayList<>();;
+
+  private final int LIVE_ON_TAPE_ID = 0;
+  private final int B_ROLL_ID = 1;
+  private final int NAT_VO_ID = 2;
+  private final int INTERVIEW_ID = 3;
+  private final int GRAPHICS_ID = 4;
+  private final int PIECE_ID = 5;
 
   @Inject
   public DetailProjectPresenter(Context context, DetailProjectView detailProjectView,
+                                UserEventTracker userEventTracker,
                                 ProjectRepository projectRepository) {
     this.context = context;
     this.detailProjectView = detailProjectView;
+    this.userEventTracker = userEventTracker;
     this.projectRepository = projectRepository;
-    currentProject = loadCurrentProject();
+    this.currentProject = loadCurrentProject();
   }
 
   public Project loadCurrentProject() {
@@ -46,70 +58,57 @@ public class DetailProjectPresenter {
   }
 
   public void init() {
-
     initProductTypeIdsMap(currentProject.getProjectInfo());
-
     initMultipleChoiceProductTypes();
-
     detailProjectView.showTitleProject(currentProject.getProjectInfo().getTitle());
-
     detailProjectView.showDescriptionProject(currentProject.getProjectInfo().getDescription());
-
-    detailProjectView.showProductTypeSelected(currentProject.getProjectInfo().getProductTypeList(),
-        productTypesTitles);
-
+    List<String> productTypeList = currentProject.getProjectInfo().getProductTypeList();
+    detailProjectView.showProductTypeSelected(productTypeList);
     double projectSizeMb = currentProject.getProjectSizeMbVideoToExport();
     double formatProjectSizeMb = Math.round(projectSizeMb * 100.0) / 100.0;
-
     double bitRateMbps = currentProject.getProfile().getVideoQuality().getVideoBitRate() * 0.000001;
-
     detailProjectView.showDetailProjectInfo(
         currentProject.getDuration(),
         formatProjectSizeMb,
         currentProject.getProfile().getVideoResolution().getWidth(),
         bitRateMbps,
         currentProject.getProfile().getVideoFrameRate().getFrameRate());
-
   }
 
   private void initProductTypeIdsMap(ProjectInfo projectInfo) {
     productTypeCheckedIdsMap = new HashMap<>();
-    productTypeCheckedIdsMap.put(ProjectInfo.ProductType.DIRECT_FAILURE,
-        projectInfo.isDirectFalseTypeSelected());
-    productTypeCheckedIdsMap.put(ProjectInfo.ProductType.RAW_VIDEOS,
-        projectInfo.isRawVideoTypeSelected());
-    productTypeCheckedIdsMap.put(ProjectInfo.ProductType.SPOOLERS,
-        projectInfo.isSpoolTypeSelected());
-    productTypeCheckedIdsMap.put(ProjectInfo.ProductType.TOTAL,
-        projectInfo.isTotalTypeSelected());
-    productTypeCheckedIdsMap.put(ProjectInfo.ProductType.GRAPHIC,
-        projectInfo.isGraphicTypeSelected());
-    productTypeCheckedIdsMap.put(ProjectInfo.ProductType.PIECE,
-        projectInfo.isPieceTypeSelected());
+    productTypeCheckedIdsMap.put(LIVE_ON_TAPE_ID,
+        projectInfo.getProductTypeList().contains(ProductTypeProvider.Types.LIVE_ON_TAPE.name()));
+    productTypeCheckedIdsMap.put(B_ROLL_ID,
+        projectInfo.getProductTypeList().contains(ProductTypeProvider.Types.B_ROLL.name()));
+    productTypeCheckedIdsMap.put(NAT_VO_ID,
+        projectInfo.getProductTypeList().contains(ProductTypeProvider.Types.NAT_VO.name()));
+    productTypeCheckedIdsMap.put(INTERVIEW_ID,
+        projectInfo.getProductTypeList().contains(ProductTypeProvider.Types.INTERVIEW.name()));
+    productTypeCheckedIdsMap.put(GRAPHICS_ID,
+        projectInfo.getProductTypeList().contains(ProductTypeProvider.Types.GRAPHICS.name()));
+    productTypeCheckedIdsMap.put(PIECE_ID,
+        projectInfo.getProductTypeList().contains(ProductTypeProvider.Types.PIECE.name()));
   }
 
-  private void initMultipleChoiceProductTypes() {
+   private void initMultipleChoiceProductTypes() {
+      // Boolean array for initial selected items
+      checkedProductTypes = new boolean[]{
+          productTypeCheckedIdsMap.get(LIVE_ON_TAPE_ID),
+          productTypeCheckedIdsMap.get(B_ROLL_ID),
+          productTypeCheckedIdsMap.get(NAT_VO_ID),
+          productTypeCheckedIdsMap.get(INTERVIEW_ID),
+          productTypeCheckedIdsMap.get(GRAPHICS_ID),
+          productTypeCheckedIdsMap.get(PIECE_ID)
+      };
 
-    // String array for alert dialog multi choice items
-    productTypesTitles = new String[] {
-      context.getString(R.string.detail_project_product_type_direct_failure),
-          context.getString(R.string.detail_project_product_type_raw_videos),
-          context.getString(R.string.detail_project_product_type_spoolers),
-          context.getString(R.string.detail_project_product_type_total),
-          context.getString(R.string.detail_project_product_type_graphic),
-          context.getString(R.string.detail_project_product_type_piece)
-    } ;
-
-    // Boolean array for initial selected items
-    checkedProductTypes = new boolean[]{
-        productTypeCheckedIdsMap.get(ProjectInfo.ProductType.DIRECT_FAILURE),
-        productTypeCheckedIdsMap.get(ProjectInfo.ProductType.RAW_VIDEOS),
-        productTypeCheckedIdsMap.get(ProjectInfo.ProductType.SPOOLERS),
-        productTypeCheckedIdsMap.get(ProjectInfo.ProductType.TOTAL),
-        productTypeCheckedIdsMap.get(ProjectInfo.ProductType.GRAPHIC),
-        productTypeCheckedIdsMap.get(ProjectInfo.ProductType.PIECE)
-    };
-  }
+     productTypesTitles.add(context.getString(R.string.detail_project_product_type_live_on_tape));
+     productTypesTitles.add(context.getString(R.string.detail_project_product_type_b_roll));
+     productTypesTitles.add(context.getString(R.string.detail_project_product_type_nat_vo));
+     productTypesTitles.add(context.getString(R.string.detail_project_product_type_interview));
+     productTypesTitles.add(context.getString(R.string.detail_project_product_type_graphic));
+     productTypesTitles.add(context.getString(R.string.detail_project_product_type_piece));
+    }
 
   public void titleClicked() {
     detailProjectView.showAcceptTitleButton();
@@ -135,65 +134,63 @@ public class DetailProjectPresenter {
     }
   }
 
-  public void setDetailProject(Editable title, Editable description) {
-    String projectTitle = title.toString();
-    String projectDescription = description.toString();
-
+  public void setProjectInfo(String projectTitle, String projectDescription,
+                             List<String> projectInfoProductTypeSelected) {
+    userEventTracker.trackProjectInfo(currentProject);
     projectRepository.setProjectInfo(currentProject, projectTitle, projectDescription,
-        productTypesListSelected);
+        getProjectInfoProductTypeSelectedInOrder(projectInfoProductTypeSelected));
   }
 
-  public void addProductTypeSelected(int positionSelected) {
-    if (positionSelected > ProjectInfo.ProductType.values().length) {
-      return;
-    }
-    ProjectInfo.ProductType addProductType = getProductTypeFromPosition(positionSelected);
-    if (addProductType != null) {
-      productTypesListSelected.add(addProductType.name());
-      productTypeCheckedIdsMap.put(addProductType, true);
-    }
-  }
-
-  public void removeProductTypeSelected(int positionSelected) {
-    ProjectInfo.ProductType removeProductType = getProductTypeFromPosition(positionSelected);
-    if(removeProductType != null) {
-      productTypesListSelected.remove(removeProductType.name());
-      productTypeCheckedIdsMap.put(removeProductType, false);
-    }
-  }
-
-  private ProjectInfo.ProductType getProductTypeFromPosition(int position) {
-    if (position == 0) {
-      return ProjectInfo.ProductType.DIRECT_FAILURE;
-    } else {
-      if (position == 1) {
-        return ProjectInfo.ProductType.RAW_VIDEOS;
-      } else {
-        if (position == 2) {
-          return ProjectInfo.ProductType.SPOOLERS;
-        } else {
-          if (position == 3) {
-            return ProjectInfo.ProductType.TOTAL;
-          } else {
-            if (position == 4) {
-              return ProjectInfo.ProductType.GRAPHIC;
-            } else {
-              if (position == 5) {
-                return ProjectInfo.ProductType.PIECE;
-              }
-            }
-          }
+  // Product list is added/removed item by item without order. Needed sort list to show it properly in activity.
+  private List<String> getProjectInfoProductTypeSelectedInOrder(List<String>
+                                                          projectInfoArrayListProductTypeSelected) {
+    List<ProductType> sortProjectInfoProductTypeList = new ArrayList<>();
+    for (String productTypeString : projectInfoArrayListProductTypeSelected) {
+      for (ProductType productType : ProductTypeProvider.getProductTypeList()) {
+        if (productTypeString.equals(productType.getName())) {
+          sortProjectInfoProductTypeList.add(productType);
         }
       }
     }
-    return null;
+    Collections.sort(sortProjectInfoProductTypeList);
+    List<String> sortProjectInfoArrayListProductType = new ArrayList<>();
+    for (ProductType productType : sortProjectInfoProductTypeList) {
+      sortProjectInfoArrayListProductType.add(productType.getName());
+    }
+    return sortProjectInfoArrayListProductType;
+  }
+
+  public void addProductTypeSelected(int position) {
+    ProductType productType = getProductTypeFromPosition(position);
+    productTypeCheckedIdsMap.put(productType.getPosition(), true);
+    detailProjectView.addSelectedProductType(productType.getName());
+  }
+
+  public void removeProductTypeSelected(int position) {
+    ProductType productType = getProductTypeFromPosition(position);
+    productTypeCheckedIdsMap.put(productType.getPosition(), false);
+    detailProjectView.removeSelectedProductType(productType.getName());
   }
 
   public void onClickProductTypes() {
-    detailProjectView.showProductTypeMultipleDialog(productTypesTitles, checkedProductTypes);
+    detailProjectView.showProductTypeMultipleDialog(checkedProductTypes, productTypesTitles);
   }
 
-  public String[] getProductTypesTitles() {
-    return productTypesTitles;
+  private ProductType getProductTypeFromPosition(int position) {
+    List<ProductType> productTypeList = ProductTypeProvider.getProductTypeList();
+    return productTypeList.get(position);
+  }
+
+  public List<String> convertToStringProductTypeListValues(List<String> productTypeList) {
+    List<String> productTypeConverted = new ArrayList<>();
+    List<ProductType> productTypeListProvider = ProductTypeProvider.getProductTypeList();
+    for(String productTypeName: productTypeList) {
+      for(ProductType productType: productTypeListProvider) {
+        if(productTypeName.equals(productType.getName())) {
+          productTypeConverted.add(productTypesTitles.get(productType.getPosition()));
+        }
+      }
+    }
+    return productTypeConverted;
   }
 }
