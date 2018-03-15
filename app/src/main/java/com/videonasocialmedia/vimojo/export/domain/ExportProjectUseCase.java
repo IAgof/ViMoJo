@@ -38,6 +38,7 @@ public class ExportProjectUseCase implements ExportListener {
   private VMCompositionExportSession vmCompositionExportSession;
   private Project project;
   private final VideoToAdaptRepository videoToAdaptRepository;
+  private boolean isExportCanceled = false;
 
   /**
    * Project VMCompositionExportSession use case.
@@ -60,6 +61,7 @@ public class ExportProjectUseCase implements ExportListener {
    */
   public void export(String pathWatermark, OnExportFinishedListener onExportFinishedListener) {
     this.onExportFinishedListener = onExportFinishedListener;
+    isExportCanceled = false;
     checkWatermarkResource(pathWatermark);
     try {
       ListenableFuture<List<Video>> adaptVideoTasks = getAdaptingVideoTasks();
@@ -108,17 +110,49 @@ public class ExportProjectUseCase implements ExportListener {
 
   @Override
   public void onExportSuccess(Video video) {
-    onExportFinishedListener.onExportSuccess(video);
+    if (!isExportCanceled) {
+      onExportFinishedListener.onExportSuccess(video);
+    }
   }
 
   @Override
   public void onExportProgress(String progressMsg, int exportStage) {
     Log.d(TAG, progressMsg);
-    onExportFinishedListener.onExportProgress(progressMsg, exportStage);
+    if (!isExportCanceled) {
+      onExportFinishedListener.onExportProgress(progressMsg, exportStage);
+    }
   }
 
   @Override
   public void onExportError(String error) {
-    onExportFinishedListener.onExportError(error);
+    if (!isExportCanceled) {
+      onExportFinishedListener.onExportError(error);
+    }
+  }
+
+  @Override
+  public void onCancelExport() {
+    onExportFinishedListener.onExportCanceled();
+  }
+
+  public void cancelExport() {
+    /*try {
+      ListenableFuture<List<Video>> adaptVideoTasks = getAdaptingVideoTasks();
+      boolean interrupt = adaptVideoTasks.cancel(true);
+      Log.d(TAG, "cancel adaptingTasks " + interrupt);
+      adaptVideoTasks.get();
+      boolean isCancelled = adaptVideoTasks.isCancelled();
+      Log.d(TAG, "cancel isCancelled " + isCancelled);
+      if (!isCancelled) {
+        Log.d(TAG, "cancel vmCompositionExportSession");
+        vmCompositionExportSession.cancel();
+      }
+
+    } catch (ExecutionException e) {
+      e.printStackTrace();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }*/
+    isExportCanceled = true;
   }
 }

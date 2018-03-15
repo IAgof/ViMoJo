@@ -238,6 +238,13 @@ public class ShareVideoPresenter extends VimojoPresenter {
                     shareVideoViewReference.get().showExportProgress(progressMsg);
                 }
             }
+
+            @Override
+            public void onExportCanceled() {
+                if (shareVideoViewReference.get() != null) {
+                    shareVideoViewReference.get().showExportCanceled();
+                }
+            }
         });
     }
 
@@ -412,4 +419,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         return socialNetworkSelected;
     }
 
+    public void cancelExportation() {
+        exportUseCase.cancelExport();
+    }
 }

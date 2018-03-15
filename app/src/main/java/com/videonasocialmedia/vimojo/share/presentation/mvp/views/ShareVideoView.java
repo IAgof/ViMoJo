@@ -44,4 +44,6 @@ public interface ShareVideoView {
   void showDialogNotNetworkUploadVideoOnConnection();
 
   void pauseVideoPlayerPreview();
+
+  void showExportCanceled();
 }

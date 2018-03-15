@@ -57,6 +57,7 @@
     <string name="upload_video_complete_project_info">For uploading videos, you need to complete project details.</string>
     <string name="progress_dialog_title_checking_info_user">Checking info</string>
     <string name="progress_dialog_message_checking_user_auth">Checking user auth</string>
+    <string name="cancel_exportation">Cancel</string>
 
     <!-- Editor Activity -->
     <string name="new_project">New project</string>

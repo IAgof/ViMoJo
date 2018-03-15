@@ -143,6 +143,13 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     exportProgressDialog.setProgressPercentFormat(null);
     exportProgressDialog.setCanceledOnTouchOutside(false);
     exportProgressDialog.setCancelable(false);
+    exportProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+        getString(R.string.cancel_exportation), new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        cancelExportation();
+      }
+    });
 
     checkingUserProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
     checkingUserProgressDialog.setTitle(R.string.progress_dialog_title_checking_info_user);
@@ -153,6 +160,10 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     checkingUserProgressDialog.setProgressPercentFormat(null);
     checkingUserProgressDialog.setCanceledOnTouchOutside(false);
     checkingUserProgressDialog.setCancelable(false);
+  }
+
+  private void cancelExportation() {
+    presenter.cancelExportation();
   }
 
   private void setupBottomBar(BottomBar bottomBar) {
@@ -305,6 +316,15 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   public void pauseVideoPlayerPreview() {
     pausePreview();
+  }
+
+  @Override
+  public void showExportCanceled() {
+    runOnUiThread(() -> {
+      if (exportProgressDialog != null) {
+        exportProgressDialog.dismiss();
+      }
+    });
   }
 
   private void navigateToProjectDetails() {

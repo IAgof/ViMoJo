@@ -15,4 +15,6 @@ public interface OnExportFinishedListener {
   void onExportSuccess(Video video);
 
   void onExportProgress(String progressMsg, int exportStage);
+
+  void onExportCanceled();
 }
