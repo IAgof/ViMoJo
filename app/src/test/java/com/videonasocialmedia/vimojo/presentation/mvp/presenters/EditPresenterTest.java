@@ -30,7 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
@@ -141,7 +140,7 @@ public class EditPresenterTest {
     editPresenter.onRemoveMediaItemFromTrackSuccess();
 
     assertThat(getAProject().getVMComposition().hasVideos(), is(true));
-    verify(mockedEditorView).updatePlayerAndTimelineVideoListChanged();
+    verify(mockedEditorView).updatePlayerAndTimeLineVideoListChanged();
   }
 
   @Test
@@ -163,9 +162,9 @@ public class EditPresenterTest {
     }).when(mockedMediaItemReorderer).moveMediaItem(anyInt(),anyInt(), any(OnReorderMediaListener.class));
     EditPresenter editPresenter = getEditPresenter();
 
-    editPresenter.moveItem(fromPosition, toPosition);
+    editPresenter.finishedMoveItem(fromPosition, toPosition);
 
-    verify(mockedEditorView).updatePlayerAndTimelineVideoListChanged();
+    verify(mockedEditorView).updatePlayerVideoListChanged();
   }
 
   @NonNull

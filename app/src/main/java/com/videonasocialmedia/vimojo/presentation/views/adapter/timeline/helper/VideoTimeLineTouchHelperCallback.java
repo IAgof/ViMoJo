@@ -4,18 +4,19 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.ItemTouchHelperViewHolder;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallbackAdapter;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallbackAdapterListener;
 
 /**
  * Created by jliarte on 24/04/17.
  */
 
 public class VideoTimeLineTouchHelperCallback extends ItemTouchHelper.Callback {
-  private final VideoTimeLineTouchHelperCallbackAdapter timeLineAdapter;
+  private final VideoTimeLineTouchHelperCallbackAdapterListener timeLineTouchHelperAdapterListener;
 
-  public VideoTimeLineTouchHelperCallback(VideoTimeLineTouchHelperCallbackAdapter timeLineAdapter) {
+  public VideoTimeLineTouchHelperCallback(VideoTimeLineTouchHelperCallbackAdapterListener
+                                              timeLineTouchHelperAdapterListener) {
     super();
-    this.timeLineAdapter = timeLineAdapter;
+    this.timeLineTouchHelperAdapterListener = timeLineTouchHelperAdapterListener;
   }
 
   @Override
@@ -38,7 +39,10 @@ public class VideoTimeLineTouchHelperCallback extends ItemTouchHelper.Callback {
   @Override
   public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
                         RecyclerView.ViewHolder target) {
-    timeLineAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+    if(viewHolder.getAdapterPosition() != target.getAdapterPosition()) {
+      timeLineTouchHelperAdapterListener.onItemMove(viewHolder.getAdapterPosition(),
+          target.getAdapterPosition());
+    }
     return true;
   }
 
@@ -64,7 +68,7 @@ public class VideoTimeLineTouchHelperCallback extends ItemTouchHelper.Callback {
       ItemTouchHelperViewHolder itemViewHolder =
               (ItemTouchHelperViewHolder) viewHolder;
       itemViewHolder.onItemClear();
-      timeLineAdapter.finishMovement(viewHolder.getAdapterPosition());
+      timeLineTouchHelperAdapterListener.finishMovement();
     }
   }
 }

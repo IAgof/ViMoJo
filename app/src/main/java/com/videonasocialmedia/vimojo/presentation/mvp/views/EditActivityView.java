@@ -16,10 +16,6 @@ import java.util.List;
  */
 public interface EditActivityView {
 
-  void showProgressDialog();
-
-  void hideProgressDialog();
-
   void showError(int causeTextResource);
 
   void showMessage(int stringToast);
@@ -42,5 +38,7 @@ public interface EditActivityView {
 
   void goToRecordOrGallery();
 
-  void updatePlayerAndTimelineVideoListChanged();
+  void updatePlayerVideoListChanged();
+
+  void updatePlayerAndTimeLineVideoListChanged();
 }

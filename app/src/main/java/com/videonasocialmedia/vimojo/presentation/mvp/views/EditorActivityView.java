@@ -34,9 +34,5 @@ public interface EditorActivityView {
 
     void setHeaderViewCurrentProject(String pathThumbProject, String projectName, String projectDate);
 
-    void showProgressDialog();
-
-    void hideProgressDialog();
-
     void goToRecordOrGalleryScreen();
 }

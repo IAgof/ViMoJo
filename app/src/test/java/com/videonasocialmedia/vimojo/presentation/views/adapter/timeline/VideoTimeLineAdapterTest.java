@@ -16,7 +16,7 @@ import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallbackAdapter;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallbackAdapterListener;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 
@@ -74,7 +74,7 @@ public class VideoTimeLineAdapterTest {
 
   @Test
   public void adapterImplementsVideoTimeLineTouchHelperCallbackAdapter() {
-    assertThat(videoTimeLineAdapter, is(instanceOf(VideoTimeLineTouchHelperCallbackAdapter.class)));
+    assertThat(videoTimeLineAdapter, is(instanceOf(VideoTimeLineTouchHelperCallbackAdapterListener.class)));
   }
 
   @Test
@@ -184,7 +184,7 @@ public class VideoTimeLineAdapterTest {
 
     videoTimeLineAdapter.onItemMove(0, 1);
 
-    verify(mockedListener).onClipMoved(0, 1);
+    verify(mockedListener).onClipMoving(0, 1);
   }
 
   @NonNull
@@ -222,9 +222,9 @@ public class VideoTimeLineAdapterTest {
 
   @Test
   public void finishMovementNotifiesListener() {
-    videoTimeLineAdapter.finishMovement(4);
+    videoTimeLineAdapter.finishMovement();
 
-    verify(mockedListener).onClipReordered(4);
+    verify(mockedListener).onClipReordered();
   }
 
   @NonNull

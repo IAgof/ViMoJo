@@ -11,13 +11,16 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.ActivityPresentersComponent;
+import com.videonasocialmedia.vimojo.main.DaggerActivityPresentersComponent;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
+import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.ItemTouchHelperViewHolder;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 
 import org.junit.Before;
@@ -39,7 +42,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 25/04/17.
@@ -52,9 +54,10 @@ public class TimeLineVideoViewHolderTest {
   @Mock private VideoTimeLineRecyclerViewClickListener mockedListener;
   @InjectMocks private VideoTimeLineAdapter injectedAdapter;
   private VideoTimeLineAdapter adapterSpy;
-  @Mock private ProjectRepository mockedProjectRepository;
+  @Mock VimojoTestApplication mockedVimojoTestApplication;
+  private com.videonasocialmedia.vimojo.model.entities.editor.Project currentProject;
+  @Mock VimojoActivity mockedVimojoActivity;
 
-  @Before
   public void setUpEditActivity() {
     editActivity = Robolectric.buildActivity(EditActivity.class).create().get();
   }
@@ -62,21 +65,25 @@ public class TimeLineVideoViewHolderTest {
   @Before
   public void setUpTestDoubles() {
     MockitoAnnotations.initMocks(this);
-    adapterSpy = spy(injectedAdapter);
     getAProject();
+    adapterSpy = spy(injectedAdapter);
+    setUpEditActivity();
   }
 
-  private Project getAProject() {
+  private ActivityPresentersComponent getActivityPresentersComponent() {
+    return DaggerActivityPresentersComponent.builder()
+        .activityPresentersModule(new ActivityPresentersModule(mockedVimojoActivity))
+        .systemComponent(mockedVimojoTestApplication.getSystemComponent())
+        .build();
+  }
+
+  private void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    Project project = new Project(projectInfo, "/path", "private/path",
+    currentProject = new Project(projectInfo, "/path", "private/path",
         compositionProfile);
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(project);
-    //return Project.getInstance(projectInfo, "/path", "private/path",
-      //  compositionProfile);
-    return project;
   }
 
   @Test

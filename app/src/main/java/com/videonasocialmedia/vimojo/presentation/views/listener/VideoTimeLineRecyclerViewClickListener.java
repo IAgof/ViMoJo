@@ -18,7 +18,7 @@ public interface VideoTimeLineRecyclerViewClickListener {
 
     void onClipRemoveClicked(int position);
 
-    void onClipMoved(int fromPosition, int toPosition);
+    void onClipMoving(int fromPosition, int toPosition);
 
-    void onClipReordered(int newPosition);
+    void onClipReordered();
 }

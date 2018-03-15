@@ -42,7 +42,7 @@ import javax.inject.Inject;
 public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener,
         ElementChangedListener {
     private final String TAG = getClass().getSimpleName();
-    private final Project currentProject;
+    private Project currentProject;
     private final ProjectRepository projectRepository;
     private Context context;
     // TODO(jliarte): 2/05/17 inject delegate?
@@ -79,6 +79,9 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
         this.userEventTracker = userEventTracker;
         this.projectRepository = projectRepository;
+    }
+
+    public void addElementChangedListener(){
         this.currentProject = loadCurrentProject();
         currentProject.addListener(this);
     }
@@ -97,7 +100,10 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         return sharedPreferences.getString(ConfigPreferences.RESOLUTION, "1280x720");
     }
 
-    public void moveItem(int fromPosition, int toPosition) {
+    public void finishedMoveItem(int fromPosition, int toPosition) {
+        if( fromPosition == toPosition ) {
+            return;
+        }
         reorderMediaItemUseCase.moveMediaItem(fromPosition, toPosition,
                 new OnReorderMediaListener() {
             @Override
@@ -105,14 +111,14 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 // If everything was right the UI is already updated since the user did the
                 // reordering over the "model view"
                 userEventTracker.trackClipsReordered(projectRepository.getCurrentProject());
-                editActivityView.updatePlayerAndTimelineVideoListChanged();
+                editActivityView.updatePlayerVideoListChanged();
             }
 
             @Override
             public void onErrorReorderingMedia() {
                 //The reordering went wrong so we ask the project for the actual video list
                 Log.d(TAG, "timeline:  error reordering!!");
-                editActivityView.updatePlayerAndTimelineVideoListChanged();
+                editActivityView.updatePlayerVideoListChanged();
             }
         });
     }
@@ -136,7 +142,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     @Override
     public void onRemoveMediaItemFromTrackSuccess() {
         if (projectRepository.getCurrentProject().getVMComposition().hasVideos()) {
-            editActivityView.updatePlayerAndTimelineVideoListChanged();
+            editActivityView.updatePlayerAndTimeLineVideoListChanged();
         } else {
             editActivityView.goToRecordOrGallery();
         }
@@ -167,7 +173,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     }
 
     public void init() {
-        editActivityView.showProgressDialog();
         // TODO: 21/2/18 Study if is necessary repeat use case, running also in father, EditorActivity. Tried ListenableFuture and make synchronus call to wait until finish and after this method get result of get medialist, problems with UI thread.
         getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
             @Override
@@ -187,7 +192,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 editActivityView.updateVideoList(videoCopy);
                 videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
                     videoList, videoTranscodingErrorNotifier);
-                editActivityView.hideProgressDialog();
             }
 
             @Override
@@ -196,7 +200,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 editActivityView.disableBottomBar();
                 editActivityView.enableFabText(false);
                 editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
-                editActivityView.hideProgressDialog();
             }
         });
     }
@@ -205,7 +208,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     public void onObjectUpdated() {
         // TODO(jliarte): 26/07/17 save playback state and restore it when done updating project
         // in view
-        editActivityView.updatePlayerAndTimelineVideoListChanged();
+        editActivityView.updatePlayerVideoListChanged();
     }
 
     public String getCurrentTheme() {
@@ -213,5 +216,4 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
         return (String) outValue.string;
     }
-
 }

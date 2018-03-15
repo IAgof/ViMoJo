@@ -16,7 +16,7 @@ import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallbackAdapter;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallbackAdapterListener;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.TimeLineVideoViewHolder;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.VideoTimeLineAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
@@ -47,7 +47,7 @@ import static org.mockito.Mockito.verify;
 @Config(application = VimojoTestApplication.class, constants = BuildConfig.class, sdk = 21,
         shadows = {ShadowMultiDex.class}, packageName = "com.videonasocialmedia.vimojo.debug")
 public class VideoTimeLineTouchHelperCallbackTest {
-  @Mock private VideoTimeLineTouchHelperCallbackAdapter mockedCallbackAdapter;
+  @Mock private VideoTimeLineTouchHelperCallbackAdapterListener mockedCallbackAdapter;
   @Mock private RecyclerView mockedRecyclerView;
   @Mock private RecyclerView.ViewHolder mockedViewHolder;
   @Mock private RecyclerView.ViewHolder mockedViewHolderTarget;
@@ -113,7 +113,7 @@ public class VideoTimeLineTouchHelperCallbackTest {
 
     callback.clearView(mockedRecyclerView, viewHolder);
 
-    verify(videoTimeLineAdapter).finishMovement(viewHolder.getAdapterPosition());
+    verify(videoTimeLineAdapter).finishMovement();
   }
 
   private Project getAProject() {

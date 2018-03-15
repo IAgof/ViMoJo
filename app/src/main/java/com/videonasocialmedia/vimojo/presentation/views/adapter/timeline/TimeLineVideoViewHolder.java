@@ -23,6 +23,7 @@ import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRe
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 import static com.videonasocialmedia.videonamediaframework.utils.TimeUtils.toFormattedTimeHoursMinutesSecond;
@@ -130,9 +131,16 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
     videoTimeLineListener.onClipClicked(adapterPosition);
   }
 
+  @OnLongClick(R.id.timeline_video_thumb)
+  public boolean onLongClick() {
+    int adapterPosition = getAdapterPosition();
+    videoTimeLineListener.onClipLongClicked(adapterPosition);
+    return true;
+  }
+
   @Override
   public void onItemSelected() {
-    itemView.setBackgroundColor(selectedColor);
+    itemView.setSelected(true);
   }
 
   @Override

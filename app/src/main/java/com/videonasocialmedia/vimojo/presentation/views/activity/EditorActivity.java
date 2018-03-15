@@ -33,7 +33,6 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
@@ -62,6 +61,9 @@ import static com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPr
  */
 public abstract class EditorActivity extends VimojoActivity implements EditorActivityView,
     VideonaPlayerView, VideonaPlayer.VideonaPlayerListener {
+
+  private static String LOG_TAG = EditorActivity.class.getCanonicalName();
+
   private static final String EDITOR_ACTIVITY_PROJECT_POSITION = "editor_activity_project_position";
   private static final String EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED =
       "editor_activity_has_been_project_exported";
@@ -74,9 +76,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Nullable
   @BindView(R.id.text_dialog)
   EditText editTextDialog;
-
-  private AlertDialog alertDialog;
-
   @BindView(R.id.edit_activity_drawer_layout)
   DrawerLayout drawerLayout;
   @BindView(R.id.navigator_view)
@@ -125,7 +124,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     }
   };
 
-  private android.app.AlertDialog progressDialog;
   private boolean isVideoMute;
   protected String videoExportedPath;
   protected boolean hasBeenProjectExported = false;
@@ -137,26 +135,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     setContentView(R.layout.editor_activity);
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
-    restoreState(savedInstanceState);
-    createProgressDialog();
-  }
-
-  private void restoreState(Bundle savedInstanceState) {
-    if (savedInstanceState != null) {
-      currentPlayerPosition = savedInstanceState.getInt(EDITOR_ACTIVITY_PROJECT_POSITION,
-          0);
-      hasBeenProjectExported = savedInstanceState.
-          getBoolean(EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED, false);
-      videoExportedPath = savedInstanceState.getString(EDITOR_ACTIVITY_VIDEO_EXPORTED);
-    }
-  }
-
-  private void createProgressDialog() {
-    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-    View dialogView = getLayoutInflater().inflate(R.layout.dialog_export_progress, null);
-    progressDialog = builder.setCancelable(false)
-        .setView(dialogView)
-        .create();
   }
 
   @Override
@@ -167,6 +145,19 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     outState.putString(EDITOR_ACTIVITY_VIDEO_EXPORTED, videoExportedPath);
     super.onSaveInstanceState(outState);
   }
+
+  @Override
+  protected  void onRestoreInstanceState(Bundle state) {
+    super.onRestoreInstanceState(state);
+    if(state != null) {
+      currentPlayerPosition = state.getInt(EDITOR_ACTIVITY_PROJECT_POSITION,
+          0);
+      hasBeenProjectExported = state.getBoolean(EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED,
+          false);
+      videoExportedPath = state.getString(EDITOR_ACTIVITY_VIDEO_EXPORTED);
+    }
+  }
+
 
   private void setUpAndCheckHeaderViewCurrentProject() {
     imageProjectThumb = navigationView.getHeaderView(0)
@@ -201,7 +192,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     super.onStart();
     videonaPlayer.setListener(this);
     videonaPlayer.onShown(this);
-    initVideonaPlayer();
   }
 
   @Override
@@ -214,6 +204,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     setupSwitchThemeAppIntoDrawer();
     editorPresenter.updateTheme();
     editorPresenter.checkFeaturesAvailable();
+    initVideonaPlayer();
   }
 
   @Override
@@ -326,7 +317,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       }
     };
 
-    alertDialog = builder.setCancelable(true).
+    AlertDialog alertDialog = builder.setCancelable(true).
             setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
             .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
   }
@@ -477,23 +468,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     switchWatermark.setOnCheckedChangeListener(null);
     switchWatermark.setChecked(true);
     switchWatermark.setOnCheckedChangeListener(watermarkOnCheckedChangeListener);
-  }
-
-  @Override
-  public void showProgressDialog() {
-    runOnUiThread(() -> {
-      if (!isFinishing()) {
-        progressDialog.show();
-      }
-    });  }
-
-  @Override
-  public void hideProgressDialog() {
-    runOnUiThread(() -> {
-      if (progressDialog != null && progressDialog.isShowing()) {
-        progressDialog.dismiss();
-      }
-    });
   }
 
   @Override

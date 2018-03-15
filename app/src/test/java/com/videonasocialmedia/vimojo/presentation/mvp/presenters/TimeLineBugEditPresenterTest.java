@@ -1,9 +1,15 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.junit.After;
 import org.junit.Before;
@@ -16,6 +22,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -30,13 +37,18 @@ public class TimeLineBugEditPresenterTest {
   private Project currentProject;
 
   @Before
-  public void setUpTestDoubles() {
+  public void setUp() {
     MockitoAnnotations.initMocks(this);
+    getAProject();
   }
 
-  @Before
-  public void setUp() {
-    currentProject = Project.getInstance(null, null, null, null);
+  private void getAProject() {
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+    List<String> productType = new ArrayList<>();
+    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+    currentProject = new Project(projectInfo, "/path", "private/path",
+        compositionProfile);
   }
 
   @After
@@ -61,7 +73,7 @@ public class TimeLineBugEditPresenterTest {
     videoList.add(video5);
     editPresenter.videoList = videoList;
 
-    editPresenter.moveItem(0, 1);
+    editPresenter.finishedMoveItem(0, 1);
 
     verify(reorderMediaItemUseCase).moveMediaItem(eq(0), eq(1),
             Mockito.any(OnReorderMediaListener.class));
